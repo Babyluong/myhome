@@ -191,8 +191,8 @@ export const ModuleAccessControlPage: React.FC = () => {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <AlertCircle className="w-12 h-12 text-error-500 mx-auto mb-4" />
-          <p className="text-lg font-semibold text-slate-900">Access Denied</p>
-          <p className="text-slate-600">Only System Admin can access this page.</p>
+          <p className="text-lg font-semibold text-text-primary">Access Denied</p>
+          <p className="text-text-muted">Only System Admin can access this page.</p>
         </div>
       </div>
     )
@@ -209,8 +209,8 @@ export const ModuleAccessControlPage: React.FC = () => {
         <div className="flex items-center gap-3">
           <Settings className="w-6 h-6 text-primary-600" />
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Module Access Control</h1>
-            <p className="text-sm text-slate-600 mt-1">
+            <h1 className="text-2xl font-bold text-text-primary">Module Access Control</h1>
+            <p className="text-sm text-text-muted mt-1">
               Enable or disable modules for each hospital
             </p>
           </div>
@@ -245,8 +245,8 @@ export const ModuleAccessControlPage: React.FC = () => {
           transition={{ delay: 0.1 }}
           className="lg:col-span-1"
         >
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-            <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+          <div className="bg-surface rounded-xl border border-border-default shadow-sm p-6">
+            <h3 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
               <Building2 className="w-5 h-5 text-primary-600" />
               Select Hospital
             </h3>
@@ -273,22 +273,22 @@ export const ModuleAccessControlPage: React.FC = () => {
                       'w-full text-left p-3 rounded-lg border transition-colors',
                       selectedHospital?.id === hospital.id
                         ? 'bg-primary-50 border-primary-300 text-primary-900'
-                        : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+                        : 'bg-subtle/50 border-border-default text-text-secondary hover:bg-subtle'
                     )}
                   >
                     <div className="font-semibold text-sm">{hospital.hospital_name}</div>
-                    <div className="text-xs text-slate-500 mt-1 font-mono">
+                    <div className="text-xs text-text-muted mt-1 font-mono">
                       {hospital.hospital_code}
                     </div>
                     {hospital.enabled_modules_count !== undefined && (
-                      <div className="text-xs text-slate-500 mt-1">
+                      <div className="text-xs text-text-muted mt-1">
                         {hospital.enabled_modules_count} modules enabled
                       </div>
                     )}
                   </button>
                 ))
               ) : (
-                <p className="text-sm text-slate-500 text-center py-4">No hospitals found</p>
+                <p className="text-sm text-text-muted text-center py-4">No hospitals found</p>
               )}
             </div>
           </div>
@@ -304,11 +304,11 @@ export const ModuleAccessControlPage: React.FC = () => {
           {selectedHospital ? (
             <div className="space-y-6">
               {/* Hospital Info Card */}
-              <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+              <div className="bg-surface rounded-xl border border-border-default shadow-sm p-6">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h2 className="text-xl font-bold text-slate-900">{selectedHospital.hospital_name}</h2>
-                    <p className="text-sm text-slate-600 font-mono">{selectedHospital.hospital_code}</p>
+                    <h2 className="text-xl font-bold text-text-primary">{selectedHospital.hospital_name}</h2>
+                    <p className="text-sm text-text-muted font-mono">{selectedHospital.hospital_code}</p>
                   </div>
                   <Badge variant="success" size="lg">
                     {enabledCount} / {totalCount} Enabled
@@ -316,8 +316,8 @@ export const ModuleAccessControlPage: React.FC = () => {
                 </div>
 
                 {/* Bulk Actions */}
-                <div className="flex items-center gap-3 mb-6 pb-6 border-b border-slate-200">
-                  <span className="text-sm font-medium text-slate-700">Bulk Actions:</span>
+                <div className="flex items-center gap-3 mb-6 pb-6 border-b border-border-default">
+                  <span className="text-sm font-medium text-text-secondary">Bulk Actions:</span>
                   <Button
                     variant="outline"
                     size="sm"
@@ -352,21 +352,21 @@ export const ModuleAccessControlPage: React.FC = () => {
                           initial={{ opacity: 0, y: 10 }}
                           animate={{ opacity: 1, y: 0 }}
                           className={cn(
-                            'p-4 rounded-xl border-2 transition-all',
+                            'p-4 rounded-xl border-2 transition-colors',
                             isEnabled
                               ? 'border-primary-200 bg-primary-50'
-                              : 'border-slate-200 bg-slate-50'
+                              : 'border-border-default bg-subtle/50'
                           )}
                         >
                           <div className="flex items-start justify-between mb-3">
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-1">
                                 <Icon className="w-5 h-5 text-primary-600" />
-                                <h3 className="font-semibold text-slate-900 capitalize">
+                                <h3 className="font-semibold text-text-primary capitalize">
                                   {moduleDef.name}
                                 </h3>
                               </div>
-                              <p className="text-xs text-slate-600">{moduleDef.description}</p>
+                              <p className="text-xs text-text-muted">{moduleDef.description}</p>
                             </div>
                             <Badge
                               variant={isEnabled ? 'success' : 'gray'}
@@ -383,8 +383,8 @@ export const ModuleAccessControlPage: React.FC = () => {
                           />
 
                           {module && (
-                            <div className="mt-3 pt-3 border-t border-slate-200">
-                              <div className="flex items-center justify-between text-xs text-slate-500">
+                            <div className="mt-3 pt-3 border-t border-border-default">
+                              <div className="flex items-center justify-between text-xs text-text-muted">
                                 <span>
                                   {module.is_enabled
                                     ? `Enabled ${module.enabled_at ? formatDate(module.enabled_at) : ''}`
@@ -416,10 +416,10 @@ export const ModuleAccessControlPage: React.FC = () => {
               )}
             </div>
           ) : (
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-12 text-center">
+            <div className="bg-surface rounded-xl border border-border-default shadow-sm p-12 text-center">
               <Building2 className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">Select a Hospital</h3>
-              <p className="text-slate-600">
+              <h3 className="text-lg font-semibold text-text-primary mb-2">Select a Hospital</h3>
+              <p className="text-text-muted">
                 Choose a hospital from the list to configure module access
               </p>
             </div>
@@ -439,9 +439,9 @@ export const ModuleAccessControlPage: React.FC = () => {
         cancelText="Cancel"
         isLoading={isSaving}
       >
-        <div className="bg-slate-50 rounded-lg p-4 mt-4">
-          <p className="text-sm font-medium text-slate-900 mb-2">Summary:</p>
-          <ul className="text-sm text-slate-600 space-y-1">
+        <div className="bg-subtle/50 rounded-lg p-4 mt-4">
+          <p className="text-sm font-medium text-text-primary mb-2">Summary:</p>
+          <ul className="text-sm text-text-muted space-y-1">
             <li>â€¢ {enabledCount} modules will be enabled</li>
             <li>â€¢ {totalCount - enabledCount} modules will be disabled</li>
           </ul>

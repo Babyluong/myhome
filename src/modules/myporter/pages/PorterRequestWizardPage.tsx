@@ -281,16 +281,16 @@ export const PorterRequestWizardPage: React.FC = () => {
         {/* Wizard Progress Bar */}
         <div className="space-y-2">
           <div className="flex justify-between text-xs font-bold">
-            <span className={step >= 1 ? 'text-sky-400' : 'text-slate-500'}>
+            <span className={step >= 1 ? 'text-sky-400' : 'text-text-muted'}>
               {language === 'ms' ? '1. Kategori & Urgensi' : '1. Category & Urgency'}
             </span>
-            <span className={step >= 2 ? 'text-sky-400' : 'text-slate-500'}>
+            <span className={step >= 2 ? 'text-sky-400' : 'text-text-muted'}>
               {language === 'ms' ? '2. Lokasi Laluan' : '2. Route Locations'}
             </span>
-            <span className={step >= 3 ? 'text-sky-400' : 'text-slate-500'}>
+            <span className={step >= 3 ? 'text-sky-400' : 'text-text-muted'}>
               {language === 'ms' ? '3. Butiran Khusus' : '3. Specific Details'}
             </span>
-            <span className={step >= 4 ? 'text-sky-400' : 'text-slate-500'}>
+            <span className={step >= 4 ? 'text-sky-400' : 'text-text-muted'}>
               {language === 'ms' ? '4. Semakan & Hantar' : '4. Review & Submit'}
             </span>
           </div>
@@ -323,7 +323,7 @@ export const PorterRequestWizardPage: React.FC = () => {
                     key={item.key}
                     type="button"
                     onClick={() => setCategory(item.key as PorterTaskCategory)}
-                    className={`p-4 rounded-2xl border text-left transition-all flex items-start gap-3.5 ${
+                    className={`p-4 rounded-2xl border text-left transition-colors flex items-start gap-3.5 ${
                       isSelected
                         ? 'border-sky-500 bg-sky-500/10 ring-2 ring-sky-500/30'
                         : 'border-slate-800 bg-slate-950/60 hover:border-slate-700'
@@ -373,7 +373,7 @@ export const PorterRequestWizardPage: React.FC = () => {
                       key={u.key}
                       type="button"
                       onClick={() => setUrgency(u.key as PorterUrgency)}
-                      className={`p-4 rounded-2xl border text-left transition-all ${
+                      className={`p-4 rounded-2xl border text-left transition-colors ${
                         isSel
                           ? 'border-sky-500 bg-sky-500/20 ring-2 ring-sky-500/40'
                           : `bg-slate-950/40 ${u.color}`
@@ -714,7 +714,7 @@ export const PorterRequestWizardPage: React.FC = () => {
               type="button"
               onClick={handleSubmitOrder}
               isLoading={loading}
-              className="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-black px-6 shadow-lg shadow-sky-500/25"
+              className="bg-accent-base hover:bg-accent-hover text-white font-black px-6 shadow-lg shadow-sky-500/25"
             >
               <Sparkles className="w-4 h-4 mr-2" />
               <span>{language === 'ms' ? 'Hantar Pesanan ke Radar PPK' : 'Broadcast Request to Porter Radar'}</span>

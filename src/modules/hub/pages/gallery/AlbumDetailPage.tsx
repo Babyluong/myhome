@@ -208,7 +208,7 @@ const AlbumDetailPage: React.FC = () => {
               <h1 className="text-4xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white to-slate-400">
                 {album?.name}
               </h1>
-              <p className="text-slate-500 font-medium">{album?.description || 'Tiada keterangan disediakan.'}</p>
+              <p className="text-text-muted font-medium">{album?.description || 'Tiada keterangan disediakan.'}</p>
             </div>
           </div>
 
@@ -223,7 +223,7 @@ const AlbumDetailPage: React.FC = () => {
             <Button 
               onClick={() => fileInputRef.current?.click()}
               disabled={uploading}
-              className="bg-white text-slate-950 hover:bg-slate-200 rounded-2xl px-6 py-3 flex items-center gap-2 font-bold shadow-xl shadow-white/5 border-none"
+              className="bg-surface text-slate-950 hover:bg-subtle rounded-2xl px-6 py-3 flex items-center gap-2 font-bold shadow-xl shadow-white/5 border-none"
             >
               {uploading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Upload className="w-5 h-5" />}
               <span>{uploading ? 'Memuatnaik...' : 'Tambah Gambar'}</span>
@@ -262,11 +262,11 @@ const AlbumDetailPage: React.FC = () => {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-32 text-center">
-            <div className="p-8 bg-slate-900/50 rounded-full border border-slate-800 text-slate-700 mb-6">
+            <div className="p-8 bg-slate-900/50 rounded-full border border-slate-800 text-text-secondary mb-6">
               <ImageIcon className="w-20 h-20" />
             </div>
             <h3 className="text-xl font-bold text-slate-300">Belum ada gambar</h3>
-            <p className="text-slate-500 mb-8 max-w-xs">Album ini kosong. Mula muatnaik gambar untuk menghidupkannya.</p>
+            <p className="text-text-muted mb-8 max-w-xs">Album ini kosong. Mula muatnaik gambar untuk menghidupkannya.</p>
             <Button 
               variant="outline"
               onClick={() => fileInputRef.current?.click()}
@@ -290,14 +290,14 @@ const AlbumDetailPage: React.FC = () => {
             {/* Lightbox Header */}
             <div className="flex items-center justify-between p-6">
               <div className="flex items-center gap-4">
-                <span className="text-slate-500 font-mono text-sm">
+                <span className="text-text-muted font-mono text-sm">
                   {selectedPhotoIndex + 1} / {photos.length}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <button 
                   onClick={() => setIsDeleting(photos[selectedPhotoIndex].id)}
-                  className="p-3 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-all"
+                  className="p-3 text-text-muted hover:text-red-400 hover:bg-red-400/10 rounded-xl transition-colors"
                   title="Padam Gambar"
                 >
                   <Trash2 className="w-5 h-5" />
@@ -307,14 +307,14 @@ const AlbumDetailPage: React.FC = () => {
                   download 
                   target="_blank"
                   rel="noreferrer"
-                  className="p-3 text-slate-500 hover:text-white hover:bg-white/10 rounded-xl transition-all"
+                  className="p-3 text-text-muted hover:text-white hover:bg-surface/10 rounded-xl transition-colors"
                   title="Muat Turun"
                 >
                   <Download className="w-5 h-5" />
                 </a>
                 <button 
                   onClick={() => setSelectedPhotoIndex(null)}
-                  className="p-3 text-slate-500 hover:text-white hover:bg-white/10 rounded-xl transition-all"
+                  className="p-3 text-text-muted hover:text-white hover:bg-surface/10 rounded-xl transition-colors"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -325,7 +325,7 @@ const AlbumDetailPage: React.FC = () => {
             <div className="flex-1 relative flex items-center justify-center p-4 md:p-12">
               <button 
                 onClick={handlePrevPhoto}
-                className="absolute left-4 md:left-8 p-4 text-white/30 hover:text-white hover:bg-white/10 rounded-full transition-all z-10"
+                className="absolute left-4 md:left-8 p-4 text-white/30 hover:text-white hover:bg-surface/10 rounded-full transition-colors z-10"
               >
                 <ChevronLeft className="w-8 h-8" />
               </button>
@@ -340,7 +340,7 @@ const AlbumDetailPage: React.FC = () => {
 
               <button 
                 onClick={handleNextPhoto}
-                className="absolute right-4 md:right-8 p-4 text-white/30 hover:text-white hover:bg-white/10 rounded-full transition-all z-10"
+                className="absolute right-4 md:right-8 p-4 text-white/30 hover:text-white hover:bg-surface/10 rounded-full transition-colors z-10"
               >
                 <ChevronRight className="w-8 h-8" />
               </button>

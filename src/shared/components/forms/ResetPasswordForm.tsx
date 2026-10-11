@@ -69,7 +69,7 @@ export const ResetPasswordForm: React.FC<ResetPasswordFormProps> = ({ onBack }) 
         </p>
         
         <div className="space-y-3">
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-text-muted">
             Tidak menerima e-mel? Sila semak folder spam atau cuba lagi.
           </p>
           

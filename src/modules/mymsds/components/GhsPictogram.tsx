@@ -108,7 +108,7 @@ export const GhsPictogram: React.FC<GhsPictogramProps> = ({ code, size = 'md', s
       </div>
       {showLabel && (
         <span className="text-xs font-semibold text-slate-300">
-          {info.malayLabel} <span className="text-[10px] text-slate-500 font-mono">({code})</span>
+          {info.malayLabel} <span className="text-[10px] text-text-muted font-mono">({code})</span>
         </span>
       )}
     </div>

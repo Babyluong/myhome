@@ -471,7 +471,7 @@ export const MyPerolehanDashboard: React.FC<MyPerolehanDashboardProps> = ({ init
                       </div>
                       <div className="w-full h-2 bg-subtle rounded-full overflow-hidden relative border border-border-default">
                         <div
-                          className="h-full bg-accent-base rounded-full transition-all duration-1000"
+                          className="h-full bg-accent-base rounded-full transition-colors duration-1000"
                           style={{ width: `${kpis.overallUtilizationRate}%` }}
                         />
                       </div>
@@ -562,7 +562,7 @@ export const MyPerolehanDashboard: React.FC<MyPerolehanDashboardProps> = ({ init
                   setActiveView('dashboard')
                   navigate('/perolehan')
                 }}
-                className="flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-900 bg-white border border-slate-200 px-4 py-2.5 min-h-[44px] rounded-xl shadow-xs"
+                className="flex items-center gap-2 text-xs font-bold text-text-muted hover:text-text-primary bg-surface border border-border-default px-4 py-2.5 min-h-[44px] rounded-xl shadow-xs"
               >
                 <span>← Back to Operations Portal</span>
               </button>

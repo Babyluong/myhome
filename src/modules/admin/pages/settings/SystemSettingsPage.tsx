@@ -78,7 +78,7 @@ export const SystemSettingsPage: React.FC = () => {
   if (!settings) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-slate-600">Failed to load system settings</p>
+        <p className="text-text-muted">Failed to load system settings</p>
       </div>
     )
   }
@@ -95,8 +95,8 @@ export const SystemSettingsPage: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">System Settings</h1>
-          <p className="text-sm text-slate-600 mt-1">Configure system-wide settings and preferences</p>
+          <h1 className="text-2xl font-bold text-text-primary">System Settings</h1>
+          <p className="text-sm text-text-muted mt-1">Configure system-wide settings and preferences</p>
         </div>
         <div className="flex items-center gap-3">
           <Button variant="outline" onClick={() => setShowResetModal(true)}>
@@ -113,12 +113,12 @@ export const SystemSettingsPage: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-center gap-3"
+          className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 flex items-center gap-3"
         >
           <AlertTriangle className="w-6 h-6 text-amber-600" />
           <div className="flex-1">
-            <p className="font-semibold text-amber-900">Maintenance Mode is Active</p>
-            <p className="text-sm text-amber-800">
+            <p className="font-semibold text-amber-400 dark:text-amber-300 font-bold">Maintenance Mode is Active</p>
+            <p className="text-sm text-amber-400">
               {settings.maintenance_message || 'The system is currently under maintenance.'}
             </p>
           </div>
@@ -126,8 +126,8 @@ export const SystemSettingsPage: React.FC = () => {
       )}
 
       {/* Tabs */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
-        <div className="border-b border-slate-200">
+      <div className="bg-surface rounded-xl border border-border-default shadow-sm">
+        <div className="border-b border-border-default">
           <div className="flex">
             {tabs.map((tab) => {
               const Icon = tab.icon
@@ -139,8 +139,8 @@ export const SystemSettingsPage: React.FC = () => {
                     flex items-center gap-2 px-6 py-4 font-medium text-sm transition-colors
                     ${
                       activeTab === tab.id
-                        ? 'text-teal-600 border-b-2 border-teal-600 bg-teal-50'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                        ? 'text-teal-600 border-b-2 border-teal-600 bg-accent-base/10'
+                        : 'text-text-muted hover:text-text-primary hover:bg-subtle/50'
                     }
                   `}
                 >
@@ -180,9 +180,9 @@ export const SystemSettingsPage: React.FC = () => {
                       id="maintenance_mode"
                       checked={settings.maintenance_mode}
                       onChange={(e) => updateSetting('maintenance_mode', e.target.checked)}
-                      className="w-4 h-4 text-teal-600 border-slate-300 rounded focus:ring-teal-500"
+                      className="w-4 h-4 text-teal-600 border-border-default rounded focus:ring-teal-500"
                     />
-                    <label htmlFor="maintenance_mode" className="font-medium text-slate-900">
+                    <label htmlFor="maintenance_mode" className="font-medium text-text-primary">
                       Enable Maintenance Mode
                     </label>
                   </div>
@@ -211,9 +211,9 @@ export const SystemSettingsPage: React.FC = () => {
                     id="allow_registration"
                     checked={settings.allow_registration}
                     onChange={(e) => updateSetting('allow_registration', e.target.checked)}
-                    className="w-4 h-4 text-teal-600 border-slate-300 rounded focus:ring-teal-500"
+                    className="w-4 h-4 text-teal-600 border-border-default rounded focus:ring-teal-500"
                   />
-                  <label htmlFor="allow_registration" className="font-medium text-slate-900">
+                  <label htmlFor="allow_registration" className="font-medium text-text-primary">
                     Allow User Registration
                   </label>
                 </div>
@@ -229,7 +229,7 @@ export const SystemSettingsPage: React.FC = () => {
               className="space-y-6"
             >
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-text-primary flex items-center gap-2">
                   <Lock className="w-5 h-5" />
                   Authentication Settings
                 </h3>
@@ -262,7 +262,7 @@ export const SystemSettingsPage: React.FC = () => {
               </div>
 
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-text-primary flex items-center gap-2">
                   <Shield className="w-5 h-5" />
                   Password Policy
                 </h3>
@@ -290,9 +290,9 @@ export const SystemSettingsPage: React.FC = () => {
                         id="password_require_uppercase"
                         checked={settings.password_require_uppercase}
                         onChange={(e) => updateSetting('password_require_uppercase', e.target.checked)}
-                        className="w-4 h-4 text-teal-600 border-slate-300 rounded focus:ring-teal-500"
+                        className="w-4 h-4 text-teal-600 border-border-default rounded focus:ring-teal-500"
                       />
-                      <label htmlFor="password_require_uppercase" className="text-slate-700">
+                      <label htmlFor="password_require_uppercase" className="text-text-secondary">
                         Require Uppercase Letters
                       </label>
                     </div>
@@ -302,9 +302,9 @@ export const SystemSettingsPage: React.FC = () => {
                         id="password_require_lowercase"
                         checked={settings.password_require_lowercase}
                         onChange={(e) => updateSetting('password_require_lowercase', e.target.checked)}
-                        className="w-4 h-4 text-teal-600 border-slate-300 rounded focus:ring-teal-500"
+                        className="w-4 h-4 text-teal-600 border-border-default rounded focus:ring-teal-500"
                       />
-                      <label htmlFor="password_require_lowercase" className="text-slate-700">
+                      <label htmlFor="password_require_lowercase" className="text-text-secondary">
                         Require Lowercase Letters
                       </label>
                     </div>
@@ -314,9 +314,9 @@ export const SystemSettingsPage: React.FC = () => {
                         id="password_require_numbers"
                         checked={settings.password_require_numbers}
                         onChange={(e) => updateSetting('password_require_numbers', e.target.checked)}
-                        className="w-4 h-4 text-teal-600 border-slate-300 rounded focus:ring-teal-500"
+                        className="w-4 h-4 text-teal-600 border-border-default rounded focus:ring-teal-500"
                       />
-                      <label htmlFor="password_require_numbers" className="text-slate-700">
+                      <label htmlFor="password_require_numbers" className="text-text-secondary">
                         Require Numbers
                       </label>
                     </div>
@@ -326,9 +326,9 @@ export const SystemSettingsPage: React.FC = () => {
                         id="password_require_special"
                         checked={settings.password_require_special}
                         onChange={(e) => updateSetting('password_require_special', e.target.checked)}
-                        className="w-4 h-4 text-teal-600 border-slate-300 rounded focus:ring-teal-500"
+                        className="w-4 h-4 text-teal-600 border-border-default rounded focus:ring-teal-500"
                       />
-                      <label htmlFor="password_require_special" className="text-slate-700">
+                      <label htmlFor="password_require_special" className="text-text-secondary">
                         Require Special Characters
                       </label>
                     </div>
@@ -339,9 +339,9 @@ export const SystemSettingsPage: React.FC = () => {
                       id="require_email_verification"
                       checked={settings.require_email_verification}
                       onChange={(e) => updateSetting('require_email_verification', e.target.checked)}
-                      className="w-4 h-4 text-teal-600 border-slate-300 rounded focus:ring-teal-500"
+                      className="w-4 h-4 text-teal-600 border-border-default rounded focus:ring-teal-500"
                     />
-                    <label htmlFor="require_email_verification" className="text-slate-700">
+                    <label htmlFor="require_email_verification" className="text-text-secondary">
                       Require Email Verification
                     </label>
                   </div>
@@ -363,9 +363,9 @@ export const SystemSettingsPage: React.FC = () => {
                   id="email_enabled"
                   checked={settings.email_enabled}
                   onChange={(e) => updateSetting('email_enabled', e.target.checked)}
-                  className="w-4 h-4 text-teal-600 border-slate-300 rounded focus:ring-teal-500"
+                  className="w-4 h-4 text-teal-600 border-border-default rounded focus:ring-teal-500"
                 />
-                <label htmlFor="email_enabled" className="font-medium text-slate-900">
+                <label htmlFor="email_enabled" className="font-medium text-text-primary">
                   Enable Email Notifications
                 </label>
               </div>
@@ -426,7 +426,7 @@ export const SystemSettingsPage: React.FC = () => {
               className="space-y-6"
             >
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-text-primary flex items-center gap-2">
                   <Database className="w-5 h-5" />
                   Backup Settings
                 </h3>
@@ -436,9 +436,9 @@ export const SystemSettingsPage: React.FC = () => {
                     id="backup_enabled"
                     checked={settings.backup_enabled}
                     onChange={(e) => updateSetting('backup_enabled', e.target.checked)}
-                    className="w-4 h-4 text-teal-600 border-slate-300 rounded focus:ring-teal-500"
+                    className="w-4 h-4 text-teal-600 border-border-default rounded focus:ring-teal-500"
                   />
-                  <label htmlFor="backup_enabled" className="font-medium text-slate-900">
+                  <label htmlFor="backup_enabled" className="font-medium text-text-primary">
                     Enable Automatic Backups
                   </label>
                 </div>
@@ -465,7 +465,7 @@ export const SystemSettingsPage: React.FC = () => {
               </div>
 
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-text-primary flex items-center gap-2">
                   <FileText className="w-5 h-5" />
                   Log Retention
                 </h3>
@@ -490,7 +490,7 @@ export const SystemSettingsPage: React.FC = () => {
         title="Reset System Settings"
       >
         <div className="space-y-4">
-          <p className="text-slate-700">
+          <p className="text-text-secondary">
             Are you sure you want to reset all system settings to their default values? This action cannot be undone.
           </p>
           <div className="flex items-center justify-end gap-3">

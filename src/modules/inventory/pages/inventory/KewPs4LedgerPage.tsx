@@ -3438,12 +3438,14 @@ export const KewPs4LedgerPage: React.FC = () => {
   }, [selectedItem])
 
   return (
-    <div className="p-4 sm:p-6 md:p-8 space-y-6 md:space-y-8 text-slate-800 pb-28 lg:pb-8">
+    <div className="p-4 sm:p-6 md:p-8 space-y-6 md:space-y-8 text-text-primary pb-28 lg:pb-8">
       
       {/* LUXURY EXECUTIVE HEADER BANNER */}
-      <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-teal-950 text-white rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden border border-slate-800">
-        <div className="absolute -right-10 -bottom-10 w-72 h-72 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-teal-500 via-emerald-400 to-indigo-500" />
+      <div className="bg-surface border border-border-default text-white rounded-3xl p-6 md:p-8 shadow-2xl relative border border-slate-800">
+        <div className="absolute inset-0 overflow-hidden rounded-3xl pointer-events-none">
+          <div className="absolute -right-10 -bottom-10 w-72 h-72 bg-teal-500/10 rounded-full blur-3xl" />
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-teal-500 via-emerald-400 to-indigo-500" />
+        </div>
         
         <div className="relative z-10 space-y-6">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
@@ -3521,23 +3523,23 @@ export const KewPs4LedgerPage: React.FC = () => {
           
           {/* MOBILE COMPACT SEARCH PILL HEADER (Only on mobile when item selected and search not expanded) */}
           {selectedItem && !isMobileSearchExpanded && (
-            <div className="lg:hidden bg-white border border-slate-200/90 rounded-2xl p-4 shadow-sm flex items-center justify-between gap-3">
+            <div className="lg:hidden bg-surface border border-border-default rounded-2xl p-4 shadow-sm flex items-center justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0">
-                <div className="w-9 h-9 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center shrink-0 border border-teal-100">
+                <div className="w-9 h-9 rounded-xl bg-accent-base/10 text-teal-600 flex items-center justify-center shrink-0 border border-teal-100">
                   <Search className="w-4 h-4" />
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Item Dipilih</span>
-                    <span className="font-mono text-[10px] text-teal-700 font-bold bg-teal-50 px-1.5 py-0.2 rounded">{selectedItem.item_code}</span>
+                    <span className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider">Item Dipilih</span>
+                    <span className="font-mono text-[10px] text-teal-700 font-bold bg-accent-base/10 px-1.5 py-0.2 rounded">{selectedItem.item_code}</span>
                   </div>
-                  <div className="text-xs font-black text-slate-900 truncate mt-0.5">{selectedItem.item_name}</div>
+                  <div className="text-xs font-black text-text-primary truncate mt-0.5">{selectedItem.item_name}</div>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => setIsMobileSearchExpanded(true)}
-                className="shrink-0 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-teal-700 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                className="shrink-0 bg-subtle hover:bg-subtle active:bg-slate-300 text-teal-700 border border-border-default px-3 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
               >
                 <Search className="w-3.5 h-3.5" />
                 <span>Tukar</span>
@@ -3546,11 +3548,11 @@ export const KewPs4LedgerPage: React.FC = () => {
           )}
 
           {/* SEARCH BOX & CATALOG LIST (Always visible on Desktop, Collapsible on Mobile) */}
-          <div className={`bg-white border border-slate-100 rounded-3xl shadow-soft p-5 space-y-5 ${
+          <div className={`bg-surface border border-border-subtle rounded-3xl shadow-elevation-1 p-5 space-y-5 ${
             selectedItem && !isMobileSearchExpanded ? 'hidden lg:block' : 'block'
           }`}>
             <div className="flex items-center justify-between border-b border-slate-50 pb-3">
-              <h3 className="font-black text-slate-800 text-sm flex items-center gap-2">
+              <h3 className="font-black text-text-primary text-sm flex items-center gap-2">
                 <Layers className="w-4 h-4 text-teal-600" />
                 <span>Pilih Item Inventori</span>
               </h3>
@@ -3562,7 +3564,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setIsMobileSearchExpanded(false)}
-                    className="lg:hidden text-slate-400 hover:text-slate-600 p-1"
+                    className="lg:hidden text-slate-400 hover:text-text-muted p-1"
                     title="Tutup carian"
                   >
                     <X className="w-4 h-4" />
@@ -3584,7 +3586,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-2.5 text-slate-400 hover:text-slate-600 transition-colors"
+                  className="absolute right-2.5 top-2.5 text-slate-400 hover:text-text-muted transition-colors"
                   title="Kosongkan carian"
                 >
                   <X className="w-4 h-4" />
@@ -3598,15 +3600,15 @@ export const KewPs4LedgerPage: React.FC = () => {
                 <Spinner size="sm" />
               </div>
             ) : !searchQuery.trim() ? (
-              <div className="text-center p-6 bg-slate-50/80 rounded-2xl border border-dashed border-slate-200 space-y-2">
+              <div className="text-center p-6 bg-subtle/50 rounded-2xl border border-dashed border-border-default space-y-2">
                 <Search className="w-6 h-6 text-slate-300 mx-auto" />
-                <p className="text-xs font-bold text-slate-600">Carian Item Inventori</p>
+                <p className="text-xs font-bold text-text-muted">Carian Item Inventori</p>
                 <p className="text-[11px] text-slate-400 font-medium">
                   Sila taip kod atau nama item pada ruangan carian di atas untuk memaparkan senarai item.
                 </p>
               </div>
             ) : filteredCatalog.length === 0 ? (
-              <div className="text-center p-6 text-xs text-slate-400 font-bold bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+              <div className="text-center p-6 text-xs text-slate-400 font-bold bg-subtle/50 rounded-2xl border border-dashed border-border-default">
                 Tiada item ditemui untuk &quot;{searchQuery}&quot;.
               </div>
             ) : (
@@ -3628,17 +3630,17 @@ export const KewPs4LedgerPage: React.FC = () => {
                           setSelectedItemId(item.item_id)
                           setIsMobileSearchExpanded(false)
                         }}
-                        className={`text-left p-3.5 rounded-2xl border transition-all flex items-center justify-between text-xs cursor-pointer ${
+                        className={`text-left p-3.5 rounded-2xl border transition-colors flex items-center justify-between text-xs cursor-pointer ${
                           isSelected
-                            ? 'bg-teal-50/70 border-teal-400 text-teal-950 shadow-md ring-1 ring-teal-400'
-                            : 'bg-white border-slate-150 hover:bg-slate-50 text-slate-700'
+                            ? 'bg-accent-base/10 border-teal-400 text-teal-950 shadow-md ring-1 ring-teal-400'
+                            : 'bg-surface border-slate-150 hover:bg-subtle/50 text-text-secondary'
                         }`}
                       >
                         <div className="min-w-0 pr-2">
                           <div className="flex items-center gap-1.5">
                             <span className="font-mono font-bold text-slate-400 text-[10px]">{item.item_code}</span>
                             <span className={`text-[9px] px-1.5 py-0.5 rounded-md font-bold uppercase ${
-                              item.item_type === 'drug' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-700'
+                              item.item_type === 'drug' ? 'bg-emerald-100 text-emerald-400' : 'bg-subtle text-text-secondary'
                             }`}>
                               {item.item_type === 'drug' ? 'Ubat' : 'Bukan Ubat'}
                             </span>
@@ -3694,7 +3696,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                 {/* Visual Progress Bar Band */}
                 <div className="w-full bg-slate-800 h-3 rounded-full overflow-hidden p-0.5 flex">
                   <div 
-                    className={`h-full rounded-full transition-all duration-500 ${
+                    className={`h-full rounded-full transition-colors duration-500 ${
                       (ledgerRows.length > 0 ? ledgerRows[0].runningBalance : selectedItem.current_stock) <= (selectedItem.min_stock || 0) 
                         ? 'bg-rose-500' 
                         : (ledgerRows.length > 0 ? ledgerRows[0].runningBalance : selectedItem.current_stock) <= ((selectedItem as any)?.buffer_stock ?? selectedItem.reorder_level ?? (selectedItem.min_stock ? selectedItem.min_stock * 1.5 : 0))
@@ -3719,13 +3721,13 @@ export const KewPs4LedgerPage: React.FC = () => {
         <div className="lg:col-span-9 space-y-6">
 
           {!selectedItem ? (
-            <div className="bg-white border border-slate-100 rounded-3xl p-12 text-center shadow-soft space-y-3">
-              <div className="w-16 h-16 bg-teal-50 text-teal-600 rounded-3xl flex items-center justify-center mx-auto shadow-sm">
+            <div className="bg-surface border border-border-subtle rounded-3xl p-12 text-center shadow-elevation-1 space-y-3">
+              <div className="w-16 h-16 bg-accent-base/10 text-teal-600 rounded-3xl flex items-center justify-center mx-auto shadow-sm">
                 <Search className="w-8 h-8" />
               </div>
               <div className="max-w-md mx-auto space-y-1.5">
-                <h3 className="text-base font-black text-slate-800 tracking-tight">Sila Pilih Item Inventori</h3>
-                <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                <h3 className="text-base font-black text-text-primary tracking-tight">Sila Pilih Item Inventori</h3>
+                <p className="text-xs text-text-muted font-medium leading-relaxed">
                   Sila taip kod atau nama ubat pada ruangan carian di sebelah kiri untuk memaparkan Buku Daftar Transaksi (Digital KEW.PS-4).
                 </p>
               </div>
@@ -3733,21 +3735,21 @@ export const KewPs4LedgerPage: React.FC = () => {
           ) : (
             <>
               {/* UNIFIED MOBILE HERO CARD (De-duplicated & Compact for Phone screens) */}
-              <div className="lg:hidden bg-white border border-slate-200/90 rounded-3xl p-5 shadow-md space-y-4">
+              <div className="lg:hidden bg-surface border border-border-default rounded-3xl p-5 shadow-md space-y-4">
                 {/* Badges row */}
-                <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-100">
+                <div className="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-border-subtle">
                   <div className="flex flex-wrap items-center gap-1.5">
-                    <span className="font-mono text-[11px] font-extrabold text-slate-800 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">
+                    <span className="font-mono text-[11px] font-extrabold text-text-primary bg-subtle px-2.5 py-1 rounded-lg border border-border-default">
                       {selectedItem.item_code}
                     </span>
-                    <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded-lg border border-slate-200/80">
+                    <span className="text-[10px] font-bold text-text-muted bg-subtle px-2 py-1 rounded-lg border border-border-default">
                       UOM: {selectedItem.unit_of_measure}
                     </span>
                     {selectedItem.item_type && (
                       <span className={`text-[9px] font-black uppercase px-2 py-1 rounded-lg border ${
                         selectedItem.item_type === 'drug' 
-                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
-                          : 'bg-slate-100 text-slate-700 border-slate-200'
+                          ? 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20' 
+                          : 'bg-subtle text-text-secondary border-border-default'
                       }`}>
                         {selectedItem.item_type === 'drug' ? 'UBAT' : 'BUKAN UBAT'}
                       </span>
@@ -3763,12 +3765,12 @@ export const KewPs4LedgerPage: React.FC = () => {
 
                 {/* Title & Location */}
                 <div className="space-y-2">
-                  <h2 className="text-lg font-black text-slate-900 tracking-tight leading-snug">
+                  <h2 className="text-lg font-black text-text-primary tracking-tight leading-snug">
                     {selectedItem.item_name}
                   </h2>
                   
                   <div className="flex items-center justify-between gap-2 flex-wrap text-xs">
-                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-indigo-50/70 border border-indigo-100 text-indigo-900 text-[11px] font-semibold max-w-full truncate">
+                    <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-indigo-500/10 border border-indigo-100 text-indigo-400 dark:text-indigo-300 font-bold text-[11px] font-semibold max-w-full truncate">
                       <MapPin className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
                       <span className="font-mono font-bold truncate">
                         {selectedItem.location ? formatLocationDisplay(selectedItem.location) : (itemLocations.length > 0 ? itemLocations.map(loc => formatLocationDisplay(loc)).join(', ') : 'Belum ditetapkan')}
@@ -3777,7 +3779,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={openEditStockModal}
-                      className="inline-flex items-center gap-1 text-[11px] font-bold text-teal-700 hover:text-teal-800 bg-teal-50 hover:bg-teal-100 px-2 py-1 rounded-lg border border-teal-200 transition-colors cursor-pointer"
+                      className="inline-flex items-center gap-1 text-[11px] font-bold text-teal-700 hover:text-teal-800 bg-accent-base/10 hover:bg-teal-100 px-2 py-1 rounded-lg border border-accent-base/20 transition-colors cursor-pointer"
                     >
                       <Pencil className="w-3 h-3" />
                       <span>Edit Lokasi</span>
@@ -3796,7 +3798,7 @@ export const KewPs4LedgerPage: React.FC = () => {
 
                   <div className="w-full bg-slate-800 h-2.5 rounded-full overflow-hidden p-0.5 flex">
                     <div 
-                      className={`h-full rounded-full transition-all duration-500 ${
+                      className={`h-full rounded-full transition-colors duration-500 ${
                         (ledgerRows.length > 0 ? ledgerRows[0].runningBalance : selectedItem.current_stock) <= (selectedItem.min_stock || 0) 
                           ? 'bg-rose-500' 
                           : (ledgerRows.length > 0 ? ledgerRows[0].runningBalance : selectedItem.current_stock) <= ((selectedItem as any)?.buffer_stock ?? selectedItem.reorder_level ?? (selectedItem.min_stock ? selectedItem.min_stock * 1.5 : 0))
@@ -3816,21 +3818,21 @@ export const KewPs4LedgerPage: React.FC = () => {
               </div>
 
               {/* DESKTOP ZONE A: ACTIVE ITEM HEADER CARD */}
-              <div className="hidden lg:block bg-white border border-slate-200/80 rounded-2xl p-5 md:p-6 shadow-sm space-y-4">
+              <div className="hidden lg:block bg-surface border border-border-default rounded-2xl p-5 md:p-6 shadow-sm space-y-4">
                 {/* Header Top Meta Row */}
-                <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-border-subtle">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-mono text-xs font-bold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200/70 shadow-2xs">
+                    <span className="font-mono text-xs font-bold text-text-secondary bg-subtle px-2.5 py-1 rounded-lg border border-border-default shadow-elevation-1">
                       {selectedItem.item_code}
                     </span>
-                    <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200/50">
-                      UOM: <span className="font-bold text-slate-800">{selectedItem.unit_of_measure}</span>
+                    <span className="text-xs font-semibold text-text-muted uppercase tracking-wider bg-subtle/50 px-2.5 py-1 rounded-lg border border-border-default">
+                      UOM: <span className="font-bold text-text-primary">{selectedItem.unit_of_measure}</span>
                     </span>
                     {selectedItem.item_type && (
                       <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-lg border ${
                         selectedItem.item_type === 'drug' 
-                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200/70' 
-                          : 'bg-slate-100 text-slate-700 border-slate-200'
+                          ? 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20' 
+                          : 'bg-subtle text-text-secondary border-border-default'
                       }`}>
                         {selectedItem.item_type === 'drug' ? 'UBAT' : 'BUKAN UBAT'}
                       </span>
@@ -3839,7 +3841,7 @@ export const KewPs4LedgerPage: React.FC = () => {
 
                     <div className="flex items-center gap-2">
                       {storeVerificationLogs.some(r => r.item_id === selectedItem.item_id && r.verification_year === new Date().getFullYear()) && (
-                        <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider px-3 py-1 rounded-xl border bg-emerald-50 text-emerald-800 border-emerald-300 shadow-2xs">
+                        <span className="inline-flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider px-3 py-1 rounded-xl border bg-emerald-500/10 text-emerald-400 border-emerald-300 shadow-elevation-1">
                           <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
                           <span>Verifikasi {new Date().getFullYear()}: Tally</span>
                         </span>
@@ -3847,7 +3849,7 @@ export const KewPs4LedgerPage: React.FC = () => {
 
                       <Badge 
                         variant={(ledgerRows.length > 0 ? ledgerRows[0].runningBalance : selectedItem.current_stock) <= (selectedItem.min_stock || 0) ? 'danger' : 'success'}
-                        className="text-xs px-3 py-1 font-bold shadow-2xs"
+                        className="text-xs px-3 py-1 font-bold shadow-elevation-1"
                       >
                         {(ledgerRows.length > 0 ? ledgerRows[0].runningBalance : selectedItem.current_stock) <= (selectedItem.min_stock || 0) ? '⚠ STOK MINIMA' : '● STOK MENCUKUPI'}
                       </Badge>
@@ -3856,12 +3858,12 @@ export const KewPs4LedgerPage: React.FC = () => {
 
                 {/* Main Item Title & Storage Location */}
                 <div className="space-y-2">
-                  <h2 className="text-xl md:text-2xl font-black text-slate-900 tracking-tight leading-snug">
+                  <h2 className="text-xl md:text-2xl font-black text-text-primary tracking-tight leading-snug">
                     {selectedItem.item_name}
                   </h2>
                   
                   <div className="flex items-center gap-2 flex-wrap">
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-indigo-50/70 border border-indigo-100 text-indigo-900 text-xs font-semibold">
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-indigo-500/10 border border-indigo-100 text-indigo-400 dark:text-indigo-300 font-bold text-xs font-semibold">
                       <MapPin className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
                       <span className="text-[10px] font-extrabold uppercase tracking-wider text-indigo-500">LOKASI:</span>
                       <span className="font-mono font-bold">
@@ -3871,7 +3873,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={openEditStockModal}
-                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-teal-50 text-slate-700 hover:text-teal-700 border border-slate-200 hover:border-teal-200 text-xs font-bold transition-all cursor-pointer"
+                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-subtle hover:bg-accent-base/10 text-text-secondary hover:text-teal-700 border border-border-default hover:border-accent-base/20 text-xs font-bold transition-colors cursor-pointer"
                       title="Kemaskini Lokasi, Buffer, Min & Max"
                     >
                       <Pencil className="w-3 h-3" />
@@ -3881,13 +3883,13 @@ export const KewPs4LedgerPage: React.FC = () => {
                 </div>
 
                 {/* Action Buttons Toolbar with Clear Hierarchy & Flex Wrap */}
-                <div className="pt-3 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                <div className="pt-3 border-t border-border-subtle flex flex-wrap items-center justify-between gap-3">
                   {/* Primary Stock Actions (Terima & Keluar) */}
                   <div className="flex flex-wrap items-center gap-2.5">
                     <button
                       type="button"
                       onClick={openReceiveModal}
-                      className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-xl font-bold text-xs gap-1.5 px-4 py-2.5 shadow-sm transition-all active:scale-[0.98] whitespace-nowrap inline-flex items-center justify-center cursor-pointer"
+                      className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-xl font-bold text-xs gap-1.5 px-4 py-2.5 shadow-sm transition-colors active:scale-[0.98] whitespace-nowrap inline-flex items-center justify-center cursor-pointer"
                     >
                       <PlusCircle className="w-4 h-4 text-white" />
                       <span>+ Terima</span>
@@ -3896,7 +3898,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={openIssueModal}
-                      className="bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white rounded-xl font-bold text-xs gap-1.5 px-4 py-2.5 shadow-sm transition-all active:scale-[0.98] whitespace-nowrap inline-flex items-center justify-center cursor-pointer"
+                      className="bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white rounded-xl font-bold text-xs gap-1.5 px-4 py-2.5 shadow-sm transition-colors active:scale-[0.98] whitespace-nowrap inline-flex items-center justify-center cursor-pointer"
                     >
                       <MinusCircle className="w-4 h-4 text-white" />
                       <span>- Keluar</span>
@@ -3908,7 +3910,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={openStoreVerificationModal}
-                      className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-xl font-bold text-xs gap-1.5 px-3.5 py-2.5 shadow-sm transition-all active:scale-[0.98] whitespace-nowrap inline-flex items-center justify-center cursor-pointer"
+                      className="bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-xl font-bold text-xs gap-1.5 px-3.5 py-2.5 shadow-sm transition-colors active:scale-[0.98] whitespace-nowrap inline-flex items-center justify-center cursor-pointer"
                       title="Verifikasi Stor Tahunan oleh Pegawai Pemverifikasi Luar (Semakan Fizikal vs KEW.PS-4 vs PHiS)"
                     >
                       <ShieldCheck className="w-3.5 h-3.5 text-white" />
@@ -3918,27 +3920,27 @@ export const KewPs4LedgerPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={openCheckFoundModal}
-                      className="bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-900 border border-slate-300 rounded-xl font-bold text-xs gap-1.5 px-3.5 py-2.5 shadow-2xs transition-all active:scale-[0.98] whitespace-nowrap inline-flex items-center justify-center cursor-pointer"
+                      className="bg-subtle hover:bg-subtle active:bg-slate-300 text-text-primary border border-border-default rounded-xl font-bold text-xs gap-1.5 px-3.5 py-2.5 shadow-elevation-1 transition-colors active:scale-[0.98] whitespace-nowrap inline-flex items-center justify-center cursor-pointer"
                       title="Check & Found Audit"
                     >
-                      <ClipboardCheck className="w-3.5 h-3.5 text-slate-700" />
-                      <span className="text-slate-900 font-bold">Check & Found</span>
+                      <ClipboardCheck className="w-3.5 h-3.5 text-text-secondary" />
+                      <span className="text-text-primary font-bold">Check & Found</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={openBringForwardModal}
-                      className="bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-900 border border-slate-300 rounded-xl font-bold text-xs gap-1.5 px-3.5 py-2.5 shadow-2xs transition-all active:scale-[0.98] whitespace-nowrap inline-flex items-center justify-center cursor-pointer"
+                      className="bg-subtle hover:bg-subtle active:bg-slate-300 text-text-primary border border-border-default rounded-xl font-bold text-xs gap-1.5 px-3.5 py-2.5 shadow-elevation-1 transition-colors active:scale-[0.98] whitespace-nowrap inline-flex items-center justify-center cursor-pointer"
                       title="Bawa Ke Hadapan baki dari tahun/bulan lepas"
                     >
-                      <FastForward className="w-3.5 h-3.5 text-slate-700" />
-                      <span className="text-slate-900 font-bold">Bring Forward</span>
+                      <FastForward className="w-3.5 h-3.5 text-text-secondary" />
+                      <span className="text-text-primary font-bold">Bring Forward</span>
                     </button>
 
                     <button
                       type="button"
                       onClick={openClearModal}
-                      className="bg-amber-400 hover:bg-amber-500 active:bg-amber-600 text-slate-950 rounded-xl font-black text-xs gap-1.5 px-3.5 py-2.5 shadow-sm transition-all active:scale-[0.98] whitespace-nowrap inline-flex items-center justify-center cursor-pointer border border-amber-500"
+                      className="bg-amber-400 hover:bg-amber-500 active:bg-amber-600 text-slate-950 rounded-xl font-black text-xs gap-1.5 px-3.5 py-2.5 shadow-sm transition-colors active:scale-[0.98] whitespace-nowrap inline-flex items-center justify-center cursor-pointer border border-amber-500"
                       title="Padam rekod transaksi untuk bermula semula (Dilindungi kata laluan kebenaran)"
                     >
                       <Lock className="w-3.5 h-3.5 text-slate-950" />
@@ -3949,11 +3951,11 @@ export const KewPs4LedgerPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setIsVerificationHistoryModalOpen(true)}
-                        className="bg-emerald-50 hover:bg-emerald-100 active:bg-emerald-200 text-emerald-950 border border-emerald-300 rounded-xl font-bold text-xs gap-1.5 px-3.5 py-2.5 transition-all whitespace-nowrap inline-flex items-center justify-center cursor-pointer"
+                        className="bg-emerald-500/10 hover:bg-emerald-100 active:bg-emerald-200 text-emerald-400 dark:text-emerald-300 font-bold border border-emerald-300 rounded-xl font-bold text-xs gap-1.5 px-3.5 py-2.5 transition-colors whitespace-nowrap inline-flex items-center justify-center cursor-pointer"
                         title="Lihat Sejarah Log Verifikasi Stor Tahunan"
                       >
                         <FileCheck className="w-3.5 h-3.5 text-emerald-700" />
-                        <span className="text-emerald-950 font-bold">
+                        <span className="text-emerald-400 dark:text-emerald-300 font-bold font-bold">
                           Log Verifikasi ({storeVerificationLogs.filter(r => r.item_id === selectedItem?.item_id).length})
                         </span>
                       </button>
@@ -3963,11 +3965,11 @@ export const KewPs4LedgerPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setIsResetAuditModalOpen(true)}
-                        className="bg-purple-100 hover:bg-purple-200 active:bg-purple-300 text-purple-950 border border-purple-300 rounded-xl font-bold text-xs gap-1.5 px-3.5 py-2.5 transition-all whitespace-nowrap inline-flex items-center justify-center cursor-pointer"
+                        className="bg-purple-100 hover:bg-purple-200 active:bg-purple-300 text-indigo-400 dark:text-indigo-300 font-bold border border-purple-300 rounded-xl font-bold text-xs gap-1.5 px-3.5 py-2.5 transition-colors whitespace-nowrap inline-flex items-center justify-center cursor-pointer"
                         title="Lihat Sejarah Log Audit Set Semula Ledger"
                       >
-                        <History className="w-3.5 h-3.5 text-purple-800" />
-                        <span className="text-purple-950 font-bold">Log Reset ({resetAuditLogs.length})</span>
+                        <History className="w-3.5 h-3.5 text-indigo-400" />
+                        <span className="text-indigo-400 dark:text-indigo-300 font-bold font-bold">Log Reset ({resetAuditLogs.length})</span>
                       </button>
                     )}
                   </div>
@@ -3975,14 +3977,14 @@ export const KewPs4LedgerPage: React.FC = () => {
               </div>
 
               {/* MOBILE SEGMENTED VIEW SWITCHER TABS */}
-              <div className="lg:hidden flex bg-slate-100/90 p-1.5 rounded-2xl border border-slate-200/80 gap-1 shadow-inner">
+              <div className="lg:hidden flex bg-subtle p-1.5 rounded-2xl border border-border-default gap-1 shadow-inner">
                 <button
                   type="button"
                   onClick={() => setMobileTab('ledger')}
-                  className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${
+                  className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-colors flex items-center justify-center gap-1.5 ${
                     mobileTab === 'ledger'
-                      ? 'bg-white text-teal-700 shadow-sm border border-slate-200/60'
-                      : 'text-slate-500 hover:text-slate-800'
+                      ? 'bg-surface text-teal-700 shadow-sm border border-border-default'
+                      : 'text-text-muted hover:text-text-primary'
                   }`}
                 >
                   <FileText className="w-3.5 h-3.5" />
@@ -3991,10 +3993,10 @@ export const KewPs4LedgerPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setMobileTab('summary')}
-                  className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${
+                  className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-colors flex items-center justify-center gap-1.5 ${
                     mobileTab === 'summary'
-                      ? 'bg-white text-teal-700 shadow-sm border border-slate-200/60'
-                      : 'text-slate-500 hover:text-slate-800'
+                      ? 'bg-surface text-teal-700 shadow-sm border border-border-default'
+                      : 'text-text-muted hover:text-text-primary'
                   }`}
                 >
                   <BarChart3 className="w-3.5 h-3.5" />
@@ -4003,10 +4005,10 @@ export const KewPs4LedgerPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setMobileTab('departments')}
-                  className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 ${
+                  className={`flex-1 py-2.5 px-3 rounded-xl text-xs font-black transition-colors flex items-center justify-center gap-1.5 ${
                     mobileTab === 'departments'
-                      ? 'bg-white text-teal-700 shadow-sm border border-slate-200/60'
-                      : 'text-slate-500 hover:text-slate-800'
+                      ? 'bg-surface text-teal-700 shadow-sm border border-border-default'
+                      : 'text-text-muted hover:text-text-primary'
                   }`}
                 >
                   <Building className="w-3.5 h-3.5" />
@@ -4018,10 +4020,10 @@ export const KewPs4LedgerPage: React.FC = () => {
               <div className={`${mobileTab === 'summary' ? 'grid' : 'hidden'} lg:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4`}>
                 
                 {/* 1. Baki Semasa */}
-                <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-soft border-l-4 border-l-teal-500 space-y-1">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Baki Kedudukan</span>
+                <div className="bg-surface border border-border-subtle rounded-2xl p-4 shadow-elevation-1 border-l-4 border-l-teal-500 space-y-1">
+                  <span className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider block">Baki Kedudukan</span>
                   <div className="flex items-baseline gap-1.5">
-                    <span className="text-2xl font-black text-slate-900 font-mono">
+                    <span className="text-2xl font-black text-text-primary font-mono">
                       {currentStockBalance}
                     </span>
                     <span className="text-xs text-slate-400 uppercase font-bold">{selectedItem.unit_of_measure}</span>
@@ -4030,8 +4032,8 @@ export const KewPs4LedgerPage: React.FC = () => {
                 </div>
 
                 {/* 2. Jumlah Diterima */}
-                <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-soft border-l-4 border-l-emerald-500 space-y-1">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Diterima (+)</span>
+                <div className="bg-surface border border-border-subtle rounded-2xl p-4 shadow-elevation-1 border-l-4 border-l-emerald-500 space-y-1">
+                  <span className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider block">Total Diterima (+)</span>
                   <div className="flex items-baseline gap-1.5">
                     <span className="text-2xl font-black text-emerald-600 font-mono">
                       +{totalReceived}
@@ -4042,8 +4044,8 @@ export const KewPs4LedgerPage: React.FC = () => {
                 </div>
 
                 {/* 3. Jumlah Dikeluarkan */}
-                <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-soft border-l-4 border-l-rose-500 space-y-1">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Dikeluarkan (-)</span>
+                <div className="bg-surface border border-border-subtle rounded-2xl p-4 shadow-elevation-1 border-l-4 border-l-rose-500 space-y-1">
+                  <span className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider block">Total Dikeluarkan (-)</span>
                   <div className="flex items-baseline gap-1.5">
                     <span className="text-2xl font-black text-rose-600 font-mono">
                       -{totalIssued}
@@ -4054,8 +4056,8 @@ export const KewPs4LedgerPage: React.FC = () => {
                 </div>
 
                 {/* 4. % Pengeluaran */}
-                <div className="bg-white border border-slate-100 rounded-2xl p-4 shadow-soft border-l-4 border-l-indigo-500 space-y-1">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">% Pengeluaran</span>
+                <div className="bg-surface border border-border-subtle rounded-2xl p-4 shadow-elevation-1 border-l-4 border-l-indigo-500 space-y-1">
+                  <span className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider block">% Pengeluaran</span>
                   <div className="flex items-baseline gap-1.5">
                     <span className="text-2xl font-black text-indigo-600 font-mono">
                       {issuePercentage}%
@@ -4069,9 +4071,9 @@ export const KewPs4LedgerPage: React.FC = () => {
               {/* SUMMARY TAB EXTRA SECTIONS (D1 & D2) */}
               <div className={`${mobileTab === 'summary' ? 'block' : 'hidden'} lg:block space-y-6`}>
                 {/* ZONE D1: PARAS STOK TAHUNAN */}
-                <div className="bg-white border border-slate-100 rounded-3xl p-5 shadow-soft space-y-3">
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                    <span className="font-black text-xs text-slate-800 flex items-center gap-2">
+                <div className="bg-surface border border-border-subtle rounded-3xl p-5 shadow-elevation-1 space-y-3">
+                  <div className="flex items-center justify-between border-b border-border-subtle pb-2">
+                    <span className="font-black text-xs text-text-primary flex items-center gap-2">
                       <Layers className="w-4 h-4 text-teal-600" />
                       <span>Paras Stok Tahunan (Min, Buffer & Max)</span>
                     </span>
@@ -4093,17 +4095,17 @@ export const KewPs4LedgerPage: React.FC = () => {
                   <div className="overflow-x-auto">
                     <table className="w-full text-xs text-left border-collapse">
                       <thead>
-                        <tr className="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] border-b border-slate-200">
+                        <tr className="bg-subtle/50 text-text-muted font-bold uppercase text-[10px] border-b border-border-default">
                           <th className="py-2 px-3">Tahun</th>
                           <th className="py-2 px-3 text-center">Paras Stok Min</th>
                           <th className="py-2 px-3 text-center">Stok Buffer (Tambahan)</th>
                           <th className="py-2 px-3 text-center">Paras Stok Max</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100 font-mono">
+                      <tbody className="divide-y divide-border-subtle font-mono">
                         {annualStockLevels.map((l, i) => (
-                          <tr key={i} className="hover:bg-slate-50/50">
-                            <td className="py-2 px-3 font-bold font-sans text-slate-900">{l.year}</td>
+                          <tr key={i} className="hover:bg-subtle/50">
+                            <td className="py-2 px-3 font-bold font-sans text-text-primary">{l.year}</td>
                             <td className="py-2 px-3 text-center font-black text-rose-600">{l.min} {selectedItem.unit_of_measure}</td>
                             <td className="py-2 px-3 text-center font-black text-amber-600">{l.buffer} {selectedItem.unit_of_measure}</td>
                             <td className="py-2 px-3 text-center font-black text-emerald-600">{l.max} {selectedItem.unit_of_measure}</td>
@@ -4115,9 +4117,9 @@ export const KewPs4LedgerPage: React.FC = () => {
                 </div>
 
                 {/* ZONE D2: REKOD TERIMAAN DAN PENGELUARAN SUKU TAHUN */}
-                <div className="bg-white border border-slate-100 rounded-3xl p-5 shadow-soft space-y-3">
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                    <span className="font-black text-xs text-slate-800 flex items-center gap-2">
+                <div className="bg-surface border border-border-subtle rounded-3xl p-5 shadow-elevation-1 space-y-3">
+                  <div className="flex items-center justify-between border-b border-border-subtle pb-2">
+                    <span className="font-black text-xs text-text-primary flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-indigo-600" />
                       <span>Rekod Terimaan & Pengeluaran Suku Tahun (Kuantiti & Nilai RM)</span>
                     </span>
@@ -4127,10 +4129,10 @@ export const KewPs4LedgerPage: React.FC = () => {
                   {/* Mobile View for Quarterly Summary */}
                   <div className="md:hidden space-y-4">
                     {quarterlySummary.map((yData, idx) => (
-                      <div key={idx} className="bg-slate-50 border border-slate-200/80 rounded-2xl p-3.5 space-y-3">
-                        <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-                          <span className="font-black text-sm text-slate-900 font-mono">Tahun {yData.year}</span>
-                          <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                      <div key={idx} className="bg-subtle/50 border border-border-default rounded-2xl p-3.5 space-y-3">
+                        <div className="flex items-center justify-between border-b border-border-default pb-2">
+                          <span className="font-black text-sm text-text-primary font-mono">Tahun {yData.year}</span>
+                          <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
                             Jumlah Terima: +{yData.total.receiptQty} {selectedItem.unit_of_measure}
                           </span>
                         </div>
@@ -4142,18 +4144,18 @@ export const KewPs4LedgerPage: React.FC = () => {
                             { label: 'Q3 (Jul-Sep)', data: yData.q3 },
                             { label: 'Q4 (Okt-Dis)', data: yData.q4 }
                           ].map((q, qIdx) => (
-                            <div key={qIdx} className="bg-white p-2.5 rounded-xl border border-slate-100 space-y-1.5 shadow-2xs">
-                              <div className="font-bold text-slate-700 text-[11px]">{q.label}</div>
+                            <div key={qIdx} className="bg-surface p-2.5 rounded-xl border border-border-subtle space-y-1.5 shadow-elevation-1">
+                              <div className="font-bold text-text-secondary text-[11px]">{q.label}</div>
                               <div className="grid grid-cols-2 gap-2 text-[11px] font-mono">
-                                <div className="bg-emerald-50/70 p-2 rounded-lg border border-emerald-100/80">
-                                  <div className="text-[9px] text-emerald-800 font-sans font-bold uppercase">Terimaan</div>
+                                <div className="bg-emerald-500/10 p-2 rounded-lg border border-emerald-100/80">
+                                  <div className="text-[9px] text-emerald-400 font-sans font-bold uppercase">Terimaan</div>
                                   <div className="text-emerald-700 font-black">{q.data.receiptQty > 0 ? `+${q.data.receiptQty} ${selectedItem.unit_of_measure}` : '—'}</div>
-                                  {q.data.receiptVal > 0 && <div className="text-[10px] text-slate-500 font-sans">RM {q.data.receiptVal.toFixed(2)}</div>}
+                                  {q.data.receiptVal > 0 && <div className="text-[10px] text-text-muted font-sans">RM {q.data.receiptVal.toFixed(2)}</div>}
                                 </div>
-                                <div className="bg-rose-50/70 p-2 rounded-lg border border-rose-100/80">
-                                  <div className="text-[9px] text-rose-800 font-sans font-bold uppercase">Pengeluaran</div>
+                                <div className="bg-rose-500/10 p-2 rounded-lg border border-rose-100/80">
+                                  <div className="text-[9px] text-rose-400 font-sans font-bold uppercase">Pengeluaran</div>
                                   <div className="text-rose-700 font-black">{q.data.issueQty > 0 ? `-${q.data.issueQty} ${selectedItem.unit_of_measure}` : '—'}</div>
-                                  {q.data.issueVal > 0 && <div className="text-[10px] text-slate-500 font-sans">RM {q.data.issueVal.toFixed(2)}</div>}
+                                  {q.data.issueVal > 0 && <div className="text-[10px] text-text-muted font-sans">RM {q.data.issueVal.toFixed(2)}</div>}
                                 </div>
                               </div>
                             </div>
@@ -4161,10 +4163,10 @@ export const KewPs4LedgerPage: React.FC = () => {
                         </div>
 
                         <div className="bg-slate-200/60 p-2.5 rounded-xl font-mono text-xs flex justify-between items-center">
-                          <span className="font-bold font-sans text-slate-800 text-[11px]">Jumlah Keseluruhan:</span>
+                          <span className="font-bold font-sans text-text-primary text-[11px]">Jumlah Keseluruhan:</span>
                           <div className="text-right">
-                            <span className="text-emerald-800 font-bold block">+{yData.total.receiptQty} {selectedItem.unit_of_measure} ({yData.total.receiptVal > 0 ? `RM ${yData.total.receiptVal.toFixed(2)}` : '—'})</span>
-                            <span className="text-rose-800 font-bold block">-{yData.total.issueQty} {selectedItem.unit_of_measure} ({yData.total.issueVal > 0 ? `RM ${yData.total.issueVal.toFixed(2)}` : '—'})</span>
+                            <span className="text-emerald-400 font-bold block">+{yData.total.receiptQty} {selectedItem.unit_of_measure} ({yData.total.receiptVal > 0 ? `RM ${yData.total.receiptVal.toFixed(2)}` : '—'})</span>
+                            <span className="text-rose-400 font-bold block">-{yData.total.issueQty} {selectedItem.unit_of_measure} ({yData.total.issueVal > 0 ? `RM ${yData.total.issueVal.toFixed(2)}` : '—'})</span>
                           </div>
                         </div>
                       </div>
@@ -4175,59 +4177,59 @@ export const KewPs4LedgerPage: React.FC = () => {
                   <div className="hidden md:block overflow-x-auto">
                     <table className="w-full text-xs border-collapse">
                       <thead>
-                        <tr className="bg-slate-100 text-slate-700 font-extrabold uppercase text-[10px] border-b border-slate-200">
-                          <th rowSpan={2} className="py-2 px-3 text-center border-r border-slate-200">Tahun</th>
-                          <th rowSpan={2} className="py-2 px-3 text-left border-r border-slate-200">Suku Tahun</th>
-                          <th colSpan={2} className="py-1 px-3 text-center bg-emerald-50 text-emerald-900 border-r border-emerald-200">Terimaan</th>
-                          <th colSpan={2} className="py-1 px-3 text-center bg-rose-50 text-rose-900">Pengeluaran</th>
+                        <tr className="bg-subtle text-text-secondary font-extrabold uppercase text-[10px] border-b border-border-default">
+                          <th rowSpan={2} className="py-2 px-3 text-center border-r border-border-default">Tahun</th>
+                          <th rowSpan={2} className="py-2 px-3 text-left border-r border-border-default">Suku Tahun</th>
+                          <th colSpan={2} className="py-1 px-3 text-center bg-emerald-500/10 text-emerald-400 dark:text-emerald-300 font-bold border-r border-emerald-500/20">Terimaan</th>
+                          <th colSpan={2} className="py-1 px-3 text-center bg-rose-500/10 text-rose-400 dark:text-rose-300 font-bold">Pengeluaran</th>
                         </tr>
-                        <tr className="bg-slate-50 text-slate-600 font-bold uppercase text-[9px] border-b border-slate-200">
-                          <th className="py-1 px-2 text-right bg-emerald-50/50">Kuantiti</th>
-                          <th className="py-1 px-2 text-right bg-emerald-50/50 border-r border-emerald-200">Nilai (RM)</th>
-                          <th className="py-1 px-2 text-right bg-rose-50/50">Kuantiti</th>
-                          <th className="py-1 px-2 text-right bg-rose-50/50">Nilai (RM)</th>
+                        <tr className="bg-subtle/50 text-text-muted font-bold uppercase text-[9px] border-b border-border-default">
+                          <th className="py-1 px-2 text-right bg-emerald-500/10">Kuantiti</th>
+                          <th className="py-1 px-2 text-right bg-emerald-500/10 border-r border-emerald-500/20">Nilai (RM)</th>
+                          <th className="py-1 px-2 text-right bg-rose-500/10">Kuantiti</th>
+                          <th className="py-1 px-2 text-right bg-rose-500/10">Nilai (RM)</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100 font-mono">
+                      <tbody className="divide-y divide-border-subtle font-mono">
                         {quarterlySummary.map((yData, idx) => (
                           <React.Fragment key={idx}>
-                            <tr className="hover:bg-slate-50/50">
-                              <td rowSpan={5} className="py-2 px-3 font-bold font-sans text-center text-slate-900 bg-slate-50/70 border-r border-slate-200 align-middle">
+                            <tr className="hover:bg-subtle/50">
+                              <td rowSpan={5} className="py-2 px-3 font-bold font-sans text-center text-text-primary bg-subtle/50 border-r border-border-default align-middle">
                                 {yData.year}
                               </td>
-                              <td className="py-2 px-3 font-sans text-slate-700 border-r border-slate-100">Suku Pertama (Q1: Jan-Mac)</td>
+                              <td className="py-2 px-3 font-sans text-text-secondary border-r border-border-subtle">Suku Pertama (Q1: Jan-Mac)</td>
                               <td className="py-2 px-2 text-right text-emerald-700 font-bold">{yData.q1.receiptQty > 0 ? `+${yData.q1.receiptQty} ${selectedItem.unit_of_measure}` : '—'}</td>
-                              <td className="py-2 px-2 text-right text-slate-600 border-r border-slate-100">{yData.q1.receiptVal > 0 ? `RM ${yData.q1.receiptVal.toFixed(2)}` : '—'}</td>
+                              <td className="py-2 px-2 text-right text-text-muted border-r border-border-subtle">{yData.q1.receiptVal > 0 ? `RM ${yData.q1.receiptVal.toFixed(2)}` : '—'}</td>
                               <td className="py-2 px-2 text-right text-rose-700 font-bold">{yData.q1.issueQty > 0 ? `-${yData.q1.issueQty} ${selectedItem.unit_of_measure}` : '—'}</td>
-                              <td className="py-2 px-2 text-right text-slate-600">{yData.q1.issueVal > 0 ? `RM ${yData.q1.issueVal.toFixed(2)}` : '—'}</td>
+                              <td className="py-2 px-2 text-right text-text-muted">{yData.q1.issueVal > 0 ? `RM ${yData.q1.issueVal.toFixed(2)}` : '—'}</td>
                             </tr>
-                            <tr className="hover:bg-slate-50/50">
-                              <td className="py-2 px-3 font-sans text-slate-700 border-r border-slate-100">Suku Kedua (Q2: Apr-Jun)</td>
+                            <tr className="hover:bg-subtle/50">
+                              <td className="py-2 px-3 font-sans text-text-secondary border-r border-border-subtle">Suku Kedua (Q2: Apr-Jun)</td>
                               <td className="py-2 px-2 text-right text-emerald-700 font-bold">{yData.q2.receiptQty > 0 ? `+${yData.q2.receiptQty} ${selectedItem.unit_of_measure}` : '—'}</td>
-                              <td className="py-2 px-2 text-right text-slate-600 border-r border-slate-100">{yData.q2.receiptVal > 0 ? `RM ${yData.q2.receiptVal.toFixed(2)}` : '—'}</td>
+                              <td className="py-2 px-2 text-right text-text-muted border-r border-border-subtle">{yData.q2.receiptVal > 0 ? `RM ${yData.q2.receiptVal.toFixed(2)}` : '—'}</td>
                               <td className="py-2 px-2 text-right text-rose-700 font-bold">{yData.q2.issueQty > 0 ? `-${yData.q2.issueQty} ${selectedItem.unit_of_measure}` : '—'}</td>
-                              <td className="py-2 px-2 text-right text-slate-600">{yData.q2.issueVal > 0 ? `RM ${yData.q2.issueVal.toFixed(2)}` : '—'}</td>
+                              <td className="py-2 px-2 text-right text-text-muted">{yData.q2.issueVal > 0 ? `RM ${yData.q2.issueVal.toFixed(2)}` : '—'}</td>
                             </tr>
-                            <tr className="hover:bg-slate-50/50">
-                              <td className="py-2 px-3 font-sans text-slate-700 border-r border-slate-100">Suku Ketiga (Q3: Jul-Sep)</td>
+                            <tr className="hover:bg-subtle/50">
+                              <td className="py-2 px-3 font-sans text-text-secondary border-r border-border-subtle">Suku Ketiga (Q3: Jul-Sep)</td>
                               <td className="py-2 px-2 text-right text-emerald-700 font-bold">{yData.q3.receiptQty > 0 ? `+${yData.q3.receiptQty} ${selectedItem.unit_of_measure}` : '—'}</td>
-                              <td className="py-2 px-2 text-right text-slate-600 border-r border-slate-100">{yData.q3.receiptVal > 0 ? `RM ${yData.q3.receiptVal.toFixed(2)}` : '—'}</td>
+                              <td className="py-2 px-2 text-right text-text-muted border-r border-border-subtle">{yData.q3.receiptVal > 0 ? `RM ${yData.q3.receiptVal.toFixed(2)}` : '—'}</td>
                               <td className="py-2 px-2 text-right text-rose-700 font-bold">{yData.q3.issueQty > 0 ? `-${yData.q3.issueQty} ${selectedItem.unit_of_measure}` : '—'}</td>
-                              <td className="py-2 px-2 text-right text-slate-600">{yData.q3.issueVal > 0 ? `RM ${yData.q3.issueVal.toFixed(2)}` : '—'}</td>
+                              <td className="py-2 px-2 text-right text-text-muted">{yData.q3.issueVal > 0 ? `RM ${yData.q3.issueVal.toFixed(2)}` : '—'}</td>
                             </tr>
-                            <tr className="hover:bg-slate-50/50">
-                              <td className="py-2 px-3 font-sans text-slate-700 border-r border-slate-100">Suku Keempat (Q4: Okt-Dis)</td>
+                            <tr className="hover:bg-subtle/50">
+                              <td className="py-2 px-3 font-sans text-text-secondary border-r border-border-subtle">Suku Keempat (Q4: Okt-Dis)</td>
                               <td className="py-2 px-2 text-right text-emerald-700 font-bold">{yData.q4.receiptQty > 0 ? `+${yData.q4.receiptQty} ${selectedItem.unit_of_measure}` : '—'}</td>
-                              <td className="py-2 px-2 text-right text-slate-600 border-r border-slate-100">{yData.q4.receiptVal > 0 ? `RM ${yData.q4.receiptVal.toFixed(2)}` : '—'}</td>
+                              <td className="py-2 px-2 text-right text-text-muted border-r border-border-subtle">{yData.q4.receiptVal > 0 ? `RM ${yData.q4.receiptVal.toFixed(2)}` : '—'}</td>
                               <td className="py-2 px-2 text-right text-rose-700 font-bold">{yData.q4.issueQty > 0 ? `-${yData.q4.issueQty} ${selectedItem.unit_of_measure}` : '—'}</td>
-                              <td className="py-2 px-2 text-right text-slate-600">{yData.q4.issueVal > 0 ? `RM ${yData.q4.issueVal.toFixed(2)}` : '—'}</td>
+                              <td className="py-2 px-2 text-right text-text-muted">{yData.q4.issueVal > 0 ? `RM ${yData.q4.issueVal.toFixed(2)}` : '—'}</td>
                             </tr>
-                            <tr className="bg-slate-100/80 font-bold border-b border-slate-200">
-                              <td className="py-2 px-3 font-sans text-slate-900 border-r border-slate-200">Jumlah Keseluruhan Tahun {yData.year}</td>
-                              <td className="py-2 px-2 text-right text-emerald-800">{yData.total.receiptQty > 0 ? `+${yData.total.receiptQty} ${selectedItem.unit_of_measure}` : '—'}</td>
-                              <td className="py-2 px-2 text-right text-slate-900 border-r border-slate-200">RM {yData.total.receiptVal.toFixed(2)}</td>
-                              <td className="py-2 px-2 text-right text-rose-800">{yData.total.issueQty > 0 ? `-${yData.total.issueQty} ${selectedItem.unit_of_measure}` : '—'}</td>
-                              <td className="py-2 px-2 text-right text-slate-900">RM {yData.total.issueVal.toFixed(2)}</td>
+                            <tr className="bg-subtle font-bold border-b border-border-default">
+                              <td className="py-2 px-3 font-sans text-text-primary border-r border-border-default">Jumlah Keseluruhan Tahun {yData.year}</td>
+                              <td className="py-2 px-2 text-right text-emerald-400">{yData.total.receiptQty > 0 ? `+${yData.total.receiptQty} ${selectedItem.unit_of_measure}` : '—'}</td>
+                              <td className="py-2 px-2 text-right text-text-primary border-r border-border-default">RM {yData.total.receiptVal.toFixed(2)}</td>
+                              <td className="py-2 px-2 text-right text-rose-400">{yData.total.issueQty > 0 ? `-${yData.total.issueQty} ${selectedItem.unit_of_measure}` : '—'}</td>
+                              <td className="py-2 px-2 text-right text-text-primary">RM {yData.total.issueVal.toFixed(2)}</td>
                             </tr>
                           </React.Fragment>
                         ))}
@@ -4239,9 +4241,9 @@ export const KewPs4LedgerPage: React.FC = () => {
 
               {/* DEPARTMENTS TAB CONTENT (Zone D Log Penerimaan dan Pengeluaran) */}
               {movementLogSummary.length > 0 && (
-                <div className={`${mobileTab === 'departments' ? 'block' : 'hidden'} lg:block bg-white border border-slate-100 rounded-3xl p-5 shadow-soft space-y-3`}>
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                    <span className="font-black text-xs text-slate-800 flex items-center gap-2">
+                <div className={`${mobileTab === 'departments' ? 'block' : 'hidden'} lg:block bg-surface border border-border-subtle rounded-3xl p-5 shadow-elevation-1 space-y-3`}>
+                  <div className="flex items-center justify-between border-b border-border-subtle pb-2">
+                    <span className="font-black text-xs text-text-primary flex items-center gap-2">
                       <Building2 className="w-4 h-4 text-indigo-600" />
                       <span>Log Penerimaan dan Pengeluaran (Rekod Mengikut Jabatan / Pembekal)</span>
                     </span>
@@ -4252,9 +4254,9 @@ export const KewPs4LedgerPage: React.FC = () => {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 pt-1">
                     {movementLogSummary.map((item, idx) => (
-                      <div key={idx} className="bg-slate-50/70 border border-slate-100 rounded-2xl p-3.5 space-y-1.5">
-                        <div className="text-xs font-bold text-slate-800 truncate">{item.name}</div>
-                        <div className="flex items-center justify-between text-xs font-mono pt-1 border-t border-slate-200/60">
+                      <div key={idx} className="bg-subtle/50 border border-border-subtle rounded-2xl p-3.5 space-y-1.5">
+                        <div className="text-xs font-bold text-text-primary truncate">{item.name}</div>
+                        <div className="flex items-center justify-between text-xs font-mono pt-1 border-t border-border-default">
                           <span className="text-emerald-700 font-black">
                             Terima: {item.totalReceived > 0 ? `+${item.totalReceived} ${selectedItem.unit_of_measure}` : '—'}
                           </span>
@@ -4271,9 +4273,9 @@ export const KewPs4LedgerPage: React.FC = () => {
               {/* LEDGER TAB CONTENT (Zone C Filters & Digital KEW.PS-4 Records) */}
               <div className={`${mobileTab === 'ledger' ? 'block' : 'hidden'} lg:block space-y-6`}>
                 {/* ZONE C: ADVANCED FILTERS BAR */}
-                <div className="bg-white border border-slate-100 rounded-3xl p-5 shadow-soft space-y-4">
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-3">
-                    <div className="flex items-center gap-2 text-xs font-bold text-slate-700">
+                <div className="bg-surface border border-border-subtle rounded-3xl p-5 shadow-elevation-1 space-y-4">
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border-subtle pb-3">
+                    <div className="flex items-center gap-2 text-xs font-bold text-text-secondary">
                       <SlidersHorizontal className="w-4 h-4 text-teal-600" />
                       <span>Penapis & Julat Tarikh Pergerakan</span>
                     </div>
@@ -4284,8 +4286,8 @@ export const KewPs4LedgerPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => applyDatePreset('today')}
-                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
-                          activeDatePreset === 'today' ? 'bg-teal-600 text-white shadow-2xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-colors ${
+                          activeDatePreset === 'today' ? 'bg-teal-600 text-white shadow-elevation-1' : 'bg-subtle hover:bg-subtle text-text-secondary'
                         }`}
                       >
                         Hari Ini
@@ -4293,8 +4295,8 @@ export const KewPs4LedgerPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => applyDatePreset('week')}
-                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
-                          activeDatePreset === 'week' ? 'bg-teal-600 text-white shadow-2xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-colors ${
+                          activeDatePreset === 'week' ? 'bg-teal-600 text-white shadow-elevation-1' : 'bg-subtle hover:bg-subtle text-text-secondary'
                         }`}
                       >
                         7 Hari
@@ -4302,8 +4304,8 @@ export const KewPs4LedgerPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => applyDatePreset('month')}
-                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
-                          activeDatePreset === 'month' ? 'bg-teal-600 text-white shadow-2xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-colors ${
+                          activeDatePreset === 'month' ? 'bg-teal-600 text-white shadow-elevation-1' : 'bg-subtle hover:bg-subtle text-text-secondary'
                         }`}
                       >
                         Bulan Ini
@@ -4311,8 +4313,8 @@ export const KewPs4LedgerPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => applyDatePreset('3months')}
-                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
-                          activeDatePreset === '3months' ? 'bg-teal-600 text-white shadow-2xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-colors ${
+                          activeDatePreset === '3months' ? 'bg-teal-600 text-white shadow-elevation-1' : 'bg-subtle hover:bg-subtle text-text-secondary'
                         }`}
                       >
                         3 Bulan
@@ -4320,8 +4322,8 @@ export const KewPs4LedgerPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => applyDatePreset('all')}
-                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
-                          activeDatePreset === 'all' ? 'bg-teal-600 text-white shadow-2xs' : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                        className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-colors ${
+                          activeDatePreset === 'all' ? 'bg-teal-600 text-white shadow-elevation-1' : 'bg-subtle hover:bg-subtle text-text-secondary'
                         }`}
                       >
                         Semua
@@ -4332,7 +4334,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                   {/* Filter Inputs Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
                     <div>
-                      <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Tarikh Mula</label>
+                      <label className="block text-[10px] font-bold text-text-muted uppercase mb-1">Tarikh Mula</label>
                       <Input
                         type="date"
                         className="text-xs py-1.5 rounded-xl font-mono"
@@ -4342,7 +4344,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                     </div>
 
                     <div>
-                      <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Tarikh Akhir</label>
+                      <label className="block text-[10px] font-bold text-text-muted uppercase mb-1">Tarikh Akhir</label>
                       <Input
                         type="date"
                         className="text-xs py-1.5 rounded-xl font-mono"
@@ -4352,7 +4354,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                     </div>
 
                     <div>
-                      <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Jenis Transaksi</label>
+                      <label className="block text-[10px] font-bold text-text-muted uppercase mb-1">Jenis Transaksi</label>
                       <Select
                         className="text-xs py-1.5 rounded-xl font-medium"
                         value={selectedTxType}
@@ -4371,7 +4373,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                     </div>
 
                     <div>
-                      <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Jabatan / Wad Destinasi</label>
+                      <label className="block text-[10px] font-bold text-text-muted uppercase mb-1">Jabatan / Wad Destinasi</label>
                       <Select
                         className="text-xs py-1.5 rounded-xl font-medium"
                         value={selectedDeptId}
@@ -4387,9 +4389,9 @@ export const KewPs4LedgerPage: React.FC = () => {
                 </div>
 
                 {/* ZONE E: DIGITAL KEW.PS-4 LEDGER TABLE */}
-                <div className="bg-white border border-slate-100 rounded-3xl shadow-soft p-6 space-y-6">
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-4">
-                    <h3 className="font-black text-slate-800 text-lg flex items-center gap-2">
+                <div className="bg-surface border border-border-subtle rounded-3xl shadow-elevation-1 p-6 space-y-6">
+                  <div className="flex items-center justify-between border-b border-border-subtle pb-4">
+                    <h3 className="font-black text-text-primary text-lg flex items-center gap-2">
                       <FileText className="w-5 h-5 text-teal-600" />
                       <span>Buku Daftar Transaksi (Digital KEW.PS-4)</span>
                     </h3>
@@ -4405,30 +4407,30 @@ export const KewPs4LedgerPage: React.FC = () => {
                     <Spinner size="lg" />
                   </div>
                 ) : ledgerRows.length === 0 ? (
-                  <div className="py-16 text-center text-slate-400 font-medium text-sm space-y-4 bg-slate-50/50 rounded-2xl p-6 border border-dashed border-slate-200">
+                  <div className="py-16 text-center text-slate-400 font-medium text-sm space-y-4 bg-subtle/50 rounded-2xl p-6 border border-dashed border-border-default">
                     <Clock className="w-10 h-10 text-slate-300 mx-auto" />
                     <div className="space-y-1.5">
-                      <p className="font-black text-slate-800 text-base">Tiada Rekod Pergerakan Ditemui</p>
+                      <p className="font-black text-text-primary text-base">Tiada Rekod Pergerakan Ditemui</p>
                       {dateFrom || dateTo ? (
-                        <p className="text-xs text-slate-500 max-w-md mx-auto leading-relaxed">
+                        <p className="text-xs text-text-muted max-w-md mx-auto leading-relaxed">
                           Tiada transaksi dikesan bagi julat tarikh ini ({dateFrom || 'Awal'} hingga {dateTo || 'Kini'}). Sila tukar tarikh atau tekan <button type="button" onClick={() => applyDatePreset('all')} className="text-teal-600 font-extrabold underline hover:text-teal-800 cursor-pointer">"Semua"</button> untuk memaparkan keseluruhan sejarah transaksi.
                         </p>
                       ) : selectedItem && currentStockBalance > 0 ? (
                         <div className="space-y-3 max-w-lg mx-auto pt-2">
-                          <p className="text-xs text-amber-800 font-semibold bg-amber-50/90 border border-amber-200/90 rounded-2xl p-3.5 leading-relaxed text-left">
+                          <p className="text-xs text-amber-400 font-semibold bg-amber-500/10 border border-amber-500/20 rounded-2xl p-3.5 leading-relaxed text-left">
                             ⚠ Item ini mempunyai baki stok aktif sebanyak <strong>{currentStockBalance} {selectedItem.unit_of_measure}</strong>, tetapi belum mempunyai rekod transaksi pembukaan / penerimaan KEW.PS-4 dalam pangkalan data.
                           </p>
                           <button
                             type="button"
                             onClick={() => openBringForwardModal(currentStockBalance.toString())}
-                            className="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-black text-xs px-4 py-2.5 rounded-xl shadow-sm transition-all cursor-pointer"
+                            className="inline-flex items-center gap-2 bg-teal-600 hover:bg-teal-700 text-white font-black text-xs px-4 py-2.5 rounded-xl shadow-sm transition-colors cursor-pointer"
                           >
                             <FastForward className="w-4 h-4 text-white" />
                             <span>Rekod Baki Pembukaan KEW.PS-4 ({currentStockBalance} {selectedItem.unit_of_measure})</span>
                           </button>
                         </div>
                       ) : (
-                        <p className="text-xs text-slate-500 max-w-xs mx-auto">
+                        <p className="text-xs text-text-muted max-w-xs mx-auto">
                           Sila tukar julat tarikh atau penapis transaksi di atas untuk melihat data.
                         </p>
                       )}
@@ -4451,28 +4453,28 @@ export const KewPs4LedgerPage: React.FC = () => {
                             key={txKey}
                             className={`rounded-2xl p-4 shadow-sm border space-y-3 ${
                               isStoreVerification
-                                ? 'bg-emerald-50/70 border-l-4 border-l-emerald-600 border-emerald-200'
+                                ? 'bg-emerald-500/10 border-l-4 border-l-emerald-600 border-emerald-500/20'
                                 : isCheckFound
-                                ? 'bg-indigo-50/70 border-l-4 border-l-indigo-600 border-indigo-200'
+                                ? 'bg-indigo-500/10 border-l-4 border-l-indigo-600 border-indigo-500/20'
                                 : isReceipt 
-                                ? 'bg-white border-l-4 border-l-emerald-500 border-slate-200/80' 
-                                : 'bg-white border-l-4 border-l-rose-400 border-slate-200/80'
+                                ? 'bg-surface border-l-4 border-l-emerald-500 border-border-default' 
+                                : 'bg-surface border-l-4 border-l-rose-400 border-border-default'
                             }`}
                           >
-                            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                            <div className="flex items-center justify-between border-b border-border-subtle pb-2">
                               <div className="flex items-center gap-2">
                                 <span className="font-mono font-black text-xs text-slate-400">#{row.index}</span>
                                 <span 
                                   className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider ${
                                     row.transaction_type === 'store_verification'
-                                      ? 'bg-emerald-100 text-emerald-950 border border-emerald-300'
+                                      ? 'bg-emerald-100 text-emerald-400 dark:text-emerald-300 font-bold border border-emerald-300'
                                       : row.transaction_type === 'check_found'
-                                      ? 'bg-indigo-100 text-indigo-900 border border-indigo-300/80'
+                                      ? 'bg-indigo-100 text-indigo-400 dark:text-indigo-300 font-bold border border-indigo-300/80'
                                       : row.transaction_type === 'bring_forward'
                                       ? 'bg-sky-100 text-sky-900 border border-sky-300/80'
                                       : isReceipt 
-                                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-300/80' 
-                                      : 'bg-rose-100 text-rose-800 border border-rose-300/80'
+                                      ? 'bg-emerald-100 text-emerald-400 border border-emerald-300/80' 
+                                      : 'bg-rose-100 text-rose-400 border border-rose-300/80'
                                   }`}
                                 >
                                   {row.transaction_type === 'store_verification'
@@ -4491,7 +4493,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                                 </span>
                               </div>
 
-                              <span className="text-[11px] font-semibold text-slate-600 font-mono">
+                              <span className="text-[11px] font-semibold text-text-muted font-mono">
                                 {new Date(row.transaction_date || row.created_at).toLocaleString('ms-MY', {
                                   day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
                                 })}
@@ -4499,41 +4501,41 @@ export const KewPs4LedgerPage: React.FC = () => {
                             </div>
 
                             <div className="flex items-center justify-between text-xs font-mono font-bold text-teal-700">
-                              <span className="bg-teal-50 px-2 py-1 rounded-lg border border-teal-100">{formatReferenceNumber(row)}</span>
+                              <span className="bg-accent-base/10 px-2 py-1 rounded-lg border border-teal-100">{formatReferenceNumber(row)}</span>
                               {hasBeenEdited && (
-                                <Badge className="bg-amber-100 text-amber-900 border-amber-300 text-[9px] font-bold">
+                                <Badge className="bg-amber-100 text-amber-400 dark:text-amber-300 font-bold border-amber-300 text-[9px] font-bold">
                                   DIPINDA
                                 </Badge>
                               )}
                             </div>
 
-                            <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                            <div className="grid grid-cols-2 gap-2 text-xs bg-subtle/50 p-2.5 rounded-xl border border-border-subtle">
                               <div>
                                 <span className="text-[9px] font-bold text-slate-400 uppercase block">Kuantiti</span>
                                 {row.receiptQty !== null ? (
                                   <div>
                                     <span className="font-mono text-sm text-emerald-600 font-black block">+{row.receiptQty}</span>
-                                    <span className="text-[10px] text-slate-500 font-medium block">{row.batch?.packaging || selectedItem.packaging_description || 'Pack'}</span>
+                                    <span className="text-[10px] text-text-muted font-medium block">{row.batch?.packaging || selectedItem.packaging_description || 'Pack'}</span>
                                     {row.batch?.batch_number && <span className="text-[9px] text-teal-700 font-bold block">Batch: {row.batch.batch_number}</span>}
                                     {row.batch?.expiry_date && <span className="text-[9px] text-amber-700 font-bold block">Luput: {new Date(row.batch.expiry_date).toLocaleDateString('ms-MY')}</span>}
                                   </div>
                                 ) : (
                                   <div>
                                     <span className="font-mono text-sm text-rose-600 font-black block">-{row.issueQty}</span>
-                                    <span className="text-[10px] text-slate-500 font-medium block">{row.batch?.packaging || selectedItem.packaging_description || 'Pack'}</span>
+                                    <span className="text-[10px] text-text-muted font-medium block">{row.batch?.packaging || selectedItem.packaging_description || 'Pack'}</span>
                                     {row.batch?.batch_number && <span className="text-[9px] text-teal-700 font-bold block">Batch: {row.batch.batch_number}</span>}
                                   </div>
                                 )}
                               </div>
                               <div>
                                 <span className="text-[9px] font-bold text-slate-400 uppercase block">Baki Berjalan</span>
-                                <span className="font-mono text-base font-black text-slate-900">{row.runningBalance}</span>
-                                <span className="text-[10px] text-slate-500 font-medium block">{selectedItem.unit_of_measure}</span>
+                                <span className="font-mono text-base font-black text-text-primary">{row.runningBalance}</span>
+                                <span className="text-[10px] text-text-muted font-medium block">{selectedItem.unit_of_measure}</span>
                               </div>
                             </div>
 
-                            <div className="space-y-1 text-xs pt-1 border-t border-slate-100">
-                              <div className="text-slate-700 font-bold flex items-center justify-between">
+                            <div className="space-y-1 text-xs pt-1 border-t border-border-subtle">
+                              <div className="text-text-secondary font-bold flex items-center justify-between">
                                 <span>{resolveRecipientName(row)}</span>
                               </div>
                               <div className="text-[10px] text-slate-400 flex items-center justify-between">
@@ -4541,7 +4543,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={() => triggerEditAuth(row)}
-                                  className="text-indigo-600 hover:text-indigo-900 font-bold underline cursor-pointer"
+                                  className="text-indigo-600 hover:text-indigo-400 dark:text-indigo-300 font-bold font-bold underline cursor-pointer"
                                 >
                                   Pinda
                                 </button>
@@ -4553,23 +4555,23 @@ export const KewPs4LedgerPage: React.FC = () => {
                     </div>
 
                     {/* Desktop View Table */}
-                    <div className="hidden md:block border border-slate-100 rounded-2xl overflow-hidden shadow-inner">
+                    <div className="hidden md:block border border-border-subtle rounded-2xl overflow-hidden shadow-inner">
                       <Table>
                         <Table.Header>
-                          <Table.Row className="bg-slate-50/70">
-                            <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5 text-center">Bil</Table.Cell>
-                            <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5">Tarikh & Masa</Table.Cell>
-                            <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5">No Rujukan</Table.Cell>
-                            <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5">Jenis</Table.Cell>
-                            <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5 text-right font-mono">Masuk (+)</Table.Cell>
-                            <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5 text-right font-mono">Keluar (-)</Table.Cell>
-                            <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5 text-right font-mono bg-teal-50/30">Baki Semasa</Table.Cell>
-                            <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5">Penerima / Jabatan</Table.Cell>
-                            <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5">Perekod</Table.Cell>
-                            <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5 text-center">Tindakan</Table.Cell>
+                          <Table.Row className="bg-subtle/50">
+                            <Table.Cell as="th" className="text-text-muted font-bold text-xs py-3.5 text-center">Bil</Table.Cell>
+                            <Table.Cell as="th" className="text-text-muted font-bold text-xs py-3.5">Tarikh & Masa</Table.Cell>
+                            <Table.Cell as="th" className="text-text-muted font-bold text-xs py-3.5">No Rujukan</Table.Cell>
+                            <Table.Cell as="th" className="text-text-muted font-bold text-xs py-3.5">Jenis</Table.Cell>
+                            <Table.Cell as="th" className="text-text-muted font-bold text-xs py-3.5 text-right font-mono">Masuk (+)</Table.Cell>
+                            <Table.Cell as="th" className="text-text-muted font-bold text-xs py-3.5 text-right font-mono">Keluar (-)</Table.Cell>
+                            <Table.Cell as="th" className="text-text-muted font-bold text-xs py-3.5 text-right font-mono bg-accent-base/10">Baki Semasa</Table.Cell>
+                            <Table.Cell as="th" className="text-text-muted font-bold text-xs py-3.5">Penerima / Jabatan</Table.Cell>
+                            <Table.Cell as="th" className="text-text-muted font-bold text-xs py-3.5">Perekod</Table.Cell>
+                            <Table.Cell as="th" className="text-text-muted font-bold text-xs py-3.5 text-center">Tindakan</Table.Cell>
                           </Table.Row>
                         </Table.Header>
-                        <Table.Body className="divide-y divide-slate-100">
+                        <Table.Body className="divide-y divide-border-subtle">
                           {ledgerRows.map(row => {
                             const isReceipt = row.receiptQty !== null
                             const isCheckFound = row.transaction_type === 'check_found'
@@ -4583,18 +4585,18 @@ export const KewPs4LedgerPage: React.FC = () => {
                                 key={txKey} 
                                 className={`transition-colors ${
                                   isStoreVerification
-                                    ? 'bg-emerald-50/70 hover:bg-emerald-100/70 border-l-4 border-l-emerald-600'
+                                    ? 'bg-emerald-500/10 hover:bg-emerald-100/70 border-l-4 border-l-emerald-600'
                                     : isCheckFound
-                                    ? 'bg-indigo-50/70 hover:bg-indigo-100/70 border-l-4 border-l-indigo-600'
+                                    ? 'bg-indigo-500/10 hover:bg-indigo-100/70 border-l-4 border-l-indigo-600'
                                     : isReceipt 
-                                    ? 'hover:bg-slate-50/50 border-l-4 border-l-emerald-500' 
-                                    : 'hover:bg-slate-50/50 border-l-4 border-l-rose-400'
+                                    ? 'hover:bg-subtle/50 border-l-4 border-l-emerald-500' 
+                                    : 'hover:bg-subtle/50 border-l-4 border-l-rose-400'
                                 }`}
                               >
                                 <Table.Cell className="text-center font-mono font-bold text-xs text-slate-400">
                                   {row.index}
                                 </Table.Cell>
-                                <Table.Cell className="text-xs font-semibold text-slate-800 font-mono">
+                                <Table.Cell className="text-xs font-semibold text-text-primary font-mono">
                                   {new Date(row.transaction_date || row.created_at).toLocaleString('ms-MY', {
                                     day: '2-digit',
                                     month: '2-digit',
@@ -4607,7 +4609,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                                   <div className="flex items-center gap-1.5">
                                     <span>{formatReferenceNumber(row)}</span>
                                     {hasBeenEdited && (
-                                      <Badge className="bg-amber-100 text-amber-900 border-amber-300 text-[9px] font-bold">
+                                      <Badge className="bg-amber-100 text-amber-400 dark:text-amber-300 font-bold border-amber-300 text-[9px] font-bold">
                                         DIPINDA
                                       </Badge>
                                     )}
@@ -4617,14 +4619,14 @@ export const KewPs4LedgerPage: React.FC = () => {
                                   <span 
                                     className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
                                       row.transaction_type === 'store_verification'
-                                        ? 'bg-emerald-100 text-emerald-950 border border-emerald-300'
+                                        ? 'bg-emerald-100 text-emerald-400 dark:text-emerald-300 font-bold border border-emerald-300'
                                         : row.transaction_type === 'check_found'
-                                        ? 'bg-indigo-100 text-indigo-900 border border-indigo-300/80'
+                                        ? 'bg-indigo-100 text-indigo-400 dark:text-indigo-300 font-bold border border-indigo-300/80'
                                         : row.transaction_type === 'bring_forward'
                                         ? 'bg-sky-100 text-sky-900 border border-sky-300/80'
                                         : isReceipt 
-                                        ? 'bg-emerald-100 text-emerald-800 border border-emerald-300/80' 
-                                        : 'bg-rose-100 text-rose-800 border border-rose-300/80'
+                                        ? 'bg-emerald-100 text-emerald-400 border border-emerald-300/80' 
+                                        : 'bg-rose-100 text-rose-400 border border-rose-300/80'
                                     }`}
                                   >
                                     {row.transaction_type === 'store_verification'
@@ -4650,7 +4652,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                                       <span className="font-mono text-sm text-emerald-600 font-black block">
                                         +{row.receiptQty}
                                       </span>
-                                      <span className="text-[10px] text-slate-500 font-medium block">
+                                      <span className="text-[10px] text-text-muted font-medium block">
                                         {row.batch?.packaging || selectedItem.packaging_description || 'Pack of 10 x 10tablet'}
                                       </span>
                                       {row.batch?.batch_number && (
@@ -4674,7 +4676,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                                       <span className="font-mono text-sm text-rose-600 font-black block">
                                         -{row.issueQty}
                                       </span>
-                                      <span className="text-[10px] text-slate-500 font-medium block">
+                                      <span className="text-[10px] text-text-muted font-medium block">
                                         {row.batch?.packaging || selectedItem.packaging_description || 'Pack of 10 x 10tablet'}
                                       </span>
                                       {row.batch?.batch_number && (
@@ -4692,13 +4694,13 @@ export const KewPs4LedgerPage: React.FC = () => {
                                     <span className="text-slate-300 font-mono">—</span>
                                   )}
                                 </Table.Cell>
-                                <Table.Cell className="text-right font-mono font-black text-sm text-slate-900 bg-teal-50/20">
+                                <Table.Cell className="text-right font-mono font-black text-sm text-text-primary bg-accent-base/10">
                                   {row.runningBalance}
                                 </Table.Cell>
-                                <Table.Cell className="text-xs font-bold text-slate-700">
+                                <Table.Cell className="text-xs font-bold text-text-secondary">
                                   {resolveRecipientName(row)}
                                 </Table.Cell>
-                                <Table.Cell className="text-xs text-slate-500 font-medium">
+                                <Table.Cell className="text-xs text-text-muted font-medium">
                                   {resolveRecorderName(row.performed_by_user?.name || row.performed_by)}
                                 </Table.Cell>
                                 <Table.Cell className="text-center">
@@ -4706,7 +4708,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                                     <button
                                       type="button"
                                       onClick={() => triggerEditAuth(row)}
-                                      className="px-2 py-1 rounded-lg bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200/80 transition-all text-xs font-bold flex items-center gap-1 shadow-2xs"
+                                      className="px-2 py-1 rounded-lg bg-amber-500/10 text-amber-400 hover:bg-amber-100 border border-amber-500/20 transition-colors text-xs font-bold flex items-center gap-1 shadow-elevation-1"
                                       title="Pinda / Betulkan Rekod ini (Dilindungi Kata Laluan Kebenaran)"
                                     >
                                       <Lock className="w-3 h-3 text-amber-700" />
@@ -4718,7 +4720,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                                       <button
                                         type="button"
                                         onClick={() => { setAuditTxRow(row); setIsAuditModalOpen(true); }}
-                                        className="px-2 py-1 rounded-lg bg-purple-50 text-purple-800 hover:bg-purple-100 border border-purple-200/80 transition-all text-xs font-bold flex items-center gap-1 shadow-2xs"
+                                        className="px-2 py-1 rounded-lg bg-indigo-500/10 text-indigo-400 hover:bg-purple-100 border border-indigo-500/20 transition-colors text-xs font-bold flex items-center gap-1 shadow-elevation-1"
                                         title="Papar Log Sejarah Pindaan & Bukti Audit"
                                       >
                                         <History className="w-3 h-3 text-purple-700" />
@@ -4744,11 +4746,11 @@ export const KewPs4LedgerPage: React.FC = () => {
 
       {/* STICKY MOBILE BOTTOM ACTION BAR (Thumb Reach Zone) */}
       {selectedItem && (
-        <div className="lg:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-slate-200/80 p-3 pb-safe z-40 shadow-2xl flex items-center gap-2">
+        <div className="lg:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur-md border-t border-border-default p-3 pb-safe z-40 shadow-2xl flex items-center gap-2">
           <button
             type="button"
             onClick={openReceiveModal}
-            className="flex-1 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-xl font-black text-xs py-3 px-3 shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer"
+            className="flex-1 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-xl font-black text-xs py-3 px-3 shadow-md transition-colors active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <PlusCircle className="w-4 h-4 text-white" />
             <span>+ Terima</span>
@@ -4757,7 +4759,7 @@ export const KewPs4LedgerPage: React.FC = () => {
           <button
             type="button"
             onClick={openIssueModal}
-            className="flex-1 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white rounded-xl font-black text-xs py-3 px-3 shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer"
+            className="flex-1 bg-rose-600 hover:bg-rose-700 active:bg-rose-800 text-white rounded-xl font-black text-xs py-3 px-3 shadow-md transition-colors active:scale-[0.98] flex items-center justify-center gap-1.5 cursor-pointer"
           >
             <MinusCircle className="w-4 h-4 text-white" />
             <span>- Keluar</span>
@@ -4766,10 +4768,10 @@ export const KewPs4LedgerPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsMobileMoreActionsOpen(true)}
-            className="bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-800 border border-slate-300 rounded-xl font-bold text-xs py-3 px-3 transition-all active:scale-[0.98] flex items-center justify-center gap-1 cursor-pointer shrink-0"
+            className="bg-subtle hover:bg-subtle active:bg-slate-300 text-text-primary border border-border-default rounded-xl font-bold text-xs py-3 px-3 transition-colors active:scale-[0.98] flex items-center justify-center gap-1 cursor-pointer shrink-0"
             title="Tindakan Tambahan"
           >
-            <SlidersHorizontal className="w-4 h-4 text-slate-700" />
+            <SlidersHorizontal className="w-4 h-4 text-text-secondary" />
             <span>Lagi</span>
           </button>
         </div>
@@ -4789,13 +4791,13 @@ export const KewPs4LedgerPage: React.FC = () => {
               setIsMobileMoreActionsOpen(false)
               openStoreVerificationModal()
             }}
-            className="w-full text-left p-3.5 rounded-2xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-xs font-bold text-emerald-950 flex items-center gap-3 transition-all cursor-pointer"
+            className="w-full text-left p-3.5 rounded-2xl bg-emerald-500/10 hover:bg-emerald-100 border border-emerald-500/20 text-xs font-bold text-emerald-400 dark:text-emerald-300 font-bold flex items-center gap-3 transition-colors cursor-pointer"
           >
             <div className="w-8 h-8 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
               <ShieldCheck className="w-4 h-4" />
             </div>
             <div>
-              <div className="font-extrabold text-emerald-950">Store Verification (Tahunan)</div>
+              <div className="font-extrabold text-emerald-400 dark:text-emerald-300 font-bold">Store Verification (Tahunan)</div>
               <div className="text-[10px] text-emerald-700">Semakan 3-Hala: Fizikal vs KEW.PS-4 vs PHiS</div>
             </div>
           </button>
@@ -4807,13 +4809,13 @@ export const KewPs4LedgerPage: React.FC = () => {
                 setIsMobileMoreActionsOpen(false)
                 setIsVerificationHistoryModalOpen(true)
               }}
-              className="w-full text-left p-3.5 rounded-2xl bg-emerald-50/60 hover:bg-emerald-100/80 border border-emerald-200 text-xs font-bold text-emerald-950 flex items-center gap-3 transition-all cursor-pointer"
+              className="w-full text-left p-3.5 rounded-2xl bg-emerald-500/10 hover:bg-emerald-100/80 border border-emerald-500/20 text-xs font-bold text-emerald-400 dark:text-emerald-300 font-bold flex items-center gap-3 transition-colors cursor-pointer"
             >
-              <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-400 flex items-center justify-center shrink-0">
                 <FileCheck className="w-4 h-4" />
               </div>
               <div>
-                <div className="font-extrabold text-emerald-950">Log Verifikasi Stor ({storeVerificationLogs.filter(r => r.item_id === selectedItem?.item_id).length})</div>
+                <div className="font-extrabold text-emerald-400 dark:text-emerald-300 font-bold">Log Verifikasi Stor ({storeVerificationLogs.filter(r => r.item_id === selectedItem?.item_id).length})</div>
                 <div className="text-[10px] text-emerald-700">Rekod &amp; Sijil Verifikasi Tahunan</div>
               </div>
             </button>
@@ -4825,14 +4827,14 @@ export const KewPs4LedgerPage: React.FC = () => {
               setIsMobileMoreActionsOpen(false)
               openEditStockModal()
             }}
-            className="w-full text-left p-3.5 rounded-2xl bg-slate-50 hover:bg-teal-50 border border-slate-200 hover:border-teal-200 text-xs font-bold text-slate-800 flex items-center gap-3 transition-all cursor-pointer"
+            className="w-full text-left p-3.5 rounded-2xl bg-subtle/50 hover:bg-accent-base/10 border border-border-default hover:border-accent-base/20 text-xs font-bold text-text-primary flex items-center gap-3 transition-colors cursor-pointer"
           >
             <div className="w-8 h-8 rounded-xl bg-teal-100 text-teal-700 flex items-center justify-center shrink-0">
               <Pencil className="w-4 h-4" />
             </div>
             <div>
-              <div className="font-extrabold text-slate-900">Kemaskini Lokasi & Paras</div>
-              <div className="text-[10px] text-slate-500">Tetapkan rak, level, min, buffer & max stock</div>
+              <div className="font-extrabold text-text-primary">Kemaskini Lokasi & Paras</div>
+              <div className="text-[10px] text-text-muted">Tetapkan rak, level, min, buffer & max stock</div>
             </div>
           </button>
 
@@ -4842,14 +4844,14 @@ export const KewPs4LedgerPage: React.FC = () => {
               setIsMobileMoreActionsOpen(false)
               openCheckFoundModal()
             }}
-            className="w-full text-left p-3.5 rounded-2xl bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-200 text-xs font-bold text-slate-800 flex items-center gap-3 transition-all cursor-pointer"
+            className="w-full text-left p-3.5 rounded-2xl bg-subtle/50 hover:bg-indigo-500/10 border border-border-default hover:border-indigo-500/20 text-xs font-bold text-text-primary flex items-center gap-3 transition-colors cursor-pointer"
           >
             <div className="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0">
               <ClipboardCheck className="w-4 h-4" />
             </div>
             <div>
-              <div className="font-extrabold text-slate-900">Check & Found Audit</div>
-              <div className="text-[10px] text-slate-500">Audit stok fizikal dan rekod jumpaan</div>
+              <div className="font-extrabold text-text-primary">Check & Found Audit</div>
+              <div className="text-[10px] text-text-muted">Audit stok fizikal dan rekod jumpaan</div>
             </div>
           </button>
 
@@ -4859,14 +4861,14 @@ export const KewPs4LedgerPage: React.FC = () => {
               setIsMobileMoreActionsOpen(false)
               openBringForwardModal()
             }}
-            className="w-full text-left p-3.5 rounded-2xl bg-slate-50 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 text-xs font-bold text-slate-800 flex items-center gap-3 transition-all cursor-pointer"
+            className="w-full text-left p-3.5 rounded-2xl bg-subtle/50 hover:bg-blue-500/10 border border-border-default hover:border-blue-500/20 text-xs font-bold text-text-primary flex items-center gap-3 transition-colors cursor-pointer"
           >
             <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
               <FastForward className="w-4 h-4" />
             </div>
             <div>
-              <div className="font-extrabold text-slate-900">Bawa Ke Hadapan (Bring Forward)</div>
-              <div className="text-[10px] text-slate-500">Bawa baki akhir dari bulan/tahun lepas</div>
+              <div className="font-extrabold text-text-primary">Bawa Ke Hadapan (Bring Forward)</div>
+              <div className="text-[10px] text-text-muted">Bawa baki akhir dari bulan/tahun lepas</div>
             </div>
           </button>
 
@@ -4876,14 +4878,14 @@ export const KewPs4LedgerPage: React.FC = () => {
               setIsMobileMoreActionsOpen(false)
               openClearModal()
             }}
-            className="w-full text-left p-3.5 rounded-2xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-xs font-bold text-amber-950 flex items-center gap-3 transition-all cursor-pointer"
+            className="w-full text-left p-3.5 rounded-2xl bg-amber-500/10 hover:bg-amber-100 border border-amber-500/20 text-xs font-bold text-amber-400 dark:text-amber-300 font-bold flex items-center gap-3 transition-colors cursor-pointer"
           >
-            <div className="w-8 h-8 rounded-xl bg-amber-200 text-amber-900 flex items-center justify-center shrink-0">
+            <div className="w-8 h-8 rounded-xl bg-amber-200 text-amber-400 dark:text-amber-300 font-bold flex items-center justify-center shrink-0">
               <Lock className="w-4 h-4" />
             </div>
             <div>
-              <div className="font-extrabold text-amber-950">Set Semula Ledger</div>
-              <div className="text-[10px] text-amber-800">Padam rekod transaksi untuk bermula semula (Kata laluan)</div>
+              <div className="font-extrabold text-amber-400 dark:text-amber-300 font-bold">Set Semula Ledger</div>
+              <div className="text-[10px] text-amber-400">Padam rekod transaksi untuk bermula semula (Kata laluan)</div>
             </div>
           </button>
 
@@ -4894,14 +4896,14 @@ export const KewPs4LedgerPage: React.FC = () => {
                 setIsMobileMoreActionsOpen(false)
                 setIsResetAuditModalOpen(true)
               }}
-              className="w-full text-left p-3.5 rounded-2xl bg-purple-50 hover:bg-purple-100 border border-purple-200 text-xs font-bold text-purple-950 flex items-center gap-3 transition-all cursor-pointer"
+              className="w-full text-left p-3.5 rounded-2xl bg-indigo-500/10 hover:bg-purple-100 border border-indigo-500/20 text-xs font-bold text-indigo-400 dark:text-indigo-300 font-bold flex items-center gap-3 transition-colors cursor-pointer"
             >
-              <div className="w-8 h-8 rounded-xl bg-purple-200 text-purple-900 flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-purple-200 text-indigo-400 dark:text-indigo-300 font-bold flex items-center justify-center shrink-0">
                 <History className="w-4 h-4" />
               </div>
               <div>
-                <div className="font-extrabold text-purple-950">Sejarah Log Reset ({resetAuditLogs.length})</div>
-                <div className="text-[10px] text-purple-800">Lihat rekod pemadaman ledger terdahulu</div>
+                <div className="font-extrabold text-indigo-400 dark:text-indigo-300 font-bold">Sejarah Log Reset ({resetAuditLogs.length})</div>
+                <div className="text-[10px] text-indigo-400">Lihat rekod pemadaman ledger terdahulu</div>
               </div>
             </button>
           )}
@@ -4921,16 +4923,16 @@ export const KewPs4LedgerPage: React.FC = () => {
         title="Imbas QR Code Stok & Transaksi Pantas"
         maxWidth="2xl"
       >
-        <div className="space-y-6 text-slate-800">
+        <div className="space-y-6 text-text-primary">
           
           {/* SCAN TABS */}
-          <div className="flex border-b border-slate-100">
+          <div className="flex border-b border-border-subtle">
             <button
               onClick={() => setScanTab('camera')}
-              className={`flex-1 py-2.5 text-xs font-bold flex items-center justify-center gap-2 border-b-2 transition-all ${
+              className={`flex-1 py-2.5 text-xs font-bold flex items-center justify-center gap-2 border-b-2 transition-colors ${
                 scanTab === 'camera' 
-                  ? 'border-teal-600 text-teal-700 bg-teal-50/30' 
-                  : 'border-transparent text-slate-400 hover:text-slate-600'
+                  ? 'border-teal-600 text-teal-700 bg-accent-base/10' 
+                  : 'border-transparent text-slate-400 hover:text-text-muted'
               }`}
             >
               <Camera className="w-4 h-4" />
@@ -4938,10 +4940,10 @@ export const KewPs4LedgerPage: React.FC = () => {
             </button>
             <button
               onClick={() => setScanTab('manual')}
-              className={`flex-1 py-2.5 text-xs font-bold flex items-center justify-center gap-2 border-b-2 transition-all ${
+              className={`flex-1 py-2.5 text-xs font-bold flex items-center justify-center gap-2 border-b-2 transition-colors ${
                 scanTab === 'manual' 
-                  ? 'border-teal-600 text-teal-700 bg-teal-50/30' 
-                  : 'border-transparent text-slate-400 hover:text-slate-600'
+                  ? 'border-teal-600 text-teal-700 bg-accent-base/10' 
+                  : 'border-transparent text-slate-400 hover:text-text-muted'
               }`}
             >
               <Search className="w-4 h-4" />
@@ -4974,7 +4976,7 @@ export const KewPs4LedgerPage: React.FC = () => {
           {/* TAB 2: MANUAL KEY-IN */}
           {scanTab === 'manual' && (
             <form onSubmit={handleManualSearch} className="space-y-3">
-              <label className="block text-xs font-bold text-slate-700">Masukkan Kod Item / QR Payload</label>
+              <label className="block text-xs font-bold text-text-secondary">Masukkan Kod Item / QR Payload</label>
               <div className="flex gap-2">
                 <Input
                   placeholder="Contoh: DR-001 atau MYINV:DRUG:id:code"
@@ -4992,7 +4994,7 @@ export const KewPs4LedgerPage: React.FC = () => {
           {/* STATUS NOTIFICATION MESSAGE */}
           {scanStatus && (
             <div className={`p-3.5 rounded-2xl border flex items-center gap-2 text-xs font-bold ${
-              scanStatus.type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-rose-50 border-rose-200 text-rose-900'
+              scanStatus.type === 'success' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 dark:text-emerald-300 font-bold' : 'bg-rose-500/10 border-rose-500/20 text-rose-400 dark:text-rose-300 font-bold'
             }`}>
               {scanStatus.type === 'success' ? <CheckCircle2 className="w-4 h-4 text-emerald-600" /> : <AlertTriangle className="w-4 h-4 text-rose-600" />}
               <span>{scanStatus.text}</span>
@@ -5001,11 +5003,11 @@ export const KewPs4LedgerPage: React.FC = () => {
 
           {/* QUICK TRANSACTION FORM FOR SCANNED ITEM */}
           {selectedItem && (
-            <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+            <div className="bg-subtle/50 border border-border-default rounded-2xl p-4 space-y-4">
+              <div className="flex items-center justify-between border-b border-border-default pb-2">
                 <div>
                   <span className="font-mono text-[10px] font-bold text-slate-400 block">{selectedItem.item_code}</span>
-                  <span className="font-black text-xs text-slate-800">{selectedItem.item_name}</span>
+                  <span className="font-black text-xs text-text-primary">{selectedItem.item_name}</span>
                 </div>
                 <Badge variant="outline" className="font-mono text-xs">
                   Baki: {selectedItem.current_stock} {selectedItem.unit_of_measure}
@@ -5019,10 +5021,10 @@ export const KewPs4LedgerPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setQuickTxType('receipt')}
-                    className={`flex-1 py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+                    className={`flex-1 py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition-colors ${
                       quickTxType === 'receipt'
                         ? 'bg-emerald-600 text-white border-emerald-600 shadow-sm'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
+                        : 'bg-surface text-text-secondary border-border-default hover:bg-subtle'
                     }`}
                   >
                     <ArrowDownCircle className="w-4 h-4" />
@@ -5032,10 +5034,10 @@ export const KewPs4LedgerPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setQuickTxType('issue')}
-                    className={`flex-1 py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition-all ${
+                    className={`flex-1 py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 transition-colors ${
                       quickTxType === 'issue'
                         ? 'bg-rose-600 text-white border-rose-600 shadow-sm'
-                        : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
+                        : 'bg-surface text-text-secondary border-border-default hover:bg-subtle'
                     }`}
                   >
                     <ArrowUpCircle className="w-4 h-4" />
@@ -5045,7 +5047,7 @@ export const KewPs4LedgerPage: React.FC = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Kuantiti ({selectedItem.unit_of_measure})</label>
+                    <label className="block text-[10px] font-bold text-text-muted uppercase mb-1">Kuantiti ({selectedItem.unit_of_measure})</label>
                     <Input
                       type="number"
                       min="1"
@@ -5058,7 +5060,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">No. Batch</label>
+                    <label className="block text-[10px] font-bold text-text-muted uppercase mb-1">No. Batch</label>
                     <Input
                       placeholder="BT-2026-X"
                       className="text-xs py-1.5 rounded-xl font-mono"
@@ -5068,7 +5070,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Jabatan / Wad</label>
+                    <label className="block text-[10px] font-bold text-text-muted uppercase mb-1">Jabatan / Wad</label>
                     <Select
                       className="text-xs py-1.5 rounded-xl"
                       value={quickDeptId}
@@ -5110,20 +5112,20 @@ export const KewPs4LedgerPage: React.FC = () => {
           />
 
           <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-            <div className="w-screen max-w-4xl bg-white shadow-2xl flex flex-col transform transition-all duration-300 ease-in-out animate-in slide-in-from-right">
+            <div className="w-screen max-w-4xl bg-surface shadow-2xl flex flex-col transform transition-colors duration-150 ease-in-out animate-in slide-in-from-right">
               
               {/* Drawer Top Header Strip */}
               <div className="h-1.5 bg-gradient-to-r from-sky-600 via-blue-600 to-indigo-600 shrink-0" />
 
               {/* Drawer Header */}
-              <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-gradient-to-b from-sky-50/60 to-slate-50/40 shrink-0">
+              <div className="p-6 border-b border-border-subtle flex items-center justify-between bg-gradient-to-b from-sky-50/60 to-slate-50/40 shrink-0">
                 <div className="flex items-center gap-3.5">
                   <div className="p-3 rounded-2xl bg-gradient-to-br from-sky-600 to-blue-700 text-white shadow-md shadow-sky-500/20">
                     <FastForward className="w-5 h-5" />
                   </div>
                   <div>
-                    <h2 className="text-base font-black text-slate-900 tracking-tight">Bawa Ke Hadapan Baki Ledger (Bring Forward)</h2>
-                    <p className="text-[11px] text-slate-500 font-medium">Bawa ke hadapan baki dari tahun/bulan lepas sebagai baki pembukaan tanpa perlu kunci masuk semula rekod lama.</p>
+                    <h2 className="text-base font-black text-text-primary tracking-tight">Bawa Ke Hadapan Baki Ledger (Bring Forward)</h2>
+                    <p className="text-[11px] text-text-muted font-medium">Bawa ke hadapan baki dari tahun/bulan lepas sebagai baki pembukaan tanpa perlu kunci masuk semula rekod lama.</p>
                   </div>
                 </div>
 
@@ -5133,14 +5135,14 @@ export const KewPs4LedgerPage: React.FC = () => {
                     setIsBringForwardModalOpen(false)
                     setBfStatus(null)
                   }}
-                  className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                  className="p-2 rounded-xl text-slate-400 hover:text-text-secondary hover:bg-subtle transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               {/* Drawer Scrollable Body */}
-              <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 text-slate-800">
+              <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 text-text-primary">
                 
                 {/* HEADER INFO BANNER */}
                 {selectedItem && (
@@ -5167,7 +5169,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                 {/* STATUS NOTIFICATION MESSAGE */}
                 {bfStatus && (
                   <div className={`p-4 rounded-2xl border flex items-center gap-3 text-xs font-bold ${
-                    bfStatus.type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-900 shadow-sm' : 'bg-rose-50 border-rose-200 text-rose-900 shadow-sm'
+                    bfStatus.type === 'success' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 dark:text-emerald-300 font-bold shadow-sm' : 'bg-rose-500/10 border-rose-500/20 text-rose-400 dark:text-rose-300 font-bold shadow-sm'
                   }`}>
                     {bfStatus.type === 'success' ? <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" /> : <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0" />}
                     <span>{bfStatus.text}</span>
@@ -5176,21 +5178,21 @@ export const KewPs4LedgerPage: React.FC = () => {
 
                 <form id="bring-forward-form" onSubmit={handleBringForwardSubmit} className="space-y-6">
                   
-                  <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 space-y-5">
+                  <div className="bg-subtle/50 border border-border-default rounded-2xl p-5 space-y-5">
                     
                     {/* PERIOD SELECTION TABS */}
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-2">
+                      <label className="block text-xs font-bold text-text-secondary mb-2">
                         Jenis Balance Brought Forward (Period / Type) <span className="text-rose-500">*</span>
                       </label>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                         <button
                           type="button"
                           onClick={() => handleBfPeriodTypeChange('previous_year')}
-                          className={`px-3 py-2.5 rounded-xl border text-xs font-bold transition-all text-center ${
+                          className={`px-3 py-2.5 rounded-xl border text-xs font-bold transition-colors text-center ${
                             bfPeriodType === 'previous_year'
                               ? 'bg-sky-600 text-white border-sky-600 shadow-sm'
-                              : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
+                              : 'bg-surface text-text-secondary border-border-default hover:bg-subtle'
                           }`}
                         >
                           📅 Tahun Lepas (Previous Year)
@@ -5198,10 +5200,10 @@ export const KewPs4LedgerPage: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => handleBfPeriodTypeChange('previous_month')}
-                          className={`px-3 py-2.5 rounded-xl border text-xs font-bold transition-all text-center ${
+                          className={`px-3 py-2.5 rounded-xl border text-xs font-bold transition-colors text-center ${
                             bfPeriodType === 'previous_month'
                               ? 'bg-sky-600 text-white border-sky-600 shadow-sm'
-                              : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
+                              : 'bg-surface text-text-secondary border-border-default hover:bg-subtle'
                           }`}
                         >
                           🗓 Bulan Lepas (Previous Month)
@@ -5209,10 +5211,10 @@ export const KewPs4LedgerPage: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => handleBfPeriodTypeChange('initial_balance')}
-                          className={`px-3 py-2.5 rounded-xl border text-xs font-bold transition-all text-center ${
+                          className={`px-3 py-2.5 rounded-xl border text-xs font-bold transition-colors text-center ${
                             bfPeriodType === 'initial_balance'
                               ? 'bg-sky-600 text-white border-sky-600 shadow-sm'
-                              : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
+                              : 'bg-surface text-text-secondary border-border-default hover:bg-subtle'
                           }`}
                         >
                           ⚡ Baki Pembukaan Asal
@@ -5223,7 +5225,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1">
+                        <label className="block text-xs font-bold text-text-secondary mb-1">
                           Kuantiti Balance Brought Forward <span className="text-rose-500">*</span>
                         </label>
                         <Input
@@ -5235,13 +5237,13 @@ export const KewPs4LedgerPage: React.FC = () => {
                           onChange={(e) => setBfQty(e.target.value)}
                           required
                         />
-                        <span className="text-[10px] text-slate-500 block mt-1">
+                        <span className="text-[10px] text-text-muted block mt-1">
                           Kuantiti baki penutup yang dibawa ke hadapan dari tempoh terdahulu.
                         </span>
                       </div>
 
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1">
+                        <label className="block text-xs font-bold text-text-secondary mb-1">
                           Tarikh Bawa Ke Hadapan <span className="text-rose-500">*</span>
                         </label>
                         <Input
@@ -5251,13 +5253,13 @@ export const KewPs4LedgerPage: React.FC = () => {
                           onChange={(e) => setBfDate(e.target.value)}
                           required
                         />
-                        <span className="text-[10px] text-slate-500 block mt-1">
+                        <span className="text-[10px] text-text-muted block mt-1">
                           Tarikh pembukaan rekod ledger tempoh baharu.
                         </span>
                       </div>
 
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1">
+                        <label className="block text-xs font-bold text-text-secondary mb-1">
                           No. Batch / Lot (BKH)
                         </label>
                         <Input
@@ -5266,13 +5268,13 @@ export const KewPs4LedgerPage: React.FC = () => {
                           value={bfBatchNum}
                           onChange={(e) => setBfBatchNum(e.target.value)}
                         />
-                        <span className="text-[10px] text-slate-500 block mt-1">
+                        <span className="text-[10px] text-text-muted block mt-1">
                           No. batch rujukan baki bawa ke hadapan.
                         </span>
                       </div>
 
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1">
+                        <label className="block text-xs font-bold text-text-secondary mb-1">
                           Expiry Date (Pilihan)
                         </label>
                         <Input
@@ -5281,7 +5283,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                           value={bfExpiryDate}
                           onChange={(e) => setBfExpiryDate(e.target.value)}
                         />
-                        <span className="text-[10px] text-slate-500 block mt-1">
+                        <span className="text-[10px] text-text-muted block mt-1">
                           Tarikh luput bagi batch baki pembukaan (jika ada).
                         </span>
                       </div>
@@ -5289,7 +5291,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                      <label className="block text-xs font-bold text-text-secondary mb-1">
                         Catatan / Sebab Bawa Ke Hadapan
                       </label>
                       <Input
@@ -5328,7 +5330,7 @@ export const KewPs4LedgerPage: React.FC = () => {
               </div>
 
               {/* Drawer Footer Bar */}
-              <div className="p-6 border-t border-slate-100 bg-slate-50/50 flex items-center justify-end gap-3 shrink-0">
+              <div className="p-6 border-t border-border-subtle bg-subtle/50 flex items-center justify-end gap-3 shrink-0">
                 <Button
                   type="button"
                   variant="outline"
@@ -5369,25 +5371,25 @@ export const KewPs4LedgerPage: React.FC = () => {
           />
 
           <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-            <div className="w-screen max-w-4xl bg-white shadow-2xl flex flex-col transform transition-all duration-300 ease-in-out animate-in slide-in-from-right">
+            <div className="w-screen max-w-4xl bg-surface shadow-2xl flex flex-col transform transition-colors duration-150 ease-in-out animate-in slide-in-from-right">
               
               {/* Drawer Top Header Strip */}
               <div className="h-1.5 bg-gradient-to-r from-emerald-600 via-teal-500 to-emerald-700 shrink-0" />
 
               {/* Drawer Header */}
-              <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-gradient-to-b from-emerald-50/70 to-slate-50/40 shrink-0">
+              <div className="p-6 border-b border-border-subtle flex items-center justify-between bg-gradient-to-b from-emerald-50/70 to-slate-50/40 shrink-0">
                 <div className="flex items-center gap-3.5">
                   <div className="p-3 rounded-2xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white shadow-md shadow-emerald-500/20">
                     <ShieldCheck className="w-5 h-5" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h2 className="text-base font-black text-slate-900 tracking-tight">Verifikasi Stor Tahunan (Store Verification)</h2>
-                      <Badge className="bg-emerald-100 text-emerald-900 border-emerald-300 text-[10px] font-black uppercase">
+                      <h2 className="text-base font-black text-text-primary tracking-tight">Verifikasi Stor Tahunan (Store Verification)</h2>
+                      <Badge className="bg-emerald-100 text-emerald-400 dark:text-emerald-300 font-bold border-emerald-300 text-[10px] font-black uppercase">
                         KEW.PS-14
                       </Badge>
                     </div>
-                    <p className="text-[11px] text-slate-500 font-medium">Pemeriksaan Bebas 3-Hala: Fizikal vs KEW.PS-4 vs PHiS oleh Pegawai Pemverifikasi Luar</p>
+                    <p className="text-[11px] text-text-muted font-medium">Pemeriksaan Bebas 3-Hala: Fizikal vs KEW.PS-4 vs PHiS oleh Pegawai Pemverifikasi Luar</p>
                   </div>
                 </div>
 
@@ -5397,14 +5399,14 @@ export const KewPs4LedgerPage: React.FC = () => {
                     setIsStoreVerificationModalOpen(false)
                     setVerificationStatus(null)
                   }}
-                  className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                  className="p-2 rounded-xl text-slate-400 hover:text-text-secondary hover:bg-subtle transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               {/* Drawer Scrollable Body */}
-              <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 text-slate-800">
+              <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 text-text-primary">
                 
                 {/* HEADER INFO BANNER */}
                 {selectedItem && (
@@ -5431,7 +5433,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                 {/* STATUS NOTIFICATION MESSAGE */}
                 {verificationStatus && (
                   <div className={`p-4 rounded-2xl border flex items-center gap-3 text-xs font-bold ${
-                    verificationStatus.type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-900 shadow-sm' : 'bg-rose-50 border-rose-200 text-rose-900 shadow-sm'
+                    verificationStatus.type === 'success' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 dark:text-emerald-300 font-bold shadow-sm' : 'bg-rose-500/10 border-rose-500/20 text-rose-400 dark:text-rose-300 font-bold shadow-sm'
                   }`}>
                     {verificationStatus.type === 'success' ? <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" /> : <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0" />}
                     <span>{verificationStatus.text}</span>
@@ -5441,55 +5443,55 @@ export const KewPs4LedgerPage: React.FC = () => {
                 <form id="store-verification-form" onSubmit={handleStoreVerificationSubmit} className="space-y-6">
                   
                   {/* SECTION 1: IDENTITI PEGAWAI PEMVERIFIKASI (MENGIKUT AKAUN LOG MASUK SEMASA) */}
-                  <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 space-y-4">
-                    <div className="flex items-center justify-between border-b border-slate-200/70 pb-2.5">
-                      <div className="flex items-center gap-2 text-xs font-black text-slate-900 uppercase tracking-wide">
+                  <div className="bg-subtle/50 border border-border-default rounded-2xl p-5 space-y-4">
+                    <div className="flex items-center justify-between border-b border-border-default pb-2.5">
+                      <div className="flex items-center gap-2 text-xs font-black text-text-primary uppercase tracking-wide">
                         <User className="w-4 h-4 text-emerald-600" />
                         <span>1. Maklumat Pegawai Pemverifikasi (Akaun Log Masuk Semasa)</span>
                       </div>
-                      <Badge className="bg-emerald-100 text-emerald-950 border-emerald-300 text-[9px] font-extrabold flex items-center gap-1">
+                      <Badge className="bg-emerald-100 text-emerald-400 dark:text-emerald-300 font-bold border-emerald-300 text-[9px] font-extrabold flex items-center gap-1">
                         <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                         <span>ID LOG MASUK DISAHKAN</span>
                       </Badge>
                     </div>
 
                     {/* Logged-in Verifier Identity Card */}
-                    <div className="bg-white border border-slate-200/90 rounded-2xl p-4 shadow-xs">
-                      <div className="flex items-start justify-between gap-3 border-b border-slate-100 pb-3">
+                    <div className="bg-surface border border-border-default rounded-2xl p-4 shadow-xs">
+                      <div className="flex items-start justify-between gap-3 border-b border-border-subtle pb-3">
                         <div className="flex items-center gap-3">
                           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-600 to-teal-700 text-white flex items-center justify-center font-black text-sm shadow-sm shrink-0">
                             {loggedInVerifierName.charAt(0).toUpperCase()}
                           </div>
                           <div>
-                            <div className="text-sm font-black text-slate-900 leading-tight">
+                            <div className="text-sm font-black text-text-primary leading-tight">
                               {loggedInVerifierName}
                             </div>
-                            <div className="text-[11px] text-slate-500 font-medium mt-0.5">
-                              No. Kad Pengenalan / No. Pekerja: <span className="font-mono font-bold text-slate-800">{loggedInVerifierStaffId}</span>
+                            <div className="text-[11px] text-text-muted font-medium mt-0.5">
+                              No. Kad Pengenalan / No. Pekerja: <span className="font-mono font-bold text-text-primary">{loggedInVerifierStaffId}</span>
                             </div>
                           </div>
                         </div>
 
-                        <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200">
+                        <span className="text-[10px] font-mono font-bold px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                           {user?.email || 'Sesi Log Masuk Aktif'}
                         </span>
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-3 text-xs">
-                        <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                        <div className="bg-subtle/50 p-2.5 rounded-xl border border-border-subtle">
                           <span className="text-[9px] font-bold text-slate-400 uppercase block">Jawatan &amp; Gred Pegawai</span>
-                          <span className="font-bold text-slate-800">{loggedInVerifierDesignation}</span>
+                          <span className="font-bold text-text-primary">{loggedInVerifierDesignation}</span>
                         </div>
-                        <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                        <div className="bg-subtle/50 p-2.5 rounded-xl border border-border-subtle">
                           <span className="text-[9px] font-bold text-slate-400 uppercase block">Jabatan / Unit Pegawai</span>
-                          <span className="font-bold text-emerald-900">{loggedInVerifierDepartment}</span>
+                          <span className="font-bold text-emerald-400 dark:text-emerald-300 font-bold">{loggedInVerifierDepartment}</span>
                         </div>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1">
+                        <label className="block text-xs font-bold text-text-secondary mb-1">
                           Tahun Verifikasi <span className="text-rose-500">*</span>
                         </label>
                         <Select
@@ -5504,7 +5506,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                       </div>
 
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1">
+                        <label className="block text-xs font-bold text-text-secondary mb-1">
                           Tarikh Semakan Verifikasi <span className="text-rose-500">*</span>
                         </label>
                         <Input
@@ -5519,19 +5521,19 @@ export const KewPs4LedgerPage: React.FC = () => {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1">
+                        <label className="block text-xs font-bold text-text-secondary mb-1">
                           No. Rujukan Surat Lantikan Pemverifikasi (Pilihan)
                         </label>
                         <Input
                           placeholder="Contoh: KKM/HQ/VER/2026/042"
                           value={appointmentRef}
                           onChange={(e) => setAppointmentRef(e.target.value)}
-                          className="text-xs py-2 rounded-xl font-mono text-slate-600"
+                          className="text-xs py-2 rounded-xl font-mono text-text-muted"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1">
+                        <label className="block text-xs font-bold text-text-secondary mb-1">
                           Pilihan Batch Stok (Pilihan)
                         </label>
                         <Select
@@ -5550,16 +5552,16 @@ export const KewPs4LedgerPage: React.FC = () => {
                     </div>
 
                     {/* STATUTORY DECLARATION CHECKBOX */}
-                    <div className="pt-2 border-t border-slate-200">
+                    <div className="pt-2 border-t border-border-default">
                       <label className="flex items-start gap-2.5 cursor-pointer select-none">
                         <input
                           type="checkbox"
                           checked={declarationConfirmed}
                           onChange={(e) => setDeclarationConfirmed(e.target.checked)}
-                          className="mt-0.5 w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500 cursor-pointer"
+                          className="mt-0.5 w-4 h-4 text-emerald-600 rounded border-border-default focus:ring-emerald-500 cursor-pointer"
                           required
                         />
-                        <span className="text-[11px] text-slate-700 font-bold leading-snug">
+                        <span className="text-[11px] text-text-secondary font-bold leading-snug">
                           Saya dengan ini memperakui bahawa semakan verifikasi stok fizikal, KEW.PS-4 dan PHiS ini disahkan secara rasmi menerusi akaun log masuk saya ({loggedInVerifierName}) selaras dengan tatacara verifikasi stor tahunan. <span className="text-rose-500">*</span>
                         </span>
                       </label>
@@ -5568,47 +5570,47 @@ export const KewPs4LedgerPage: React.FC = () => {
                   </div>
 
                   {/* SECTION 2: 3-WAY RECONCILIATION CARDS (PHYSICAL vs KEW.PS-4 vs PHIS) */}
-                  <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 space-y-4">
-                    <div className="flex items-center justify-between border-b border-slate-200/70 pb-2.5">
-                      <div className="flex items-center gap-2 text-xs font-black text-slate-900 uppercase tracking-wide">
+                  <div className="bg-subtle/50 border border-border-default rounded-2xl p-5 space-y-4">
+                    <div className="flex items-center justify-between border-b border-border-default pb-2.5">
+                      <div className="flex items-center gap-2 text-xs font-black text-text-primary uppercase tracking-wide">
                         <Scale className="w-4 h-4 text-emerald-600" />
                         <span>2. Semakan &amp; Padanan 3-Hala (Physical vs KEW.PS-4 vs PHiS)</span>
                       </div>
-                      <span className="text-[10px] font-mono text-slate-500 font-bold">UOM: {selectedItem?.unit_of_measure}</span>
+                      <span className="text-[10px] font-mono text-text-muted font-bold">UOM: {selectedItem?.unit_of_measure}</span>
                     </div>
 
                     {/* 3 Prominent Comparison Cards */}
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
                       
                       {/* 1. PHYSICAL STOCK */}
-                      <div className="bg-white p-4 rounded-2xl border-2 border-emerald-300 shadow-xs space-y-2">
+                      <div className="bg-surface p-4 rounded-2xl border-2 border-emerald-300 shadow-xs space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-black uppercase text-emerald-800 tracking-wider">
+                          <span className="text-[10px] font-black uppercase text-emerald-400 tracking-wider">
                             📦 1. Stok Fizikal
                           </span>
-                          <Badge className="bg-emerald-100 text-emerald-900 border-emerald-300 text-[8px] font-black uppercase">
+                          <Badge className="bg-emerald-100 text-emerald-400 dark:text-emerald-300 font-bold border-emerald-300 text-[8px] font-black uppercase">
                             DI RAK
                           </Badge>
                         </div>
-                        <label className="block text-[11px] font-bold text-slate-600">
+                        <label className="block text-[11px] font-bold text-text-muted">
                           Kiraan Fizikal Sebenar <span className="text-rose-500">*</span>
                         </label>
                         <Input
                           type="number"
                           min="0"
                           placeholder="0"
-                          className="text-lg py-2 rounded-xl font-mono font-black text-emerald-950 border-emerald-300 focus:ring-2 focus:ring-emerald-500 bg-emerald-50/30"
+                          className="text-lg py-2 rounded-xl font-mono font-black text-emerald-400 dark:text-emerald-300 font-bold border-emerald-300 focus:ring-2 focus:ring-emerald-500 bg-emerald-500/10"
                           value={physicalStockInput}
                           onChange={(e) => setPhysicalStockInput(e.target.value)}
                           required
                         />
-                        <p className="text-[10px] text-slate-500 leading-tight">
+                        <p className="text-[10px] text-text-muted leading-tight">
                           Kiraan manual unit fizikal di rak/petak simpanan stor.
                         </p>
                       </div>
 
                       {/* 2. KEW.PS-4 LEDGER STOCK */}
-                      <div className="bg-white p-4 rounded-2xl border border-sky-200 shadow-xs space-y-2">
+                      <div className="bg-surface p-4 rounded-2xl border border-sky-200 shadow-xs space-y-2">
                         <div className="flex items-center justify-between">
                           <span className="text-[10px] font-black uppercase text-sky-800 tracking-wider">
                             📋 2. Stok KEW.PS-4
@@ -5617,7 +5619,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                             KAD PETAK
                           </Badge>
                         </div>
-                        <label className="block text-[11px] font-bold text-slate-600">
+                        <label className="block text-[11px] font-bold text-text-muted">
                           Baki Kad Petak Semasa <span className="text-rose-500">*</span>
                         </label>
                         <Input
@@ -5629,34 +5631,34 @@ export const KewPs4LedgerPage: React.FC = () => {
                           onChange={(e) => setKewPs4StockInput(e.target.value)}
                           required
                         />
-                        <p className="text-[10px] text-slate-500 leading-tight">
+                        <p className="text-[10px] text-text-muted leading-tight">
                           Baki rekod lejar kad petak (Auto-isi dari lejar semasa).
                         </p>
                       </div>
 
                       {/* 3. PHIS SYSTEM STOCK */}
-                      <div className="bg-white p-4 rounded-2xl border border-purple-200 shadow-xs space-y-2">
+                      <div className="bg-surface p-4 rounded-2xl border border-indigo-500/20 shadow-xs space-y-2">
                         <div className="flex items-center justify-between">
-                          <span className="text-[10px] font-black uppercase text-purple-800 tracking-wider">
+                          <span className="text-[10px] font-black uppercase text-indigo-400 tracking-wider">
                             💻 3. Stok PHiS
                           </span>
-                          <Badge className="bg-purple-100 text-purple-900 border-purple-300 text-[8px] font-black uppercase">
+                          <Badge className="bg-purple-100 text-indigo-400 dark:text-indigo-300 font-bold border-purple-300 text-[8px] font-black uppercase">
                             SISTEM PHIS
                           </Badge>
                         </div>
-                        <label className="block text-[11px] font-bold text-slate-600">
+                        <label className="block text-[11px] font-bold text-text-muted">
                           Baki Sistem Farmasi PHiS <span className="text-rose-500">*</span>
                         </label>
                         <Input
                           type="number"
                           min="0"
                           placeholder="0"
-                          className="text-lg py-2 rounded-xl font-mono font-black text-purple-950 border-purple-300 focus:ring-2 focus:ring-purple-500 bg-purple-50/30"
+                          className="text-lg py-2 rounded-xl font-mono font-black text-indigo-400 dark:text-indigo-300 font-bold border-purple-300 focus:ring-2 focus:ring-purple-500 bg-indigo-500/10"
                           value={phisStockInput}
                           onChange={(e) => setPhisStockInput(e.target.value)}
                           required
                         />
-                        <p className="text-[10px] text-slate-500 leading-tight">
+                        <p className="text-[10px] text-text-muted leading-tight">
                           Baki dalam Sistem Maklumat Farmasi (Portal PHiS).
                         </p>
                       </div>
@@ -5683,8 +5685,8 @@ export const KewPs4LedgerPage: React.FC = () => {
                         <div className="space-y-3 pt-1">
                           <div className={`p-4 rounded-2xl border ${
                             is3WayTally 
-                              ? 'bg-emerald-50/90 border-emerald-300 text-emerald-950' 
-                              : 'bg-amber-50/90 border-amber-300 text-amber-950'
+                              ? 'bg-emerald-500/10 border-emerald-300 text-emerald-400 dark:text-emerald-300 font-bold' 
+                              : 'bg-amber-500/10 border-amber-300 text-amber-400 dark:text-amber-300 font-bold'
                           }`}>
                             <div className="flex items-center justify-between gap-3">
                               <div className="flex items-center gap-3">
@@ -5714,21 +5716,21 @@ export const KewPs4LedgerPage: React.FC = () => {
                             </div>
 
                             {/* Variance breakdown strip */}
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mt-3.5 pt-3 border-t border-slate-200/80 text-xs">
-                              <div className="bg-white/80 p-2.5 rounded-xl border border-slate-200 flex items-center justify-between">
-                                <span className="text-[10px] font-bold text-slate-600">Fizikal vs KEW.PS-4:</span>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 mt-3.5 pt-3 border-t border-border-default text-xs">
+                              <div className="bg-surface p-2.5 rounded-xl border border-border-default flex items-center justify-between">
+                                <span className="text-[10px] font-bold text-text-muted">Fizikal vs KEW.PS-4:</span>
                                 <span className={`font-mono font-black ${diffPhysKew === 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
                                   {diffPhysKew === 0 ? '✓ Tally (0)' : `${diffPhysKew > 0 ? `+${diffPhysKew}` : diffPhysKew} ${selectedItem?.unit_of_measure}`}
                                 </span>
                               </div>
-                              <div className="bg-white/80 p-2.5 rounded-xl border border-slate-200 flex items-center justify-between">
-                                <span className="text-[10px] font-bold text-slate-600">Fizikal vs PHiS:</span>
+                              <div className="bg-surface p-2.5 rounded-xl border border-border-default flex items-center justify-between">
+                                <span className="text-[10px] font-bold text-text-muted">Fizikal vs PHiS:</span>
                                 <span className={`font-mono font-black ${diffPhysPhis === 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
                                   {diffPhysPhis === 0 ? '✓ Tally (0)' : `${diffPhysPhis > 0 ? `+${diffPhysPhis}` : diffPhysPhis} ${selectedItem?.unit_of_measure}`}
                                 </span>
                               </div>
-                              <div className="bg-white/80 p-2.5 rounded-xl border border-slate-200 flex items-center justify-between">
-                                <span className="text-[10px] font-bold text-slate-600">KEW.PS-4 vs PHiS:</span>
+                              <div className="bg-surface p-2.5 rounded-xl border border-border-default flex items-center justify-between">
+                                <span className="text-[10px] font-bold text-text-muted">KEW.PS-4 vs PHiS:</span>
                                 <span className={`font-mono font-black ${diffKewPhis === 0 ? 'text-emerald-700' : 'text-purple-700'}`}>
                                   {diffKewPhis === 0 ? '✓ Tally (0)' : `${diffKewPhis > 0 ? `+${diffKewPhis}` : diffKewPhis} ${selectedItem?.unit_of_measure}`}
                                 </span>
@@ -5738,19 +5740,19 @@ export const KewPs4LedgerPage: React.FC = () => {
 
                           {/* Stock sync checkbox if discrepancy */}
                           {!is3WayTally && (
-                            <div className="p-3.5 bg-blue-50/80 border border-blue-200 rounded-xl">
+                            <div className="p-3.5 bg-blue-500/10 border border-blue-500/20 rounded-xl">
                               <label className="flex items-start gap-2.5 cursor-pointer">
                                 <input
                                   type="checkbox"
                                   checked={adjustKewPs4}
                                   onChange={(e) => setAdjustKewPs4(e.target.checked)}
-                                  className="mt-0.5 w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500 cursor-pointer"
+                                  className="mt-0.5 w-4 h-4 text-blue-600 rounded border-border-default focus:ring-blue-500 cursor-pointer"
                                 />
                                 <div className="text-xs">
-                                  <span className="font-bold text-blue-950 block">
+                                  <span className="font-bold text-blue-400 dark:text-blue-300 font-bold block">
                                     Laras Baki Kad Petak KEW.PS-4 mengikut Kiraan Fizikal ({validP} {selectedItem?.unit_of_measure})
                                   </span>
-                                  <span className="text-[11px] text-blue-800 font-medium">
+                                  <span className="text-[11px] text-blue-400 font-medium">
                                     Sistem akan merekodkan transaksi verifikasi audit dan mengemas kini baki berjalan dalam kad petak.
                                   </span>
                                 </div>
@@ -5764,7 +5766,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                     {/* SECTION 3: REMARKS & RECOMMENDATIONS */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                       <div>
-                        <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">
+                        <label className="block text-[10px] font-bold text-text-muted uppercase mb-1">
                           Catatan &amp; Penjelasan Pemverifikasi Luar
                         </label>
                         <Input
@@ -5776,7 +5778,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                       </div>
 
                       <div>
-                        <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">
+                        <label className="block text-[10px] font-bold text-text-muted uppercase mb-1">
                           Syor / Cadangan Tindakan Susulan
                         </label>
                         <Input
@@ -5795,12 +5797,12 @@ export const KewPs4LedgerPage: React.FC = () => {
               </div>
 
               {/* Drawer Footer Bar */}
-              <div className="p-6 border-t border-slate-100 bg-slate-50/50 flex flex-wrap items-center justify-between gap-3 shrink-0">
+              <div className="p-6 border-t border-border-subtle bg-subtle/50 flex flex-wrap items-center justify-between gap-3 shrink-0">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => handlePrintVerificationCertificate()}
-                  className="rounded-xl text-xs font-bold px-4 py-2.5 gap-2 border-emerald-300 text-emerald-800 hover:bg-emerald-50 cursor-pointer"
+                  className="rounded-xl text-xs font-bold px-4 py-2.5 gap-2 border-emerald-300 text-emerald-400 hover:bg-emerald-500/10 cursor-pointer"
                 >
                   <Printer className="w-4 h-4 text-emerald-600" />
                   <span>Cetak Sijil KEW.PS-14</span>
@@ -5848,20 +5850,20 @@ export const KewPs4LedgerPage: React.FC = () => {
           />
 
           <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-            <div className="w-screen max-w-4xl bg-white shadow-2xl flex flex-col transform transition-all duration-300 ease-in-out animate-in slide-in-from-right">
+            <div className="w-screen max-w-4xl bg-surface shadow-2xl flex flex-col transform transition-colors duration-150 ease-in-out animate-in slide-in-from-right">
               
               {/* Drawer Top Header Strip */}
               <div className="h-1.5 bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 shrink-0" />
 
               {/* Drawer Header */}
-              <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-gradient-to-b from-indigo-50/60 to-slate-50/40 shrink-0">
+              <div className="p-6 border-b border-border-subtle flex items-center justify-between bg-gradient-to-b from-indigo-50/60 to-slate-50/40 shrink-0">
                 <div className="flex items-center gap-3.5">
                   <div className="p-3 rounded-2xl bg-gradient-to-br from-indigo-600 to-indigo-800 text-white shadow-md shadow-indigo-500/20">
                     <ClipboardCheck className="w-5 h-5" />
                   </div>
                   <div>
-                    <h2 className="text-base font-black text-slate-900 tracking-tight">Semakan & Penemuan Stok (Check & Found)</h2>
-                    <p className="text-[11px] text-slate-500 font-medium">Borang Verifikasi Stok Fizikal & Pelarasan Penemuan KEW.PS-4</p>
+                    <h2 className="text-base font-black text-text-primary tracking-tight">Semakan & Penemuan Stok (Check & Found)</h2>
+                    <p className="text-[11px] text-text-muted font-medium">Borang Verifikasi Stok Fizikal & Pelarasan Penemuan KEW.PS-4</p>
                   </div>
                 </div>
 
@@ -5871,14 +5873,14 @@ export const KewPs4LedgerPage: React.FC = () => {
                     setIsCheckFoundModalOpen(false)
                     setCheckFoundStatus(null)
                   }}
-                  className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+                  className="p-2 rounded-xl text-slate-400 hover:text-text-secondary hover:bg-subtle transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               {/* Drawer Scrollable Body */}
-              <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 text-slate-800">
+              <div className="flex-1 overflow-y-auto p-6 md:p-8 space-y-6 text-text-primary">
                 
                 {/* HEADER INFO BANNER */}
                 {selectedItem && (
@@ -5905,7 +5907,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                 {/* STATUS NOTIFICATION MESSAGE */}
                 {checkFoundStatus && (
                   <div className={`p-4 rounded-2xl border flex items-center gap-3 text-xs font-bold ${
-                    checkFoundStatus.type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-900 shadow-sm' : 'bg-rose-50 border-rose-200 text-rose-900 shadow-sm'
+                    checkFoundStatus.type === 'success' ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 dark:text-emerald-300 font-bold shadow-sm' : 'bg-rose-500/10 border-rose-500/20 text-rose-400 dark:text-rose-300 font-bold shadow-sm'
                   }`}>
                     {checkFoundStatus.type === 'success' ? <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" /> : <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0" />}
                     <span>{checkFoundStatus.text}</span>
@@ -5915,30 +5917,30 @@ export const KewPs4LedgerPage: React.FC = () => {
                 <form id="check-found-form" onSubmit={handleCheckFoundSubmit} className="space-y-6">
                   
                   {/* INPUT FIELD & DYNAMIC DISCREPANCY PREVIEW */}
-                  <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-5 space-y-5">
+                  <div className="bg-subtle/50 border border-border-default rounded-2xl p-5 space-y-5">
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1">
+                        <label className="block text-xs font-bold text-text-secondary mb-1">
                           Kuantiti Fizikal Dikira (Physical Count) <span className="text-rose-500">*</span>
                         </label>
                         <Input
                           type="number"
                           min="0"
                           placeholder="Masukkan jumlah stok fizikal di rak"
-                          className="text-base py-2.5 rounded-xl font-mono font-black text-indigo-900 border-indigo-200 focus:ring-2 focus:ring-indigo-500"
+                          className="text-base py-2.5 rounded-xl font-mono font-black text-indigo-400 dark:text-indigo-300 font-bold border-indigo-500/20 focus:ring-2 focus:ring-indigo-500"
                           value={checkFoundPhysicalQty}
                           onChange={(e) => setCheckFoundPhysicalQty(e.target.value)}
                           required
                         />
-                        <span className="text-[10px] text-slate-500 block mt-1">
+                        <span className="text-[10px] text-text-muted block mt-1">
                           Jumlah fizikal yang dikira secara manual di stor/rak.
                         </span>
                       </div>
 
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1">
+                        <label className="block text-xs font-bold text-text-secondary mb-1">
                           No. Batch Semakan (Pilihan)
                         </label>
                         <Select
@@ -5953,7 +5955,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                             </option>
                           ))}
                         </Select>
-                        <span className="text-[10px] text-slate-500 block mt-1">
+                        <span className="text-[10px] text-text-muted block mt-1">
                           Pilih batch spesifik jika semakan dilakukan per-batch.
                         </span>
                       </div>
@@ -5971,10 +5973,10 @@ export const KewPs4LedgerPage: React.FC = () => {
                       return (
                         <div className={`p-4.5 rounded-2xl border space-y-2.5 ${
                           isMatched 
-                            ? 'bg-emerald-50/80 border-emerald-200 text-emerald-950' 
+                            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 dark:text-emerald-300 font-bold' 
                             : isSurplus 
-                            ? 'bg-indigo-50/80 border-indigo-200 text-indigo-950' 
-                            : 'bg-rose-50/80 border-rose-200 text-rose-950'
+                            ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400 dark:text-indigo-300 font-bold' 
+                            : 'bg-rose-500/10 border-rose-500/20 text-rose-400 dark:text-rose-300 font-bold'
                         }`}>
                           <div className="flex items-center justify-between text-xs font-bold">
                             <span className="uppercase tracking-wider text-[11px]">Keputusan Semakan Fizikal:</span>
@@ -5989,9 +5991,9 @@ export const KewPs4LedgerPage: React.FC = () => {
                             </Badge>
                           </div>
 
-                          <div className="grid grid-cols-2 gap-4 text-xs font-mono pt-2 border-t border-slate-200/60">
+                          <div className="grid grid-cols-2 gap-4 text-xs font-mono pt-2 border-t border-border-default">
                             <div>
-                              <span className="text-[10px] text-slate-500 font-sans block uppercase font-bold">Perbezaan (Discrepancy):</span>
+                              <span className="text-[10px] text-text-muted font-sans block uppercase font-bold">Perbezaan (Discrepancy):</span>
                               <span className={`text-lg font-black ${
                                 isMatched ? 'text-emerald-700' : isSurplus ? 'text-indigo-700' : 'text-rose-700'
                               }`}>
@@ -5999,8 +6001,8 @@ export const KewPs4LedgerPage: React.FC = () => {
                               </span>
                             </div>
                             <div>
-                              <span className="text-[10px] text-slate-500 font-sans block uppercase font-bold">Baki Baharu Sistem:</span>
-                              <span className="text-lg font-black text-slate-900">
+                              <span className="text-[10px] text-text-muted font-sans block uppercase font-bold">Baki Baharu Sistem:</span>
+                              <span className="text-lg font-black text-text-primary">
                                 {validPhys} {selectedItem?.unit_of_measure}
                               </span>
                             </div>
@@ -6013,7 +6015,7 @@ export const KewPs4LedgerPage: React.FC = () => {
 
 
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase mb-1">Catatan / Sebab Semakan KEW.PS-4</label>
+                    <label className="block text-[10px] font-bold text-text-muted uppercase mb-1">Catatan / Sebab Semakan KEW.PS-4</label>
                     <Input
                       placeholder="Contoh: Semakan Stok Fizikal Bulanan / Verifikasi Pemeriksa Stok"
                       className="text-xs py-2 rounded-xl"
@@ -6027,7 +6029,7 @@ export const KewPs4LedgerPage: React.FC = () => {
               </div>
 
               {/* Drawer Footer Bar */}
-              <div className="p-6 border-t border-slate-100 bg-slate-50/50 flex items-center justify-end gap-3 shrink-0">
+              <div className="p-6 border-t border-border-subtle bg-subtle/50 flex items-center justify-end gap-3 shrink-0">
                 <Button
                   type="button"
                   variant="outline"
@@ -6067,26 +6069,26 @@ export const KewPs4LedgerPage: React.FC = () => {
           />
 
           <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-            <div className="w-screen max-w-5xl bg-white shadow-2xl flex flex-col transform transition-all duration-300 ease-in-out animate-in slide-in-from-right">
+            <div className="w-screen max-w-5xl bg-surface shadow-2xl flex flex-col transform transition-colors duration-150 ease-in-out animate-in slide-in-from-right">
               
               {/* Drawer Top Header Strip */}
               <div className="h-1.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-indigo-500 shrink-0" />
 
               {/* Drawer Header */}
-              <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-gradient-to-b from-emerald-50/50 to-slate-50/50 shrink-0">
+              <div className="p-6 border-b border-border-subtle flex items-center justify-between bg-gradient-to-b from-emerald-50/50 to-slate-50/50 shrink-0">
                 <div className="flex items-center gap-3.5">
                   <div className="p-3 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-md shadow-emerald-500/20">
                     <PlusCircle className="w-5 h-5" />
                   </div>
                   <div>
-                    <h2 className="text-base font-black text-slate-900 tracking-tight">Penerimaan Stok Baru</h2>
-                    <p className="text-[11px] text-slate-500 font-medium">Borang Rekod Penerimaan Stok Pembekal & Pindahan Inter-Fasiliti</p>
+                    <h2 className="text-base font-black text-text-primary tracking-tight">Penerimaan Stok Baru</h2>
+                    <p className="text-[11px] text-text-muted font-medium">Borang Rekod Penerimaan Stok Pembekal & Pindahan Inter-Fasiliti</p>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsReceiveModalOpen(false)}
-                  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all"
+                  className="p-2 text-slate-400 hover:text-text-muted hover:bg-subtle rounded-xl transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -6099,30 +6101,30 @@ export const KewPs4LedgerPage: React.FC = () => {
                   {/* LEFT COLUMN (COL 7): Input Form */}
                   <div className="lg:col-span-7 space-y-5">
                     {selectedItem && (
-                      <div className="bg-emerald-50/80 border border-emerald-200/90 rounded-2xl p-4 space-y-2 shadow-sm relative overflow-hidden">
-                        <div className="absolute -right-4 -bottom-4 opacity-10 text-emerald-900 pointer-events-none">
+                      <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4 space-y-2 shadow-sm relative overflow-hidden">
+                        <div className="absolute -right-4 -bottom-4 opacity-10 text-emerald-400 dark:text-emerald-300 font-bold pointer-events-none">
                           <Package className="w-24 h-24" />
                         </div>
-                        <div className="flex items-center justify-between text-[10px] font-black text-emerald-800 uppercase tracking-wider">
+                        <div className="flex items-center justify-between text-[10px] font-black text-emerald-400 uppercase tracking-wider">
                           <span className="flex items-center gap-1.5"><Sparkles className="w-3 h-3 text-emerald-600" /> Item Target</span>
-                          <Badge variant="outline" className="font-mono text-[10px] bg-white/80 border-emerald-300 font-bold">
+                          <Badge variant="outline" className="font-mono text-[10px] bg-surface border-emerald-300 font-bold">
                             {selectedItem.item_code}
                           </Badge>
                         </div>
-                        <p className="text-sm font-black text-slate-900 leading-snug">{selectedItem.item_name}</p>
-                        <div className="flex items-center gap-3 text-[11px] text-slate-600 font-medium pt-1 border-t border-emerald-200/50">
+                        <p className="text-sm font-black text-text-primary leading-snug">{selectedItem.item_name}</p>
+                        <div className="flex items-center gap-3 text-[11px] text-text-muted font-medium pt-1 border-t border-emerald-500/20">
                           <span>Baki Semasa: <strong className="text-emerald-700 font-mono font-bold">{activeLedgerStock} {selectedItem.unit_of_measure}</strong></span>
                           <span>•</span>
-                          <span>Kategori: <strong className="uppercase font-bold text-slate-700">{selectedItem.item_type === 'drug' ? 'Ubat' : 'Bukan Ubat'}</strong></span>
+                          <span>Kategori: <strong className="uppercase font-bold text-text-secondary">{selectedItem.item_type === 'drug' ? 'Ubat' : 'Bukan Ubat'}</strong></span>
                         </div>
                       </div>
                     )}
 
                     {receiveStatus && (
-                      <div className={`p-3.5 rounded-2xl text-xs font-bold flex items-center gap-2.5 shadow-sm transition-all ${
+                      <div className={`p-3.5 rounded-2xl text-xs font-bold flex items-center gap-2.5 shadow-sm transition-colors ${
                         receiveStatus.type === 'success' 
-                          ? 'bg-emerald-50 text-emerald-900 border border-emerald-200' 
-                          : 'bg-rose-50 text-rose-900 border border-rose-200'
+                          ? 'bg-emerald-500/10 text-emerald-400 dark:text-emerald-300 font-bold border border-emerald-500/20' 
+                          : 'bg-rose-500/10 text-rose-400 dark:text-rose-300 font-bold border border-rose-500/20'
                       }`}>
                         {receiveStatus.type === 'success' ? <CheckCircle2 className="w-4.5 h-4.5 text-emerald-600 shrink-0" /> : <AlertTriangle className="w-4.5 h-4.5 text-rose-600 shrink-0" />}
                         <span>{receiveStatus.text}</span>
@@ -6132,8 +6134,8 @@ export const KewPs4LedgerPage: React.FC = () => {
                     <form id="receive-form" onSubmit={handleReceiveSubmit} className="space-y-5 text-xs">
                       
                       {/* Field 1: Diterima Daripada / Received From */}
-                      <div className="space-y-2.5 bg-slate-50/70 p-3.5 rounded-2xl border border-slate-200/80">
-                        <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wide flex items-center justify-between">
+                      <div className="space-y-2.5 bg-subtle/50 p-3.5 rounded-2xl border border-border-default">
+                        <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-wide flex items-center justify-between">
                           <span className="flex items-center gap-1.5">
                             <Truck className="w-3.5 h-3.5 text-emerald-600" />
                             1. Diterima Daripada (Received From) <span className="text-rose-500">*</span>
@@ -6152,10 +6154,10 @@ export const KewPs4LedgerPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => setReceiveSourceType('supplier')}
-                            className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold transition-all ${
+                            className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold transition-colors ${
                               receiveSourceType === 'supplier'
-                                ? 'bg-white text-emerald-700 shadow-sm border border-slate-200/50'
-                                : 'text-slate-600 hover:text-slate-900'
+                                ? 'bg-surface text-emerald-700 shadow-sm border border-border-default'
+                                : 'text-text-muted hover:text-text-primary'
                             }`}
                           >
                             <Building2 className="w-3.5 h-3.5" />
@@ -6164,10 +6166,10 @@ export const KewPs4LedgerPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => setReceiveSourceType('facility')}
-                            className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold transition-all ${
+                            className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold transition-colors ${
                               receiveSourceType === 'facility'
-                                ? 'bg-white text-emerald-700 shadow-sm border border-slate-200/50'
-                                : 'text-slate-600 hover:text-slate-900'
+                                ? 'bg-surface text-emerald-700 shadow-sm border border-border-default'
+                                : 'text-text-muted hover:text-text-primary'
                             }`}
                           >
                             <Building className="w-3.5 h-3.5" />
@@ -6178,25 +6180,25 @@ export const KewPs4LedgerPage: React.FC = () => {
                         {/* Dynamic Source Inputs */}
                         {receiveSourceType === 'supplier' ? (
                           isApplItem ? (
-                            <div className="p-3 bg-amber-50/90 rounded-xl border border-amber-300 space-y-1">
+                            <div className="p-3 bg-amber-500/10 rounded-xl border border-amber-300 space-y-1">
                               <div className="flex items-center gap-2">
-                                <span className="text-[11px] font-black text-amber-900 flex items-center gap-1">
+                                <span className="text-[11px] font-black text-amber-400 dark:text-amber-300 font-bold flex items-center gap-1">
                                   <Lock className="w-3 h-3 text-amber-700" /> Pembekal Kontrak APPL (Tetap):
                                 </span>
                               </div>
-                              <div className="flex items-center gap-2 text-xs font-black text-slate-900 pt-0.5">
+                              <div className="flex items-center gap-2 text-xs font-black text-text-primary pt-0.5">
                                 <Building2 className="w-4 h-4 text-amber-700 shrink-0" />
                                 <span>PHARMANIAGA LOGISTICS SDN BHD</span>
-                                <span className="text-[10px] font-mono text-amber-800 bg-amber-200/80 px-1.5 py-0.5 rounded font-bold">SUP-PHAR-001</span>
+                                <span className="text-[10px] font-mono text-amber-400 bg-amber-200/80 px-1.5 py-0.5 rounded font-bold">SUP-PHAR-001</span>
                               </div>
-                              <p className="text-[10px] text-amber-800 font-medium pt-0.5">
+                              <p className="text-[10px] text-amber-400 font-medium pt-0.5">
                                 Item di bawah skim APPL sentiasa diterima daripada pembekal utama Pharmaniaga.
                               </p>
                             </div>
                           ) : (
                             <div className="space-y-2 pt-1">
                               <Select
-                                className="text-xs py-2.5 rounded-xl border-slate-200 bg-white font-medium focus:border-emerald-500 focus:ring-emerald-500/20"
+                                className="text-xs py-2.5 rounded-xl border-border-default bg-surface font-medium focus:border-emerald-500 focus:ring-emerald-500/20"
                                 value={receiveSupplierId}
                                 onChange={(e) => setReceiveSupplierId(e.target.value)}
                               >
@@ -6213,7 +6215,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                                 <div className="animate-in fade-in slide-in-from-top-1 duration-200">
                                   <Input
                                     placeholder="Masukkan Nama Pembekal..."
-                                    className="text-xs py-2 rounded-xl border-slate-200 bg-white font-medium"
+                                    className="text-xs py-2 rounded-xl border-border-default bg-surface font-medium"
                                     value={receiveCustomSupplier}
                                     onChange={(e) => setReceiveCustomSupplier(e.target.value)}
                                   />
@@ -6226,7 +6228,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                             <div className="relative">
                               <Input
                                 placeholder="Taip cth: Sipitang / Limbang / Beaufort / Papar..."
-                                className="text-xs py-2.5 rounded-xl border-slate-200 bg-white font-medium focus:border-emerald-500 focus:ring-emerald-500/20 pr-8"
+                                className="text-xs py-2.5 rounded-xl border-border-default bg-surface font-medium focus:border-emerald-500 focus:ring-emerald-500/20 pr-8"
                                 value={receiveFacilityName}
                                 onChange={(e) => {
                                   setReceiveFacilityName(e.target.value)
@@ -6241,7 +6243,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                                     setReceiveFacilityName('')
                                     setFacilitySearchFocused(false)
                                   }}
-                                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5"
+                                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-text-muted p-0.5"
                                 >
                                   <X className="w-3.5 h-3.5" />
                                 </button>
@@ -6250,8 +6252,8 @@ export const KewPs4LedgerPage: React.FC = () => {
 
                             {/* Dynamic Autocomplete Search Dropdown: Shows ONLY when typing */}
                             {facilitySearchFocused && receiveFacilityName.trim().length >= 1 && (
-                              <div className="absolute left-0 right-0 top-full mt-1 bg-white rounded-xl shadow-xl border border-slate-200/90 py-1.5 z-50 max-h-60 overflow-y-auto animate-in fade-in duration-150">
-                                <div className="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 flex items-center justify-between">
+                              <div className="absolute left-0 right-0 top-full mt-1 bg-surface rounded-xl shadow-xl border border-border-default py-1.5 z-50 max-h-60 overflow-y-auto animate-in fade-in duration-150">
+                                <div className="px-3 py-1.5 text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider border-b border-border-subtle flex items-center justify-between">
                                   <span>Fasiliti Kesihatan KKM ({filteredFacilities.length})</span>
                                   <span>Carian: "{receiveFacilityName}"</span>
                                 </div>
@@ -6265,13 +6267,13 @@ export const KewPs4LedgerPage: React.FC = () => {
                                         setReceiveFacilityName(fac.name)
                                         setFacilitySearchFocused(false)
                                       }}
-                                      className="w-full text-left px-3.5 py-2.5 hover:bg-emerald-50/80 transition-colors flex items-center justify-between group border-b border-slate-50 last:border-0"
+                                      className="w-full text-left px-3.5 py-2.5 hover:bg-emerald-500/10 transition-colors flex items-center justify-between group border-b border-slate-50 last:border-0"
                                     >
                                       <div className="min-w-0 pr-2">
-                                        <p className="text-xs font-bold text-slate-800 group-hover:text-emerald-800 truncate">
+                                        <p className="text-xs font-bold text-text-primary group-hover:text-emerald-400 truncate">
                                           {fac.name}
                                         </p>
-                                        <p className="text-[10px] text-slate-500 font-medium flex items-center gap-1 mt-0.5">
+                                        <p className="text-[10px] text-text-muted font-medium flex items-center gap-1 mt-0.5">
                                           <span className="font-bold text-emerald-700">{fac.type}</span>
                                           <span>•</span>
                                           <span>Daerah {fac.district}, {fac.state}</span>
@@ -6282,7 +6284,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                                   ))
                                 ) : (
                                   <div className="p-3 text-center space-y-1">
-                                    <p className="text-xs text-slate-600 font-medium">Tiada fasiliti ditemui untuk "{receiveFacilityName}"</p>
+                                    <p className="text-xs text-text-muted font-medium">Tiada fasiliti ditemui untuk "{receiveFacilityName}"</p>
                                     <button
                                       type="button"
                                       onClick={() => setFacilitySearchFocused(false)}
@@ -6300,13 +6302,13 @@ export const KewPs4LedgerPage: React.FC = () => {
 
                       {/* Field 2: Tarikh Terima */}
                       <div>
-                        <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1.5 flex items-center gap-1.5">
+                        <label className="block text-[11px] font-bold text-text-secondary uppercase mb-1.5 flex items-center gap-1.5">
                           <Calendar className="w-3.5 h-3.5 text-emerald-600" />
                           2. Tarikh Terima (Date Received) <span className="text-rose-500">*</span>
                         </label>
                         <Input
                           type="date"
-                          className="text-xs py-2.5 rounded-xl font-mono border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20"
+                          className="text-xs py-2.5 rounded-xl font-mono border-border-default focus:border-emerald-500 focus:ring-emerald-500/20"
                           value={receiveDate}
                           onChange={(e) => setReceiveDate(e.target.value)}
                           required
@@ -6315,7 +6317,7 @@ export const KewPs4LedgerPage: React.FC = () => {
 
                       {/* Field 3: Kuantiti Terima */}
                       <div>
-                        <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1.5 flex items-center justify-between">
+                        <label className="block text-[11px] font-bold text-text-secondary uppercase mb-1.5 flex items-center justify-between">
                           <span className="flex items-center gap-1.5">
                             <Package className="w-3.5 h-3.5 text-emerald-600" />
                             3. Kuantiti Terima <span className="text-rose-500">*</span>
@@ -6331,7 +6333,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                             type="number"
                             min="1"
                             placeholder="e.g. 500"
-                            className="text-xs py-2.5 rounded-xl font-mono font-bold pr-16 border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20"
+                            className="text-xs py-2.5 rounded-xl font-mono font-bold pr-16 border-border-default focus:border-emerald-500 focus:ring-emerald-500/20"
                             value={receiveQty}
                             onChange={(e) => setReceiveQty(e.target.value)}
                             required
@@ -6344,7 +6346,7 @@ export const KewPs4LedgerPage: React.FC = () => {
 
                       {/* Field 4: Pembungkusan */}
                       <div className="space-y-2">
-                        <label className="block text-[11px] font-bold text-slate-700 uppercase flex items-center gap-1.5">
+                        <label className="block text-[11px] font-bold text-text-secondary uppercase flex items-center gap-1.5">
                           <Layers className="w-3.5 h-3.5 text-emerald-600" />
                           4. Pembungkusan (Packaging)
                         </label>
@@ -6354,15 +6356,15 @@ export const KewPs4LedgerPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => { setReceivePackaging(selectedItem.packaging_description!); setReceivePackagingCustom('') }}
-                            className={`w-full text-left px-3.5 py-2.5 rounded-xl border transition-all ${
+                            className={`w-full text-left px-3.5 py-2.5 rounded-xl border transition-colors ${
                               receivePackaging === selectedItem.packaging_description && receivePackagingCustom === ''
-                                ? 'bg-emerald-50 border-emerald-400 shadow-sm'
-                                : 'bg-white border-slate-200 hover:border-slate-300'
+                                ? 'bg-emerald-500/10 border-emerald-400 shadow-sm'
+                                : 'bg-surface border-border-default hover:border-border-default'
                             }`}
                           >
                             <div className="flex items-center justify-between">
                               <div>
-                                <p className="text-xs font-black text-slate-900 uppercase tracking-wide">
+                                <p className="text-xs font-black text-text-primary uppercase tracking-wide">
                                   {selectedItem.unit_of_measure?.toUpperCase()}
                                 </p>
                                 <p className="text-[10px] text-blue-600 font-medium mt-0.5">
@@ -6380,15 +6382,15 @@ export const KewPs4LedgerPage: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => setReceivePackaging('OTHERS')}
-                          className={`w-full text-left px-3.5 py-2.5 rounded-xl border transition-all ${
+                          className={`w-full text-left px-3.5 py-2.5 rounded-xl border transition-colors ${
                             receivePackaging === 'OTHERS'
-                              ? 'bg-amber-50 border-amber-400 shadow-sm'
-                              : 'bg-white border-slate-200 hover:border-slate-300'
+                              ? 'bg-amber-500/10 border-amber-400 shadow-sm'
+                              : 'bg-surface border-border-default hover:border-border-default'
                           }`}
                         >
                           <div className="flex items-center justify-between">
                             <div>
-                              <p className="text-xs font-bold text-slate-700">Others (Lain-lain / Manual Input)</p>
+                              <p className="text-xs font-bold text-text-secondary">Others (Lain-lain / Manual Input)</p>
                               <p className="text-[10px] text-slate-400 font-medium mt-0.5">Nyatakan pembungkusan berbeza secara manual</p>
                             </div>
                             {receivePackaging === 'OTHERS' && (
@@ -6402,17 +6404,17 @@ export const KewPs4LedgerPage: React.FC = () => {
                           <div className="animate-in fade-in slide-in-from-top-1 duration-200 space-y-1.5 pt-0.5">
                             <Input
                               placeholder="Taip pembungkusan (cth: Pack of 10 x 50tabs / Pack of 1 x 30tabs)..."
-                              className="text-xs py-2.5 rounded-xl border-amber-300 bg-white font-medium focus:border-amber-500 focus:ring-amber-500/20"
+                              className="text-xs py-2.5 rounded-xl border-amber-300 bg-surface font-medium focus:border-amber-500 focus:ring-amber-500/20"
                               value={receivePackagingCustom}
                               onChange={(e) => setReceivePackagingCustom(e.target.value)}
                               autoFocus
                             />
-                            <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-slate-500 font-medium px-1">
+                            <div className="flex flex-wrap items-center gap-1.5 text-[10px] text-text-muted font-medium px-1">
                               <span>💡 Contoh:</span>
                               <button
                                 type="button"
                                 onClick={() => setReceivePackagingCustom('Pack of 10 x 50tabs')}
-                                className="text-amber-800 font-bold underline hover:text-amber-900"
+                                className="text-amber-400 font-bold underline hover:text-amber-400 dark:text-amber-300 font-bold"
                               >
                                 Pack of 10 x 50tabs
                               </button>
@@ -6420,7 +6422,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() => setReceivePackagingCustom('Pack of 1 x 30tabs')}
-                                className="text-amber-800 font-bold underline hover:text-amber-900"
+                                className="text-amber-400 font-bold underline hover:text-amber-400 dark:text-amber-300 font-bold"
                               >
                                 Pack of 1 x 30tabs
                               </button>
@@ -6431,13 +6433,13 @@ export const KewPs4LedgerPage: React.FC = () => {
 
                       {/* Field 5: No. Batch */}
                       <div>
-                        <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1.5 flex items-center gap-1.5">
+                        <label className="block text-[11px] font-bold text-text-secondary uppercase mb-1.5 flex items-center gap-1.5">
                           <Hash className="w-3.5 h-3.5 text-emerald-600" />
                           5. No. Batch <span className="text-rose-500">*</span>
                         </label>
                         <Input
                           placeholder="e.g. BT-2026-1275"
-                          className="text-xs py-2.5 rounded-xl font-mono font-bold uppercase tracking-wider border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20"
+                          className="text-xs py-2.5 rounded-xl font-mono font-bold uppercase tracking-wider border-border-default focus:border-emerald-500 focus:ring-emerald-500/20"
                           value={receiveBatchNum}
                           onChange={(e) => setReceiveBatchNum(e.target.value.toUpperCase())}
                           required
@@ -6446,13 +6448,13 @@ export const KewPs4LedgerPage: React.FC = () => {
 
                       {/* Field 6: Expiry Date */}
                       <div>
-                        <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1.5 flex items-center gap-1.5">
+                        <label className="block text-[11px] font-bold text-text-secondary uppercase mb-1.5 flex items-center gap-1.5">
                           <Calendar className="w-3.5 h-3.5 text-emerald-600" />
                           6. Expiry Date (Expiry Date)
                         </label>
                         <Input
                           type="date"
-                          className="text-xs py-2.5 rounded-xl font-mono border-slate-200 focus:border-emerald-500 focus:ring-emerald-500/20"
+                          className="text-xs py-2.5 rounded-xl font-mono border-border-default focus:border-emerald-500 focus:ring-emerald-500/20"
                           value={receiveExpiryDate}
                           onChange={(e) => setReceiveExpiryDate(e.target.value)}
                         />
@@ -6494,12 +6496,12 @@ export const KewPs4LedgerPage: React.FC = () => {
                           <p className="text-xs font-bold text-white leading-snug">{selectedItem.item_name}</p>
                         </div>
                       ) : (
-                        <div className="text-xs text-slate-500 italic p-2">Pilih item untuk melihat ringkasan</div>
+                        <div className="text-xs text-text-muted italic p-2">Pilih item untuk melihat ringkasan</div>
                       )}
 
                       {/* Stock Projection Live Calculation */}
                       <div className="bg-slate-800/40 p-3.5 rounded-2xl border border-slate-700/50 space-y-2.5">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Projeksi Baki Stok</p>
+                        <p className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider">Projeksi Baki Stok</p>
                         
                         <div className="grid grid-cols-2 gap-2 text-xs">
                           <div className="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
@@ -6507,7 +6509,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                             <span className="text-sm font-black font-mono text-slate-200">
                               {activeLedgerStock}
                             </span>
-                            <span className="text-[10px] text-slate-500 ml-1">{selectedItem?.unit_of_measure}</span>
+                            <span className="text-[10px] text-text-muted ml-1">{selectedItem?.unit_of_measure}</span>
                           </div>
 
                           <div className="bg-emerald-950/40 p-2.5 rounded-xl border border-emerald-900/60">
@@ -6580,7 +6582,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                             </>
                           )}
                         </div>
-                        <span className="text-[10px] text-slate-500 font-mono">KEW.PS-4</span>
+                        <span className="text-[10px] text-text-muted font-mono">KEW.PS-4</span>
                       </div>
 
                     </div>
@@ -6590,16 +6592,16 @@ export const KewPs4LedgerPage: React.FC = () => {
               </div>
 
               {/* Drawer Footer */}
-              <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between shrink-0">
-                <div className="text-xs text-slate-500 font-medium hidden sm:block">
-                  Item: <strong className="text-slate-800">{selectedItem?.item_name || '—'}</strong>
+              <div className="p-4 bg-subtle/50 border-t border-border-subtle flex items-center justify-between shrink-0">
+                <div className="text-xs text-text-muted font-medium hidden sm:block">
+                  Item: <strong className="text-text-primary">{selectedItem?.item_name || '—'}</strong>
                 </div>
                 <div className="flex items-center gap-2.5 ml-auto">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => setIsReceiveModalOpen(false)}
-                    className="rounded-xl text-xs font-bold px-4 py-2 border-slate-200 text-slate-600 hover:bg-slate-100"
+                    className="rounded-xl text-xs font-bold px-4 py-2 border-border-default text-text-muted hover:bg-subtle"
                   >
                     Batal
                   </Button>
@@ -6607,7 +6609,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                     type="submit"
                     form="receive-form"
                     disabled={isSubmittingReceive}
-                    className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl text-xs font-bold px-6 py-2 shadow-md shadow-emerald-600/20 gap-1.5 transition-all"
+                    className="bg-surface border border-border-default hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl text-xs font-bold px-6 py-2 shadow-md shadow-emerald-600/20 gap-1.5 transition-colors"
                   >
                     {isSubmittingReceive ? <Spinner size="sm" /> : <><PlusCircle className="w-4 h-4" /> Simpan Penerimaan</>}
                   </Button>
@@ -6629,26 +6631,26 @@ export const KewPs4LedgerPage: React.FC = () => {
           />
 
           <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-            <div className="w-screen max-w-5xl bg-white shadow-2xl flex flex-col transform transition-all duration-300 ease-in-out animate-in slide-in-from-right">
+            <div className="w-screen max-w-5xl bg-surface shadow-2xl flex flex-col transform transition-colors duration-150 ease-in-out animate-in slide-in-from-right">
               
               {/* Drawer Top Header Strip */}
               <div className="h-1.5 bg-gradient-to-r from-amber-500 via-rose-500 to-purple-500 shrink-0" />
 
               {/* Drawer Header */}
-              <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-gradient-to-b from-rose-50/50 to-slate-50/50 shrink-0">
+              <div className="p-6 border-b border-border-subtle flex items-center justify-between bg-gradient-to-b from-rose-50/50 to-slate-50/50 shrink-0">
                 <div className="flex items-center gap-3">
                   <div className="p-3 rounded-2xl bg-gradient-to-br from-rose-500 to-amber-600 text-white shadow-md shadow-rose-500/20">
                     <MinusCircle className="w-5 h-5" />
                   </div>
                   <div>
-                    <h2 className="text-base font-black text-slate-900 tracking-tight">Pengeluaran Stok (FEFO)</h2>
-                    <p className="text-[11px] text-slate-500 font-medium">Borang Agihan & Pengeluaran KEW.PS-4</p>
+                    <h2 className="text-base font-black text-text-primary tracking-tight">Pengeluaran Stok (FEFO)</h2>
+                    <p className="text-[11px] text-text-muted font-medium">Borang Agihan & Pengeluaran KEW.PS-4</p>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsIssueModalOpen(false)}
-                  className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all"
+                  className="p-2 text-slate-400 hover:text-text-muted hover:bg-subtle rounded-xl transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -6661,30 +6663,30 @@ export const KewPs4LedgerPage: React.FC = () => {
                   {/* LEFT COLUMN (COL 7): Input Form */}
                   <div className="lg:col-span-7 space-y-5">
                     {selectedItem && (
-                      <div className="bg-rose-50/80 border border-rose-200/90 rounded-2xl p-4 space-y-2 shadow-sm relative overflow-hidden">
-                        <div className="absolute -right-4 -bottom-4 opacity-10 text-rose-900 pointer-events-none">
+                      <div className="bg-rose-500/10 border border-rose-500/20 rounded-2xl p-4 space-y-2 shadow-sm relative overflow-hidden">
+                        <div className="absolute -right-4 -bottom-4 opacity-10 text-rose-400 dark:text-rose-300 font-bold pointer-events-none">
                           <PackageMinus className="w-24 h-24" />
                         </div>
-                        <div className="flex items-center justify-between text-[10px] font-black text-rose-800 uppercase tracking-wider">
+                        <div className="flex items-center justify-between text-[10px] font-black text-rose-400 uppercase tracking-wider">
                           <span className="flex items-center gap-1.5"><Sparkles className="w-3 h-3 text-rose-600" /> Item Target</span>
-                          <Badge variant="outline" className="font-mono text-[10px] bg-white/80 border-rose-300 font-bold">
+                          <Badge variant="outline" className="font-mono text-[10px] bg-surface border-rose-300 font-bold">
                             {selectedItem.item_code}
                           </Badge>
                         </div>
-                        <p className="text-sm font-black text-slate-900 leading-snug">{selectedItem.item_name}</p>
-                        <div className="flex items-center gap-3 text-[11px] text-slate-600 font-medium pt-1 border-t border-rose-200/50">
+                        <p className="text-sm font-black text-text-primary leading-snug">{selectedItem.item_name}</p>
+                        <div className="flex items-center gap-3 text-[11px] text-text-muted font-medium pt-1 border-t border-rose-500/20">
                           <span>Baki Semasa: <strong className="text-rose-700 font-mono font-bold">{activeLedgerStock} {selectedItem.unit_of_measure}</strong></span>
                           <span>•</span>
-                          <span>Kategori: <strong className="uppercase font-bold text-slate-700">{selectedItem.item_type === 'drug' ? 'Ubat' : 'Bukan Ubat'}</strong></span>
+                          <span>Kategori: <strong className="uppercase font-bold text-text-secondary">{selectedItem.item_type === 'drug' ? 'Ubat' : 'Bukan Ubat'}</strong></span>
                         </div>
                       </div>
                     )}
 
                     {issueStatus && (
-                      <div className={`p-3.5 rounded-2xl text-xs font-bold flex items-center gap-2.5 shadow-sm transition-all ${
+                      <div className={`p-3.5 rounded-2xl text-xs font-bold flex items-center gap-2.5 shadow-sm transition-colors ${
                         issueStatus.type === 'success' 
-                          ? 'bg-emerald-50 text-emerald-900 border border-emerald-200' 
-                          : 'bg-rose-50 text-rose-900 border border-rose-200'
+                          ? 'bg-emerald-500/10 text-emerald-400 dark:text-emerald-300 font-bold border border-emerald-500/20' 
+                          : 'bg-rose-500/10 text-rose-400 dark:text-rose-300 font-bold border border-rose-500/20'
                       }`}>
                         {issueStatus.type === 'success' ? <CheckCircle2 className="w-4.5 h-4.5 text-emerald-600 shrink-0" /> : <AlertTriangle className="w-4.5 h-4.5 text-rose-600 shrink-0" />}
                         <span>{issueStatus.text}</span>
@@ -6694,14 +6696,14 @@ export const KewPs4LedgerPage: React.FC = () => {
                     <form id="issue-form" onSubmit={handleIssueSubmit} className="space-y-5 text-xs">
                       
                       {/* Field 1: Mod & Pilih Batch */}
-                      <div className="space-y-3 bg-slate-50/80 p-3.5 rounded-2xl border border-slate-200/90">
+                      <div className="space-y-3 bg-subtle/50 p-3.5 rounded-2xl border border-border-default">
                         <div className="flex items-center justify-between">
-                          <label className="text-[11px] font-bold text-slate-700 uppercase flex items-center gap-1.5">
+                          <label className="text-[11px] font-bold text-text-secondary uppercase flex items-center gap-1.5">
                             <Hash className="w-3.5 h-3.5 text-rose-600" />
                             1. Mod Pengeluaran Batch <span className="text-rose-500">*</span>
                           </label>
                           {itemBatches.length > 1 && (
-                            <Badge className="bg-purple-100 text-purple-800 border-purple-200 font-mono text-[9px] font-bold">
+                            <Badge className="bg-purple-100 text-indigo-400 border-indigo-500/20 font-mono text-[9px] font-bold">
                               {itemBatches.length} BATCH AKTIF
                             </Badge>
                           )}
@@ -6712,10 +6714,10 @@ export const KewPs4LedgerPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => setIssueMode('single')}
-                            className={`py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                            className={`py-2 px-3 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5 ${
                               issueMode === 'single'
-                                ? 'bg-white text-rose-700 shadow-sm border border-slate-200/50'
-                                : 'text-slate-600 hover:text-slate-900'
+                                ? 'bg-surface text-rose-700 shadow-sm border border-border-default'
+                                : 'text-text-muted hover:text-text-primary'
                             }`}
                           >
                             <Tag className="w-3.5 h-3.5" />
@@ -6724,10 +6726,10 @@ export const KewPs4LedgerPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => setIssueMode('multi')}
-                            className={`py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                            className={`py-2 px-3 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5 ${
                               issueMode === 'multi'
-                                ? 'bg-white text-rose-700 shadow-sm border border-slate-200/50'
-                                : 'text-slate-600 hover:text-slate-900'
+                                ? 'bg-surface text-rose-700 shadow-sm border border-border-default'
+                                : 'text-text-muted hover:text-text-primary'
                             }`}
                           >
                             <Layers className="w-3.5 h-3.5" />
@@ -6740,7 +6742,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                             {isLoadingBatches ? (
                               <div className="p-3 text-center"><Spinner size="sm" /></div>
                             ) : itemBatches.length === 0 ? (
-                              <div className="p-3.5 text-xs text-rose-600 font-bold bg-rose-50 rounded-2xl border border-rose-200">
+                              <div className="p-3.5 text-xs text-rose-600 font-bold bg-rose-500/10 rounded-2xl border border-rose-500/20">
                                 Tiada batch aktif dengan baki stok ditemui untuk item ini.
                               </div>
                             ) : (
@@ -6785,9 +6787,9 @@ export const KewPs4LedgerPage: React.FC = () => {
                           /* MULTI-BATCH ALLOCATION MODE */
                           <div className="space-y-3 pt-1">
                             {/* FEFO Quick Auto-Fill Bar */}
-                            <div className="p-3 bg-purple-50/80 rounded-xl border border-purple-200/90 space-y-2">
+                            <div className="p-3 bg-indigo-500/10 rounded-xl border border-indigo-500/20 space-y-2">
                               <div className="flex items-center justify-between">
-                                <span className="text-[11px] font-black text-purple-900 flex items-center gap-1">
+                                <span className="text-[11px] font-black text-indigo-400 dark:text-indigo-300 font-bold flex items-center gap-1">
                                   <Sparkles className="w-3.5 h-3.5 text-purple-600" /> Agihan FEFO Otomatik (Auto-Split):
                                 </span>
                               </div>
@@ -6796,7 +6798,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                                   type="number"
                                   min="1"
                                   placeholder="Taip jumlah kuantiti hendak dikeluarkan..."
-                                  className="text-xs py-2 rounded-xl border-purple-200 bg-white font-mono font-bold"
+                                  className="text-xs py-2 rounded-xl border-indigo-500/20 bg-surface font-mono font-bold"
                                   value={autoFefoTargetQty}
                                   onChange={(e) => {
                                     setAutoFefoTargetQty(e.target.value)
@@ -6824,31 +6826,31 @@ export const KewPs4LedgerPage: React.FC = () => {
                                 return (
                                   <div 
                                     key={b.id} 
-                                    className={`p-3 rounded-xl border transition-all space-y-2 ${
+                                    className={`p-3 rounded-xl border transition-colors space-y-2 ${
                                       parseInt(currentQtyVal, 10) > 0 
-                                        ? 'bg-rose-50/60 border-rose-300 shadow-sm' 
-                                        : 'bg-white border-slate-200'
+                                        ? 'bg-rose-500/10 border-rose-300 shadow-sm' 
+                                        : 'bg-surface border-border-default'
                                     }`}
                                   >
                                     <div className="flex items-center justify-between text-xs">
                                       <div className="flex items-center gap-2">
-                                        <span className="font-mono font-black text-slate-900 bg-slate-100 px-2 py-0.5 rounded text-[11px]">
+                                        <span className="font-mono font-black text-text-primary bg-subtle px-2 py-0.5 rounded text-[11px]">
                                           #{idx + 1} {b.batch_number}
                                         </span>
                                         {idx === 0 && (
-                                          <Badge className="bg-amber-100 text-amber-800 border-amber-300 text-[9px] font-bold">
+                                          <Badge className="bg-amber-100 text-amber-400 border-amber-300 text-[9px] font-bold">
                                             EXP TERAWAL
                                           </Badge>
                                         )}
                                       </div>
-                                      <span className="text-[10px] font-mono text-slate-500 font-bold">
+                                      <span className="text-[10px] font-mono text-text-muted font-bold">
                                         Baki: <strong className="text-emerald-700">{avail}</strong> {b.packaging || selectedItem?.unit_of_measure || 'PACK'}
                                       </span>
                                     </div>
 
                                     <div className="grid grid-cols-12 gap-2 items-center">
-                                      <div className="col-span-7 text-[10px] text-slate-500 font-medium flex items-center gap-2">
-                                        <span>Exp: <strong className="font-mono text-slate-700">{b.expiry_date ? new Date(b.expiry_date).toISOString().split('T')[0] : '—'}</strong></span>
+                                      <div className="col-span-7 text-[10px] text-text-muted font-medium flex items-center gap-2">
+                                        <span>Exp: <strong className="font-mono text-text-secondary">{b.expiry_date ? new Date(b.expiry_date).toISOString().split('T')[0] : '—'}</strong></span>
                                       </div>
                                       <div className="col-span-5">
                                         <Input
@@ -6856,7 +6858,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                                           min="0"
                                           max={avail}
                                           placeholder={`Max: ${avail}`}
-                                          className="text-xs py-1.5 rounded-lg font-mono font-bold text-right border-slate-200 focus:border-rose-500"
+                                          className="text-xs py-1.5 rounded-lg font-mono font-bold text-right border-border-default focus:border-rose-500"
                                           value={multiBatchQtys[b.id] || ''}
                                           onChange={(e) => {
                                             setMultiBatchQtys(prev => ({
@@ -6877,13 +6879,13 @@ export const KewPs4LedgerPage: React.FC = () => {
 
                       {/* Field 2: Tarikh Keluar / Pengeluaran */}
                       <div>
-                        <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1.5 flex items-center gap-1.5">
+                        <label className="block text-[11px] font-bold text-text-secondary uppercase mb-1.5 flex items-center gap-1.5">
                           <Calendar className="w-3.5 h-3.5 text-rose-600" />
                           2. Tarikh Keluar / Pengeluaran (Date Issued) <span className="text-rose-500">*</span>
                         </label>
                         <Input
                           type="date"
-                          className="text-xs py-2.5 rounded-xl font-mono border-slate-200 focus:border-rose-500 focus:ring-rose-500/20"
+                          className="text-xs py-2.5 rounded-xl font-mono border-border-default focus:border-rose-500 focus:ring-rose-500/20"
                           value={issueDate}
                           onChange={(e) => setIssueDate(e.target.value)}
                           required
@@ -6892,7 +6894,7 @@ export const KewPs4LedgerPage: React.FC = () => {
 
                       {/* Field 3: Kuantiti Keluar */}
                       <div>
-                        <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1.5 flex items-center justify-between">
+                        <label className="block text-[11px] font-bold text-text-secondary uppercase mb-1.5 flex items-center justify-between">
                           <span className="flex items-center gap-1.5">
                             <PackageMinus className="w-3.5 h-3.5 text-rose-600" />
                             3. Kuantiti Keluar <span className="text-rose-500">*</span>
@@ -6915,7 +6917,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                               min="1"
                               max={issueBatchAvailableQty || undefined}
                               placeholder={issueSelectedBatchId ? `Masukkan kuantiti (Max: ${issueBatchAvailableQty})` : "Sila pilih batch terlebih dahulu"}
-                              className="text-xs py-2.5 rounded-xl font-mono font-bold pr-16 border-slate-200 focus:border-rose-500 focus:ring-rose-500/20"
+                              className="text-xs py-2.5 rounded-xl font-mono font-bold pr-16 border-border-default focus:border-rose-500 focus:ring-rose-500/20"
                               value={issueQty}
                               onChange={(e) => setIssueQty(e.target.value)}
                               required={issueMode === 'single'}
@@ -6929,8 +6931,8 @@ export const KewPs4LedgerPage: React.FC = () => {
                       </div>
 
                       {/* Field 4: Jabatan / Wad Penerima / Fasiliti */}
-                      <div className="space-y-2.5 bg-slate-50/70 p-3.5 rounded-2xl border border-slate-200/80">
-                        <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wide flex items-center justify-between">
+                      <div className="space-y-2.5 bg-subtle/50 p-3.5 rounded-2xl border border-border-default">
+                        <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-wide flex items-center justify-between">
                           <span className="flex items-center gap-1.5">
                             <Building2 className="w-3.5 h-3.5 text-rose-600" />
                             4. Jabatan / Wad Penerima <span className="text-rose-500">*</span>
@@ -6943,10 +6945,10 @@ export const KewPs4LedgerPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => setIssueRecipientType('internal')}
-                            className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold transition-all ${
+                            className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold transition-colors ${
                               issueRecipientType === 'internal'
-                                ? 'bg-white text-rose-700 shadow-sm border border-slate-200/50'
-                                : 'text-slate-600 hover:text-slate-900'
+                                ? 'bg-surface text-rose-700 shadow-sm border border-border-default'
+                                : 'text-text-muted hover:text-text-primary'
                             }`}
                           >
                             <Building2 className="w-3.5 h-3.5" />
@@ -6955,10 +6957,10 @@ export const KewPs4LedgerPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => setIssueRecipientType('facility')}
-                            className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold transition-all ${
+                            className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-lg text-xs font-bold transition-colors ${
                               issueRecipientType === 'facility'
-                                ? 'bg-white text-rose-700 shadow-sm border border-slate-200/50'
-                                : 'text-slate-600 hover:text-slate-900'
+                                ? 'bg-surface text-rose-700 shadow-sm border border-border-default'
+                                : 'text-text-muted hover:text-text-primary'
                             }`}
                           >
                             <Building className="w-3.5 h-3.5" />
@@ -6970,7 +6972,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                         {issueRecipientType === 'internal' ? (
                           <div className="space-y-2 pt-1">
                             <Select
-                              className="text-xs py-2.5 rounded-xl border-slate-200 bg-white font-medium focus:border-rose-500 focus:ring-rose-500/20"
+                              className="text-xs py-2.5 rounded-xl border-border-default bg-surface font-medium focus:border-rose-500 focus:ring-rose-500/20"
                               value={issueInternalDept}
                               onChange={(e) => setIssueInternalDept(e.target.value)}
                             >
@@ -6991,7 +6993,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                             <div className="relative">
                               <Input
                                 placeholder="Taip cth: Sipitang / Limbang / Beaufort / Papar..."
-                                className="text-xs py-2.5 rounded-xl border-slate-200 bg-white font-medium focus:border-rose-500 focus:ring-rose-500/20 pr-8"
+                                className="text-xs py-2.5 rounded-xl border-border-default bg-surface font-medium focus:border-rose-500 focus:ring-rose-500/20 pr-8"
                                 value={issueFacilityName}
                                 onChange={(e) => {
                                   setIssueFacilityName(e.target.value)
@@ -7006,7 +7008,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                                     setIssueFacilityName('')
                                     setIssueFacilitySearchFocused(false)
                                   }}
-                                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5"
+                                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-text-muted p-0.5"
                                 >
                                   <X className="w-3.5 h-3.5" />
                                 </button>
@@ -7015,8 +7017,8 @@ export const KewPs4LedgerPage: React.FC = () => {
 
                             {/* Dynamic Autocomplete Search Dropdown */}
                             {issueFacilitySearchFocused && issueFacilityName.trim().length >= 1 && (
-                              <div className="absolute left-0 right-0 top-full mt-1 bg-white rounded-xl shadow-xl border border-slate-200/90 py-1.5 z-50 max-h-60 overflow-y-auto animate-in fade-in duration-150">
-                                <div className="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 flex items-center justify-between">
+                              <div className="absolute left-0 right-0 top-full mt-1 bg-surface rounded-xl shadow-xl border border-border-default py-1.5 z-50 max-h-60 overflow-y-auto animate-in fade-in duration-150">
+                                <div className="px-3 py-1.5 text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider border-b border-border-subtle flex items-center justify-between">
                                   <span>Fasiliti Kesihatan KKM ({filteredIssueFacilities.length})</span>
                                   <span>Carian: "{issueFacilityName}"</span>
                                 </div>
@@ -7030,13 +7032,13 @@ export const KewPs4LedgerPage: React.FC = () => {
                                         setIssueFacilityName(fac.name)
                                         setIssueFacilitySearchFocused(false)
                                       }}
-                                      className="w-full text-left px-3.5 py-2.5 hover:bg-rose-50/80 transition-colors flex items-center justify-between group border-b border-slate-50 last:border-0"
+                                      className="w-full text-left px-3.5 py-2.5 hover:bg-rose-500/10 transition-colors flex items-center justify-between group border-b border-slate-50 last:border-0"
                                     >
                                       <div className="min-w-0 pr-2">
-                                        <p className="text-xs font-bold text-slate-800 group-hover:text-rose-800 truncate">
+                                        <p className="text-xs font-bold text-text-primary group-hover:text-rose-400 truncate">
                                           {fac.name}
                                         </p>
-                                        <p className="text-[10px] text-slate-500 font-medium flex items-center gap-1 mt-0.5">
+                                        <p className="text-[10px] text-text-muted font-medium flex items-center gap-1 mt-0.5">
                                           <span className="font-bold text-rose-700">{fac.type}</span>
                                           <span>•</span>
                                           <span>Daerah {fac.district}, {fac.state}</span>
@@ -7047,7 +7049,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                                   ))
                                 ) : (
                                   <div className="p-3 text-center space-y-1">
-                                    <p className="text-xs text-slate-600 font-medium">Tiada fasiliti ditemui untuk "{issueFacilityName}"</p>
+                                    <p className="text-xs text-text-muted font-medium">Tiada fasiliti ditemui untuk "{issueFacilityName}"</p>
                                     <button
                                       type="button"
                                       onClick={() => setIssueFacilitySearchFocused(false)}
@@ -7065,13 +7067,13 @@ export const KewPs4LedgerPage: React.FC = () => {
 
                       {/* Field 5: Tujuan / Catatan */}
                       <div>
-                        <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1.5 flex items-center gap-1.5">
+                        <label className="block text-[11px] font-bold text-text-secondary uppercase mb-1.5 flex items-center gap-1.5">
                           <FileText className="w-3.5 h-3.5 text-rose-600" />
                           5. Tujuan / Catatan (Tujuan Khas)
                         </label>
                         <Input
                           placeholder="e.g. Agihan stok mingguan wad"
-                          className="text-xs py-2.5 rounded-xl border-slate-200 focus:border-rose-500 focus:ring-rose-500/20"
+                          className="text-xs py-2.5 rounded-xl border-border-default focus:border-rose-500 focus:ring-rose-500/20"
                           value={issueReason}
                           onChange={(e) => setIssueReason(e.target.value)}
                         />
@@ -7113,12 +7115,12 @@ export const KewPs4LedgerPage: React.FC = () => {
                           <p className="text-xs font-bold text-white leading-snug">{selectedItem.item_name}</p>
                         </div>
                       ) : (
-                        <div className="text-xs text-slate-500 italic p-2">Pilih item untuk melihat ringkasan</div>
+                        <div className="text-xs text-text-muted italic p-2">Pilih item untuk melihat ringkasan</div>
                       )}
 
                       {/* Stock Projection Live Calculation */}
                       <div className="bg-slate-800/40 p-3.5 rounded-2xl border border-slate-700/50 space-y-2.5">
-                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Projeksi Baki Stok</p>
+                        <p className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider">Projeksi Baki Stok</p>
                         
                         <div className="grid grid-cols-2 gap-2 text-xs">
                           <div className="bg-slate-900/60 p-2.5 rounded-xl border border-slate-800">
@@ -7126,7 +7128,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                             <span className="text-sm font-black font-mono text-slate-200">
                               {activeLedgerStock}
                             </span>
-                            <span className="text-[10px] text-slate-500 ml-1">{selectedItem?.unit_of_measure}</span>
+                            <span className="text-[10px] text-text-muted ml-1">{selectedItem?.unit_of_measure}</span>
                           </div>
 
                           <div className="bg-rose-950/40 p-2.5 rounded-xl border border-rose-900/60">
@@ -7192,7 +7194,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                             </>
                           )}
                         </div>
-                        <span className="text-[10px] text-slate-500 font-mono">KEW.PS-4</span>
+                        <span className="text-[10px] text-text-muted font-mono">KEW.PS-4</span>
                       </div>
 
                     </div>
@@ -7202,16 +7204,16 @@ export const KewPs4LedgerPage: React.FC = () => {
               </div>
 
               {/* Drawer Footer */}
-              <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between shrink-0">
-                <div className="text-xs text-slate-500 font-medium hidden sm:block">
-                  Item: <strong className="text-slate-800">{selectedItem?.item_name || '—'}</strong>
+              <div className="p-4 bg-subtle/50 border-t border-border-subtle flex items-center justify-between shrink-0">
+                <div className="text-xs text-text-muted font-medium hidden sm:block">
+                  Item: <strong className="text-text-primary">{selectedItem?.item_name || '—'}</strong>
                 </div>
                 <div className="flex items-center gap-2.5 ml-auto">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => setIsIssueModalOpen(false)}
-                    className="rounded-xl text-xs font-bold px-4 py-2 border-slate-200 text-slate-600 hover:bg-slate-100"
+                    className="rounded-xl text-xs font-bold px-4 py-2 border-border-default text-text-muted hover:bg-subtle"
                   >
                     Batal
                   </Button>
@@ -7219,7 +7221,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                     type="submit"
                     form="issue-form"
                     disabled={isSubmittingIssue || !issueSelectedBatchId || itemBatches.length === 0}
-                    className="bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-700 hover:to-amber-700 text-white rounded-xl text-xs font-bold px-6 py-2 shadow-md shadow-rose-600/20 gap-1.5 transition-all"
+                    className="bg-gradient-to-r from-rose-600 to-amber-600 hover:from-rose-700 hover:to-amber-700 text-white rounded-xl text-xs font-bold px-6 py-2 shadow-md shadow-rose-600/20 gap-1.5 transition-colors"
                   >
                     {isSubmittingIssue ? <Spinner size="sm" /> : <><MinusCircle className="w-4 h-4" /> Simpan Pengeluaran</>}
                   </Button>
@@ -7263,7 +7265,7 @@ export const KewPs4LedgerPage: React.FC = () => {
           </div>
 
           {passError && (
-            <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-900 font-bold text-xs flex items-center gap-2 animate-in fade-in">
+            <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 dark:text-rose-300 font-bold font-bold text-xs flex items-center gap-2 animate-in fade-in">
               <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />
               <span>{passError}</span>
             </div>
@@ -7271,14 +7273,14 @@ export const KewPs4LedgerPage: React.FC = () => {
 
           <form onSubmit={handleVerifyPassword} className="space-y-4">
             <div>
-              <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1.5 flex items-center gap-1.5">
+              <label className="block text-[11px] font-bold text-text-secondary uppercase mb-1.5 flex items-center gap-1.5">
                 <Lock className="w-3.5 h-3.5 text-amber-600" />
                 Masukkan Kata Laluan Kebenaran <span className="text-rose-500">*</span>
               </label>
               <Input
                 type="password"
                 placeholder="••••••••••••"
-                className="text-xs py-2.5 rounded-xl font-mono font-bold tracking-widest border-slate-200 focus:border-amber-500 focus:ring-amber-500/20"
+                className="text-xs py-2.5 rounded-xl font-mono font-bold tracking-widest border-border-default focus:border-amber-500 focus:ring-amber-500/20"
                 value={passInput}
                 onChange={(e) => {
                   setPassInput(e.target.value)
@@ -7321,21 +7323,21 @@ export const KewPs4LedgerPage: React.FC = () => {
       >
         {editingTxRow && (
           <div className="space-y-4">
-            <div className="p-3.5 bg-amber-50/80 border border-amber-200/90 rounded-2xl space-y-2">
+            <div className="p-3.5 bg-amber-500/10 border border-amber-500/20 rounded-2xl space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-mono font-bold text-amber-800 uppercase">Rekod Sasaran #{editingTxRow.index}</span>
-                <Badge className="bg-amber-200 text-amber-900 border-amber-300 font-bold text-[9px]">
+                <span className="text-[10px] font-mono font-bold text-amber-400 uppercase">Rekod Sasaran #{editingTxRow.index}</span>
+                <Badge className="bg-amber-200 text-amber-400 dark:text-amber-300 font-bold border-amber-300 font-bold text-[9px]">
                   {editingTxRow.receiptQty !== null ? 'PENERIMAAN' : 'PENGELUARAN'}
                 </Badge>
               </div>
-              <p className="text-xs font-bold text-slate-900">{selectedItem?.item_name || 'Item Store'}</p>
-              <div className="flex items-center gap-3 text-[10px] text-slate-600 font-mono">
+              <p className="text-xs font-bold text-text-primary">{selectedItem?.item_name || 'Item Store'}</p>
+              <div className="flex items-center gap-3 text-[10px] text-text-muted font-mono">
                 <span>No Rujukan: <strong className="text-teal-700">{formatReferenceNumber(editingTxRow)}</strong></span>
                 <span>•</span>
                 <span>Baki Asal: <strong>{editingTxRow.receiptQty !== null ? `+${editingTxRow.receiptQty}` : `-${editingTxRow.issueQty}`}</strong></span>
               </div>
               {editingTxRow.received_from && (
-                <div className="pt-1.5 border-t border-amber-200/60 text-[10px] text-amber-900 font-medium flex items-center gap-1">
+                <div className="pt-1.5 border-t border-amber-500/20 text-[10px] text-amber-400 dark:text-amber-300 font-bold font-medium flex items-center gap-1">
                   <Truck className="w-3.5 h-3.5 text-amber-700 shrink-0" />
                   <span>Pembekal/Sumber Semasa: <strong className="font-bold">{editingTxRow.received_from.replace(/^(Pembekal|Fasiliti):\s*/i, '')}</strong></span>
                 </div>
@@ -7344,7 +7346,7 @@ export const KewPs4LedgerPage: React.FC = () => {
 
             {editTxStatus && (
               <div className={`p-3 rounded-xl text-xs font-bold flex items-center gap-2 ${
-                editTxStatus.type === 'success' ? 'bg-emerald-50 text-emerald-900 border border-emerald-200' : 'bg-rose-50 text-rose-900 border border-rose-200'
+                editTxStatus.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 dark:text-emerald-300 font-bold border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 dark:text-rose-300 font-bold border border-rose-500/20'
               }`}>
                 {editTxStatus.type === 'success' ? <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /> : <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0" />}
                 <span>{editTxStatus.text}</span>
@@ -7353,7 +7355,7 @@ export const KewPs4LedgerPage: React.FC = () => {
 
             <form onSubmit={handleSaveTransactionEdit} className="space-y-4 text-xs">
               <div>
-                <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1">
+                <label className="block text-[11px] font-bold text-text-secondary uppercase mb-1">
                   1. Tarikh Rekod (Date) <span className="text-rose-500">*</span>
                 </label>
                 <Input
@@ -7366,7 +7368,7 @@ export const KewPs4LedgerPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1">
+                <label className="block text-[11px] font-bold text-text-secondary uppercase mb-1">
                   2. Kuantiti Transaksi <span className="text-rose-500">*</span>
                 </label>
                 <Input
@@ -7381,7 +7383,7 @@ export const KewPs4LedgerPage: React.FC = () => {
 
               {/* FIELD 3: PEMBEKAL / SUMBER STOK (ALLOW CHANGE SUPPLIER) */}
               <div>
-                <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1 flex items-center justify-between">
+                <label className="block text-[11px] font-bold text-text-secondary uppercase mb-1 flex items-center justify-between">
                   <span className="flex items-center gap-1.5">
                     <Truck className="w-3.5 h-3.5 text-teal-600" />
                     3. Pembekal / Sumber Stok (Supplier) <span className="text-rose-500">*</span>
@@ -7389,15 +7391,15 @@ export const KewPs4LedgerPage: React.FC = () => {
                   <span className="text-[10px] text-teal-700 font-bold">Tukar Pembekal</span>
                 </label>
 
-                <div className="space-y-2 p-3 bg-slate-50 border border-slate-200/90 rounded-2xl">
+                <div className="space-y-2 p-3 bg-subtle/50 border border-border-default rounded-2xl">
                   <div className="grid grid-cols-2 gap-1.5 p-1 bg-slate-200/60 rounded-xl">
                     <button
                       type="button"
                       onClick={() => setEditTxSourceType('supplier')}
-                      className={`py-1.5 text-[10px] font-bold rounded-lg transition-all ${
+                      className={`py-1.5 text-[10px] font-bold rounded-lg transition-colors ${
                         editTxSourceType === 'supplier'
-                          ? 'bg-white text-teal-700 shadow-sm'
-                          : 'text-slate-600 hover:text-slate-900'
+                          ? 'bg-surface text-teal-700 shadow-sm'
+                          : 'text-text-muted hover:text-text-primary'
                       }`}
                     >
                       Syarikat Pembekal (Vendor)
@@ -7405,10 +7407,10 @@ export const KewPs4LedgerPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setEditTxSourceType('facility')}
-                      className={`py-1.5 text-[10px] font-bold rounded-lg transition-all ${
+                      className={`py-1.5 text-[10px] font-bold rounded-lg transition-colors ${
                         editTxSourceType === 'facility'
-                          ? 'bg-white text-teal-700 shadow-sm'
-                          : 'text-slate-600 hover:text-slate-900'
+                          ? 'bg-surface text-teal-700 shadow-sm'
+                          : 'text-text-muted hover:text-text-primary'
                       }`}
                     >
                       Fasiliti KKM / Pindahan
@@ -7418,7 +7420,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                   {editTxSourceType === 'supplier' ? (
                     <div className="space-y-1.5">
                       <Select
-                        className="text-xs py-2 rounded-xl border-slate-200 bg-white"
+                        className="text-xs py-2 rounded-xl border-border-default bg-surface"
                         value={editTxSupplierId}
                         onChange={(e) => setEditTxSupplierId(e.target.value)}
                       >
@@ -7433,7 +7435,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                       {editTxSupplierId === 'CUSTOM' && (
                         <Input
                           placeholder="Taip nama pembekal (cth: Pharmaniaga / Apex Pharmacy / Pembekal Tempatan)..."
-                          className="text-xs py-2 rounded-xl border-teal-300 bg-white font-medium focus:border-teal-500"
+                          className="text-xs py-2 rounded-xl border-teal-300 bg-surface font-medium focus:border-teal-500"
                           value={editTxCustomSupplier}
                           onChange={(e) => setEditTxCustomSupplier(e.target.value)}
                           required
@@ -7443,7 +7445,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                   ) : (
                     <Input
                       placeholder="Taip nama fasiliti KKM (cth: KK Sipitang / Hospital Tuanku Ja'afar)..."
-                      className="text-xs py-2 rounded-xl border-slate-200 bg-white"
+                      className="text-xs py-2 rounded-xl border-border-default bg-surface"
                       value={editTxFacilityName}
                       onChange={(e) => setEditTxFacilityName(e.target.value)}
                       required
@@ -7453,7 +7455,7 @@ export const KewPs4LedgerPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-slate-700 uppercase mb-1">
+                <label className="block text-[11px] font-bold text-text-secondary uppercase mb-1">
                   4. No. Rujukan Dokumen
                 </label>
                 <Input
@@ -7463,14 +7465,14 @@ export const KewPs4LedgerPage: React.FC = () => {
                 />
               </div>
 
-              <div className="p-3.5 bg-rose-50/70 border border-rose-200 rounded-2xl space-y-2">
-                <label className="block text-[11px] font-bold text-rose-900 uppercase flex items-center gap-1.5">
+              <div className="p-3.5 bg-rose-500/10 border border-rose-500/20 rounded-2xl space-y-2">
+                <label className="block text-[11px] font-bold text-rose-400 dark:text-rose-300 font-bold uppercase flex items-center gap-1.5">
                   <ShieldAlert className="w-4 h-4 text-rose-600" />
                   5. Sebab Pindaan / Bukti Audit (Mandatory Justification) <span className="text-rose-500">*</span>
                 </label>
                 <Input
                   placeholder="Taip sebab pindaan (cth: Pertukaran pembekal mengikut DO / Kesilapan taip kuantiti)..."
-                  className="text-xs py-2.5 rounded-xl border-rose-300 bg-white font-medium focus:border-rose-500"
+                  className="text-xs py-2.5 rounded-xl border-rose-300 bg-surface font-medium focus:border-rose-500"
                   value={editTxReason}
                   onChange={(e) => setEditTxReason(e.target.value)}
                   required
@@ -7524,9 +7526,9 @@ export const KewPs4LedgerPage: React.FC = () => {
             {/* Audit History Timeline */}
             <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
               {((auditLogStore[auditTxRow.id || `row-${auditTxRow.index}`]) || []).map((entry, idx) => (
-                <div key={idx} className="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-2 relative overflow-hidden">
-                  <div className="flex items-center justify-between border-b border-slate-200 pb-1.5">
-                    <span className="font-bold text-slate-800 text-[11px] flex items-center gap-1.5">
+                <div key={idx} className="p-3.5 bg-subtle/50 border border-border-default rounded-2xl space-y-2 relative overflow-hidden">
+                  <div className="flex items-center justify-between border-b border-border-default pb-1.5">
+                    <span className="font-bold text-text-primary text-[11px] flex items-center gap-1.5">
                       <User className="w-3.5 h-3.5 text-indigo-600" />
                       {entry.edited_by}
                     </span>
@@ -7536,19 +7538,19 @@ export const KewPs4LedgerPage: React.FC = () => {
                   </div>
 
                   <div className="space-y-1">
-                    <span className="text-[10px] font-bold text-slate-500 uppercase block">Perubahan Dibuat:</span>
+                    <span className="text-[10px] font-bold text-text-muted uppercase block">Perubahan Dibuat:</span>
                     <div className="flex flex-wrap gap-1.5">
                       {entry.field_changes.map((ch, cIdx) => (
-                        <Badge key={cIdx} className="bg-amber-100 text-amber-900 border-amber-300 font-mono text-[10px] font-bold">
+                        <Badge key={cIdx} className="bg-amber-100 text-amber-400 dark:text-amber-300 font-bold border-amber-300 font-mono text-[10px] font-bold">
                           {ch}
                         </Badge>
                       ))}
                     </div>
                   </div>
 
-                  <div className="pt-1 border-t border-slate-200/60">
-                    <span className="text-[10px] font-bold text-rose-800 uppercase block">Sebab Pindaan / Bukti Audit:</span>
-                    <p className="text-xs font-bold text-slate-900 bg-white p-2 rounded-xl border border-slate-200 mt-1 italic">
+                  <div className="pt-1 border-t border-border-default">
+                    <span className="text-[10px] font-bold text-rose-400 uppercase block">Sebab Pindaan / Bukti Audit:</span>
+                    <p className="text-xs font-bold text-text-primary bg-surface p-2 rounded-xl border border-border-default mt-1 italic">
                       "{entry.reason}"
                     </p>
                   </div>
@@ -7585,30 +7587,30 @@ export const KewPs4LedgerPage: React.FC = () => {
         <form onSubmit={handleClearSubmit} className="space-y-4 text-xs">
           {clearStatus && (
             <div className={`p-3 rounded-xl border text-xs font-bold ${
-              clearStatus.type === 'success' ? 'bg-emerald-50 text-emerald-900 border-emerald-300' : 'bg-rose-50 text-rose-900 border-rose-300'
+              clearStatus.type === 'success' ? 'bg-emerald-500/10 text-emerald-400 dark:text-emerald-300 font-bold border-emerald-300' : 'bg-rose-500/10 text-rose-400 dark:text-rose-300 font-bold border-rose-300'
             }`}>
               {clearStatus.text}
             </div>
           )}
 
-          <div className="p-4 bg-amber-50 border border-amber-200 rounded-2xl space-y-2">
-            <div className="flex items-center gap-2 text-amber-900 font-bold text-sm">
+          <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-2xl space-y-2">
+            <div className="flex items-center gap-2 text-amber-400 dark:text-amber-300 font-bold font-bold text-sm">
               <Lock className="w-5 h-5 text-amber-700 flex-shrink-0" />
               <span>Pengesahan Pemadaman Rekod & Set Semula Baki</span>
             </div>
-            <p className="text-amber-800 text-xs leading-relaxed">
+            <p className="text-amber-400 text-xs leading-relaxed">
               Tindakan ini dilindungi. Memerlukan kata laluan kebenaran khas untuk menetapkan semula pergerakan stok. Semua tindakan set semula akan direkodkan dalam <strong>Log Audit Khas</strong> secara kekal.
             </p>
           </div>
 
           <div className="space-y-2">
-            <label className="block text-xs font-bold text-slate-800">
+            <label className="block text-xs font-bold text-text-primary">
               Pilih Skop Set Semula:
             </label>
             
             <div className="space-y-2">
-              <label className={`flex items-start gap-3 p-3.5 rounded-2xl border cursor-pointer transition-all ${
-                clearScope === 'selected' ? 'bg-amber-50/60 border-amber-400 text-amber-950 shadow-sm' : 'bg-slate-50 border-slate-200 text-slate-700'
+              <label className={`flex items-start gap-3 p-3.5 rounded-2xl border cursor-pointer transition-colors ${
+                clearScope === 'selected' ? 'bg-amber-500/10 border-amber-400 text-amber-400 dark:text-amber-300 font-bold shadow-sm' : 'bg-subtle/50 border-border-default text-text-secondary'
               }`}>
                 <input
                   type="radio"
@@ -7622,14 +7624,14 @@ export const KewPs4LedgerPage: React.FC = () => {
                   <span className="font-black text-xs block">
                     1. Item Ini Sahaja ({selectedItem?.item_name || 'Item Terpilih'})
                   </span>
-                  <span className="text-[11px] text-slate-500 font-medium block mt-0.5">
+                  <span className="text-[11px] text-text-muted font-medium block mt-0.5">
                     Memadam transaksi dan menetapkan semula baki stok bagi <strong>{selectedItem?.item_code}</strong> sahaja kepada 0. Item lain tidak terjejas.
                   </span>
                 </div>
               </label>
 
-              <label className={`flex items-start gap-3 p-3.5 rounded-2xl border cursor-pointer transition-all ${
-                clearScope === 'all' ? 'bg-rose-50/60 border-rose-400 text-rose-950 shadow-sm' : 'bg-slate-50 border-slate-200 text-slate-700'
+              <label className={`flex items-start gap-3 p-3.5 rounded-2xl border cursor-pointer transition-colors ${
+                clearScope === 'all' ? 'bg-rose-500/10 border-rose-400 text-rose-400 dark:text-rose-300 font-bold shadow-sm' : 'bg-subtle/50 border-border-default text-text-secondary'
               }`}>
                 <input
                   type="radio"
@@ -7640,10 +7642,10 @@ export const KewPs4LedgerPage: React.FC = () => {
                   className="mt-0.5 text-rose-600 focus:ring-rose-500"
                 />
                 <div>
-                  <span className="font-black text-xs block text-rose-900">
+                  <span className="font-black text-xs block text-rose-400 dark:text-rose-300 font-bold">
                     2. Keseluruhan Inventori Stor (Semua Item)
                   </span>
-                  <span className="text-[11px] text-slate-500 font-medium block mt-0.5">
+                  <span className="text-[11px] text-text-muted font-medium block mt-0.5">
                     Memadam semua transaksi ledger untuk keseluruhan stor hospital dan menetapkan semula baki stok semua item kepada 0.
                   </span>
                 </div>
@@ -7670,7 +7672,7 @@ export const KewPs4LedgerPage: React.FC = () => {
             </span>
           </div>
 
-          <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-border-subtle">
             <Button
               type="button"
               variant="outline"
@@ -7714,19 +7716,19 @@ export const KewPs4LedgerPage: React.FC = () => {
           {resetAuditLogs.length === 0 ? (
             <div className="py-12 text-center text-slate-400 font-medium space-y-2">
               <ShieldAlert className="w-8 h-8 text-slate-300 mx-auto" />
-              <p className="font-bold text-slate-600">Tiada Rekod Set Semula Ledger</p>
+              <p className="font-bold text-text-muted">Tiada Rekod Set Semula Ledger</p>
               <p className="text-[11px]">Tiada sebarang pemadaman transaksi dilakukan lagi.</p>
             </div>
           ) : (
             <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
               {resetAuditLogs.map((log) => (
-                <div key={log.id} className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2 relative">
-                  <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-                    <span className="font-bold text-slate-900 text-xs flex items-center gap-1.5">
+                <div key={log.id} className="p-4 bg-subtle/50 border border-border-default rounded-2xl space-y-2 relative">
+                  <div className="flex items-center justify-between border-b border-border-default pb-2">
+                    <span className="font-bold text-text-primary text-xs flex items-center gap-1.5">
                       <User className="w-3.5 h-3.5 text-indigo-600" />
                       {log.performed_by}
                     </span>
-                    <span className="text-[10px] text-slate-500 font-mono">
+                    <span className="text-[10px] text-text-muted font-mono">
                       {new Date(log.timestamp).toLocaleString('ms-MY', {
                         day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit'
                       })}
@@ -7734,18 +7736,18 @@ export const KewPs4LedgerPage: React.FC = () => {
                   </div>
 
                   <div className="grid grid-cols-2 gap-2 text-[11px] font-mono">
-                    <div className="bg-white p-2 rounded-xl border border-slate-100">
+                    <div className="bg-surface p-2 rounded-xl border border-border-subtle">
                       <span className="text-[9px] font-sans font-bold text-slate-400 uppercase block">Skop Pemadaman:</span>
-                      <span className="font-bold text-slate-800">{log.scope}</span>
+                      <span className="font-bold text-text-primary">{log.scope}</span>
                     </div>
-                    <div className="bg-white p-2 rounded-xl border border-slate-100">
+                    <div className="bg-surface p-2 rounded-xl border border-border-subtle">
                       <span className="text-[9px] font-sans font-bold text-slate-400 uppercase block">Baki Sebelum Reset:</span>
                       <span className="font-bold text-amber-700">{log.previous_balance}</span>
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between pt-1">
-                    <Badge className="bg-emerald-100 text-emerald-900 border-emerald-300 text-[9px] font-bold">
+                    <Badge className="bg-emerald-100 text-emerald-400 dark:text-emerald-300 font-bold border-emerald-300 text-[9px] font-bold">
                       ✓ Password "F@rmasi.2016" Verified
                     </Badge>
                     <span className="text-[9px] font-bold text-rose-600 uppercase font-mono">
@@ -7777,8 +7779,8 @@ export const KewPs4LedgerPage: React.FC = () => {
         title={`Sejarah Log Verifikasi Stor Tahunan - ${selectedItem?.item_name || 'Item'}`}
         maxWidth="2xl"
       >
-        <div className="space-y-4 pt-2 text-slate-800">
-          <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-950 flex items-center justify-between">
+        <div className="space-y-4 pt-2 text-text-primary">
+          <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs text-emerald-400 dark:text-emerald-300 font-bold flex items-center justify-between">
             <div className="flex items-center gap-2 font-bold">
               <ShieldCheck className="w-4 h-4 text-emerald-700" />
               <span>Rekod Verifikasi Bebas Tahunan (KEW.PS-14 Audit Trail)</span>
@@ -7789,9 +7791,9 @@ export const KewPs4LedgerPage: React.FC = () => {
           </div>
 
           {storeVerificationLogs.filter(r => r.item_id === selectedItem?.item_id).length === 0 ? (
-            <div className="p-8 text-center bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+            <div className="p-8 text-center bg-subtle/50 rounded-2xl border border-border-default space-y-2">
               <ShieldAlert className="w-8 h-8 text-slate-400 mx-auto" />
-              <p className="text-xs font-bold text-slate-600">Tiada Rekod Verifikasi Stor Tahunan</p>
+              <p className="text-xs font-bold text-text-muted">Tiada Rekod Verifikasi Stor Tahunan</p>
               <p className="text-[11px] text-slate-400">Klik butang Store Verification untuk merekodkan pemeriksaan tahunan pertama.</p>
             </div>
           ) : (
@@ -7801,24 +7803,24 @@ export const KewPs4LedgerPage: React.FC = () => {
                 .map(log => {
                   const isTally = log.is_tally
                   return (
-                    <div key={log.id} className="p-4 rounded-2xl border border-slate-200/80 bg-white shadow-xs space-y-3">
-                      <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                    <div key={log.id} className="p-4 rounded-2xl border border-border-default bg-surface shadow-xs space-y-3">
+                      <div className="flex items-center justify-between border-b border-border-subtle pb-2">
                         <div className="flex items-center gap-2">
-                          <Badge className="bg-emerald-100 text-emerald-950 border-emerald-300 font-mono font-black text-xs">
+                          <Badge className="bg-emerald-100 text-emerald-400 dark:text-emerald-300 font-bold border-emerald-300 font-mono font-black text-xs">
                             TAHUN {log.verification_year}
                           </Badge>
                           <Badge className={`text-[10px] font-bold uppercase ${
-                            isTally ? 'bg-emerald-50 text-emerald-800 border-emerald-200' : 'bg-amber-50 text-amber-800 border-amber-200'
+                            isTally ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20'
                           }`}>
                             {isTally ? '✓ 3-Way Tally' : '⚠️ Percanggahan'}
                           </Badge>
                         </div>
-                        <span className="text-xs font-mono font-medium text-slate-500">
+                        <span className="text-xs font-mono font-medium text-text-muted">
                           {new Date(log.verification_date).toLocaleDateString('ms-MY', { day: '2-digit', month: 'short', year: 'numeric' })}
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-3 gap-2 text-center bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                      <div className="grid grid-cols-3 gap-2 text-center bg-subtle/50 p-2.5 rounded-xl border border-border-subtle">
                         <div>
                           <span className="text-[9px] font-bold text-slate-400 uppercase block">Stok Fizikal</span>
                           <span className="font-mono text-sm font-black text-emerald-700">{log.physical_stock} {log.unit_of_measure}</span>
@@ -7833,21 +7835,21 @@ export const KewPs4LedgerPage: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="text-xs space-y-1 text-slate-600">
+                      <div className="text-xs space-y-1 text-text-muted">
                         <div><strong>Pegawai Pemverifikasi Luar:</strong> {log.verifier_name} ({log.verifier_designation}) - <em className="text-emerald-700 font-semibold">{log.verifier_department}</em></div>
                         {log.remarks && <div><strong>Catatan:</strong> {log.remarks}</div>}
                         {log.action_taken && <div><strong>Syor / Tindakan:</strong> {log.action_taken}</div>}
                         {log.appointment_ref && <div className="text-[10px] text-slate-400">Ruj. Lantikan: {log.appointment_ref}</div>}
                       </div>
 
-                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
+                      <div className="pt-2 border-t border-border-subtle flex items-center justify-between">
                         <span className="text-[10px] font-mono text-slate-400">ID: {log.id}</span>
                         <div className="flex items-center gap-2">
                           <Button
                             size="sm"
                             variant="outline"
                             onClick={() => handlePrintVerificationCertificate(log)}
-                            className="text-xs gap-1.5 border-emerald-300 text-emerald-800 hover:bg-emerald-50 rounded-xl"
+                            className="text-xs gap-1.5 border-emerald-300 text-emerald-400 hover:bg-emerald-500/10 rounded-xl"
                           >
                             <Printer className="w-3.5 h-3.5" />
                             <span>Cetak Sijil KEW.PS-14</span>
@@ -7855,7 +7857,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => handleDeleteVerificationRecord(log.id)}
-                            className="p-2 text-rose-600 hover:bg-rose-50 rounded-xl transition-all cursor-pointer"
+                            className="p-2 text-rose-600 hover:bg-rose-500/10 rounded-xl transition-colors cursor-pointer"
                             title="Padam rekod"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -7868,7 +7870,7 @@ export const KewPs4LedgerPage: React.FC = () => {
             </div>
           )}
 
-          <div className="flex justify-end pt-2 border-t border-slate-100">
+          <div className="flex justify-end pt-2 border-t border-border-subtle">
             <Button
               type="button"
               variant="outline"
@@ -7901,7 +7903,7 @@ export const KewPs4LedgerPage: React.FC = () => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 26, stiffness: 240 }}
-              className="absolute inset-y-0 right-0 w-full max-w-2xl bg-white shadow-2xl flex flex-col h-full overflow-hidden border-l border-slate-200 z-[310]"
+              className="absolute inset-y-0 right-0 w-full max-w-2xl bg-surface shadow-2xl flex flex-col h-full overflow-hidden border-l border-border-default z-[310]"
             >
               {/* Drawer Header */}
               <div className="bg-gradient-to-r from-slate-950 via-slate-900 to-teal-950 text-white p-6 flex items-center justify-between border-b border-slate-800 shrink-0 relative overflow-hidden">
@@ -7962,8 +7964,8 @@ export const KewPs4LedgerPage: React.FC = () => {
                 {editStockStatus && (
                   <div className={`p-4 rounded-2xl text-xs font-bold flex items-center gap-2.5 ${
                     editStockStatus.type === 'success'
-                      ? 'bg-emerald-50 text-emerald-900 border border-emerald-200 shadow-sm'
-                      : 'bg-rose-50 text-rose-900 border border-rose-200 shadow-sm'
+                      ? 'bg-emerald-500/10 text-emerald-400 dark:text-emerald-300 font-bold border border-emerald-500/20 shadow-sm'
+                      : 'bg-rose-500/10 text-rose-400 dark:text-rose-300 font-bold border border-rose-500/20 shadow-sm'
                   }`}>
                     {editStockStatus.type === 'success' ? (
                       <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
@@ -7977,9 +7979,9 @@ export const KewPs4LedgerPage: React.FC = () => {
                 <form id="edit-stock-drawer-form" onSubmit={handleEditStockSubmit} className="space-y-6">
                   
                   {/* SECTION 1: PHYSICAL LOCATION CONTROLS */}
-                  <div className="bg-slate-50/80 border border-slate-200 rounded-3xl p-5 space-y-4 shadow-sm">
-                    <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-                      <span className="font-extrabold text-sm text-slate-900 flex items-center gap-2 uppercase tracking-wider">
+                  <div className="bg-subtle/50 border border-border-default rounded-3xl p-5 space-y-4 shadow-sm">
+                    <div className="flex items-center justify-between border-b border-border-default pb-3">
+                      <span className="font-extrabold text-sm text-text-primary flex items-center gap-2 uppercase tracking-wider">
                         <MapPin className="w-4.5 h-4.5 text-indigo-600" />
                         <span>1. Lokasi Fizikal Stok (Stor, Rak & Aras)</span>
                       </span>
@@ -7989,11 +7991,11 @@ export const KewPs4LedgerPage: React.FC = () => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {/* Store Dropdown */}
                       <div className="space-y-1.5">
-                        <label className="block text-xs font-extrabold text-slate-700 uppercase">
+                        <label className="block text-xs font-extrabold text-text-secondary uppercase">
                           Stor / Jabatan
                         </label>
                         <Select
-                          className="text-xs py-2.5 rounded-xl font-bold bg-white border-slate-300 shadow-2xs"
+                          className="text-xs py-2.5 rounded-xl font-bold bg-surface border-border-default shadow-elevation-1"
                           value={editStore}
                           onChange={(e) => setEditStore(e.target.value)}
                         >
@@ -8013,11 +8015,11 @@ export const KewPs4LedgerPage: React.FC = () => {
 
                       {/* Rack Dropdown */}
                       <div className="space-y-1.5">
-                        <label className="block text-xs font-extrabold text-slate-700 uppercase">
+                        <label className="block text-xs font-extrabold text-text-secondary uppercase">
                           No. Rak / Kabinet
                         </label>
                         <Select
-                          className="text-xs py-2.5 rounded-xl font-bold bg-white border-slate-300 shadow-2xs"
+                          className="text-xs py-2.5 rounded-xl font-bold bg-surface border-border-default shadow-elevation-1"
                           value={editRack}
                           onChange={(e) => setEditRack(e.target.value)}
                         >
@@ -8029,11 +8031,11 @@ export const KewPs4LedgerPage: React.FC = () => {
 
                       {/* Level Dropdown */}
                       <div className="space-y-1.5">
-                        <label className="block text-xs font-extrabold text-slate-700 uppercase">
+                        <label className="block text-xs font-extrabold text-text-secondary uppercase">
                           Aras / Tingkat (Shelf)
                         </label>
                         <Select
-                          className="text-xs py-2.5 rounded-xl font-bold bg-white border-slate-300 shadow-2xs"
+                          className="text-xs py-2.5 rounded-xl font-bold bg-surface border-border-default shadow-elevation-1"
                           value={editLevel}
                           onChange={(e) => setEditLevel(e.target.value)}
                         >
@@ -8045,18 +8047,18 @@ export const KewPs4LedgerPage: React.FC = () => {
                     </div>
 
                     {/* Live Location Preview Card */}
-                    <div className="bg-indigo-50/80 border border-indigo-100 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-2 shadow-2xs">
+                    <div className="bg-indigo-500/10 border border-indigo-100 rounded-2xl p-3.5 flex flex-wrap items-center justify-between gap-2 shadow-elevation-1">
                       <span className="text-xs font-black text-indigo-600 uppercase tracking-wider">Paparan Format Lokasi Rasmi:</span>
-                      <span className="font-mono text-xs font-black text-indigo-950 bg-white px-3 py-1.5 rounded-xl border border-indigo-200/80 shadow-2xs">
+                      <span className="font-mono text-xs font-black text-indigo-400 dark:text-indigo-300 font-bold bg-surface px-3 py-1.5 rounded-xl border border-indigo-500/20 shadow-elevation-1">
                         📍 {computedFullLocation}
                       </span>
                     </div>
                   </div>
 
                   {/* SECTION 2: STOCK LEVEL THRESHOLDS */}
-                  <div className="bg-slate-50/80 border border-slate-200 rounded-3xl p-5 space-y-4 shadow-sm">
-                    <div className="flex items-center justify-between border-b border-slate-200 pb-3">
-                      <span className="font-extrabold text-sm text-slate-900 flex items-center gap-2 uppercase tracking-wider">
+                  <div className="bg-subtle/50 border border-border-default rounded-3xl p-5 space-y-4 shadow-sm">
+                    <div className="flex items-center justify-between border-b border-border-default pb-3">
+                      <span className="font-extrabold text-sm text-text-primary flex items-center gap-2 uppercase tracking-wider">
                         <SlidersHorizontal className="w-4.5 h-4.5 text-teal-600" />
                         <span>2. Ambang & Paras Stok (Min, Buffer & Max)</span>
                       </span>
@@ -8065,15 +8067,15 @@ export const KewPs4LedgerPage: React.FC = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {/* Min Stock Card */}
-                      <div className="bg-rose-50/60 border border-rose-200 rounded-2xl p-4 space-y-2 shadow-2xs">
+                      <div className="bg-rose-500/10 border border-rose-500/20 rounded-2xl p-4 space-y-2 shadow-elevation-1">
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-black text-rose-700 uppercase tracking-wider">Paras Min (Min Stock)</span>
-                          <span className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-2xs"></span>
+                          <span className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-elevation-1"></span>
                         </div>
                         <Input
                           type="number"
                           min="0"
-                          className="text-base py-2 rounded-xl bg-white border-rose-300 font-mono font-black text-rose-950 focus:border-rose-500 focus:ring-rose-400"
+                          className="text-base py-2 rounded-xl bg-surface border-rose-300 font-mono font-black text-rose-400 dark:text-rose-300 font-bold focus:border-rose-500 focus:ring-rose-400"
                           value={editMinStock}
                           onChange={(e) => setEditMinStock(e.target.value)}
                           required
@@ -8084,39 +8086,39 @@ export const KewPs4LedgerPage: React.FC = () => {
                       </div>
 
                       {/* Buffer Stock Card */}
-                      <div className="bg-amber-50/60 border border-amber-200 rounded-2xl p-4 space-y-2 shadow-2xs">
+                      <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4 space-y-2 shadow-elevation-1">
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-black text-amber-800 uppercase tracking-wider">Stok Buffer (Reorder)</span>
-                          <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-2xs"></span>
+                          <span className="text-xs font-black text-amber-400 uppercase tracking-wider">Stok Buffer (Reorder)</span>
+                          <span className="w-2.5 h-2.5 rounded-full bg-amber-400 shadow-elevation-1"></span>
                         </div>
                         <Input
                           type="number"
                           min="0"
-                          className="text-base py-2 rounded-xl bg-white border-amber-300 font-mono font-black text-amber-950 focus:border-amber-500 focus:ring-amber-400"
+                          className="text-base py-2 rounded-xl bg-surface border-amber-300 font-mono font-black text-amber-400 dark:text-amber-300 font-bold focus:border-amber-500 focus:ring-amber-400"
                           value={editBufferStock}
                           onChange={(e) => setEditBufferStock(e.target.value)}
                           required
                         />
-                        <span className="text-[10px] text-amber-800 font-semibold block leading-snug">
+                        <span className="text-[10px] text-amber-400 font-semibold block leading-snug">
                           Simpanan buffer keselamatan tambahan stor.
                         </span>
                       </div>
 
                       {/* Max Stock Card */}
-                      <div className="bg-emerald-50/60 border border-emerald-200 rounded-2xl p-4 space-y-2 shadow-2xs">
+                      <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4 space-y-2 shadow-elevation-1">
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-black text-emerald-800 uppercase tracking-wider">Paras Max (Max Stock)</span>
-                          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-2xs"></span>
+                          <span className="text-xs font-black text-emerald-400 uppercase tracking-wider">Paras Max (Max Stock)</span>
+                          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-elevation-1"></span>
                         </div>
                         <Input
                           type="number"
                           min="0"
-                          className="text-base py-2 rounded-xl bg-white border-emerald-300 font-mono font-black text-emerald-950 focus:border-emerald-500 focus:ring-emerald-400"
+                          className="text-base py-2 rounded-xl bg-surface border-emerald-300 font-mono font-black text-emerald-400 dark:text-emerald-300 font-bold focus:border-emerald-500 focus:ring-emerald-400"
                           value={editMaxStock}
                           onChange={(e) => setEditMaxStock(e.target.value)}
                           required
                         />
-                        <span className="text-[10px] text-emerald-800 font-semibold block leading-snug">
+                        <span className="text-[10px] text-emerald-400 font-semibold block leading-snug">
                           Had maksimum simpanan keatas ubat/stok.
                         </span>
                       </div>
@@ -8127,13 +8129,13 @@ export const KewPs4LedgerPage: React.FC = () => {
               </div>
 
               {/* Drawer Footer Actions */}
-              <div className="p-6 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-3 shrink-0">
+              <div className="p-6 bg-subtle/50 border-t border-border-default flex items-center justify-end gap-3 shrink-0">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={() => setIsEditStockModalOpen(false)}
                   disabled={isSubmittingEditStock}
-                  className="rounded-2xl text-xs py-2.5 px-5 font-bold border-slate-300 hover:bg-slate-100"
+                  className="rounded-2xl text-xs py-2.5 px-5 font-bold border-border-default hover:bg-subtle"
                 >
                   Batal
                 </Button>
@@ -8141,7 +8143,7 @@ export const KewPs4LedgerPage: React.FC = () => {
                   type="submit"
                   form="edit-stock-drawer-form"
                   disabled={isSubmittingEditStock}
-                  className="bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white font-black text-xs py-2.5 px-6 rounded-2xl shadow-lg gap-2 cursor-pointer transition-all active:scale-[0.98]"
+                  className="bg-teal-600 hover:bg-teal-700 active:bg-teal-800 text-white font-black text-xs py-2.5 px-6 rounded-2xl shadow-lg gap-2 cursor-pointer transition-colors active:scale-[0.98]"
                 >
                   {isSubmittingEditStock ? (
                     <Spinner size="sm" />

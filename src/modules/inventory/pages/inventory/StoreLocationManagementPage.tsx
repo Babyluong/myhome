@@ -878,9 +878,9 @@ export const StoreLocationManagementPage: React.FC = () => {
   const totalItemsStored = useMemo(() => locations.reduce((sum, l) => sum + l.total_items_count, 0), [locations])
 
   return (
-    <div className="p-6 md:p-8 space-y-6 text-slate-800 min-h-screen bg-slate-50/50">
+    <div className="p-6 md:p-8 space-y-6 text-text-primary min-h-screen bg-subtle/50">
       {/* LUXURY EXECUTIVE HEADER BANNER */}
-      <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-teal-950 text-white rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden border border-slate-800">
+      <div className="bg-surface border border-border-default text-white rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden border border-slate-800">
         <div className="absolute -right-10 -bottom-10 w-72 h-72 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-teal-500 via-emerald-400 to-indigo-500" />
         
@@ -912,7 +912,7 @@ export const StoreLocationManagementPage: React.FC = () => {
               </button>
               <Button
                 onClick={handleOpenCreateModal}
-                className="bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white rounded-2xl font-bold text-xs gap-1.5 px-4 py-2.5 shadow-lg"
+                className="bg-accent-base hover:bg-accent-hover text-white rounded-2xl font-bold text-xs gap-1.5 px-4 py-2.5 shadow-lg"
               >
                 <Plus className="w-4 h-4" />
                 + Tambah Lokasi Stor
@@ -927,25 +927,25 @@ export const StoreLocationManagementPage: React.FC = () => {
         /* STORE LOCATION DETAIL VIEW WINDOW */
         <div className="space-y-6">
           {/* Header Bar */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="bg-surface p-6 rounded-2xl border border-border-default shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setSelectedStoreLocation(null)}
-                className="p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition flex items-center justify-center shrink-0 border border-slate-200"
+                className="p-2.5 bg-subtle hover:bg-subtle text-text-secondary rounded-xl transition flex items-center justify-center shrink-0 border border-border-default"
                 title="Kembali ke Senarai Stor"
               >
                 <ArrowLeft className="w-5 h-5" />
               </button>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono font-bold text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-md border border-teal-200">
+                  <span className="text-xs font-mono font-bold text-teal-700 bg-accent-base/10 px-2.5 py-0.5 rounded-md border border-accent-base/20">
                     {selectedStoreLocation.location_code}
                   </span>
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider bg-slate-100 px-2 py-0.5 rounded-md">
+                  <span className="text-xs font-bold text-text-muted uppercase tracking-wider bg-subtle px-2 py-0.5 rounded-md">
                     {selectedStoreLocation.department || 'LOG'}
                   </span>
                 </div>
-                <h1 className="text-2xl font-black tracking-tight text-slate-900 mt-1 flex items-center gap-2">
+                <h1 className="text-2xl font-black tracking-tight text-text-primary mt-1 flex items-center gap-2">
                   <Building2 className="w-6 h-6 text-teal-600" />
                   <span>{selectedStoreLocation.store_name}</span>
                 </h1>
@@ -974,13 +974,13 @@ export const StoreLocationManagementPage: React.FC = () => {
 
           {/* Overview Metadata Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-3 border-l-4 border-l-teal-500">
-              <div className="p-2.5 bg-teal-50 text-teal-600 rounded-xl">
+            <div className="bg-surface p-4 rounded-2xl border border-border-default shadow-sm flex items-center gap-3 border-l-4 border-l-teal-500">
+              <div className="p-2.5 bg-accent-base/10 text-teal-600 rounded-xl">
                 <Layers className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Kategori Bekalan</p>
-                <p className="text-xs font-bold text-slate-800 mt-0.5">
+                <p className="text-[11px] font-bold text-text-secondary font-bold uppercase tracking-wider">Kategori Bekalan</p>
+                <p className="text-xs font-bold text-text-primary mt-0.5">
                   {selectedStoreLocation.location_type === 'drug' && 'Bekalan Ubat Sahaja'}
                   {selectedStoreLocation.location_type === 'non_drug' && 'Bukan Ubat Sahaja'}
                   {selectedStoreLocation.location_type === 'both' && 'Ubat & Bukan Ubat'}
@@ -988,13 +988,13 @@ export const StoreLocationManagementPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-3 border-l-4 border-l-cyan-500">
+            <div className="bg-surface p-4 rounded-2xl border border-border-default shadow-sm flex items-center gap-3 border-l-4 border-l-cyan-500">
               <div className="p-2.5 bg-cyan-50 text-cyan-600 rounded-xl">
                 <Thermometer className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Syarat Simpanan</p>
-                <p className="text-xs font-bold text-slate-800 mt-0.5">
+                <p className="text-[11px] font-bold text-text-secondary font-bold uppercase tracking-wider">Syarat Simpanan</p>
+                <p className="text-xs font-bold text-text-primary mt-0.5">
                   {selectedStoreLocation.storage_condition === 'cold_2_8c' && 'Peti Sejuk (2-8°C)'}
                   {selectedStoreLocation.storage_condition === 'controlled' && 'Bilik Kawalan DDA'}
                   {selectedStoreLocation.storage_condition === 'ambient' && 'Suhu Bilik (Ambient)'}
@@ -1003,22 +1003,22 @@ export const StoreLocationManagementPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-3 border-l-4 border-l-indigo-500">
-              <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl">
+            <div className="bg-surface p-4 rounded-2xl border border-border-default shadow-sm flex items-center gap-3 border-l-4 border-l-indigo-500">
+              <div className="p-2.5 bg-indigo-500/10 text-indigo-600 rounded-xl">
                 <Box className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Jumlah Item Tersimpan</p>
-                <p className="text-xs font-bold text-slate-800 mt-0.5">{selectedStoreLocation.total_items_count} Item</p>
+                <p className="text-[11px] font-bold text-text-secondary font-bold uppercase tracking-wider">Jumlah Item Tersimpan</p>
+                <p className="text-xs font-bold text-text-primary mt-0.5">{selectedStoreLocation.total_items_count} Item</p>
               </div>
             </div>
 
-            <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-3 border-l-4 border-l-emerald-500">
-              <div className="p-2.5 bg-emerald-50 text-emerald-600 rounded-xl">
+            <div className="bg-surface p-4 rounded-2xl border border-border-default shadow-sm flex items-center gap-3 border-l-4 border-l-emerald-500">
+              <div className="p-2.5 bg-emerald-500/10 text-emerald-600 rounded-xl">
                 <CheckCircle className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Status Operasi</p>
+                <p className="text-[11px] font-bold text-text-secondary font-bold uppercase tracking-wider">Status Operasi</p>
                 <p className="text-xs font-bold text-emerald-600 mt-0.5">
                   {selectedStoreLocation.is_active ? 'Lokasi Aktif & Berfungsi' : 'Tidak Aktif'}
                 </p>
@@ -1027,17 +1027,17 @@ export const StoreLocationManagementPage: React.FC = () => {
           </div>
 
           {/* Sub-Locations Management (Pallet, Rack, Cabinet, Level, Column) Section */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+          <div className="bg-surface p-6 rounded-2xl border border-border-default shadow-sm space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border-subtle pb-4">
               <div>
                 <div className="flex items-center gap-2">
                   <FolderTree className="w-5 h-5 text-teal-600" />
-                  <h2 className="text-base font-bold text-slate-900">Hierarki Lokasi Fizikal (WMS Sub-Locations)</h2>
-                  <span className="text-[10px] font-bold text-teal-700 bg-teal-50 px-2.5 py-0.5 rounded-full border border-teal-200">
+                  <h2 className="text-base font-bold text-text-primary">Hierarki Lokasi Fizikal (WMS Sub-Locations)</h2>
+                  <span className="text-[10px] font-bold text-teal-700 bg-accent-base/10 px-2.5 py-0.5 rounded-full border border-accent-base/20">
                     {subLocations.length} Unit Fizikal
                   </span>
                 </div>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-text-muted mt-1">
                   Struktur susunan fizikal Palet, Rak, Kabinet, Level (Tingkat) & Column (Bin) dalam {selectedStoreLocation.store_name}
                 </p>
               </div>
@@ -1064,24 +1064,24 @@ export const StoreLocationManagementPage: React.FC = () => {
                   return (
                     <div
                       key={mainUnit.id}
-                      className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-2xs transition hover:border-slate-300"
+                      className="bg-surface border border-border-default rounded-xl overflow-hidden shadow-elevation-1 transition hover:border-border-default"
                     >
                       {/* Parent Node Header */}
-                      <div className="p-3.5 bg-slate-50/90 flex items-center justify-between gap-3 border-b border-slate-100">
+                      <div className="p-3.5 bg-subtle/50 flex items-center justify-between gap-3 border-b border-border-subtle">
                         <div className="flex items-center gap-2.5 min-w-0">
                           <button
                             type="button"
                             onClick={() => toggleNodeExpand(mainUnit.id)}
-                            className="p-1 hover:bg-slate-200/70 text-slate-500 rounded-md transition"
+                            className="p-1 hover:bg-subtle text-text-muted rounded-md transition"
                           >
                             {isExpanded ? (
-                              <ChevronDown className="w-4 h-4 text-slate-600" />
+                              <ChevronDown className="w-4 h-4 text-text-muted" />
                             ) : (
-                              <ChevronRight className="w-4 h-4 text-slate-600" />
+                              <ChevronRight className="w-4 h-4 text-text-muted" />
                             )}
                           </button>
 
-                          <div className="p-2 rounded-lg shrink-0 bg-white border border-slate-200 text-slate-700 shadow-2xs">
+                          <div className="p-2 rounded-lg shrink-0 bg-surface border border-border-default text-text-secondary shadow-elevation-1">
                             {mainUnit.type === 'cabinet' && <Archive className="w-4 h-4 text-purple-600" />}
                             {mainUnit.type === 'rack' && <Layers className="w-4 h-4 text-amber-600" />}
                             {mainUnit.type === 'pallet' && <Box className="w-4 h-4 text-orange-600" />}
@@ -1089,8 +1089,8 @@ export const StoreLocationManagementPage: React.FC = () => {
 
                           <div className="min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <span className="font-extrabold text-xs text-slate-800 tracking-tight">{mainUnit.name}</span>
-                              <span className="font-mono text-[11px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-200/80">
+                              <span className="font-extrabold text-xs text-text-primary tracking-tight">{mainUnit.name}</span>
+                              <span className="font-mono text-[11px] font-bold text-teal-700 bg-accent-base/10 px-2 py-0.5 rounded border border-accent-base/20">
                                 {mainUnit.code}
                               </span>
                               <span className="text-[10px] font-mono text-slate-400">
@@ -1098,20 +1098,20 @@ export const StoreLocationManagementPage: React.FC = () => {
                               </span>
                             </div>
                             {mainUnit.notes && (
-                              <p className="text-[11px] text-slate-500 truncate mt-0.5">{mainUnit.notes}</p>
+                              <p className="text-[11px] text-text-muted truncate mt-0.5">{mainUnit.notes}</p>
                             )}
                           </div>
                         </div>
 
                         <div className="flex items-center gap-2 shrink-0">
-                          <span className="text-[11px] font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md">
+                          <span className="text-[11px] font-semibold text-text-muted bg-subtle px-2.5 py-1 rounded-md">
                             {children.length} Sub-unit
                           </span>
 
                           <button
                             type="button"
                             onClick={(e) => handleOpenRackItemsModal(mainUnit, e)}
-                            className="text-[11px] font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200/80 px-2.5 py-1 rounded-lg flex items-center gap-1 transition"
+                            className="text-[11px] font-bold text-indigo-700 bg-indigo-500/10 hover:bg-indigo-100 border border-indigo-500/20 px-2.5 py-1 rounded-lg flex items-center gap-1 transition"
                             title="Papar Semua Item di Rack"
                           >
                             <Eye className="w-3.5 h-3.5" />
@@ -1121,7 +1121,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={(e) => handleOpenBulkAssignModal(mainUnit, undefined, e)}
-                            className="text-[11px] font-extrabold text-emerald-800 bg-emerald-100/90 hover:bg-emerald-200 border border-emerald-300 px-2.5 py-1 rounded-lg flex items-center gap-1 transition cursor-pointer shadow-2xs"
+                            className="text-[11px] font-extrabold text-emerald-400 bg-emerald-100/90 hover:bg-emerald-200 border border-emerald-300 px-2.5 py-1 rounded-lg flex items-center gap-1 transition cursor-pointer shadow-elevation-1"
                             title={`Tetapkan Item Pukal ke ${mainUnit.name}`}
                           >
                             <PlusCircle className="w-3.5 h-3.5 text-emerald-700" />
@@ -1131,7 +1131,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => handleOpenAddSubLocation('level', mainUnit.name)}
-                            className="text-[11px] font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 px-2.5 py-1 rounded-lg flex items-center gap-1 transition"
+                            className="text-[11px] font-bold text-teal-700 bg-accent-base/10 hover:bg-teal-100 border border-accent-base/20 px-2.5 py-1 rounded-lg flex items-center gap-1 transition"
                             title="Tambah Level"
                           >
                             <Plus className="w-3.5 h-3.5" />
@@ -1141,7 +1141,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => handleOpenEditSubLocation(mainUnit)}
-                            className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 rounded-lg transition"
+                            className="p-1.5 text-slate-400 hover:text-text-secondary hover:bg-subtle rounded-lg transition"
                             title="Sunting Unit"
                           >
                             <Edit className="w-3.5 h-3.5" />
@@ -1150,7 +1150,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => handleDeleteSubLocation(mainUnit.id)}
-                            className="p-1.5 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition"
+                            className="p-1.5 text-rose-400 hover:text-rose-600 hover:bg-rose-500/10 rounded-lg transition"
                             title="Padam Unit"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -1160,9 +1160,9 @@ export const StoreLocationManagementPage: React.FC = () => {
 
                       {/* Children Level & Column Nodes */}
                       {isExpanded && (
-                        <div className="p-3 bg-white space-y-2 border-t border-slate-100">
+                        <div className="p-3 bg-surface space-y-2 border-t border-border-subtle">
                           {children.length === 0 ? (
-                            <div className="py-3 px-4 text-center text-slate-400 text-xs bg-slate-50/50 rounded-lg border border-dashed border-slate-200">
+                            <div className="py-3 px-4 text-center text-slate-400 text-xs bg-subtle/50 rounded-lg border border-dashed border-border-default">
                               Tiada sub-unit (Level/Column) ditambah di bawah {mainUnit.name}. Click <b>+ Level</b> di atas.
                             </div>
                           ) : (
@@ -1173,10 +1173,10 @@ export const StoreLocationManagementPage: React.FC = () => {
                                 <div
                                   key={child.id}
                                   onClick={(e) => handleOpenLevelItemsModal(mainUnit, child, e)}
-                                  className="ml-6 pl-4 border-l-2 border-slate-200 py-2.5 px-3.5 bg-slate-50/60 hover:bg-teal-50/60 rounded-r-xl border border-slate-200/80 flex items-center justify-between text-xs transition cursor-pointer group shadow-2xs hover:border-teal-300"
+                                  className="ml-6 pl-4 border-l-2 border-border-default py-2.5 px-3.5 bg-subtle/50 hover:bg-accent-base/10 rounded-r-xl border border-border-default flex items-center justify-between text-xs transition cursor-pointer group shadow-elevation-1 hover:border-teal-300"
                                 >
                                   <div className="flex items-center gap-2.5">
-                                    <div className="p-1.5 bg-white border border-slate-200 group-hover:border-teal-300 rounded-md text-slate-600 group-hover:text-teal-600 shadow-2xs transition">
+                                    <div className="p-1.5 bg-surface border border-border-default group-hover:border-teal-300 rounded-md text-text-muted group-hover:text-teal-600 shadow-elevation-1 transition">
                                       {child.type === 'level' ? (
                                         <Tag className="w-3.5 h-3.5 text-teal-600" />
                                       ) : (
@@ -1185,7 +1185,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                                     </div>
                                     <div>
                                       <div className="flex items-center gap-2">
-                                        <span className="font-bold text-slate-800 group-hover:text-teal-900 transition">{child.name}</span>
+                                        <span className="font-bold text-text-primary group-hover:text-teal-900 transition">{child.name}</span>
                                         <span className="text-[10px] text-teal-600 font-semibold opacity-0 group-hover:opacity-100 transition flex items-center gap-0.5">
                                           <Eye className="w-3 h-3" /> Papar Senarai Item
                                         </span>
@@ -1201,13 +1201,13 @@ export const StoreLocationManagementPage: React.FC = () => {
                                       <button
                                         type="button"
                                         onClick={(e) => handleOpenLevelItemsModal(mainUnit, child, e)}
-                                        className="text-[10px] font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 px-2.5 py-1 rounded-full transition flex items-center gap-1"
+                                        className="text-[10px] font-bold text-emerald-700 bg-emerald-500/10 hover:bg-emerald-100 border border-emerald-500/20 px-2.5 py-1 rounded-full transition flex items-center gap-1"
                                       >
                                         <Eye className="w-3 h-3" />
                                         <span>{itemsAtLevel.length} Item</span>
                                       </button>
                                     ) : (
-                                      <span className="text-[10px] font-medium text-slate-400 bg-slate-100 border border-slate-200/60 px-2 py-0.5 rounded-full">
+                                      <span className="text-[10px] font-medium text-slate-400 bg-subtle border border-border-default px-2 py-0.5 rounded-full">
                                         Kosong
                                       </span>
                                     )}
@@ -1215,18 +1215,18 @@ export const StoreLocationManagementPage: React.FC = () => {
                                     <button
                                       type="button"
                                       onClick={(e) => handleOpenBulkAssignModal(mainUnit, child, e)}
-                                      className="text-[10px] font-extrabold text-teal-800 bg-teal-100/90 hover:bg-teal-200 border border-teal-300 px-2 py-0.5 rounded-md flex items-center gap-1 transition cursor-pointer shadow-2xs"
+                                      className="text-[10px] font-extrabold text-teal-800 bg-teal-100/90 hover:bg-teal-200 border border-teal-300 px-2 py-0.5 rounded-md flex items-center gap-1 transition cursor-pointer shadow-elevation-1"
                                       title={`Tetapkan Item Pukal ke ${mainUnit.name} › ${child.name}`}
                                     >
                                       <PlusCircle className="w-3 h-3 text-teal-700" />
                                       <span>+ Assign Item</span>
                                     </button>
 
-                                    <div className="flex items-center gap-0.5 border-l border-slate-200 pl-1.5 ml-0.5">
+                                    <div className="flex items-center gap-0.5 border-l border-border-default pl-1.5 ml-0.5">
                                       <button
                                         type="button"
                                         onClick={() => handleOpenEditSubLocation(child)}
-                                        className="p-1 text-slate-400 hover:text-slate-700 hover:bg-slate-200/50 rounded transition"
+                                        className="p-1 text-slate-400 hover:text-text-secondary hover:bg-subtle rounded transition"
                                         title="Sunting Level"
                                       >
                                         <Edit className="w-3.5 h-3.5" />
@@ -1234,7 +1234,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                                       <button
                                         type="button"
                                         onClick={() => handleDeleteSubLocation(child.id)}
-                                        className="p-1 text-rose-400 hover:text-rose-600 hover:bg-rose-50 rounded transition"
+                                        className="p-1 text-rose-400 hover:text-rose-600 hover:bg-rose-500/10 rounded transition"
                                         title="Padam Level"
                                       >
                                         <Trash2 className="w-3.5 h-3.5" />
@@ -1254,14 +1254,14 @@ export const StoreLocationManagementPage: React.FC = () => {
           </div>
 
           {/* Assigned Inventory Items Table inside Location */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+          <div className="bg-surface p-6 rounded-2xl border border-border-default shadow-sm space-y-4">
+            <div className="flex items-center justify-between border-b border-border-subtle pb-4">
               <div>
-                <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <h2 className="text-base font-bold text-text-primary flex items-center gap-2">
                   <Package className="w-5 h-5 text-teal-600" />
                   <span>Item Inventori Tersimpan di {selectedStoreLocation.store_name}</span>
                 </h2>
-                <p className="text-xs text-slate-500 mt-0.5">Senarai ubat dan bekalan bukan ubat yang dipetakan ke stor ini</p>
+                <p className="text-xs text-text-muted mt-0.5">Senarai ubat dan bekalan bukan ubat yang dipetakan ke stor ini</p>
               </div>
             </div>
 
@@ -1270,8 +1270,8 @@ export const StoreLocationManagementPage: React.FC = () => {
                 <Spinner size="md" />
               </div>
             ) : assignedDrugs.length === 0 && assignedNonDrugs.length === 0 ? (
-              <div className="p-8 text-center bg-slate-50 rounded-xl border border-slate-200">
-                <p className="text-xs font-semibold text-slate-500">Tiada item inventori ditempatkan di stor ini buat masa ini.</p>
+              <div className="p-8 text-center bg-subtle/50 rounded-xl border border-border-default">
+                <p className="text-xs font-semibold text-text-muted">Tiada item inventori ditempatkan di stor ini buat masa ini.</p>
               </div>
             ) : (
               <div className="space-y-6">
@@ -1281,20 +1281,20 @@ export const StoreLocationManagementPage: React.FC = () => {
                       <Package className="w-4 h-4 text-blue-600" /> Bekalan Ubat Mengikut Level & Rak ({assignedDrugs.length})
                     </h3>
                     {Object.entries(groupedDrugs).map(([subGroupName, items]) => (
-                      <div key={subGroupName} className="bg-slate-50/70 rounded-xl border border-slate-200/90 p-4 space-y-2.5">
-                        <div className="flex items-center justify-between border-b border-slate-200/80 pb-2">
-                          <span className="text-xs font-extrabold text-slate-800 flex items-center gap-2">
+                      <div key={subGroupName} className="bg-subtle/50 rounded-xl border border-border-default p-4 space-y-2.5">
+                        <div className="flex items-center justify-between border-b border-border-default pb-2">
+                          <span className="text-xs font-extrabold text-text-primary flex items-center gap-2">
                             <Layers className="w-3.5 h-3.5 text-teal-600" />
                             <span>{subGroupName}</span>
                           </span>
-                          <span className="text-[10px] font-bold text-teal-700 bg-teal-50 border border-teal-200/80 px-2.5 py-0.5 rounded-full">
+                          <span className="text-[10px] font-bold text-teal-700 bg-accent-base/10 border border-accent-base/20 px-2.5 py-0.5 rounded-full">
                             {items.length} Item
                           </span>
                         </div>
 
-                        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+                        <div className="overflow-x-auto rounded-lg border border-border-default bg-surface">
                           <table className="w-full text-left text-xs">
-                            <thead className="bg-blue-50/40 text-slate-600 font-bold border-b border-slate-200">
+                            <thead className="bg-blue-500/10 text-text-muted font-bold border-b border-border-default">
                               <tr>
                                 <th className="py-2.5 px-3">Kod Item</th>
                                 <th className="py-2.5 px-3">Nama Ubat</th>
@@ -1302,12 +1302,12 @@ export const StoreLocationManagementPage: React.FC = () => {
                                 <th className="py-2.5 px-3 text-right">Stok Semasa</th>
                               </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100">
+                            <tbody className="divide-y divide-border-subtle">
                               {items.map(item => (
                                 <tr key={item.id}>
-                                  <td className="py-2.5 px-3 font-mono font-bold text-slate-700">{item.item_code}</td>
-                                  <td className="py-2.5 px-3 font-bold text-slate-900">{item.drug_name}</td>
-                                  <td className="py-2.5 px-3 text-slate-600">{item.dosage_form || '-'}</td>
+                                  <td className="py-2.5 px-3 font-mono font-bold text-text-secondary">{item.item_code}</td>
+                                  <td className="py-2.5 px-3 font-bold text-text-primary">{item.drug_name}</td>
+                                  <td className="py-2.5 px-3 text-text-muted">{item.dosage_form || '-'}</td>
                                   <td className="py-2.5 px-3 text-right font-bold text-teal-700">{item.current_stock} {item.unit_of_measure}</td>
                                 </tr>
                               ))}
@@ -1325,20 +1325,20 @@ export const StoreLocationManagementPage: React.FC = () => {
                       <ClipboardList className="w-4 h-4 text-purple-600" /> Bekalan Bukan Ubat Mengikut Level & Rak ({assignedNonDrugs.length})
                     </h3>
                     {Object.entries(groupedNonDrugs).map(([subGroupName, items]) => (
-                      <div key={subGroupName} className="bg-purple-50/40 rounded-xl border border-purple-200/80 p-4 space-y-2.5">
-                        <div className="flex items-center justify-between border-b border-purple-200/60 pb-2">
-                          <span className="text-xs font-extrabold text-slate-800 flex items-center gap-2">
+                      <div key={subGroupName} className="bg-indigo-500/10 rounded-xl border border-indigo-500/20 p-4 space-y-2.5">
+                        <div className="flex items-center justify-between border-b border-indigo-500/20 pb-2">
+                          <span className="text-xs font-extrabold text-text-primary flex items-center gap-2">
                             <Layers className="w-3.5 h-3.5 text-purple-600" />
                             <span>{subGroupName}</span>
                           </span>
-                          <span className="text-[10px] font-bold text-purple-700 bg-purple-50 border border-purple-200 px-2.5 py-0.5 rounded-full">
+                          <span className="text-[10px] font-bold text-purple-700 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-0.5 rounded-full">
                             {items.length} Item
                           </span>
                         </div>
 
-                        <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+                        <div className="overflow-x-auto rounded-lg border border-border-default bg-surface">
                           <table className="w-full text-left text-xs">
-                            <thead className="bg-purple-50/40 text-slate-600 font-bold border-b border-slate-200">
+                            <thead className="bg-indigo-500/10 text-text-muted font-bold border-b border-border-default">
                               <tr>
                                 <th className="py-2.5 px-3">Kod Item</th>
                                 <th className="py-2.5 px-3">Nama Item</th>
@@ -1346,12 +1346,12 @@ export const StoreLocationManagementPage: React.FC = () => {
                                 <th className="py-2.5 px-3 text-right">Stok Semasa</th>
                               </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100">
+                            <tbody className="divide-y divide-border-subtle">
                               {items.map(item => (
                                 <tr key={item.id}>
-                                  <td className="py-2.5 px-3 font-mono font-bold text-slate-700">{item.item_code}</td>
-                                  <td className="py-2.5 px-3 font-bold text-slate-900">{item.item_name}</td>
-                                  <td className="py-2.5 px-3 text-slate-600">{item.category || '-'}</td>
+                                  <td className="py-2.5 px-3 font-mono font-bold text-text-secondary">{item.item_code}</td>
+                                  <td className="py-2.5 px-3 font-bold text-text-primary">{item.item_name}</td>
+                                  <td className="py-2.5 px-3 text-text-muted">{item.category || '-'}</td>
                                   <td className="py-2.5 px-3 text-right font-bold text-teal-700">{item.current_stock} {item.unit_of_measure}</td>
                                 </tr>
                               ))}
@@ -1371,49 +1371,49 @@ export const StoreLocationManagementPage: React.FC = () => {
         <>
           {/* Metrics Row (Light Clean Cards) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4 border-l-4 border-l-teal-500">
-              <div className="p-3 bg-teal-50 text-teal-600 rounded-xl">
+            <div className="bg-surface p-5 rounded-2xl border border-border-default shadow-sm flex items-center gap-4 border-l-4 border-l-teal-500">
+              <div className="p-3 bg-accent-base/10 text-teal-600 rounded-xl">
                 <Building2 className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Jumlah Stor</p>
-                <p className="text-2xl font-black text-slate-800 mt-0.5">{uniqueStoresCount}</p>
+                <p className="text-xs font-bold text-text-secondary font-bold uppercase tracking-wider">Jumlah Stor</p>
+                <p className="text-2xl font-black text-text-primary mt-0.5">{uniqueStoresCount}</p>
               </div>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4 border-l-4 border-l-indigo-500">
-              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
+            <div className="bg-surface p-5 rounded-2xl border border-border-default shadow-sm flex items-center gap-4 border-l-4 border-l-indigo-500">
+              <div className="p-3 bg-indigo-500/10 text-indigo-600 rounded-xl">
                 <Layers className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Jumlah Kabinet/Rak</p>
-                <p className="text-2xl font-black text-slate-800 mt-0.5">{uniqueCabinetsCount}</p>
+                <p className="text-xs font-bold text-text-secondary font-bold uppercase tracking-wider">Jumlah Kabinet/Rak</p>
+                <p className="text-2xl font-black text-text-primary mt-0.5">{uniqueCabinetsCount}</p>
               </div>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4 border-l-4 border-l-amber-500">
-              <div className="p-3 bg-amber-50 text-amber-600 rounded-xl">
+            <div className="bg-surface p-5 rounded-2xl border border-border-default shadow-sm flex items-center gap-4 border-l-4 border-l-amber-500">
+              <div className="p-3 bg-amber-500/10 text-amber-600 rounded-xl">
                 <Box className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Lokasi Berisi Item</p>
-                <p className="text-2xl font-black text-slate-800 mt-0.5">{totalOccupiedCount} / {locations.length}</p>
+                <p className="text-xs font-bold text-text-secondary font-bold uppercase tracking-wider">Lokasi Berisi Item</p>
+                <p className="text-2xl font-black text-text-primary mt-0.5">{totalOccupiedCount} / {locations.length}</p>
               </div>
             </div>
 
-            <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center gap-4 border-l-4 border-l-emerald-500">
-              <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
+            <div className="bg-surface p-5 rounded-2xl border border-border-default shadow-sm flex items-center gap-4 border-l-4 border-l-emerald-500">
+              <div className="p-3 bg-emerald-500/10 text-emerald-600 rounded-xl">
                 <Package className="w-6 h-6" />
               </div>
               <div>
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Jumlah Item Berlokasi</p>
-                <p className="text-2xl font-black text-slate-800 mt-0.5">{totalItemsStored} Item</p>
+                <p className="text-xs font-bold text-text-secondary font-bold uppercase tracking-wider">Jumlah Item Berlokasi</p>
+                <p className="text-2xl font-black text-text-primary mt-0.5">{totalItemsStored} Item</p>
               </div>
             </div>
           </div>
 
           {/* Filter and View Bar */}
-          <div className="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="bg-surface p-4 rounded-2xl border border-border-default shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex flex-1 flex-col sm:flex-row items-center gap-3">
               <div className="relative w-full sm:w-80">
                 <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -1422,7 +1422,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                   placeholder="Cari stor, kabinet, level, atau kod..."
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
-                  className="w-full bg-slate-50 text-slate-800 placeholder-slate-400 text-xs font-medium pl-9 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 focus:bg-white transition"
+                  className="w-full bg-subtle/50 text-text-primary placeholder-slate-400 text-xs font-medium pl-9 pr-4 py-2.5 rounded-xl border border-border-default focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 focus:bg-surface transition"
                 />
               </div>
 
@@ -1430,7 +1430,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                 <select
                   value={typeFilter}
                   onChange={e => setTypeFilter(e.target.value)}
-                  className="bg-slate-50 text-slate-700 text-xs font-semibold px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
+                  className="bg-subtle/50 text-text-secondary text-xs font-semibold px-3 py-2.5 rounded-xl border border-border-default focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
                 >
                   <option value="all">Semua Jenis (Ubat & Bukan Ubat)</option>
                   <option value="drug">Bekalan Ubat Sahaja</option>
@@ -1441,7 +1441,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                 <select
                   value={conditionFilter}
                   onChange={e => setConditionFilter(e.target.value)}
-                  className="bg-slate-50 text-slate-700 text-xs font-semibold px-3 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
+                  className="bg-subtle/50 text-text-secondary text-xs font-semibold px-3 py-2.5 rounded-xl border border-border-default focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
                 >
                   <option value="all">Semua Syarat Simpanan</option>
                   <option value="ambient">Suhu Bilik (Ambient)</option>
@@ -1452,11 +1452,11 @@ export const StoreLocationManagementPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200 self-end md:self-auto">
+            <div className="flex items-center gap-1 bg-subtle p-1 rounded-xl border border-border-default self-end md:self-auto">
               <button
                 onClick={() => setViewMode('table')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
-                  viewMode === 'table' ? 'bg-white text-teal-700 shadow-sm' : 'text-slate-500 hover:text-slate-800'
+                  viewMode === 'table' ? 'bg-surface text-teal-700 shadow-sm' : 'text-text-muted hover:text-text-primary'
                 }`}
               >
                 <FolderTree className="w-3.5 h-3.5" />
@@ -1465,7 +1465,7 @@ export const StoreLocationManagementPage: React.FC = () => {
               <button
                 onClick={() => setViewMode('grid')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
-                  viewMode === 'grid' ? 'bg-white text-teal-700 shadow-sm' : 'text-slate-500 hover:text-slate-800'
+                  viewMode === 'grid' ? 'bg-surface text-teal-700 shadow-sm' : 'text-text-muted hover:text-text-primary'
                 }`}
               >
                 <LayoutGrid className="w-3.5 h-3.5" />
@@ -1476,33 +1476,33 @@ export const StoreLocationManagementPage: React.FC = () => {
 
           {/* Main Content Area */}
           {isLoading ? (
-            <div className="flex flex-col items-center justify-center p-16 bg-white rounded-2xl border border-slate-200 space-y-4 shadow-sm">
+            <div className="flex flex-col items-center justify-center p-16 bg-surface rounded-2xl border border-border-default space-y-4 shadow-sm">
               <Spinner size="lg" />
-              <p className="text-slate-500 text-sm font-medium">Sedang memuatkan senarai lokasi stor...</p>
+              <p className="text-text-muted text-sm font-medium">Sedang memuatkan senarai lokasi stor...</p>
             </div>
           ) : filteredLocations.length === 0 ? (
-            <div className="flex flex-col items-center justify-center p-16 bg-white rounded-2xl border border-slate-200 text-center space-y-3 shadow-sm">
-              <div className="p-4 bg-teal-50 text-teal-600 rounded-full">
+            <div className="flex flex-col items-center justify-center p-16 bg-surface rounded-2xl border border-border-default text-center space-y-3 shadow-sm">
+              <div className="p-4 bg-accent-base/10 text-teal-600 rounded-full">
                 <MapPin className="w-10 h-10" />
               </div>
-              <h3 className="text-lg font-bold text-slate-800">Tiada Lokasi Stor Ditemui</h3>
-              <p className="text-sm text-slate-500 max-w-md">
+              <h3 className="text-lg font-bold text-text-primary">Tiada Lokasi Stor Ditemui</h3>
+              <p className="text-sm text-text-muted max-w-md">
                 Sila cipta lokasi stor fizikal baharu (Stor → Kabinet → Level) untuk menempatkan bekalan ubat & bukan ubat di fasiliti anda.
               </p>
               <Button
                 onClick={handleOpenCreateModal}
-                className="mt-2 bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition"
+                className="mt-2 bg-accent-base hover:bg-accent-hover text-white text-xs font-bold px-4 py-2.5 rounded-xl transition"
               >
                 + Tambah Lokasi Baharu
               </Button>
             </div>
           ) : viewMode === 'table' ? (
             /* TABLE VIEW */
-            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+            <div className="bg-surface rounded-2xl border border-border-default shadow-sm overflow-hidden">
               {/* Desktop View: Full Table */}
               <div className="hidden md:block overflow-x-auto">
-                <table className="w-full text-left text-xs text-slate-700">
-                  <thead className="bg-slate-50 text-slate-600 uppercase font-bold tracking-wider border-b border-slate-200">
+                <table className="w-full text-left text-xs text-text-secondary">
+                  <thead className="bg-subtle/50 text-text-muted uppercase font-bold tracking-wider border-b border-border-default">
                     <tr>
                       <th className="py-3.5 px-4">Kod Lokasi</th>
                       <th className="py-3.5 px-4">Nama Stor</th>
@@ -1512,39 +1512,39 @@ export const StoreLocationManagementPage: React.FC = () => {
                       <th className="py-3.5 px-4 text-center">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="divide-y divide-border-subtle">
                     {filteredLocations.map(loc => (
                       <tr
                         key={loc.id}
                         onClick={() => handleSelectStoreLocation(loc)}
-                        className="hover:bg-teal-50/40 cursor-pointer transition group"
+                        className="hover:bg-accent-base/10 cursor-pointer transition group"
                       >
                         <td className="py-3.5 px-4 font-mono font-bold text-teal-700 group-hover:underline">
                           {loc.location_code}
                         </td>
-                        <td className="py-3.5 px-4 font-bold text-slate-800 group-hover:text-teal-900">
+                        <td className="py-3.5 px-4 font-bold text-text-primary group-hover:text-teal-900">
                           {loc.store_name}
                         </td>
                         <td className="py-3.5 px-4">
                           {loc.location_type === 'drug' && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200 rounded-lg">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-blue-500/10 text-blue-700 border border-blue-500/20 rounded-lg">
                               <Package className="w-3 h-3" /> Ubat
                             </span>
                           )}
                           {loc.location_type === 'non_drug' && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-purple-50 text-purple-700 border border-purple-200 rounded-lg">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-indigo-500/10 text-purple-700 border border-indigo-500/20 rounded-lg">
                               <ClipboardList className="w-3 h-3" /> Bukan Ubat
                             </span>
                           )}
                           {loc.location_type === 'both' && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-teal-50 text-teal-700 border border-teal-200 rounded-lg">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-accent-base/10 text-teal-700 border border-accent-base/20 rounded-lg">
                               <Layers className="w-3 h-3" /> Ubat & Bukan Ubat
                             </span>
                           )}
                         </td>
                         <td className="py-3.5 px-4">
                           {(loc.storage_condition === 'ambient' || (loc.storage_condition as unknown as string) === 'room_temp') && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200 rounded-lg">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-amber-500/10 text-amber-700 border border-amber-500/20 rounded-lg">
                               Suhu Bilik (≤25°C)
                             </span>
                           )}
@@ -1554,7 +1554,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                             </span>
                           )}
                           {loc.storage_condition === 'frozen' && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-lg">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-indigo-500/10 text-indigo-700 border border-indigo-500/20 rounded-lg">
                               Peti Beku (-20°C)
                             </span>
                           )}
@@ -1565,7 +1565,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                               e.stopPropagation()
                               handleViewItems(loc)
                             }}
-                            className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-full text-xs font-bold text-slate-700 transition"
+                            className="inline-flex items-center gap-1.5 px-3 py-1 bg-subtle hover:bg-subtle border border-border-default rounded-full text-xs font-bold text-text-secondary transition"
                           >
                             <Eye className="w-3.5 h-3.5 text-teal-600" />
                             <span>{loc.total_items_count} Item</span>
@@ -1573,11 +1573,11 @@ export const StoreLocationManagementPage: React.FC = () => {
                         </td>
                         <td className="py-3.5 px-4 text-center">
                           {loc.is_active ? (
-                            <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                            <span className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
                               <CheckCircle className="w-3.5 h-3.5" /> Aktif
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+                            <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-400 bg-subtle px-2 py-0.5 rounded-full">
                               <XCircle className="w-3.5 h-3.5" /> Tidak Aktif
                             </span>
                           )}
@@ -1589,28 +1589,28 @@ export const StoreLocationManagementPage: React.FC = () => {
               </div>
 
               {/* Mobile View: High-End Native Cards (Zero Horizontal Scroll!) */}
-              <div className="md:hidden divide-y divide-slate-100">
+              <div className="md:hidden divide-y divide-border-subtle">
                 {filteredLocations.map(loc => (
                   <div
                     key={loc.id}
                     onClick={() => handleSelectStoreLocation(loc)}
-                    className="p-4 space-y-3 hover:bg-slate-50/50 transition cursor-pointer"
+                    className="p-4 space-y-3 hover:bg-subtle/50 transition cursor-pointer"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <span className="font-mono font-bold text-teal-700 text-xs block">
                           {loc.location_code}
                         </span>
-                        <h4 className="font-bold text-slate-900 text-sm">
+                        <h4 className="font-bold text-text-primary text-sm">
                           {loc.store_name}
                         </h4>
                       </div>
                       {loc.is_active ? (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 flex-shrink-0">
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 flex-shrink-0">
                           <CheckCircle className="w-3 h-3" /> Aktif
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full flex-shrink-0">
+                        <span className="inline-flex items-center gap-1 text-[10px] font-medium text-slate-400 bg-subtle px-2 py-0.5 rounded-full flex-shrink-0">
                           <XCircle className="w-3 h-3" /> Tidak Aktif
                         </span>
                       )}
@@ -1618,22 +1618,22 @@ export const StoreLocationManagementPage: React.FC = () => {
 
                     <div className="flex items-center gap-2 flex-wrap">
                       {loc.location_type === 'drug' && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200 rounded-md">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold bg-blue-500/10 text-blue-700 border border-blue-500/20 rounded-md">
                           <Package className="w-2.5 h-2.5" /> Ubat
                         </span>
                       )}
                       {loc.location_type === 'non_drug' && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold bg-purple-50 text-purple-700 border border-purple-200 rounded-md">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold bg-indigo-500/10 text-purple-700 border border-indigo-500/20 rounded-md">
                           <ClipboardList className="w-2.5 h-2.5" /> Bukan Ubat
                         </span>
                       )}
                       {loc.location_type === 'both' && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold bg-teal-50 text-teal-700 border border-teal-200 rounded-md">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold bg-accent-base/10 text-teal-700 border border-accent-base/20 rounded-md">
                           <Layers className="w-2.5 h-2.5" /> Ubat & Bukan Ubat
                         </span>
                       )}
                       {(loc.storage_condition === 'ambient' || (loc.storage_condition as unknown as string) === 'room_temp') && (
-                        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 rounded-md">
+                        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold bg-amber-500/10 text-amber-700 border border-amber-500/20 rounded-md">
                           ≤25°C
                         </span>
                       )}
@@ -1643,19 +1643,19 @@ export const StoreLocationManagementPage: React.FC = () => {
                         </span>
                       )}
                       {loc.storage_condition === 'frozen' && (
-                        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-md">
+                        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold bg-indigo-500/10 text-indigo-700 border border-indigo-500/20 rounded-md">
                           -20°C
                         </span>
                       )}
                     </div>
 
-                    <div className="flex items-center justify-between pt-1 border-t border-slate-100">
+                    <div className="flex items-center justify-between pt-1 border-t border-border-subtle">
                       <button
                         onClick={(e) => {
                           e.stopPropagation()
                           handleViewItems(loc)
                         }}
-                        className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 transition"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 bg-subtle hover:bg-subtle border border-border-default rounded-xl text-xs font-bold text-text-secondary transition"
                       >
                         <Eye className="w-3.5 h-3.5 text-teal-600" />
                         <span>{loc.total_items_count} Item</span>
@@ -1673,18 +1673,18 @@ export const StoreLocationManagementPage: React.FC = () => {
             /* HIERARCHY GRID VIEW */
             <div className="space-y-6">
               {Object.entries(groupedStores).map(([storeName, storeLocs]) => (
-                <div key={storeName} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div key={storeName} className="bg-surface p-5 rounded-2xl border border-border-default shadow-sm space-y-4">
+                  <div className="flex items-center justify-between border-b border-border-subtle pb-3">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-teal-50 text-teal-600 rounded-xl border border-teal-100">
+                      <div className="p-2 bg-accent-base/10 text-teal-600 rounded-xl border border-teal-100">
                         <Building2 className="w-5 h-5" />
                       </div>
                       <div>
-                        <h3 className="text-base font-bold text-slate-800">{storeName}</h3>
-                        <p className="text-xs text-slate-500 font-medium">{storeLocs.length} Ruangan Lokasi Berdaftar</p>
+                        <h3 className="text-base font-bold text-text-primary">{storeName}</h3>
+                        <p className="text-xs text-text-muted font-medium">{storeLocs.length} Ruangan Lokasi Berdaftar</p>
                       </div>
                     </div>
-                    <span className="text-xs font-bold px-3 py-1 bg-slate-50 text-teal-700 border border-slate-200 rounded-full">
+                    <span className="text-xs font-bold px-3 py-1 bg-subtle/50 text-teal-700 border border-border-default rounded-full">
                       {storeLocs.reduce((acc, curr) => acc + curr.total_items_count, 0)} Item Tersimpan
                     </span>
                   </div>
@@ -1694,12 +1694,12 @@ export const StoreLocationManagementPage: React.FC = () => {
                       <div
                         key={loc.id}
                         onClick={() => handleSelectStoreLocation(loc)}
-                        className="bg-slate-50/70 p-4 rounded-xl border border-slate-200 space-y-3 hover:border-teal-400 transition cursor-pointer"
+                        className="bg-subtle/50 p-4 rounded-xl border border-border-default space-y-3 hover:border-teal-400 transition cursor-pointer"
                       >
                         <div className="flex items-start justify-between">
                           <div>
                             <span className="text-xs font-mono font-bold text-teal-700">{loc.location_code}</span>
-                            <h4 className="text-sm font-bold text-slate-800 mt-0.5">
+                            <h4 className="text-sm font-bold text-text-primary mt-0.5">
                               {loc.cabinet_rack && loc.cabinet_rack !== '-' ? `${loc.cabinet_rack} → ${loc.shelf_level}` : loc.store_name}
                             </h4>
                           </div>
@@ -1709,7 +1709,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                                 e.stopPropagation()
                                 handleOpenEditModal(loc)
                               }}
-                              className="p-1 text-slate-500 hover:text-slate-800"
+                              className="p-1 text-text-muted hover:text-text-primary"
                             >
                               <Settings className="w-3.5 h-3.5" />
                             </button>
@@ -1726,10 +1726,10 @@ export const StoreLocationManagementPage: React.FC = () => {
                         </div>
 
                     {loc.description && (
-                      <p className="text-xs text-slate-500 line-clamp-2">{loc.description}</p>
+                      <p className="text-xs text-text-muted line-clamp-2">{loc.description}</p>
                     )}
 
-                    <div className="flex flex-wrap items-center justify-between gap-2 border-t border-slate-200/60 pt-3 text-xs">
+                    <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border-default pt-3 text-xs">
                       <div className="flex items-center gap-1.5 font-bold">
                         {loc.location_type === 'drug' && <span className="text-blue-700">Ubat</span>}
                         {loc.location_type === 'non_drug' && <span className="text-purple-700">Bukan Ubat</span>}
@@ -1762,20 +1762,20 @@ export const StoreLocationManagementPage: React.FC = () => {
         description="Tetapan Lokasi Stor & Syarat Simpanan"
         size="lg"
       >
-        <form onSubmit={handleSubmitForm} className="flex flex-col h-full bg-slate-50/50">
+        <form onSubmit={handleSubmitForm} className="flex flex-col h-full bg-subtle/50">
           <div className="flex-1 overflow-y-auto p-6 space-y-5">
             {/* Department Selector */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center justify-between">
+              <label className="block text-xs font-bold uppercase tracking-wider text-text-secondary mb-1.5 flex items-center justify-between">
                 <span>Jabatan / Unit <span className="text-red-500">*</span></span>
-                <span className="text-[10px] font-mono text-teal-700 font-bold bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200/60">
+                <span className="text-[10px] font-mono text-teal-700 font-bold bg-accent-base/10 px-2 py-0.5 rounded-md border border-accent-base/20">
                   Prefix: {departmentInput}
                 </span>
               </label>
               <select
                 value={departmentInput}
                 onChange={e => handleDepartmentChange(e.target.value)}
-                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold text-slate-900 shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition cursor-pointer"
+                className="w-full bg-surface border border-border-default rounded-xl px-4 py-3 text-xs font-semibold text-text-primary shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition cursor-pointer"
               >
                 {DEPARTMENT_OPTIONS.map(dept => (
                   <option key={dept.code} value={dept.code}>
@@ -1787,7 +1787,7 @@ export const StoreLocationManagementPage: React.FC = () => {
 
             {/* Store Name */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5 flex items-center justify-between">
+              <label className="block text-xs font-bold uppercase tracking-wider text-text-secondary mb-1.5 flex items-center justify-between">
                 <span>Nama Stor Utama <span className="text-red-500">*</span></span>
               </label>
               <input
@@ -1796,37 +1796,37 @@ export const StoreLocationManagementPage: React.FC = () => {
                 placeholder="cth: Liquid Store, Stor Utama, Bilik Sejuk"
                 value={storeNameInput}
                 onChange={e => handleStoreNameChange(e.target.value)}
-                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold text-slate-900 shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
+                className="w-full bg-surface border border-border-default rounded-xl px-4 py-3 text-xs font-semibold text-text-primary shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
               />
             </div>
 
             {/* Store Code (Auto) */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
+                <label className="block text-xs font-bold uppercase tracking-wider text-text-secondary">
                   Kod Lokasi (Auto)
                 </label>
-                <span className="text-[10px] font-semibold text-teal-600 bg-teal-50 px-2 py-0.5 rounded-md border border-teal-200">Format: {departmentInput}-xxx-xxx</span>
+                <span className="text-[10px] font-semibold text-teal-600 bg-accent-base/10 px-2 py-0.5 rounded-md border border-accent-base/20">Format: {departmentInput}-xxx-xxx</span>
               </div>
               <input
                 type="text"
                 placeholder={`cth: ${departmentInput}-STR-001`}
                 value={locationCodeInput}
                 onChange={e => setLocationCodeInput(e.target.value)}
-                className="w-full bg-slate-100/80 border border-slate-200 font-mono text-teal-700 font-bold rounded-xl px-4 py-3 text-xs shadow-inner focus:bg-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
+                className="w-full bg-subtle border border-border-default font-mono text-teal-700 font-bold rounded-xl px-4 py-3 text-xs shadow-inner focus:bg-surface focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
               />
             </div>
 
             {/* Kategori & Temperature */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-xs font-bold uppercase tracking-wider text-text-secondary mb-1.5">
                   Kategori Bekalan
                 </label>
                 <select
                   value={locationTypeInput}
                   onChange={e => setLocationTypeInput(e.target.value as StoreLocationType)}
-                  className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-xs font-semibold text-slate-900 shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
+                  className="w-full bg-surface border border-border-default rounded-xl px-3.5 py-3 text-xs font-semibold text-text-primary shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
                 >
                   <option value="both">Ubat & Bukan Ubat</option>
                   <option value="drug">Bekalan Ubat Sahaja</option>
@@ -1835,13 +1835,13 @@ export const StoreLocationManagementPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                <label className="block text-xs font-bold uppercase tracking-wider text-text-secondary mb-1.5">
                   Syarat Simpanan / Suhu
                 </label>
                 <select
                   value={storageConditionInput}
                   onChange={e => setStorageConditionInput(e.target.value as StorageCondition)}
-                  className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-xs font-semibold text-slate-900 shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
+                  className="w-full bg-surface border border-border-default rounded-xl px-3.5 py-3 text-xs font-semibold text-text-primary shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
                 >
                   <option value="ambient">Suhu Bilik (Ambient)</option>
                   <option value="cold_2_8c">Peti Sejuk (2-8°C)</option>
@@ -1853,7 +1853,7 @@ export const StoreLocationManagementPage: React.FC = () => {
 
             {/* Catatan */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-text-secondary mb-1.5">
                 Catatan / Penerangan Lokasi
               </label>
               <textarea
@@ -1861,44 +1861,44 @@ export const StoreLocationManagementPage: React.FC = () => {
                 placeholder="Catatan tambahan mengenai ruang fizikal ini..."
                 value={descriptionInput}
                 onChange={e => setDescriptionInput(e.target.value)}
-                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs font-medium text-slate-900 shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition resize-none"
+                className="w-full bg-surface border border-border-default rounded-xl px-4 py-3 text-xs font-medium text-text-primary shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition resize-none"
               />
             </div>
 
             {/* Active Status */}
-            <div className="flex items-center gap-3 pt-2 bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-sm">
+            <div className="flex items-center gap-3 pt-2 bg-surface p-3.5 rounded-xl border border-border-default shadow-sm">
               <input
                 type="checkbox"
                 id="isActive"
                 checked={isActiveInput}
                 onChange={e => setIsActiveInput(e.target.checked)}
-                className="w-4 h-4 text-teal-600 rounded border-slate-300 focus:ring-teal-500 cursor-pointer"
+                className="w-4 h-4 text-teal-600 rounded border-border-default focus:ring-teal-500 cursor-pointer"
               />
-              <label htmlFor="isActive" className="text-xs font-semibold text-slate-700 cursor-pointer select-none">
+              <label htmlFor="isActive" className="text-xs font-semibold text-text-secondary cursor-pointer select-none">
                 Lokasi Aktif & Boleh Dipilih Dalam Inventori
               </label>
             </div>
 
-            <div className="bg-amber-50/70 border border-amber-200/70 rounded-xl p-3 text-[11px] text-amber-800 flex items-start gap-2">
+            <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 text-[11px] text-amber-400 flex items-start gap-2">
               <span className="font-bold shrink-0 mt-0.5">Nota:</span>
               <span>Kabinet dan Tingkat (Rack & Level) boleh ditambah mengikut keperluan selepas stor dicipta.</span>
             </div>
           </div>
 
           {/* Footer Actions */}
-          <div className="p-4 bg-white border-t border-slate-200/80 flex items-center justify-end gap-3 shrink-0">
+          <div className="p-4 bg-surface border-t border-border-default flex items-center justify-end gap-3 shrink-0">
             <Button
               type="button"
               variant="outline"
               onClick={() => setIsModalOpen(false)}
-              className="rounded-xl border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-xs px-4"
+              className="rounded-xl border-border-default text-text-muted hover:bg-subtle/50 font-bold text-xs px-4"
             >
               Batal
             </Button>
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white rounded-xl font-bold text-xs px-6 py-2.5 shadow-md flex items-center gap-2"
+              className="bg-accent-base hover:bg-accent-hover text-white rounded-xl font-bold text-xs px-6 py-2.5 shadow-md flex items-center gap-2"
             >
               {isSubmitting && <Spinner size="sm" />}
               <span>{editingLocation ? 'Simpan Kemaskini' : 'Cipta Lokasi'}</span>
@@ -1913,7 +1913,7 @@ export const StoreLocationManagementPage: React.FC = () => {
         onClose={() => setViewItemsModalLocation(null)}
         title={`Senarai Item di Lokasi: ${viewItemsModalLocation?.formatted_location || ''}`}
       >
-        <div className="space-y-4 text-slate-800 max-h-[70vh] overflow-y-auto pr-1">
+        <div className="space-y-4 text-text-primary max-h-[70vh] overflow-y-auto pr-1">
           {isLoadingItems ? (
             <div className="flex justify-center p-8">
               <Spinner size="md" />
@@ -1921,7 +1921,7 @@ export const StoreLocationManagementPage: React.FC = () => {
           ) : (assignedDrugs.length === 0 && assignedNonDrugs.length === 0) ? (
             <div className="text-center p-8 space-y-2">
               <Package className="w-10 h-10 text-slate-400 mx-auto" />
-              <p className="text-sm font-medium text-slate-500">Tiada item ubat atau bukan ubat ditempatkan di lokasi ini buat masa ini.</p>
+              <p className="text-sm font-medium text-text-muted">Tiada item ubat atau bukan ubat ditempatkan di lokasi ini buat masa ini.</p>
             </div>
           ) : (
             <div className="space-y-4">
@@ -1931,16 +1931,16 @@ export const StoreLocationManagementPage: React.FC = () => {
                   <h4 className="text-xs font-bold uppercase tracking-wider text-blue-700 mb-2 flex items-center gap-1.5">
                     <Package className="w-4 h-4" /> Bekalan Ubat ({assignedDrugs.length})
                   </h4>
-                  <div className="bg-slate-50 rounded-xl border border-slate-200 divide-y divide-slate-200/80">
+                  <div className="bg-subtle/50 rounded-xl border border-border-default divide-y divide-border-default">
                     {assignedDrugs.map(item => (
                       <div key={item.id} className="p-3 flex items-center justify-between text-xs">
                         <div>
-                          <p className="font-bold text-slate-800">{item.drug_name || item.generic_name}</p>
-                          <p className="text-slate-500 font-mono text-[11px] mt-0.5">{item.drug_code} • Batch: {item.batch_number || 'N/A'}</p>
+                          <p className="font-bold text-text-primary">{item.drug_name || item.generic_name}</p>
+                          <p className="text-text-muted font-mono text-[11px] mt-0.5">{item.drug_code} • Batch: {item.batch_number || 'N/A'}</p>
                         </div>
                         <div className="text-right">
                           <p className="font-bold text-teal-700">{item.facility_stock ?? 0} {item.unit_of_measure}</p>
-                          <p className="text-slate-500 text-[11px]">Min Buffer: {item.min_buffer_level ?? 20}</p>
+                          <p className="text-text-muted text-[11px]">Min Buffer: {item.min_buffer_level ?? 20}</p>
                         </div>
                       </div>
                     ))}
@@ -1954,12 +1954,12 @@ export const StoreLocationManagementPage: React.FC = () => {
                   <h4 className="text-xs font-bold uppercase tracking-wider text-purple-700 mb-2 flex items-center gap-1.5">
                     <ClipboardList className="w-4 h-4" /> Bukan Ubat ({assignedNonDrugs.length})
                   </h4>
-                  <div className="bg-slate-50 rounded-xl border border-slate-200 divide-y divide-slate-200/80">
+                  <div className="bg-subtle/50 rounded-xl border border-border-default divide-y divide-border-default">
                     {assignedNonDrugs.map(item => (
                       <div key={item.id} className="p-3 flex items-center justify-between text-xs">
                         <div>
-                          <p className="font-bold text-slate-800">{item.item_name}</p>
-                          <p className="text-slate-500 font-mono text-[11px] mt-0.5">{item.item_code}</p>
+                          <p className="font-bold text-text-primary">{item.item_name}</p>
+                          <p className="text-text-muted font-mono text-[11px] mt-0.5">{item.item_code}</p>
                         </div>
                         <div className="text-right">
                           <p className="font-bold text-purple-700">{item.facility_stock ?? 0} {item.unit_of_measure}</p>
@@ -1972,7 +1972,7 @@ export const StoreLocationManagementPage: React.FC = () => {
             </div>
           )}
 
-          <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
+          <div className="pt-4 border-t border-border-default flex items-center justify-between">
             {viewItemsModalLocation ? (
               <Button
                 onClick={() => handleExportPdfForLocation(viewItemsModalLocation)}
@@ -1985,7 +1985,7 @@ export const StoreLocationManagementPage: React.FC = () => {
             <Button
               variant="outline"
               onClick={() => setViewItemsModalLocation(null)}
-              className="rounded-xl border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-xs"
+              className="rounded-xl border-border-default text-text-muted hover:bg-subtle/50 font-bold text-xs"
             >
               Tutup
             </Button>
@@ -1999,37 +1999,37 @@ export const StoreLocationManagementPage: React.FC = () => {
         onClose={() => setSubLocationItemsModalData(null)}
         title={subLocationItemsModalData?.title || 'Senarai Item Lokasi'}
       >
-        <div className="space-y-4 text-slate-800 max-h-[70vh] overflow-y-auto pr-1">
-          <p className="text-xs text-slate-500">{subLocationItemsModalData?.subtitle}</p>
+        <div className="space-y-4 text-text-primary max-h-[70vh] overflow-y-auto pr-1">
+          <p className="text-xs text-text-muted">{subLocationItemsModalData?.subtitle}</p>
 
           {(!subLocationItemsModalData?.items || subLocationItemsModalData.items.length === 0) ? (
-            <div className="text-center p-8 space-y-2 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+            <div className="text-center p-8 space-y-2 bg-subtle/50 rounded-2xl border border-dashed border-border-default">
               <Package className="w-10 h-10 text-slate-400 mx-auto" />
-              <p className="text-sm font-semibold text-slate-600">Tiada item ubat ditempatkan di lokasi ini buat masa ini.</p>
+              <p className="text-sm font-semibold text-text-muted">Tiada item ubat ditempatkan di lokasi ini buat masa ini.</p>
               <p className="text-xs text-slate-400">Anda boleh mendaftarkan lokasi ini pada item ubat melalui skrin Inventori Ubat Fasiliti.</p>
             </div>
           ) : (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                <span className="text-xs font-bold text-text-secondary uppercase tracking-wider flex items-center gap-1.5">
                   <Pill className="w-4 h-4 text-indigo-600" />
                   Item Berdaftar ({subLocationItemsModalData.items.length})
                 </span>
               </div>
 
-              <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-2xs divide-y divide-slate-100">
+              <div className="bg-surface rounded-xl border border-border-default overflow-hidden shadow-elevation-1 divide-y divide-border-subtle">
                 {subLocationItemsModalData.items.map((item, idx) => (
-                  <div key={item.id || idx} className="p-3.5 flex items-center justify-between text-xs hover:bg-slate-50 transition">
+                  <div key={item.id || idx} className="p-3.5 flex items-center justify-between text-xs hover:bg-subtle/50 transition">
                     <div className="flex items-center gap-3">
-                      <span className="w-6 h-6 rounded-lg bg-indigo-50 text-indigo-700 font-bold font-mono text-[11px] flex items-center justify-center border border-indigo-200/60">
+                      <span className="w-6 h-6 rounded-lg bg-indigo-500/10 text-indigo-700 font-bold font-mono text-[11px] flex items-center justify-center border border-indigo-500/20">
                         {idx + 1}
                       </span>
                       <div>
-                        <p className="font-bold text-slate-900">{item.drug_name || item.generic_name}</p>
-                        <div className="flex items-center gap-2 mt-0.5 font-mono text-[11px] text-slate-500">
+                        <p className="font-bold text-text-primary">{item.drug_name || item.generic_name}</p>
+                        <div className="flex items-center gap-2 mt-0.5 font-mono text-[11px] text-text-muted">
                           <span>[{item.drug_code || 'CODE'}]</span>
                           <span>•</span>
-                          <span className="text-slate-600">Batch: {item.batch_number || item.batch_no || 'N/A'}</span>
+                          <span className="text-text-muted">Batch: {item.batch_number || item.batch_no || 'N/A'}</span>
                         </div>
                       </div>
                     </div>
@@ -2038,7 +2038,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                       <span className="font-extrabold text-sm text-teal-700 font-mono">
                         {item.facility_stock ?? 0}
                       </span>
-                      <span className="text-[11px] text-slate-500 block">Unit Stok</span>
+                      <span className="text-[11px] text-text-muted block">Unit Stok</span>
                     </div>
                   </div>
                 ))}
@@ -2046,7 +2046,7 @@ export const StoreLocationManagementPage: React.FC = () => {
             </div>
           )}
 
-          <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
+          <div className="pt-4 border-t border-border-default flex items-center justify-between">
             {selectedStoreLocation ? (
               <Button
                 onClick={() => handleExportPdfForLocation(selectedStoreLocation)}
@@ -2059,7 +2059,7 @@ export const StoreLocationManagementPage: React.FC = () => {
             <Button
               variant="outline"
               onClick={() => setSubLocationItemsModalData(null)}
-              className="rounded-xl border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-xs"
+              className="rounded-xl border-border-default text-text-muted hover:bg-subtle/50 font-bold text-xs"
             >
               Tutup
             </Button>
@@ -2074,7 +2074,7 @@ export const StoreLocationManagementPage: React.FC = () => {
         description={`Daftar Palet, Rak, Kabinet, Level atau Column dalam ${selectedStoreLocation?.store_name || 'Stor'}`}
         size="lg"
       >
-        <form onSubmit={handleSaveSubLocation} className="flex flex-col h-full bg-slate-50/50">
+        <form onSubmit={handleSaveSubLocation} className="flex flex-col h-full bg-subtle/50">
           <div className="flex-1 overflow-y-auto p-6 space-y-5">
             {/* Mode Selector: Single vs Bulk Generator */}
             {!editingSubLocation && (
@@ -2083,7 +2083,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                   type="button"
                   onClick={() => setIsBulkMode(false)}
                   className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold transition ${
-                    !isBulkMode ? 'bg-white text-teal-800 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                    !isBulkMode ? 'bg-surface text-teal-800 shadow-elevation-1' : 'text-text-muted hover:text-text-primary'
                   }`}
                 >
                   Tambah 1 Unit (Tunggal)
@@ -2092,7 +2092,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                   type="button"
                   onClick={() => setIsBulkMode(true)}
                   className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
-                    isBulkMode ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+                    isBulkMode ? 'bg-surface border border-border-default text-white shadow-elevation-1' : 'text-text-muted hover:text-text-primary'
                   }`}
                 >
                   <span>⚡ Penjanaan Pukal (Bulk)</span>
@@ -2102,7 +2102,7 @@ export const StoreLocationManagementPage: React.FC = () => {
 
             {/* Sub-Location Type Select Cards */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">
+              <label className="block text-xs font-bold uppercase tracking-wider text-text-secondary mb-2">
                 Jenis Unit Fizikal <span className="text-red-500">*</span>
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
@@ -2118,11 +2118,11 @@ export const StoreLocationManagementPage: React.FC = () => {
                     }}
                     className={`p-3 rounded-xl border text-left flex flex-col items-center justify-center gap-1 transition cursor-pointer ${
                       subTypeInput === st.type
-                        ? 'bg-teal-50 border-teal-500 ring-2 ring-teal-500/20 text-teal-900 font-bold shadow-2xs'
-                        : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50 font-medium'
+                        ? 'bg-accent-base/10 border-teal-500 ring-2 ring-teal-500/20 text-teal-900 font-bold shadow-elevation-1'
+                        : 'bg-surface border-border-default text-text-muted hover:bg-subtle/50 font-medium'
                     }`}
                   >
-                    <div className="p-2 rounded-lg bg-slate-100 text-slate-700 mb-0.5">
+                    <div className="p-2 rounded-lg bg-subtle text-text-secondary mb-0.5">
                       {st.type === 'cabinet' && <Archive className="w-5 h-5 text-purple-600" />}
                       {st.type === 'rack' && <Layers className="w-5 h-5 text-amber-600" />}
                       {st.type === 'pallet' && <Box className="w-5 h-5 text-orange-600" />}
@@ -2138,8 +2138,8 @@ export const StoreLocationManagementPage: React.FC = () => {
 
             {/* BULK GENERATOR FORM FIELDS */}
             {isBulkMode ? (
-              <div className="bg-teal-50/60 border border-teal-200/80 p-4 rounded-2xl space-y-4">
-                <div className="flex items-center gap-2 border-b border-teal-200/60 pb-2.5">
+              <div className="bg-accent-base/10 border border-accent-base/20 p-4 rounded-2xl space-y-4">
+                <div className="flex items-center gap-2 border-b border-accent-base/20 pb-2.5">
                   <RefreshCw className="w-4 h-4 text-teal-700 animate-spin-slow" />
                   <h4 className="text-xs font-black uppercase text-teal-900 tracking-wider">
                     Tetapan Penjanaan Pukal (Bulk Generator)
@@ -2155,7 +2155,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                       <select
                         value={subParentInput}
                         onChange={e => setSubParentInput(e.target.value)}
-                        className="w-full bg-white border border-teal-200 rounded-xl px-3.5 py-3 text-xs font-semibold text-slate-900 shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition cursor-pointer"
+                        className="w-full bg-surface border border-accent-base/20 rounded-xl px-3.5 py-3 text-xs font-semibold text-text-primary shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition cursor-pointer"
                       >
                         <option value="">Pilih Parent Unit...</option>
                         {subLocations
@@ -2179,11 +2179,11 @@ export const StoreLocationManagementPage: React.FC = () => {
                         required
                         value={bulkLevelsPerUnit}
                         onChange={e => setBulkLevelsPerUnit(Number(e.target.value))}
-                        className="w-full bg-white border border-teal-200 rounded-xl px-4 py-3 text-xs font-bold text-slate-900 shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
+                        className="w-full bg-surface border border-accent-base/20 rounded-xl px-4 py-3 text-xs font-bold text-text-primary shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
                       />
                     </div>
 
-                    <div className="bg-white p-3 rounded-xl border border-teal-200 text-xs text-teal-800 space-y-1">
+                    <div className="bg-surface p-3 rounded-xl border border-accent-base/20 text-xs text-teal-800 space-y-1">
                       <span className="font-bold block text-teal-900">Ringkasan Penjanaan:</span>
                       <p>
                         Akan menjana <b>{bulkLevelsPerUnit || 0} Level</b> (Level 1 hingga Level {bulkLevelsPerUnit || 1}) di bawah <b>{subParentInput || 'Unit Terpilih'}</b> secara automatik.
@@ -2203,7 +2203,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                           placeholder="cth: Rak, Kabinet, Palet"
                           value={bulkPrefixName}
                           onChange={e => setBulkPrefixName(e.target.value)}
-                          className="w-full bg-white border border-teal-200 rounded-xl px-4 py-3 text-xs font-bold text-slate-900 shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
+                          className="w-full bg-surface border border-accent-base/20 rounded-xl px-4 py-3 text-xs font-bold text-text-primary shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
                         />
                       </div>
 
@@ -2218,7 +2218,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                           required
                           value={bulkCountUnits}
                           onChange={e => setBulkCountUnits(Number(e.target.value))}
-                          className="w-full bg-white border border-teal-200 rounded-xl px-4 py-3 text-xs font-bold text-slate-900 shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
+                          className="w-full bg-surface border border-accent-base/20 rounded-xl px-4 py-3 text-xs font-bold text-text-primary shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
                         />
                       </div>
                     </div>
@@ -2233,11 +2233,11 @@ export const StoreLocationManagementPage: React.FC = () => {
                         max={30}
                         value={bulkLevelsPerUnit}
                         onChange={e => setBulkLevelsPerUnit(Number(e.target.value))}
-                        className="w-full bg-white border border-teal-200 rounded-xl px-4 py-3 text-xs font-bold text-slate-900 shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
+                        className="w-full bg-surface border border-accent-base/20 rounded-xl px-4 py-3 text-xs font-bold text-text-primary shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
                       />
                     </div>
 
-                    <div className="bg-white p-3.5 rounded-xl border border-teal-200 text-xs text-teal-800 space-y-1">
+                    <div className="bg-surface p-3.5 rounded-xl border border-accent-base/20 text-xs text-teal-800 space-y-1">
                       <span className="font-bold block text-teal-900">Ringkasan Penjanaan Pukal:</span>
                       <p>
                         Akan menjana <b>{bulkCountUnits || 0} {bulkPrefixName || 'Unit'}</b> ({bulkPrefixName} 1 hingga {bulkPrefixName} {bulkCountUnits || 1}) dan <b>{(bulkCountUnits || 0) * (bulkLevelsPerUnit || 0)} Level</b> ({bulkLevelsPerUnit} Level per unit) secara automatik dalam 1 klik!
@@ -2250,7 +2250,7 @@ export const StoreLocationManagementPage: React.FC = () => {
               /* SINGLE UNIT FORM FIELDS */
               <>
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-text-secondary mb-1.5">
                     Nama / Label Sub-Lokasi <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -2259,18 +2259,18 @@ export const StoreLocationManagementPage: React.FC = () => {
                     placeholder="cth: Kabinet A, Palet 01, Rak DDA, Level 2, Column B3"
                     value={subNameInput}
                     onChange={e => setSubNameInput(e.target.value)}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs font-semibold text-slate-900 shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
+                    className="w-full bg-surface border border-border-default rounded-xl px-4 py-3 text-xs font-semibold text-text-primary shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-text-secondary mb-1.5">
                     Unit Induk / Parent Unit (Opsional)
                   </label>
                   <select
                     value={subParentInput}
                     onChange={e => setSubParentInput(e.target.value)}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-xs font-semibold text-slate-900 shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition cursor-pointer"
+                    className="w-full bg-surface border border-border-default rounded-xl px-3.5 py-3 text-xs font-semibold text-text-primary shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition cursor-pointer"
                   >
                     <option value="">Tiada (Unit Utama / Direct to Store)</option>
                     {subLocations
@@ -2287,7 +2287,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-text-secondary mb-1.5">
                     Kod Tag / Short Identifier (Opsional)
                   </label>
                   <input
@@ -2295,12 +2295,12 @@ export const StoreLocationManagementPage: React.FC = () => {
                     placeholder="cth: CAB-A, PAL-01, COL-B3 (Auto-generated jika kosong)"
                     value={subCodeInput}
                     onChange={e => setSubCodeInput(e.target.value)}
-                    className="w-full bg-slate-100/80 border border-slate-200 font-mono text-teal-700 font-bold rounded-xl px-4 py-3 text-xs focus:bg-white focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
+                    className="w-full bg-subtle border border-border-default font-mono text-teal-700 font-bold rounded-xl px-4 py-3 text-xs focus:bg-surface focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-text-secondary mb-1.5">
                     Catatan / Deskripsi Lokasi
                   </label>
                   <textarea
@@ -2308,7 +2308,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                     placeholder="Catatan tambahan mengenai ruang fizikal ini..."
                     value={subNotesInput}
                     onChange={e => setSubNotesInput(e.target.value)}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-medium text-slate-900 shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition resize-none"
+                    className="w-full bg-surface border border-border-default rounded-xl px-4 py-2.5 text-xs font-medium text-text-primary shadow-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition resize-none"
                   />
                 </div>
               </>
@@ -2316,18 +2316,18 @@ export const StoreLocationManagementPage: React.FC = () => {
           </div>
 
           {/* Footer Actions */}
-          <div className="p-4 bg-white border-t border-slate-200/80 flex items-center justify-end gap-3 shrink-0">
+          <div className="p-4 bg-surface border-t border-border-default flex items-center justify-end gap-3 shrink-0">
             <Button
               type="button"
               variant="outline"
               onClick={() => setIsSubLocationModalOpen(false)}
-              className="rounded-xl border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-xs px-4"
+              className="rounded-xl border-border-default text-text-muted hover:bg-subtle/50 font-bold text-xs px-4"
             >
               Batal
             </Button>
             <Button
               type="submit"
-              className="bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white rounded-xl font-bold text-xs px-6 py-2.5 shadow-md flex items-center gap-2"
+              className="bg-accent-base hover:bg-accent-hover text-white rounded-xl font-bold text-xs px-6 py-2.5 shadow-md flex items-center gap-2"
             >
               <span>
                 {editingSubLocation
@@ -2356,7 +2356,7 @@ export const StoreLocationManagementPage: React.FC = () => {
             {/* LEFT COLUMN: Target Path, Search, Filters & Consolidated Item Table (8 Cols) */}
             <div className="lg:col-span-8 space-y-4">
               {/* Target Path Banner */}
-              <div className="bg-gradient-to-r from-teal-50 to-emerald-50 border border-teal-200/90 p-4 rounded-2xl flex items-center justify-between shadow-2xs">
+              <div className="bg-gradient-to-r from-teal-50 to-emerald-50 border border-accent-base/20 p-4 rounded-2xl flex items-center justify-between shadow-elevation-1">
                 <div>
                   <span className="text-[11px] font-extrabold uppercase tracking-wider text-teal-700 block">Lokasi Sasaran (Target Location):</span>
                   <span className="text-base font-black text-teal-950 flex items-center gap-2 mt-0.5">
@@ -2364,13 +2364,13 @@ export const StoreLocationManagementPage: React.FC = () => {
                     {selectedStoreLocation?.store_name} › {bulkAssignTargetUnit.mainUnit.name} {bulkAssignTargetUnit.childUnit ? `› ${bulkAssignTargetUnit.childUnit.name}` : ''}
                   </span>
                 </div>
-                <Badge variant="success" className="px-3.5 py-1 text-xs font-bold shadow-2xs shrink-0">
+                <Badge variant="success" className="px-3.5 py-1 text-xs font-bold shadow-elevation-1 shrink-0">
                   {selectedDrugIdsForAssign.size} Item Dipilih
                 </Badge>
               </div>
 
               {/* Search & Filter Bar */}
-              <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-2xs space-y-3">
+              <div className="bg-surface p-4 rounded-2xl border border-border-default shadow-elevation-1 space-y-3">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
                   <div className="relative w-full sm:w-80">
                     <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -2379,7 +2379,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                       placeholder="Cari ubat, kod, lokasi..."
                       value={bulkAssignSearchTerm}
                       onChange={e => setBulkAssignSearchTerm(e.target.value)}
-                      className="w-full bg-slate-50 text-xs font-semibold pl-9 pr-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
+                      className="w-full bg-subtle/50 text-xs font-semibold pl-9 pr-3 py-2 rounded-xl border border-border-default focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500"
                     />
                   </div>
 
@@ -2387,21 +2387,21 @@ export const StoreLocationManagementPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setBulkAssignFilterMode('all')}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${bulkAssignFilterMode === 'all' ? 'bg-teal-600 text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${bulkAssignFilterMode === 'all' ? 'bg-teal-600 text-white shadow-elevation-1' : 'bg-subtle text-text-muted hover:bg-subtle'}`}
                     >
                       Semua ({placedDrugItems.length})
                     </button>
                     <button
                       type="button"
                       onClick={() => setBulkAssignFilterMode('unassigned')}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${bulkAssignFilterMode === 'unassigned' ? 'bg-teal-600 text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${bulkAssignFilterMode === 'unassigned' ? 'bg-teal-600 text-white shadow-elevation-1' : 'bg-subtle text-text-muted hover:bg-subtle'}`}
                     >
                       Belum Diset
                     </button>
                     <button
                       type="button"
                       onClick={() => setBulkAssignFilterMode('here')}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${bulkAssignFilterMode === 'here' ? 'bg-teal-600 text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer ${bulkAssignFilterMode === 'here' ? 'bg-teal-600 text-white shadow-elevation-1' : 'bg-subtle text-text-muted hover:bg-subtle'}`}
                     >
                       Di Lokasi Ini
                     </button>
@@ -2409,7 +2409,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                 </div>
 
                 {/* Procurement Category Filter Bar (APPL, CC, LP, DP) */}
-                <div className="flex items-center gap-1.5 pt-2 border-t border-slate-100 flex-wrap">
+                <div className="flex items-center gap-1.5 pt-2 border-t border-border-subtle flex-wrap">
                   <span className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mr-1">
                     Kontrak / Kategori:
                   </span>
@@ -2417,7 +2417,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                     type="button"
                     onClick={() => setBulkAssignProcurementFilter('all')}
                     className={`px-2.5 py-1 rounded-lg text-xs font-extrabold transition cursor-pointer ${
-                      bulkAssignProcurementFilter === 'all' ? 'bg-slate-800 text-white shadow-2xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      bulkAssignProcurementFilter === 'all' ? 'bg-slate-800 text-white shadow-elevation-1' : 'bg-subtle text-text-muted hover:bg-subtle'
                     }`}
                   >
                     Semua Kontrak
@@ -2426,7 +2426,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                     type="button"
                     onClick={() => setBulkAssignProcurementFilter('APPL')}
                     className={`px-2.5 py-1 rounded-lg text-xs font-extrabold transition cursor-pointer ${
-                      bulkAssignProcurementFilter === 'APPL' ? 'bg-blue-600 text-white shadow-2xs' : 'bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200/80'
+                      bulkAssignProcurementFilter === 'APPL' ? 'bg-blue-600 text-white shadow-elevation-1' : 'bg-blue-500/10 text-blue-700 hover:bg-blue-100 border border-blue-500/20'
                     }`}
                   >
                     APPL
@@ -2435,7 +2435,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                     type="button"
                     onClick={() => setBulkAssignProcurementFilter('CC')}
                     className={`px-2.5 py-1 rounded-lg text-xs font-extrabold transition cursor-pointer ${
-                      bulkAssignProcurementFilter === 'CC' ? 'bg-purple-600 text-white shadow-2xs' : 'bg-purple-50 text-purple-700 hover:bg-purple-100 border border-purple-200/80'
+                      bulkAssignProcurementFilter === 'CC' ? 'bg-purple-600 text-white shadow-elevation-1' : 'bg-indigo-500/10 text-purple-700 hover:bg-purple-100 border border-indigo-500/20'
                     }`}
                   >
                     CC (Central Contract)
@@ -2444,7 +2444,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                     type="button"
                     onClick={() => setBulkAssignProcurementFilter('LP')}
                     className={`px-2.5 py-1 rounded-lg text-xs font-extrabold transition cursor-pointer ${
-                      bulkAssignProcurementFilter === 'LP' ? 'bg-amber-600 text-white shadow-2xs' : 'bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200/80'
+                      bulkAssignProcurementFilter === 'LP' ? 'bg-amber-600 text-white shadow-elevation-1' : 'bg-amber-500/10 text-amber-400 hover:bg-amber-100 border border-amber-500/20'
                     }`}
                   >
                     LP (Local Purchase)
@@ -2453,7 +2453,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                     type="button"
                     onClick={() => setBulkAssignProcurementFilter('DP')}
                     className={`px-2.5 py-1 rounded-lg text-xs font-extrabold transition cursor-pointer ${
-                      bulkAssignProcurementFilter === 'DP' ? 'bg-emerald-600 text-white shadow-2xs' : 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200/80'
+                      bulkAssignProcurementFilter === 'DP' ? 'bg-emerald-600 text-white shadow-elevation-1' : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-100 border border-emerald-500/20'
                     }`}
                   >
                     DP (Direct Purchase)
@@ -2462,27 +2462,27 @@ export const StoreLocationManagementPage: React.FC = () => {
               </div>
 
               {/* Consolidated Item Selection Table (3 Clean Columns) */}
-              <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+              <div className="bg-surface border border-border-default rounded-2xl overflow-hidden shadow-sm">
                 <div className="max-h-[520px] overflow-y-auto">
                   <table className="w-full text-left text-xs">
-                    <thead className="bg-slate-100/90 sticky top-0 text-slate-700 font-extrabold uppercase tracking-wider border-b border-slate-200 z-10">
+                    <thead className="bg-subtle sticky top-0 text-text-secondary font-extrabold uppercase tracking-wider border-b border-border-default z-10">
                       <tr>
                         <th className="py-3 px-3.5 w-12 text-center">
                           <input
                             type="checkbox"
                             checked={visibleDrugItemsForAssign.length > 0 && visibleDrugItemsForAssign.every(i => selectedDrugIdsForAssign.has(i.id || i.drug_id))}
                             onChange={() => handleToggleSelectAllVisible(visibleDrugItemsForAssign.map(i => i.id || i.drug_id))}
-                            className="rounded border-slate-300 text-teal-600 focus:ring-teal-500 cursor-pointer w-4 h-4"
+                            className="rounded border-border-default text-teal-600 focus:ring-teal-500 cursor-pointer w-4 h-4"
                           />
                         </th>
                         <th className="py-3 px-4">Maklumat Ubat / Bekalan</th>
                         <th className="py-3 px-4 text-right">Lokasi Semasa & Stok</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 bg-white">
+                    <tbody className="divide-y divide-border-subtle bg-surface">
                       {visibleDrugItemsForAssign.length === 0 ? (
                         <tr>
-                          <td colSpan={3} className="py-12 text-center text-slate-400 font-semibold">
+                          <td colSpan={3} className="py-12 text-center text-text-muted font-medium font-semibold">
                             Tiada ubat / bekalan ditemui mengikut carian ini.
                           </td>
                         </tr>
@@ -2497,35 +2497,35 @@ export const StoreLocationManagementPage: React.FC = () => {
                             <tr
                               key={itemId}
                               onClick={() => handleToggleSelectDrug(itemId)}
-                              className={`cursor-pointer transition ${isSelected ? 'bg-teal-50/80 border-l-4 border-l-teal-600' : 'hover:bg-slate-50'}`}
+                              className={`cursor-pointer transition ${isSelected ? 'bg-accent-base/10 border-l-4 border-l-teal-600' : 'hover:bg-subtle/50'}`}
                             >
                               <td className="py-3.5 px-3.5 text-center" onClick={e => e.stopPropagation()}>
                                 <input
                                   type="checkbox"
                                   checked={isSelected}
                                   onChange={() => handleToggleSelectDrug(itemId)}
-                                  className="rounded border-slate-300 text-teal-600 focus:ring-teal-500 cursor-pointer w-4 h-4"
+                                  className="rounded border-border-default text-teal-600 focus:ring-teal-500 cursor-pointer w-4 h-4"
                                 />
                               </td>
                               <td className="py-3.5 px-4">
                                 <div className="flex flex-col gap-1">
-                                  <span className="font-extrabold text-xs text-slate-900 leading-snug">
+                                  <span className="font-extrabold text-xs text-text-primary leading-snug">
                                     {item.drug_name || item.brand_name || item.item_name || '-'}
                                   </span>
                                   <div className="flex items-center gap-2 flex-wrap">
-                                    <span className="font-mono text-[10px] font-bold text-teal-700 bg-teal-50 border border-teal-200/80 px-1.5 py-0.5 rounded">
+                                    <span className="font-mono text-[10px] font-bold text-teal-700 bg-accent-base/10 border border-accent-base/20 px-1.5 py-0.5 rounded">
                                       {item.item_code || item.drug_code || '-'}
                                     </span>
                                     <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded border ${
-                                      pCat === 'APPL' ? 'bg-blue-50 text-blue-700 border-blue-200' :
-                                      pCat === 'CC' ? 'bg-purple-50 text-purple-700 border-purple-200' :
-                                      pCat === 'LP' ? 'bg-amber-50 text-amber-800 border-amber-200' :
-                                      'bg-emerald-50 text-emerald-800 border-emerald-200'
+                                      pCat === 'APPL' ? 'bg-blue-500/10 text-blue-700 border-blue-500/20' :
+                                      pCat === 'CC' ? 'bg-indigo-500/10 text-purple-700 border-indigo-500/20' :
+                                      pCat === 'LP' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
+                                      'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                                     }`}>
                                       {pCat}
                                     </span>
                                     {(item.dosage_form || item.category) && (
-                                      <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">
+                                      <span className="text-[10px] font-semibold text-text-muted bg-subtle px-1.5 py-0.5 rounded">
                                         {item.dosage_form || item.category}
                                       </span>
                                     )}
@@ -2534,11 +2534,11 @@ export const StoreLocationManagementPage: React.FC = () => {
                               </td>
                               <td className="py-3.5 px-4 text-right">
                                 <div className="flex flex-col items-end gap-1">
-                                  <span className={`px-2.5 py-0.5 rounded text-[11px] font-bold border ${!currentLoc || currentLoc === 'Belum Diset' ? 'bg-amber-50 text-amber-700 border-amber-200' : 'bg-slate-100 text-slate-600 border-slate-200'}`}>
+                                  <span className={`px-2.5 py-0.5 rounded text-[11px] font-bold border ${!currentLoc || currentLoc === 'Belum Diset' ? 'bg-amber-500/10 text-amber-700 border-amber-500/20' : 'bg-subtle text-text-muted border-border-default'}`}>
                                     {currentLoc}
                                   </span>
-                                  <span className="text-[11px] font-medium text-slate-500">
-                                    Stok: <b className="text-slate-800">{item.current_stock ?? item.facility_stock ?? 0}</b> {item.unit_of_measure || ''}
+                                  <span className="text-[11px] font-medium text-text-muted">
+                                    Stok: <b className="text-text-primary">{item.current_stock ?? item.facility_stock ?? 0}</b> {item.unit_of_measure || ''}
                                   </span>
                                 </div>
                               </td>
@@ -2554,8 +2554,8 @@ export const StoreLocationManagementPage: React.FC = () => {
 
             {/* RIGHT COLUMN: Dedicated Selected Items Summary Panel & Action Box (4 Cols) */}
             <div className="lg:col-span-4 sticky top-6 space-y-4">
-              <div className="bg-white border border-teal-200/90 rounded-2xl p-4.5 space-y-4 shadow-sm">
-                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="bg-surface border border-accent-base/20 rounded-2xl p-4.5 space-y-4 shadow-sm">
+                <div className="flex items-center justify-between border-b border-border-subtle pb-3">
                   <div>
                     <h3 className="text-xs font-black uppercase text-teal-950 tracking-wider flex items-center gap-2">
                       <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0" />
@@ -2567,7 +2567,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setSelectedDrugIdsForAssign(new Set())}
-                      className="text-[11px] font-bold text-rose-600 hover:text-rose-800 hover:underline transition cursor-pointer shrink-0"
+                      className="text-[11px] font-bold text-rose-600 hover:text-rose-400 hover:underline transition cursor-pointer shrink-0"
                     >
                       Kosongkan
                     </button>
@@ -2575,9 +2575,9 @@ export const StoreLocationManagementPage: React.FC = () => {
                 </div>
 
                 {selectedItemsList.length === 0 ? (
-                  <div className="py-12 px-4 text-center text-slate-400 bg-slate-50/70 rounded-xl border border-dashed border-slate-200">
+                  <div className="py-12 px-4 text-center text-slate-400 bg-subtle/50 rounded-xl border border-dashed border-border-default">
                     <Package className="w-8 h-8 mx-auto text-slate-300 mb-2" />
-                    <p className="text-xs font-bold text-slate-500">Tiada Item Dipilih</p>
+                    <p className="text-xs font-bold text-text-muted">Tiada Item Dipilih</p>
                     <p className="text-[11px] text-slate-400 mt-1">Tanda jadual di sebelah kiri untuk memilih item secara pukal.</p>
                   </div>
                 ) : (
@@ -2590,16 +2590,16 @@ export const StoreLocationManagementPage: React.FC = () => {
                       return (
                         <div
                           key={itemId}
-                          className="p-2.5 bg-slate-50 hover:bg-teal-50/50 rounded-xl border border-slate-200/80 flex items-start justify-between gap-2 transition group"
+                          className="p-2.5 bg-subtle/50 hover:bg-accent-base/10 rounded-xl border border-border-default flex items-start justify-between gap-2 transition group"
                         >
                           <div className="min-w-0 flex-1">
-                            <p className="text-xs font-bold text-slate-900 leading-snug">{name}</p>
+                            <p className="text-xs font-bold text-text-primary leading-snug">{name}</p>
                             {code && <p className="font-mono text-[10px] font-semibold text-teal-700 mt-0.5">{code}</p>}
                           </div>
                           <button
                             type="button"
                             onClick={() => handleToggleSelectDrug(itemId)}
-                            className="text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-1 rounded-lg transition cursor-pointer shrink-0 mt-0.5"
+                            className="text-slate-400 hover:text-rose-600 hover:bg-rose-500/10 p-1 rounded-lg transition cursor-pointer shrink-0 mt-0.5"
                             title="Keluarkan item ini"
                           >
                             <X className="w-4 h-4" />
@@ -2611,8 +2611,8 @@ export const StoreLocationManagementPage: React.FC = () => {
                 )}
 
                 {/* Target Path Box & Action Buttons */}
-                <div className="border-t border-slate-100 pt-3 space-y-3">
-                  <div className="bg-teal-50/80 border border-teal-200/80 p-3 rounded-xl text-xs space-y-1">
+                <div className="border-t border-border-subtle pt-3 space-y-3">
+                  <div className="bg-accent-base/10 border border-accent-base/20 p-3 rounded-xl text-xs space-y-1">
                     <span className="font-extrabold text-teal-900 block text-[10px] uppercase tracking-wider">Lokasi Sasaran Akhir:</span>
                     <p className="font-black text-teal-950 text-xs">
                       {selectedStoreLocation?.store_name} › {bulkAssignTargetUnit.mainUnit.name} {bulkAssignTargetUnit.childUnit ? `› ${bulkAssignTargetUnit.childUnit.name}` : ''}
@@ -2623,7 +2623,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                     type="button"
                     onClick={handleSaveBulkAssign}
                     disabled={isSavingBulkAssign || selectedDrugIdsForAssign.size === 0}
-                    className="w-full bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white rounded-xl font-extrabold text-xs py-3 shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full bg-accent-base hover:bg-accent-hover text-white rounded-xl font-extrabold text-xs py-3 shadow-md flex items-center justify-center gap-2 cursor-pointer"
                   >
                     {isSavingBulkAssign ? <Spinner size="sm" /> : <CheckCircle2 className="w-4 h-4 text-white" />}
                     <span>Tetapkan Lokasi ({selectedDrugIdsForAssign.size} Item)</span>
@@ -2633,7 +2633,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                     type="button"
                     variant="outline"
                     onClick={() => setIsBulkAssignModalOpen(false)}
-                    className="w-full rounded-xl border-slate-200 text-slate-600 hover:bg-slate-50 font-bold text-xs py-2.5"
+                    className="w-full rounded-xl border-border-default text-text-muted hover:bg-subtle/50 font-bold text-xs py-2.5"
                   >
                     Batal
                   </Button>

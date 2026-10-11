@@ -133,7 +133,7 @@ export const HospitalAdminForm: React.FC<HospitalAdminFormProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Full Name */}
         <div className="md:col-span-2">
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <label className="block text-sm font-medium text-text-secondary mb-2">
             <User className="w-4 h-4 inline mr-2" />
             Full Name *
           </label>
@@ -147,7 +147,7 @@ export const HospitalAdminForm: React.FC<HospitalAdminFormProps> = ({
 
         {/* Email */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <label className="block text-sm font-medium text-text-secondary mb-2">
             <Mail className="w-4 h-4 inline mr-2" />
             Email Address *
           </label>
@@ -162,7 +162,7 @@ export const HospitalAdminForm: React.FC<HospitalAdminFormProps> = ({
 
         {/* Employee ID */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <label className="block text-sm font-medium text-text-secondary mb-2">
             <Hash className="w-4 h-4 inline mr-2" />
             Employee ID *
           </label>
@@ -176,7 +176,7 @@ export const HospitalAdminForm: React.FC<HospitalAdminFormProps> = ({
 
         {/* IC Number */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <label className="block text-sm font-medium text-text-secondary mb-2">
             <Hash className="w-4 h-4 inline mr-2" />
             IC Number *
           </label>
@@ -190,7 +190,7 @@ export const HospitalAdminForm: React.FC<HospitalAdminFormProps> = ({
 
         {/* Phone Number */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <label className="block text-sm font-medium text-text-secondary mb-2">
             <Phone className="w-4 h-4 inline mr-2" />
             Phone Number *
           </label>
@@ -205,7 +205,7 @@ export const HospitalAdminForm: React.FC<HospitalAdminFormProps> = ({
 
         {/* Jawatan */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <label className="block text-sm font-medium text-text-secondary mb-2">
             <Briefcase className="w-4 h-4 inline mr-2" />
             Jawatan *
           </label>
@@ -219,7 +219,7 @@ export const HospitalAdminForm: React.FC<HospitalAdminFormProps> = ({
 
         {/* Password */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <label className="block text-sm font-medium text-text-secondary mb-2">
             <Lock className="w-4 h-4 inline mr-2" />
             Password *
           </label>
@@ -235,7 +235,7 @@ export const HospitalAdminForm: React.FC<HospitalAdminFormProps> = ({
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-text-muted"
             >
               {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>
@@ -249,7 +249,7 @@ export const HospitalAdminForm: React.FC<HospitalAdminFormProps> = ({
 
         {/* Confirm Password */}
         <div>
-          <label className="block text-sm font-medium text-slate-700 mb-2">
+          <label className="block text-sm font-medium text-text-secondary mb-2">
             <Lock className="w-4 h-4 inline mr-2" />
             Confirm Password *
           </label>
@@ -265,7 +265,7 @@ export const HospitalAdminForm: React.FC<HospitalAdminFormProps> = ({
             <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-text-muted"
             >
               {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
             </button>
@@ -274,11 +274,11 @@ export const HospitalAdminForm: React.FC<HospitalAdminFormProps> = ({
       </div>
 
       {/* Password Generator */}
-      <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
+      <div className="bg-subtle/50 border border-border-default rounded-lg p-4">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-slate-700">Generate Secure Password</p>
-            <p className="text-xs text-slate-500 mt-1">
+            <p className="text-sm font-medium text-text-secondary">Generate Secure Password</p>
+            <p className="text-xs text-text-muted mt-1">
               Click to generate a strong 12-character password automatically
             </p>
           </div>
@@ -295,7 +295,7 @@ export const HospitalAdminForm: React.FC<HospitalAdminFormProps> = ({
       </div>
 
       {/* Form Actions */}
-      <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
+      <div className="flex items-center justify-end gap-3 pt-4 border-t border-border-default">
         <Button type="button" variant="outline" onClick={onCancel} disabled={isLoading}>
           <X className="w-4 h-4 mr-2" />
           Cancel

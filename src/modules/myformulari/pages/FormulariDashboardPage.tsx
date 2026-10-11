@@ -152,7 +152,7 @@ export const FormulariDashboardPage: React.FC = () => {
               href="https://myformulary.pharmacy.gov.my/"
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-2 bg-subtle hover:bg-hover border border-border-default text-text-primary text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-all shadow-2xs"
+              className="px-3 py-2 bg-subtle hover:bg-hover border border-border-default text-text-primary text-xs font-semibold rounded-lg flex items-center gap-1.5 transition-colors shadow-elevation-1"
               title="Open Official MOH MyFormulary Portal"
             >
               <ExternalLink className="w-3.5 h-3.5 text-text-muted" />
@@ -161,7 +161,7 @@ export const FormulariDashboardPage: React.FC = () => {
 
             <button
               onClick={() => setIsInteractionModalOpen(true)}
-              className="px-3.5 py-2 bg-accent-base hover:bg-accent-hover active:bg-accent-active text-accent-foreground text-xs font-semibold rounded-lg shadow-2xs flex items-center gap-2 transition-all cursor-pointer"
+              className="px-3.5 py-2 bg-accent-base hover:bg-accent-hover active:bg-accent-active text-accent-foreground text-xs font-semibold rounded-lg shadow-elevation-1 flex items-center gap-2 transition-colors cursor-pointer"
             >
               <ShieldCheck className="w-4 h-4" />
               <span>Check Drug Interactions</span>
@@ -174,7 +174,7 @@ export const FormulariDashboardPage: React.FC = () => {
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         <div
           onClick={() => { handleResetFilters(); }}
-          className="p-4 bg-surface rounded-xl border border-border-default shadow-2xs cursor-pointer hover:border-border-strong hover:bg-subtle/30 transition-all"
+          className="p-4 bg-surface rounded-xl border border-border-default shadow-elevation-1 cursor-pointer hover:border-border-strong hover:bg-subtle/30 transition-colors"
         >
           <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wider block">Total Drugs</span>
           <strong className="text-2xl font-bold text-text-primary tabular-nums block mt-0.5">{stats.totalDrugs}</strong>
@@ -183,7 +183,7 @@ export const FormulariDashboardPage: React.FC = () => {
 
         <div
           onClick={() => { handleResetFilters(); setHamOnly(true); }}
-          className={`p-4 bg-surface rounded-xl border shadow-2xs cursor-pointer transition-all ${
+          className={`p-4 bg-surface rounded-xl border shadow-elevation-1 cursor-pointer transition-colors ${
             hamOnly ? 'border-rose-500/60 bg-rose-500/10 ring-1 ring-rose-500/20' : 'border-border-default hover:border-rose-500/40 hover:bg-subtle/30'
           }`}
         >
@@ -196,7 +196,7 @@ export const FormulariDashboardPage: React.FC = () => {
 
         <div
           onClick={() => { handleResetFilters(); setLasaOnly(true); }}
-          className={`p-4 bg-surface rounded-xl border shadow-2xs cursor-pointer transition-all ${
+          className={`p-4 bg-surface rounded-xl border shadow-elevation-1 cursor-pointer transition-colors ${
             lasaOnly ? 'border-amber-500/60 bg-amber-500/10 ring-1 ring-amber-500/20' : 'border-border-default hover:border-amber-500/40 hover:bg-subtle/30'
           }`}
         >
@@ -209,7 +209,7 @@ export const FormulariDashboardPage: React.FC = () => {
 
         <div
           onClick={() => { handleResetFilters(); setAntimicrobialOnly(true); }}
-          className={`p-4 bg-surface rounded-xl border shadow-2xs cursor-pointer transition-all ${
+          className={`p-4 bg-surface rounded-xl border shadow-elevation-1 cursor-pointer transition-colors ${
             antimicrobialOnly ? 'border-emerald-500/60 bg-emerald-500/10 ring-1 ring-emerald-500/20' : 'border-border-default hover:border-emerald-500/40 hover:bg-subtle/30'
           }`}
         >
@@ -222,7 +222,7 @@ export const FormulariDashboardPage: React.FC = () => {
 
         <div
           onClick={() => { handleResetFilters(); }}
-          className="p-4 bg-surface rounded-xl border border-border-default shadow-2xs cursor-pointer hover:border-border-strong hover:bg-subtle/30 transition-all"
+          className="p-4 bg-surface rounded-xl border border-border-default shadow-elevation-1 cursor-pointer hover:border-border-strong hover:bg-subtle/30 transition-colors"
         >
           <span className="text-[11px] font-semibold text-teal-600 dark:text-teal-400 uppercase tracking-wider block flex items-center gap-1">
             <Droplets className="w-3 h-3 text-teal-500" /> IV Dilution
@@ -233,7 +233,7 @@ export const FormulariDashboardPage: React.FC = () => {
 
         <div
           onClick={() => { handleResetFilters(); setLowStockOnly(true); }}
-          className={`p-4 bg-surface rounded-xl border shadow-2xs cursor-pointer transition-all ${
+          className={`p-4 bg-surface rounded-xl border shadow-elevation-1 cursor-pointer transition-colors ${
             lowStockOnly ? 'border-rose-500/60 bg-rose-500/10 ring-1 ring-rose-500/20' : 'border-border-default hover:border-rose-500/40 hover:bg-subtle/30'
           }`}
         >
@@ -246,7 +246,7 @@ export const FormulariDashboardPage: React.FC = () => {
       </div>
 
       {/* Search & Filter Bar */}
-      <div className="bg-surface rounded-xl border border-border-default shadow-2xs p-5 space-y-4">
+      <div className="bg-surface rounded-xl border border-border-default shadow-elevation-1 p-5 space-y-4">
         <div className="flex flex-col md:flex-row gap-3">
           {/* Main Search Input */}
           <div className="relative flex-1">
@@ -256,7 +256,7 @@ export const FormulariDashboardPage: React.FC = () => {
               placeholder="Search by Generic Name (INN), Brand Name, ATC Code, Indication, or Therapeutic Class..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-2.5 bg-subtle border border-border-default rounded-xl text-xs sm:text-sm text-text-primary placeholder:text-text-muted focus:outline-hidden focus:border-accent-base focus:bg-surface focus:ring-2 focus:ring-accent-base/15 transition-all"
+              className="w-full pl-12 pr-4 py-2.5 bg-subtle border border-border-default rounded-xl text-xs sm:text-sm text-text-primary placeholder:text-text-muted focus:outline-hidden focus:border-accent-base focus:bg-surface focus:ring-2 focus:ring-accent-base/15 transition-colors"
             />
             {searchTerm && (
               <button
@@ -286,8 +286,8 @@ export const FormulariDashboardPage: React.FC = () => {
           <div className="flex items-center bg-subtle p-1 rounded-xl border border-border-default shrink-0">
             <button
               onClick={() => setViewMode('table')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
-                viewMode === 'table' ? 'bg-surface text-accent-base shadow-2xs border border-border-default' : 'text-text-muted hover:text-text-primary'
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors ${
+                viewMode === 'table' ? 'bg-surface text-accent-base shadow-elevation-1 border border-border-default' : 'text-text-muted hover:text-text-primary'
               }`}
             >
               <List className="w-4 h-4" />
@@ -295,8 +295,8 @@ export const FormulariDashboardPage: React.FC = () => {
             </button>
             <button
               onClick={() => setViewMode('grid')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
-                viewMode === 'grid' ? 'bg-surface text-accent-base shadow-2xs border border-border-default' : 'text-text-muted hover:text-text-primary'
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors ${
+                viewMode === 'grid' ? 'bg-surface text-accent-base shadow-elevation-1 border border-border-default' : 'text-text-muted hover:text-text-primary'
               }`}
             >
               <Grid className="w-4 h-4" />
@@ -314,7 +314,7 @@ export const FormulariDashboardPage: React.FC = () => {
 
           <button
             onClick={() => setHamOnly(!hamOnly)}
-            className={`px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1.5 border transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1.5 border transition-colors cursor-pointer ${
               hamOnly ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30' : 'bg-subtle text-text-secondary border-border-default hover:bg-hover'
             }`}
           >
@@ -324,7 +324,7 @@ export const FormulariDashboardPage: React.FC = () => {
 
           <button
             onClick={() => setLasaOnly(!lasaOnly)}
-            className={`px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1.5 border transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1.5 border transition-colors cursor-pointer ${
               lasaOnly ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30' : 'bg-subtle text-text-secondary border-border-default hover:bg-hover'
             }`}
           >
@@ -334,7 +334,7 @@ export const FormulariDashboardPage: React.FC = () => {
 
           <button
             onClick={() => setAntimicrobialOnly(!antimicrobialOnly)}
-            className={`px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1.5 border transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1.5 border transition-colors cursor-pointer ${
               antimicrobialOnly ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30' : 'bg-subtle text-text-secondary border-border-default hover:bg-hover'
             }`}
           >
@@ -344,7 +344,7 @@ export const FormulariDashboardPage: React.FC = () => {
 
           <button
             onClick={() => setLowStockOnly(!lowStockOnly)}
-            className={`px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1.5 border transition-all cursor-pointer ${
+            className={`px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1.5 border transition-colors cursor-pointer ${
               lowStockOnly ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/30' : 'bg-subtle text-text-secondary border-border-default hover:bg-hover'
             }`}
           >
@@ -372,7 +372,7 @@ export const FormulariDashboardPage: React.FC = () => {
 
       {/* PRIMARY VIEW: Full-Width Clinical Table List with Rich Columns */}
       {viewMode === 'table' && (
-        <div className="bg-surface rounded-xl border border-border-default shadow-2xs overflow-hidden">
+        <div className="bg-surface rounded-xl border border-border-default shadow-elevation-1 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead className="bg-subtle/80 border-b border-border-default text-text-secondary font-semibold uppercase tracking-wider select-none">
@@ -498,7 +498,7 @@ export const FormulariDashboardPage: React.FC = () => {
 
       {/* Pagination Controls Bar */}
       {filteredDrugs.length > 0 && (
-        <div className="bg-surface rounded-xl border border-border-default p-4 shadow-2xs flex flex-col sm:flex-row items-center justify-between gap-4 text-xs select-none">
+        <div className="bg-surface rounded-xl border border-border-default p-4 shadow-elevation-1 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs select-none">
           <div className="flex items-center gap-3 text-text-secondary">
             <span>
               Showing <strong className="text-text-primary font-bold tabular-nums">{(currentPage - 1) * pageSize + 1}</strong> - <strong className="text-text-primary font-bold tabular-nums">{Math.min(currentPage * pageSize, filteredDrugs.length)}</strong> of <strong className="text-text-primary font-bold tabular-nums">{filteredDrugs.length.toLocaleString()}</strong> formulary records

@@ -136,7 +136,7 @@ export const PrepackDrugPickerModal: React.FC<PrepackDrugPickerModalProps> = ({
               key={cat.id}
               type="button"
               onClick={() => setCategoryFilter(cat.id as any)}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all active:scale-[0.98] cursor-pointer ${
+              className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors active:scale-[0.98] cursor-pointer ${
                 categoryFilter === cat.id
                   ? 'bg-teal-700 text-white shadow-xs'
                   : 'bg-subtle text-text-secondary hover:text-text-primary border border-border-subtle'
@@ -222,7 +222,7 @@ export const PrepackDrugPickerModal: React.FC<PrepackDrugPickerModalProps> = ({
 
                       <button
                         type="button"
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all active:scale-[0.98] cursor-pointer ${
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors active:scale-[0.98] cursor-pointer ${
                           isSelected
                             ? 'bg-teal-700 text-white shadow-xs'
                             : 'bg-subtle group-hover:bg-teal-700 group-hover:text-white text-text-secondary border border-border-subtle'

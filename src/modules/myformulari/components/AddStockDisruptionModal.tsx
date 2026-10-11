@@ -175,7 +175,7 @@ export const AddStockDisruptionModal: React.FC<AddStockDisruptionModalProps> = (
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200">
-      <div className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden my-6">
+      <div className="bg-surface rounded-3xl shadow-2xl border border-border-default w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden my-6">
         {/* Header */}
         <div className="flex items-center justify-between p-6 bg-gradient-to-r from-purple-800 via-indigo-800 to-slate-900 text-white">
           <div className="flex items-center gap-3">
@@ -189,22 +189,22 @@ export const AddStockDisruptionModal: React.FC<AddStockDisruptionModalProps> = (
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-white/20 rounded-xl text-white/80 hover:text-white transition-colors cursor-pointer"
+            className="p-2 hover:bg-surface/20 rounded-xl text-white/80 hover:text-white transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Item Type Switcher (Drug vs Non-Drug) */}
-        <div className="bg-slate-100 p-3 border-b border-slate-200 flex items-center gap-2">
-          <span className="text-xs font-bold text-slate-600 ml-3 mr-2">Jenis Item Gangguan:</span>
+        <div className="bg-subtle p-3 border-b border-border-default flex items-center gap-2">
+          <span className="text-xs font-bold text-text-muted ml-3 mr-2">Jenis Item Gangguan:</span>
           <button
             type="button"
             onClick={() => setItemType('DRUG')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
               itemType === 'DRUG'
                 ? 'bg-purple-700 text-white shadow-sm'
-                : 'bg-white text-slate-700 hover:bg-slate-200 border border-slate-300'
+                : 'bg-surface text-text-secondary hover:bg-subtle border border-border-default'
             }`}
           >
             <Pill className="w-4 h-4" />
@@ -214,10 +214,10 @@ export const AddStockDisruptionModal: React.FC<AddStockDisruptionModalProps> = (
           <button
             type="button"
             onClick={() => setItemType('NON_DRUG')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer ${
               itemType === 'NON_DRUG'
                 ? 'bg-teal-700 text-white shadow-sm'
-                : 'bg-white text-slate-700 hover:bg-slate-200 border border-slate-300'
+                : 'bg-surface text-text-secondary hover:bg-subtle border border-border-default'
             }`}
           >
             <Package className="w-4 h-4" />
@@ -228,15 +228,15 @@ export const AddStockDisruptionModal: React.FC<AddStockDisruptionModalProps> = (
         {/* Content Form */}
         <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-6 flex-1 text-xs">
           {/* Section 1: Item Details */}
-          <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
-            <h4 className="font-bold text-slate-800 uppercase tracking-wider text-[11px] flex items-center gap-2">
+          <div className="bg-subtle/50 p-5 rounded-2xl border border-border-default space-y-4">
+            <h4 className="font-bold text-text-primary uppercase tracking-wider text-[11px] flex items-center gap-2">
               {itemType === 'DRUG' ? <Pill className="w-4 h-4 text-purple-600" /> : <Package className="w-4 h-4 text-teal-600" />}
               1. Maklumat {itemType === 'DRUG' ? 'Ubat' : 'Bukan Ubat'} Terjejas Bekalan (Hospital Lawas)
             </h4>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               <div className="sm:col-span-2">
-                <label className="block text-slate-700 font-semibold mb-1">
+                <label className="block text-text-secondary font-semibold mb-1">
                   {itemType === 'DRUG' ? 'Nama Generik Ubat *' : 'Nama Item Bukan Ubat *'}
                 </label>
                 <input
@@ -245,18 +245,18 @@ export const AddStockDisruptionModal: React.FC<AddStockDisruptionModalProps> = (
                   placeholder={itemType === 'DRUG' ? 'Contoh: Dobutamine Hydrochloride' : 'Contoh: Syringe 50mL Luer Lock Sterile / Blood Giving Set'}
                   value={genericName}
                   onChange={e => setGenericName(e.target.value)}
-                  className="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:border-purple-500 focus:outline-hidden"
+                  className="w-full p-2.5 bg-surface border border-border-default rounded-xl text-text-primary focus:border-purple-500 focus:outline-hidden"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">Jenama / Pengeluar</label>
+                <label className="block text-text-secondary font-semibold mb-1">Jenama / Pengeluar</label>
                 <input
                   type="text"
                   placeholder={itemType === 'DRUG' ? 'Contoh: Dobutrex' : 'Contoh: Terumo / BD / Meditop'}
                   value={brandNames}
                   onChange={e => setBrandNames(e.target.value)}
-                  className="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:border-purple-500 focus:outline-hidden"
+                  className="w-full p-2.5 bg-surface border border-border-default rounded-xl text-text-primary focus:border-purple-500 focus:outline-hidden"
                 />
               </div>
 
@@ -264,33 +264,33 @@ export const AddStockDisruptionModal: React.FC<AddStockDisruptionModalProps> = (
               {itemType === 'DRUG' && (
                 <>
                   <div>
-                    <label className="block text-slate-700 font-semibold mb-1">Bentuk Dos (Dosage Form)</label>
+                    <label className="block text-text-secondary font-semibold mb-1">Bentuk Dos (Dosage Form)</label>
                     <input
                       type="text"
                       placeholder="Contoh: Ampoule / Vial / Tablet"
                       value={dosageForm}
                       onChange={e => setDosageForm(e.target.value)}
-                      className="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:border-purple-500 focus:outline-hidden"
+                      className="w-full p-2.5 bg-surface border border-border-default rounded-xl text-text-primary focus:border-purple-500 focus:outline-hidden"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-slate-700 font-semibold mb-1">Kekuatan (Strength)</label>
+                    <label className="block text-text-secondary font-semibold mb-1">Kekuatan (Strength)</label>
                     <input
                       type="text"
                       placeholder="Contoh: 250mg/20mL"
                       value={strength}
                       onChange={e => setStrength(e.target.value)}
-                      className="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:border-purple-500 focus:outline-hidden"
+                      className="w-full p-2.5 bg-surface border border-border-default rounded-xl text-text-primary focus:border-purple-500 focus:outline-hidden"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-slate-700 font-semibold mb-1">Kategori Preskripsi</label>
+                    <label className="block text-text-secondary font-semibold mb-1">Kategori Preskripsi</label>
                     <select
                       value={prescriberCategory}
                       onChange={e => setPrescriberCategory(e.target.value as PrescriberCategory)}
-                      className="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:border-purple-500 focus:outline-hidden"
+                      className="w-full p-2.5 bg-surface border border-border-default rounded-xl text-text-primary focus:border-purple-500 focus:outline-hidden"
                     >
                       <option value="A*">Kategori A* (Pakar Subkepakaran)</option>
                       <option value="A">Kategori A (Pakar)</option>
@@ -306,11 +306,11 @@ export const AddStockDisruptionModal: React.FC<AddStockDisruptionModalProps> = (
               {itemType === 'NON_DRUG' && (
                 <>
                   <div className="sm:col-span-2">
-                    <label className="block text-slate-700 font-semibold mb-1">Kategori Bukan Ubat *</label>
+                    <label className="block text-text-secondary font-semibold mb-1">Kategori Bukan Ubat *</label>
                     <select
                       value={nonDrugCategory}
                       onChange={e => setNonDrugCategory(e.target.value as NonDrugCategory)}
-                      className="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:border-purple-500 focus:outline-hidden"
+                      className="w-full p-2.5 bg-surface border border-border-default rounded-xl text-text-primary focus:border-purple-500 focus:outline-hidden"
                     >
                       {NON_DRUG_CATEGORIES.map((cat, idx) => (
                         <option key={idx} value={cat}>{cat}</option>
@@ -319,37 +319,37 @@ export const AddStockDisruptionModal: React.FC<AddStockDisruptionModalProps> = (
                   </div>
 
                   <div>
-                    <label className="block text-slate-700 font-semibold mb-1">Spesifikasi / Saiz / Model</label>
+                    <label className="block text-text-secondary font-semibold mb-1">Spesifikasi / Saiz / Model</label>
                     <input
                       type="text"
                       placeholder="Contoh: Saiz 7.5 / 50mL Luer-Lock"
                       value={itemSpecification}
                       onChange={e => setItemSpecification(e.target.value)}
-                      className="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:border-purple-500 focus:outline-hidden"
+                      className="w-full p-2.5 bg-surface border border-border-default rounded-xl text-text-primary focus:border-purple-500 focus:outline-hidden"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-slate-700 font-semibold mb-1">Unit Pembungkusan</label>
+                    <label className="block text-text-secondary font-semibold mb-1">Unit Pembungkusan</label>
                     <input
                       type="text"
                       placeholder="Contoh: Kotak (100 Pcs) / Set"
                       value={packagingUnit}
                       onChange={e => setPackagingUnit(e.target.value)}
-                      className="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:border-purple-500 focus:outline-hidden"
+                      className="w-full p-2.5 bg-surface border border-border-default rounded-xl text-text-primary focus:border-purple-500 focus:outline-hidden"
                     />
                   </div>
                 </>
               )}
 
               <div className="sm:col-span-2">
-                <label className="block text-slate-700 font-semibold mb-1">Wad / Unit Utama Terjejas di Lawas</label>
+                <label className="block text-text-secondary font-semibold mb-1">Wad / Unit Utama Terjejas di Lawas</label>
                 <input
                   type="text"
                   placeholder="Contoh: Unit Kecemasan & Trauma (ETD) / HDU / Bilik Bedah (OT)"
                   value={departmentAffected}
                   onChange={e => setDepartmentAffected(e.target.value)}
-                  className="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:border-purple-500 focus:outline-hidden"
+                  className="w-full p-2.5 bg-surface border border-border-default rounded-xl text-text-primary focus:border-purple-500 focus:outline-hidden"
                 />
               </div>
 
@@ -362,7 +362,7 @@ export const AddStockDisruptionModal: React.FC<AddStockDisruptionModalProps> = (
                     onChange={e => setIsHAM(e.target.checked)}
                     className="w-4 h-4 text-purple-600 rounded-sm"
                   />
-                  <label htmlFor="modal-is-ham" className="text-slate-800 font-bold cursor-pointer">
+                  <label htmlFor="modal-is-ham" className="text-text-primary font-bold cursor-pointer">
                     Ubat Berisiko Tinggi (HAM)
                   </label>
                 </div>
@@ -371,19 +371,19 @@ export const AddStockDisruptionModal: React.FC<AddStockDisruptionModalProps> = (
           </div>
 
           {/* Section 2: Disruption Status & ETA */}
-          <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
-            <h4 className="font-bold text-slate-800 uppercase tracking-wider text-[11px] flex items-center gap-2">
+          <div className="bg-subtle/50 p-5 rounded-2xl border border-border-default space-y-4">
+            <h4 className="font-bold text-text-primary uppercase tracking-wider text-[11px] flex items-center gap-2">
               <Clock className="w-4 h-4 text-rose-600" />
               2. Status Gangguan &amp; Anggaran Masa Pulih (ETA)
             </h4>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">Tahap Gangguan (Severity) *</label>
+                <label className="block text-text-secondary font-semibold mb-1">Tahap Gangguan (Severity) *</label>
                 <select
                   value={severity}
                   onChange={e => setSeverity(e.target.value as DisruptionSeverity)}
-                  className="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 font-medium focus:border-purple-500 focus:outline-hidden"
+                  className="w-full p-2.5 bg-surface border border-border-default rounded-xl text-text-primary font-medium focus:border-purple-500 focus:outline-hidden"
                 >
                   <option value="CRITICAL_OUT_OF_STOCK">Putus Bekalan Kritikal (0 Baki)</option>
                   <option value="LOW_STOCK_BUFFER">Stok Penampan Rendah (&lt; 3-5 Hari)</option>
@@ -394,44 +394,44 @@ export const AddStockDisruptionModal: React.FC<AddStockDisruptionModalProps> = (
               </div>
 
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">Baki Stok Semasa di Lawas</label>
+                <label className="block text-text-secondary font-semibold mb-1">Baki Stok Semasa di Lawas</label>
                 <input
                   type="text"
                   placeholder="Contoh: 0 Kotak / 5 Pcs / Habis"
                   value={currentBalanceText}
                   onChange={e => setCurrentBalanceText(e.target.value)}
-                  className="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:border-purple-500 focus:outline-hidden"
+                  className="w-full p-2.5 bg-surface border border-border-default rounded-xl text-text-primary focus:border-purple-500 focus:outline-hidden"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">Tarikh Anggaran Bekalan Kembali Stabil (ETA) *</label>
+                <label className="block text-text-secondary font-semibold mb-1">Tarikh Anggaran Bekalan Kembali Stabil (ETA) *</label>
                 <input
                   type="date"
                   required
                   value={targetEtaDate}
                   onChange={e => setTargetEtaDate(e.target.value)}
-                  className="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:border-purple-500 focus:outline-hidden"
+                  className="w-full p-2.5 bg-surface border border-border-default rounded-xl text-text-primary focus:border-purple-500 focus:outline-hidden"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">Anggaran Hari ke Pemulihan</label>
+                <label className="block text-text-secondary font-semibold mb-1">Anggaran Hari ke Pemulihan</label>
                 <input
                   type="number"
                   min={1}
                   value={estimatedDaysToStable}
                   onChange={e => setEstimatedDaysToStable(Number(e.target.value))}
-                  className="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:border-purple-500 focus:outline-hidden"
+                  className="w-full p-2.5 bg-surface border border-border-default rounded-xl text-text-primary focus:border-purple-500 focus:outline-hidden"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">Fasa Pemulihan Semasa</label>
+                <label className="block text-text-secondary font-semibold mb-1">Fasa Pemulihan Semasa</label>
                 <select
                   value={stabilizationStage}
                   onChange={e => setStabilizationStage(e.target.value as StabilizationStage)}
-                  className="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:border-purple-500 focus:outline-hidden"
+                  className="w-full p-2.5 bg-surface border border-border-default rounded-xl text-text-primary focus:border-purple-500 focus:outline-hidden"
                 >
                   <option value="STAGE_1_BUFFER_ACTIVATED">Tahap 1: Buffer Darurat / Pinjaman Diaktifkan</option>
                   <option value="STAGE_2_IN_TRANSIT">Tahap 2: Konsainan Dalam Perjalanan</option>
@@ -441,44 +441,44 @@ export const AddStockDisruptionModal: React.FC<AddStockDisruptionModalProps> = (
               </div>
 
               <div>
-                <label className="block text-slate-700 font-semibold mb-1">Kuantiti Bekalan Dijangka</label>
+                <label className="block text-text-secondary font-semibold mb-1">Kuantiti Bekalan Dijangka</label>
                 <input
                   type="text"
                   placeholder="Contoh: 50 Kotak / 200 Unit"
                   value={expectedRestockedQuantity}
                   onChange={e => setExpectedRestockedQuantity(e.target.value)}
-                  className="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:border-purple-500 focus:outline-hidden"
+                  className="w-full p-2.5 bg-surface border border-border-default rounded-xl text-text-primary focus:border-purple-500 focus:outline-hidden"
                 />
               </div>
 
               <div className="sm:col-span-3">
-                <label className="block text-slate-700 font-semibold mb-1">Punca / Sebab Gangguan Bekalan</label>
+                <label className="block text-text-secondary font-semibold mb-1">Punca / Sebab Gangguan Bekalan</label>
                 <input
                   type="text"
                   placeholder="Contoh: Gangguan kilang pengeluar tempatan & kelewatan pelepasan permit transit sempadan."
                   value={disruptionReason}
                   onChange={e => setDisruptionReason(e.target.value)}
-                  className="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:border-purple-500 focus:outline-hidden"
+                  className="w-full p-2.5 bg-surface border border-border-default rounded-xl text-text-primary focus:border-purple-500 focus:outline-hidden"
                 />
               </div>
 
               <div className="sm:col-span-3">
-                <label className="block text-slate-700 font-semibold mb-1">Sumber &amp; Pelan Pembekalan Semula (Resupply Source)</label>
+                <label className="block text-text-secondary font-semibold mb-1">Sumber &amp; Pelan Pembekalan Semula (Resupply Source)</label>
                 <input
                   type="text"
                   placeholder="Contoh: Pesanan Kecemasan (Mutual Aid Indent) Hospital Miri / Pembekal Kontrak Khas"
                   value={resupplySource}
                   onChange={e => setResupplySource(e.target.value)}
-                  className="w-full p-2.5 bg-white border border-slate-300 rounded-xl text-slate-900 focus:border-purple-500 focus:outline-hidden"
+                  className="w-full p-2.5 bg-surface border border-border-default rounded-xl text-text-primary focus:border-purple-500 focus:outline-hidden"
                 />
               </div>
             </div>
           </div>
 
           {/* Section 3: Recommended Alternative Items */}
-          <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
+          <div className="bg-subtle/50 p-5 rounded-2xl border border-border-default space-y-4">
             <div className="flex items-center justify-between">
-              <h4 className="font-bold text-slate-800 uppercase tracking-wider text-[11px] flex items-center gap-2">
+              <h4 className="font-bold text-text-primary uppercase tracking-wider text-[11px] flex items-center gap-2">
                 <Layers className="w-4 h-4 text-indigo-600" />
                 3. Pilihan Item Alternatif Disyorkan Sedia Ada di Lawas ({alternatives.length})
               </h4>
@@ -494,14 +494,14 @@ export const AddStockDisruptionModal: React.FC<AddStockDisruptionModalProps> = (
 
             <div className="space-y-4">
               {alternatives.map((alt, idx) => (
-                <div key={idx} className="p-4 bg-white rounded-2xl border border-slate-300 space-y-3 relative">
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                <div key={idx} className="p-4 bg-surface rounded-2xl border border-border-default space-y-3 relative">
+                  <div className="flex items-center justify-between border-b border-border-subtle pb-2">
                     <span className="font-bold text-indigo-700">Alternatif #{idx + 1}</span>
                     {alternatives.length > 1 && (
                       <button
                         type="button"
                         onClick={() => handleRemoveAlternative(idx)}
-                        className="text-rose-600 hover:text-rose-800 p-1 cursor-pointer"
+                        className="text-rose-600 hover:text-rose-400 p-1 cursor-pointer"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -510,7 +510,7 @@ export const AddStockDisruptionModal: React.FC<AddStockDisruptionModalProps> = (
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                     <div>
-                      <label className="block text-slate-700 font-semibold mb-1">
+                      <label className="block text-text-secondary font-semibold mb-1">
                         {itemType === 'DRUG' ? 'Nama Generik Alternatif *' : 'Nama Item Alternatif *'}
                       </label>
                       <input
@@ -518,12 +518,12 @@ export const AddStockDisruptionModal: React.FC<AddStockDisruptionModalProps> = (
                         placeholder={itemType === 'DRUG' ? 'Contoh: Dopamine Hydrochloride' : 'Contoh: Syringe 50mL Catheter Tip / Saiz 8.0'}
                         value={alt.genericName}
                         onChange={e => handleUpdateAlternative(idx, 'genericName', e.target.value)}
-                        className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:border-purple-500 focus:bg-white"
+                        className="w-full p-2 bg-subtle/50 border border-border-default rounded-xl text-text-primary focus:border-purple-500 focus:bg-surface"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-slate-700 font-semibold mb-1">
+                      <label className="block text-text-secondary font-semibold mb-1">
                         {itemType === 'DRUG' ? 'Bentuk & Kekuatan' : 'Spesifikasi / Saiz Alternatif'}
                       </label>
                       <input
@@ -531,16 +531,16 @@ export const AddStockDisruptionModal: React.FC<AddStockDisruptionModalProps> = (
                         placeholder={itemType === 'DRUG' ? 'Contoh: Ampul 200mg/5mL' : 'Contoh: Saiz 8.0 / Catheter Tip with Adapter'}
                         value={alt.strength}
                         onChange={e => handleUpdateAlternative(idx, 'strength', e.target.value)}
-                        className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:border-purple-500 focus:bg-white"
+                        className="w-full p-2 bg-subtle/50 border border-border-default rounded-xl text-text-primary focus:border-purple-500 focus:bg-surface"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-slate-700 font-semibold mb-1">Hierarki Penggantian</label>
+                      <label className="block text-text-secondary font-semibold mb-1">Hierarki Penggantian</label>
                       <select
                         value={alt.therapeuticHierarchy}
                         onChange={e => handleUpdateAlternative(idx, 'therapeuticHierarchy', e.target.value)}
-                        className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900"
+                        className="w-full p-2 bg-subtle/50 border border-border-default rounded-xl text-text-primary"
                       >
                         {itemType === 'DRUG' ? (
                           <>
@@ -559,11 +559,11 @@ export const AddStockDisruptionModal: React.FC<AddStockDisruptionModalProps> = (
                     </div>
 
                     <div>
-                      <label className="block text-slate-700 font-semibold mb-1">Status Ketersediaan di Lawas</label>
+                      <label className="block text-text-secondary font-semibold mb-1">Status Ketersediaan di Lawas</label>
                       <select
                         value={alt.lawasAvailabilityStatus}
                         onChange={e => handleUpdateAlternative(idx, 'lawasAvailabilityStatus', e.target.value)}
-                        className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-medium"
+                        className="w-full p-2 bg-subtle/50 border border-border-default rounded-xl text-text-primary font-medium"
                       >
                         <option value="In Stock (Sedia Ada)">In Stock (Sedia Ada)</option>
                         <option value="Buffer Available (Penampan Cukup)">Buffer Available (Penampan Cukup)</option>
@@ -572,18 +572,18 @@ export const AddStockDisruptionModal: React.FC<AddStockDisruptionModalProps> = (
                     </div>
 
                     <div>
-                      <label className="block text-slate-700 font-semibold mb-1">Baki Stok di Lawas</label>
+                      <label className="block text-text-secondary font-semibold mb-1">Baki Stok di Lawas</label>
                       <input
                         type="text"
                         placeholder="Contoh: 80 Kotak / 20 Set"
                         value={alt.currentLawasBalance || ''}
                         onChange={e => handleUpdateAlternative(idx, 'currentLawasBalance', e.target.value)}
-                        className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900"
+                        className="w-full p-2 bg-subtle/50 border border-border-default rounded-xl text-text-primary"
                       />
                     </div>
 
                     <div className="sm:col-span-2 lg:col-span-3">
-                      <label className="block text-slate-700 font-semibold mb-1">
+                      <label className="block text-text-secondary font-semibold mb-1">
                         {itemType === 'DRUG' ? 'Protokol Penukaran Dos Klinikal' : 'Arahan Penggunaan / Pelarasan Klinikal Bukan Ubat'}
                       </label>
                       <textarea
@@ -595,7 +595,7 @@ export const AddStockDisruptionModal: React.FC<AddStockDisruptionModalProps> = (
                         }
                         value={alt.clinicalDosingProtocol}
                         onChange={e => handleUpdateAlternative(idx, 'clinicalDosingProtocol', e.target.value)}
-                        className="w-full p-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900"
+                        className="w-full p-2 bg-subtle/50 border border-border-default rounded-xl text-text-primary"
                       />
                     </div>
                   </div>
@@ -607,39 +607,39 @@ export const AddStockDisruptionModal: React.FC<AddStockDisruptionModalProps> = (
           {/* Section 4: Clinical Plan & Verification */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-slate-700 font-semibold mb-1">Pelan Tindakan Klinikal Hospital Lawas</label>
+              <label className="block text-text-secondary font-semibold mb-1">Pelan Tindakan Klinikal Hospital Lawas</label>
               <input
                 type="text"
                 placeholder="Contoh: Gunakan stok alternatif sedia ada, maklumkan ketua wad berkaitan."
                 value={clinicalActionPlan}
                 onChange={e => setClinicalActionPlan(e.target.value)}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900"
+                className="w-full p-2.5 bg-subtle/50 border border-border-default rounded-xl text-text-primary"
               />
             </div>
 
             <div>
-              <label className="block text-slate-700 font-semibold mb-1">Disahkan Oleh (Pegawai Bertanggungjawab)</label>
+              <label className="block text-text-secondary font-semibold mb-1">Disahkan Oleh (Pegawai Bertanggungjawab)</label>
               <input
                 type="text"
                 value={verifiedByPharmacist}
                 onChange={e => setVerifiedByPharmacist(e.target.value)}
-                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900"
+                className="w-full p-2.5 bg-subtle/50 border border-border-default rounded-xl text-text-primary"
               />
             </div>
           </div>
 
           {/* Footer Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-border-default">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-bold hover:bg-slate-100 transition-colors cursor-pointer"
+              className="px-5 py-2.5 rounded-xl border border-border-default text-text-secondary font-bold hover:bg-subtle transition-colors cursor-pointer"
             >
               Batal
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 bg-gradient-to-r from-purple-700 via-indigo-700 to-slate-900 hover:from-purple-800 hover:to-indigo-800 text-white font-bold rounded-xl shadow-md transition-all flex items-center gap-2 cursor-pointer"
+              className="px-6 py-2.5 bg-gradient-to-r from-purple-700 via-indigo-700 to-slate-900 hover:from-purple-800 hover:to-indigo-800 text-white font-bold rounded-xl shadow-md transition-colors flex items-center gap-2 cursor-pointer"
             >
               <CheckCircle2 className="w-4 h-4" />
               Simpan Rekod Gangguan ({itemType === 'DRUG' ? 'Ubat' : 'Bukan Ubat'})

@@ -101,7 +101,7 @@ export const PrepackBatchListPage: React.FC = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setBatchModalOpen(true)}
-              className="min-h-[36px] px-3.5 py-1.5 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-teal-500/40"
+              className="min-h-[36px] px-3.5 py-1.5 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-teal-500/40"
             >
               <Plus className="w-4 h-4" />
               <span>New Prepack Batch</span>
@@ -110,7 +110,7 @@ export const PrepackBatchListPage: React.FC = () => {
             <button
               onClick={loadData}
               title="Refresh Batches"
-              className="min-h-[36px] min-w-[36px] p-2 bg-surface hover:bg-subtle active:scale-[0.98] text-text-muted hover:text-text-primary rounded-lg border border-border-default hover:border-border-strong transition-all cursor-pointer shadow-xs flex items-center justify-center"
+              className="min-h-[36px] min-w-[36px] p-2 bg-surface hover:bg-subtle active:scale-[0.98] text-text-muted hover:text-text-primary rounded-lg border border-border-default hover:border-border-strong transition-colors cursor-pointer shadow-xs flex items-center justify-center"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             </button>
@@ -127,7 +127,7 @@ export const PrepackBatchListPage: React.FC = () => {
             placeholder="Search batch or manufacturer lot no..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 text-xs bg-subtle/70 hover:bg-subtle border border-border-default hover:border-border-strong focus:border-border-strong rounded-lg text-text-primary placeholder:text-text-muted font-mono outline-none transition-all"
+            className="w-full pl-9 pr-3 py-1.5 text-xs bg-subtle/70 hover:bg-subtle border border-border-default hover:border-border-strong focus:border-border-strong rounded-lg text-text-primary placeholder:text-text-muted font-mono outline-none transition-colors"
           />
         </div>
 
@@ -162,7 +162,7 @@ export const PrepackBatchListPage: React.FC = () => {
             <div className="mt-4">
               <button
                 onClick={() => setBatchModalOpen(true)}
-                className="px-3.5 py-1.5 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] text-white rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
+                className="px-3.5 py-1.5 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] text-white rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>New Prepack Batch</span>
@@ -292,7 +292,7 @@ export const PrepackBatchListPage: React.FC = () => {
                             setLabelModalOpen(true)
                           }}
                           title="Print Thermal / Sticker Label"
-                          className="px-2 py-1 bg-surface hover:bg-subtle text-text-secondary hover:text-text-primary border border-border-default hover:border-border-strong rounded font-medium text-[11px] flex items-center gap-1 transition-all cursor-pointer active:scale-[0.98] shadow-xs"
+                          className="px-2 py-1 bg-surface hover:bg-subtle text-text-secondary hover:text-text-primary border border-border-default hover:border-border-strong rounded font-medium text-[11px] flex items-center gap-1 transition-colors cursor-pointer active:scale-[0.98] shadow-xs"
                         >
                           <Printer className="w-3.5 h-3.5 text-text-muted" />
                           <span>Label</span>
@@ -305,7 +305,7 @@ export const PrepackBatchListPage: React.FC = () => {
                               setUsageModalOpen(true)
                             }}
                             title="Issue Stock to Counter / Prescription"
-                            className="px-2 py-1 bg-teal-500/10 hover:bg-teal-500/20 text-teal-700 dark:text-teal-300 border border-teal-500/20 rounded font-medium text-[11px] flex items-center gap-1 transition-all cursor-pointer active:scale-[0.98] shadow-xs"
+                            className="px-2 py-1 bg-teal-500/10 hover:bg-teal-500/20 text-teal-700 dark:text-teal-300 border border-teal-500/20 rounded font-medium text-[11px] flex items-center gap-1 transition-colors cursor-pointer active:scale-[0.98] shadow-xs"
                           >
                             <Send className="w-3 h-3" />
                             <span>Issue</span>

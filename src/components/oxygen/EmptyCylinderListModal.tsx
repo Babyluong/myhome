@@ -251,7 +251,7 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
       {/* Screen Interactive Modal */}
       <div className="fixed inset-0 z-[100] bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-0 sm:p-4 md:p-6 overflow-hidden">
         <div 
-          className="bg-white border-0 sm:border sm:border-slate-200/90 sm:rounded-2xl w-full max-w-5xl shadow-2xl flex flex-col h-full sm:h-auto sm:max-h-[92vh] overflow-hidden animate-in fade-in zoom-in-95 duration-150"
+          className="bg-surface border-0 sm:border sm:border-border-default sm:rounded-2xl w-full max-w-5xl shadow-2xl flex flex-col h-full sm:h-auto sm:max-h-[92vh] overflow-hidden animate-in fade-in zoom-in-95 duration-150"
           onClick={e => e.stopPropagation()}
         >
           {/* Header Bar */}
@@ -269,7 +269,7 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
                     type="button"
                     onClick={handleCopyDocNum}
                     title={language === 'ms' ? 'Salin No. Dokumen' : 'Copy Document Reference'}
-                    className="inline-flex items-center gap-1.5 font-mono text-[11px] font-bold px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 hover:bg-indigo-500/30 active:scale-95 transition-all cursor-pointer"
+                    className="inline-flex items-center gap-1.5 font-mono text-[11px] font-bold px-2 py-0.5 rounded-md bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 hover:bg-indigo-500/30 active:scale-95 transition-[transform,opacity,box-shadow,border-color] cursor-pointer"
                   >
                     <span>{documentNumber}</span>
                     {copiedDocNum ? (
@@ -290,7 +290,7 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
             <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
               <button
                 onClick={handlePrint}
-                className="px-2.5 sm:px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
+                className="px-2.5 sm:px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-bold transition-[transform,opacity,box-shadow,border-color] flex items-center gap-1.5 cursor-pointer shadow-xs active:scale-95"
                 title={language === 'ms' ? 'Print Register' : 'Print Manifest'}
               >
                 <Printer className="w-3.5 h-3.5 text-indigo-400" />
@@ -308,32 +308,32 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
           </div>
 
           {/* Compact Document Metadata Ribbon */}
-          <div className="bg-slate-50 border-b border-slate-200/80 px-4 sm:px-6 py-2 flex items-center justify-between gap-3 text-xs shrink-0 overflow-x-auto">
-            <div className="flex items-center gap-3 sm:gap-5 min-w-0 text-slate-600 whitespace-nowrap">
+          <div className="bg-subtle/50 border-b border-border-default px-4 sm:px-6 py-2 flex items-center justify-between gap-3 text-xs shrink-0 overflow-x-auto">
+            <div className="flex items-center gap-3 sm:gap-5 min-w-0 text-text-secondary whitespace-nowrap">
               <div className="flex items-center gap-1.5">
                 <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                <span className="text-slate-500 font-medium">{language === 'ms' ? 'Stor:' : 'Store:'}</span>
-                <span className="font-bold text-slate-900 bg-white px-1.5 py-0.5 rounded border border-slate-200 text-[11px]">
+                <span className="text-text-muted font-medium">{language === 'ms' ? 'Stor:' : 'Store:'}</span>
+                <span className="font-bold text-text-primary bg-surface px-1.5 py-0.5 rounded border border-border-default text-[11px]">
                   Stor Farmasi
                 </span>
               </div>
               <span className="text-slate-300">•</span>
               <div className="flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                <span className="font-mono font-bold text-slate-800 text-[11px]">
+                <span className="font-mono font-bold text-text-primary text-[11px]">
                   {new Date().toLocaleDateString('ms-MY', { year: 'numeric', month: 'short', day: '2-digit' })}
                 </span>
               </div>
               <span className="text-slate-300 hidden sm:inline">•</span>
               <div className="hidden sm:flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                <span className="text-slate-500 font-medium">{language === 'ms' ? 'Pegawai:' : 'Officer:'}</span>
-                <span className="font-bold text-slate-800 text-[11px] truncate max-w-[150px]">
+                <span className="text-text-muted font-medium">{language === 'ms' ? 'Pegawai:' : 'Officer:'}</span>
+                <span className="font-bold text-text-primary text-[11px] truncate max-w-[150px]">
                   {user?.name || user?.email || 'Pegawai Stor'}
                 </span>
               </div>
             </div>
-            <span className="shrink-0 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-extrabold text-[10px] sm:text-[11px] border border-emerald-200 flex items-center gap-1 whitespace-nowrap">
+            <span className="shrink-0 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-400 font-extrabold text-[10px] sm:text-[11px] border border-emerald-500/20 flex items-center gap-1 whitespace-nowrap">
               <CheckCircle2 className="w-3 h-3 text-emerald-600" />
               <span>{language === 'ms' ? 'Disahkan di Stor' : 'Verified in Store'}</span>
             </span>
@@ -341,63 +341,63 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
 
           {/* KPI Metrics Strip (Sleek 4-col micro-strip on mobile, clear cards on desktop) */}
           {/* Mobile Micro-Strip (sm:hidden) */}
-          <div className="grid grid-cols-4 gap-1.5 px-3 py-2 bg-white border-b border-slate-100 shrink-0 sm:hidden">
-            <div className="bg-slate-50 border border-slate-200/80 rounded-lg p-1.5 text-center">
+          <div className="grid grid-cols-4 gap-1.5 px-3 py-2 bg-surface border-b border-border-subtle shrink-0 sm:hidden">
+            <div className="bg-subtle/50 border border-border-default rounded-lg p-1.5 text-center">
               <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 block truncate">
                 {language === 'ms' ? 'Kosong' : 'Empty'}
               </span>
-              <div className="font-mono font-extrabold text-slate-900 text-sm mt-0.5">
+              <div className="font-mono font-extrabold text-text-primary text-sm mt-0.5">
                 {cylinders.length}
               </div>
             </div>
 
-            <div className="bg-rose-50/70 border border-rose-200/90 rounded-lg p-1.5 text-center">
+            <div className="bg-rose-500/10 border border-rose-500/20 rounded-lg p-1.5 text-center">
               <span className="text-[9px] font-bold uppercase tracking-wider text-rose-600 block truncate">
                 {language === 'ms' ? 'Dipilih' : 'Selected'}
               </span>
-              <div className="font-mono font-extrabold text-rose-900 text-sm mt-0.5">
+              <div className="font-mono font-extrabold text-rose-400 dark:text-rose-300 font-bold text-sm mt-0.5">
                 {selectedIds.size}
                 <span className="text-[10px] font-normal text-rose-600 font-sans">/{cylinders.length}</span>
               </div>
             </div>
 
-            <div className="bg-blue-50/60 border border-blue-200/80 rounded-lg p-1.5 text-center">
+            <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-1.5 text-center">
               <span className="text-[9px] font-bold uppercase tracking-wider text-blue-600 block truncate">
                 Bullnose
               </span>
-              <div className="font-mono font-extrabold text-blue-900 text-sm mt-0.5">
+              <div className="font-mono font-extrabold text-blue-400 dark:text-blue-300 font-bold text-sm mt-0.5">
                 {valveCounts.bn}
               </div>
             </div>
 
-            <div className="bg-purple-50/60 border border-purple-200/80 rounded-lg p-1.5 text-center">
+            <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-lg p-1.5 text-center">
               <span className="text-[9px] font-bold uppercase tracking-wider text-purple-600 block truncate">
                 Pin Index
               </span>
-              <div className="font-mono font-extrabold text-purple-900 text-sm mt-0.5">
+              <div className="font-mono font-extrabold text-indigo-400 dark:text-indigo-300 font-bold text-sm mt-0.5">
                 {valveCounts.pi}
               </div>
             </div>
           </div>
 
           {/* Desktop Summary Cards (hidden sm:grid) */}
-          <div className="hidden sm:grid grid-cols-4 gap-3 px-6 py-2.5 bg-white border-b border-slate-100 shrink-0">
-            <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-2.5 flex items-center justify-between">
+          <div className="hidden sm:grid grid-cols-4 gap-3 px-6 py-2.5 bg-surface border-b border-border-subtle shrink-0">
+            <div className="bg-subtle/50 border border-border-default rounded-xl p-2.5 flex items-center justify-between">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
                   {language === 'ms' ? 'Jumlah Silinder Kosong' : 'Total Empty Cylinders'}
                 </span>
-                <span className="text-[10px] text-slate-500 font-medium">
+                <span className="text-[10px] text-text-muted font-medium">
                   {language === 'ms' ? 'Inventori semasa stor' : 'Live store inventory'}
                 </span>
               </div>
-              <div className="text-xl font-extrabold text-slate-900 font-mono">
+              <div className="text-xl font-extrabold text-text-primary font-mono">
                 {cylinders.length}
-                <span className="text-xs font-sans font-normal text-slate-500 ml-1">cyl</span>
+                <span className="text-xs font-sans font-normal text-text-muted ml-1">cyl</span>
               </div>
             </div>
 
-            <div className="bg-rose-50/60 border border-rose-200/80 rounded-xl p-2.5 flex items-center justify-between">
+            <div className="bg-rose-500/10 border border-rose-500/20 rounded-xl p-2.5 flex items-center justify-between">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-rose-600 block">
                   {language === 'ms' ? 'Dipilih Untuk Pulang' : 'Selected for Return'}
@@ -406,13 +406,13 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
                   {language === 'ms' ? 'Sedia untuk pemulangan' : 'Ready to create return doc'}
                 </span>
               </div>
-              <div className="text-xl font-extrabold text-rose-900 font-mono">
+              <div className="text-xl font-extrabold text-rose-400 dark:text-rose-300 font-bold font-mono">
                 {selectedIds.size}
                 <span className="text-xs font-sans font-normal text-rose-700 ml-1">/ {cylinders.length}</span>
               </div>
             </div>
 
-            <div className="bg-blue-50/60 border border-blue-200/80 rounded-xl p-2.5 flex items-center justify-between">
+            <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-2.5 flex items-center justify-between">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 block">
                   🔵 Bullnose (BN)
@@ -421,13 +421,13 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
                   {language === 'ms' ? 'Injap Bullnose' : 'Bullnose Valve Type'}
                 </span>
               </div>
-              <div className="text-xl font-extrabold text-blue-900 font-mono">
+              <div className="text-xl font-extrabold text-blue-400 dark:text-blue-300 font-bold font-mono">
                 {valveCounts.bn}
                 <span className="text-xs font-sans font-normal text-blue-700 ml-1">cyl</span>
               </div>
             </div>
 
-            <div className="bg-purple-50/60 border border-purple-200/80 rounded-xl p-2.5 flex items-center justify-between">
+            <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-2.5 flex items-center justify-between">
               <div>
                 <span className="text-[10px] font-bold uppercase tracking-wider text-purple-600 block">
                   🟣 Pin Index (PI)
@@ -436,7 +436,7 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
                   {language === 'ms' ? 'Injap Pin Index' : 'Pin Index Valve Type'}
                 </span>
               </div>
-              <div className="text-xl font-extrabold text-purple-900 font-mono">
+              <div className="text-xl font-extrabold text-indigo-400 dark:text-indigo-300 font-bold font-mono">
                 {valveCounts.pi}
                 <span className="text-xs font-sans font-normal text-purple-700 ml-1">cyl</span>
               </div>
@@ -444,7 +444,7 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
           </div>
 
           {/* Filter & Search Toolbar */}
-          <div className="px-4 sm:px-6 py-2.5 bg-slate-50/70 border-b border-slate-200/80 flex flex-col gap-2 shrink-0">
+          <div className="px-4 sm:px-6 py-2.5 bg-subtle/50 border-b border-border-default flex flex-col gap-2 shrink-0">
             {/* Row 1: Search & Bulk Action on desktop */}
             <div className="flex items-center gap-2">
               <div className="relative flex-1">
@@ -454,12 +454,12 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
                   placeholder={language === 'ms' ? 'Cari no. siri atau kod QR silinder...' : 'Search serial # or QR code...'}
-                  className="w-full pl-8 pr-7 py-1.5 bg-white border border-slate-200 hover:border-slate-300 rounded-lg text-xs font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-colors"
+                  className="w-full pl-8 pr-7 py-1.5 bg-surface border border-border-default hover:border-border-default rounded-lg text-xs font-medium text-text-primary placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900/10 transition-colors"
                 />
                 {searchTerm && (
                   <button 
                     onClick={() => setSearchTerm('')} 
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5"
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-text-secondary p-0.5"
                     aria-label="Clear search"
                   >
                     <X className="w-3.5 h-3.5" />
@@ -471,7 +471,7 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
               <button
                 type="button"
                 onClick={toggleSelectAllFiltered}
-                className="px-2.5 sm:px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-lg text-xs font-bold text-slate-700 transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs shrink-0 whitespace-nowrap active:scale-95"
+                className="px-2.5 sm:px-3 py-1.5 bg-surface hover:bg-subtle/50 border border-border-default hover:border-border-default rounded-lg text-xs font-bold text-text-secondary transition-[transform,opacity,box-shadow,border-color] flex items-center gap-1.5 cursor-pointer shadow-elevation-1 shrink-0 whitespace-nowrap active:scale-95"
               >
                 {isAllFilteredSelected ? (
                   <>
@@ -493,16 +493,16 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
             <div className="flex items-center justify-between gap-2 overflow-x-auto pb-0.5">
               {/* Size Filter Pills */}
               <div className="flex items-center gap-1 shrink-0">
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider hidden sm:inline mr-1">
+                <span className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider hidden sm:inline mr-1">
                   {language === 'ms' ? 'Saiz:' : 'Size:'}
                 </span>
                 <button
                   type="button"
                   onClick={() => setSizeFilter('')}
-                  className={`px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-bold transition-all border cursor-pointer whitespace-nowrap ${
+                  className={`px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-bold transition-[transform,opacity,box-shadow,border-color] border cursor-pointer whitespace-nowrap ${
                     sizeFilter === ''
                       ? 'bg-slate-900 text-white border-slate-900'
-                      : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                      : 'bg-surface text-text-secondary border-border-default hover:bg-subtle/50'
                   }`}
                 >
                   {language === 'ms' ? 'Semua' : 'All'} ({cylinders.length})
@@ -514,10 +514,10 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
                       key={size}
                       type="button"
                       onClick={() => setSizeFilter(size)}
-                      className={`px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-bold transition-all border cursor-pointer whitespace-nowrap ${
+                      className={`px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-bold transition-[transform,opacity,box-shadow,border-color] border cursor-pointer whitespace-nowrap ${
                         sizeFilter === size
                           ? 'bg-slate-900 text-white border-slate-900'
-                          : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                          : 'bg-surface text-text-secondary border-border-default hover:bg-subtle/50'
                       }`}
                     >
                       {size} ({cnt})
@@ -531,8 +531,8 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setValveFilter('all')}
-                  className={`px-2 py-0.5 rounded-md transition-all cursor-pointer whitespace-nowrap ${
-                    valveFilter === 'all' ? 'bg-white text-slate-900 shadow-2xs font-extrabold' : 'text-slate-600 hover:text-slate-900'
+                  className={`px-2 py-0.5 rounded-md transition-[transform,opacity,box-shadow,border-color] cursor-pointer whitespace-nowrap ${
+                    valveFilter === 'all' ? 'bg-surface text-text-primary shadow-elevation-1 font-extrabold' : 'text-text-secondary hover:text-text-primary'
                   }`}
                 >
                   {language === 'ms' ? 'Semua Injap' : 'All Valves'}
@@ -540,8 +540,8 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setValveFilter('BN')}
-                  className={`px-2 py-0.5 rounded-md transition-all cursor-pointer whitespace-nowrap ${
-                    valveFilter === 'BN' ? 'bg-blue-600 text-white shadow-2xs font-extrabold' : 'text-slate-600 hover:text-slate-900'
+                  className={`px-2 py-0.5 rounded-md transition-[transform,opacity,box-shadow,border-color] cursor-pointer whitespace-nowrap ${
+                    valveFilter === 'BN' ? 'bg-blue-600 text-white shadow-elevation-1 font-extrabold' : 'text-text-secondary hover:text-text-primary'
                   }`}
                 >
                   BN ({valveCounts.bn})
@@ -549,8 +549,8 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setValveFilter('PI')}
-                  className={`px-2 py-0.5 rounded-md transition-all cursor-pointer whitespace-nowrap ${
-                    valveFilter === 'PI' ? 'bg-purple-600 text-white shadow-2xs font-extrabold' : 'text-slate-600 hover:text-slate-900'
+                  className={`px-2 py-0.5 rounded-md transition-[transform,opacity,box-shadow,border-color] cursor-pointer whitespace-nowrap ${
+                    valveFilter === 'PI' ? 'bg-purple-600 text-white shadow-elevation-1 font-extrabold' : 'text-text-secondary hover:text-text-primary'
                   }`}
                 >
                   PI ({valveCounts.pi})
@@ -569,9 +569,9 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
                 </span>
               </div>
             ) : filteredCylinders.length === 0 ? (
-              <div className="py-16 text-center border-2 border-dashed border-slate-200 rounded-2xl p-6 bg-slate-50/50">
+              <div className="py-16 text-center border-2 border-dashed border-border-default rounded-2xl p-6 bg-subtle/50">
                 <Database className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                <h5 className="text-sm font-bold text-slate-700">
+                <h5 className="text-sm font-bold text-text-secondary">
                   {language === 'ms' ? 'Tiada silinder dijumpai' : 'No empty cylinders found'}
                 </h5>
                 <p className="text-xs text-slate-400 mt-1 max-w-sm mx-auto">
@@ -598,10 +598,10 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
                       <div
                         key={cyl.id}
                         onClick={() => toggleSelectCylinder(cyl.id)}
-                        className={`p-2.5 rounded-xl border transition-all cursor-pointer active:scale-[0.99] select-none ${
+                        className={`p-2.5 rounded-xl border transition-[transform,opacity,box-shadow,border-color] cursor-pointer active:scale-[0.99] select-none ${
                           isSelected
-                            ? 'bg-rose-50/40 border-rose-300 shadow-2xs'
-                            : 'bg-white border-slate-200/80 hover:border-slate-300 shadow-2xs'
+                            ? 'bg-rose-500/10 border-rose-300 shadow-elevation-1'
+                            : 'bg-surface border-border-default hover:border-border-default shadow-elevation-1'
                         }`}
                       >
                         <div className="flex items-start gap-2.5">
@@ -611,7 +611,7 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
                               type="checkbox"
                               checked={isSelected}
                               onChange={() => toggleSelectCylinder(cyl.id)}
-                              className="w-4 h-4 rounded border-slate-300 text-rose-600 focus:ring-rose-500 cursor-pointer"
+                              className="w-4 h-4 rounded border-border-default text-rose-600 focus:ring-rose-500 cursor-pointer"
                             />
                           </div>
 
@@ -619,13 +619,13 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center justify-between gap-1.5">
                               <div className="flex items-center gap-1 min-w-0">
-                                <span className="font-mono font-bold text-slate-900 text-sm tracking-tight whitespace-nowrap">
+                                <span className="font-mono font-bold text-text-primary text-sm tracking-tight whitespace-nowrap">
                                   {cyl.serial_number}
                                 </span>
                                 <button
                                   type="button"
                                   onClick={(e) => handleCopySerial(cyl.serial_number, cyl.id, e)}
-                                  className="p-1 text-slate-400 hover:text-slate-600 rounded transition-colors"
+                                  className="p-1 text-slate-400 hover:text-text-secondary rounded transition-colors"
                                   title={language === 'ms' ? 'Salin No. Siri' : 'Copy Serial Number'}
                                 >
                                   {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
@@ -638,20 +638,20 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
 
                             {/* Tags / Metadata Row */}
                             <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
-                              <span className="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded font-mono font-bold text-slate-700 text-[10px] whitespace-nowrap">
+                              <span className="px-1.5 py-0.5 bg-subtle border border-border-default rounded font-mono font-bold text-text-secondary text-[10px] whitespace-nowrap">
                                 {sizeLabel} ({capacityStr})
                               </span>
                               <span className={`px-1.5 py-0.5 rounded text-[10px] font-extrabold border whitespace-nowrap ${
                                 valveCode === 'BN'
-                                  ? 'bg-blue-50 text-blue-700 border-blue-200'
-                                  : 'bg-purple-50 text-purple-700 border-purple-200'
+                                  ? 'bg-blue-500/10 text-blue-700 border-blue-500/20'
+                                  : 'bg-indigo-500/10 text-purple-700 border-indigo-500/20'
                               }`}>
                                 {valveCode === 'BN' ? '🔵 Bullnose' : '🟣 Pin Index'}
                               </span>
-                              <span className="px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[10px] font-bold border border-amber-200 whitespace-nowrap">
+                              <span className="px-1.5 py-0.5 rounded-full bg-amber-500/10 text-amber-400 text-[10px] font-bold border border-amber-500/20 whitespace-nowrap">
                                 {language === 'ms' ? 'KOSONG' : 'EMPTY'}
                               </span>
-                              <span className="text-[10px] text-slate-500 truncate max-w-[130px]">
+                              <span className="text-[10px] text-text-muted truncate max-w-[130px]">
                                 {locationName}
                               </span>
                             </div>
@@ -663,21 +663,21 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
                 </div>
 
                 {/* 2. DESKTOP TABLE VIEW (hidden md:block) */}
-                <div className="hidden md:block border border-slate-200 rounded-xl overflow-hidden shadow-2xs">
+                <div className="hidden md:block border border-border-default rounded-xl overflow-hidden shadow-elevation-1">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse text-xs">
                       <thead>
-                        <tr className="bg-slate-100/80 text-slate-600 font-bold border-b border-slate-200 text-[11px] uppercase tracking-wider">
-                          <th className="py-2.5 px-3 w-10 text-center sticky left-0 bg-slate-100/95 z-10">
+                        <tr className="bg-subtle text-text-secondary font-bold border-b border-border-default text-[11px] uppercase tracking-wider">
+                          <th className="py-2.5 px-3 w-10 text-center sticky left-0 bg-subtle z-10">
                             <input
                               type="checkbox"
                               checked={isAllFilteredSelected}
                               onChange={toggleSelectAllFiltered}
-                              className="rounded border-slate-300 text-rose-600 focus:ring-rose-500 cursor-pointer"
+                              className="rounded border-border-default text-rose-600 focus:ring-rose-500 cursor-pointer"
                             />
                           </th>
-                          <th className="py-2.5 px-2.5 w-10 text-slate-400 font-mono text-center">#</th>
-                          <th className="py-2.5 px-3 font-extrabold text-slate-800 whitespace-nowrap">
+                          <th className="py-2.5 px-2.5 w-10 text-text-secondary font-bold font-mono text-center">#</th>
+                          <th className="py-2.5 px-3 font-extrabold text-text-primary whitespace-nowrap">
                             {language === 'ms' ? 'No. Siri Silinder' : 'Serial Number'}
                           </th>
                           <th className="py-2.5 px-3 whitespace-nowrap">{language === 'ms' ? 'Kod QR / Barcode' : 'QR / Tag'}</th>
@@ -687,7 +687,7 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
                           <th className="py-2.5 px-3 text-center whitespace-nowrap">{language === 'ms' ? 'Status' : 'Status'}</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-200/70 bg-white">
+                      <tbody className="divide-y divide-border-default bg-surface">
                         {filteredCylinders.map((cyl, idx) => {
                           const isSelected = selectedIds.has(cyl.id);
                           const capacityStr = getCapacityStr(cyl);
@@ -702,16 +702,16 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
                             <tr
                               key={cyl.id}
                               onClick={() => toggleSelectCylinder(cyl.id)}
-                              className={`hover:bg-slate-50/80 cursor-pointer transition-colors ${
-                                isSelected ? 'bg-rose-50/30 font-medium' : ''
+                              className={`hover:bg-subtle/50 cursor-pointer transition-colors ${
+                                isSelected ? 'bg-rose-500/10 font-medium' : ''
                               }`}
                             >
-                              <td className="py-2.5 px-3 text-center sticky left-0 bg-white group-hover:bg-slate-50/95 z-10" onClick={e => e.stopPropagation()}>
+                              <td className="py-2.5 px-3 text-center sticky left-0 bg-surface group-hover:bg-subtle/50 z-10" onClick={e => e.stopPropagation()}>
                                 <input
                                   type="checkbox"
                                   checked={isSelected}
                                   onChange={() => toggleSelectCylinder(cyl.id)}
-                                  className="rounded border-slate-300 text-rose-600 focus:ring-rose-500 cursor-pointer"
+                                  className="rounded border-border-default text-rose-600 focus:ring-rose-500 cursor-pointer"
                                 />
                               </td>
                               <td className="py-2.5 px-2.5 text-center font-mono text-slate-400 text-[11px]">
@@ -719,41 +719,41 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
                               </td>
                               <td className="py-2.5 px-3">
                                 <div className="flex items-center gap-1.5">
-                                  <span className="font-mono font-bold text-slate-900 text-[13px] whitespace-nowrap">
+                                  <span className="font-mono font-bold text-text-primary text-[13px] whitespace-nowrap">
                                     {cyl.serial_number}
                                   </span>
                                   <button
                                     type="button"
                                     onClick={(e) => handleCopySerial(cyl.serial_number, cyl.id, e)}
-                                    className="p-1 text-slate-400 hover:text-slate-600 rounded transition-colors"
+                                    className="p-1 text-slate-400 hover:text-text-secondary rounded transition-colors"
                                     title="Salin No. Siri"
                                   >
                                     {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
                                   </button>
                                 </div>
                               </td>
-                              <td className="py-2.5 px-3 font-mono text-slate-500 text-[11px] whitespace-nowrap">
+                              <td className="py-2.5 px-3 font-mono text-text-muted text-[11px] whitespace-nowrap">
                                 {cyl.qr_code || cyl.serial_number}
                               </td>
                               <td className="py-2.5 px-3 whitespace-nowrap">
-                                <span className="px-2 py-0.5 bg-slate-100 border border-slate-200 rounded font-mono font-bold text-slate-700 text-[11px]">
+                                <span className="px-2 py-0.5 bg-subtle border border-border-default rounded font-mono font-bold text-text-secondary text-[11px]">
                                   {sizeLabel} ({capacityStr})
                                 </span>
                               </td>
                               <td className="py-2.5 px-3 whitespace-nowrap">
                                 <span className={`px-2 py-0.5 rounded text-[10px] font-extrabold border ${
                                   valveCode === 'BN'
-                                    ? 'bg-blue-50 text-blue-700 border-blue-200'
-                                    : 'bg-purple-50 text-purple-700 border-purple-200'
+                                    ? 'bg-blue-500/10 text-blue-700 border-blue-500/20'
+                                    : 'bg-indigo-500/10 text-purple-700 border-indigo-500/20'
                                 }`}>
                                   {valveCode === 'BN' ? '🔵 Bullnose (BN)' : '🟣 Pin Index (PI)'}
                                 </span>
                               </td>
-                              <td className="py-2.5 px-3 text-slate-600 text-[11px] whitespace-nowrap">
+                              <td className="py-2.5 px-3 text-text-secondary text-[11px] whitespace-nowrap">
                                 {locationName}
                               </td>
                               <td className="py-2.5 px-3 text-center whitespace-nowrap">
-                                <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 text-[10px] font-bold border border-amber-200">
+                                <span className="px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 text-[10px] font-bold border border-amber-500/20">
                                   {language === 'ms' ? 'KOSONG' : 'EMPTY'}
                                 </span>
                               </td>
@@ -769,14 +769,14 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
           </div>
 
           {/* Sticky Footer Actions */}
-          <div className="bg-slate-50 border-t border-slate-200 px-4 sm:px-6 py-3 sm:py-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
-            <div className="flex items-center gap-2 text-xs text-slate-600 w-full sm:w-auto justify-between sm:justify-start">
-              <span className="text-slate-500">{language === 'ms' ? 'Status Pemilihan:' : 'Selection Status:'}</span>
-              <div className="flex items-center gap-1 font-bold text-slate-900 bg-white px-2 py-0.5 rounded-md border border-slate-200">
+          <div className="bg-subtle/50 border-t border-border-default px-4 sm:px-6 py-3 sm:py-3.5 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
+            <div className="flex items-center gap-2 text-xs text-text-secondary w-full sm:w-auto justify-between sm:justify-start">
+              <span className="text-text-muted">{language === 'ms' ? 'Status Pemilihan:' : 'Selection Status:'}</span>
+              <div className="flex items-center gap-1 font-bold text-text-primary bg-surface px-2 py-0.5 rounded-md border border-border-default">
                 <span className="text-rose-600 font-mono">{selectedIds.size}</span>
                 <span className="text-slate-400">/</span>
                 <span className="font-mono">{cylinders.length}</span>
-                <span className="text-[11px] font-normal text-slate-500 ml-1">
+                <span className="text-[11px] font-normal text-text-muted ml-1">
                   {language === 'ms' ? 'silinder' : 'cylinders'}
                 </span>
               </div>
@@ -786,7 +786,7 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 sm:flex-initial px-4 py-2 border border-slate-200 hover:border-slate-300 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 transition-all cursor-pointer active:scale-95"
+                className="flex-1 sm:flex-initial px-4 py-2 border border-border-default hover:border-border-default rounded-xl text-xs font-bold text-text-secondary hover:bg-subtle transition-[transform,opacity,box-shadow,border-color] cursor-pointer active:scale-95"
               >
                 {language === 'ms' ? 'Tutup' : 'Close'}
               </button>
@@ -796,7 +796,7 @@ export const EmptyCylinderListModal: React.FC<EmptyCylinderListModalProps> = ({
                   type="button"
                   onClick={handleProceedToReturn}
                   disabled={selectedIds.size === 0}
-                  className={`flex-1 sm:flex-initial px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-sm hover:shadow active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                  className={`flex-1 sm:flex-initial px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-sm hover:shadow active:scale-95 transition-[transform,opacity,box-shadow,border-color] flex items-center justify-center gap-2 cursor-pointer ${
                     selectedIds.size === 0 ? 'opacity-50 grayscale cursor-not-allowed' : ''
                   }`}
                 >

@@ -172,7 +172,7 @@ const TransporterVehicleRegistryPage: React.FC = () => {
       {/* Back button */}
       <button 
         onClick={() => navigate('/transporter/dashboard')}
-        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold mb-4 cursor-pointer"
+        className="flex items-center gap-2 text-text-muted hover:text-text-primary transition-colors text-sm font-semibold mb-4 cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>{isEn ? 'Back to Dashboard' : 'Kembali ke Papan Pemuka'}</span>
@@ -201,14 +201,14 @@ const TransporterVehicleRegistryPage: React.FC = () => {
       </div>
 
       {/* Fleet Table Card */}
-      <Card className="border border-slate-200 shadow-sm overflow-hidden">
+      <Card className="border border-border-default shadow-sm overflow-hidden">
         <CardContent className="p-0">
           {loading ? (
-            <div className="p-12 text-center text-slate-500 font-medium animate-pulse">
+            <div className="p-12 text-center text-text-muted font-medium animate-pulse">
               {isEn ? 'Loading fleet registry...' : 'Memuatkan senarai kenderaan...'}
             </div>
           ) : vehicles.length === 0 ? (
-            <div className="p-12 text-center text-slate-500">
+            <div className="p-12 text-center text-text-muted">
               {isEn ? 'No vehicles registered in your facility.' : 'Tiada kenderaan berdaftar dalam hospital anda.'}
             </div>
           ) : (
@@ -216,7 +216,7 @@ const TransporterVehicleRegistryPage: React.FC = () => {
               <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  <tr className="bg-subtle/50 border-b border-border-subtle text-xs font-semibold text-text-muted uppercase tracking-wider">
                     <th className="px-6 py-4">{isEn ? 'Vehicle / Plate No' : 'Kenderaan / No. Plat'}</th>
                     <th className="px-6 py-4">{isEn ? 'Vehicle Model' : 'Model Kenderaan'}</th>
                     <th className="px-6 py-4">{isEn ? 'Chassis No' : 'No. Chasis'}</th>
@@ -226,19 +226,19 @@ const TransporterVehicleRegistryPage: React.FC = () => {
                     <th className="px-6 py-4 text-right">{isEn ? 'Action' : 'Tindakan'}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
+                <tbody className="divide-y divide-border-subtle text-sm text-text-secondary">
                   {vehicles.map((v) => (
-                    <tr key={v.id} className="hover:bg-slate-50/50 transition-colors">
+                    <tr key={v.id} className="hover:bg-subtle/50 transition-colors">
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           {v.foto_kenderaan ? (
                             <img 
                               src={v.foto_kenderaan} 
                               alt={v.no_kenderaan} 
-                              className="w-10 h-10 rounded-lg object-cover border border-slate-200" 
+                              className="w-10 h-10 rounded-lg object-cover border border-border-default" 
                             />
                           ) : (
-                            <div className="w-10 h-10 rounded-lg bg-slate-50 flex items-center justify-center border border-slate-100 text-slate-400">
+                            <div className="w-10 h-10 rounded-lg bg-subtle/50 flex items-center justify-center border border-border-subtle text-slate-400">
                               {v.jenis_kenderaan === 'ambulance' ? (
                                 <Ambulance className="w-5 h-5 opacity-40" />
                               ) : v.jenis_kenderaan === 'van_jenazah' ? (
@@ -249,20 +249,20 @@ const TransporterVehicleRegistryPage: React.FC = () => {
                             </div>
                           )}
                           <div>
-                            <span className="block font-mono font-bold text-slate-800">{v.no_kenderaan}</span>
+                            <span className="block font-mono font-bold text-text-primary">{v.no_kenderaan}</span>
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 font-semibold text-slate-700">{v.model}</td>
-                      <td className="px-6 py-4 font-mono text-slate-500 text-xs">{v.no_chasis}</td>
+                      <td className="px-6 py-4 font-semibold text-text-secondary">{v.model}</td>
+                      <td className="px-6 py-4 font-mono text-text-muted text-xs">{v.no_chasis}</td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                            {v.jenis_kenderaan === 'ambulance' ? (
-                             <span className="p-1.5 bg-rose-50 text-rose-600 rounded-lg"><Ambulance className="w-4 h-4" /></span>
+                             <span className="p-1.5 bg-rose-500/10 text-rose-600 rounded-lg"><Ambulance className="w-4 h-4" /></span>
                            ) : v.jenis_kenderaan === 'van_jenazah' ? (
-                             <span className="p-1.5 bg-slate-100 text-slate-700 rounded-lg"><Truck className="w-4 h-4" /></span>
+                             <span className="p-1.5 bg-subtle text-text-secondary rounded-lg"><Truck className="w-4 h-4" /></span>
                            ) : (
-                             <span className="p-1.5 bg-blue-50 text-blue-600 rounded-lg"><Car className="w-4 h-4" /></span>
+                             <span className="p-1.5 bg-blue-500/10 text-blue-600 rounded-lg"><Car className="w-4 h-4" /></span>
                            )}
                            <span className="capitalize">
                              {v.jenis_kenderaan === 'sg' 
@@ -274,7 +274,7 @@ const TransporterVehicleRegistryPage: React.FC = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 font-medium">
-                        <div className="flex items-center gap-1.5 text-xs text-slate-600">
+                        <div className="flex items-center gap-1.5 text-xs text-text-muted">
                           <Calendar className="w-3.5 h-3.5 text-slate-400" />
                           {new Date(v.tarikh_tamat_cukai_jalan).toLocaleDateString(isEn ? 'en-US' : 'ms-MY')}
                         </div>
@@ -288,7 +288,7 @@ const TransporterVehicleRegistryPage: React.FC = () => {
                         <Button 
                           variant="ghost" 
                           onClick={() => handleOpenEdit(v)}
-                          className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 rounded-lg px-2.5 py-1 cursor-pointer"
+                          className="text-xs text-text-muted hover:text-text-primary border border-border-default rounded-lg px-2.5 py-1 cursor-pointer"
                         >
                           <Edit className="w-3.5 h-3.5 mr-1 inline" />
                           {isEn ? 'Edit' : 'Edit'}
@@ -301,31 +301,31 @@ const TransporterVehicleRegistryPage: React.FC = () => {
             </div>
 
             {/* Mobile View: High-End Native Vehicle Cards */}
-            <div className="md:hidden divide-y divide-slate-100">
+            <div className="md:hidden divide-y divide-border-subtle">
               {vehicles.map((v) => (
-                <div key={v.id} className="p-4 space-y-3 hover:bg-slate-50/50 transition">
+                <div key={v.id} className="p-4 space-y-3 hover:bg-subtle/50 transition">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-3">
                       {v.foto_kenderaan ? (
                         <img 
                           src={v.foto_kenderaan} 
                           alt={v.no_kenderaan} 
-                          className="w-12 h-12 rounded-xl object-cover border border-slate-200 flex-shrink-0" 
+                          className="w-12 h-12 rounded-xl object-cover border border-border-default flex-shrink-0" 
                         />
                       ) : (
-                        <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-100 text-slate-400 flex-shrink-0">
+                        <div className="w-12 h-12 rounded-xl bg-subtle/50 flex items-center justify-center border border-border-subtle text-slate-400 flex-shrink-0">
                           {v.jenis_kenderaan === 'ambulance' ? (
                             <Ambulance className="w-6 h-6 opacity-50 text-rose-600" />
                           ) : v.jenis_kenderaan === 'van_jenazah' ? (
-                            <Truck className="w-6 h-6 opacity-50 text-slate-700" />
+                            <Truck className="w-6 h-6 opacity-50 text-text-secondary" />
                           ) : (
                             <Car className="w-6 h-6 opacity-50 text-blue-600" />
                           )}
                         </div>
                       )}
                       <div>
-                        <span className="font-mono font-bold text-slate-900 text-sm block">{v.no_kenderaan}</span>
-                        <p className="font-semibold text-slate-700 text-xs">{v.model}</p>
+                        <span className="font-mono font-bold text-text-primary text-sm block">{v.no_kenderaan}</span>
+                        <p className="font-semibold text-text-secondary text-xs">{v.model}</p>
                       </div>
                     </div>
 
@@ -336,10 +336,10 @@ const TransporterVehicleRegistryPage: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="bg-slate-50 rounded-xl p-2.5 border border-slate-100 text-xs space-y-1">
-                    <div className="flex items-center justify-between text-slate-600">
+                  <div className="bg-subtle/50 rounded-xl p-2.5 border border-border-subtle text-xs space-y-1">
+                    <div className="flex items-center justify-between text-text-muted">
                       <span>Kategori:</span>
-                      <span className="font-medium text-slate-800">
+                      <span className="font-medium text-text-primary">
                         {v.jenis_kenderaan === 'sg' 
                           ? (isEn ? 'Official Vehicle (SG)' : 'SG (Kereta Jabatan)') 
                           : v.jenis_kenderaan === 'van_jenazah' 
@@ -347,13 +347,13 @@ const TransporterVehicleRegistryPage: React.FC = () => {
                           : (isEn ? 'Ambulance' : 'Ambulans')}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between text-slate-600">
+                    <div className="flex items-center justify-between text-text-muted">
                       <span>No. Chasis:</span>
-                      <span className="font-mono text-[11px] text-slate-500">{v.no_chasis}</span>
+                      <span className="font-mono text-[11px] text-text-muted">{v.no_chasis}</span>
                     </div>
-                    <div className="flex items-center justify-between text-slate-600">
+                    <div className="flex items-center justify-between text-text-muted">
                       <span>Tamat Cukai Jalan:</span>
-                      <span className="font-mono text-[11px] text-slate-700 font-semibold">
+                      <span className="font-mono text-[11px] text-text-secondary font-semibold">
                         {new Date(v.tarikh_tamat_cukai_jalan).toLocaleDateString(isEn ? 'en-US' : 'ms-MY')}
                       </span>
                     </div>
@@ -363,7 +363,7 @@ const TransporterVehicleRegistryPage: React.FC = () => {
                     <Button 
                       variant="ghost" 
                       onClick={() => handleOpenEdit(v)}
-                      className="text-xs text-slate-700 hover:text-slate-900 border border-slate-200 rounded-lg px-3 py-1.5"
+                      className="text-xs text-text-secondary hover:text-text-primary border border-border-default rounded-lg px-3 py-1.5"
                     >
                       <Edit className="w-3.5 h-3.5 mr-1 inline" />
                       {isEn ? 'Edit Vehicle' : 'Kemaskini Kenderaan'}
@@ -380,10 +380,10 @@ const TransporterVehicleRegistryPage: React.FC = () => {
       {/* 1. Register / Edit Vehicle Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-md w-full mx-4 overflow-hidden animate-scaleIn">
+          <div className="bg-surface rounded-2xl shadow-xl border border-border-default max-w-md w-full mx-4 overflow-hidden animate-scaleIn">
             
-            <div className="bg-slate-50 border-b border-slate-100 px-6 py-4 flex justify-between items-center">
-              <h3 className="text-lg font-bold text-slate-800">
+            <div className="bg-subtle/50 border-b border-border-subtle px-6 py-4 flex justify-between items-center">
+              <h3 className="text-lg font-bold text-text-primary">
                 {modalMode === 'create' 
                   ? (isEn ? 'Register New Vehicle' : 'Daftar Kenderaan Baru') 
                   : (isEn ? 'Update Vehicle Details' : 'Kemaskini Butiran Kenderaan')}
@@ -394,7 +394,7 @@ const TransporterVehicleRegistryPage: React.FC = () => {
               
               {/* Plate No */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                <label className="text-xs font-bold text-text-muted uppercase tracking-wider">
                   {isEn ? 'Registration Plate No' : 'No. Pendaftaran (Plate No)'}
                 </label>
                 <Input 
@@ -407,7 +407,7 @@ const TransporterVehicleRegistryPage: React.FC = () => {
 
               {/* Chassis No */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                <label className="text-xs font-bold text-text-muted uppercase tracking-wider">
                   {isEn ? 'Chassis Number' : 'No. Chasis'}
                 </label>
                 <Input 
@@ -420,13 +420,13 @@ const TransporterVehicleRegistryPage: React.FC = () => {
 
               {/* Vehicle Type */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                <label className="text-xs font-bold text-text-muted uppercase tracking-wider">
                   {isEn ? 'Service Category' : 'Kategori Perkhidmatan'}
                 </label>
                 <select
                   value={jenisKenderaan}
                   onChange={(e) => setJenisKenderaan(e.target.value as any)}
-                  className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
+                  className="w-full bg-subtle/50 border border-border-default hover:border-border-default rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
                   required
                 >
                   <option value="ambulance">{isEn ? 'Ambulance' : 'Ambulans'}</option>
@@ -437,7 +437,7 @@ const TransporterVehicleRegistryPage: React.FC = () => {
 
               {/* Model */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                <label className="text-xs font-bold text-text-muted uppercase tracking-wider">
                   {isEn ? 'Vehicle Model' : 'Model Kenderaan'}
                 </label>
                 <Input 
@@ -450,7 +450,7 @@ const TransporterVehicleRegistryPage: React.FC = () => {
 
               {/* Roadtax Expiry Date */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                <label className="text-xs font-bold text-text-muted uppercase tracking-wider">
                   {isEn ? 'Road Tax Expiry Date' : 'Tarikh Tamat Cukai Jalan'}
                 </label>
                 <Input 
@@ -463,13 +463,13 @@ const TransporterVehicleRegistryPage: React.FC = () => {
 
               {/* Vehicle Status */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                <label className="text-xs font-bold text-text-muted uppercase tracking-wider">
                   {isEn ? 'Operational Status' : 'Status Semasa'}
                 </label>
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value as any)}
-                  className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
+                  className="w-full bg-subtle/50 border border-border-default hover:border-border-default rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
                   required
                 >
                   <option value="active">{isEn ? 'Active (Good to Go)' : 'Aktif (Good to Go)'}</option>
@@ -480,12 +480,12 @@ const TransporterVehicleRegistryPage: React.FC = () => {
 
               {/* Photo Upload */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider block">
+                <label className="text-xs font-bold text-text-muted uppercase tracking-wider block">
                   {isEn ? 'Vehicle Photo (Optional)' : 'Foto Kenderaan (Pilihan)'}
                 </label>
                 <div className="flex items-center gap-4">
                   {fotoKenderaan ? (
-                    <div className="relative w-20 h-20 rounded-xl overflow-hidden border border-slate-200 bg-slate-50">
+                    <div className="relative w-20 h-20 rounded-xl overflow-hidden border border-border-default bg-subtle/50">
                       <img src={fotoKenderaan} alt="Preview" className="w-full h-full object-cover" />
                       <button
                         type="button"
@@ -496,7 +496,7 @@ const TransporterVehicleRegistryPage: React.FC = () => {
                       </button>
                     </div>
                   ) : (
-                    <div className="w-20 h-20 rounded-xl border-2 border-dashed border-slate-200 flex items-center justify-center text-slate-400 bg-slate-50/50">
+                    <div className="w-20 h-20 rounded-xl border-2 border-dashed border-border-default flex items-center justify-center text-slate-400 bg-subtle/50">
                       <Car className="w-8 h-8 opacity-40" />
                     </div>
                   )}
@@ -510,7 +510,7 @@ const TransporterVehicleRegistryPage: React.FC = () => {
                     />
                     <label
                       htmlFor="vehiclePhotoUpload"
-                      className="inline-flex px-3.5 py-2 border border-slate-200 hover:border-slate-300 hover:bg-slate-50 rounded-xl text-xs font-bold text-slate-700 cursor-pointer transition-colors"
+                      className="inline-flex px-3.5 py-2 border border-border-default hover:border-border-default hover:bg-subtle/50 rounded-xl text-xs font-bold text-text-secondary cursor-pointer transition-colors"
                     >
                       {isEn ? 'Upload Photo' : 'Muat Naik Foto'}
                     </label>
@@ -521,12 +521,12 @@ const TransporterVehicleRegistryPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+              <div className="flex justify-end gap-3 pt-4 border-t border-border-subtle">
                 <Button 
                   type="button" 
                   variant="outline" 
                   onClick={() => setIsModalOpen(false)}
-                  className="border-slate-200 text-slate-700 cursor-pointer"
+                  className="border-border-default text-text-secondary cursor-pointer"
                 >
                   {isEn ? 'Cancel' : 'Batal'}
                 </Button>

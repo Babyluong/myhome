@@ -153,7 +153,7 @@ export const CylinderQrTag: React.FC<CylinderQrTagProps> = ({
             onClick={() => onPrint(cylinder.id || tagId)}
             type="button"
             title="Print Label"
-            className="p-1.5 bg-white/95 hover:bg-white border border-black/30 hover:border-black text-black rounded-lg shadow-md transition-all active:scale-95"
+            className="p-1.5 bg-white/95 hover:bg-surface border border-black/30 hover:border-black text-black rounded-lg shadow-md transition-colors active:scale-95"
           >
             <Printer className="w-3.5 h-3.5" />
           </button>

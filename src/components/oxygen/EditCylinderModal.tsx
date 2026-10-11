@@ -159,7 +159,7 @@ export const EditCylinderModal: React.FC<EditCylinderModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-150">
-      <div className="bg-white w-full max-w-lg rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[92vh] animate-in zoom-in-95 duration-200">
+      <div className="bg-surface w-full max-w-lg rounded-3xl shadow-2xl border border-border-default overflow-hidden flex flex-col max-h-[92vh] animate-in zoom-in-95 duration-200">
         
         {/* Header */}
         <div className="px-6 py-5 bg-gradient-to-r from-teal-900 via-teal-850 to-emerald-900 text-white flex items-center justify-between border-b border-teal-950/40">
@@ -179,7 +179,7 @@ export const EditCylinderModal: React.FC<EditCylinderModalProps> = ({
           <button
             onClick={onClose}
             type="button"
-            className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center transition-all cursor-pointer text-slate-200"
+            className="w-8 h-8 rounded-full bg-white/10 hover:bg-surface/20 border border-white/20 flex items-center justify-center transition-[transform,opacity,box-shadow,border-color] cursor-pointer text-slate-200"
           >
             <X className="w-4 h-4" />
           </button>
@@ -188,23 +188,23 @@ export const EditCylinderModal: React.FC<EditCylinderModalProps> = ({
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-5 flex-1">
           {errorMessage && (
-            <div className="p-3.5 bg-rose-50 border border-rose-200 text-rose-700 text-xs rounded-xl flex items-start gap-2.5">
+            <div className="p-3.5 bg-rose-500/10 border border-rose-500/20 text-rose-700 text-xs rounded-xl flex items-start gap-2.5">
               <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
               <div className="font-semibold">{errorMessage}</div>
             </div>
           )}
 
           {/* Current Cylinder Snapshot */}
-          <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-3.5 space-y-2 text-xs">
+          <div className="bg-subtle/50 border border-border-default rounded-2xl p-3.5 space-y-2 text-xs">
             <div className="text-[10px] font-black uppercase tracking-wider text-slate-400">
               {language === 'ms' ? 'Rekod Semasa Dalam Sistem' : 'Current System Record'}
             </div>
             <div className="flex items-center justify-between flex-wrap gap-2">
-              <span className="font-mono font-bold text-slate-800 text-sm">{cylinder.serial_number}</span>
-              <span className="px-2 py-0.5 rounded-md bg-slate-200/70 text-slate-700 text-[10px] font-bold">
+              <span className="font-mono font-bold text-text-primary text-sm">{cylinder.serial_number}</span>
+              <span className="px-2 py-0.5 rounded-md bg-slate-200/70 text-text-secondary text-[10px] font-bold">
                 {cylinder.type_info?.type_name || 'Standard'}
               </span>
-              <span className="px-2 py-0.5 rounded-md bg-teal-50 text-teal-700 border border-teal-200 text-[10px] font-bold">
+              <span className="px-2 py-0.5 rounded-md bg-accent-base/10 text-teal-700 border border-accent-base/20 text-[10px] font-bold">
                 {cylinder.current_location?.location_name || 'Pharmacy Store'}
               </span>
             </div>
@@ -212,7 +212,7 @@ export const EditCylinderModal: React.FC<EditCylinderModalProps> = ({
 
           {/* Field 1: Serial Number (Name) */}
           <div className="space-y-1.5">
-            <label className="text-xs font-extrabold text-slate-800 flex items-center justify-between">
+            <label className="text-xs font-extrabold text-text-primary flex items-center justify-between">
               <span className="flex items-center gap-1.5">
                 <Tag className="w-3.5 h-3.5 text-teal-600" />
                 {language === 'ms' ? 'Nombor Siri / Nama Silinder' : 'Serial Number / Cylinder Name'}
@@ -224,10 +224,10 @@ export const EditCylinderModal: React.FC<EditCylinderModalProps> = ({
               value={serialNumber}
               onChange={(e) => setSerialNumber(e.target.value.toUpperCase())}
               placeholder="e.g. SABOXY-006083"
-              className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl font-mono font-bold text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all placeholder:text-slate-400"
+              className="w-full px-3.5 py-2.5 bg-surface border border-border-default rounded-xl font-mono font-bold text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-[transform,opacity,box-shadow,border-color] placeholder:text-text-muted"
               required
             />
-            <div className="flex items-center gap-1 text-[11px] text-slate-500 font-medium pt-0.5">
+            <div className="flex items-center gap-1 text-[11px] text-text-muted font-medium pt-0.5">
               <Info className="w-3.5 h-3.5 text-slate-400 shrink-0" />
               <span>{language === 'ms' ? 'QR code and system search will be updated with this serial number.' : 'QR tag and system search will automatically sync with this serial.'}</span>
             </div>
@@ -235,7 +235,7 @@ export const EditCylinderModal: React.FC<EditCylinderModalProps> = ({
 
           {/* Field 2: Cylinder Size & Ownership Category */}
           <div className="space-y-1.5">
-            <label className="text-xs font-extrabold text-slate-800 flex items-center justify-between">
+            <label className="text-xs font-extrabold text-text-primary flex items-center justify-between">
               <span className="flex items-center gap-1.5">
                 <Gauge className="w-3.5 h-3.5 text-teal-600" />
                 {language === 'ms' ? 'Saiz & Kategori Silinder' : 'Cylinder Size & Category'}
@@ -252,7 +252,7 @@ export const EditCylinderModal: React.FC<EditCylinderModalProps> = ({
               <select
                 value={selectedSizeId}
                 onChange={(e) => handleSizeChange(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl font-bold text-slate-800 text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-all cursor-pointer"
+                className="w-full px-3.5 py-2.5 bg-surface border border-border-default rounded-xl font-bold text-text-primary text-xs focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 transition-[transform,opacity,box-shadow,border-color] cursor-pointer"
                 required
               >
                 <option value="" disabled>
@@ -275,12 +275,12 @@ export const EditCylinderModal: React.FC<EditCylinderModalProps> = ({
               <div className="flex items-center gap-2 pt-1 flex-wrap">
                 <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
                   currentSizeObj.is_loan
-                    ? 'bg-amber-100 text-amber-800 border border-amber-300'
-                    : 'bg-blue-100 text-blue-800 border border-blue-300'
+                    ? 'bg-amber-100 text-amber-400 border border-amber-300'
+                    : 'bg-blue-100 text-blue-400 border border-blue-300'
                 }`}>
                   {currentSizeObj.is_loan ? (language === 'ms' ? '📌 Silinder Pinjaman (Loan)' : '📌 Loan Cylinder') : (language === 'ms' ? '🏢 Milik Hospital (Private)' : '🏢 Hospital Owned (Private)')}
                 </span>
-                <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[10px] font-bold">
+                <span className="px-2.5 py-0.5 rounded-full bg-subtle text-text-secondary border border-border-default text-[10px] font-bold">
                   {language === 'ms' ? 'Kapasiti' : 'Capacity'}: {currentSizeObj.capacity} {currentSizeObj.unit || 'm³'}
                 </span>
               </div>
@@ -289,7 +289,7 @@ export const EditCylinderModal: React.FC<EditCylinderModalProps> = ({
 
           {/* Field 3: Valve Type (Pin Index vs Bullnose) */}
           <div className="space-y-1.5">
-            <label className="text-xs font-extrabold text-slate-800 flex items-center justify-between">
+            <label className="text-xs font-extrabold text-text-primary flex items-center justify-between">
               <span>{language === 'ms' ? 'Jenis Injap Silinder (Valve Connection)' : 'Cylinder Valve Connection'}</span>
               <span className="text-[10px] text-slate-400 font-semibold">{language === 'ms' ? 'Semak label fizikal' : 'Verify physical label'}</span>
             </label>
@@ -297,10 +297,10 @@ export const EditCylinderModal: React.FC<EditCylinderModalProps> = ({
               <button
                 type="button"
                 onClick={() => setSelectedValveCode('PI')}
-                className={`py-2.5 px-3 rounded-xl border-2 flex items-center justify-center gap-2 text-xs font-black transition-all cursor-pointer ${
+                className={`py-2.5 px-3 rounded-xl border-2 flex items-center justify-center gap-2 text-xs font-black transition-[transform,opacity,box-shadow,border-color] cursor-pointer ${
                   selectedValveCode === 'PI'
-                    ? 'bg-purple-50 border-purple-500 text-purple-900 shadow-xs'
-                    : 'bg-white border-slate-200 text-slate-600 hover:border-purple-200 hover:bg-purple-50/30'
+                    ? 'bg-indigo-500/10 border-purple-500 text-indigo-400 dark:text-indigo-300 font-bold shadow-xs'
+                    : 'bg-surface border-border-default text-text-secondary hover:border-indigo-500/20 hover:bg-indigo-500/10'
                 }`}
               >
                 <span className="w-2.5 h-2.5 rounded-full bg-purple-600" />
@@ -311,10 +311,10 @@ export const EditCylinderModal: React.FC<EditCylinderModalProps> = ({
               <button
                 type="button"
                 onClick={() => setSelectedValveCode('BN')}
-                className={`py-2.5 px-3 rounded-xl border-2 flex items-center justify-center gap-2 text-xs font-black transition-all cursor-pointer ${
+                className={`py-2.5 px-3 rounded-xl border-2 flex items-center justify-center gap-2 text-xs font-black transition-[transform,opacity,box-shadow,border-color] cursor-pointer ${
                   selectedValveCode === 'BN'
-                    ? 'bg-blue-50 border-blue-500 text-blue-900 shadow-xs'
-                    : 'bg-white border-slate-200 text-slate-600 hover:border-blue-200 hover:bg-blue-50/30'
+                    ? 'bg-blue-500/10 border-blue-500 text-blue-400 dark:text-blue-300 font-bold shadow-xs'
+                    : 'bg-surface border-border-default text-text-secondary hover:border-blue-500/20 hover:bg-blue-500/10'
                 }`}
               >
                 <span className="w-2.5 h-2.5 rounded-full bg-blue-600" />
@@ -322,7 +322,7 @@ export const EditCylinderModal: React.FC<EditCylinderModalProps> = ({
                 {selectedValveCode === 'BN' && <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 ml-auto" />}
               </button>
             </div>
-            <p className="text-[10px] text-slate-500 font-medium">
+            <p className="text-[10px] text-text-muted font-medium">
               {language === 'ms'
                 ? 'Nota: Silinder 101-F, P101-D & P101-E standard menggunakan Pin Index (PI). Silinder 101-N & P101-HS menggunakan Bullnose (BN).'
                 : 'Note: 101-F, P101-D & P101-E standard cylinders use Pin Index (PI). 101-N & P101-HS use Bullnose (BN).'}
@@ -330,7 +330,7 @@ export const EditCylinderModal: React.FC<EditCylinderModalProps> = ({
           </div>
 
           {/* Target Group Preview */}
-          <div className="bg-emerald-50/80 border border-emerald-200/80 rounded-2xl p-3.5 text-xs text-emerald-900 space-y-1">
+          <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-3.5 text-xs text-emerald-400 dark:text-emerald-300 font-bold space-y-1">
             <div className="text-[10px] font-black uppercase tracking-wider text-emerald-700">
               {language === 'ms' ? 'Kumpulan Tab Rekonsiliasi Sasaran' : 'Target Reconciliation Tab Group'}
             </div>
@@ -351,19 +351,19 @@ export const EditCylinderModal: React.FC<EditCylinderModalProps> = ({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+          <div className="flex items-center justify-end gap-3 pt-3 border-t border-border-subtle">
             <button
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-50 font-bold text-xs transition-all cursor-pointer"
+              className="px-4 py-2.5 rounded-xl border border-border-default text-text-secondary hover:bg-subtle/50 font-bold text-xs transition-[transform,opacity,box-shadow,border-color] cursor-pointer"
             >
               {language === 'ms' ? 'Batal' : 'Cancel'}
             </button>
             <button
               type="submit"
               disabled={isSubmitting || isLoadingMasterData}
-              className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 active:scale-95 text-white font-extrabold text-xs transition-all flex items-center gap-2 shadow-sm disabled:opacity-50 cursor-pointer"
+              className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 active:scale-95 text-white font-extrabold text-xs transition-[transform,opacity,box-shadow,border-color] flex items-center gap-2 shadow-sm disabled:opacity-50 cursor-pointer"
             >
               {isSubmitting ? (
                 <>

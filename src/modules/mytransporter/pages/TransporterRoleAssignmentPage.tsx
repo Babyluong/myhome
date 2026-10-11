@@ -114,7 +114,7 @@ const TransporterRoleAssignmentPage: React.FC = () => {
       {/* Back button */}
       <button 
         onClick={() => navigate('/transporter/dashboard')}
-        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold mb-4 cursor-pointer"
+        className="flex items-center gap-2 text-text-muted hover:text-text-primary transition-colors text-sm font-semibold mb-4 cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>{isEn ? 'Back to Dashboard' : 'Kembali ke Papan Pemuka'}</span>
@@ -122,11 +122,11 @@ const TransporterRoleAssignmentPage: React.FC = () => {
 
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+        <h1 className="text-2xl font-black text-text-primary tracking-tight flex items-center gap-2">
           <Shield className="w-8 h-8 text-indigo-600 animate-pulse" />
           {isEn ? 'Staff Roles & Permission Assignments' : 'Kebenaran & Peranan Kakitangan (Module Access Controls)'}
         </h1>
-        <p className="text-slate-500 text-sm">
+        <p className="text-text-muted text-sm">
           {isEn 
             ? 'Assign designated hospital staff as Duty Drivers (for vehicle pre-trip logs) or Transport Administrators (for dispatch approvals).' 
             : 'Tentukan kakitangan yang mempunyai peranan sebagai On-Duty Driver atau Pentadbir Pengangkutan untuk meluluskan permohonan.'}
@@ -134,7 +134,7 @@ const TransporterRoleAssignmentPage: React.FC = () => {
       </div>
 
       {/* User Search Card */}
-      <Card className="border border-slate-200 shadow-sm">
+      <Card className="border border-border-default shadow-sm">
         <CardContent className="p-4 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="relative col-span-2">
             <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
@@ -154,21 +154,21 @@ const TransporterRoleAssignmentPage: React.FC = () => {
       </Card>
 
       {/* Users table */}
-      <Card className="border border-slate-200 shadow-sm overflow-hidden">
+      <Card className="border border-border-default shadow-sm overflow-hidden">
         <CardContent className="p-0">
           {loading ? (
-            <div className="p-12 text-center text-slate-500 font-medium animate-pulse">
+            <div className="p-12 text-center text-text-muted font-medium animate-pulse">
               {isEn ? 'Loading hospital staff roster...' : 'Loading hospital personnel records...'}
             </div>
           ) : filteredUsers.length === 0 ? (
-            <div className="p-12 text-center text-slate-500">
+            <div className="p-12 text-center text-text-muted">
               {isEn ? 'No matching staff members found.' : 'Tiada kakitangan sepadan dijumpai.'}
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  <tr className="bg-subtle/50 border-b border-border-subtle text-xs font-semibold text-text-muted uppercase tracking-wider">
                     <th className="px-6 py-4">{isEn ? 'Staff Member' : 'Kakitangan'}</th>
                     <th className="px-6 py-4">{isEn ? 'Employee ID / Email' : 'ID Pekerja / Email'}</th>
                     <th className="px-6 py-4">{isEn ? 'Department' : 'Jabatan Asal'}</th>
@@ -176,20 +176,20 @@ const TransporterRoleAssignmentPage: React.FC = () => {
                     <th className="px-6 py-4 text-right">{isEn ? 'Change Role' : 'Tukar Peranan Transporter'}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
+                <tbody className="divide-y divide-border-subtle text-sm text-text-secondary">
                   {filteredUsers.map((u) => {
                     const currentRole = transporterRoles[u.id] || null
                     return (
-                      <tr key={u.id} className="hover:bg-slate-50/50 transition-colors">
+                      <tr key={u.id} className="hover:bg-subtle/50 transition-colors">
                         <td className="px-6 py-4">
-                          <div className="font-bold text-slate-800">{u.full_name}</div>
+                          <div className="font-bold text-text-primary">{u.full_name}</div>
                           <div className="text-xxs text-slate-400 font-semibold">{u.jawatan || (isEn ? 'Staff' : 'Kakitangan')}</div>
                         </td>
                         <td className="px-6 py-4">
                           <div className="font-mono text-xs">{u.employee_id}</div>
                           <div className="text-xxs text-slate-400">{u.email}</div>
                         </td>
-                        <td className="px-6 py-4 font-semibold text-slate-600">
+                        <td className="px-6 py-4 font-semibold text-text-muted">
                           {u.department?.department_name || '-'}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -202,7 +202,7 @@ const TransporterRoleAssignmentPage: React.FC = () => {
                               const val = e.target.value
                               handleRoleChange(u.id, val === '' ? null : val)
                             }}
-                            className="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-bold outline-none cursor-pointer"
+                            className="bg-subtle/50 border border-border-default rounded-lg px-2.5 py-1.5 text-xs font-bold outline-none cursor-pointer"
                           >
                             <option value="">{isEn ? 'None (Standard Requester Access)' : 'Tiada (Akses Pemohon Sahaja)'}</option>
                             <option value="transport_driver">{isEn ? 'Duty Driver (Driver Panel)' : 'On-Duty Driver (Driver)'}</option>

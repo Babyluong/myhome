@@ -75,50 +75,50 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
         <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <Mail className="w-8 h-8 text-primary-600" />
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+        <h3 className="text-lg font-semibold text-text-primary mb-2">
           Contact Us via Email
         </h3>
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-text-secondary">
           For urgent matters, please email us directly
         </p>
       </div>
 
       <div className="space-y-4">
-        <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+        <div className="flex items-center gap-3 p-4 bg-subtle/50 rounded-xl">
           <Mail className="w-5 h-5 text-primary-600" />
           <div>
-            <p className="text-sm font-medium text-gray-900">General Inquiries</p>
+            <p className="text-sm font-medium text-text-primary">General Inquiries</p>
             <a href="mailto:info@home.gov.my" className="text-sm text-primary-600 hover:underline">
               info@home.gov.my
             </a>
           </div>
         </div>
 
-        <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+        <div className="flex items-center gap-3 p-4 bg-subtle/50 rounded-xl">
           <Mail className="w-5 h-5 text-primary-600" />
           <div>
-            <p className="text-sm font-medium text-gray-900">Technical Support</p>
+            <p className="text-sm font-medium text-text-primary">Technical Support</p>
             <a href="mailto:support@home.gov.my" className="text-sm text-primary-600 hover:underline">
               support@home.gov.my
             </a>
           </div>
         </div>
 
-        <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+        <div className="flex items-center gap-3 p-4 bg-subtle/50 rounded-xl">
           <Phone className="w-5 h-5 text-primary-600" />
           <div>
-            <p className="text-sm font-medium text-gray-900">Hotline</p>
+            <p className="text-sm font-medium text-text-primary">Hotline</p>
             <a href="tel:+60326155555" className="text-sm text-primary-600 hover:underline">
               +603-2615-5555
             </a>
           </div>
         </div>
 
-        <div className="flex items-start gap-3 p-4 bg-gray-50 rounded-xl">
+        <div className="flex items-start gap-3 p-4 bg-subtle/50 rounded-xl">
           <MapPin className="w-5 h-5 text-primary-600 flex-shrink-0" />
           <div>
-            <p className="text-sm font-medium text-gray-900">Address</p>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm font-medium text-text-primary">Address</p>
+            <p className="text-sm text-text-secondary">
               Ministry of Health Malaysia<br />
               Level 1, Block E1, Parcel E<br />
               62590 Putrajaya, Malaysia
@@ -150,7 +150,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
                   'max-w-[80%] px-4 py-3 rounded-2xl text-sm',
                   message.role === 'user'
                     ? 'bg-primary-600 text-white rounded-br-md'
-                    : 'bg-gray-100 text-gray-900 rounded-bl-md'
+                    : 'bg-subtle text-text-primary rounded-bl-md'
                 )}
               >
                 {message.content}
@@ -163,7 +163,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
               animate={{ opacity: 1, y: 0 }}
               className="flex justify-start"
             >
-              <div className="bg-gray-100 px-4 py-3 rounded-2xl rounded-bl-md">
+              <div className="bg-subtle px-4 py-3 rounded-2xl rounded-bl-md">
                 <div className="flex gap-1">
                   <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                   <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -213,7 +213,7 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
       size="lg"
     >
       {/* Tab Navigation */}
-      <div className="flex gap-2 mb-6 p-1 bg-gray-100 rounded-xl">
+      <div className="flex gap-2 mb-6 p-1 bg-subtle rounded-xl">
         {tabs.map((tab) => {
           const Icon = tab.icon
           const isActive = activeTab === tab.id
@@ -223,10 +223,10 @@ export const ContactModal: React.FC<ContactModalProps> = ({ isOpen, onClose }) =
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={cn(
-                'flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all',
+                'flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-[transform,opacity,box-shadow,border-color]',
                 isActive
-                  ? 'bg-white text-primary-600 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                  ? 'bg-surface text-primary-600 shadow-sm'
+                  : 'text-text-secondary hover:text-text-primary'
               )}
             >
               <Icon className="w-4 h-4" />

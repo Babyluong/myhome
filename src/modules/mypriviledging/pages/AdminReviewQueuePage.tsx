@@ -59,23 +59,23 @@ export const AdminReviewQueuePage: React.FC = () => {
         pendingReviewsCount={kpis.pendingSubmissions}
       />
 
-      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-5 shadow-xs">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-800 rounded-2xl p-5 shadow-xs">
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 rounded-xl border border-amber-200 dark:border-amber-800">
+          <div className="p-3 bg-amber-500/10 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 rounded-xl border border-amber-500/20 dark:border-amber-800">
             <ShieldCheck className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white">
+            <h2 className="text-lg md:text-xl font-bold text-text-primary dark:text-white">
               JKCP Committee Review Queue & Privileging Approvals
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-text-muted dark:text-slate-400 mt-0.5">
               Assessment of clinical log evidence, validity duration setting, and authorization letter issuance
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="px-3 py-1.5 bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 font-bold text-xs rounded-xl border border-amber-200 dark:border-amber-800">
+          <span className="px-3 py-1.5 bg-amber-500/10 dark:bg-amber-950/50 text-amber-400 dark:text-amber-300 font-bold text-xs rounded-xl border border-amber-500/20 dark:border-amber-800">
             {kpis.pendingSubmissions} Procedures Pending Review
           </span>
         </div>

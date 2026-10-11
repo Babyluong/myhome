@@ -127,7 +127,7 @@ export const LPOListPage: React.FC = () => {
 
     if (!url) {
       return (
-        <div className="w-full h-full flex flex-col items-center justify-center bg-slate-900 text-slate-500 italic gap-3">
+        <div className="w-full h-full flex flex-col items-center justify-center bg-slate-900 text-text-muted italic gap-3">
           <Spinner className="w-6 h-6 text-blue-500" />
           <p className="text-[10px] font-black uppercase tracking-widest">Preparing Preview...</p>
         </div>
@@ -137,7 +137,7 @@ export const LPOListPage: React.FC = () => {
     return (
       <iframe 
         src={`${url}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`}
-        className="w-full h-full border-none bg-white"
+        className="w-full h-full border-none bg-surface"
         title="PDF Preview"
       />
     )
@@ -1139,9 +1139,9 @@ export const LPOListPage: React.FC = () => {
   // Status Badge formatting
   const getStatusBadge = (status: LPOStatus) => {
     const map: Record<LPOStatus, { label: string, classes: string }> = {
-      draft: { label: 'Draft', classes: 'bg-gray-100 text-gray-800 border border-gray-200' },
-      sent: { label: 'Sent', classes: 'bg-blue-100 text-blue-800 border border-blue-200' },
-      verified: { label: 'Verified', classes: 'bg-emerald-100 text-emerald-800 border border-emerald-200' }
+      draft: { label: 'Draft', classes: 'bg-subtle text-text-primary border border-border-default' },
+      sent: { label: 'Sent', classes: 'bg-blue-100 text-blue-400 border border-blue-500/20' },
+      verified: { label: 'Verified', classes: 'bg-emerald-100 text-emerald-400 border border-emerald-500/20' }
     }
     const s = map[status] || map.draft
     return <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${s.classes}`}>{s.label}</span>
@@ -1149,9 +1149,9 @@ export const LPOListPage: React.FC = () => {
 
   const getPaymentStatusBadge = (status: LPOPaymentStatus) => {
     const map: Record<LPOPaymentStatus, { label: string, classes: string }> = {
-      pending: { label: 'Pending', classes: 'bg-amber-100 text-amber-800 border border-amber-200' },
-      processing: { label: 'Processing', classes: 'bg-blue-100 text-blue-800 border border-blue-200' },
-      paid: { label: 'Paid', classes: 'bg-emerald-100 text-emerald-800 border border-emerald-200' }
+      pending: { label: 'Pending', classes: 'bg-amber-100 text-amber-400 border border-amber-500/20' },
+      processing: { label: 'Processing', classes: 'bg-blue-100 text-blue-400 border border-blue-500/20' },
+      paid: { label: 'Paid', classes: 'bg-emerald-100 text-emerald-400 border border-emerald-500/20' }
     }
     const s = map[status] || map.pending
     return <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${s.classes}`}>{s.label}</span>
@@ -1169,20 +1169,20 @@ export const LPOListPage: React.FC = () => {
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
           <span className="text-slate-400">Procurement</span>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-          <span className="text-slate-800 font-extrabold tracking-wide">Local Purchase Orders (LPO)</span>
+          <span className="text-text-primary font-extrabold tracking-wide">Local Purchase Orders (LPO)</span>
         </nav>
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative z-20">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-gradient-to-tr from-slate-900 to-indigo-950 border border-slate-800/80 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/10 hover:rotate-2 transition-transform duration-300">
+            <div className="w-14 h-14 bg-surface border border-border-default rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/10 hover:rotate-2 transition-transform duration-300">
               <IconShoppingCart className="h-6 w-6 text-white" />
             </div>
             <div className="space-y-0.5">
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900">
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-transparent bg-clip-text bg-surface border border-border-default">
                 Local Purchase Orders (LPO)
               </h1>
-              <p className="text-slate-500 font-semibold text-[11px] flex items-center gap-1.5">
+              <p className="text-text-muted font-semibold text-[11px] flex items-center gap-1.5">
                 <Sparkles className="w-3 h-3 text-indigo-500" />
                 Manage and track LPO documents synced from ePerolehan/NGEP
               </p>
@@ -1191,18 +1191,18 @@ export const LPOListPage: React.FC = () => {
         </div>
 
         {/* Elevated Dashboard KPI Metrics Section wrapped in a luxurious white background card */}
-        <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] border border-slate-200 shadow-xl mb-10 relative z-10">
+        <div className="bg-surface p-6 sm:p-8 rounded-2xl border border-border-default shadow-xl mb-10 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             {/* Total Value */}
-            <div className="bg-slate-50/50 border-2 border-slate-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:border-slate-200 hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-all duration-300 cursor-default">
+            <div className="bg-surface border border-border-default hover:border-slate-500/40 p-6 rounded-2xl relative overflow-hidden group hover:border-border-default hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-colors duration-150 cursor-default">
               <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/[0.03] rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
               <div className="flex items-start gap-4 relative z-10">
-                <div className="w-12 h-12 bg-slate-100 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-700 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <div className="w-11 h-11 bg-slate-500/10 border border-slate-500/20 rounded-xl flex items-center justify-center text-slate-300 shadow-xs shrink-0 group-hover:scale-110 transition-transform duration-300">
                   <IconMoney className="w-6 h-6" />
                 </div>
                 <div className="space-y-1 flex-1">
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">All LPO Value</p>
-                  <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight tabular-nums" title={formatCurrency(stats.totalValue).replace('MYR', 'RM')}>{formatCurrency(stats.totalValue).replace('MYR', 'RM')}</h3>
+                  <h3 className="text-2xl sm:text-3xl font-black text-text-primary tracking-tight tabular-nums" title={formatCurrency(stats.totalValue).replace('MYR', 'RM')}>{formatCurrency(stats.totalValue).replace('MYR', 'RM')}</h3>
                   <p className="text-[11px] font-semibold text-slate-400 flex items-center gap-1">
                     <IconFileText className="w-3 h-3 text-slate-400" /> {stats.totalApproved} Total Records
                   </p>
@@ -1211,15 +1211,15 @@ export const LPOListPage: React.FC = () => {
             </div>
 
             {/* Pending LPO */}
-            <div className="bg-slate-50/50 border-2 border-slate-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:border-slate-200 hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-all duration-300 cursor-default">
+            <div className="bg-surface border border-border-default hover:border-slate-500/40 p-6 rounded-2xl relative overflow-hidden group hover:border-border-default hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-colors duration-150 cursor-default">
               <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/[0.03] rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
               <div className="flex items-start gap-4 relative z-10">
-                <div className="w-12 h-12 bg-slate-100 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-700 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <div className="w-11 h-11 bg-slate-500/10 border border-slate-500/20 rounded-xl flex items-center justify-center text-slate-300 shadow-xs shrink-0 group-hover:scale-110 transition-transform duration-300">
                   <IconShoppingCart className="w-6 h-6" />
                 </div>
                 <div className="space-y-1 flex-1">
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Pending LPO</p>
-                  <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight tabular-nums">{stats.pendingCount}</h3>
+                  <h3 className="text-2xl sm:text-3xl font-black text-text-primary tracking-tight tabular-nums">{stats.pendingCount}</h3>
                   <p className="text-[11px] font-semibold text-amber-600 flex items-center gap-1">
                     <IconClock className="w-3 h-3 text-amber-500" /> Awaiting upload
                   </p>
@@ -1228,15 +1228,15 @@ export const LPOListPage: React.FC = () => {
             </div>
 
             {/* Sent LPO */}
-            <div className="bg-slate-50/50 border-2 border-slate-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:border-slate-200 hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-all duration-300 cursor-default">
+            <div className="bg-surface border border-border-default hover:border-slate-500/40 p-6 rounded-2xl relative overflow-hidden group hover:border-border-default hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-colors duration-150 cursor-default">
               <div className="absolute top-0 right-0 w-32 h-32 bg-sky-500/[0.03] rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
               <div className="flex items-start gap-4 relative z-10">
-                <div className="w-12 h-12 bg-slate-100 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-700 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <div className="w-11 h-11 bg-slate-500/10 border border-slate-500/20 rounded-xl flex items-center justify-center text-slate-300 shadow-xs shrink-0 group-hover:scale-110 transition-transform duration-300">
                   <IconFileText className="w-6 h-6" />
                 </div>
                 <div className="space-y-1 flex-1">
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Sent LPOs</p>
-                  <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight tabular-nums">{stats.sentCount}</h3>
+                  <h3 className="text-2xl sm:text-3xl font-black text-text-primary tracking-tight tabular-nums">{stats.sentCount}</h3>
                   <p className="text-[11px] font-semibold text-sky-600 flex items-center gap-1">
                     <IconReceipt className="w-3 h-3 text-sky-500" /> Uploaded to system
                   </p>
@@ -1245,15 +1245,15 @@ export const LPOListPage: React.FC = () => {
             </div>
 
             {/* Verified LPO */}
-            <div className="bg-slate-50/50 border-2 border-slate-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:border-slate-200 hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-all duration-300 cursor-default">
+            <div className="bg-surface border border-border-default hover:border-slate-500/40 p-6 rounded-2xl relative overflow-hidden group hover:border-border-default hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-colors duration-150 cursor-default">
               <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/[0.03] rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
               <div className="flex items-start gap-4 relative z-10">
-                <div className="w-12 h-12 bg-slate-100 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-700 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <div className="w-11 h-11 bg-slate-500/10 border border-slate-500/20 rounded-xl flex items-center justify-center text-slate-300 shadow-xs shrink-0 group-hover:scale-110 transition-transform duration-300">
                   <IconCheck className="w-6 h-6" />
                 </div>
                 <div className="space-y-1 flex-1">
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Verified LPOs</p>
-                  <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight tabular-nums">{stats.verifiedCount}</h3>
+                  <h3 className="text-2xl sm:text-3xl font-black text-text-primary tracking-tight tabular-nums">{stats.verifiedCount}</h3>
                   <p className="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
                     <IconCheck className="w-3 h-3 text-emerald-500" /> Fully validated
                   </p>
@@ -1264,13 +1264,13 @@ export const LPOListPage: React.FC = () => {
         </div>
 
       {/* Tabs */}
-      <div className="flex flex-wrap bg-slate-100/80 p-1 rounded-2xl w-fit max-w-full border border-slate-200">
+      <div className="flex flex-wrap bg-subtle p-1 rounded-2xl w-fit max-w-full border border-border-default">
         <button
           onClick={() => handleTabChange('pending')}
-          className={`flex-1 sm:flex-none px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 ${
+          className={`flex-1 sm:flex-none px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors duration-150 ${
             activeTab === 'pending'
-              ? 'bg-white text-blue-600 shadow-sm border border-slate-200/50 ring-1 ring-black/[0.02]'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+              ? 'bg-surface text-blue-600 shadow-sm border border-border-default ring-1 ring-black/[0.02]'
+              : 'text-text-muted hover:text-text-primary hover:bg-subtle'
           }`}
         >
           <div className="flex items-center justify-center sm:justify-start gap-2 whitespace-nowrap">
@@ -1280,10 +1280,10 @@ export const LPOListPage: React.FC = () => {
         </button>
         <button
           onClick={() => handleTabChange('approved')}
-          className={`flex-1 sm:flex-none px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-all duration-200 ${
+          className={`flex-1 sm:flex-none px-4 sm:px-6 py-2.5 rounded-xl text-xs sm:text-sm font-medium transition-colors duration-150 ${
             activeTab === 'approved'
-              ? 'bg-white text-blue-600 shadow-sm border border-slate-200/50 ring-1 ring-black/[0.02]'
-              : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+              ? 'bg-surface text-blue-600 shadow-sm border border-border-default ring-1 ring-black/[0.02]'
+              : 'text-text-muted hover:text-text-primary hover:bg-subtle'
           }`}
         >
           <div className="flex items-center justify-center sm:justify-start gap-2 whitespace-nowrap">
@@ -1294,7 +1294,7 @@ export const LPOListPage: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="bg-slate-50/50 p-4 rounded-3xl border border-slate-200/60 shadow-sm">
+      <div className="bg-subtle/50 p-4 rounded-3xl border border-border-default shadow-sm">
         <div className="flex flex-col lg:flex-row gap-4 items-center">
           <div className="relative flex-1 w-full group">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400 group-focus-within:text-blue-500 transition-colors">
@@ -1305,7 +1305,7 @@ export const LPOListPage: React.FC = () => {
               placeholder="Search by PO, LPO, supplier, or item name..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-11 pr-4 py-2.5 w-full bg-white border border-slate-200 rounded-2xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all shadow-sm"
+              className="pl-11 pr-4 py-2.5 w-full bg-surface border border-border-default rounded-2xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors shadow-sm"
               onKeyDown={(e) => e.key === 'Enter' && loadData()}
             />
           </div>
@@ -1314,7 +1314,7 @@ export const LPOListPage: React.FC = () => {
             <select
               value={voteCodeFilter}
               onChange={(e) => setVoteCodeFilter(e.target.value)}
-              className="bg-white border border-slate-200 text-slate-700 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all shadow-sm"
+              className="bg-surface border border-border-default text-text-secondary text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-colors shadow-sm"
             >
               <option value="">All Vote Codes</option>
               {metadata.voteCodes.map(code => (
@@ -1325,7 +1325,7 @@ export const LPOListPage: React.FC = () => {
             <select
               value={categoryFilter}
               onChange={(e) => setCategoryFilter(e.target.value)}
-              className="bg-white border border-slate-200 text-slate-700 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all shadow-sm"
+              className="bg-surface border border-border-default text-text-secondary text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-colors shadow-sm"
             >
               <option value="">All Categories</option>
               {metadata.categories.map(cat => {
@@ -1339,7 +1339,7 @@ export const LPOListPage: React.FC = () => {
             <select
               value={departmentFilter}
               onChange={(e) => setDepartmentFilter(e.target.value)}
-              className="bg-white border border-slate-200 text-slate-700 text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all shadow-sm"
+              className="bg-surface border border-border-default text-text-secondary text-sm rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-colors shadow-sm"
             >
               <option value="">All Departments</option>
               {WARRANT_DEPARTMENTS.map(dept => (
@@ -1349,7 +1349,7 @@ export const LPOListPage: React.FC = () => {
             
             <button
               onClick={resetFilters}
-              className="px-4 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl transition-colors shadow-sm"
+              className="px-4 py-2.5 text-sm font-medium text-text-muted hover:text-text-primary bg-surface hover:bg-subtle/50 border border-border-default rounded-xl transition-colors shadow-sm"
             >
               Reset
             </button>
@@ -1359,10 +1359,10 @@ export const LPOListPage: React.FC = () => {
                 onClick={handleSyncLPONumbers}
                 disabled={isSyncing}
                 className={cn(
-                  "px-4 py-2.5 text-sm font-medium rounded-xl transition-all shadow-sm flex items-center gap-2",
+                  "px-4 py-2.5 text-sm font-medium rounded-xl transition-colors shadow-sm flex items-center gap-2",
                   isSyncing 
-                    ? "bg-amber-50 text-amber-600 border border-amber-200 cursor-not-allowed"
-                    : "bg-white text-amber-600 hover:bg-amber-50 border border-amber-200"
+                    ? "bg-amber-500/10 text-amber-600 border border-amber-500/20 cursor-not-allowed"
+                    : "bg-surface text-amber-600 hover:bg-amber-500/10 border border-amber-500/20"
                 )}
               >
                 <IconRefresh className={cn("w-4 h-4", isSyncing && "animate-spin")} />
@@ -1373,7 +1373,7 @@ export const LPOListPage: React.FC = () => {
             {activeTab === 'pending' && (
               <button
                 onClick={() => setIsBulkUploadModalOpen(true)}
-                className="px-4 py-2.5 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl transition-all shadow-sm flex items-center gap-2"
+                className="px-4 py-2.5 text-sm font-medium text-blue-600 bg-blue-500/10 hover:bg-blue-100 border border-blue-500/20 rounded-xl transition-colors shadow-sm flex items-center gap-2"
               >
                 <IconUpload className="w-4 h-4" />
                 Bulk Upload
@@ -1385,7 +1385,7 @@ export const LPOListPage: React.FC = () => {
                 <button
                   onClick={() => handleVerifyAll(false)}
                   disabled={isLoading || orders.filter(o => o.lpo_status === 'sent' && o.document_url).length === 0}
-                  className="px-4 py-2.5 text-xs sm:text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl sm:rounded-l-xl sm:rounded-r-none transition-all shadow-sm flex items-center justify-center gap-2 group relative overflow-hidden"
+                  className="px-4 py-2.5 text-xs sm:text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 rounded-xl sm:rounded-l-xl sm:rounded-r-none transition-colors shadow-sm flex items-center justify-center gap-2 group relative overflow-hidden"
                   title="Verify only items on this page"
                 >
                   <IconCheck className="w-4 h-4 relative z-10" />
@@ -1394,7 +1394,7 @@ export const LPOListPage: React.FC = () => {
                 <button
                   onClick={() => handleVerifyAll(true)}
                   disabled={isLoading}
-                  className="px-4 py-2.5 text-xs sm:text-sm font-medium text-emerald-600 bg-emerald-50 hover:bg-emerald-100 rounded-xl sm:rounded-r-xl sm:rounded-l-none border sm:border-l-0 border-emerald-200 transition-all shadow-sm flex items-center justify-center gap-2"
+                  className="px-4 py-2.5 text-xs sm:text-sm font-medium text-emerald-600 bg-emerald-500/10 hover:bg-emerald-100 rounded-xl sm:rounded-r-xl sm:rounded-l-none border sm:border-l-0 border-emerald-500/20 transition-colors shadow-sm flex items-center justify-center gap-2"
                   title="Verify ALL items across ALL pages"
                 >
                   <IconShield className="w-4 h-4" />
@@ -1407,7 +1407,7 @@ export const LPOListPage: React.FC = () => {
               <button
                 onClick={handleAuditBindings}
                 disabled={isAuditing}
-                className="px-4 py-2.5 text-xs sm:text-sm font-medium text-orange-600 bg-orange-50 hover:bg-orange-100 border border-orange-200 rounded-xl transition-all shadow-sm flex items-center gap-2"
+                className="px-4 py-2.5 text-xs sm:text-sm font-medium text-orange-600 bg-orange-50 hover:bg-orange-100 border border-orange-200 rounded-xl transition-colors shadow-sm flex items-center gap-2"
                 title="Scan all LPO PDFs and check if amounts match the linked PO"
               >
                 <IconShield className="w-4 h-4" />
@@ -1419,7 +1419,7 @@ export const LPOListPage: React.FC = () => {
       </div>
 
       {/* Main Content Area */}
-      <div className="bg-white rounded-[2.5rem] border border-slate-200 p-6 sm:p-8 shadow-xl overflow-hidden">
+      <div className="bg-surface rounded-2xl border border-border-default p-6 sm:p-8 shadow-xl overflow-hidden">
         {isLoading ? (
           <div className="flex justify-center items-center p-12">
             <Spinner className="w-8 h-8 text-blue-500" />
@@ -1427,29 +1427,29 @@ export const LPOListPage: React.FC = () => {
         ) : (error && (typeof navigator === 'undefined' || navigator.onLine)) ? (
           <div className="p-8 text-center text-red-500 bg-red-50">{error}</div>
         ) : (
-          <div className="overflow-x-auto rounded-[2rem] border border-slate-100 shadow-sm">
+          <div className="overflow-x-auto rounded-xl border border-border-subtle shadow-sm">
             {/* Table Area - Desktop: Table, Mobile: Cards */}
             {/* Desktop Table View */}
             <table className="hidden lg:table w-full text-left text-sm whitespace-nowrap border-collapse">
-              <thead className="bg-gradient-to-r from-slate-50 to-indigo-50/10 border-b border-slate-200/80">
+              <thead className="bg-subtle/50 border-b border-border-default">
                 <tr>
                   <th className="w-1.5 p-0" />
-                  <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">PO Number</th>
-                  <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Order Date</th>
-                  {activeTab === 'approved' && <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">LPO Number</th>}
-                  {activeTab === 'approved' && <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">LPO Date</th>}
-                  <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Vote Code</th>
-                  <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Department</th>
-                  <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Supplier</th>
-                  <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Amount</th>
-                  <th className="px-6 py-4 text-right text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Actions</th>
+                  <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">PO Number</th>
+                  <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Order Date</th>
+                  {activeTab === 'approved' && <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">LPO Number</th>}
+                  {activeTab === 'approved' && <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">LPO Date</th>}
+                  <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Vote Code</th>
+                  <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Department</th>
+                  <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Supplier</th>
+                  <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Amount</th>
+                  <th className="px-6 py-4 text-right text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Actions</th>
                   <th className="w-8 p-0" />
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-border-subtle">
                 {orders.length === 0 ? (
                   <tr>
-                    <td colSpan={12} className="px-6 py-12 text-center text-slate-500">
+                    <td colSpan={12} className="px-6 py-12 text-center text-text-muted">
                       No records found
                     </td>
                   </tr>
@@ -1460,9 +1460,9 @@ export const LPOListPage: React.FC = () => {
                       className={`group transition-colors ${
                         activeTab === 'approved' 
                           ? order.lpo_status === 'sent'
-                            ? 'bg-emerald-50/60 hover:bg-emerald-100/70 cursor-pointer'
-                            : 'hover:bg-blue-50/30 cursor-pointer'
-                          : 'hover:bg-slate-50 cursor-pointer'
+                            ? 'bg-emerald-500/10 hover:bg-emerald-100/70 cursor-pointer'
+                            : 'hover:bg-blue-500/10 cursor-pointer'
+                          : 'hover:bg-subtle/50 cursor-pointer'
                       }`}
                       onClick={() => activeTab === 'approved' && setSelectedOrderId(order.po_id)}
                     >
@@ -1479,9 +1479,9 @@ export const LPOListPage: React.FC = () => {
                         >
                           {order.po_number}
                         </button>
-                        <div className="text-xs text-slate-500 mt-0.5 capitalize">{order.po_type.replace('_', ' ')}</div>
+                        <div className="text-xs text-text-muted mt-0.5 capitalize">{order.po_type.replace('_', ' ')}</div>
                       </td>
-                      <td className="px-6 py-4 text-slate-600">{formatDate(order.order_date)}</td>
+                      <td className="px-6 py-4 text-text-muted">{formatDate(order.order_date)}</td>
                       
                       {activeTab === 'approved' && (
                         <td className="px-6 py-4 font-medium">
@@ -1505,24 +1505,24 @@ export const LPOListPage: React.FC = () => {
                       )}
                       
                       {activeTab === 'approved' && (
-                        <td className="px-6 py-4 text-slate-600">
+                        <td className="px-6 py-4 text-text-muted">
                           {order.document_date ? formatDate(order.document_date) : '-'}
                         </td>
                       )}
                       
-                      <td className="px-6 py-4 text-slate-600">
+                      <td className="px-6 py-4 text-text-muted">
                         {order.vote_code || '-'}
                       </td>
                       
-                      <td className="px-6 py-4 text-slate-600 capitalize">
+                      <td className="px-6 py-4 text-text-muted capitalize">
                         {order.department ? (WARRANT_DEPARTMENTS.find(d => d.value === order.department)?.label || order.department.replace(/_/g, ' ')) : '-'}
                       </td>
                       
-                      <td className="px-6 py-4 text-slate-900">
+                      <td className="px-6 py-4 text-text-primary">
                         {order.supplier_name || '-'}
                       </td>
                       
-                      <td className="px-6 py-4 font-medium text-slate-900 tabular-nums">
+                      <td className="px-6 py-4 font-medium text-text-primary tabular-nums">
                         {formatCurrency(order.total_amount).replace('MYR', 'RM')}
                       </td>
                       
@@ -1539,8 +1539,8 @@ export const LPOListPage: React.FC = () => {
                                 className={cn(
                                   "inline-flex items-center gap-1.5 px-3 py-1.5 font-medium text-sm rounded-lg transition-colors border shadow-sm",
                                   (!order.document_url)
-                                    ? "bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed" 
-                                    : "bg-emerald-50 text-emerald-600 hover:bg-emerald-100 border-emerald-200"
+                                    ? "bg-subtle/50 text-gray-300 border-border-subtle cursor-not-allowed" 
+                                    : "bg-emerald-500/10 text-emerald-600 hover:bg-emerald-100 border-emerald-500/20"
                                 )}
                                 title={!order.document_url ? "Missing LPO document" : "Verify LPO"}
                               >
@@ -1562,7 +1562,7 @@ export const LPOListPage: React.FC = () => {
                                 });
                                 setIsUploadModalOpen(true);
                               }}
-                              className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 rounded-lg border border-slate-200 transition-colors shadow-xs"
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold text-text-muted bg-subtle hover:bg-blue-500/10 hover:text-blue-600 hover:border-blue-500/20 rounded-lg border border-border-default transition-colors shadow-xs"
                               title="Upload new LPO PDF or change LPO document"
                             >
                               <IconUpload className="w-3.5 h-3.5" />
@@ -1580,7 +1580,7 @@ export const LPOListPage: React.FC = () => {
                               setUploadTargetPO(order.po_id);
                               setIsUploadModalOpen(true);
                             }}
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 font-medium text-sm rounded-lg transition-colors border border-blue-200 animate-pulse-subtle"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-500/10 text-blue-600 hover:bg-blue-100 font-medium text-sm rounded-lg transition-colors border border-blue-500/20 animate-pulse-subtle"
                           >
                             <IconUpload className="w-4 h-4" />
                             Upload LPO
@@ -1588,7 +1588,7 @@ export const LPOListPage: React.FC = () => {
                         </td>
                       )}
                       <td className="w-8 p-0 text-center">
-                        <ChevronRight className="w-4 h-4 text-slate-400 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 inline" />
+                        <ChevronRight className="w-4 h-4 text-slate-400 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-colors duration-150 inline" />
                       </td>
                     </tr>
                   ))
@@ -1597,49 +1597,49 @@ export const LPOListPage: React.FC = () => {
             </table>
 
             {/* Mobile Card View */}
-            <div className="lg:hidden divide-y divide-slate-100">
+            <div className="lg:hidden divide-y divide-border-subtle">
               {orders.length === 0 ? (
-                <div className="px-6 py-12 text-center text-slate-500">
+                <div className="px-6 py-12 text-center text-text-muted">
                   No records found
                 </div>
               ) : (
                 orders.map((order) => (
                   <div 
                     key={order.po_id}
-                    className="p-5 space-y-4 active:bg-slate-50 transition-colors"
+                    className="p-5 space-y-4 active:bg-subtle/50 transition-colors"
                     onClick={() => activeTab === 'approved' && setSelectedOrderId(order.po_id)}
                   >
                     <div className="flex justify-between items-start">
                       <div className="space-y-1">
                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">PO Number</span>
                         <h4 className="text-base font-bold text-blue-600">{order.po_number}</h4>
-                        <div className="text-[10px] text-slate-500 capitalize">{order.po_type.replace('_', ' ')}</div>
+                        <div className="text-[10px] text-text-muted capitalize">{order.po_type.replace('_', ' ')}</div>
                       </div>
                       <div className="text-right">
                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Amount</span>
-                        <p className="text-base font-black text-slate-900 tabular-nums">{formatCurrency(order.total_amount).replace('MYR', 'RM')}</p>
+                        <p className="text-base font-black text-text-primary tabular-nums">{formatCurrency(order.total_amount).replace('MYR', 'RM')}</p>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-1">
                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Order Date</span>
-                        <p className="text-sm font-bold text-slate-700">{formatDate(order.order_date)}</p>
+                        <p className="text-sm font-bold text-text-secondary">{formatDate(order.order_date)}</p>
                       </div>
                       <div className="space-y-1">
                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Supplier</span>
-                        <p className="text-sm font-bold text-slate-700 truncate">{order.supplier_name || '-'}</p>
+                        <p className="text-sm font-bold text-text-secondary truncate">{order.supplier_name || '-'}</p>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div className="space-y-1">
                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Vote Code</span>
-                        <p className="text-sm font-bold text-slate-700">{order.vote_code || '-'}</p>
+                        <p className="text-sm font-bold text-text-secondary">{order.vote_code || '-'}</p>
                       </div>
                       <div className="space-y-1">
                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Department</span>
-                        <p className="text-sm font-bold text-slate-700 capitalize truncate">
+                        <p className="text-sm font-bold text-text-secondary capitalize truncate">
                           {order.department ? (WARRANT_DEPARTMENTS.find(d => d.value === order.department)?.label || order.department.replace(/_/g, ' ')) : '-'}
                         </p>
                       </div>
@@ -1661,7 +1661,7 @@ export const LPOListPage: React.FC = () => {
                               {order.lpo_number}
                             </a>
                           ) : (
-                            <p className="text-sm font-bold text-slate-600">{order.lpo_number}</p>
+                            <p className="text-sm font-bold text-text-muted">{order.lpo_number}</p>
                           )}
                         </div>
                         <div className="text-right">
@@ -1675,8 +1675,8 @@ export const LPOListPage: React.FC = () => {
                               className={cn(
                                 "px-3 py-1.5 font-bold text-xs rounded-lg border",
                                 (!order.document_url)
-                                  ? "bg-gray-50 text-gray-300 border-gray-100" 
-                                  : "bg-emerald-50 text-emerald-600 border-emerald-200"
+                                  ? "bg-subtle/50 text-gray-300 border-border-subtle" 
+                                  : "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
                               )}
                             >
                               Verify
@@ -1696,7 +1696,7 @@ export const LPOListPage: React.FC = () => {
                             setUploadTargetPO(order.po_id);
                             setIsUploadModalOpen(true);
                           }}
-                          className="w-full py-2 bg-blue-50 text-blue-600 font-bold text-sm rounded-xl border border-blue-100 flex items-center justify-center gap-2"
+                          className="w-full py-2 bg-blue-500/10 text-blue-600 font-bold text-sm rounded-xl border border-blue-100 flex items-center justify-center gap-2"
                         >
                           <IconUpload className="w-4 h-4" />
                           Upload LPO
@@ -1712,22 +1712,22 @@ export const LPOListPage: React.FC = () => {
 
         {/* Pagination */}
         {!isLoading && totalRecords > 0 && (
-          <div className="mt-8 pt-6 pb-6 px-8 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="mt-8 pt-6 pb-6 px-8 border-t border-border-subtle flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <div className="w-2 h-10 bg-slate-900 rounded-full" />
-              <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
-                Showing <span className="text-slate-900">{(page - 1) * pageSize + 1}</span> to{' '}
-                <span className="text-slate-900">
+              <span className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">
+                Showing <span className="text-text-primary">{(page - 1) * pageSize + 1}</span> to{' '}
+                <span className="text-text-primary">
                   {Math.min(page * pageSize, totalRecords)}
                 </span>{' '}
-                of <span className="text-slate-900">{totalRecords}</span> entries
+                of <span className="text-text-primary">{totalRecords}</span> entries
               </span>
             </div>
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="group flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-200 bg-white text-[10px] font-black uppercase tracking-widest text-slate-600 hover:border-slate-900 hover:text-slate-900 disabled:opacity-20 transition-all"
+                className="group flex items-center gap-2 px-6 py-3 rounded-xl border border-border-default bg-surface text-[10px] font-black uppercase tracking-widest text-text-muted hover:border-slate-900 hover:text-text-primary disabled:opacity-20 transition-colors"
               >
                 <IconChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
                 Previous
@@ -1735,7 +1735,7 @@ export const LPOListPage: React.FC = () => {
               <button
                 onClick={() => setPage((p) => p + 1)}
                 disabled={page * pageSize >= totalRecords}
-                className="group flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-900 text-[10px] font-black uppercase tracking-widest text-white hover:bg-slate-800 disabled:opacity-20 transition-all shadow-lg shadow-slate-900/10"
+                className="group flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-900 text-[10px] font-black uppercase tracking-widest text-white hover:bg-slate-800 disabled:opacity-20 transition-colors shadow-lg shadow-slate-900/10"
               >
                 Next
                 <IconChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -1767,12 +1767,12 @@ export const LPOListPage: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
           <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onClick={() => setIsUploadModalOpen(false)}></div>
           
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-md relative z-10 overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
-              <h3 className="text-lg font-semibold text-slate-900">Upload LPO Document</h3>
+          <div className="bg-surface rounded-2xl shadow-xl border border-border-default w-full max-w-md relative z-10 overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-subtle/50">
+              <h3 className="text-lg font-semibold text-text-primary">Upload LPO Document</h3>
               <button 
                 onClick={() => setIsUploadModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 transition-colors p-1"
+                className="text-slate-400 hover:text-text-muted transition-colors p-1"
               >
                 <IconX className="w-5 h-5" />
               </button>
@@ -1780,7 +1780,7 @@ export const LPOListPage: React.FC = () => {
             
             <form onSubmit={handleUploadSubmit} className="p-6 space-y-5">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-text-secondary mb-1.5">
                   LPO Number <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -1789,12 +1789,12 @@ export const LPOListPage: React.FC = () => {
                   value={uploadData.lpo_number}
                   onChange={(e) => setUploadData({ ...uploadData, lpo_number: e.target.value })}
                   placeholder="e.g. PO26000000123"
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                  className="w-full px-3 py-2 bg-surface border border-border-default rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-colors"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-text-secondary mb-1.5">
                   Document Date <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -1802,33 +1802,33 @@ export const LPOListPage: React.FC = () => {
                   required
                   value={uploadData.document_date}
                   onChange={(e) => setUploadData({ ...uploadData, document_date: e.target.value })}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                  className="w-full px-3 py-2 bg-surface border border-border-default rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-colors"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-text-secondary mb-1.5">
                   Expected Delivery Date (ETA) <span className="text-slate-400 font-normal">(Optional)</span>
                 </label>
                 <input
                   type="date"
                   value={uploadData.expected_delivery_date || ''}
                   onChange={(e) => setUploadData({ ...uploadData, expected_delivery_date: e.target.value || undefined })}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                  className="w-full px-3 py-2 bg-surface border border-border-default rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-colors"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-text-secondary mb-1.5">
                   LPO Document PDF <span className="text-red-500">*</span>
                 </label>
                 <div 
-                  className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-xl hover:border-blue-400 hover:bg-blue-50/50 transition-colors cursor-pointer"
+                  className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-border-default border-dashed rounded-xl hover:border-blue-400 hover:bg-blue-500/10 transition-colors cursor-pointer"
                   onClick={() => fileInputRef.current?.click()}
                 >
                   <div className="space-y-1 text-center">
                     <IconUpload className="mx-auto h-8 w-8 text-slate-400" />
-                    <div className="flex text-sm text-slate-600 justify-center">
+                    <div className="flex text-sm text-text-muted justify-center">
                       <label className="relative cursor-pointer bg-transparent rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
                         <span>Upload a file</span>
                         <input 
@@ -1844,21 +1844,21 @@ export const LPOListPage: React.FC = () => {
                       </label>
                       <p className="pl-1">or drag and drop</p>
                     </div>
-                    <p className="mt-2 text-xs text-slate-500">
+                    <p className="mt-2 text-xs text-text-muted">
                       Strictly PDF format only. Filenames containing "LPO-XXXXX" will be automatically identified.
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-text-muted">
                       {uploadData.document_file ? uploadData.document_file.name : 'PDF up to 10MB'}
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-4 flex gap-3 justify-end border-t border-slate-100 mt-6">
+              <div className="pt-4 flex gap-3 justify-end border-t border-border-subtle mt-6">
                 <button
                   type="button"
                   onClick={() => setIsUploadModalOpen(false)}
-                  className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-text-secondary bg-surface border border-border-default rounded-xl hover:bg-subtle/50 transition-colors"
                 >
                   Cancel
                 </button>
@@ -1886,20 +1886,20 @@ export const LPOListPage: React.FC = () => {
       {isBulkUploadModalOpen && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => !isLoading && setIsBulkUploadModalOpen(false)} />
-          <div className="relative bg-white w-full max-w-[95vw] h-[95vh] rounded-[2.5rem] shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
+          <div className="relative bg-surface w-full max-w-[95vw] h-[95vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
             {/* Header */}
-            <div className="px-8 py-4 border-b border-slate-100 flex justify-between items-center bg-white z-20">
+            <div className="px-8 py-4 border-b border-border-subtle flex justify-between items-center bg-surface z-20">
               <div className="flex items-center gap-6">
                 <button 
                   onClick={() => setIsBulkUploadModalOpen(false)}
-                  className="flex items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors"
+                  className="flex items-center gap-2 text-text-muted hover:text-text-primary transition-colors"
                 >
                   <IconX className="w-5 h-5" />
                   <span className="text-sm font-bold">Close Matcher</span>
                 </button>
-                <div className="w-px h-6 bg-slate-200" />
+                <div className="w-px h-6 bg-subtle" />
                 <div>
-                  <h3 className="text-lg font-black text-slate-900 tracking-tight">Bulk LPO Matcher Workspace</h3>
+                  <h3 className="text-lg font-black text-text-primary tracking-tight">Bulk LPO Matcher Workspace</h3>
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Automatic Duplicate Filtering Enabled</p>
                 </div>
               </div>
@@ -1908,13 +1908,13 @@ export const LPOListPage: React.FC = () => {
                 <div className="flex items-center gap-8">
                   <div className="w-64">
                     <div className="flex items-center justify-between mb-1.5">
-                      <p className="text-[10px] font-black text-slate-900 uppercase tracking-widest">
+                      <p className="text-[10px] font-black text-text-primary uppercase tracking-widest">
                         Queue Progress: {bulkPdfRows.filter(r => r.status === 'valid' || r.status === 'matched').length} / {bulkPdfRows.length}
                       </p>
                     </div>
-                    <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                    <div className="h-1.5 w-full bg-subtle rounded-full overflow-hidden">
                       <div 
-                        className="h-full bg-blue-500 transition-all duration-500"
+                        className="h-full bg-blue-500 transition-colors duration-500"
                         style={{ width: `${(bulkPdfRows.filter(r => r.status === 'valid' || r.status === 'matched').length / bulkPdfRows.length) * 100}%` }}
                       />
                     </div>
@@ -1923,7 +1923,7 @@ export const LPOListPage: React.FC = () => {
                   <button
                     onClick={handleBulkUploadSubmit}
                     disabled={isLoading || bulkPdfRows.length === 0 || !bulkPdfRows.some(r => r.status === 'matched')}
-                    className="px-8 py-3 text-sm font-bold text-white bg-blue-600 rounded-2xl hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-xl shadow-blue-200 flex items-center gap-2"
+                    className="px-8 py-3 text-sm font-bold text-white bg-blue-600 rounded-2xl hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors shadow-xl shadow-blue-200 flex items-center gap-2"
                   >
                     {isLoading ? <Spinner className="w-4 h-4 text-white" /> : <IconCheck className="w-5 h-5" />}
                     Confirm & Process Batch
@@ -1934,19 +1934,19 @@ export const LPOListPage: React.FC = () => {
 
             <div className="flex-1 flex overflow-hidden">
               {!bulkPdfRows.length ? (
-                <div className="flex-1 flex flex-col items-center justify-center p-12 bg-slate-50/30">
+                <div className="flex-1 flex flex-col items-center justify-center p-12 bg-subtle/50">
                   <div 
-                    className="w-full max-w-2xl bg-white border-2 border-dashed border-slate-200 rounded-[3rem] p-20 text-center cursor-pointer hover:border-blue-400 transition-all group"
+                    className="w-full max-w-2xl bg-surface border-2 border-dashed border-border-default rounded-[3rem] p-20 text-center cursor-pointer hover:border-blue-400 transition-colors group"
                     onClick={() => bulkFileInputRef.current?.click()}
                   >
-                    <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-8 group-hover:scale-110 transition-transform">
+                    <div className="w-24 h-24 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-8 group-hover:scale-110 transition-transform">
                       <IconCloud className="w-12 h-12 text-blue-500" />
                     </div>
-                    <h3 className="text-3xl font-black text-slate-900 mb-4">Upload LPO Documents</h3>
-                    <p className="text-slate-500 mb-10 max-w-md mx-auto">
+                    <h3 className="text-3xl font-black text-text-primary mb-4">Upload LPO Documents</h3>
+                    <p className="text-text-muted mb-10 max-w-md mx-auto">
                       Drag & drop multiple LPO PDF documents. We'll automatically filter duplicates and match them to pending POs.
                     </p>
-                    <button className="px-12 py-4 bg-blue-600 text-white rounded-2xl font-black shadow-xl shadow-blue-200 hover:bg-blue-700 transition-all">
+                    <button className="px-12 py-4 bg-blue-600 text-white rounded-2xl font-black shadow-xl shadow-blue-200 hover:bg-blue-700 transition-colors">
                       Select PDF Files
                     </button>
                   </div>
@@ -1955,20 +1955,20 @@ export const LPOListPage: React.FC = () => {
               ) : (
                 <>
                   {/* Left Sidebar: Queue & Dismissed Tabs */}
-                  <div className="w-[320px] bg-slate-50 border-r border-slate-200 flex flex-col overflow-hidden">
-                    <div className="p-2 bg-slate-100/50 flex gap-1 border-b border-slate-200">
+                  <div className="w-[320px] bg-subtle/50 border-r border-border-default flex flex-col overflow-hidden">
+                    <div className="p-2 bg-subtle flex gap-1 border-b border-border-default">
                       <button 
                         onClick={() => setLeftSidebarTab('queue')}
-                        className={`flex-1 py-2 px-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                          leftSidebarTab === 'queue' ? 'bg-white text-blue-600 shadow-sm ring-1 ring-slate-200' : 'text-slate-400 hover:text-slate-600'
+                        className={`flex-1 py-2 px-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors ${
+                          leftSidebarTab === 'queue' ? 'bg-surface text-blue-600 shadow-sm ring-1 ring-border-default' : 'text-slate-400 hover:text-text-muted'
                         }`}
                       >
                         Queue ({bulkPdfRows.length})
                       </button>
                       <button 
                         onClick={() => setLeftSidebarTab('dismissed')}
-                        className={`flex-1 py-2 px-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                          leftSidebarTab === 'dismissed' ? 'bg-white text-red-500 shadow-sm ring-1 ring-slate-200' : 'text-slate-400 hover:text-slate-600'
+                        className={`flex-1 py-2 px-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors ${
+                          leftSidebarTab === 'dismissed' ? 'bg-surface text-red-500 shadow-sm ring-1 ring-border-default' : 'text-slate-400 hover:text-text-muted'
                         }`}
                       >
                         Skipped ({skippedRows.length})
@@ -1986,10 +1986,10 @@ export const LPOListPage: React.FC = () => {
                             <div 
                               key={idx}
                               onClick={() => setActiveRowIndex(idx)}
-                              className={`p-3 rounded-2xl cursor-pointer transition-all border ${
+                              className={`p-3 rounded-2xl cursor-pointer transition-colors border ${
                                 activeRowIndex === idx 
-                                  ? 'bg-white border-blue-500 shadow-md ring-1 ring-blue-500/10' 
-                                  : 'bg-transparent border-transparent hover:bg-white hover:border-slate-200'
+                                  ? 'bg-surface border-blue-500 shadow-md ring-1 ring-blue-500/10' 
+                                  : 'bg-transparent border-transparent hover:bg-surface hover:border-border-default'
                               }`}
                             >
                               <div className="flex items-center gap-2">
@@ -1999,7 +1999,7 @@ export const LPOListPage: React.FC = () => {
                                   <IconFileText className="w-3 h-3" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-[10px] font-bold text-slate-900 truncate">{row.file.name}</p>
+                                  <p className="text-[10px] font-bold text-text-primary truncate">{row.file.name}</p>
                                   <div className="flex items-center gap-1">
                                     <span className={`text-[8px] font-black uppercase ${
                                       row.status === 'matched' ? 'text-emerald-500' : 'text-blue-500'
@@ -2029,15 +2029,15 @@ export const LPOListPage: React.FC = () => {
                           </div>
                         ) : (
                           skippedRows.map((row, idx) => (
-                            <div key={idx} className="p-3 bg-white/60 border border-slate-200 rounded-xl opacity-60">
+                            <div key={idx} className="p-3 bg-white/60 border border-border-default rounded-xl opacity-60">
                               <div className="flex items-center gap-2">
                                 <div className={`w-5 h-5 rounded-lg flex items-center justify-center shrink-0 ${
-                                  row.status === 'duplicate' ? 'bg-amber-100 text-amber-600' : 'bg-slate-200 text-slate-500'
+                                  row.status === 'duplicate' ? 'bg-amber-100 text-amber-600' : 'bg-subtle text-text-muted'
                                 }`}>
                                   <IconX className="w-3 h-3" />
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <p className="text-[9px] font-bold text-slate-900 truncate">{row.file.name}</p>
+                                  <p className="text-[9px] font-bold text-text-primary truncate">{row.file.name}</p>
                                   <p className="text-[8px] font-black text-red-500 uppercase">{row.reason}</p>
                                 </div>
                               </div>
@@ -2048,10 +2048,10 @@ export const LPOListPage: React.FC = () => {
                     </div>
                     
                     {leftSidebarTab === 'queue' && (
-                      <div className="p-4 border-t border-slate-200 bg-white">
+                      <div className="p-4 border-t border-border-default bg-surface">
                         <button 
                           onClick={() => bulkFileInputRef.current?.click()}
-                          className="w-full py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-600 text-[10px] font-black rounded-xl border border-slate-200 transition-all flex items-center justify-center gap-2 uppercase tracking-widest"
+                          className="w-full py-2.5 bg-subtle/50 hover:bg-subtle text-text-muted text-[10px] font-black rounded-xl border border-border-default transition-colors flex items-center justify-center gap-2 uppercase tracking-widest"
                         >
                           <IconPlus className="w-3.5 h-3.5" />
                           Add Files
@@ -2071,13 +2071,13 @@ export const LPOListPage: React.FC = () => {
                         </div>
                       </div>
                       
-                      <div className="flex-1 w-full overflow-hidden bg-white">
+                      <div className="flex-1 w-full overflow-hidden bg-surface">
                         {bulkPdfRows[activeRowIndex] ? (
                           <PDFPreview file={bulkPdfRows[activeRowIndex].file} />
                         ) : (
-                          <div className="w-full h-full flex flex-col items-center justify-center text-slate-500 italic p-12 text-center">
-                            <IconFileText className="w-12 h-12 text-slate-700 mb-4 opacity-20" />
-                            <p className="text-sm font-bold text-slate-600">No document selected</p>
+                          <div className="w-full h-full flex flex-col items-center justify-center text-text-muted italic p-12 text-center">
+                            <IconFileText className="w-12 h-12 text-text-secondary mb-4 opacity-20" />
+                            <p className="text-sm font-bold text-text-muted">No document selected</p>
                             <p className="text-xs text-slate-400 mt-1">Select a file from the queue to preview it</p>
                           </div>
                         )}
@@ -2085,21 +2085,21 @@ export const LPOListPage: React.FC = () => {
                     </div>
 
                     {/* PO Matcher */}
-                    <div className="w-[500px] bg-white flex flex-col overflow-hidden">
-                      <div className="p-4 border-b border-slate-100">
+                    <div className="w-[500px] bg-surface flex flex-col overflow-hidden">
+                      <div className="p-4 border-b border-border-subtle">
                         <div className="flex items-center justify-between mb-4">
                           <div>
                             <div className="flex items-center gap-2 mb-0.5">
                               <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
                               <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Active Mapping</span>
                             </div>
-                            <h4 className="text-base font-black text-slate-900">Match LPO to PO</h4>
+                            <h4 className="text-base font-black text-text-primary">Match LPO to PO</h4>
                           </div>
                           <div className="flex items-center gap-1">
                             <button 
                               disabled={activeRowIndex === 0}
                               onClick={() => setActiveRowIndex(prev => prev - 1)}
-                              className="p-1.5 hover:bg-slate-100 rounded-lg disabled:opacity-20 transition-all"
+                              className="p-1.5 hover:bg-subtle rounded-lg disabled:opacity-20 transition-colors"
                             >
                               <IconChevronLeft className="w-4 h-4" />
                             </button>
@@ -2120,7 +2120,7 @@ export const LPOListPage: React.FC = () => {
                                 if (newRows.length > 0) setActiveRowIndex(nextIdx);
                                 toast.info('Document skipped');
                               }}
-                              className="px-2 py-1 text-[9px] font-black text-red-500 hover:bg-red-50 rounded-lg transition-all border border-red-100 uppercase tracking-widest"
+                              className="px-2 py-1 text-[9px] font-black text-red-500 hover:bg-red-50 rounded-lg transition-colors border border-red-100 uppercase tracking-widest"
                             >
                               Skip
                             </button>
@@ -2128,7 +2128,7 @@ export const LPOListPage: React.FC = () => {
                             <button 
                               disabled={activeRowIndex === bulkPdfRows.length - 1}
                               onClick={() => setActiveRowIndex(prev => prev + 1)}
-                              className="p-1.5 hover:bg-slate-100 rounded-lg disabled:opacity-20 transition-all"
+                              className="p-1.5 hover:bg-subtle rounded-lg disabled:opacity-20 transition-colors"
                             >
                               <IconChevronRight className="w-4 h-4" />
                             </button>
@@ -2142,27 +2142,27 @@ export const LPOListPage: React.FC = () => {
                             placeholder="Search pending POs..."
                             value={poSearch}
                             onChange={(e) => setPoSearch(e.target.value)}
-                            className="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 outline-none transition-all"
+                            className="w-full pl-9 pr-3 py-2.5 bg-subtle/50 border border-border-default rounded-xl text-xs focus:ring-4 focus:ring-blue-500/5 focus:border-blue-500 outline-none transition-colors"
                           />
                         </div>
                       </div>
 
-                      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-slate-50/30">
+                      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-subtle/50">
                         {bulkPdfRows.length === 0 ? (
-                          <div className="h-full flex flex-col items-center justify-center p-8 text-center bg-white/50 rounded-[2.5rem] border border-slate-100 border-dashed">
+                          <div className="h-full flex flex-col items-center justify-center p-8 text-center bg-white/50 rounded-2xl border border-border-subtle border-dashed">
                             <IconCheckCircle className="w-8 h-8 text-slate-200 mb-4" />
                             <h5 className="text-sm font-black text-slate-400 uppercase tracking-widest">Done</h5>
                           </div>
                         ) : bulkPdfRows[activeRowIndex]?.status === 'matched' ? (() => {
                           const matchedPo = pendingPOs.find(p => p.id === bulkPdfRows[activeRowIndex].selectedPoId);
                           return (
-                            <div className="h-full flex flex-col p-6 bg-emerald-50/20 rounded-[2.5rem] border border-emerald-100">
+                            <div className="h-full flex flex-col p-6 bg-emerald-500/10 rounded-2xl border border-emerald-100">
                               <div className="flex items-center gap-3 mb-6">
-                                <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center border border-emerald-200">
+                                <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center border border-emerald-500/20">
                                   <IconCheckCircle className="w-5 h-5 text-emerald-600" />
                                 </div>
                                 <div>
-                                  <h5 className="text-sm font-black text-slate-900">Auto-Matched!</h5>
+                                  <h5 className="text-sm font-black text-text-primary">Auto-Matched!</h5>
                                   <p className="text-[10px] font-bold text-emerald-600">
                                     {bulkPdfRows[activeRowIndex].matchReason} ({bulkPdfRows[activeRowIndex].matchScore} pts)
                                   </p>
@@ -2172,7 +2172,7 @@ export const LPOListPage: React.FC = () => {
                               {matchedPo ? (
                                 <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
                                   {/* PO Summary Card */}
-                                  <div className="bg-white rounded-2xl p-4 shadow-sm border border-emerald-100">
+                                  <div className="bg-surface rounded-2xl p-4 shadow-sm border border-emerald-100">
                                     <div className="flex justify-between items-start mb-3">
                                       <div>
                                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Matched PO</p>
@@ -2180,7 +2180,7 @@ export const LPOListPage: React.FC = () => {
                                       </div>
                                       <div className="text-right">
                                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Amount</p>
-                                        <h6 className="text-lg font-black text-slate-900">{formatCurrency(matchedPo.total_amount)}</h6>
+                                        <h6 className="text-lg font-black text-text-primary">{formatCurrency(matchedPo.total_amount)}</h6>
                                       </div>
                                     </div>
                                     
@@ -2196,12 +2196,12 @@ export const LPOListPage: React.FC = () => {
                                             setBulkPdfRows(newRows);
                                           }}
                                           placeholder="e.g. CO26... / PO26..."
-                                          className="w-full px-2.5 py-1 text-xs font-mono font-bold text-blue-600 bg-blue-50/50 border border-blue-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                          className="w-full px-2.5 py-1 text-xs font-mono font-bold text-blue-600 bg-blue-500/10 border border-blue-500/20 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
                                         />
                                       </div>
                                       <div className="text-right shrink-0">
                                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Supplier</p>
-                                        <p className="text-xs font-bold text-slate-700 truncate max-w-[160px]">{(matchedPo as any).supplier_name}</p>
+                                        <p className="text-xs font-bold text-text-secondary truncate max-w-[160px]">{(matchedPo as any).supplier_name}</p>
                                       </div>
                                     </div>
                                   </div>
@@ -2210,13 +2210,13 @@ export const LPOListPage: React.FC = () => {
                                   <div className="space-y-2">
                                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">PO Items ({ (matchedPo as any).items?.length || 0})</p>
                                     {((matchedPo as any).items || []).slice(0, 5).map((item: any) => (
-                                      <div key={item.id} className="bg-white/50 p-3 rounded-xl border border-slate-100 flex justify-between items-center gap-4">
+                                      <div key={item.id} className="bg-white/50 p-3 rounded-xl border border-border-subtle flex justify-between items-center gap-4">
                                         <div className="flex-1 min-w-0">
-                                          <p className="text-[11px] font-bold text-slate-700 truncate">{item.item_name}</p>
+                                          <p className="text-[11px] font-bold text-text-secondary truncate">{item.item_name}</p>
                                           <p className="text-[9px] font-black text-slate-400 uppercase">{item.item_code}</p>
                                         </div>
                                         <div className="text-right shrink-0">
-                                          <p className="text-[10px] font-black text-slate-900">x{item.quantity_ordered}</p>
+                                          <p className="text-[10px] font-black text-text-primary">x{item.quantity_ordered}</p>
                                         </div>
                                       </div>
                                     ))}
@@ -2300,46 +2300,46 @@ export const LPOListPage: React.FC = () => {
                                       setTimeout(() => setActiveRowIndex(activeRowIndex + 1), 300)
                                     }
                                   }}
-                                  className={`p-6 border rounded-[2rem] cursor-pointer transition-all ${
-                                    isSelected ? 'bg-white border-blue-500 shadow-xl ring-2 ring-blue-500/5' : 'bg-white border-slate-100 hover:border-blue-400 hover:shadow-lg'
+                                  className={`p-6 border rounded-xl cursor-pointer transition-colors ${
+                                    isSelected ? 'bg-surface border-blue-500 shadow-xl ring-2 ring-blue-500/5' : 'bg-surface border-border-subtle hover:border-blue-400 hover:shadow-lg'
                                   }`}
                                 >
                                   <div className="flex justify-between items-start mb-4">
                                     <div className="flex-1 min-w-0 pr-4">
                                       <div className="flex items-center gap-2 mb-1">
-                                        <h5 className={`text-base font-black tracking-tight ${isSelected ? 'text-blue-600' : 'text-slate-900'}`}>{po.po_number}</h5>
+                                        <h5 className={`text-base font-black tracking-tight ${isSelected ? 'text-blue-600' : 'text-text-primary'}`}>{po.po_number}</h5>
                                         {isSelected && <IconCheckCircle className="w-4 h-4 text-blue-500" />}
                                       </div>
                                       <div className="flex items-center gap-2 mb-2">
-                                        <p className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-slate-50 border border-slate-100 ${isSelected ? 'text-blue-600 border-blue-100' : 'text-slate-400'}`}>
+                                        <p className={`text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded bg-subtle/50 border border-border-subtle ${isSelected ? 'text-blue-600 border-blue-100' : 'text-slate-400'}`}>
                                           {formatDate(po.order_date)}
                                         </p>
                                       </div>
-                                      <p className={`text-xs font-bold truncate ${isSelected ? 'text-blue-700/60' : 'text-slate-500'}`}>
+                                      <p className={`text-xs font-bold truncate ${isSelected ? 'text-blue-700/60' : 'text-text-muted'}`}>
                                         {po.manual_supplier_name || po.supplier_name || 'N/A'}
                                       </p>
                                     </div>
-                                    <div className={`px-4 py-2 rounded-2xl text-sm font-black transition-all ${
-                                      isSelected ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'bg-slate-100 text-slate-900'
+                                    <div className={`px-4 py-2 rounded-2xl text-sm font-black transition-colors ${
+                                      isSelected ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'bg-subtle text-text-primary'
                                     }`}>
                                       {formatCurrency(po.total_amount)}
                                     </div>
                                   </div>
 
-                                  <div className={`h-px w-full my-4 ${isSelected ? 'bg-blue-50' : 'bg-slate-50'}`} />
+                                  <div className={`h-px w-full my-4 ${isSelected ? 'bg-blue-500/10' : 'bg-subtle/50'}`} />
 
                                   <div className="space-y-3">
                                     {(po.items || []).slice(0, 5).map((item: any, i: number) => (
                                       <div key={i} className="flex justify-between items-start group/item">
                                         <div className="flex-1 min-w-0 pr-4">
-                                          <p className={`text-[11px] font-black leading-tight ${isSelected ? 'text-blue-900' : 'text-slate-700'}`}>
+                                          <p className={`text-[11px] font-black leading-tight ${isSelected ? 'text-blue-400 dark:text-blue-300 font-bold' : 'text-text-secondary'}`}>
                                             {item.item_name}
                                           </p>
                                           <p className="text-[9px] font-bold text-slate-400 uppercase mt-0.5">{item.item_code}</p>
                                         </div>
                                         <div className="flex items-center gap-4 shrink-0 text-right">
                                           <div className="text-right">
-                                            <p className={`text-[10px] font-black ${isSelected ? 'text-blue-600' : 'text-slate-900'}`}>x{item.quantity_ordered}</p>
+                                            <p className={`text-[10px] font-black ${isSelected ? 'text-blue-600' : 'text-text-primary'}`}>x{item.quantity_ordered}</p>
                                             <p className="text-[9px] font-bold text-slate-400">{formatCurrency(item.unit_price)}</p>
                                           </div>
                                         </div>
@@ -2368,11 +2368,11 @@ export const LPOListPage: React.FC = () => {
       {/* Processing Progress Overlay */}
       {isBulkProcessing && (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-slate-900/80 backdrop-blur-xl animate-in fade-in duration-300">
-          <div className="bg-white rounded-[3rem] p-12 max-w-md w-full shadow-2xl text-center border border-white/20">
-            <div className="w-24 h-24 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-8 relative">
+          <div className="bg-surface rounded-[3rem] p-12 max-w-md w-full shadow-2xl text-center border border-white/20">
+            <div className="w-24 h-24 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-8 relative">
               <div className="absolute inset-0 border-4 border-blue-100 rounded-full" />
               <div 
-                className="absolute inset-0 border-4 border-blue-500 rounded-full transition-all duration-300"
+                className="absolute inset-0 border-4 border-blue-500 rounded-full transition-colors duration-150"
                 style={{ 
                   clipPath: `polygon(50% 50%, -50% -50%, ${bulkProcessingProgress > 25 ? '150% -50%' : '50% -50%'}, ${bulkProcessingProgress > 50 ? '150% 150%' : '50% 50%'}, ${bulkProcessingProgress > 75 ? '-50% 150%' : '50% 50%'}, -50% -50%)`,
                   transform: 'rotate(-45deg)'
@@ -2381,19 +2381,19 @@ export const LPOListPage: React.FC = () => {
               <IconCloud className="w-10 h-10 text-blue-500 animate-bounce" />
             </div>
             
-            <h3 className="text-2xl font-black text-slate-900 mb-2">Processing Batch</h3>
+            <h3 className="text-2xl font-black text-text-primary mb-2">Processing Batch</h3>
             <p className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-8">
               {bulkProcessingProgress}% Complete
             </p>
             
-            <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden mb-6 shadow-inner">
+            <div className="h-3 w-full bg-subtle rounded-full overflow-hidden mb-6 shadow-inner">
               <div 
-                className="h-full bg-gradient-to-r from-blue-600 to-blue-400 transition-all duration-300 shadow-lg"
+                className="h-full bg-gradient-to-r from-blue-600 to-blue-400 transition-colors duration-150 shadow-lg"
                 style={{ width: `${bulkProcessingProgress}%` }}
               />
             </div>
             
-            <div className="text-xs font-bold text-slate-500 italic flex items-center justify-center gap-2">
+            <div className="text-xs font-bold text-text-muted italic flex items-center justify-center gap-2">
               <Spinner className="w-3 h-3 text-blue-500" />
               {bulkProcessingMessage}
             </div>
@@ -2409,27 +2409,27 @@ export const LPOListPage: React.FC = () => {
       {isAuditModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => !isAuditing && setIsAuditModalOpen(false)} />
-          <div className="bg-white w-full max-w-6xl max-h-[90vh] rounded-[2rem] shadow-2xl relative z-10 flex flex-col overflow-hidden">
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+          <div className="bg-surface w-full max-w-6xl max-h-[90vh] rounded-xl shadow-2xl relative z-10 flex flex-col overflow-hidden">
+            <div className="p-6 border-b border-border-subtle flex items-center justify-between bg-subtle/50">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
                   <IconShield className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 text-lg">Binding Integrity Audit</h3>
-                  <p className="text-sm text-slate-500">Scan PDFs and verify amounts match the linked Purchase Orders</p>
+                  <h3 className="font-bold text-text-primary text-lg">Binding Integrity Audit</h3>
+                  <p className="text-sm text-text-muted">Scan PDFs and verify amounts match the linked Purchase Orders</p>
                 </div>
               </div>
               <button
                 onClick={() => setIsAuditModalOpen(false)}
                 disabled={isAuditing}
-                className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center hover:bg-slate-200 transition-colors disabled:opacity-50"
+                className="w-8 h-8 rounded-full bg-subtle text-text-muted flex items-center justify-center hover:bg-subtle transition-colors disabled:opacity-50"
               >
                 <IconX className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="p-6 overflow-y-auto flex-1 bg-slate-50/50">
+            <div className="p-6 overflow-y-auto flex-1 bg-subtle/50">
               {isAuditing ? (
                 <div className="flex flex-col items-center justify-center h-64 gap-6">
                   <div className="relative">
@@ -2437,11 +2437,11 @@ export const LPOListPage: React.FC = () => {
                     <IconFileText className="w-5 h-5 text-orange-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-50" />
                   </div>
                   <div className="text-center space-y-2 w-full max-w-md">
-                    <h4 className="font-bold text-slate-700">Auditing LPO Documents</h4>
-                    <p className="text-sm text-slate-500">{auditProgress.label}</p>
-                    <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden mt-2">
+                    <h4 className="font-bold text-text-secondary">Auditing LPO Documents</h4>
+                    <p className="text-sm text-text-muted">{auditProgress.label}</p>
+                    <div className="w-full h-2 bg-subtle rounded-full overflow-hidden mt-2">
                       <div
-                        className="h-full bg-gradient-to-r from-orange-500 to-amber-500 transition-all duration-300"
+                        className="h-full bg-gradient-to-r from-orange-500 to-amber-500 transition-colors duration-150"
                         style={{ width: `${Math.max(5, (auditProgress.current / (auditProgress.total || 1)) * 100)}%` }}
                       />
                     </div>
@@ -2451,16 +2451,16 @@ export const LPOListPage: React.FC = () => {
               ) : (
                 <div className="space-y-4">
                   <div className="flex gap-4 mb-4">
-                    <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex-1 flex items-center gap-4">
+                    <div className="bg-surface p-4 rounded-xl border border-border-default shadow-sm flex-1 flex items-center gap-4">
                       <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
                         <IconCheckCircle className="w-5 h-5" />
                       </div>
                       <div>
-                        <p className="text-xs text-slate-500 uppercase font-bold tracking-wider">Verified OK</p>
-                        <p className="text-2xl font-black text-slate-800">{auditRows.filter(r => r.audit_status === 'ok').length}</p>
+                        <p className="text-xs text-text-muted uppercase font-bold tracking-wider">Verified OK</p>
+                        <p className="text-2xl font-black text-text-primary">{auditRows.filter(r => r.audit_status === 'ok').length}</p>
                       </div>
                     </div>
-                    <div className="bg-white p-4 rounded-xl border border-orange-200 shadow-sm flex-1 flex items-center gap-4">
+                    <div className="bg-surface p-4 rounded-xl border border-orange-200 shadow-sm flex-1 flex items-center gap-4">
                       <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
                         <IconShield className="w-5 h-5" />
                       </div>
@@ -2469,7 +2469,7 @@ export const LPOListPage: React.FC = () => {
                         <p className="text-2xl font-black text-orange-700">{auditRows.filter(r => r.audit_status === 'suspicious').length}</p>
                       </div>
                     </div>
-                    <div className="bg-white p-4 rounded-xl border border-red-200 shadow-sm flex-1 flex items-center gap-4">
+                    <div className="bg-surface p-4 rounded-xl border border-red-200 shadow-sm flex-1 flex items-center gap-4">
                       <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600">
                         <IconX className="w-5 h-5" />
                       </div>
@@ -2480,9 +2480,9 @@ export const LPOListPage: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                  <div className="bg-surface border border-border-default rounded-xl overflow-hidden shadow-sm">
                     <table className="w-full text-left text-sm whitespace-nowrap">
-                      <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-medium">
+                      <thead className="bg-subtle/50 border-b border-border-default text-text-muted font-medium">
                         <tr>
                           <th className="px-4 py-3">Status</th>
                           <th className="px-4 py-3">LPO Number</th>
@@ -2492,16 +2492,16 @@ export const LPOListPage: React.FC = () => {
                           <th className="px-4 py-3">Fix Binding</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100">
+                      <tbody className="divide-y divide-border-subtle">
                         {auditRows.map((row) => (
                           <React.Fragment key={row.lpo_id}>
                             <tr className={cn(row.audit_status === 'suspicious' ? 'bg-orange-50/50' : '')}>
                               <td className="px-4 py-3">
-                                {row.audit_status === 'ok' && <span className="inline-flex items-center gap-1 text-emerald-600 text-xs font-medium px-2 py-1 rounded-md bg-emerald-50 border border-emerald-200"><IconCheckCircle className="w-3 h-3" /> OK</span>}
+                                {row.audit_status === 'ok' && <span className="inline-flex items-center gap-1 text-emerald-600 text-xs font-medium px-2 py-1 rounded-md bg-emerald-500/10 border border-emerald-500/20"><IconCheckCircle className="w-3 h-3" /> OK</span>}
                                 {row.audit_status === 'suspicious' && <span className="inline-flex items-center gap-1 text-orange-600 text-xs font-medium px-2 py-1 rounded-md bg-orange-50 border border-orange-200"><IconShield className="w-3 h-3" /> Suspicious</span>}
                                 {(row.audit_status === 'error' || row.audit_status === 'no_doc') && <span className="inline-flex items-center gap-1 text-red-600 text-xs font-medium px-2 py-1 rounded-md bg-red-50 border border-red-200"><IconX className="w-3 h-3" /> {row.audit_status === 'no_doc' ? 'No PDF' : 'Error'}</span>}
                               </td>
-                              <td className="px-4 py-3 font-medium text-slate-700">
+                              <td className="px-4 py-3 font-medium text-text-secondary">
                                 <div className="flex flex-col gap-1">
                                   {row.document_url ? (
                                     <>
@@ -2509,7 +2509,7 @@ export const LPOListPage: React.FC = () => {
                                         href={row.document_url} 
                                         target="_blank" 
                                         rel="noopener noreferrer" 
-                                        className="text-blue-600 hover:text-blue-800 hover:underline flex items-center gap-1 w-fit font-semibold"
+                                        className="text-blue-600 hover:text-blue-400 hover:underline flex items-center gap-1 w-fit font-semibold"
                                         title="Open LPO PDF in new tab"
                                       >
                                         {row.lpo_number}
@@ -2518,7 +2518,7 @@ export const LPOListPage: React.FC = () => {
                                       <button
                                         type="button"
                                         onClick={() => setExpandedLpoPdfId(expandedLpoPdfId === row.lpo_id ? null : row.lpo_id)}
-                                        className="text-[10px] text-blue-600 hover:text-blue-800 hover:underline font-bold text-left mt-0.5"
+                                        className="text-[10px] text-blue-600 hover:text-blue-400 hover:underline font-bold text-left mt-0.5"
                                       >
                                         {expandedLpoPdfId === row.lpo_id ? 'Hide PDF Preview' : 'Preview PDF inline'}
                                       </button>
@@ -2528,9 +2528,9 @@ export const LPOListPage: React.FC = () => {
                                   )}
                                 </div>
                               </td>
-                              <td className="px-4 py-3 text-slate-600">
+                              <td className="px-4 py-3 text-text-muted">
                                 <div className="flex flex-col">
-                                  <span className="font-semibold text-slate-800">{row.po_number}</span>
+                                  <span className="font-semibold text-text-primary">{row.po_number}</span>
                                   <span className="text-[10px] text-slate-400 truncate max-w-[150px]" title={row.supplier_name}>{row.supplier_name}</span>
                                   {row.items && row.items.length > 0 && (
                                     <div className="text-[10px] mt-1 shrink-0">
@@ -2545,13 +2545,13 @@ export const LPOListPage: React.FC = () => {
                                           }
                                           return next
                                         })}
-                                        className="text-blue-600 hover:text-blue-800 font-bold hover:underline"
+                                        className="text-blue-600 hover:text-blue-400 font-bold hover:underline"
                                       >
                                         {expandedRows.has(row.lpo_id) ? 'Hide Items' : 'View Items'} ({row.items.length})
                                       </button>
                                       {expandedRows.has(row.lpo_id) && (
-                                        <div className="text-[10px] text-slate-500 mt-1 max-w-[280px] bg-slate-50 border border-slate-100 rounded p-1.5 whitespace-normal leading-relaxed">
-                                          <span className="font-bold text-slate-600 block mb-0.5">PO Items: </span>
+                                        <div className="text-[10px] text-text-muted mt-1 max-w-[280px] bg-subtle/50 border border-border-subtle rounded p-1.5 whitespace-normal leading-relaxed">
+                                          <span className="font-bold text-text-muted block mb-0.5">PO Items: </span>
                                           <span className="italic">{row.items.map(i => i.item_name).join(', ')}</span>
                                         </div>
                                       )}
@@ -2559,10 +2559,10 @@ export const LPOListPage: React.FC = () => {
                                   )}
                                 </div>
                               </td>
-                              <td className="px-4 py-3 font-mono text-slate-700">
+                              <td className="px-4 py-3 font-mono text-text-secondary">
                                 {row.extracted_amount !== null ? formatCurrency(row.extracted_amount) : '-'}
                               </td>
-                              <td className="px-4 py-3 font-mono text-slate-700">
+                              <td className="px-4 py-3 font-mono text-text-secondary">
                                 {formatCurrency(row.po_amount)}
                               </td>
                               <td className="px-4 py-3">
@@ -2577,13 +2577,13 @@ export const LPOListPage: React.FC = () => {
                                           const val = e.target.value
                                           setAuditRows(prev => prev.map(r => r.lpo_id === row.lpo_id ? { ...r, rebind_search: val } : r))
                                         }}
-                                        className="text-[10px] border border-slate-200 rounded px-2 py-0.5 bg-white focus:ring-1 focus:ring-blue-500 w-48"
+                                        className="text-[10px] border border-border-default rounded px-2 py-0.5 bg-surface focus:ring-1 focus:ring-blue-500 w-48"
                                       />
                                       <div className="flex items-center gap-2">
                                         <select
                                           value={row.rebind_po_id}
                                           onChange={(e) => setAuditRows(prev => prev.map(r => r.lpo_id === row.lpo_id ? { ...r, rebind_po_id: e.target.value } : r))}
-                                          className="text-xs border border-slate-200 rounded px-2 py-1 bg-white focus:ring-2 focus:ring-blue-500 w-48"
+                                          className="text-xs border border-border-default rounded px-2 py-1 bg-surface focus:ring-2 focus:ring-blue-500 w-48"
                                         >
                                           <option value="">Select Correct PO...</option>
                                           {allApprovedPOs
@@ -2617,8 +2617,8 @@ export const LPOListPage: React.FC = () => {
                                     {row.rebind_po_id && (() => {
                                       const selectedPO = allApprovedPOs.find(p => p.id === row.rebind_po_id);
                                       return selectedPO?.items && selectedPO.items.length > 0 ? (
-                                        <div className="text-[10px] text-slate-500 max-w-[280px] bg-slate-50 border border-slate-100 rounded p-1.5 whitespace-normal" title={selectedPO.items.map(i => i.item_name).join(', ')}>
-                                          <span className="font-semibold text-slate-600 block mb-0.5">Selected PO Items:</span>
+                                        <div className="text-[10px] text-text-muted max-w-[280px] bg-subtle/50 border border-border-subtle rounded p-1.5 whitespace-normal" title={selectedPO.items.map(i => i.item_name).join(', ')}>
+                                          <span className="font-semibold text-text-muted block mb-0.5">Selected PO Items:</span>
                                           <div className="line-clamp-2 leading-tight">{selectedPO.items.map(i => i.item_name).join(', ')}</div>
                                         </div>
                                       ) : null;
@@ -2630,9 +2630,9 @@ export const LPOListPage: React.FC = () => {
                               </td>
                             </tr>
                             {expandedLpoPdfId === row.lpo_id && row.document_url && (
-                              <tr className="bg-slate-50">
+                              <tr className="bg-subtle/50">
                                 <td colSpan={6} className="px-6 py-4">
-                                  <div className="w-full h-[500px] border border-slate-200 rounded-2xl overflow-hidden shadow-inner bg-white">
+                                  <div className="w-full h-[500px] border border-border-default rounded-2xl overflow-hidden shadow-inner bg-surface">
                                     <PDFPreview url={row.document_url} />
                                   </div>
                                 </td>
@@ -2647,10 +2647,10 @@ export const LPOListPage: React.FC = () => {
                 </div>
               )}
             </div>
-            <div className="p-4 border-t border-slate-100 bg-white flex justify-end">
+            <div className="p-4 border-t border-border-subtle bg-surface flex justify-end">
               <button
                 onClick={() => setIsAuditModalOpen(false)}
-                className="px-6 py-2.5 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-xl font-medium transition-colors"
+                className="px-6 py-2.5 bg-subtle text-text-secondary hover:bg-subtle rounded-xl font-medium transition-colors"
               >
                 Close Audit
               </button>

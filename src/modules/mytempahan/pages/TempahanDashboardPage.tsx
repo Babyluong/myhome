@@ -319,7 +319,7 @@ export const TempahanDashboardPage: React.FC = () => {
                   key={tab.id}
                   onClick={() => setSelectedCategory(tab.id)}
                   className={cn(
-                    'px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all border',
+                    'px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors border',
                     selectedCategory === tab.id
                       ? 'bg-accent-base border-accent-base text-white shadow-xs'
                       : 'bg-subtle border-border-default text-text-secondary hover:text-text-primary hover:bg-surface'
@@ -335,12 +335,12 @@ export const TempahanDashboardPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-4">
             {loading ? (
               Array.from({ length: 6 }).map((_, i) => (
-                <SkeletonCard key={i} className="!bg-white dark:!bg-slate-900 !border-slate-200/90 dark:!border-slate-800 shadow-xs" />
+                <SkeletonCard key={i} className="!bg-surface dark:!bg-slate-900 !border-border-default dark:!border-slate-800 shadow-xs" />
               ))
             ) : filteredRooms.length === 0 ? (
-              <div className="col-span-full p-8 text-center bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl">
-                <Building2 className="w-10 h-10 mx-auto text-slate-300 dark:text-slate-600 mb-2" />
-                <p className="text-sm font-semibold text-slate-700 dark:text-slate-300">No Facilities Found</p>
+              <div className="col-span-full p-8 text-center bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-800 rounded-2xl">
+                <Building2 className="w-10 h-10 mx-auto text-slate-300 dark:text-text-muted mb-2" />
+                <p className="text-sm font-semibold text-text-secondary dark:text-slate-300">No Facilities Found</p>
                 <p className="text-xs text-slate-400 mt-1">Try changing category filters or search keywords.</p>
               </div>
             ) : (
@@ -406,7 +406,7 @@ export const TempahanDashboardPage: React.FC = () => {
                   <div
                     key={b.id}
                     onClick={() => openBookingDetails(b)}
-                    className="p-3.5 rounded-xl bg-subtle/40 hover:bg-subtle border border-border-default cursor-pointer transition-all space-y-1.5 group"
+                    className="p-3.5 rounded-xl bg-subtle/40 hover:bg-subtle border border-border-default cursor-pointer transition-colors space-y-1.5 group"
                   >
                     <div className="flex items-center justify-between text-xs">
                       <span className="font-bold text-accent-base font-mono">
@@ -529,9 +529,9 @@ export const TempahanDashboardPage: React.FC = () => {
                     <span
                       className={cn(
                         'px-2.5 py-1 rounded-full text-[10px] font-semibold border',
-                        b.status === 'approved' && 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
-                        b.status === 'pending' && 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',
-                        b.status === 'rejected' && 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800',
+                        b.status === 'approved' && 'bg-emerald-500/10 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-500/20 dark:border-emerald-800',
+                        b.status === 'pending' && 'bg-amber-500/10 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-500/20 dark:border-amber-800',
+                        b.status === 'rejected' && 'bg-rose-500/10 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-500/20 dark:border-rose-800',
                         b.status === 'completed' && 'bg-subtle text-text-secondary border-border-default'
                       )}
                     >
@@ -574,9 +574,9 @@ export const TempahanDashboardPage: React.FC = () => {
                 <span
                   className={cn(
                     'px-2 py-0.5 rounded-full text-[10px] font-semibold border flex-shrink-0',
-                    b.status === 'approved' && 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
-                    b.status === 'pending' && 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',
-                    b.status === 'rejected' && 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800',
+                    b.status === 'approved' && 'bg-emerald-500/10 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-500/20 dark:border-emerald-800',
+                    b.status === 'pending' && 'bg-amber-500/10 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-500/20 dark:border-amber-800',
+                    b.status === 'rejected' && 'bg-rose-500/10 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-500/20 dark:border-rose-800',
                     b.status === 'completed' && 'bg-subtle text-text-secondary border-border-default'
                   )}
                 >

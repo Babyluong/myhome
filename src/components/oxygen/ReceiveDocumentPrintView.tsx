@@ -341,7 +341,7 @@ export const ReceiveDocumentPrintView: React.FC<ReceiveDocumentPrintViewProps> =
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all"
+            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-[transform,opacity,box-shadow,border-color]"
           >
             <X className="w-5 h-5" />
           </button>
@@ -416,14 +416,14 @@ export const ReceiveDocumentPrintView: React.FC<ReceiveDocumentPrintViewProps> =
         <div className="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 rounded-xl transition-all"
+            className="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 rounded-xl transition-[transform,opacity,box-shadow,border-color]"
           >
             Tutup
           </button>
           <button
             onClick={handlePrint}
             disabled={!doc || cylindersList.length === 0}
-            className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-xl text-xs font-extrabold flex items-center gap-2 shadow-md shadow-emerald-600/20 transition-all cursor-pointer"
+            className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-xl text-xs font-extrabold flex items-center gap-2 shadow-md shadow-emerald-600/20 transition-[transform,opacity,box-shadow,border-color] cursor-pointer"
           >
             <Printer className="w-4 h-4" />
             <span>Cetak Surat Akuan Penerimaan (PDF)</span>

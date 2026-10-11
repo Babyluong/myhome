@@ -46,13 +46,17 @@ export const StoreToCounterTransferModal: React.FC<StoreToCounterTransferModalPr
   const [sourceBatchNo, setSourceBatchNo] = useState<string>('')
   const [remarks, setRemarks] = useState<string>('')
 
-  const selectedItem = items.find(i => i.id === selectedItemId) as PrepackLedgerItemWithBalances | undefined
+  const activeItems = React.useMemo(() => {
+    return items.filter(i => (i as any).status !== 'inactive')
+  }, [items])
+
+  const selectedItem = activeItems.find(i => i.id === selectedItemId) as PrepackLedgerItemWithBalances | undefined
   const storeStock = selectedItem?.store_bulk_stock ?? 0
   const counterStock = selectedItem?.counter_raw_stock ?? 0
 
   useEffect(() => {
     if (isOpen) {
-      const initialId = preselectedItemId || (items.length > 0 ? items[0].id : '')
+      const initialId = preselectedItemId || (activeItems.length > 0 ? activeItems[0].id : '')
       setSelectedItemId(initialId)
       const currentYear = new Date().getFullYear()
       const randSeq = Math.floor(100 + Math.random() * 900)
@@ -62,7 +66,7 @@ export const StoreToCounterTransferModal: React.FC<StoreToCounterTransferModalPr
       setRemarks('Bulk stock transfer for UOD & prepacking operations.')
       setQuantity(500)
     }
-  }, [isOpen, preselectedItemId, items, loggedUser])
+  }, [isOpen, preselectedItemId, activeItems, loggedUser])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -126,7 +130,7 @@ export const StoreToCounterTransferModal: React.FC<StoreToCounterTransferModalPr
             className="w-full px-3 py-2 text-sm bg-surface border border-border-default rounded-lg text-text-primary font-medium focus:outline-none focus:ring-1 focus:ring-teal-500/50"
           >
             <option value="">-- Please Select Medication --</option>
-            {items.map(item => (
+            {activeItems.map(item => (
               <option key={item.id} value={item.id}>
                 {item.item_name} [{item.item_code}] - {item.dosage_form}
               </option>

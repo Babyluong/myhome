@@ -341,26 +341,26 @@ export const PaediatricCataloguePage: React.FC = () => {
   }
 
   return (
-    <div className="w-full min-h-screen bg-slate-950 text-slate-100 p-4 md:p-6 lg:p-8 space-y-6">
+    <div className="w-full min-h-screen text-text-primary p-4 md:p-6 lg:p-8 space-y-6">
       {/* Official Government Module Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-white/[0.08]">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-border-default">
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-500/20 to-emerald-500/10 border border-teal-500/30 flex items-center justify-center text-teal-400 shadow-lg shadow-teal-950/40 shrink-0">
+          <div className="w-12 h-12 rounded-xl bg-subtle border border-border-default flex items-center justify-center text-accent-base shadow-elevation-1 shrink-0">
             <Baby className="w-6 h-6" />
           </div>
           <div>
             <div className="flex flex-wrap items-center gap-2 mb-1">
-              <h1 className="text-2xl font-bold tracking-tight text-white">
+              <h1 className="text-xl md:text-2xl font-bold tracking-tight text-text-primary">
                 Paediatric Drug Catalogue
               </h1>
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-teal-500/15 text-teal-300 border border-teal-500/30">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-accent-base/10 text-accent-base border border-accent-base/20">
                 Paediatric Ward
               </span>
-              <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-white/[0.05] text-slate-300 border border-white/[0.08]">
+              <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-subtle text-text-muted border border-border-default">
                 Synced with MyInventory
               </span>
             </div>
-            <p className="text-xs md:text-sm text-slate-400 max-w-3xl leading-relaxed">
+            <p className="text-xs md:text-sm text-text-muted max-w-3xl leading-relaxed">
               Approved paediatric medication formulary and floor stock for Hospital Lawas Paediatric Ward. Directly synchronized with MyInventory facility stock.
             </p>
           </div>
@@ -371,46 +371,46 @@ export const PaediatricCataloguePage: React.FC = () => {
           <button
             onClick={() => fetchCatalogueData(true)}
             disabled={isRefreshing}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border border-white/[0.08] transition-all disabled:opacity-50"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold bg-surface hover:bg-subtle text-text-secondary border border-border-default transition-colors shadow-elevation-1 disabled:opacity-50"
             title="Sync list from database"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-teal-400' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-accent-base' : ''}`} />
             <span className="hidden sm:inline">Sync</span>
           </button>
 
           <button
             onClick={() => handleOpenCalculator('')}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/30 transition-all shadow-sm shadow-indigo-950/20"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold bg-surface hover:bg-subtle text-text-primary border border-border-default transition-colors shadow-elevation-1"
           >
-            <Calculator className="w-3.5 h-3.5 text-indigo-400" />
+            <Calculator className="w-3.5 h-3.5 text-accent-base" />
             <span>Dose Calculator</span>
           </button>
 
           <button
             onClick={handleExportExcel}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-medium bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 transition-all"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold bg-surface hover:bg-subtle text-text-secondary border border-border-default transition-colors shadow-elevation-1"
           >
-            <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-400" />
+            <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             <span>Excel</span>
           </button>
 
           <button
             onClick={handleExportPdf}
             disabled={isExportingPdf}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 transition-all shadow-sm shadow-rose-950/20 disabled:opacity-50"
-            title="Download official Paediatric Catalogue PDF (5 Columns: Code, Name, Prescriber, Packaging, Price)"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-semibold bg-surface hover:bg-subtle text-text-secondary border border-border-default transition-colors shadow-elevation-1 disabled:opacity-50"
+            title="Download official Paediatric Catalogue PDF"
           >
             {isExportingPdf ? (
-              <Loader2 className="w-3.5 h-3.5 animate-spin text-rose-400" />
+              <Loader2 className="w-3.5 h-3.5 animate-spin text-rose-500" />
             ) : (
-              <Printer className="w-3.5 h-3.5 text-rose-400" />
+              <Printer className="w-3.5 h-3.5 text-rose-500" />
             )}
             <span>PDF</span>
           </button>
 
           <button
             onClick={() => setIsPickerModalOpen(true)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 shadow-md shadow-teal-500/20 transition-all"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-xs font-semibold bg-accent-base hover:bg-accent-hover text-white transition-colors shadow-elevation-1"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>Select From MyInventory</span>
@@ -419,77 +419,77 @@ export const PaediatricCataloguePage: React.FC = () => {
       </div>
 
       {/* KPI Stat Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-        <div className="p-4 rounded-2xl bg-gradient-to-br from-white/[0.04] to-white/[0.01] border border-white/[0.06] shadow-sm">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">TOTAL PAEDIATRIC MEDICATIONS</span>
-            <div className="w-7 h-7 rounded-lg bg-teal-500/10 text-teal-400 flex items-center justify-center">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+        <div className="p-4 rounded-xl bg-surface border border-border-default shadow-elevation-1">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wide">TOTAL PAEDIATRIC MEDICATIONS</span>
+            <div className="w-7 h-7 rounded-lg bg-subtle text-text-muted flex items-center justify-center">
               <Baby className="w-4 h-4" />
             </div>
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl md:text-3xl font-extrabold text-white tracking-tight">{stats.total}</span>
-            <span className="text-xs text-slate-400 font-medium">items in ward</span>
+          <div className="flex items-baseline gap-2 mt-1">
+            <span className="text-2xl font-bold font-mono text-text-primary tabular-nums">{stats.total}</span>
+            <span className="text-xs text-text-muted font-medium">items in ward</span>
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-gradient-to-br from-white/[0.04] to-white/[0.01] border border-white/[0.06] shadow-sm">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">SYRUPS & DROPS</span>
-            <div className="w-7 h-7 rounded-lg bg-cyan-500/10 text-cyan-400 flex items-center justify-center">
+        <div className="p-4 rounded-xl bg-surface border border-border-default shadow-elevation-1">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wide">SYRUPS & DROPS</span>
+            <div className="w-7 h-7 rounded-lg bg-subtle text-teal-600 dark:text-teal-400 flex items-center justify-center">
               <Droplets className="w-4 h-4" />
             </div>
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl md:text-3xl font-extrabold text-cyan-300 tracking-tight">{stats.liquid}</span>
-            <span className="text-xs text-slate-400 font-medium">liquid formulations</span>
+          <div className="flex items-baseline gap-2 mt-1">
+            <span className="text-2xl font-bold font-mono text-teal-600 dark:text-teal-400 tabular-nums">{stats.liquid}</span>
+            <span className="text-xs text-text-muted font-medium">liquid formulations</span>
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-gradient-to-br from-white/[0.04] to-white/[0.01] border border-white/[0.06] shadow-sm">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">EMERGENCY / RESUSCITATION</span>
-            <div className="w-7 h-7 rounded-lg bg-rose-500/10 text-rose-400 flex items-center justify-center">
+        <div className="p-4 rounded-xl bg-surface border border-border-default shadow-elevation-1">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wide">EMERGENCY / RESUSCITATION</span>
+            <div className="w-7 h-7 rounded-lg bg-subtle text-rose-600 dark:text-rose-400 flex items-center justify-center">
               <Flame className="w-4 h-4" />
             </div>
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl md:text-3xl font-extrabold text-rose-300 tracking-tight">{stats.highAlertOrRescue}</span>
-            <span className="text-xs text-slate-400 font-medium">critical medications</span>
+          <div className="flex items-baseline gap-2 mt-1">
+            <span className="text-2xl font-bold font-mono text-rose-600 dark:text-rose-400 tabular-nums">{stats.highAlertOrRescue}</span>
+            <span className="text-xs text-text-muted font-medium">critical medications</span>
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-gradient-to-br from-white/[0.04] to-white/[0.01] border border-white/[0.06] shadow-sm">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">RESTOCK REQUIRED</span>
-            <div className="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center">
+        <div className="p-4 rounded-xl bg-surface border border-border-default shadow-elevation-1">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wide">RESTOCK REQUIRED</span>
+            <div className="w-7 h-7 rounded-lg bg-subtle text-amber-500 flex items-center justify-center">
               <AlertTriangle className="w-4 h-4" />
             </div>
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl md:text-3xl font-extrabold text-amber-300 tracking-tight">{stats.lowStock}</span>
-            <span className="text-xs text-slate-400 font-medium">below min limit</span>
+          <div className="flex items-baseline gap-2 mt-1">
+            <span className="text-2xl font-bold font-mono text-amber-500 tabular-nums">{stats.lowStock}</span>
+            <span className="text-xs text-text-muted font-medium">below min limit</span>
           </div>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] space-y-3">
+      <div className="p-4 rounded-xl bg-surface border border-border-default space-y-3 shadow-elevation-1">
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
           {/* Search Box */}
           <div className="relative flex-1">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+            <Search className="w-4 h-4 text-text-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
               placeholder="Search paediatric medication name, generic (INN), dosage or item code..."
-              className="w-full pl-10 pr-9 py-2 bg-slate-900/90 border border-white/[0.1] rounded-xl text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-all"
+              className="w-full pl-10 pr-9 py-2 bg-surface border border-border-default rounded-lg text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-base focus:ring-1 focus:ring-accent-base/20 transition-colors"
             />
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-primary"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -502,7 +502,7 @@ export const PaediatricCataloguePage: React.FC = () => {
             <select
               value={prescriberFilter}
               onChange={e => setPrescriberFilter(e.target.value)}
-              className="px-3 py-2 bg-slate-900/90 border border-white/[0.1] rounded-xl text-xs text-slate-300 focus:outline-none focus:border-teal-500"
+              className="px-3 py-2 bg-surface border border-border-default rounded-lg text-xs text-text-secondary focus:outline-none focus:border-accent-base"
             >
               <option value="all">All Prescriber Categories</option>
               <option value="A*">Category A*</option>
@@ -516,7 +516,7 @@ export const PaediatricCataloguePage: React.FC = () => {
             <select
               value={stockFilter}
               onChange={e => setStockFilter(e.target.value as any)}
-              className="px-3 py-2 bg-slate-900/90 border border-white/[0.1] rounded-xl text-xs text-slate-300 focus:outline-none focus:border-teal-500"
+              className="px-3 py-2 bg-surface border border-border-default rounded-lg text-xs text-text-secondary focus:outline-none focus:border-accent-base"
             >
               <option value="all">All Stock Levels</option>
               <option value="in_stock">In Stock (Sufficient)</option>
@@ -525,11 +525,11 @@ export const PaediatricCataloguePage: React.FC = () => {
             </select>
 
             {/* View Mode Toggle */}
-            <div className="flex items-center bg-slate-900 border border-white/[0.08] rounded-xl p-1 shrink-0">
+            <div className="flex items-center bg-subtle border border-border-default rounded-lg p-0.5 shrink-0">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-1.5 rounded-lg transition-colors ${
-                  viewMode === 'grid' ? 'bg-teal-500 text-slate-950 shadow-sm' : 'text-slate-400 hover:text-white'
+                className={`p-1.5 rounded-md transition-colors ${
+                  viewMode === 'grid' ? 'bg-surface text-text-primary shadow-elevation-1 font-semibold' : 'text-text-muted hover:text-text-primary'
                 }`}
                 title="Grid View"
               >
@@ -537,8 +537,8 @@ export const PaediatricCataloguePage: React.FC = () => {
               </button>
               <button
                 onClick={() => setViewMode('table')}
-                className={`p-1.5 rounded-lg transition-colors ${
-                  viewMode === 'table' ? 'bg-teal-500 text-slate-950 shadow-sm' : 'text-slate-400 hover:text-white'
+                className={`p-1.5 rounded-md transition-colors ${
+                  viewMode === 'table' ? 'bg-surface text-text-primary shadow-elevation-1 font-semibold' : 'text-text-muted hover:text-text-primary'
                 }`}
                 title="Compact Table View"
               >
@@ -549,8 +549,8 @@ export const PaediatricCataloguePage: React.FC = () => {
         </div>
 
         {/* Clinical Category Tabs */}
-        <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-white/[0.04]">
-          <span className="text-[11px] font-medium text-slate-400 mr-1 flex items-center gap-1">
+        <div className="flex flex-wrap items-center gap-1.5 pt-2 border-t border-border-default">
+          <span className="text-[11px] font-medium text-text-muted mr-1 flex items-center gap-1">
             <Filter className="w-3 h-3" /> Clinical Class:
           </span>
           {[
@@ -567,10 +567,10 @@ export const PaediatricCataloguePage: React.FC = () => {
             <button
               key={tab.id}
               onClick={() => setSelectedClinicalGroup(tab.id)}
-              className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+              className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
                 selectedClinicalGroup === tab.id
-                  ? 'bg-teal-500 text-slate-950 font-semibold shadow-sm shadow-teal-500/30'
-                  : 'bg-white/[0.03] text-slate-300 hover:bg-white/[0.06] border border-white/[0.05]'
+                  ? 'bg-accent-base text-white font-semibold shadow-elevation-1'
+                  : 'bg-surface text-text-secondary hover:bg-subtle border border-border-default'
               }`}
             >
               {tab.label}
@@ -580,7 +580,7 @@ export const PaediatricCataloguePage: React.FC = () => {
 
         {/* Formulation Sub-Tabs */}
         <div className="flex flex-wrap items-center gap-1.5">
-          <span className="text-[11px] font-medium text-slate-400 mr-1">Dosage Form:</span>
+          <span className="text-[11px] font-medium text-text-muted mr-1">Dosage Form:</span>
           {[
             { id: 'all', label: 'All' },
             { id: 'syrup', label: '🥄 Syrup / Suspension' },
@@ -592,10 +592,10 @@ export const PaediatricCataloguePage: React.FC = () => {
             <button
               key={f.id}
               onClick={() => setFormulationFilter(f.id)}
-              className={`px-2 py-0.5 rounded text-[11px] font-medium transition-all ${
+              className={`px-2 py-0.5 rounded text-[11px] font-medium transition-colors ${
                 formulationFilter === f.id
-                  ? 'bg-white/20 text-white font-semibold border border-white/30'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-subtle text-text-primary font-semibold border border-border-default'
+                  : 'text-text-muted hover:text-text-primary'
               }`}
             >
               {f.label}
@@ -625,7 +625,7 @@ export const PaediatricCataloguePage: React.FC = () => {
           </div>
           <button
             onClick={() => setIsPickerModalOpen(true)}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 shadow-md shadow-teal-500/20 transition-all"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 shadow-md shadow-teal-500/20 transition-colors"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             <span>Select Drugs From MyInventory</span>
@@ -643,20 +643,20 @@ export const PaediatricCataloguePage: React.FC = () => {
             return (
               <div
                 key={item.id}
-                className="group relative flex flex-col justify-between rounded-2xl bg-gradient-to-b from-white/[0.04] to-white/[0.01] border border-white/[0.06] hover:border-teal-500/40 p-4 transition-all duration-200 hover:shadow-xl hover:shadow-teal-950/20"
+                className="group relative flex flex-col justify-between rounded-xl bg-surface border border-border-default hover:border-accent-base/40 p-4 transition-colors duration-150 shadow-elevation-1 hover:shadow-xs"
               >
                 <div className="space-y-3">
                   {/* Top Badges */}
                   <div className="flex items-center justify-between gap-2">
-                    <span className="px-2 py-0.5 rounded text-[10.5px] font-semibold bg-teal-500/15 text-teal-300 border border-teal-500/25">
+                    <span className="px-2 py-0.5 rounded text-[10.5px] font-semibold bg-subtle text-text-secondary border border-border-default">
                       {item.clinical_group}
                     </span>
                     <div className="flex items-center gap-1.5">
-                      <span className="px-2 py-0.5 rounded text-[10.5px] font-bold bg-indigo-500/15 text-indigo-300 border border-indigo-500/25">
+                      <span className="px-2 py-0.5 rounded text-[10.5px] font-bold bg-accent-base/10 text-accent-base border border-accent-base/20">
                         Cat {item.prescriber_category}
                       </span>
                       {item.drug.procurement_vote && (
-                        <span className="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/15 text-amber-300 border border-amber-500/25">
+                        <span className="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase bg-subtle text-text-muted border border-border-default">
                           {item.drug.procurement_vote}
                         </span>
                       )}
@@ -667,24 +667,24 @@ export const PaediatricCataloguePage: React.FC = () => {
                   <div>
                     <h3
                       onClick={() => handleOpenMonograph(item)}
-                      className="font-bold text-sm text-slate-100 group-hover:text-teal-300 transition-colors cursor-pointer leading-snug"
+                      className="font-bold text-sm text-text-primary group-hover:text-accent-base transition-colors cursor-pointer leading-snug"
                     >
                       {item.drug.drug_name}
                     </h3>
                     {item.drug.generic_name && (
-                      <p className="text-xs text-slate-400 mt-0.5 italic">
+                      <p className="text-xs text-text-muted mt-0.5 italic">
                         {item.drug.generic_name}
                       </p>
                     )}
                   </div>
 
                   {/* Metadata Chips */}
-                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-slate-400 pt-1 border-t border-white/[0.04]">
+                  <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-text-muted pt-1 border-t border-border-default">
                     {item.drug.dosage_form && (
-                      <span>Form: <strong className="text-slate-300 font-medium">{item.drug.dosage_form}</strong></span>
+                      <span>Form: <strong className="text-text-primary font-medium">{item.drug.dosage_form}</strong></span>
                     )}
                     {item.drug.drug_code && (
-                      <span>Code: <code className="text-teal-400 font-mono text-[11px]">{item.drug.drug_code}</code></span>
+                      <span>Code: <code className="text-accent-base font-mono text-[11px]">{item.drug.drug_code}</code></span>
                     )}
                     {item.drug.storage_conditions && (
                       <span>🌡️ {item.drug.storage_conditions}</span>
@@ -692,62 +692,62 @@ export const PaediatricCataloguePage: React.FC = () => {
                   </div>
 
                   {/* Quota & Physical Stock Tile */}
-                  <div className="p-3 rounded-xl bg-slate-900/80 border border-white/[0.05] space-y-2">
+                  <div className="p-3 rounded-lg bg-subtle/50 border border-border-default space-y-2">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="text-slate-400 font-medium">Facility Stock Balance:</span>
+                      <span className="text-text-muted font-medium">Facility Stock Balance:</span>
                       {isNil ? (
-                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30">
-                          <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
+                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+                          <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
                           NIL (Out of Stock)
                         </span>
                       ) : isLow ? (
-                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30">
-                          <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
                           {stock} units (Low)
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                        <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                           {stock} units
                         </span>
                       )}
                     </div>
 
-                    <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/[0.05] text-[11px] text-center">
+                    <div className="grid grid-cols-3 gap-2 pt-2 border-t border-border-default text-[11px] text-center">
                       <div>
-                        <span className="block text-slate-500 text-[10px]">Ward Min</span>
-                        <strong className="text-slate-200 font-mono">{item.min_limit}</strong>
+                        <span className="block text-text-muted text-[10px] uppercase font-medium">Ward Min</span>
+                        <strong className="text-text-primary font-mono text-xs">{item.min_limit}</strong>
                       </div>
                       <div>
-                        <span className="block text-slate-500 text-[10px]">Reorder</span>
-                        <strong className="text-amber-400 font-mono">{item.reorder_level}</strong>
+                        <span className="block text-text-muted text-[10px] uppercase font-medium">Reorder</span>
+                        <strong className="text-amber-600 dark:text-amber-400 font-mono text-xs">{item.reorder_level}</strong>
                       </div>
                       <div>
-                        <span className="block text-slate-500 text-[10px]">Ward Max</span>
-                        <strong className="text-slate-200 font-mono">{item.max_limit || '-'}</strong>
+                        <span className="block text-text-muted text-[10px] uppercase font-medium">Ward Max</span>
+                        <strong className="text-text-primary font-mono text-xs">{item.max_limit || '-'}</strong>
                       </div>
                     </div>
                   </div>
                 </div>
 
                 {/* Card Footer Actions */}
-                <div className="flex items-center justify-between pt-3 mt-3 border-t border-white/[0.06]">
+                <div className="flex items-center justify-between pt-3 mt-3 border-t border-border-default">
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => handleOpenCalculator(item.drug.drug_name)}
-                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/30 transition-colors"
+                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-surface hover:bg-subtle text-text-primary border border-border-default transition-colors shadow-elevation-1"
                       title="Calculate paediatric dosage by weight"
                     >
-                      <Calculator className="w-3.5 h-3.5 text-indigo-400" />
+                      <Calculator className="w-3.5 h-3.5 text-accent-base" />
                       <span>Calculator</span>
                     </button>
 
                     <button
                       onClick={() => handleOpenMonograph(item)}
-                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white hover:bg-white/[0.06] transition-colors"
+                      className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-text-muted hover:text-text-primary hover:bg-subtle transition-colors"
                       title="View FUKKM Clinical Monograph"
                     >
-                      <ExternalLink className="w-3.5 h-3.5 text-teal-400" />
+                      <ExternalLink className="w-3.5 h-3.5 text-accent-base" />
                       <span>Monograph</span>
                     </button>
                   </div>
@@ -755,7 +755,7 @@ export const PaediatricCataloguePage: React.FC = () => {
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => handleOpenEditLimits(item)}
-                      className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
+                      className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-subtle transition-colors"
                       title="Edit Ward Quota Limits"
                     >
                       <Edit className="w-3.5 h-3.5" />
@@ -764,11 +764,11 @@ export const PaediatricCataloguePage: React.FC = () => {
                     <button
                       onClick={() => handleDeleteItem(item)}
                       disabled={isDeleting}
-                      className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors disabled:opacity-40"
+                      className="p-1.5 rounded-lg text-text-muted hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-500/10 transition-colors disabled:opacity-40"
                       title="Remove from Paediatric Ward"
                     >
                       {isDeleting ? (
-                        <Loader2 className="w-3.5 h-3.5 animate-spin text-rose-400" />
+                        <Loader2 className="w-3.5 h-3.5 animate-spin text-rose-500" />
                       ) : (
                         <Trash2 className="w-3.5 h-3.5" />
                       )}
@@ -781,11 +781,11 @@ export const PaediatricCataloguePage: React.FC = () => {
         </div>
       ) : (
         /* TABLE VIEW */
-        <div className="rounded-2xl border border-white/[0.08] bg-slate-900/60 overflow-hidden shadow-sm">
+        <div className="rounded-xl border border-border-default bg-surface overflow-hidden shadow-elevation-1">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="border-b border-white/[0.08] bg-white/[0.02] text-slate-400 font-semibold uppercase tracking-wider">
+                <tr className="border-b border-border-default bg-subtle/50 text-text-muted font-semibold uppercase tracking-wider">
                   <th className="py-3 px-4">Paediatric Medication Name</th>
                   <th className="py-3 px-3">Clinical Class</th>
                   <th className="py-3 px-3">Dosage Form</th>
@@ -795,63 +795,63 @@ export const PaediatricCataloguePage: React.FC = () => {
                   <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/[0.05] text-slate-300">
+              <tbody className="divide-y divide-border-default text-text-secondary">
                 {filteredItems.map(item => {
                   const stock = item.facility_stock ?? 0
                   const isNil = stock <= 0
                   const isLow = stock > 0 && stock < item.min_limit
 
                   return (
-                    <tr key={item.id} className="hover:bg-white/[0.02] transition-colors group">
+                    <tr key={item.id} className="hover:bg-subtle/40 transition-colors group">
                       <td className="py-3 px-4">
                         <div className="flex flex-col">
                           <span
                             onClick={() => handleOpenMonograph(item)}
-                            className="font-bold text-slate-100 hover:text-teal-300 cursor-pointer transition-colors"
+                            className="font-bold text-text-primary hover:text-accent-base cursor-pointer transition-colors"
                           >
                             {item.drug.drug_name}
                           </span>
                           {item.drug.generic_name && (
-                            <span className="text-[11px] text-slate-400 italic">
+                            <span className="text-[11px] text-text-muted italic">
                               {item.drug.generic_name}
                             </span>
                           )}
-                          <span className="text-[10px] text-slate-500 font-mono mt-0.5">
+                          <span className="text-[10px] text-text-muted font-mono mt-0.5">
                             {item.drug.drug_code}
                           </span>
                         </div>
                       </td>
                       <td className="py-3 px-3">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-teal-500/15 text-teal-300 border border-teal-500/25 whitespace-nowrap">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-subtle text-text-secondary border border-border-default whitespace-nowrap">
                           {item.clinical_group}
                         </span>
                       </td>
                       <td className="py-3 px-3">
-                        <span className="text-slate-300 font-medium">
+                        <span className="text-text-primary font-medium">
                           {item.drug.dosage_form || '-'}
                         </span>
                       </td>
                       <td className="py-3 px-3">
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/15 text-indigo-300 border border-indigo-500/25">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-accent-base/10 text-accent-base border border-accent-base/20">
                           Cat {item.prescriber_category}
                         </span>
                       </td>
                       <td className="py-3 px-3 font-mono">
-                        <span className="text-slate-300">Min: {item.min_limit}</span> |{' '}
-                        <span className="text-amber-400">Reorder: {item.reorder_level}</span> |{' '}
-                        <span className="text-slate-400">Max: {item.max_limit || '-'}</span>
+                        <span className="text-text-primary">Min: {item.min_limit}</span> |{' '}
+                        <span className="text-amber-600 dark:text-amber-400">Reorder: {item.reorder_level}</span> |{' '}
+                        <span className="text-text-muted">Max: {item.max_limit || '-'}</span>
                       </td>
                       <td className="py-3 px-3">
                         {isNil ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10.5px] font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10.5px] font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
                             NIL
                           </span>
                         ) : isLow ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10.5px] font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10.5px] font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
                             {stock} units (Low)
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10.5px] font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10.5px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                             {stock} units
                           </span>
                         )}
@@ -860,28 +860,28 @@ export const PaediatricCataloguePage: React.FC = () => {
                         <div className="flex items-center justify-end gap-1.5">
                           <button
                             onClick={() => handleOpenCalculator(item.drug.drug_name)}
-                            className="p-1.5 rounded-lg bg-indigo-500/15 hover:bg-indigo-500/25 text-indigo-300 border border-indigo-500/30"
+                            className="p-1.5 rounded-lg bg-surface hover:bg-subtle text-text-primary border border-border-default transition-colors shadow-elevation-1"
                             title="Open Dose Calculator"
                           >
-                            <Calculator className="w-3.5 h-3.5" />
+                            <Calculator className="w-3.5 h-3.5 text-accent-base" />
                           </button>
                           <button
                             onClick={() => handleOpenMonograph(item)}
-                            className="p-1.5 rounded-lg text-slate-300 hover:text-white hover:bg-white/[0.06]"
+                            className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-subtle transition-colors"
                             title="Clinical Monograph"
                           >
-                            <ExternalLink className="w-3.5 h-3.5 text-teal-400" />
+                            <ExternalLink className="w-3.5 h-3.5 text-accent-base" />
                           </button>
                           <button
                             onClick={() => handleOpenEditLimits(item)}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06]"
+                            className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-subtle transition-colors"
                             title="Edit Quota Limits"
                           >
                             <Edit className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => handleDeleteItem(item)}
-                            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10"
+                            className="p-1.5 rounded-lg text-text-muted hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
                             title="Remove from Ward"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
@@ -966,7 +966,7 @@ export const PaediatricCataloguePage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setEditingItem(null)}
-                className="px-4 py-2 rounded-xl text-xs text-slate-300 hover:bg-white/[0.06] border border-white/[0.08]"
+                className="px-4 py-2 rounded-xl text-xs text-slate-300 hover:bg-surface/[0.06] border border-white/[0.08]"
               >
                 Cancel
               </button>
@@ -974,7 +974,7 @@ export const PaediatricCataloguePage: React.FC = () => {
                 type="button"
                 disabled={isUpdatingLimit}
                 onClick={handleSaveLimits}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-teal-500 hover:bg-teal-400 text-slate-950 transition-all disabled:opacity-50"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-teal-500 hover:bg-teal-400 text-slate-950 transition-colors disabled:opacity-50"
               >
                 {isUpdatingLimit ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
                 <span>Save Changes</span>

@@ -1748,7 +1748,7 @@ export default function FacilityCatalogPage() {
           type="checkbox"
           checked={paginatedItems.length > 0 && paginatedItems.every(item => selectedItemIds.includes(item.id))}
           onChange={(e) => toggleSelectAll(e.target.checked, paginatedItems)}
-          className="rounded border-slate-300 text-teal-650 focus:ring-teal-500 w-4 h-4 cursor-pointer"
+          className="rounded border-border-default text-teal-650 focus:ring-teal-500 w-4 h-4 cursor-pointer"
         />
       ),
       render: (item: UnifiedCatalogItem) => (
@@ -1757,7 +1757,7 @@ export default function FacilityCatalogPage() {
           checked={selectedItemIds.includes(item.id)}
           onChange={() => toggleSelectItem(item.id)}
           onClick={(e) => e.stopPropagation()} // Prevent opening details modal on checkbox click
-          className="rounded border-slate-300 text-teal-655 focus:ring-teal-500 w-4 h-4 cursor-pointer"
+          className="rounded border-border-default text-teal-655 focus:ring-teal-500 w-4 h-4 cursor-pointer"
         />
       ),
     },
@@ -1765,7 +1765,7 @@ export default function FacilityCatalogPage() {
       key: 'code',
       header: 'Item Code',
       render: (item: UnifiedCatalogItem) => (
-        <span className="font-mono text-xs font-bold text-teal-600 bg-teal-50/75 px-2.5 py-1 rounded-lg border border-teal-100">
+        <span className="font-mono text-xs font-bold text-teal-600 bg-accent-base/10 px-2.5 py-1 rounded-lg border border-teal-100">
           {item.code}
         </span>
       ),
@@ -1777,13 +1777,13 @@ export default function FacilityCatalogPage() {
         <div className="flex items-center space-x-3 max-w-md">
           <div className={`p-2.5 rounded-xl ${
             item.type === 'Drug' 
-              ? 'bg-indigo-50 text-indigo-600 border border-indigo-100' 
-              : 'bg-emerald-50 text-emerald-600 border border-emerald-100'
+              ? 'bg-indigo-500/10 text-indigo-600 border border-indigo-100' 
+              : 'bg-emerald-500/10 text-emerald-600 border border-emerald-100'
           }`}>
             {item.type === 'Drug' ? <Plus className="w-5 h-5" /> : <Package className="w-5 h-5" />}
           </div>
           <div>
-            <div className="font-bold text-slate-800 text-sm leading-snug">{item.name}</div>
+            <div className="font-bold text-text-primary text-sm leading-snug">{item.name}</div>
             <div className="flex flex-wrap gap-1.5 mt-1 items-center">
               <span className="text-slate-400 text-[10px] font-medium flex items-center">
                 <Layers className="w-3 h-3 mr-1" />
@@ -1815,7 +1815,7 @@ export default function FacilityCatalogPage() {
       key: 'procurement_vote',
       header: 'Vote',
       render: (item: UnifiedCatalogItem) => (
-        <span className="font-mono text-xs font-extrabold text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+        <span className="font-mono text-xs font-extrabold text-text-muted bg-subtle px-2 py-0.5 rounded border border-border-default">
           {item.procurement_vote}
         </span>
       ),
@@ -1824,7 +1824,7 @@ export default function FacilityCatalogPage() {
       key: 'price',
       header: 'Price (RM)',
       render: (item: UnifiedCatalogItem) => (
-        <span className="text-sm font-bold text-slate-700">
+        <span className="text-sm font-bold text-text-secondary">
           RM {item.price.toFixed(2)}
           <span className="text-[10px] font-normal text-slate-400 ml-1">/{item.uom}</span>
         </span>
@@ -1838,7 +1838,7 @@ export default function FacilityCatalogPage() {
           {item.status === 'active' ? (
             <>
               <CheckCircle2 className="w-4.5 h-4.5 text-emerald-500" />
-              <span className="text-xs font-semibold text-slate-600">Active</span>
+              <span className="text-xs font-semibold text-text-muted">Active</span>
             </>
           ) : (
             <>
@@ -1860,7 +1860,7 @@ export default function FacilityCatalogPage() {
             e.stopPropagation()
             setSelectedItem(item)
           }}
-          className="hover:bg-slate-100 hover:text-slate-900 group"
+          className="hover:bg-subtle hover:text-text-primary group"
         >
           <span className="text-xs font-bold text-teal-600 mr-1 group-hover:translate-x-0.5 transition-transform duration-200">
             View Details
@@ -1879,7 +1879,7 @@ export default function FacilityCatalogPage() {
       className="w-full p-6 space-y-8"
     >
       {/* Premium Header */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-8 md:p-10 shadow-2xl border border-slate-800">
+      <div className="relative overflow-hidden rounded-3xl bg-surface border border-border-default text-white p-8 md:p-10 shadow-2xl border border-slate-800">
         <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-gradient-to-br from-teal-500/15 to-indigo-500/20 rounded-full blur-3xl" />
         <div className="absolute -bottom-10 -left-10 w-[300px] h-[300px] bg-gradient-to-tr from-emerald-500/10 to-cyan-500/15 rounded-full blur-2xl" />
 
@@ -1906,7 +1906,7 @@ export default function FacilityCatalogPage() {
               <button
                 type="button"
                 onClick={() => setShowUpdateHistory(true)}
-                className="ml-2 px-2.5 py-0.5 bg-teal-500/20 hover:bg-teal-500/40 text-teal-200 hover:text-white rounded-lg transition-all border border-teal-500/30 text-[10px]"
+                className="ml-2 px-2.5 py-0.5 bg-teal-500/20 hover:bg-teal-500/40 text-teal-200 hover:text-white rounded-lg transition-colors border border-teal-500/30 text-[10px]"
               >
                 View History
               </button>
@@ -1917,7 +1917,7 @@ export default function FacilityCatalogPage() {
               variant="outline"
               onClick={handleExportPdf}
               disabled={isExportingPdf}
-              className="rounded-2xl px-6 py-3.5 font-bold border-white/10 hover:border-teal-450 hover:bg-white/5 text-white shadow-md transition-all duration-300 transform hover:-translate-y-0.5"
+              className="rounded-2xl px-6 py-3.5 font-bold border-white/10 hover:border-teal-450 hover:bg-surface/5 text-white shadow-md transition-colors duration-150 transform hover:-translate-y-0.5"
             >
               {isExportingPdf ? <Spinner size="sm" className="mr-2 text-teal-400" /> : <FileText className="w-5 h-5 mr-2 text-teal-400" />}
               Export Catalog (PDF)
@@ -1925,7 +1925,7 @@ export default function FacilityCatalogPage() {
             <Button
               variant="outline"
               onClick={() => setShowUpdateHistory(true)}
-              className="rounded-2xl px-6 py-3.5 font-bold border-white/10 hover:border-teal-450 hover:bg-white/5 text-white shadow-md transition-all duration-300 transform hover:-translate-y-0.5"
+              className="rounded-2xl px-6 py-3.5 font-bold border-white/10 hover:border-teal-450 hover:bg-surface/5 text-white shadow-md transition-colors duration-150 transform hover:-translate-y-0.5"
             >
               <Activity className="w-5 h-5 mr-2 text-teal-400" />
               Update History
@@ -1937,7 +1937,7 @@ export default function FacilityCatalogPage() {
                 setSelectedMasterItem(null)
                 setShowCreateCustomForm(false)
               }}
-              className="rounded-2xl px-6 py-3.5 font-bold bg-teal-500 hover:bg-teal-600 text-white shadow-lg shadow-teal-500/30 hover:shadow-xl hover:shadow-teal-500/40 transition-all duration-300 transform hover:-translate-y-0.5 border border-teal-400/20"
+              className="rounded-2xl px-6 py-3.5 font-bold bg-teal-500 hover:bg-teal-600 text-white shadow-lg shadow-teal-500/30 hover:shadow-xl hover:shadow-teal-500/40 transition-colors duration-150 transform hover:-translate-y-0.5 border border-teal-400/20"
             >
               <Plus className="w-5 h-5 mr-2" />
               Add Facility Item
@@ -1951,8 +1951,8 @@ export default function FacilityCatalogPage() {
 
       {/* Dynamic Statistics Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-        <div className="bg-white rounded-3xl p-6 border border-slate-100/80 shadow-md hover:shadow-xl transform hover:-translate-y-1.5 transition-all duration-300 flex items-center space-x-4 group">
-          <div className="p-3.5 bg-indigo-50 text-indigo-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+        <div className="bg-surface rounded-3xl p-6 border border-border-subtle shadow-md hover:shadow-xl transform hover:-translate-y-1.5 transition-colors duration-150 flex items-center space-x-4 group">
+          <div className="p-3.5 bg-indigo-500/10 text-indigo-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
             <Tag className="w-6 h-6" />
           </div>
           <div>
@@ -1967,8 +1967,8 @@ export default function FacilityCatalogPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-3xl p-6 border border-slate-100/80 shadow-md hover:shadow-xl transform hover:-translate-y-1.5 transition-all duration-300 flex items-center space-x-4 group">
-          <div className="p-3.5 bg-amber-50 text-amber-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+        <div className="bg-surface rounded-3xl p-6 border border-border-subtle shadow-md hover:shadow-xl transform hover:-translate-y-1.5 transition-colors duration-150 flex items-center space-x-4 group">
+          <div className="p-3.5 bg-amber-500/10 text-amber-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
             <Coins className="w-6 h-6" />
           </div>
           <div>
@@ -1983,8 +1983,8 @@ export default function FacilityCatalogPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-3xl p-6 border border-slate-100/80 shadow-md hover:shadow-xl transform hover:-translate-y-1.5 transition-all duration-300 flex items-center space-x-4 group">
-          <div className="p-3.5 bg-rose-50 text-rose-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+        <div className="bg-surface rounded-3xl p-6 border border-border-subtle shadow-md hover:shadow-xl transform hover:-translate-y-1.5 transition-colors duration-150 flex items-center space-x-4 group">
+          <div className="p-3.5 bg-rose-500/10 text-rose-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
             <Truck className="w-6 h-6" />
           </div>
           <div>
@@ -1999,8 +1999,8 @@ export default function FacilityCatalogPage() {
           </div>
         </div>
 
-        <div className="bg-white rounded-3xl p-6 border border-slate-100/80 shadow-md hover:shadow-xl transform hover:-translate-y-1.5 transition-all duration-300 flex items-center space-x-4 group">
-          <div className="p-3.5 bg-teal-50 text-teal-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
+        <div className="bg-surface rounded-3xl p-6 border border-border-subtle shadow-md hover:shadow-xl transform hover:-translate-y-1.5 transition-colors duration-150 flex items-center space-x-4 group">
+          <div className="p-3.5 bg-accent-base/10 text-teal-600 rounded-2xl group-hover:scale-110 transition-transform duration-300">
             <ClipboardList className="w-6 h-6" />
           </div>
           <div>
@@ -2017,39 +2017,39 @@ export default function FacilityCatalogPage() {
       </div>
 
       {/* Main Catalog View Container */}
-      <div className="bg-white rounded-3xl border border-slate-100 shadow-xl overflow-hidden p-6 md:p-8 space-y-6">
+      <div className="bg-surface rounded-3xl border border-border-subtle shadow-xl overflow-hidden p-6 md:p-8 space-y-6">
         
         {/* Interactive Tabs and Toolbar */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-slate-100 pb-6">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 border-b border-border-subtle pb-6">
           
           {/* Custom Tabs */}
-          <div className="flex bg-slate-100 p-1.5 rounded-2xl max-w-md w-full lg:w-auto">
+          <div className="flex bg-subtle p-1.5 rounded-2xl max-w-md w-full lg:w-auto">
             <button
               onClick={() => setActiveTab('all')}
-              className={`flex-1 flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 ${
+              className={`flex-1 flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-colors duration-150 ${
                 activeTab === 'all'
-                  ? 'bg-white text-slate-800 shadow-md shadow-slate-200/50'
-                  : 'text-slate-500 hover:text-slate-880'
+                  ? 'bg-surface text-text-primary shadow-md shadow-slate-200/50'
+                  : 'text-text-muted hover:text-slate-880'
               }`}
             >
               <span>All Keeping Items</span>
             </button>
             <button
               onClick={() => setActiveTab('Drug')}
-              className={`flex-1 flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 ${
+              className={`flex-1 flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-colors duration-150 ${
                 activeTab === 'Drug'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200/40'
-                  : 'text-slate-500 hover:text-slate-880'
+                  : 'text-text-muted hover:text-slate-880'
               }`}
             >
               <span>Drugs Only</span>
             </button>
             <button
               onClick={() => setActiveTab('Non-Drug')}
-              className={`flex-1 flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 ${
+              className={`flex-1 flex items-center justify-center space-x-2 px-5 py-2.5 rounded-xl text-xs font-bold transition-colors duration-150 ${
                 activeTab === 'Non-Drug'
                   ? 'bg-emerald-600 text-white shadow-md shadow-emerald-200/40'
-                  : 'text-slate-500 hover:text-slate-880'
+                  : 'text-text-muted hover:text-slate-880'
               }`}
             >
               <span>Non-Drugs Only</span>
@@ -2067,7 +2067,7 @@ export default function FacilityCatalogPage() {
                 placeholder="Search code, name, supplier..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="pl-11 pr-4 py-2.5 bg-slate-50/50 border-slate-200 focus:bg-white rounded-xl text-sm"
+                className="pl-11 pr-4 py-2.5 bg-subtle/50 border-border-default focus:bg-surface rounded-xl text-sm"
               />
             </div>
 
@@ -2076,7 +2076,7 @@ export default function FacilityCatalogPage() {
               <select
                 value={selectedCategory}
                 onChange={e => setSelectedCategory(e.target.value)}
-                className="pl-4 pr-10 py-2.5 bg-slate-50/50 border border-slate-200 focus:bg-white rounded-xl text-xs font-bold text-slate-600 cursor-pointer appearance-none outline-none focus:ring-2 focus:ring-teal-500/25 transition-all"
+                className="pl-4 pr-10 py-2.5 bg-subtle/50 border border-border-default focus:bg-surface rounded-xl text-xs font-bold text-text-muted cursor-pointer appearance-none outline-none focus:ring-2 focus:ring-teal-500/25 transition-colors"
               >
                 <option value="all">All Categories</option>
                 {uniqueCategories.filter(c => c !== 'all').map(cat => (
@@ -2093,7 +2093,7 @@ export default function FacilityCatalogPage() {
               <select
                 value={selectedVote}
                 onChange={e => setSelectedVote(e.target.value)}
-                className="pl-4 pr-10 py-2.5 bg-slate-50/50 border border-slate-200 focus:bg-white rounded-xl text-xs font-bold text-slate-600 cursor-pointer appearance-none outline-none focus:ring-2 focus:ring-teal-500/25 transition-all"
+                className="pl-4 pr-10 py-2.5 bg-subtle/50 border border-border-default focus:bg-surface rounded-xl text-xs font-bold text-text-muted cursor-pointer appearance-none outline-none focus:ring-2 focus:ring-teal-500/25 transition-colors"
               >
                 <option value="all">All Votes</option>
                 <option value="APPL">APPL</option>
@@ -2109,7 +2109,7 @@ export default function FacilityCatalogPage() {
               <select
                 value={selectedStatus}
                 onChange={e => setSelectedStatus(e.target.value)}
-                className="pl-4 pr-10 py-2.5 bg-slate-50/50 border border-slate-200 focus:bg-white rounded-xl text-xs font-bold text-slate-600 cursor-pointer appearance-none outline-none focus:ring-2 focus:ring-teal-500/25 transition-all"
+                className="pl-4 pr-10 py-2.5 bg-subtle/50 border border-border-default focus:bg-surface rounded-xl text-xs font-bold text-text-muted cursor-pointer appearance-none outline-none focus:ring-2 focus:ring-teal-500/25 transition-colors"
               >
                 <option value="all">All Statuses</option>
                 <option value="active">Active</option>
@@ -2127,7 +2127,7 @@ export default function FacilityCatalogPage() {
             data={paginatedItems}
             isLoading={isLoading}
             onRowClick={(item) => setSelectedItem(item)}
-            rowClassName="hover:bg-slate-50/70 transition-colors cursor-pointer"
+            rowClassName="hover:bg-subtle/50 transition-colors cursor-pointer"
           />
         </div>
 
@@ -2144,7 +2144,7 @@ export default function FacilityCatalogPage() {
               setCurrentPage(1)
             }}
             pageSizeOptions={[10, 25, 50, 100]}
-            className="border-t border-slate-100 pt-6 bg-transparent px-0"
+            className="border-t border-border-subtle pt-6 bg-transparent px-0"
           />
         )}
 
@@ -2175,13 +2175,13 @@ export default function FacilityCatalogPage() {
                 </button>
                 <button
                   onClick={() => batchToggleStatus('inactive')}
-                  className="bg-rose-600 hover:bg-rose-700 active:scale-95 transition-all text-white text-xs font-extrabold px-4 py-2 rounded-xl shadow-md shadow-rose-900/20"
+                  className="bg-rose-600 hover:bg-rose-700 active:scale-95 transition-colors text-white text-xs font-extrabold px-4 py-2 rounded-xl shadow-md shadow-rose-900/20"
                 >
                   Deactivate
                 </button>
                 <button
                   onClick={() => batchToggleStatus('active')}
-                  className="bg-emerald-600 hover:bg-emerald-700 active:scale-95 transition-all text-white text-xs font-extrabold px-4 py-2 rounded-xl shadow-md shadow-emerald-900/20"
+                  className="bg-emerald-600 hover:bg-emerald-700 active:scale-95 transition-colors text-white text-xs font-extrabold px-4 py-2 rounded-xl shadow-md shadow-emerald-900/20"
                 >
                   Activate
                 </button>
@@ -2209,14 +2209,14 @@ export default function FacilityCatalogPage() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 26, stiffness: 220 }}
-              className="fixed right-0 top-0 bottom-0 h-screen w-full md:w-[85vw] lg:w-[75vw] xl:w-[70vw] max-w-[1400px] min-w-[320px] bg-white z-50 shadow-2xl flex flex-col border-l border-slate-100"
+              className="fixed right-0 top-0 bottom-0 h-screen w-full md:w-[85vw] lg:w-[75vw] xl:w-[70vw] max-w-[1400px] min-w-[320px] bg-surface z-50 shadow-2xl flex flex-col border-l border-border-subtle"
             >
               {/* Header with Title and Close Button */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-white">
-                <h2 className="text-xl font-extrabold text-slate-800 tracking-tight">Item Technical Specifications</h2>
+              <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface">
+                <h2 className="text-xl font-extrabold text-text-primary tracking-tight">Item Technical Specifications</h2>
                 <button
                   onClick={() => setSelectedItem(null)}
-                  className="p-2 rounded-xl text-slate-400 hover:text-slate-655 hover:bg-slate-50 transition-all focus:outline-none text-2xl font-semibold leading-none"
+                  className="p-2 rounded-xl text-slate-400 hover:text-slate-655 hover:bg-subtle/50 transition-colors focus:outline-none text-2xl font-semibold leading-none"
                   title="Close specifications"
                 >
                   &times;
@@ -2231,7 +2231,7 @@ export default function FacilityCatalogPage() {
                   <div className="lg:col-span-8 space-y-6">
                     
                     {/* Item Brand Hero with Sleek Modern Gradient Background */}
-                    <div className={`relative overflow-hidden p-6 rounded-2xl border transition-all ${
+                    <div className={`relative overflow-hidden p-6 rounded-2xl border transition-colors ${
                       selectedItem.type === 'Drug' 
                         ? 'bg-gradient-to-r from-indigo-50/70 via-slate-50/50 to-white border-indigo-100/80 shadow-sm shadow-indigo-100/10' 
                         : 'bg-gradient-to-r from-emerald-50/70 via-slate-50/50 to-white border-emerald-100/80 shadow-sm shadow-emerald-100/10'
@@ -2258,14 +2258,14 @@ export default function FacilityCatalogPage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex flex-wrap items-center gap-2">
-                            <span className="font-mono text-xs font-extrabold text-teal-700 bg-teal-50/80 border border-teal-100 px-2.5 py-0.5 rounded-lg tracking-wide shadow-2xs">
+                            <span className="font-mono text-xs font-extrabold text-teal-700 bg-accent-base/10 border border-teal-100 px-2.5 py-0.5 rounded-lg tracking-wide shadow-elevation-1">
                               {selectedItem.code}
                             </span>
-                            <Badge variant={selectedItem.type === 'Drug' ? 'primary' : 'success'} className="px-2.5 py-0.5 text-xs font-bold rounded-lg shadow-2xs">
+                            <Badge variant={selectedItem.type === 'Drug' ? 'primary' : 'success'} className="px-2.5 py-0.5 text-xs font-bold rounded-lg shadow-elevation-1">
                               {selectedItem.type}
                             </Badge>
                             {selectedItem.isControlled && (
-                              <span className="inline-flex items-center text-[10px] font-extrabold bg-rose-50 text-rose-650 border border-rose-100 px-2.5 py-0.5 rounded-lg uppercase tracking-wider shadow-2xs">
+                              <span className="inline-flex items-center text-[10px] font-extrabold bg-rose-500/10 text-rose-650 border border-rose-100 px-2.5 py-0.5 rounded-lg uppercase tracking-wider shadow-elevation-1">
                                 Controlled Medicine
                               </span>
                             )}
@@ -2275,11 +2275,11 @@ export default function FacilityCatalogPage() {
                               type="text"
                               value={editForm.name}
                               onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                              className="mt-2 font-bold text-slate-800 text-sm max-w-lg"
+                              className="mt-2 font-bold text-text-primary text-sm max-w-lg"
                               placeholder="Item Name"
                             />
                           ) : (
-                            <h3 className="text-xl font-extrabold text-slate-800 mt-2 tracking-tight leading-tight">
+                            <h3 className="text-xl font-extrabold text-text-primary mt-2 tracking-tight leading-tight">
                               {selectedItem.name}
                             </h3>
                           )}
@@ -2300,9 +2300,9 @@ export default function FacilityCatalogPage() {
                               s1. Item Specification
                             </h4>
                             
-                            <div className="bg-slate-50/30 p-5 rounded-2xl border border-slate-100 space-y-3.5 hover:border-slate-200/50 transition-all shadow-2xs">
-                              <div className="flex flex-col py-1 space-y-1.5 border-b border-slate-100/80 pb-2">
-                                <span className="text-xs font-bold text-slate-500">Item Name</span>
+                            <div className="bg-subtle/50 p-5 rounded-2xl border border-border-subtle space-y-3.5 hover:border-border-default transition-colors shadow-elevation-1">
+                              <div className="flex flex-col py-1 space-y-1.5 border-b border-border-subtle pb-2">
+                                <span className="text-xs font-bold text-text-muted">Item Name</span>
                                 {isEditingSpecs ? (
                                   <Input
                                     type="text"
@@ -2317,8 +2317,8 @@ export default function FacilityCatalogPage() {
                                 )}
                               </div>
 
-                              <div className="flex justify-between items-center py-2 border-b border-slate-100/80">
-                                <span className="text-xs font-bold text-slate-500">Brand Name</span>
+                              <div className="flex justify-between items-center py-2 border-b border-border-subtle">
+                                <span className="text-xs font-bold text-text-muted">Brand Name</span>
                                 {isEditingSpecs ? (
                                   <Input
                                     type="text"
@@ -2327,20 +2327,20 @@ export default function FacilityCatalogPage() {
                                     placeholder="e.g. Panadol"
                                   />
                                 ) : (
-                                  <span className="text-xs font-extrabold text-slate-880 bg-white border border-slate-100/70 px-3 py-1 rounded-xl shadow-3xs">
+                                  <span className="text-xs font-extrabold text-slate-880 bg-surface border border-border-subtle px-3 py-1 rounded-xl shadow-3xs">
                                     {selectedItem.brandName || 'N/A'}
                                   </span>
                                 )}
                               </div>
 
                               {selectedItem.type === 'Drug' && (
-                                <div className="flex justify-between items-center py-2 border-b border-slate-100/80">
-                                  <span className="text-xs font-bold text-slate-500">Dosage Form</span>
+                                <div className="flex justify-between items-center py-2 border-b border-border-subtle">
+                                  <span className="text-xs font-bold text-text-muted">Dosage Form</span>
                                   {isEditingSpecs ? (
                                     <select
                                       value={editForm.dosageForm || 'tablet'}
                                       onChange={(e) => setEditForm({ ...editForm, dosageForm: e.target.value })}
-                                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 outline-none"
+                                      className="w-full bg-surface border border-border-default rounded-xl px-3 py-2 text-xs font-bold text-text-secondary outline-none"
                                     >
                                       <option value="capsule">capsule</option>
                                       <option value="tablet">tablet</option>
@@ -2351,7 +2351,7 @@ export default function FacilityCatalogPage() {
                                       <option value="ointment">ointment</option>
                                     </select>
                                   ) : (
-                                    <span className="text-xs font-extrabold text-slate-880 bg-white border border-slate-100/70 px-3 py-1 rounded-xl shadow-3xs capitalize">
+                                    <span className="text-xs font-extrabold text-slate-880 bg-surface border border-border-subtle px-3 py-1 rounded-xl shadow-3xs capitalize">
                                       {selectedItem.dosageForm || 'Consumable'}
                                     </span>
                                   )}
@@ -2359,12 +2359,12 @@ export default function FacilityCatalogPage() {
                               )}
 
                               <div className="flex flex-col py-1 space-y-2">
-                                <span className="text-xs font-bold text-slate-500">Procurement Type</span>
+                                <span className="text-xs font-bold text-text-muted">Procurement Type</span>
                                 {isEditingSpecs ? (
                                   <select
                                     value={editForm.procurement_vote}
                                     onChange={(e) => setEditForm({ ...editForm, procurement_vote: e.target.value as any })}
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-700 outline-none"
+                                    className="w-full bg-surface border border-border-default rounded-xl px-3 py-2.5 text-xs font-bold text-text-secondary outline-none"
                                   >
                                     <option value="APPL">APPL</option>
                                     <option value="CC">CC</option>
@@ -2372,8 +2372,8 @@ export default function FacilityCatalogPage() {
                                     <option value="LP">LP</option>
                                   </select>
                                 ) : (
-                                  <div className="flex items-start space-x-3 text-slate-650 bg-white p-3.5 rounded-xl border border-slate-100/70 shadow-3xs">
-                                    <div className="p-2 bg-indigo-50 rounded-lg text-indigo-500 mt-0.5">
+                                  <div className="flex items-start space-x-3 text-slate-650 bg-surface p-3.5 rounded-xl border border-border-subtle shadow-3xs">
+                                    <div className="p-2 bg-indigo-500/10 rounded-lg text-indigo-500 mt-0.5">
                                       <Tag className="w-4 h-4" />
                                     </div>
                                     <div className="flex-1 min-w-0">
@@ -2393,7 +2393,7 @@ export default function FacilityCatalogPage() {
 
                               {editForm.procurement_vote === 'CC' && (
                                 <div className="flex flex-col py-1 space-y-2">
-                                  <span className="text-xs font-bold text-slate-500">KKM Contract No</span>
+                                  <span className="text-xs font-bold text-text-muted">KKM Contract No</span>
                                   {isEditingSpecs ? (
                                     <Input
                                       type="text"
@@ -2402,7 +2402,7 @@ export default function FacilityCatalogPage() {
                                       placeholder="KKM/KONTRAK/CC/..."
                                     />
                                   ) : (
-                                    <div className="flex items-start space-x-3 text-slate-655 bg-white p-3.5 rounded-xl border border-violet-100/80 shadow-3xs">
+                                    <div className="flex items-start space-x-3 text-slate-655 bg-surface p-3.5 rounded-xl border border-violet-100/80 shadow-3xs">
                                       <div className="p-2 bg-violet-50 rounded-lg text-violet-500 mt-0.5">
                                         <FileText className="w-4 h-4" />
                                       </div>
@@ -2437,15 +2437,15 @@ export default function FacilityCatalogPage() {
                               )}
                             </h4>
                             
-                            <div className="bg-slate-50/30 p-5 rounded-2xl border border-slate-100 space-y-3.5 hover:border-slate-200/50 transition-all shadow-2xs">
+                            <div className="bg-subtle/50 p-5 rounded-2xl border border-border-subtle space-y-3.5 hover:border-border-default transition-colors shadow-elevation-1">
 
-                              <div className="flex justify-between items-center py-2 border-b border-slate-100/80">
-                                <span className="text-xs font-bold text-slate-500">Item Category</span>
+                              <div className="flex justify-between items-center py-2 border-b border-border-subtle">
+                                <span className="text-xs font-bold text-text-muted">Item Category</span>
                                 {isEditingSpecs ? (
                                   <select
                                     value={editForm.category || 'B'}
                                     onChange={(e) => setEditForm({ ...editForm, category: e.target.value })}
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 outline-none"
+                                    className="w-full bg-surface border border-border-default rounded-xl px-3 py-2 text-xs font-bold text-text-secondary outline-none"
                                   >
                                     <option value="A">A</option>
                                     <option value="A*">A*</option>
@@ -2455,19 +2455,19 @@ export default function FacilityCatalogPage() {
                                     <option value="KPK">KPK</option>
                                   </select>
                                 ) : (
-                                  <span className="text-xs font-extrabold text-indigo-650 bg-indigo-50/50 border border-indigo-100/60 px-3 py-1 rounded-xl shadow-3xs truncate">
+                                  <span className="text-xs font-extrabold text-indigo-650 bg-indigo-500/10 border border-indigo-100/60 px-3 py-1 rounded-xl shadow-3xs truncate">
                                     {selectedItem.category || 'B'}
                                   </span>
                                 )}
                               </div>
 
                               <div className="flex justify-between items-center py-1">
-                                <span className="text-xs font-bold text-slate-500">Item Group</span>
+                                <span className="text-xs font-bold text-text-muted">Item Group</span>
                                 {isEditingSpecs ? (
                                   <select
                                     value={editForm.itemGroup || 'general'}
                                     onChange={(e) => setEditForm({ ...editForm, itemGroup: e.target.value })}
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 outline-none"
+                                    className="w-full bg-surface border border-border-default rounded-xl px-3 py-2 text-xs font-bold text-text-secondary outline-none"
                                   >
                                     <option value="analgesics">Analgesics & Antipyretics</option>
                                     <option value="antacids">Antacids & Antiulcer</option>
@@ -2501,7 +2501,7 @@ export default function FacilityCatalogPage() {
                                     <option value="general">General / Others</option>
                                   </select>
                                 ) : (
-                                  <span className="text-[10px] font-extrabold px-3 py-1 rounded-xl uppercase tracking-wider border shadow-3xs bg-slate-100/80 text-slate-655 border-slate-200/50">
+                                  <span className="text-[10px] font-extrabold px-3 py-1 rounded-xl uppercase tracking-wider border shadow-3xs bg-subtle text-slate-655 border-border-default">
                                     {selectedItem.itemGroup || 'General'}
                                   </span>
                                 )}
@@ -2516,16 +2516,16 @@ export default function FacilityCatalogPage() {
                               s3. Packaging
                             </h4>
                             
-                            <div className="bg-slate-50/30 p-5 rounded-2xl border border-slate-100 space-y-3.5 hover:border-slate-200/50 transition-all shadow-2xs">
-                              <div className="flex justify-between items-center py-2 border-b border-slate-100/80">
-                                <span className="text-xs font-bold text-slate-500">Item Code</span>
-                                <span className="font-mono text-xs font-extrabold text-teal-700 bg-teal-50/80 border border-teal-100 px-3 py-1 rounded-xl shadow-3xs">
+                            <div className="bg-subtle/50 p-5 rounded-2xl border border-border-subtle space-y-3.5 hover:border-border-default transition-colors shadow-elevation-1">
+                              <div className="flex justify-between items-center py-2 border-b border-border-subtle">
+                                <span className="text-xs font-bold text-text-muted">Item Code</span>
+                                <span className="font-mono text-xs font-extrabold text-teal-700 bg-accent-base/10 border border-teal-100 px-3 py-1 rounded-xl shadow-3xs">
                                   {selectedItem.code}
                                 </span>
                               </div>
 
-                              <div className="flex justify-between items-center py-2 border-b border-slate-100/80">
-                                <span className="text-xs font-bold text-slate-500">Price (RM)</span>
+                              <div className="flex justify-between items-center py-2 border-b border-border-subtle">
+                                <span className="text-xs font-bold text-text-muted">Price (RM)</span>
                                 {isEditingSpecs ? (
                                   <Input
                                     type="number"
@@ -2534,7 +2534,7 @@ export default function FacilityCatalogPage() {
                                     onChange={(e) => setEditForm({ ...editForm, price: parseFloat(e.target.value) || 0 })}
                                   />
                                 ) : (
-                                  <span className="text-sm font-extrabold text-teal-655 bg-teal-50/40 border border-teal-100/80 px-3 py-1 rounded-xl shadow-3xs">
+                                  <span className="text-sm font-extrabold text-teal-655 bg-accent-base/10 border border-teal-100/80 px-3 py-1 rounded-xl shadow-3xs">
                                     RM {selectedItem.price.toFixed(2)}
                                     <span className="text-[10px] font-normal text-slate-400 ml-1">/{selectedItem.uom}</span>
                                   </span>
@@ -2543,7 +2543,7 @@ export default function FacilityCatalogPage() {
 
                               <div className="flex flex-col py-1 space-y-2">
                                 <div className="flex justify-between items-center">
-                                  <span className="text-xs font-bold text-slate-500">Packaging Size</span>
+                                  <span className="text-xs font-bold text-text-muted">Packaging Size</span>
                                   
                                   <div className="flex items-center space-x-2">
                                     {isAddingNewSize ? (
@@ -2553,7 +2553,7 @@ export default function FacilityCatalogPage() {
                                           placeholder="e.g. box of 60 tablets"
                                           value={newSizeText}
                                           onChange={(e) => setNewSizeText(e.target.value)}
-                                          className="px-2.5 py-1 text-xs border border-slate-200 rounded-lg outline-none focus:ring-1 focus:ring-teal-500"
+                                          className="px-2.5 py-1 text-xs border border-border-default rounded-lg outline-none focus:ring-1 focus:ring-teal-500"
                                         />
                                         <button
                                           type="button"
@@ -2603,7 +2603,7 @@ export default function FacilityCatalogPage() {
                                       <button
                                         type="button"
                                         onClick={() => setIsAddingNewSize(true)}
-                                        className="inline-flex items-center px-2 py-1 text-[10px] font-bold text-teal-600 bg-teal-50 hover:bg-teal-100 rounded-lg transition-colors"
+                                        className="inline-flex items-center px-2 py-1 text-[10px] font-bold text-teal-600 bg-accent-base/10 hover:bg-teal-100 rounded-lg transition-colors"
                                       >
                                         <Plus className="w-3 h-3 mr-1" />
                                         Add Custom Size
@@ -2652,7 +2652,7 @@ export default function FacilityCatalogPage() {
                                       })
                                     }
                                   }}
-                                  className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-700 outline-none cursor-pointer focus:ring-2 focus:ring-teal-500/20 disabled:cursor-default disabled:bg-slate-50/50"
+                                  className="w-full bg-surface border border-border-default rounded-xl px-3.5 py-2.5 text-xs font-bold text-text-secondary outline-none cursor-pointer focus:ring-2 focus:ring-teal-500/20 disabled:cursor-default disabled:bg-subtle/50"
                                 >
                                   {(isEditingSpecs ? (editForm.packagingSizes || [editForm.packagingDescription || 'Standard box']) : (selectedItem.packagingSizes || [selectedItem.packagingDescription || 'Standard box'])).map(size => (
                                     <option key={size} value={size}>
@@ -2671,14 +2671,14 @@ export default function FacilityCatalogPage() {
                               s4. Storage
                             </h4>
                             
-                            <div className="bg-slate-50/30 p-5 rounded-2xl border border-slate-100 space-y-3.5 hover:border-slate-200/50 transition-all shadow-2xs">
-                              <div className="flex justify-between items-start py-2 border-b border-slate-100/80">
-                                <span className="text-xs font-bold text-slate-500 mt-0.5">Storage Condition</span>
+                            <div className="bg-subtle/50 p-5 rounded-2xl border border-border-subtle space-y-3.5 hover:border-border-default transition-colors shadow-elevation-1">
+                              <div className="flex justify-between items-start py-2 border-b border-border-subtle">
+                                <span className="text-xs font-bold text-text-muted mt-0.5">Storage Condition</span>
                                 {isEditingSpecs ? (
                                   <select
                                     value={editForm.storageConditions || 'Room temperature (below 30degree)'}
                                     onChange={(e) => setEditForm({ ...editForm, storageConditions: e.target.value })}
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 outline-none"
+                                    className="w-full bg-surface border border-border-default rounded-xl px-3 py-2 text-xs font-bold text-text-secondary outline-none"
                                   >
                                     <option value="Room temperature (below 30degree)">Room temperature (below 30degree)</option>
                                     <option value="Fridge(below 8 degree)">Fridge(below 8 degree)</option>
@@ -2690,8 +2690,8 @@ export default function FacilityCatalogPage() {
                                 )}
                               </div>
 
-                              <div className="flex justify-between items-center py-2 border-b border-slate-100/80">
-                                <span className="text-xs font-bold text-slate-500">Min Stock Level</span>
+                              <div className="flex justify-between items-center py-2 border-b border-border-subtle">
+                                <span className="text-xs font-bold text-text-muted">Min Stock Level</span>
                                 {isEditingSpecs ? (
                                   <Input
                                     type="number"
@@ -2699,14 +2699,14 @@ export default function FacilityCatalogPage() {
                                     onChange={(e) => setEditForm({ ...editForm, minStock: parseInt(e.target.value) || 0 })}
                                   />
                                 ) : (
-                                  <span className="text-xs font-extrabold text-slate-880 font-mono bg-white border border-slate-100/70 px-3 py-1 rounded-xl shadow-3xs">
+                                  <span className="text-xs font-extrabold text-slate-880 font-mono bg-surface border border-border-subtle px-3 py-1 rounded-xl shadow-3xs">
                                     {selectedItem.minStock.toLocaleString()} {selectedItem.uom}s
                                   </span>
                                 )}
                               </div>
 
-                              <div className="flex justify-between items-center py-2 border-b border-slate-100/80">
-                                <span className="text-xs font-bold text-slate-500">Max Stock Level</span>
+                              <div className="flex justify-between items-center py-2 border-b border-border-subtle">
+                                <span className="text-xs font-bold text-text-muted">Max Stock Level</span>
                                 {isEditingSpecs ? (
                                   <Input
                                     type="number"
@@ -2714,14 +2714,14 @@ export default function FacilityCatalogPage() {
                                     onChange={(e) => setEditForm({ ...editForm, maxStock: parseInt(e.target.value) || 0 })}
                                   />
                                 ) : (
-                                  <span className="text-xs font-extrabold text-slate-880 font-mono bg-white border border-slate-100/70 px-3 py-1 rounded-xl shadow-3xs">
+                                  <span className="text-xs font-extrabold text-slate-880 font-mono bg-surface border border-border-subtle px-3 py-1 rounded-xl shadow-3xs">
                                     {selectedItem.maxStock.toLocaleString()} {selectedItem.uom}s
                                   </span>
                                 )}
                               </div>
 
-                              <div className="flex justify-between items-center py-2 border-b border-slate-100/80">
-                                <span className="text-xs font-bold text-slate-500">Buffer Stock Level</span>
+                              <div className="flex justify-between items-center py-2 border-b border-border-subtle">
+                                <span className="text-xs font-bold text-text-muted">Buffer Stock Level</span>
                                 {isEditingSpecs ? (
                                   <Input
                                     type="number"
@@ -2729,14 +2729,14 @@ export default function FacilityCatalogPage() {
                                     onChange={(e) => setEditForm({ ...editForm, reorderLevel: parseInt(e.target.value) || 0 })}
                                   />
                                 ) : (
-                                  <span className="text-xs font-extrabold text-amber-655 font-mono bg-amber-50/60 border border-amber-100 px-3 py-1 rounded-xl shadow-3xs">
+                                  <span className="text-xs font-extrabold text-amber-655 font-mono bg-amber-500/10 border border-amber-100 px-3 py-1 rounded-xl shadow-3xs">
                                     {selectedItem.reorderLevel.toLocaleString()} {selectedItem.uom}s
                                   </span>
                                 )}
                               </div>
 
                               <div className="flex flex-col py-2 space-y-2">
-                                <span className="text-xs font-bold text-slate-500">Storage Location</span>
+                                <span className="text-xs font-bold text-text-muted">Storage Location</span>
                                 {isEditingSpecs ? (
                                   <div className="grid grid-cols-2 gap-2">
                                     <Input placeholder="Which Store" value={editForm.storageStore || ''} onChange={(e) => setEditForm({ ...editForm, storageStore: e.target.value })} className="text-xs" />
@@ -2746,17 +2746,17 @@ export default function FacilityCatalogPage() {
                                   </div>
                                 ) : (
                                   <div className="grid grid-cols-2 gap-2">
-                                    <span className="text-xs font-extrabold text-indigo-700 bg-indigo-50/60 px-3 py-1.5 rounded-xl border border-indigo-100/80 shadow-3xs flex items-center">
+                                    <span className="text-xs font-extrabold text-indigo-700 bg-indigo-500/10 px-3 py-1.5 rounded-xl border border-indigo-100/80 shadow-3xs flex items-center">
                                       <MapPin className="w-3.5 h-3.5 mr-1.5 text-indigo-500" />
                                       {selectedItem.storageStore || 'Main Store'}
                                     </span>
-                                    <span className="text-xs font-extrabold text-indigo-700 bg-indigo-50/60 px-3 py-1.5 rounded-xl border border-indigo-100/80 shadow-3xs flex items-center">
+                                    <span className="text-xs font-extrabold text-indigo-700 bg-indigo-500/10 px-3 py-1.5 rounded-xl border border-indigo-100/80 shadow-3xs flex items-center">
                                       Cab: {selectedItem.storageCabinet || 'N/A'}
                                     </span>
-                                    <span className="text-xs font-extrabold text-indigo-700 bg-indigo-50/60 px-3 py-1.5 rounded-xl border border-indigo-100/80 shadow-3xs flex items-center">
+                                    <span className="text-xs font-extrabold text-indigo-700 bg-indigo-500/10 px-3 py-1.5 rounded-xl border border-indigo-100/80 shadow-3xs flex items-center">
                                       Lvl: {selectedItem.storageLevel || 'N/A'}
                                     </span>
-                                    <span className="text-xs font-extrabold text-indigo-700 bg-indigo-50/60 px-3 py-1.5 rounded-xl border border-indigo-100/80 shadow-3xs flex items-center">
+                                    <span className="text-xs font-extrabold text-indigo-700 bg-indigo-500/10 px-3 py-1.5 rounded-xl border border-indigo-100/80 shadow-3xs flex items-center">
                                       Lbl: {selectedItem.storageLabel || 'N/A'}
                                     </span>
                                   </div>
@@ -2769,7 +2769,7 @@ export default function FacilityCatalogPage() {
 
                         {/* Action Buttons inside Edit Mode */}
                         {isEditingSpecs && (
-                          <div className="flex items-center justify-end space-x-3 pt-6 border-t border-slate-100 mt-4">
+                          <div className="flex items-center justify-end space-x-3 pt-6 border-t border-border-subtle mt-4">
                             <Button
                               variant="outline"
                               type="button"
@@ -2777,14 +2777,14 @@ export default function FacilityCatalogPage() {
                                 setEditForm({ ...selectedItem })
                                 setIsEditingSpecs(false)
                               }}
-                              className="rounded-xl px-6 py-2.5 text-xs font-bold text-slate-500 border-slate-200 shadow-3xs hover:text-slate-700 transition-all"
+                              className="rounded-xl px-6 py-2.5 text-xs font-bold text-text-muted border-border-default shadow-3xs hover:text-text-secondary transition-colors"
                             >
                               Cancel
                             </Button>
                             <Button
                               variant="primary"
                               type="submit"
-                              className="rounded-xl px-6 py-2.5 text-xs font-bold bg-teal-600 hover:bg-teal-700 text-white shadow-md shadow-teal-105 transition-all duration-200"
+                              className="rounded-xl px-6 py-2.5 text-xs font-bold bg-teal-600 hover:bg-teal-700 text-white shadow-md shadow-teal-105 transition-colors duration-150"
                             >
                               Save Specifications
                             </Button>
@@ -2795,17 +2795,17 @@ export default function FacilityCatalogPage() {
 
                     {/* Default actions when NOT editing */}
                     {!isEditingSpecs && (
-                      <div className="flex items-center justify-end space-x-3 pt-6 border-t border-slate-100 mt-4">
+                      <div className="flex items-center justify-end space-x-3 pt-6 border-t border-border-subtle mt-4">
                         <Button
                           variant="outline"
                           onClick={() => setSelectedItem(null)}
-                          className="rounded-xl px-6 py-2.5 text-xs font-bold text-slate-500 hover:bg-slate-50 border-slate-200/80 shadow-3xs hover:text-slate-700 transition-all duration-200"
+                          className="rounded-xl px-6 py-2.5 text-xs font-bold text-text-muted hover:bg-subtle/50 border-border-default shadow-3xs hover:text-text-secondary transition-colors duration-150"
                         >
                           Close Window
                         </Button>
                         <button
                           onClick={() => toggleItemStatus(selectedItem)}
-                          className={`rounded-xl px-6 py-2.5 text-xs font-bold text-white shadow-md transition-all duration-200 ${
+                          className={`rounded-xl px-6 py-2.5 text-xs font-bold text-white shadow-md transition-colors duration-150 ${
                             selectedItem.status === 'active' 
                               ? 'bg-rose-600 hover:bg-rose-700 shadow-rose-100' 
                               : 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-100'
@@ -2816,7 +2816,7 @@ export default function FacilityCatalogPage() {
                         <Button
                           variant="outline"
                           onClick={() => setIsEditingSpecs(true)}
-                          className="rounded-xl px-6 py-2.5 text-xs font-bold border-indigo-200 text-indigo-600 hover:bg-indigo-50/50 shadow-3xs transition-all duration-200"
+                          className="rounded-xl px-6 py-2.5 text-xs font-bold border-indigo-500/20 text-indigo-600 hover:bg-indigo-500/10 shadow-3xs transition-colors duration-150"
                         >
                           Edit Technical Specs
                         </Button>
@@ -2829,7 +2829,7 @@ export default function FacilityCatalogPage() {
                               type: 'info',
                             })
                           }}
-                          className="rounded-xl px-6 py-2.5 text-xs font-bold bg-teal-650 hover:bg-teal-700 text-white shadow-md shadow-teal-100 hover:shadow-lg hover:shadow-teal-200 transition-all duration-200"
+                          className="rounded-xl px-6 py-2.5 text-xs font-bold bg-teal-650 hover:bg-teal-700 text-white shadow-md shadow-teal-100 hover:shadow-lg hover:shadow-teal-200 transition-colors duration-150"
                         >
                           <Compass className="w-4 h-4 mr-2" />
                           Audit Specifications
@@ -2839,13 +2839,13 @@ export default function FacilityCatalogPage() {
                   </div>
 
                   {/* Right Column: Dynamic Timeline Audit Logs (lg:col-span-4) */}
-                  <div className="lg:col-span-4 border-l border-slate-100 pl-6 space-y-4">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                      <h4 className="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center">
+                  <div className="lg:col-span-4 border-l border-border-subtle pl-6 space-y-4">
+                    <div className="flex items-center justify-between border-b border-border-subtle pb-3">
+                      <h4 className="text-xs font-bold text-text-primary uppercase tracking-wider flex items-center">
                         <Activity className="w-4 h-4 mr-2 text-teal-600 animate-pulse" />
                         Specifications Audit Log
                       </h4>
-                      <Badge variant="gray" className="text-[10px] font-bold bg-slate-100 text-slate-500">
+                      <Badge variant="gray" className="text-[10px] font-bold bg-subtle text-text-muted">
                         Live
                       </Badge>
                     </div>
@@ -2868,16 +2868,16 @@ export default function FacilityCatalogPage() {
                                 {/* Dot indicator */}
                                 <div className="absolute -left-[21px] top-1.5 w-2.5 h-2.5 rounded-full bg-teal-500 border border-white ring-4 ring-teal-50" />
                                 
-                                <div className="text-[10px] font-bold text-teal-600 bg-teal-50/70 border border-teal-100/50 px-2 py-0.5 rounded-md w-fit">
+                                <div className="text-[10px] font-bold text-teal-600 bg-accent-base/10 border border-teal-100/50 px-2 py-0.5 rounded-md w-fit">
                                   {log.fieldName}
                                 </div>
                                 
-                                <div className="text-xs font-medium text-slate-700 leading-snug">
-                                  Changed from <span className="font-mono font-bold text-slate-400 line-through bg-slate-50 px-1 rounded">{log.oldValue}</span> to <span className="font-bold text-slate-800 bg-teal-50/40 border border-teal-100/30 px-1.5 py-0.5 rounded">{log.newValue}</span>
+                                <div className="text-xs font-medium text-text-secondary leading-snug">
+                                  Changed from <span className="font-mono font-bold text-slate-400 line-through bg-subtle/50 px-1 rounded">{log.oldValue}</span> to <span className="font-bold text-text-primary bg-accent-base/10 border border-teal-100/30 px-1.5 py-0.5 rounded">{log.newValue}</span>
                                 </div>
 
                                 <div className="flex items-center space-x-1.5 text-[9px] text-slate-400 font-semibold pt-0.5">
-                                  <span className="text-slate-500">{log.changedBy}</span>
+                                  <span className="text-text-muted">{log.changedBy}</span>
                                   <span>•</span>
                                   <span>
                                     {new Date(log.changedAt).toLocaleDateString(undefined, {
@@ -2922,17 +2922,17 @@ export default function FacilityCatalogPage() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 26, stiffness: 220 }}
-              className="fixed right-0 top-0 bottom-0 h-screen w-full md:w-[60vw] lg:w-[45vw] xl:w-[35vw] max-w-[800px] min-w-[320px] bg-white z-50 shadow-2xl flex flex-col border-l border-slate-100"
+              className="fixed right-0 top-0 bottom-0 h-screen w-full md:w-[60vw] lg:w-[45vw] xl:w-[35vw] max-w-[800px] min-w-[320px] bg-surface z-50 shadow-2xl flex flex-col border-l border-border-subtle"
             >
               {/* Header with Title and Close Button */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-white">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-surface">
                 <div className="flex items-center space-x-2">
                   <Activity className="w-5 h-5 text-teal-600" />
-                  <h2 className="text-lg font-extrabold text-slate-800 tracking-tight">Catalog Update History</h2>
+                  <h2 className="text-lg font-extrabold text-text-primary tracking-tight">Catalog Update History</h2>
                 </div>
                 <button
                   onClick={() => setShowUpdateHistory(false)}
-                  className="p-2 rounded-xl text-slate-400 hover:text-slate-655 hover:bg-slate-50 transition-all focus:outline-none text-2xl font-semibold leading-none"
+                  className="p-2 rounded-xl text-slate-400 hover:text-slate-655 hover:bg-subtle/50 transition-colors focus:outline-none text-2xl font-semibold leading-none"
                   title="Close history"
                 >
                   &times;
@@ -2940,8 +2940,8 @@ export default function FacilityCatalogPage() {
               </div>
 
               {/* Scrollable Content Body */}
-              <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50">
-                <p className="text-[11px] text-slate-500 font-semibold bg-white p-3.5 rounded-xl border border-slate-100 shadow-3xs leading-relaxed">
+              <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-subtle/50">
+                <p className="text-[11px] text-text-muted font-semibold bg-surface p-3.5 rounded-xl border border-border-subtle shadow-3xs leading-relaxed">
                   Real-time timeline of technical specifications, stock thresholds, and operational registry updates made to the hospital catalog by authenticated users.
                 </p>
 
@@ -2959,31 +2959,31 @@ export default function FacilityCatalogPage() {
                       {auditLogs.map((log) => {
                         const associatedItem = catalogItems.find(x => x.id === log.itemId)
                         return (
-                          <div key={log.id} className="relative space-y-2 bg-white p-4 rounded-xl border border-slate-100/80 shadow-3xs hover:shadow-xs transition-shadow">
+                          <div key={log.id} className="relative space-y-2 bg-surface p-4 rounded-xl border border-border-subtle shadow-3xs hover:shadow-xs transition-shadow">
                             {/* Dot indicator */}
                             <div className="absolute -left-[32px] top-4 w-3.5 h-3.5 rounded-full bg-teal-500 border-2 border-white ring-4 ring-teal-50/50" />
                             
                             <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-50 pb-2">
-                              <span className="text-xs font-extrabold text-slate-800 leading-snug">
+                              <span className="text-xs font-extrabold text-text-primary leading-snug">
                                 {log.itemName || associatedItem?.name || 'Catalog Item'}
                               </span>
-                              <span className="text-[10px] font-extrabold text-teal-600 bg-teal-50/70 border border-teal-100/50 px-2 py-0.5 rounded-md">
+                              <span className="text-[10px] font-extrabold text-teal-600 bg-accent-base/10 border border-teal-100/50 px-2 py-0.5 rounded-md">
                                 {log.fieldName}
                               </span>
                             </div>
 
                             <div className="flex items-center space-x-2 mt-1">
-                              <span className="font-mono text-[9px] font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">
+                              <span className="font-mono text-[9px] font-bold text-slate-400 bg-subtle/50 px-2 py-0.5 rounded border border-border-subtle">
                                 Code: {associatedItem ? associatedItem.code : log.itemId}
                               </span>
                             </div>
                             
-                            <div className="text-xs font-medium text-slate-600 leading-normal">
-                              Changed from <span className="font-mono text-slate-400 line-through bg-slate-50/80 px-1 rounded">{log.oldValue}</span> to <span className="font-bold text-slate-800 bg-teal-50/30 border border-teal-100/20 px-1.5 py-0.5 rounded">{log.newValue}</span>
+                            <div className="text-xs font-medium text-text-muted leading-normal">
+                              Changed from <span className="font-mono text-slate-400 line-through bg-subtle/50 px-1 rounded">{log.oldValue}</span> to <span className="font-bold text-text-primary bg-accent-base/10 border border-teal-100/20 px-1.5 py-0.5 rounded">{log.newValue}</span>
                             </div>
 
                             <div className="flex items-center space-x-1.5 text-[9px] text-slate-400 font-semibold pt-1 border-t border-slate-50/80">
-                              <span className="text-slate-500 font-bold">{log.changedBy}</span>
+                              <span className="text-text-muted font-bold">{log.changedBy}</span>
                               <span>•</span>
                               <span>
                                 {new Date(log.changedAt).toLocaleDateString(undefined, {
@@ -3005,11 +3005,11 @@ export default function FacilityCatalogPage() {
               </div>
 
               {/* Footer */}
-              <div className="p-4 border-t border-slate-100 bg-white flex justify-end">
+              <div className="p-4 border-t border-border-subtle bg-surface flex justify-end">
                 <Button
                   variant="outline"
                   onClick={() => setShowUpdateHistory(false)}
-                  className="rounded-xl px-5 py-2 text-xs font-bold text-slate-500 hover:bg-slate-50 border-slate-200"
+                  className="rounded-xl px-5 py-2 text-xs font-bold text-text-muted hover:bg-subtle/50 border-border-default"
                 >
                   Close Window
                 </Button>
@@ -3036,14 +3036,14 @@ export default function FacilityCatalogPage() {
               
               {/* Header section with tabs/switch if NOT in detail spec verification */}
               {!selectedMasterItem && !showCreateCustomForm && (
-                <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center border-b border-slate-100 pb-4 gap-4">
-                  <div className="flex bg-slate-100 p-1 rounded-xl w-fit">
+                <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center border-b border-border-subtle pb-4 gap-4">
+                  <div className="flex bg-subtle p-1 rounded-xl w-fit">
                     <button
                       onClick={() => setMasterFilterType('Drug')}
-                      className={`px-5 py-2 text-xs font-extrabold rounded-lg flex items-center space-x-2 transition-all ${
+                      className={`px-5 py-2 text-xs font-extrabold rounded-lg flex items-center space-x-2 transition-colors ${
                         masterFilterType === 'Drug'
-                          ? 'bg-white text-slate-800 shadow-sm'
-                          : 'text-slate-500 hover:text-slate-850'
+                          ? 'bg-surface text-text-primary shadow-sm'
+                          : 'text-text-muted hover:text-slate-850'
                       }`}
                     >
                       <Pill className="w-4 h-4 mr-1 text-indigo-500" />
@@ -3051,10 +3051,10 @@ export default function FacilityCatalogPage() {
                     </button>
                     <button
                       onClick={() => setMasterFilterType('Non-Drug')}
-                      className={`px-5 py-2 text-xs font-extrabold rounded-lg flex items-center space-x-2 transition-all ${
+                      className={`px-5 py-2 text-xs font-extrabold rounded-lg flex items-center space-x-2 transition-colors ${
                         masterFilterType === 'Non-Drug'
-                          ? 'bg-white text-slate-800 shadow-sm'
-                          : 'text-slate-500 hover:text-slate-850'
+                          ? 'bg-surface text-text-primary shadow-sm'
+                          : 'text-text-muted hover:text-slate-850'
                       }`}
                     >
                       <Package className="w-4 h-4 mr-1 text-emerald-500" />
@@ -3065,7 +3065,7 @@ export default function FacilityCatalogPage() {
                   <Button
                     variant="outline"
                     onClick={handleOpenCustomItemForm}
-                    className="rounded-xl text-xs px-4 py-2 border-slate-200 text-teal-600 font-bold hover:bg-slate-50 self-start sm:self-auto"
+                    className="rounded-xl text-xs px-4 py-2 border-border-default text-teal-600 font-bold hover:bg-subtle/50 self-start sm:self-auto"
                   >
                     Create Custom Item
                   </Button>
@@ -3082,30 +3082,30 @@ export default function FacilityCatalogPage() {
                       placeholder={`Search ${masterFilterType === 'Drug' ? 'drugs' : 'non-drugs'} in master catalog by code or name...`}
                       value={masterSearchQuery}
                       onChange={e => setMasterSearchQuery(e.target.value)}
-                      className="pl-11 pr-4 py-2.5 bg-slate-50/50 border-slate-200 focus:bg-white rounded-xl text-sm"
+                      className="pl-11 pr-4 py-2.5 bg-subtle/50 border-border-default focus:bg-surface rounded-xl text-sm"
                     />
                   </div>
 
                   {/* Clean, Professional Code & Name Table Grid */}
-                  <div className="border border-slate-100 rounded-2xl overflow-hidden shadow-sm bg-white">
+                  <div className="border border-border-subtle rounded-2xl overflow-hidden shadow-sm bg-surface">
                     <table className="w-full border-collapse text-left">
                       <thead>
-                        <tr className="bg-slate-50/80 border-b border-slate-100">
-                          <th className="px-6 py-3.5 text-xs font-black uppercase tracking-wider text-slate-400 w-1/4">Item Code</th>
-                          <th className="px-6 py-3.5 text-xs font-black uppercase tracking-wider text-slate-400">Item Name</th>
+                        <tr className="bg-subtle/50 border-b border-border-subtle">
+                          <th className="px-6 py-3.5 text-xs font-black uppercase tracking-wider text-text-secondary font-bold w-1/4">Item Code</th>
+                          <th className="px-6 py-3.5 text-xs font-black uppercase tracking-wider text-text-secondary font-bold">Item Name</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100">
+                      <tbody className="divide-y divide-border-subtle">
                         {isMasterLoading ? (
                           <tr>
-                            <td colSpan={2} className="px-6 py-8 text-center text-slate-400">
+                            <td colSpan={2} className="px-6 py-8 text-center text-text-muted font-medium">
                               <Spinner size="md" className="mx-auto" />
                               <div className="text-xs font-bold mt-2">Searching live Supabase catalog...</div>
                             </td>
                           </tr>
                         ) : masterItems.length === 0 ? (
                           <tr>
-                            <td colSpan={2} className="px-6 py-8 text-center text-slate-400 text-xs font-bold">
+                            <td colSpan={2} className="px-6 py-8 text-center text-text-muted font-medium text-xs font-bold">
                               No items found in {masterFilterType} catalog.
                             </td>
                           </tr>
@@ -3118,15 +3118,15 @@ export default function FacilityCatalogPage() {
                               <tr 
                                 key={masterItem.id} 
                                 onClick={() => handleSelectMasterItem(masterItem)}
-                                className="hover:bg-slate-50/60 transition-all cursor-pointer group"
+                                className="hover:bg-subtle/50 transition-colors cursor-pointer group"
                               >
                                 <td className="px-6 py-4">
-                                  <span className="font-mono text-xs font-bold text-teal-600 bg-teal-50 px-2 py-0.5 rounded border border-teal-100">
+                                  <span className="font-mono text-xs font-bold text-teal-600 bg-accent-base/10 px-2 py-0.5 rounded border border-teal-100">
                                     {masterItem.code}
                                   </span>
                                 </td>
                                 <td className="px-6 py-4">
-                                  <span className="font-bold text-slate-800 text-sm group-hover:text-indigo-650 transition-colors">
+                                  <span className="font-bold text-text-primary text-sm group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
                                     {masterItem.name}
                                   </span>
                                 </td>
@@ -3146,7 +3146,7 @@ export default function FacilityCatalogPage() {
                       pageSize={masterPageSize}
                       total={totalMasterRecords}
                       onPageChange={(page) => setMasterCurrentPage(page)}
-                      className="border-t border-slate-100 pt-4 bg-transparent px-0"
+                      className="border-t border-border-subtle pt-4 bg-transparent px-0"
                     />
                   )}
                 </div>
@@ -3156,10 +3156,10 @@ export default function FacilityCatalogPage() {
               {(selectedMasterItem || showCreateCustomForm) && (
                 <form onSubmit={handleAddWithSections} className="space-y-6">
                   {/* Item Identifier Hero */}
-                  <div className="bg-slate-50 border border-slate-200/60 p-4 rounded-2xl flex items-center justify-between">
+                  <div className="bg-subtle/50 border border-border-default p-4 rounded-2xl flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <div className={`p-2.5 rounded-xl ${
-                        sectionsForm.type === 'Drug' ? 'bg-indigo-50 text-indigo-500' : 'bg-emerald-50 text-emerald-500'
+                        sectionsForm.type === 'Drug' ? 'bg-indigo-500/10 text-indigo-500' : 'bg-emerald-500/10 text-emerald-500'
                       }`}>
                         {sectionsForm.type === 'Drug' ? <Pill className="w-5 h-5" /> : <Package className="w-5 h-5" />}
                       </div>
@@ -3167,7 +3167,7 @@ export default function FacilityCatalogPage() {
                         <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                           {sectionsForm.type.toUpperCase()} REFERENCE SPECIFICATIONS
                         </div>
-                        <h4 className="font-extrabold text-slate-800 text-base leading-snug">
+                        <h4 className="font-extrabold text-text-primary text-base leading-snug">
                           {selectedMasterItem ? selectedMasterItem.name : "New Custom Catalog Item"}
                         </h4>
                       </div>
@@ -3177,14 +3177,14 @@ export default function FacilityCatalogPage() {
                         variant="outline"
                         type="button"
                         onClick={() => setSelectedMasterItem(null)}
-                        className="rounded-xl px-3 py-1.5 text-xs border-slate-200 font-bold"
+                        className="rounded-xl px-3 py-1.5 text-xs border-border-default font-bold"
                       >
                         Back to List
                       </Button>
                     )}
                   </div>
 
-                  <p className="text-[11px] font-black text-rose-500 bg-rose-50/50 border border-rose-100/50 px-3 py-2 rounded-xl uppercase tracking-wider">
+                  <p className="text-[11px] font-black text-rose-500 bg-rose-500/10 border border-rose-100/50 px-3 py-2 rounded-xl uppercase tracking-wider">
                     ΓÜá∩╕Å CRITICAL VERIFICATION: Please review and set all 4 specification sections before saving this item to the active hospital facility registry.
                   </p>
 
@@ -3193,19 +3193,19 @@ export default function FacilityCatalogPage() {
                     
                     {/* s1. Item Specification */}
                     <div className="space-y-3 break-inside-avoid mb-6">
-                      <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center border-b border-slate-100 pb-2">
+                      <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center border-b border-border-subtle pb-2">
                         <ClipboardList className="w-4 h-4 mr-2 text-indigo-500" />
                         s1. Item Specification
                       </h4>
-                      <div className="bg-slate-50/30 p-5 rounded-2xl border border-slate-150 space-y-3.5 shadow-2xs">
+                      <div className="bg-subtle/50 p-5 rounded-2xl border border-slate-150 space-y-3.5 shadow-elevation-1">
                         
                         {showCreateCustomForm && (
                           <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Item Type *</label>
+                            <label className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider">Item Type *</label>
                             <select
                               value={sectionsForm.type}
                               onChange={e => setSectionsForm({ ...sectionsForm, type: e.target.value as any })}
-                              className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 outline-none"
+                              className="w-full bg-surface border border-border-default rounded-xl px-3 py-2 text-xs font-bold text-text-secondary outline-none"
                             >
                               <option value="Drug">Drug</option>
                               <option value="Non-Drug">Non-Drug</option>
@@ -3214,7 +3214,7 @@ export default function FacilityCatalogPage() {
                         )}
 
                         <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Item Name *</label>
+                          <label className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider">Item Name *</label>
                           <Input
                             type="text"
                             value={sectionsForm.name}
@@ -3224,7 +3224,7 @@ export default function FacilityCatalogPage() {
                         </div>
 
                         <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Brand Name</label>
+                          <label className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider">Brand Name</label>
                           <Input
                             type="text"
                             value={sectionsForm.brandName}
@@ -3235,11 +3235,11 @@ export default function FacilityCatalogPage() {
 
                         {sectionsForm.type === 'Drug' && (
                           <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Dosage Form</label>
+                            <label className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider">Dosage Form</label>
                             <select
                               value={sectionsForm.dosageForm || 'tablet'}
                               onChange={e => setSectionsForm({ ...sectionsForm, dosageForm: e.target.value })}
-                              className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 outline-none"
+                              className="w-full bg-surface border border-border-default rounded-xl px-3 py-2 text-xs font-bold text-text-secondary outline-none"
                             >
                               <option value="capsule">capsule</option>
                               <option value="tablet">tablet</option>
@@ -3254,11 +3254,11 @@ export default function FacilityCatalogPage() {
 
                         <div className="grid grid-cols-2 gap-3">
                           <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Procurement Type</label>
+                            <label className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider">Procurement Type</label>
                             <select
                               value={sectionsForm.procurement_vote}
                               onChange={e => setSectionsForm({ ...sectionsForm, procurement_vote: e.target.value as any })}
-                              className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 outline-none"
+                              className="w-full bg-surface border border-border-default rounded-xl px-3 py-2 text-xs font-bold text-text-secondary outline-none"
                             >
                               <option value="APPL">APPL</option>
                               <option value="CC">CC</option>
@@ -3269,7 +3269,7 @@ export default function FacilityCatalogPage() {
 
                           {sectionsForm.procurement_vote === 'CC' && (
                             <div className="space-y-1">
-                              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">KKM Contract No</label>
+                              <label className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider">KKM Contract No</label>
                               <Input
                                 type="text"
                                 value={sectionsForm.kkmContractNumber}
@@ -3284,7 +3284,7 @@ export default function FacilityCatalogPage() {
 
                     {/* s2. Pharmacology & Technical Spec */}
                     <div className="space-y-3 break-inside-avoid mb-6">
-                      <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center border-b border-slate-100 pb-2">
+                      <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center border-b border-border-subtle pb-2">
                         {sectionsForm.type === 'Drug' ? (
                           <>
                             <Pill className="w-4 h-4 mr-2 text-rose-500" />
@@ -3297,16 +3297,16 @@ export default function FacilityCatalogPage() {
                           </>
                         )}
                       </h4>
-                      <div className="bg-slate-50/30 p-5 rounded-2xl border border-slate-150 space-y-3.5 shadow-2xs">
+                      <div className="bg-subtle/50 p-5 rounded-2xl border border-slate-150 space-y-3.5 shadow-elevation-1">
 
 
                         <div className="grid grid-cols-2 gap-3">
                           <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Item Category *</label>
+                            <label className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider">Item Category *</label>
                             <select
                               value={sectionsForm.category || 'B'}
                               onChange={e => setSectionsForm({ ...sectionsForm, category: e.target.value })}
-                              className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 outline-none"
+                              className="w-full bg-surface border border-border-default rounded-xl px-3 py-2 text-xs font-bold text-text-secondary outline-none"
                               required
                             >
                               <option value="A">A</option>
@@ -3319,11 +3319,11 @@ export default function FacilityCatalogPage() {
                           </div>
 
                           <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Item Group</label>
+                            <label className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider">Item Group</label>
                             <select
                               value={sectionsForm.itemGroup || 'general'}
                               onChange={e => setSectionsForm({ ...sectionsForm, itemGroup: e.target.value })}
-                              className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 outline-none"
+                              className="w-full bg-surface border border-border-default rounded-xl px-3 py-2 text-xs font-bold text-text-secondary outline-none"
                             >
                               <option value="analgesics">Analgesics & Antipyretics</option>
                               <option value="antacids">Antacids & Antiulcer</option>
@@ -3363,14 +3363,14 @@ export default function FacilityCatalogPage() {
 
                     {/* s3. Packaging & Pricing */}
                     <div className="space-y-3 break-inside-avoid mb-6">
-                      <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center border-b border-slate-100 pb-2">
+                      <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center border-b border-border-subtle pb-2">
                         <Package className="w-4 h-4 mr-2 text-emerald-500" />
                         s3. Packaging & Pricing
                       </h4>
-                      <div className="bg-slate-50/30 p-5 rounded-2xl border border-slate-150 space-y-3.5 shadow-2xs">
+                      <div className="bg-subtle/50 p-5 rounded-2xl border border-slate-150 space-y-3.5 shadow-elevation-1">
                         <div className="grid grid-cols-2 gap-3">
                           <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Item Code *</label>
+                            <label className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider">Item Code *</label>
                             <Input
                               type="text"
                               value={sectionsForm.code}
@@ -3380,7 +3380,7 @@ export default function FacilityCatalogPage() {
                           </div>
 
                           <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">UOM / Unit Of Measure</label>
+                            <label className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider">UOM / Unit Of Measure</label>
                             <Input
                               type="text"
                               value={sectionsForm.uom}
@@ -3394,7 +3394,7 @@ export default function FacilityCatalogPage() {
 
                         <div className="grid grid-cols-2 gap-3">
                           <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Unit Price (RM) *</label>
+                            <label className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider">Unit Price (RM) *</label>
                             <Input
                               type="number"
                               step="0.01"
@@ -3405,7 +3405,7 @@ export default function FacilityCatalogPage() {
                           </div>
 
                           <div className="space-y-1">
-                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Packaging Description</label>
+                            <label className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider">Packaging Description</label>
                             <Input
                               type="text"
                               value={sectionsForm.packagingDescription}
@@ -3419,17 +3419,17 @@ export default function FacilityCatalogPage() {
 
                     {/* s4. Storage & Stock Level */}
                     <div className="space-y-3 break-inside-avoid mb-6">
-                      <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center border-b border-slate-100 pb-2">
+                      <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-widest flex items-center border-b border-border-subtle pb-2">
                         <Boxes className="w-4 h-4 mr-2 text-teal-500" />
                         s4. Storage & Stock Level
                       </h4>
-                      <div className="bg-slate-50/30 p-5 rounded-2xl border border-slate-150 space-y-3.5 shadow-2xs">
+                      <div className="bg-subtle/50 p-5 rounded-2xl border border-slate-150 space-y-3.5 shadow-elevation-1">
                         <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Storage Conditions</label>
+                          <label className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider">Storage Conditions</label>
                           <select
                             value={sectionsForm.storageConditions || 'Room temperature (below 30degree)'}
                             onChange={e => setSectionsForm({ ...sectionsForm, storageConditions: e.target.value })}
-                            className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 outline-none"
+                            className="w-full bg-surface border border-border-default rounded-xl px-3 py-2 text-xs font-bold text-text-secondary outline-none"
                           >
                             <option value="Room temperature (below 30degree)">Room temperature (below 30degree)</option>
                             <option value="Fridge(below 8 degree)">Fridge(below 8 degree)</option>
@@ -3438,7 +3438,7 @@ export default function FacilityCatalogPage() {
 
                         <div className="grid grid-cols-3 gap-2">
                           <div className="space-y-1">
-                            <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Min Stock</label>
+                            <label className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider">Min Stock</label>
                             <Input
                               type="number"
                               value={sectionsForm.minStock}
@@ -3447,7 +3447,7 @@ export default function FacilityCatalogPage() {
                           </div>
 
                           <div className="space-y-1">
-                            <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Max Stock</label>
+                            <label className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider">Max Stock</label>
                             <Input
                               type="number"
                               value={sectionsForm.maxStock}
@@ -3456,7 +3456,7 @@ export default function FacilityCatalogPage() {
                           </div>
 
                           <div className="space-y-1">
-                            <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Buffer/Reorder</label>
+                            <label className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider">Buffer/Reorder</label>
                             <Input
                               type="number"
                               value={sectionsForm.reorderLevel}
@@ -3466,7 +3466,7 @@ export default function FacilityCatalogPage() {
                         </div>
 
                         <div className="space-y-1">
-                          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Storage Location</label>
+                          <label className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider">Storage Location</label>
                           <div className="grid grid-cols-2 gap-2">
                             <Input placeholder="Which Store" value={sectionsForm.storageStore} onChange={e => setSectionsForm({ ...sectionsForm, storageStore: e.target.value })} />
                             <Input placeholder="Which Cabinet" value={sectionsForm.storageCabinet} onChange={e => setSectionsForm({ ...sectionsForm, storageCabinet: e.target.value })} />
@@ -3479,7 +3479,7 @@ export default function FacilityCatalogPage() {
 
                   </div>
 
-                  <div className="flex justify-end space-x-3 pt-6 border-t border-slate-100 mt-6">
+                  <div className="flex justify-end space-x-3 pt-6 border-t border-border-subtle mt-6">
                     <Button
                       variant="outline"
                       type="button"
@@ -3487,7 +3487,7 @@ export default function FacilityCatalogPage() {
                         setSelectedMasterItem(null)
                         setShowCreateCustomForm(false)
                       }}
-                      className="rounded-xl px-6 py-2.5 text-xs font-bold text-slate-500 border-slate-200"
+                      className="rounded-xl px-6 py-2.5 text-xs font-bold text-text-muted border-border-default"
                     >
                       Back to List
                     </Button>

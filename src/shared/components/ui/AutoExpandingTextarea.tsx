@@ -24,7 +24,7 @@ export const AutoExpandingTextarea = React.forwardRef<HTMLTextAreaElement, AutoE
       <textarea
         ref={textareaRef}
         rows={1}
-        className={`w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all resize-none overflow-hidden hover:border-slate-300 ${className}`}
+        className={`w-full rounded-xl border border-border-default bg-surface px-4 py-2.5 text-sm text-text-primary placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors resize-none overflow-hidden hover:border-border-default ${className}`}
         onInput={adjustHeight}
         {...props}
       />

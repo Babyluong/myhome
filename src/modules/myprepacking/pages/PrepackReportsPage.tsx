@@ -120,7 +120,7 @@ export const PrepackReportsPage: React.FC = () => {
           <div className="flex items-center flex-wrap gap-2">
             <button
               onClick={() => exportPrepackReportExcel(items, batches, usageLogs)}
-              className="min-h-[36px] px-3.5 py-1.5 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-teal-500/40"
+              className="min-h-[36px] px-3.5 py-1.5 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-teal-500/40"
             >
               <FileSpreadsheet className="w-3.5 h-3.5" />
               <span>Export Excel (.xlsx)</span>
@@ -128,7 +128,7 @@ export const PrepackReportsPage: React.FC = () => {
 
             <button
               onClick={() => generatePrepackPdfReport(items, batches, usageLogs)}
-              className="min-h-[36px] px-3.5 py-1.5 bg-surface hover:bg-subtle active:scale-[0.98] text-text-primary border border-border-default hover:border-border-strong rounded-lg text-xs font-medium flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
+              className="min-h-[36px] px-3.5 py-1.5 bg-surface hover:bg-subtle active:scale-[0.98] text-text-primary border border-border-default hover:border-border-strong rounded-lg text-xs font-medium flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
             >
               <FileDown className="w-3.5 h-3.5 text-text-muted" />
               <span>Official PDF Report</span>
@@ -137,7 +137,7 @@ export const PrepackReportsPage: React.FC = () => {
             <button
               onClick={loadData}
               title="Refresh Reports Data"
-              className="min-h-[36px] min-w-[36px] p-2 bg-surface hover:bg-subtle active:scale-[0.98] text-text-muted hover:text-text-primary rounded-lg border border-border-default hover:border-border-strong transition-all cursor-pointer shadow-xs flex items-center justify-center"
+              className="min-h-[36px] min-w-[36px] p-2 bg-surface hover:bg-subtle active:scale-[0.98] text-text-muted hover:text-text-primary rounded-lg border border-border-default hover:border-border-strong transition-colors cursor-pointer shadow-xs flex items-center justify-center"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             </button>
@@ -225,7 +225,7 @@ export const PrepackReportsPage: React.FC = () => {
                     </div>
                     <div className="w-full bg-subtle h-2 rounded-full overflow-hidden">
                       <div
-                        className="bg-teal-600 dark:bg-teal-500 h-2 rounded-full transition-all duration-500"
+                        className="bg-teal-600 dark:bg-teal-500 h-2 rounded-full transition-colors duration-500"
                         style={{ width: `${Math.min(100, percentage)}%` }}
                       />
                     </div>
@@ -259,7 +259,7 @@ export const PrepackReportsPage: React.FC = () => {
                     </div>
                     <div className="w-full bg-subtle h-2 rounded-full overflow-hidden">
                       <div
-                        className="bg-teal-600 dark:bg-teal-500 h-2 rounded-full transition-all duration-500"
+                        className="bg-teal-600 dark:bg-teal-500 h-2 rounded-full transition-colors duration-500"
                         style={{ width: `${Math.min(100, percentage)}%` }}
                       />
                     </div>

@@ -101,7 +101,7 @@ export const PrepackBatchCard: React.FC<PrepackBatchCardProps> = ({
         <button
           type="button"
           onClick={() => onPrintLabel(batch)}
-          className="flex-1 py-1.5 px-3 bg-surface hover:bg-subtle text-text-primary border border-border-default hover:border-border-strong rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-[0.98] shadow-xs"
+          className="flex-1 py-1.5 px-3 bg-surface hover:bg-subtle text-text-primary border border-border-default hover:border-border-strong rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer active:scale-[0.98] shadow-xs"
         >
           <Printer className="w-3.5 h-3.5 text-text-muted" />
           <span>Print Label</span>
@@ -111,7 +111,7 @@ export const PrepackBatchCard: React.FC<PrepackBatchCardProps> = ({
           <button
             type="button"
             onClick={() => onIssueStock(batch)}
-            className="flex-1 py-1.5 px-3 bg-teal-700 hover:bg-teal-600 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer active:scale-[0.98] shadow-xs"
+            className="flex-1 py-1.5 px-3 bg-teal-700 hover:bg-teal-600 text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer active:scale-[0.98] shadow-xs"
           >
             <Send className="w-3.5 h-3.5" />
             <span>Issue Stock</span>

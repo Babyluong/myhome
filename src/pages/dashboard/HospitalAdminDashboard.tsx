@@ -146,7 +146,7 @@ export const HospitalAdminDashboard: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-5"
+          className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-500/20 rounded-xl p-5"
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -154,7 +154,7 @@ export const HospitalAdminDashboard: React.FC = () => {
                 <AlertTriangle className="w-6 h-6 text-amber-600" />
               </div>
               <div>
-                <h3 className="font-semibold text-amber-900">
+                <h3 className="font-semibold text-amber-400 dark:text-amber-300 font-bold">
                   {totalPendingApprovals} Item{totalPendingApprovals > 1 ? 's' : ''} Pending Approval
                 </h3>
                 <p className="text-sm text-amber-700">
@@ -197,7 +197,7 @@ export const HospitalAdminDashboard: React.FC = () => {
           className={cn(
             'rounded-xl p-5 border',
             healthSummary.overall_status === 'healthy' ? 'bg-green-50 border-green-200' :
-            healthSummary.overall_status === 'warning' ? 'bg-amber-50 border-amber-200' :
+            healthSummary.overall_status === 'warning' ? 'bg-amber-500/10 border-amber-500/20' :
             'bg-red-50 border-red-200'
           )}
         >
@@ -214,8 +214,8 @@ export const HospitalAdminDashboard: React.FC = () => {
                 )}
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900">System Status: {healthSummary.overall_status.toUpperCase()}</h3>
-                <p className="text-sm text-gray-600">
+                <h3 className="font-semibold text-text-primary">System Status: {healthSummary.overall_status.toUpperCase()}</h3>
+                <p className="text-sm text-text-secondary">
                   {healthSummary.active_sessions} active sessions • {healthSummary.uptime_percent}% uptime
                 </p>
               </div>
@@ -234,7 +234,7 @@ export const HospitalAdminDashboard: React.FC = () => {
         transition={{ delay: 0.1 }}
         className="card p-6"
       >
-        <h2 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+        <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
           <TrendingUp className="w-5 h-5 text-primary-600" />
           Key Performance Indicators
         </h2>
@@ -313,9 +313,9 @@ export const HospitalAdminDashboard: React.FC = () => {
           transition={{ delay: 0.2 }}
           className="lg:col-span-2 card"
         >
-          <div className="p-6 border-b border-gray-100">
+          <div className="p-6 border-b border-border-subtle">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2">
                 <Activity className="w-5 h-5 text-primary-600" />
                 Service Status
               </h2>
@@ -333,7 +333,7 @@ export const HospitalAdminDashboard: React.FC = () => {
                   className={cn(
                     'flex items-center justify-between p-3 rounded-lg',
                     service.status === 'healthy' ? 'bg-green-50' :
-                    service.status === 'warning' ? 'bg-amber-50' : 'bg-red-50'
+                    service.status === 'warning' ? 'bg-amber-500/10' : 'bg-red-50'
                   )}
                 >
                   <div className="flex items-center gap-3">
@@ -342,7 +342,7 @@ export const HospitalAdminDashboard: React.FC = () => {
                       service.status === 'healthy' ? 'bg-green-500' :
                       service.status === 'warning' ? 'bg-amber-500' : 'bg-red-500'
                     )} />
-                    <span className="text-sm font-medium text-gray-900">{service.name}</span>
+                    <span className="text-sm font-medium text-text-primary">{service.name}</span>
                   </div>
                   <Badge 
                     variant={
@@ -366,22 +366,22 @@ export const HospitalAdminDashboard: React.FC = () => {
           transition={{ delay: 0.25 }}
           className="card"
         >
-          <div className="p-6 border-b border-gray-100">
-            <h2 className="text-lg font-semibold text-gray-900">Quick Actions</h2>
+          <div className="p-6 border-b border-border-subtle">
+            <h2 className="text-lg font-semibold text-text-primary">Quick Actions</h2>
           </div>
 
           <div className="p-4 space-y-3">
             <Link to={ROUTES.ADMIN_ACCESS_REQUESTS}>
               <motion.div
                 whileHover={{ scale: 1.02 }}
-                className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
+                className="flex items-center gap-3 p-3 bg-subtle/50 rounded-xl hover:bg-subtle transition-colors cursor-pointer"
               >
                 <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
                   <FileText className="w-5 h-5 text-primary-600" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-medium text-gray-900">Review Access Requests</p>
-                  <p className="text-xs text-gray-500">Approve or deny user registrations</p>
+                  <p className="font-medium text-text-primary">Review Access Requests</p>
+                  <p className="text-xs text-text-muted">Approve or deny user registrations</p>
                 </div>
               </motion.div>
             </Link>
@@ -389,14 +389,14 @@ export const HospitalAdminDashboard: React.FC = () => {
             <Link to={ROUTES.ADMIN_MEMOS}>
               <motion.div
                 whileHover={{ scale: 1.02 }}
-                className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
+                className="flex items-center gap-3 p-3 bg-subtle/50 rounded-xl hover:bg-subtle transition-colors cursor-pointer"
               >
                 <div className="w-10 h-10 bg-violet-100 rounded-lg flex items-center justify-center">
                   <Megaphone className="w-5 h-5 text-violet-600" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-medium text-gray-900">Approve Memos</p>
-                  <p className="text-xs text-gray-500">Review memo submissions</p>
+                  <p className="font-medium text-text-primary">Approve Memos</p>
+                  <p className="text-xs text-text-muted">Review memo submissions</p>
                 </div>
                 {pendingMemos > 0 && (
                   <Badge variant="warning">{pendingMemos}</Badge>
@@ -407,14 +407,14 @@ export const HospitalAdminDashboard: React.FC = () => {
             <Link to={ROUTES.ADMIN_SENSITIVE_DATA_REQUESTS}>
               <motion.div
                 whileHover={{ scale: 1.02 }}
-                className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
+                className="flex items-center gap-3 p-3 bg-subtle/50 rounded-xl hover:bg-subtle transition-colors cursor-pointer"
               >
                 <div className="w-10 h-10 bg-rose-100 rounded-lg flex items-center justify-center">
                   <Lock className="w-5 h-5 text-rose-600" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-medium text-gray-900">Sensitive Data Requests</p>
-                  <p className="text-xs text-gray-500">Manage patient data access</p>
+                  <p className="font-medium text-text-primary">Sensitive Data Requests</p>
+                  <p className="text-xs text-text-muted">Manage patient data access</p>
                 </div>
                 {pendingSensitiveRequests > 0 && (
                   <Badge variant={sensitiveDataCounts.emergency > 0 ? 'error' : 'warning'}>
@@ -427,14 +427,14 @@ export const HospitalAdminDashboard: React.FC = () => {
             <Link to={ROUTES.ADMIN_HOSPITAL_LOGS}>
               <motion.div
                 whileHover={{ scale: 1.02 }}
-                className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
+                className="flex items-center gap-3 p-3 bg-subtle/50 rounded-xl hover:bg-subtle transition-colors cursor-pointer"
               >
-                <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
-                  <ScrollText className="w-5 h-5 text-slate-600" />
+                <div className="w-10 h-10 bg-subtle rounded-lg flex items-center justify-center">
+                  <ScrollText className="w-5 h-5 text-text-secondary" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-medium text-gray-900">View System Logs</p>
-                  <p className="text-xs text-gray-500">Monitor system activities</p>
+                  <p className="font-medium text-text-primary">View System Logs</p>
+                  <p className="text-xs text-text-muted">Monitor system activities</p>
                 </div>
               </motion.div>
             </Link>
@@ -442,14 +442,14 @@ export const HospitalAdminDashboard: React.FC = () => {
             <Link to={ROUTES.ADMIN_HOSPITAL_BACKUPS}>
               <motion.div
                 whileHover={{ scale: 1.02 }}
-                className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
+                className="flex items-center gap-3 p-3 bg-subtle/50 rounded-xl hover:bg-subtle transition-colors cursor-pointer"
               >
                 <div className="w-10 h-10 bg-indigo-100 rounded-lg flex items-center justify-center">
                   <Database className="w-5 h-5 text-indigo-600" />
                 </div>
                 <div className="flex-1">
-                  <p className="font-medium text-gray-900">Check Backup Status</p>
-                  <p className="text-xs text-gray-500">View backup history</p>
+                  <p className="font-medium text-text-primary">Check Backup Status</p>
+                  <p className="text-xs text-text-muted">View backup history</p>
                 </div>
               </motion.div>
             </Link>
@@ -464,7 +464,7 @@ export const HospitalAdminDashboard: React.FC = () => {
         transition={{ delay: 0.3 }}
         className="card p-6"
       >
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Hospital Management</h3>
+        <h3 className="text-lg font-semibold text-text-primary mb-4">Hospital Management</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Button variant="outline" className="h-auto py-4 flex-col gap-2" as={Link} to={ROUTES.ADMIN_USERS}>
             <Users className="w-6 h-6" />

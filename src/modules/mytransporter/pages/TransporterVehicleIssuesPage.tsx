@@ -272,7 +272,7 @@ const TransporterVehicleIssuesPage: React.FC = () => {
       {/* Back button */}
       <button 
         onClick={() => navigate('/transporter/dashboard')}
-        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold mb-4 cursor-pointer"
+        className="flex items-center gap-2 text-text-muted hover:text-text-primary transition-colors text-sm font-semibold mb-4 cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>{isEn ? 'Back to Dashboard' : 'Kembali ke Papan Pemuka'}</span>
@@ -281,11 +281,11 @@ const TransporterVehicleIssuesPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+          <h1 className="text-2xl font-black text-text-primary tracking-tight flex items-center gap-2">
             <Wrench className="w-8 h-8 text-rose-600 animate-pulse" />
             {isEn ? 'Vehicle Defect & Incident Reports' : 'Aduan & Laporan Kerosakan Kenderaan'}
           </h1>
-          <p className="text-slate-500 text-sm">
+          <p className="text-text-muted text-sm">
             {isEn 
               ? 'Review, acknowledge, and track maintenance actions for hospital fleet vehicles reported with defects or maintenance needs.' 
               : 'Semak, sahkan, dan urus tindakan penyelenggaraan bagi kenderaan hospital yang dilaporkan rosak/masalah oleh pemandu.'}
@@ -301,21 +301,21 @@ const TransporterVehicleIssuesPage: React.FC = () => {
       </div>
 
       {/* Issues List Card */}
-      <Card className="border border-slate-200 shadow-sm overflow-hidden">
+      <Card className="border border-border-default shadow-sm overflow-hidden">
         <CardContent className="p-0">
           {loading ? (
-            <div className="p-12 text-center text-slate-500 font-medium animate-pulse">
+            <div className="p-12 text-center text-text-muted font-medium animate-pulse">
               {isEn ? 'Loading defect reports...' : 'Memuatkan laporan kerosakan...'}
             </div>
           ) : issues.length === 0 ? (
-            <div className="p-12 text-center text-slate-500">
+            <div className="p-12 text-center text-text-muted">
               {isEn ? 'No vehicle defect reports on file.' : 'Tiada sebarang laporan kerosakan kenderaan berdaftar.'}
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  <tr className="bg-subtle/50 border-b border-border-subtle text-xs font-semibold text-text-muted uppercase tracking-wider">
                     <th className="px-6 py-4">{isEn ? 'Vehicle' : 'Kenderaan'}</th>
                     <th className="px-6 py-4">{isEn ? 'Issue & Defect Description' : 'Aduan Kerosakan'}</th>
                     <th className="px-6 py-4">{isEn ? 'Reported By' : 'Kakitangan Melapor'}</th>
@@ -325,23 +325,23 @@ const TransporterVehicleIssuesPage: React.FC = () => {
                     <th className="px-6 py-4 text-right">{isEn ? 'Action' : 'Tindakan'}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
+                <tbody className="divide-y divide-border-subtle text-sm text-text-secondary">
                   {issues.map((issue) => (
-                    <tr key={issue.id} className="hover:bg-slate-50/50 transition-colors">
+                    <tr key={issue.id} className="hover:bg-subtle/50 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="font-mono font-bold text-blue-600">{issue.kenderaan?.no_kenderaan}</div>
                         <div className="text-xxs text-slate-400 font-semibold">{issue.kenderaan?.model}</div>
                       </td>
                       <td className="px-6 py-4 max-w-sm">
                         <div className="flex flex-col gap-1.5">
-                          <div className="font-bold text-slate-800">{issue.tajuk}</div>
-                          <p className="text-xs text-slate-500 truncate max-w-xs">{issue.penerangan}</p>
+                          <div className="font-bold text-text-primary">{issue.tajuk}</div>
+                          <p className="text-xs text-text-muted truncate max-w-xs">{issue.penerangan}</p>
                           
                           {/* Photo thumbnails list */}
                           {issue.foto_kerosakan && (
                             <div className="flex flex-wrap gap-1.5 mt-1">
                               {getPhotos(issue.foto_kerosakan).map((photoUrl, idx) => (
-                                <div key={idx} className="w-10 h-10 rounded border border-slate-200 overflow-hidden bg-slate-100 flex-shrink-0 shadow-xxs">
+                                <div key={idx} className="w-10 h-10 rounded border border-border-default overflow-hidden bg-subtle flex-shrink-0 shadow-xxs">
                                   <img 
                                     src={photoUrl} 
                                     className="w-full h-full object-cover cursor-zoom-in hover:scale-105 transition-transform" 
@@ -354,21 +354,21 @@ const TransporterVehicleIssuesPage: React.FC = () => {
                           )}
 
                           {issue.status === 'resolved' && issue.catatan_penyelesaian && (
-                            <div className="mt-2 p-2 bg-slate-50 border border-slate-200 rounded-lg text-xxs text-slate-500">
+                            <div className="mt-2 p-2 bg-subtle/50 border border-border-default rounded-lg text-xxs text-text-muted">
                               <strong>{isEn ? 'Resolution Note:' : 'Res:'}</strong> "{issue.catatan_penyelesaian}"
                             </div>
                           )}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700">
+                        <div className="flex items-center gap-1.5 text-xs font-semibold text-text-secondary">
                           <User className="w-3.5 h-3.5 text-slate-400" />
                           {issue.pemandu?.full_name || (isEn ? 'Staff Driver' : 'Driver')}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">{getPriorityBadge(issue.keutamaan)}</td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-xs font-semibold text-slate-600">
+                        <span className="text-xs font-semibold text-text-muted">
                           {new Date(issue.created_at).toLocaleDateString(isEn ? 'en-US' : 'ms-MY')}
                         </span>
                       </td>
@@ -378,7 +378,7 @@ const TransporterVehicleIssuesPage: React.FC = () => {
                           <Button 
                             variant="ghost" 
                             onClick={() => handleAcknowledge(issue.id)}
-                            className="text-xs text-amber-600 hover:text-amber-800 border border-amber-100 rounded-lg px-2.5 py-1 bg-amber-50/50 font-bold cursor-pointer"
+                            className="text-xs text-amber-600 hover:text-amber-400 border border-amber-100 rounded-lg px-2.5 py-1 bg-amber-500/10 font-bold cursor-pointer"
                           >
                             {isEn ? 'Acknowledge' : 'Acknowledge'}
                           </Button>
@@ -388,7 +388,7 @@ const TransporterVehicleIssuesPage: React.FC = () => {
                           <Button 
                             variant="ghost"
                             onClick={() => handleOpenResolve(issue.id)}
-                            className="text-xs text-emerald-600 hover:text-emerald-800 border border-emerald-100 rounded-lg px-2.5 py-1 bg-emerald-50/50 font-bold cursor-pointer"
+                            className="text-xs text-emerald-600 hover:text-emerald-400 border border-emerald-100 rounded-lg px-2.5 py-1 bg-emerald-500/10 font-bold cursor-pointer"
                           >
                             {isEn ? 'Resolve / Fixed' : 'Resolve / Baiki'}
                           </Button>
@@ -412,13 +412,13 @@ const TransporterVehicleIssuesPage: React.FC = () => {
       {/* Resolve Issue Modal */}
       {isResolveOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 max-w-2xl w-full mx-4 space-y-4">
-            <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+          <div className="bg-surface rounded-2xl shadow-xl border border-border-default p-6 max-w-2xl w-full mx-4 space-y-4">
+            <h3 className="text-lg font-bold text-text-primary flex items-center gap-2">
               <Wrench className="w-5 h-5 text-emerald-600" />
               {isEn ? 'Resolve Vehicle Defect / Maintenance' : 'Selesaikan Penyelenggaraan Kenderaan'}
             </h3>
             
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-text-muted">
               {isEn 
                 ? 'Specify the corrective action taken (e.g. Sent to authorized workshop, brake pads replaced, full service complete, etc.).' 
                 : 'Sila nyatakan nota tindakan baiki/penyelenggaraan yang diambil (contoh: Hantar ke bengkel tukar brek, servis selesai, dll).'}
@@ -429,7 +429,7 @@ const TransporterVehicleIssuesPage: React.FC = () => {
               placeholder={isEn ? 'E.g., Brake pads replaced at official workshop, road test passed...' : 'Contoh: Brek pad telah diganti di bengkel Toyota rasmi...'}
               value={resolutionNotes}
               onChange={(e) => setResolutionNotes(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-emerald-500 focus:bg-white transition-colors font-medium shadow-xs"
+              className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-text-primary placeholder:text-text-muted outline-none focus:border-emerald-500 focus:bg-surface transition-colors font-medium shadow-xs"
               required
             />
 
@@ -437,7 +437,7 @@ const TransporterVehicleIssuesPage: React.FC = () => {
               <Button 
                 variant="outline" 
                 onClick={() => setIsResolveOpen(false)}
-                className="border-slate-200 text-slate-700 cursor-pointer"
+                className="border-border-default text-text-secondary cursor-pointer"
               >
                 {isEn ? 'Cancel' : 'Batal'}
               </Button>
@@ -455,13 +455,13 @@ const TransporterVehicleIssuesPage: React.FC = () => {
       {/* Report Issue Modal */}
       {isReportOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 max-w-2xl w-full mx-4 space-y-4 animate-fade-in">
-            <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+          <div className="bg-surface rounded-2xl shadow-xl border border-border-default p-6 max-w-2xl w-full mx-4 space-y-4 animate-fade-in">
+            <h3 className="text-lg font-bold text-text-primary flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-rose-600 animate-pulse" />
               {isEn ? 'Report Vehicle Defect' : 'Laporkan Kerosakan Kenderaan'}
             </h3>
             
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-text-muted">
               {isEn 
                 ? 'Please complete the defect details accurately for workshop scheduling and maintenance tracking.' 
                 : 'Sila isi butiran kerosakan kenderaan secara terperinci untuk rujukan tindakan penyelenggaraan.'}
@@ -469,13 +469,13 @@ const TransporterVehicleIssuesPage: React.FC = () => {
 
             <div className="space-y-3">
               <div>
-                <label className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-1">
+                <label className="block text-xxs font-extrabold text-text-secondary font-bold uppercase tracking-wider mb-1">
                   {isEn ? 'Select Vehicle' : 'Select Vehicle'}
                 </label>
                 <select
                   value={reportVehicleId}
                   onChange={(e) => setReportVehicleId(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm text-slate-900 outline-none focus:border-rose-500 focus:bg-white transition-colors font-medium shadow-xs cursor-pointer"
+                  className="w-full bg-subtle/50 border border-border-default rounded-xl p-2.5 text-sm text-text-primary outline-none focus:border-rose-500 focus:bg-surface transition-colors font-medium shadow-xs cursor-pointer"
                 >
                   <option value="">{isEn ? '-- Select Fleet Vehicle --' : '-- Sila Select Vehicle --'}</option>
                   {vehicles.map((v) => (
@@ -487,7 +487,7 @@ const TransporterVehicleIssuesPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-1">
+                <label className="block text-xxs font-extrabold text-text-secondary font-bold uppercase tracking-wider mb-1">
                   {isEn ? 'Defect / Issue Title' : 'Tajuk Kerosakan'}
                 </label>
                 <Input
@@ -499,13 +499,13 @@ const TransporterVehicleIssuesPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-1">
+                <label className="block text-xxs font-extrabold text-text-secondary font-bold uppercase tracking-wider mb-1">
                   {isEn ? 'Priority Level' : 'Keutamaan (Priority)'}
                 </label>
                 <select
                   value={reportPriority}
                   onChange={(e) => setReportPriority(e.target.value as any)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm text-slate-900 outline-none focus:border-rose-500 focus:bg-white transition-colors font-medium shadow-xs cursor-pointer"
+                  className="w-full bg-subtle/50 border border-border-default rounded-xl p-2.5 text-sm text-text-primary outline-none focus:border-rose-500 focus:bg-surface transition-colors font-medium shadow-xs cursor-pointer"
                 >
                   <option value="low">{isEn ? 'Low' : 'Rendah (Low)'}</option>
                   <option value="medium">{isEn ? 'Medium' : 'Sederhana (Medium)'}</option>
@@ -514,7 +514,7 @@ const TransporterVehicleIssuesPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-1">
+                <label className="block text-xxs font-extrabold text-text-secondary font-bold uppercase tracking-wider mb-1">
                   {isEn ? 'Detailed Issue Description' : 'Penerangan Kerosakan / Isu'}
                 </label>
                 <textarea 
@@ -522,12 +522,12 @@ const TransporterVehicleIssuesPage: React.FC = () => {
                   placeholder={isEn ? 'Describe the issue or defect symptoms in detail...' : 'Terangkan masalah atau kerosakan secara terperinci...'}
                   value={reportDesc}
                   onChange={(e) => setReportDesc(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-rose-500 focus:bg-white transition-colors font-medium shadow-xs"
+                  className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-text-primary placeholder:text-text-muted outline-none focus:border-rose-500 focus:bg-surface transition-colors font-medium shadow-xs"
                 />
               </div>
 
               <div>
-                <label className="block text-xxs font-extrabold text-slate-400 uppercase tracking-wider mb-1">
+                <label className="block text-xxs font-extrabold text-text-secondary font-bold uppercase tracking-wider mb-1">
                   {isEn ? `Defect Photos (${reportPhotos.length} attached)` : `Bukti Foto Kerosakan (${reportPhotos.length} keping)`}
                 </label>
                 <div className="space-y-3">
@@ -544,7 +544,7 @@ const TransporterVehicleIssuesPage: React.FC = () => {
                   {reportPhotos.length > 0 && (
                     <div className="grid grid-cols-4 gap-2 mt-2">
                       {reportPhotos.map((photo, index) => (
-                        <div key={index} className="relative w-full aspect-square rounded-xl border border-slate-200 overflow-hidden bg-slate-100 shadow-xxs group">
+                        <div key={index} className="relative w-full aspect-square rounded-xl border border-border-default overflow-hidden bg-subtle shadow-xxs group">
                           <img src={photo} className="w-full h-full object-cover" alt="Preview defect" />
                           <button
                             type="button"
@@ -572,7 +572,7 @@ const TransporterVehicleIssuesPage: React.FC = () => {
                   setReportDesc('')
                   setReportPhotos([])
                 }}
-                className="border-slate-200 text-slate-700 cursor-pointer"
+                className="border-border-default text-text-secondary cursor-pointer"
               >
                 {isEn ? 'Cancel' : 'Batal'}
               </Button>

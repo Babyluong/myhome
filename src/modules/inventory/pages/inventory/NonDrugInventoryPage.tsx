@@ -352,10 +352,10 @@ export const NonDrugInventoryPage: React.FC = () => {
     if (!contractStatus || contractStatus === '-') return <Badge variant="secondary">—</Badge>
     const statusLower = contractStatus.toLowerCase()
     if (statusLower.includes('aktif') || statusLower.includes('active')) {
-      return <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold font-mono text-[10px] uppercase">{contractStatus}</Badge>
+      return <Badge className="bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 font-bold font-mono text-[10px] uppercase">{contractStatus}</Badge>
     }
     if (statusLower.includes('tamat') || statusLower.includes('expired')) {
-      return <Badge className="bg-rose-50 text-rose-700 border border-rose-200 font-bold font-mono text-[10px] uppercase">{contractStatus}</Badge>
+      return <Badge className="bg-rose-500/10 text-rose-700 border border-rose-500/20 font-bold font-mono text-[10px] uppercase">{contractStatus}</Badge>
     }
     return <Badge className="bg-sky-50 text-sky-700 border border-sky-200 font-bold font-mono text-[10px] uppercase">{contractStatus}</Badge>
   }
@@ -363,10 +363,10 @@ export const NonDrugInventoryPage: React.FC = () => {
   const renderVoteBadge = (vote?: string) => {
     if (!vote) return <Badge variant="secondary">—</Badge>
     const v = vote.toUpperCase()
-    if (v === 'APPL') return <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold font-mono text-[10px]">APPL</Badge>
-    if (v === 'LP') return <Badge className="bg-purple-50 text-purple-700 border border-purple-200 font-bold font-mono text-[10px]">LP</Badge>
+    if (v === 'APPL') return <Badge className="bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 font-bold font-mono text-[10px]">APPL</Badge>
+    if (v === 'LP') return <Badge className="bg-indigo-500/10 text-purple-700 border border-indigo-500/20 font-bold font-mono text-[10px]">LP</Badge>
     if (v === 'CC') return <Badge className="bg-sky-50 text-sky-700 border border-sky-200 font-bold font-mono text-[10px]">CC</Badge>
-    if (v === 'DP') return <Badge className="bg-amber-50 text-amber-700 border border-amber-200 font-bold font-mono text-[10px]">DP</Badge>
+    if (v === 'DP') return <Badge className="bg-amber-500/10 text-amber-700 border border-amber-500/20 font-bold font-mono text-[10px]">DP</Badge>
     return <Badge variant="secondary">{v}</Badge>
   }
 
@@ -472,17 +472,17 @@ export const NonDrugInventoryPage: React.FC = () => {
   }
 
   return (
-    <div className="p-6 md:p-8 w-full space-y-8 text-slate-800">
+    <div className="p-6 md:p-8 w-full space-y-8 text-text-primary">
       {/* Header (Premium Layout matching HOME guidelines) */}
-      <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+      <div className="bg-surface border border-border-subtle rounded-3xl p-6 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-indigo-500 via-indigo-600 to-purple-600" />
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-800 flex items-center gap-2">
+            <h1 className="text-2xl font-black tracking-tight text-text-primary flex items-center gap-2">
               <Package className="w-6 h-6 text-indigo-600 animate-pulse" />
               <span>{isEn ? 'Non-Drug Catalog & Consumables' : 'Katalog & Inventori Bukan Ubat'}</span>
             </h1>
-            <p className="text-sm text-slate-500 mt-0.5 font-medium">
+            <p className="text-sm text-text-muted mt-0.5 font-medium">
               {isEn 
                 ? 'Manage disposables, medical consumables, and hospital non-drug supply contracts' 
                 : 'Urus stok alat pakai buang, bahan habis guna dan kelengkapan bukan ubat'}
@@ -492,7 +492,7 @@ export const NonDrugInventoryPage: React.FC = () => {
             <Button
               onClick={handleSync}
               disabled={isSyncing || isLpSyncing || isCcSyncing}
-              className="bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-600 hover:to-emerald-700 text-white rounded-xl font-bold text-xs gap-2 px-4 shadow-md transition-all duration-200 cursor-pointer"
+              className="bg-accent-base hover:bg-accent-hover text-white rounded-xl font-bold text-xs gap-2 px-4 shadow-md transition-colors duration-150 cursor-pointer"
             >
               <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
               {isSyncing ? (isEn ? 'Syncing...' : 'Menyelaras...') : (isEn ? 'Sync APPL' : 'Selaras APPL')}
@@ -500,7 +500,7 @@ export const NonDrugInventoryPage: React.FC = () => {
             <Button
               onClick={handleLpSync}
               disabled={isSyncing || isLpSyncing || isCcSyncing}
-              className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white rounded-xl font-bold text-xs gap-2 px-4 shadow-md transition-all duration-200 cursor-pointer"
+              className="bg-accent-base hover:bg-accent-hover text-white rounded-xl font-bold text-xs gap-2 px-4 shadow-md transition-colors duration-150 cursor-pointer"
             >
               <RefreshCw className={`w-4 h-4 ${isLpSyncing ? 'animate-spin' : ''}`} />
               {isLpSyncing ? (isEn ? 'Syncing...' : 'Menyelaras...') : (isEn ? 'Sync LP' : 'Selaras LP')}
@@ -508,7 +508,7 @@ export const NonDrugInventoryPage: React.FC = () => {
             <Button
               onClick={() => setIsCcModalOpen(true)}
               disabled={isSyncing || isLpSyncing || isCcSyncing}
-              className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl font-bold text-xs gap-2 px-4 shadow-md transition-all duration-200 cursor-pointer"
+              className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-xl font-bold text-xs gap-2 px-4 shadow-md transition-colors duration-150 cursor-pointer"
             >
               <RefreshCw className={`w-4 h-4 ${isCcSyncing ? 'animate-spin' : ''}`} />
               {isCcSyncing ? (isEn ? 'Syncing...' : 'Menyelaras...') : (isEn ? 'Sync CC' : 'Selaras CC')}
@@ -519,12 +519,12 @@ export const NonDrugInventoryPage: React.FC = () => {
 
       {/* Sync Alerts */}
       {syncSuccessMessage && (
-        <div className="flex items-center gap-2.5 rounded-2xl border border-emerald-100 bg-emerald-50/50 p-4 text-xs font-semibold text-emerald-800 shadow-sm relative pr-10">
+        <div className="flex items-center gap-2.5 rounded-2xl border border-emerald-100 bg-emerald-500/10 p-4 text-xs font-semibold text-emerald-400 shadow-sm relative pr-10">
           <Badge variant="success">{isEn ? 'Success' : 'Berjaya'}</Badge>
           <span className="leading-relaxed">{syncSuccessMessage}</span>
           <button 
             onClick={() => setSyncSuccessMessage(null)}
-            className="absolute top-3.5 right-4 text-emerald-600 hover:text-emerald-800 text-lg font-black cursor-pointer"
+            className="absolute top-3.5 right-4 text-emerald-600 hover:text-emerald-400 text-lg font-black cursor-pointer"
           >
             ×
           </button>
@@ -532,12 +532,12 @@ export const NonDrugInventoryPage: React.FC = () => {
       )}
 
       {syncError && (
-        <div className="flex items-center gap-2.5 rounded-2xl border border-rose-100 bg-rose-50/50 p-4 text-xs font-semibold text-rose-800 shadow-sm relative pr-10">
+        <div className="flex items-center gap-2.5 rounded-2xl border border-rose-100 bg-rose-500/10 p-4 text-xs font-semibold text-rose-400 shadow-sm relative pr-10">
           <Badge variant="error">{isEn ? 'Error' : 'Ralat'}</Badge>
           <span className="leading-relaxed">{syncError}</span>
           <button 
             onClick={() => setSyncError(null)}
-            className="absolute top-3.5 right-4 text-rose-600 hover:text-rose-800 text-lg font-black cursor-pointer"
+            className="absolute top-3.5 right-4 text-rose-600 hover:text-rose-400 text-lg font-black cursor-pointer"
           >
             ×
           </button>
@@ -545,7 +545,7 @@ export const NonDrugInventoryPage: React.FC = () => {
       )}
 
       {/* Filters */}
-      <div className="flex flex-col md:flex-row md:items-end gap-4 bg-white border border-slate-100 p-5 rounded-3xl shadow-soft">
+      <div className="flex flex-col md:flex-row md:items-end gap-4 bg-surface border border-border-subtle p-5 rounded-3xl shadow-elevation-1">
         <div className="flex-1">
           <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
             {isEn ? 'Search' : 'Carian'}
@@ -600,7 +600,7 @@ export const NonDrugInventoryPage: React.FC = () => {
 
       {/* Error */}
       {!isLoading && error && (
-        <div className="flex items-start gap-2 rounded-2xl border border-rose-200 bg-rose-50 p-5 text-sm text-rose-700">
+        <div className="flex items-start gap-2 rounded-2xl border border-rose-500/20 bg-rose-500/10 p-5 text-sm text-rose-700">
           <AlertTriangle className="w-5 h-5 flex-shrink-0 text-rose-500 mt-0.5" />
           <div>
             <p className="font-bold">{isEn ? 'Failed to load non-drug catalog' : 'Gagal memuatkan katalog bukan ubat'}</p>
@@ -624,7 +624,7 @@ export const NonDrugInventoryPage: React.FC = () => {
             <button
               onClick={() => handleBulkStatusChange('active')}
               disabled={isBulkUpdating}
-              className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
+              className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition-colors shadow-sm flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
             >
               <CheckCircle className="w-4 h-4" />
               {isEn ? `Activate Selected (${selectedIds.length})` : `Aktifkan Dipilih (${selectedIds.length})`}
@@ -632,14 +632,14 @@ export const NonDrugInventoryPage: React.FC = () => {
             <button
               onClick={() => handleBulkStatusChange('inactive')}
               disabled={isBulkUpdating}
-              className="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
+              className="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-bold transition-colors shadow-sm flex items-center gap-1.5 disabled:opacity-50 cursor-pointer"
             >
               <XCircle className="w-4 h-4" />
               {isEn ? `Deactivate Selected (${selectedIds.length})` : `Nyahaktifkan Dipilih (${selectedIds.length})`}
             </button>
             <button
               onClick={() => setSelectedIds([])}
-              className="px-3 py-1.5 text-slate-400 hover:text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
+              className="px-3 py-1.5 text-slate-400 hover:text-white rounded-xl text-xs font-bold transition-colors cursor-pointer"
             >
               {isEn ? 'Deselect All' : 'Clear Selection'}
             </button>
@@ -650,54 +650,54 @@ export const NonDrugInventoryPage: React.FC = () => {
       {/* Table */}
       {!isLoading && !error && (
         <>
-          <div className="bg-white border border-slate-100 rounded-3xl shadow-soft overflow-hidden">
+          <div className="bg-surface border border-border-subtle rounded-3xl shadow-elevation-1 overflow-hidden">
             <Table>
               <Table.Header>
                 {procurementVote === 'cc' ? (
-                  <Table.Row className="bg-slate-50 border-b border-slate-100">
+                  <Table.Row className="bg-subtle/50 border-b border-border-subtle">
                     <Table.Cell as="th" className="py-4 px-3 w-10">
                       <input
                         type="checkbox"
                         checked={items.length > 0 && selectedIds.length === items.length}
                         onChange={handleSelectAll}
-                        className="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"
+                        className="w-4 h-4 text-indigo-600 border-border-default rounded focus:ring-indigo-500 cursor-pointer"
                       />
                     </Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">{isEn ? 'Item Name / Code' : 'Nama Barang / Kod'}</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">{isEn ? 'Packaging' : 'Pembungkusan'}</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">{isEn ? 'Supplier' : 'Pembekal'}</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">{isEn ? 'Contract No.' : 'No. Kontrak'}</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">{isEn ? 'Start Date' : 'Tarikh Mula'}</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">{isEn ? 'End Date' : 'Tarikh Tamat'}</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">{isEn ? 'Contract Status' : 'Status Kontrak'}</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-right">{isEn ? 'Price (RM)' : 'Harga (RM)'}</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">{isEn ? 'Status' : 'Status'}</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">{isEn ? 'Actions' : 'Tindakan'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted">{isEn ? 'Item Name / Code' : 'Nama Barang / Kod'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted">{isEn ? 'Packaging' : 'Pembungkusan'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted">{isEn ? 'Supplier' : 'Pembekal'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted">{isEn ? 'Contract No.' : 'No. Kontrak'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted text-center">{isEn ? 'Start Date' : 'Tarikh Mula'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted text-center">{isEn ? 'End Date' : 'Tarikh Tamat'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted text-center">{isEn ? 'Contract Status' : 'Status Kontrak'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted text-right">{isEn ? 'Price (RM)' : 'Harga (RM)'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted text-center">{isEn ? 'Status' : 'Status'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted text-center">{isEn ? 'Actions' : 'Tindakan'}</Table.Cell>
                   </Table.Row>
                 ) : (
-                  <Table.Row className="bg-slate-50 border-b border-slate-100">
+                  <Table.Row className="bg-subtle/50 border-b border-border-subtle">
                     <Table.Cell as="th" className="py-4 px-3 w-10">
                       <input
                         type="checkbox"
                         checked={items.length > 0 && selectedIds.length === items.length}
                         onChange={handleSelectAll}
-                        className="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"
+                        className="w-4 h-4 text-indigo-600 border-border-default rounded focus:ring-indigo-500 cursor-pointer"
                       />
                     </Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">{isEn ? 'Code' : 'Kod'}</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">{isEn ? 'Item Name' : 'Nama Barang'}</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">{isEn ? 'UOM' : 'Bentuk / UOM'}</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">{isEn ? 'Packaging' : 'Pembungkusan'}</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">{isEn ? 'Scheme' : 'Skim'}</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-right">{isEn ? 'Price (RM)' : 'Harga (RM)'}</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">{isEn ? 'Category' : 'Kategori'}</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">{isEn ? 'Stock' : 'Stok'}</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">{isEn ? 'Status' : 'Status'}</Table.Cell>
-                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">{isEn ? 'Actions' : 'Tindakan'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted">{isEn ? 'Code' : 'Kod'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted">{isEn ? 'Item Name' : 'Nama Barang'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted">{isEn ? 'UOM' : 'Bentuk / UOM'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted">{isEn ? 'Packaging' : 'Pembungkusan'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted text-center">{isEn ? 'Scheme' : 'Skim'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted text-right">{isEn ? 'Price (RM)' : 'Harga (RM)'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted">{isEn ? 'Category' : 'Kategori'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted text-center">{isEn ? 'Stock' : 'Stok'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted text-center">{isEn ? 'Status' : 'Status'}</Table.Cell>
+                    <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted text-center">{isEn ? 'Actions' : 'Tindakan'}</Table.Cell>
                   </Table.Row>
                 )}
               </Table.Header>
-              <Table.Body className="divide-y divide-slate-100">
+              <Table.Body className="divide-y divide-border-subtle">
                 {items.length === 0 && (
                   <Table.Row>
                     <Table.Cell colSpan={procurementVote === 'cc' ? 11 : 11} className="text-center text-sm text-slate-400 py-12 font-medium">
@@ -714,7 +714,7 @@ export const NonDrugInventoryPage: React.FC = () => {
                       setEditSkim(item.procurement_vote || 'appl')
                       setIsEditModalOpen(true)
                     }}
-                    className="hover:bg-teal-50/50 cursor-pointer transition-colors group"
+                    className="hover:bg-accent-base/10 cursor-pointer transition-colors group"
                   >
                     <Table.Cell className="py-3 px-3" onClick={(e) => e.stopPropagation()}>
                       <input
@@ -724,23 +724,23 @@ export const NonDrugInventoryPage: React.FC = () => {
                           e.stopPropagation()
                           handleSelectRow(item.id)
                         }}
-                        className="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"
+                        className="w-4 h-4 text-indigo-600 border-border-default rounded focus:ring-indigo-500 cursor-pointer"
                       />
                     </Table.Cell>
                     {procurementVote === 'cc' ? (
                       <>
                         <Table.Cell className="py-3 max-w-[260px]">
-                          <div className="text-sm font-black text-slate-800 group-hover:text-teal-700 transition-colors leading-tight">
+                          <div className="text-sm font-black text-text-primary group-hover:text-teal-700 dark:group-hover:text-teal-400 transition-colors leading-tight">
                             {item.item_name}
                           </div>
                           <div className="text-[11px] font-mono font-bold text-slate-400 mt-1 tracking-tight">
                             {item.item_code}
                           </div>
                         </Table.Cell>
-                        <Table.Cell className="text-sm text-slate-500 font-medium">
+                        <Table.Cell className="text-sm text-text-muted font-medium">
                           {item.packaging_description || '—'}
                         </Table.Cell>
-                        <Table.Cell className="text-xs text-slate-600 font-semibold max-w-[180px] truncate" title={item.cc_supplier_name || item.supplier?.company_name}>
+                        <Table.Cell className="text-xs text-text-muted font-semibold max-w-[180px] truncate" title={item.cc_supplier_name || item.supplier?.company_name}>
                           {item.cc_supplier_name || item.supplier?.company_name || '—'}
                         </Table.Cell>
                         <Table.Cell className="text-xs font-bold text-sky-700 font-mono">
@@ -757,10 +757,10 @@ export const NonDrugInventoryPage: React.FC = () => {
                           const contractStatus = (item as any).cc_contract_status || (item as any).contract_status || computeContractStatus(startDate, endDate)
                           return (
                             <>
-                              <Table.Cell className="text-xs font-mono font-medium text-slate-600 text-center">
+                              <Table.Cell className="text-xs font-mono font-medium text-text-muted text-center">
                                 {formatDate(startDate)}
                               </Table.Cell>
-                              <Table.Cell className="text-xs font-mono font-medium text-slate-600 text-center">
+                              <Table.Cell className="text-xs font-mono font-medium text-text-muted text-center">
                                 {formatDate(endDate)}
                               </Table.Cell>
                               <Table.Cell className="text-center">
@@ -772,16 +772,16 @@ export const NonDrugInventoryPage: React.FC = () => {
                       </>
                     ) : (
                       <>
-                        <Table.Cell className="font-mono text-xs font-bold text-slate-700">
+                        <Table.Cell className="font-mono text-xs font-bold text-text-secondary">
                           {item.item_code}
                         </Table.Cell>
-                        <Table.Cell className="text-sm font-black text-slate-800 group-hover:text-teal-700 transition-colors">
+                        <Table.Cell className="text-sm font-black text-text-primary group-hover:text-teal-700 dark:group-hover:text-teal-400 transition-colors">
                           {item.item_name}
                         </Table.Cell>
                         <Table.Cell className="text-xs font-bold uppercase text-slate-400">
                           {item.unit_of_measure}
                         </Table.Cell>
-                        <Table.Cell className="text-sm text-slate-500 font-medium">
+                        <Table.Cell className="text-sm text-text-muted font-medium">
                           {item.packaging_description || '—'}
                         </Table.Cell>
                         <Table.Cell className="text-center">
@@ -789,11 +789,11 @@ export const NonDrugInventoryPage: React.FC = () => {
                         </Table.Cell>
                       </>
                     )}
-                    <Table.Cell className="text-sm text-slate-700 font-mono font-bold text-right">
+                    <Table.Cell className="text-sm text-text-secondary font-mono font-bold text-right">
                       {item.price !== null && item.price !== undefined && Number(item.price) > 0 ? `RM ${Number(item.price).toFixed(2)}` : '—'}
                     </Table.Cell>
                     {procurementVote !== 'cc' && (
-                      <Table.Cell className="text-xs text-slate-500 font-medium">
+                      <Table.Cell className="text-xs text-text-muted font-medium">
                         {item.category?.category_name || '—'}
                       </Table.Cell>
                     )}
@@ -809,10 +809,10 @@ export const NonDrugInventoryPage: React.FC = () => {
                           handleToggleSingleStatus(item)
                         }}
                         title={item.status === 'active' ? (isEn ? 'Click to deactivate' : 'Klik untuk nyahaktifkan') : (isEn ? 'Click to activate' : 'Klik untuk aktifkan')}
-                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold transition-all cursor-pointer shadow-sm ${
+                        className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold transition-colors cursor-pointer shadow-sm ${
                           item.status === 'active'
-                            ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200'
-                            : 'bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200'
+                            ? 'bg-emerald-500/10 text-emerald-700 hover:bg-emerald-100 border border-emerald-500/20'
+                            : 'bg-amber-500/10 text-amber-700 hover:bg-amber-100 border border-amber-500/20'
                         }`}
                       >
                         <span className={`w-1.5 h-1.5 rounded-full ${item.status === 'active' ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
@@ -828,7 +828,7 @@ export const NonDrugInventoryPage: React.FC = () => {
                           setSelectedItemForEdit(item)
                           setIsEditModalOpen(true)
                         }}
-                        className="rounded-xl hover:bg-indigo-50 text-indigo-600 font-bold text-xs gap-1.5 cursor-pointer"
+                        className="rounded-xl hover:bg-indigo-500/10 text-indigo-600 font-bold text-xs gap-1.5 cursor-pointer"
                         title={isEn ? 'Edit non-drug details' : 'Sunting maklumat bukan ubat'}
                       >
                         <Edit className="w-3.5 h-3.5" />
@@ -843,7 +843,7 @@ export const NonDrugInventoryPage: React.FC = () => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between text-xs text-slate-500 font-bold font-mono px-2">
+            <div className="flex items-center justify-between text-xs text-text-muted font-bold font-mono px-2">
               <span>
                 {isEn ? `PAGE ${page} OF ${totalPages}` : `HALAMAN ${page} DARI ${totalPages}`}
               </span>
@@ -876,24 +876,24 @@ export const NonDrugInventoryPage: React.FC = () => {
       <Modal isOpen={!!selectedItemForQr} onClose={() => setSelectedItemForQr(null)} size="sm">
         {selectedItemForQr && (
           <div className="p-6 text-center space-y-6">
-            <div className="border-b border-slate-100 pb-4">
-              <h2 className="text-lg font-black text-slate-800">{isEn ? 'Generate QR Code Label' : 'Jana Label QR Kod'}</h2>
+            <div className="border-b border-border-subtle pb-4">
+              <h2 className="text-lg font-black text-text-primary">{isEn ? 'Generate QR Code Label' : 'Jana Label QR Kod'}</h2>
               <p className="text-xs text-slate-400 mt-1 font-medium">{isEn ? 'Scan label for automated store transactions' : 'Imbasan label untuk transaksi stor automatik'}</p>
             </div>
 
             {/* Simulated Printed Tag */}
-            <div className="border border-slate-200 bg-white rounded-2xl p-5 max-w-[280px] mx-auto shadow-inner flex items-center gap-4 text-left">
+            <div className="border border-border-default bg-surface rounded-2xl p-5 max-w-[280px] mx-auto shadow-inner flex items-center gap-4 text-left">
               {qrCodeUrl ? (
                 <img src={qrCodeUrl} alt="QR Code" className="w-24 h-24 flex-shrink-0" />
               ) : (
-                <div className="w-24 h-24 bg-slate-50 rounded-xl flex items-center justify-center text-slate-300">
+                <div className="w-24 h-24 bg-subtle/50 rounded-xl flex items-center justify-center text-slate-300">
                   {isEn ? 'Loading...' : 'Memuatkan...'}
                 </div>
               )}
               <div className="min-w-0">
                 <span className="font-mono text-[10px] font-black text-slate-400 block">{selectedItemForQr.item_code}</span>
-                <h4 className="text-sm font-black text-slate-800 leading-tight mt-1 truncate">{selectedItemForQr.item_name}</h4>
-                <p className="text-[10px] text-slate-500 mt-1 font-medium truncate">{selectedItemForQr.category?.category_name || '—'}</p>
+                <h4 className="text-sm font-black text-text-primary leading-tight mt-1 truncate">{selectedItemForQr.item_name}</h4>
+                <p className="text-[10px] text-text-muted mt-1 font-medium truncate">{selectedItemForQr.category?.category_name || '—'}</p>
                 <p className="text-[9px] text-slate-400 font-bold uppercase mt-1">UOM: {selectedItemForQr.unit_of_measure}</p>
               </div>
             </div>
@@ -907,7 +907,7 @@ export const NonDrugInventoryPage: React.FC = () => {
                 {isEn ? 'Close' : 'Tutup'}
               </Button>
               <Button
-                className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white rounded-xl font-bold flex-1 gap-1.5 cursor-pointer"
+                className="bg-accent-base hover:bg-accent-hover text-white rounded-xl font-bold flex-1 gap-1.5 cursor-pointer"
                 onClick={handlePrintLabel}
                 disabled={!qrCodeUrl}
               >
@@ -922,8 +922,8 @@ export const NonDrugInventoryPage: React.FC = () => {
       {/* CC Sync Option Modal */}
       <Modal isOpen={isCcModalOpen} onClose={() => setIsCcModalOpen(false)} size="md">
         <div className="p-6 space-y-6">
-          <div className="border-b border-slate-100 pb-4">
-            <h2 className="text-lg font-black text-slate-800 flex items-center gap-2">
+          <div className="border-b border-border-subtle pb-4">
+            <h2 className="text-lg font-black text-text-primary flex items-center gap-2">
               <RefreshCw className="w-5 h-5 text-indigo-600" />
               <span>{isEn ? 'Cost Center (CC) Contract Sync' : 'Penyelarasan Kontrak CC'}</span>
             </h2>
@@ -933,9 +933,9 @@ export const NonDrugInventoryPage: React.FC = () => {
           </div>
 
           <div className="space-y-4">
-            <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-3">
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">{isEn ? 'Method 1: Automatic Sync' : 'Kaedah 1: Selaras Automatik'}</h4>
-              <p className="text-xs text-slate-500 font-medium">
+            <div className="bg-subtle/50 border border-border-subtle rounded-2xl p-4 space-y-3">
+              <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider">{isEn ? 'Method 1: Automatic Sync' : 'Kaedah 1: Selaras Automatik'}</h4>
+              <p className="text-xs text-text-muted font-medium">
                 {isEn 
                   ? 'Automatic synchronization directly from Google Docs. Requires Google Sheet sharing permission ("Anyone with link can view").'
                   : 'Penyelarasan automatik terus dari Google Docs. Ini memerlukan fail Google Sheet dikongsi secara awam ("Anyone with the link can view").'}
@@ -947,21 +947,21 @@ export const NonDrugInventoryPage: React.FC = () => {
                   await handleCcSync()
                 }}
                 disabled={isSyncing || isLpSyncing || isCcSyncing}
-                className="w-full bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-600 hover:to-emerald-600 text-white rounded-xl font-bold text-xs gap-1.5 cursor-pointer"
+                className="w-full bg-accent-base hover:bg-accent-hover text-white rounded-xl font-bold text-xs gap-1.5 cursor-pointer"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${isCcSyncing ? 'animate-spin' : ''}`} />
                 {isEn ? 'Sync Automatically' : 'Selaras Automatik'}
               </Button>
             </div>
 
-            <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-3">
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">{isEn ? 'Method 2: Manual CSV Upload' : 'Kaedah 2: Muat Naik Fail CSV Manual'}</h4>
-              <p className="text-xs text-slate-500 font-medium">
+            <div className="bg-subtle/50 border border-border-subtle rounded-2xl p-4 space-y-3">
+              <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider">{isEn ? 'Method 2: Manual CSV Upload' : 'Kaedah 2: Muat Naik Fail CSV Manual'}</h4>
+              <p className="text-xs text-text-muted font-medium">
                 {isEn 
                   ? 'If Google Sheet is restricted (private), open Google Sheet, click File > Download > Comma Separated Values (.csv) (Active Contract tab), and upload below:'
                   : 'Jika Google Sheet adalah sulit (private), buka Google Sheet, klik File > Download > Comma Separated Values (.csv) (Tab semasa: Kontrak Aktif), dan muat naik di bawah:'}
               </p>
-              <div className="border-2 border-dashed border-slate-200 rounded-xl p-4 text-center hover:border-indigo-400 transition-colors relative cursor-pointer bg-white">
+              <div className="border-2 border-dashed border-border-default rounded-xl p-4 text-center hover:border-indigo-400 transition-colors relative cursor-pointer bg-surface">
                 <input
                   type="file"
                   accept=".csv"
@@ -1015,7 +1015,7 @@ export const NonDrugInventoryPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex justify-end border-t border-slate-100 pt-4">
+          <div className="flex justify-end border-t border-border-subtle pt-4">
             <Button
               variant="outline"
               size="sm"
@@ -1077,19 +1077,19 @@ export const NonDrugInventoryPage: React.FC = () => {
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'Non-Drug Code *' : 'Kod Bukan Ubat *'}</label>
+                  <label className="block text-xs font-bold text-text-secondary mb-1">{isEn ? 'Non-Drug Code *' : 'Kod Bukan Ubat *'}</label>
                   <Input name="item_code" defaultValue={selectedItemForEdit.item_code || ''} required />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'Item Name *' : 'Nama Barang *'}</label>
+                  <label className="block text-xs font-bold text-text-secondary mb-1">{isEn ? 'Item Name *' : 'Nama Barang *'}</label>
                   <Input name="item_name" defaultValue={selectedItemForEdit.item_name || ''} required />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'Unit of Measure (UOM)' : 'Unit Ukuran (UOM)'}</label>
+                  <label className="block text-xs font-bold text-text-secondary mb-1">{isEn ? 'Unit of Measure (UOM)' : 'Unit Ukuran (UOM)'}</label>
                   <Input name="unit_of_measure" defaultValue={selectedItemForEdit.unit_of_measure || ''} />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'SKU / PKU' : 'SKU / PKU'}</label>
+                  <label className="block text-xs font-bold text-text-secondary mb-1">{isEn ? 'SKU / PKU' : 'SKU / PKU'}</label>
                   <div className="grid grid-cols-2 gap-2">
                     <Input name="sku" defaultValue={selectedItemForEdit.sku || ''} placeholder="SKU" />
                     <Input name="pku" defaultValue={selectedItemForEdit.pku || ''} placeholder="PKU" />
@@ -1105,11 +1105,11 @@ export const NonDrugInventoryPage: React.FC = () => {
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'Unit Price (RM)' : 'Harga Unit (RM)'}</label>
+                  <label className="block text-xs font-bold text-text-secondary mb-1">{isEn ? 'Unit Price (RM)' : 'Harga Unit (RM)'}</label>
                   <Input name="price" type="number" step="0.01" defaultValue={selectedItemForEdit.price || 0} />
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'Supplier Name' : 'Nama Pembekal (Supplier)'}</label>
+                  <label className="block text-xs font-bold text-text-secondary mb-1">{isEn ? 'Supplier Name' : 'Nama Pembekal (Supplier)'}</label>
                   <Select
                     name="supplier_id"
                     defaultValue={
@@ -1139,11 +1139,11 @@ export const NonDrugInventoryPage: React.FC = () => {
                   )}
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'Contract No. (CC)' : 'No. Kontrak (CC)'}</label>
+                  <label className="block text-xs font-bold text-text-secondary mb-1">{isEn ? 'Contract No. (CC)' : 'No. Kontrak (CC)'}</label>
                   <Input name="cc_contract_number" defaultValue={selectedItemForEdit.cc_contract_number || ''} placeholder="e.g. KK/SUM/2024/001" />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'Contract Status' : 'Status Kontrak'}</label>
+                  <label className="block text-xs font-bold text-text-secondary mb-1">{isEn ? 'Contract Status' : 'Status Kontrak'}</label>
                   <Select name="cc_contract_status" defaultValue={selectedItemForEdit.cc_contract_status || 'active'}>
                     <option value="active">{isEn ? 'Active' : 'Aktif'}</option>
                     <option value="pending">{isEn ? 'Pending' : 'Pending'}</option>
@@ -1152,11 +1152,11 @@ export const NonDrugInventoryPage: React.FC = () => {
                   </Select>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'Contract Start Date' : 'Tarikh Mula Kontrak'}</label>
+                  <label className="block text-xs font-bold text-text-secondary mb-1">{isEn ? 'Contract Start Date' : 'Tarikh Mula Kontrak'}</label>
                   <Input name="cc_contract_start_date" type="date" defaultValue={parseAndNormalizeDate(selectedItemForEdit.cc_contract_start_date || getFallbackContractDates(selectedItemForEdit).startDate)} />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'Contract End Date' : 'Tarikh Tamat Kontrak'}</label>
+                  <label className="block text-xs font-bold text-text-secondary mb-1">{isEn ? 'Contract End Date' : 'Tarikh Tamat Kontrak'}</label>
                   <Input name="cc_contract_end_date" type="date" defaultValue={parseAndNormalizeDate(selectedItemForEdit.cc_contract_end_date || getFallbackContractDates(selectedItemForEdit).endDate)} />
                 </div>
               </div>
@@ -1169,9 +1169,9 @@ export const NonDrugInventoryPage: React.FC = () => {
               </h3>
               <input type="hidden" name="procurement_vote" value={editSkim} />
               {editSkim !== (selectedItemForEdit.procurement_vote || 'appl') && (
-                <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-4 py-2.5">
+                <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 rounded-xl px-4 py-2.5">
                   <span className="text-amber-600 font-black text-sm">⚠</span>
-                  <span className="text-xs font-bold text-amber-800">
+                  <span className="text-xs font-bold text-amber-400">
                     {isEn ? 'Scheme will be changed from ' : 'Skim akan ditukar daripada '}
                     <span className="uppercase font-black">{(selectedItemForEdit.procurement_vote || 'appl').toUpperCase()}</span>{' '}
                     {isEn ? 'to ' : 'kepada '}
@@ -1184,17 +1184,17 @@ export const NonDrugInventoryPage: React.FC = () => {
                   const isCurrentSkim = skim === (selectedItemForEdit.procurement_vote || 'appl')
                   const isSelected = skim === editSkim
                   const skimMeta = {
-                    appl: { label: 'APPL', desc: isEn ? 'Appendix B' : 'Lampiran B', color: isSelected ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-slate-600 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50' },
-                    cc: { label: 'CC', desc: 'Cost Center', color: isSelected ? 'bg-sky-600 text-white border-sky-600' : 'bg-white text-slate-600 border-slate-200 hover:border-sky-300 hover:bg-sky-50' },
-                    lp: { label: 'LP', desc: 'Local Purchase', color: isSelected ? 'bg-purple-600 text-white border-purple-600' : 'bg-white text-slate-600 border-slate-200 hover:border-purple-300 hover:bg-purple-50' },
-                    dp: { label: 'DP', desc: 'Direct Purchase', color: isSelected ? 'bg-rose-600 text-white border-rose-600' : 'bg-white text-slate-600 border-slate-200 hover:border-rose-300 hover:bg-rose-50' },
+                    appl: { label: 'APPL', desc: isEn ? 'Appendix B' : 'Lampiran B', color: isSelected ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-surface text-text-muted border-border-default hover:border-indigo-300 hover:bg-indigo-500/10' },
+                    cc: { label: 'CC', desc: 'Cost Center', color: isSelected ? 'bg-sky-600 text-white border-sky-600' : 'bg-surface text-text-muted border-border-default hover:border-sky-300 hover:bg-sky-50' },
+                    lp: { label: 'LP', desc: 'Local Purchase', color: isSelected ? 'bg-purple-600 text-white border-purple-600' : 'bg-surface text-text-muted border-border-default hover:border-purple-300 hover:bg-indigo-500/10' },
+                    dp: { label: 'DP', desc: 'Direct Purchase', color: isSelected ? 'bg-rose-600 text-white border-rose-600' : 'bg-surface text-text-muted border-border-default hover:border-rose-300 hover:bg-rose-500/10' },
                   }[skim]
                   return (
                     <button
                       key={skim}
                       type="button"
                       onClick={() => setEditSkim(skim)}
-                      className={`relative flex flex-col items-center justify-center rounded-2xl border-2 p-3 text-center transition-all duration-200 font-bold shadow-sm cursor-pointer ${skimMeta.color}`}
+                      className={`relative flex flex-col items-center justify-center rounded-2xl border-2 p-3 text-center transition-colors duration-150 font-bold shadow-sm cursor-pointer ${skimMeta.color}`}
                     >
                       {isCurrentSkim && (
                         <span className="absolute -top-2 -right-2 bg-teal-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded-full uppercase tracking-wide">
@@ -1216,7 +1216,7 @@ export const NonDrugInventoryPage: React.FC = () => {
               </h3>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'Item Category' : 'Kategori Barang'}</label>
+                  <label className="block text-xs font-bold text-text-secondary mb-1">{isEn ? 'Item Category' : 'Kategori Barang'}</label>
                   <Select name="category_id" defaultValue={selectedItemForEdit.category_id || ''}>
                     <option value="">{isEn ? 'Select Category' : 'Pilih Kategori'}</option>
                     {categories.map((c) => (
@@ -1225,11 +1225,11 @@ export const NonDrugInventoryPage: React.FC = () => {
                   </Select>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'Packaging Description' : 'Pembungkusan'}</label>
+                  <label className="block text-xs font-bold text-text-secondary mb-1">{isEn ? 'Packaging Description' : 'Pembungkusan'}</label>
                   <Input name="packaging_description" defaultValue={selectedItemForEdit.packaging_description || ''} placeholder="Pack of 10 Units" />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">{isEn ? 'Item Status' : 'Status Item'}</label>
+                  <label className="block text-xs font-bold text-text-secondary mb-1">{isEn ? 'Item Status' : 'Status Item'}</label>
                   <Select name="status" defaultValue={selectedItemForEdit.status || 'active'}>
                     <option value="active">{isEn ? 'Active' : 'Aktif'}</option>
                     <option value="inactive">{isEn ? 'Inactive' : 'Tidak Aktif'}</option>
@@ -1238,7 +1238,7 @@ export const NonDrugInventoryPage: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+            <div className="flex items-center justify-between pt-4 border-t border-border-subtle">
               <Button
                 type="button"
                 variant="outline"
@@ -1263,7 +1263,7 @@ export const NonDrugInventoryPage: React.FC = () => {
                     }
                   }
                 }}
-                className="border-indigo-200 bg-indigo-50 hover:bg-indigo-100 text-indigo-800 font-bold text-xs gap-1.5 cursor-pointer"
+                className="border-indigo-500/20 bg-indigo-500/10 hover:bg-indigo-100 text-indigo-400 font-bold text-xs gap-1.5 cursor-pointer"
               >
                 <ArrowRightLeft className="w-3.5 h-3.5" />
                 {isEn ? 'Move to Drug Inventory' : 'Pindah ke Inventori Ubat'}

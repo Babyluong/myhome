@@ -155,7 +155,7 @@ export const PriviledgingDashboardPage: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <label className="text-xs font-semibold text-slate-500">Switch Staff:</label>
+          <label className="text-xs font-semibold text-text-muted">Switch Staff:</label>
           <select
             value={activeStaff?.id || ''}
             onChange={(e) => handleSelectStaff(e.target.value)}
@@ -183,13 +183,13 @@ export const PriviledgingDashboardPage: React.FC = () => {
         {/* Card 1: Credentialing Criteria */}
         <div
           onClick={() => navigate('/priviledging/criteria')}
-          className="group p-4 md:p-5 bg-surface border border-border-default hover:border-accent-base/40 rounded-xl cursor-pointer transition-all shadow-xs hover:shadow-sm"
+          className="group p-4 md:p-5 bg-surface border border-border-default hover:border-accent-base/40 rounded-xl cursor-pointer transition-colors shadow-xs hover:shadow-sm"
         >
           <div className="flex items-center justify-between mb-3">
-            <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-sky-700 dark:text-sky-400 border border-slate-200 dark:border-slate-700">
+            <div className="p-2.5 rounded-xl bg-subtle dark:bg-slate-800 text-sky-700 dark:text-sky-400 border border-border-default dark:border-slate-700">
               <Award className="w-5 h-5" />
             </div>
-            <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-sky-700 transition-all" />
+            <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-sky-700 transition-colors" />
           </div>
           <h4 className="text-sm font-bold text-text-primary">
             Credentialing Criteria
@@ -202,13 +202,13 @@ export const PriviledgingDashboardPage: React.FC = () => {
         {/* Card 2: Catalog Explorer */}
         <div
           onClick={() => navigate('/priviledging/catalog')}
-          className="group p-4 md:p-5 bg-surface border border-border-default hover:border-accent-base/40 rounded-xl cursor-pointer transition-all shadow-xs hover:shadow-sm"
+          className="group p-4 md:p-5 bg-surface border border-border-default hover:border-accent-base/40 rounded-xl cursor-pointer transition-colors shadow-xs hover:shadow-sm"
         >
           <div className="flex items-center justify-between mb-3">
-            <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-emerald-700 dark:text-emerald-400 border border-slate-200 dark:border-slate-700">
+            <div className="p-2.5 rounded-xl bg-subtle dark:bg-slate-800 text-emerald-700 dark:text-emerald-400 border border-border-default dark:border-slate-700">
               <BookOpen className="w-5 h-5" />
             </div>
-            <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-emerald-700 transition-all" />
+            <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-emerald-700 transition-colors" />
           </div>
           <h4 className="text-sm font-bold text-text-primary">
             Procedure Catalog (500+)
@@ -221,13 +221,13 @@ export const PriviledgingDashboardPage: React.FC = () => {
         {/* Card 3: Admin Queue or My Submissions */}
         <div
           onClick={() => navigate(isAdminMode ? '/priviledging/review-queue' : '/priviledging/my-submissions')}
-          className="group p-4 md:p-5 bg-surface border border-border-default hover:border-accent-base/40 rounded-xl cursor-pointer transition-all shadow-xs hover:shadow-sm"
+          className="group p-4 md:p-5 bg-surface border border-border-default hover:border-accent-base/40 rounded-xl cursor-pointer transition-colors shadow-xs hover:shadow-sm"
         >
           <div className="flex items-center justify-between mb-3">
-            <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-amber-700 dark:text-amber-400 border border-slate-200 dark:border-slate-700">
+            <div className="p-2.5 rounded-xl bg-subtle dark:bg-slate-800 text-amber-700 dark:text-amber-400 border border-border-default dark:border-slate-700">
               {isAdminMode ? <ShieldCheck className="w-5 h-5" /> : <Clock className="w-5 h-5" />}
             </div>
-            <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-amber-700 transition-all" />
+            <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-amber-700 transition-colors" />
           </div>
           <h4 className="text-sm font-bold text-text-primary">
             {isAdminMode ? 'JKCP Committee Review Queue' : 'My Submissions & Logbook'}
@@ -242,13 +242,13 @@ export const PriviledgingDashboardPage: React.FC = () => {
         {/* Card 4: Print Privileging Certificate */}
         <div
           onClick={() => navigate('/priviledging/print')}
-          className="group p-4 md:p-5 bg-surface border border-border-default hover:border-accent-base/40 rounded-xl cursor-pointer transition-all shadow-xs hover:shadow-sm"
+          className="group p-4 md:p-5 bg-surface border border-border-default hover:border-accent-base/40 rounded-xl cursor-pointer transition-colors shadow-xs hover:shadow-sm"
         >
           <div className="flex items-center justify-between mb-3">
-            <div className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+            <div className="p-2.5 rounded-xl bg-subtle dark:bg-slate-800 text-text-secondary dark:text-slate-300 border border-border-default dark:border-slate-700">
               <Printer className="w-5 h-5" />
             </div>
-            <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-slate-900 transition-all" />
+            <ArrowRight className="w-4 h-4 text-slate-400 group-hover:translate-x-1 group-hover:text-text-primary transition-colors" />
           </div>
           <h4 className="text-sm font-bold text-text-primary">
             Print Privileging Certificate

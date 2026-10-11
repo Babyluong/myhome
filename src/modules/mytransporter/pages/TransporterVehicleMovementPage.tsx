@@ -245,7 +245,7 @@ const TransporterVehicleMovementPage: React.FC = () => {
       {/* Back button */}
       <button 
         onClick={() => navigate('/transporter/dashboard')}
-        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold mb-4 cursor-pointer"
+        className="flex items-center gap-2 text-text-muted hover:text-text-primary transition-colors text-sm font-semibold mb-4 cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>{isEn ? 'Back to Dashboard' : 'Kembali ke Papan Pemuka'}</span>
@@ -254,11 +254,11 @@ const TransporterVehicleMovementPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+          <h1 className="text-2xl font-black text-text-primary tracking-tight flex items-center gap-2">
             <Activity className="w-8 h-8 text-emerald-600" />
             {isEn ? 'Vehicle Movement Journal & Mileage Log' : 'Vehicle Movement & Mileage Log'}
           </h1>
-          <p className="text-slate-500 text-sm">
+          <p className="text-text-muted text-sm">
             {isEn 
               ? 'Review trip odometers, duty drivers, destinations, and monthly total mileage for audit verification and fuel claims.' 
               : 'Semak odometer perjalanan, pemandu bertugas, destinasi, dan jumlah kilometer bulanan untuk tujuan claims/rekod petrol.'}
@@ -275,18 +275,18 @@ const TransporterVehicleMovementPage: React.FC = () => {
       </div>
 
       {/* Filters Card */}
-      <Card className="border border-slate-200 shadow-sm">
+      <Card className="border border-border-default shadow-sm">
         <CardContent className="p-4 grid grid-cols-1 md:grid-cols-4 gap-4">
           
           {/* Driver Dropdown */}
           <div className="space-y-1">
-            <label className="text-xxs font-bold text-slate-400 uppercase tracking-wider">
+            <label className="text-xxs font-bold text-text-secondary font-bold uppercase tracking-wider">
               {isEn ? 'Select Driver' : 'Select Driver'}
             </label>
             <select
               value={selectedDriverId}
               onChange={(e) => setSelectedDriverId(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
+              className="w-full bg-subtle/50 border border-border-default hover:border-border-default rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
             >
               {drivers.map(d => (
                 <option key={d.id} value={d.id}>
@@ -298,13 +298,13 @@ const TransporterVehicleMovementPage: React.FC = () => {
 
           {/* Month */}
           <div className="space-y-1">
-            <label className="text-xxs font-bold text-slate-400 uppercase tracking-wider">
+            <label className="text-xxs font-bold text-text-secondary font-bold uppercase tracking-wider">
               {isEn ? 'Month' : 'Bulan'}
             </label>
             <select
               value={month}
               onChange={(e) => setMonth(parseInt(e.target.value, 10))}
-              className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
+              className="w-full bg-subtle/50 border border-border-default hover:border-border-default rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
             >
               {[1,2,3,4,5,6,7,8,9,10,11,12].map(m => (
                 <option key={m} value={m}>
@@ -316,13 +316,13 @@ const TransporterVehicleMovementPage: React.FC = () => {
 
           {/* Year */}
           <div className="space-y-1">
-            <label className="text-xxs font-bold text-slate-400 uppercase tracking-wider">
+            <label className="text-xxs font-bold text-text-secondary font-bold uppercase tracking-wider">
               {isEn ? 'Year' : 'Tahun'}
             </label>
             <select
               value={year}
               onChange={(e) => setYear(parseInt(e.target.value, 10))}
-              className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
+              className="w-full bg-subtle/50 border border-border-default hover:border-border-default rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
             >
               {[2025, 2026, 2027].map(y => (
                 <option key={y} value={y}>{y}</option>
@@ -331,7 +331,7 @@ const TransporterVehicleMovementPage: React.FC = () => {
           </div>
 
           <div className="flex items-end">
-            <div className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2 text-center text-xs font-bold text-slate-600">
+            <div className="w-full bg-subtle/50 border border-border-default rounded-xl p-2 text-center text-xs font-bold text-text-muted">
               {isEn ? 'Total:' : 'Jumlah:'} {reportData?.totalKm || 0} km {isEn ? 'driven' : 'jarak tempuh'}
             </div>
           </div>
@@ -340,14 +340,14 @@ const TransporterVehicleMovementPage: React.FC = () => {
       </Card>
 
       {/* Report Table Card */}
-      <Card className="border border-slate-200 shadow-sm overflow-hidden">
+      <Card className="border border-border-default shadow-sm overflow-hidden">
         <CardContent className="p-0">
           {loading ? (
-            <div className="p-12 text-center text-slate-500 font-medium animate-pulse">
+            <div className="p-12 text-center text-text-muted font-medium animate-pulse">
               {isEn ? 'Loading movement log...' : 'Memuatkan log pergerakan...'}
             </div>
           ) : !reportData || reportData.trips.length === 0 ? (
-            <div className="p-12 text-center text-slate-500">
+            <div className="p-12 text-center text-text-muted">
               {isEn ? 'No trips recorded for this driver during the selected period.' : 'Tiada pergerakan trip direkodkan bagi pemandu ini pada tempoh tersebut.'}
             </div>
           ) : (
@@ -355,7 +355,7 @@ const TransporterVehicleMovementPage: React.FC = () => {
               <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                  <tr className="bg-subtle/50 border-b border-border-subtle text-xs font-semibold text-text-muted uppercase tracking-wider">
                     <th className="px-6 py-4">{isEn ? 'Date' : 'Tarikh'}</th>
                     <th className="px-6 py-4">{isEn ? 'Ref No' : 'No. Rujukan'}</th>
                     <th className="px-6 py-4">{isEn ? 'Vehicle' : 'Kenderaan'}</th>
@@ -366,21 +366,21 @@ const TransporterVehicleMovementPage: React.FC = () => {
                     <th className="px-6 py-4">{isEn ? 'Distance (km)' : 'Jarak (km)'}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
+                <tbody className="divide-y divide-border-subtle text-sm text-text-secondary">
                   {reportData.trips.map((trip: any, idx: number) => (
-                    <tr key={idx} className="hover:bg-slate-50/50 transition-colors">
+                    <tr key={idx} className="hover:bg-subtle/50 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="font-semibold text-slate-600">{trip.date}</span>
+                        <span className="font-semibold text-text-muted">{trip.date}</span>
                       </td>
                       <td className="px-6 py-4 font-mono font-bold text-blue-600 text-xs">{trip.referenceNo}</td>
-                      <td className="px-6 py-4 font-semibold text-slate-700">{trip.driverName}</td>
+                      <td className="px-6 py-4 font-semibold text-text-secondary">{trip.driverName}</td>
                       <td className="px-6 py-4 max-w-xs">
-                        <div className="font-bold text-slate-800 truncate">{trip.destination}</div>
+                        <div className="font-bold text-text-primary truncate">{trip.destination}</div>
                         <p className="text-xs text-slate-400 truncate mt-0.5">{trip.purpose}</p>
                       </td>
-                      <td className="px-6 py-4 font-mono text-slate-600 tabular-nums">{trip.odometerStart} km</td>
-                      <td className="px-6 py-4 font-mono text-slate-600 tabular-nums">{trip.odometerEnd} km</td>
-                      <td className="px-6 py-4 font-mono text-slate-600 tabular-nums">
+                      <td className="px-6 py-4 font-mono text-text-muted tabular-nums">{trip.odometerStart} km</td>
+                      <td className="px-6 py-4 font-mono text-text-muted tabular-nums">{trip.odometerEnd} km</td>
+                      <td className="px-6 py-4 font-mono text-text-muted tabular-nums">
                         {trip.durationHours !== undefined ? `${trip.durationHours} ${isEn ? 'hrs' : 'jam'}` : '-'}
                       </td>
                       <td className="px-6 py-4 font-mono font-bold text-emerald-600 tabular-nums">+{trip.distanceKm} km</td>
@@ -391,32 +391,32 @@ const TransporterVehicleMovementPage: React.FC = () => {
             </div>
 
             {/* Mobile View: High-End Native Trip Cards */}
-            <div className="md:hidden divide-y divide-slate-100">
+            <div className="md:hidden divide-y divide-border-subtle">
               {reportData.trips.map((trip: any, idx: number) => (
-                <div key={idx} className="p-4 space-y-2.5 hover:bg-slate-50/50 transition">
+                <div key={idx} className="p-4 space-y-2.5 hover:bg-subtle/50 transition">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <span className="font-mono text-xs font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-200 inline-block">
+                      <span className="font-mono text-xs font-bold text-blue-600 bg-blue-500/10 px-2 py-0.5 rounded border border-blue-500/20 inline-block">
                         {trip.referenceNo}
                       </span>
-                      <h4 className="font-bold text-slate-900 text-sm mt-1">{trip.destination}</h4>
+                      <h4 className="font-bold text-text-primary text-sm mt-1">{trip.destination}</h4>
                       <p className="text-xs text-slate-400 mt-0.5">{trip.purpose}</p>
                     </div>
-                    <span className="font-mono font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg text-xs tabular-nums flex-shrink-0">
+                    <span className="font-mono font-bold text-emerald-700 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-lg text-xs tabular-nums flex-shrink-0">
                       +{trip.distanceKm} km
                     </span>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2 bg-slate-50 rounded-xl p-2.5 border border-slate-100 text-xs">
+                  <div className="grid grid-cols-2 gap-2 bg-subtle/50 rounded-xl p-2.5 border border-border-subtle text-xs">
                     <div>
                       <span className="text-slate-400 text-[10px] uppercase">Odometer Mula - Tamat</span>
-                      <div className="font-mono text-slate-700 font-semibold mt-0.5">
+                      <div className="font-mono text-text-secondary font-semibold mt-0.5">
                         {trip.odometerStart} → {trip.odometerEnd} km
                       </div>
                     </div>
                     <div>
                       <span className="text-slate-400 text-[10px] uppercase">Tempoh Perjalanan</span>
-                      <div className="font-mono text-slate-700 font-semibold mt-0.5">
+                      <div className="font-mono text-text-secondary font-semibold mt-0.5">
                         {trip.durationHours !== undefined ? `${trip.durationHours} ${isEn ? 'hrs' : 'jam'}` : '-'}
                       </div>
                     </div>
@@ -424,7 +424,7 @@ const TransporterVehicleMovementPage: React.FC = () => {
 
                   <div className="flex items-center justify-between text-[11px] text-slate-400 pt-0.5">
                     <span>{trip.date}</span>
-                    <span>Pemandu: <strong className="text-slate-600">{trip.driverName}</strong></span>
+                    <span>Pemandu: <strong className="text-text-muted">{trip.driverName}</strong></span>
                   </div>
                 </div>
               ))}

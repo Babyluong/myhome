@@ -106,7 +106,7 @@ export const RolePermissionPage: React.FC = () => {
   if (!role) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-slate-600">Role not found</p>
+        <p className="text-text-muted">Role not found</p>
       </div>
     )
   }
@@ -139,8 +139,8 @@ export const RolePermissionPage: React.FC = () => {
             Back to Roles
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Permission Management</h1>
-            <p className="text-sm text-slate-600 mt-1">{role.role_name}</p>
+            <h1 className="text-2xl font-bold text-text-primary">Permission Management</h1>
+            <p className="text-sm text-text-muted mt-1">{role.role_name}</p>
           </div>
         </div>
         <Button
@@ -158,7 +158,7 @@ export const RolePermissionPage: React.FC = () => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-xl border border-slate-200 shadow-sm p-6"
+        className="bg-surface rounded-xl border border-border-default shadow-sm p-6"
       >
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 bg-teal-100 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -166,14 +166,14 @@ export const RolePermissionPage: React.FC = () => {
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
-              <h2 className="text-2xl font-bold text-slate-900">{role.role_name}</h2>
+              <h2 className="text-2xl font-bold text-text-primary">{role.role_name}</h2>
               <Badge variant={role.is_system_role ? 'info' : 'gray'}>
                 {role.is_system_role ? 'System Role' : 'Hospital Role'}
               </Badge>
             </div>
-            <p className="text-slate-600 font-mono font-semibold">{role.role_code}</p>
-            {role.description && <p className="text-slate-600 mt-2">{role.description}</p>}
-            <p className="text-sm text-slate-500 mt-2">Created: {formatDate(role.created_at)}</p>
+            <p className="text-text-muted font-mono font-semibold">{role.role_code}</p>
+            {role.description && <p className="text-text-muted mt-2">{role.description}</p>}
+            <p className="text-sm text-text-muted mt-2">Created: {formatDate(role.created_at)}</p>
           </div>
         </div>
       </motion.div>
@@ -190,19 +190,19 @@ export const RolePermissionPage: React.FC = () => {
               key={module}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden"
+              className="bg-surface rounded-xl border border-border-default shadow-sm overflow-hidden"
             >
               {/* Module Header */}
-              <div className="bg-gradient-to-r from-teal-50 to-cyan-50 border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+              <div className="bg-gradient-to-r from-teal-50 to-cyan-50 border-b border-border-default px-6 py-4 flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900 capitalize">{module.replace('_', ' ')}</h3>
-                  <p className="text-sm text-slate-600 mt-1">
+                  <h3 className="text-lg font-bold text-text-primary capitalize">{module.replace('_', ' ')}</h3>
+                  <p className="text-sm text-text-muted mt-1">
                     {modulePermissions.length} permissions across {Object.keys(features).length} features
                   </p>
                 </div>
                 <button
                   onClick={() => handleSelectAllInModule(module)}
-                  className="flex items-center gap-2 px-4 py-2 text-sm text-teal-700 hover:text-teal-800 font-semibold bg-white rounded-lg border border-teal-200 hover:bg-teal-50 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 text-sm text-teal-700 hover:text-teal-800 font-semibold bg-surface rounded-lg border border-accent-base/20 hover:bg-accent-base/10 transition-colors"
                 >
                   {allSelected ? (
                     <>
@@ -219,7 +219,7 @@ export const RolePermissionPage: React.FC = () => {
               </div>
 
               {/* Features within Module */}
-              <div className="divide-y divide-slate-100">
+              <div className="divide-y divide-border-subtle">
                 {Object.entries(features).map(([feature, featurePermissions]) => {
                   const allFeatureSelected = featurePermissions.every((p) => selectedPermissions.includes(p.id))
                   const someFeatureSelected = featurePermissions.some((p) => selectedPermissions.includes(p.id))
@@ -229,16 +229,16 @@ export const RolePermissionPage: React.FC = () => {
                       {/* Feature Header */}
                       <div className="flex items-center justify-between mb-4">
                         <div>
-                          <h4 className="text-base font-semibold text-slate-800 capitalize">
+                          <h4 className="text-base font-semibold text-text-primary capitalize">
                             {feature.replace('_', ' ')}
                           </h4>
-                          <p className="text-xs text-slate-500 mt-1">
+                          <p className="text-xs text-text-muted mt-1">
                             {featurePermissions.length} permission{featurePermissions.length !== 1 ? 's' : ''}
                           </p>
                         </div>
                         <button
                           onClick={() => handleSelectAllInFeature(module, feature)}
-                          className="flex items-center gap-2 text-xs text-teal-600 hover:text-teal-700 font-medium px-3 py-1.5 rounded-md hover:bg-teal-50 transition-colors"
+                          className="flex items-center gap-2 text-xs text-teal-600 hover:text-teal-700 font-medium px-3 py-1.5 rounded-md hover:bg-accent-base/10 transition-colors"
                         >
                           {allFeatureSelected ? (
                             <>
@@ -263,10 +263,10 @@ export const RolePermissionPage: React.FC = () => {
                               key={permission.id}
                               onClick={() => handleTogglePermission(permission.id)}
                               className={cn(
-                                'p-4 rounded-lg border-2 text-left transition-all',
+                                'p-4 rounded-lg border-2 text-left transition-colors',
                                 isSelected
-                                  ? 'border-teal-500 bg-teal-50 hover:bg-teal-100'
-                                  : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50'
+                                  ? 'border-teal-500 bg-accent-base/10 hover:bg-teal-100'
+                                  : 'border-border-default bg-surface hover:border-border-default hover:bg-subtle/50'
                               )}
                             >
                               <div className="flex items-start gap-3">
@@ -276,9 +276,9 @@ export const RolePermissionPage: React.FC = () => {
                                   <Square className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" />
                                 )}
                                 <div className="flex-1 min-w-0">
-                                  <p className="font-medium text-slate-900 text-sm">{permission.permission_name}</p>
+                                  <p className="font-medium text-text-primary text-sm">{permission.permission_name}</p>
                                   {permission.description && (
-                                    <p className="text-xs text-slate-500 mt-1">{permission.description}</p>
+                                    <p className="text-xs text-text-muted mt-1">{permission.description}</p>
                                   )}
                                   <p className="text-xs text-slate-400 mt-1 font-mono truncate">
                                     {permission.permission_code}
@@ -302,7 +302,7 @@ export const RolePermissionPage: React.FC = () => {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-teal-50 border border-teal-200 rounded-xl p-4"
+        className="bg-accent-base/10 border border-accent-base/20 rounded-xl p-4"
       >
         <div className="flex items-center justify-between">
           <div>

@@ -141,23 +141,23 @@ export const StaffDeadlinePage: React.FC = () => {
   }
 
   return (
-    <div className="p-6 md:p-8 w-full space-y-6 text-slate-800">
+    <div className="p-6 md:p-8 w-full space-y-6 text-text-primary">
       {/* Header Panel */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-white border border-slate-100 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-surface border border-border-subtle rounded-3xl p-6 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500" />
         
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate(ROUTES.STAFF_DASHBOARD)}
-            className="p-3 hover:bg-slate-50 border border-slate-100 rounded-2xl text-slate-400 hover:text-slate-700 transition-all shadow-sm"
+            className="p-3 hover:bg-subtle/50 border border-border-subtle rounded-2xl text-slate-400 hover:text-text-secondary transition-colors shadow-sm"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-800 flex items-center gap-2">
+            <h1 className="text-2xl font-black tracking-tight text-text-primary flex items-center gap-2">
               {isMs ? 'Log Laporan & Serahan Tugasan' : 'Deadlines & Report Submissions'}
             </h1>
-            <p className="text-sm text-slate-500 mt-0.5 font-medium">
+            <p className="text-sm text-text-muted mt-0.5 font-medium">
               {isMs
                 ? 'Pemantauan Serahan Laporan Bulanan, Anggaran Belanja Mengurus (ABM), Unjuran APPL & Audit'
                 : 'Monthly Report Submissions, Budget Estimates (ABM), APPL Forecasting & Audit Deadlines'}
@@ -168,7 +168,7 @@ export const StaffDeadlinePage: React.FC = () => {
         <div className="flex items-center gap-2.5">
           <Button
             onClick={() => setIsModalOpen(true)}
-            className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-2xl shadow-md font-bold flex items-center gap-2 px-5 py-2.5 transition-all text-sm"
+            className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-2xl shadow-md font-bold flex items-center gap-2 px-5 py-2.5 transition-colors text-sm"
           >
             <Plus className="w-4 h-4" />
             <span>{isMs ? 'Tambah Log Laporan' : 'Add New Deadline'}</span>
@@ -177,33 +177,33 @@ export const StaffDeadlinePage: React.FC = () => {
       </div>
 
       {/* Filter Tabs */}
-      <div className="flex items-center gap-2 bg-white p-3 rounded-2xl border border-slate-100 shadow-sm w-fit">
+      <div className="flex items-center gap-2 bg-surface p-3 rounded-2xl border border-border-subtle shadow-sm w-fit">
         <button
           onClick={() => setSelectedFilter('ACTIVE')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
             selectedFilter === 'ACTIVE'
               ? 'bg-slate-900 text-white shadow-sm'
-              : 'text-slate-600 hover:bg-slate-100'
+              : 'text-text-muted hover:bg-subtle'
           }`}
         >
           {isMs ? 'Masih Aktif' : 'Active'} ({deadlines.filter(d => d.status !== 'submitted').length})
         </button>
         <button
           onClick={() => setSelectedFilter('COMPLETED')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
             selectedFilter === 'COMPLETED'
               ? 'bg-emerald-600 text-white shadow-sm'
-              : 'text-slate-600 hover:bg-slate-100'
+              : 'text-text-muted hover:bg-subtle'
           }`}
         >
           {isMs ? 'Telah Selesai' : 'Completed'} ({deadlines.filter(d => d.status === 'submitted').length})
         </button>
         <button
           onClick={() => setSelectedFilter('ALL')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
             selectedFilter === 'ALL'
               ? 'bg-slate-900 text-white shadow-sm'
-              : 'text-slate-600 hover:bg-slate-100'
+              : 'text-text-muted hover:bg-subtle'
           }`}
         >
           {isMs ? 'Semua' : 'All'} ({deadlines.length})
@@ -213,7 +213,7 @@ export const StaffDeadlinePage: React.FC = () => {
       {/* Deadlines List Cards */}
       <div className="space-y-3">
         {filteredDeadlines.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-3xl border border-slate-100 shadow-md text-slate-400">
+          <div className="text-center py-16 bg-surface rounded-3xl border border-border-subtle shadow-md text-slate-400">
             {isMs ? 'Tiada rekod tarikh akhir dalam senarai ini.' : 'No deadline records found in this list.'}
           </div>
         ) : (
@@ -226,23 +226,23 @@ export const StaffDeadlinePage: React.FC = () => {
             return (
               <div
                 key={dl.id}
-                className={`p-5 rounded-3xl bg-white border transition-all shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4 ${
+                className={`p-5 rounded-3xl bg-surface border transition-colors shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4 ${
                   isDone
-                    ? 'border-slate-200 opacity-60'
+                    ? 'border-border-default opacity-60'
                     : isPast
-                    ? 'border-rose-200 bg-rose-50/20'
+                    ? 'border-rose-500/20 bg-rose-500/10'
                     : isUrgent
                     ? 'border-amber-300 shadow-amber-500/5'
-                    : 'border-slate-100'
+                    : 'border-border-subtle'
                 }`}
               >
                 <div className="flex items-start gap-4">
                   <button
                     onClick={() => handleToggleComplete(dl)}
-                    className={`p-2.5 rounded-2xl border transition-all mt-0.5 ${
+                    className={`p-2.5 rounded-2xl border transition-colors mt-0.5 ${
                       isDone
                         ? 'bg-emerald-500 text-white border-emerald-500'
-                        : 'bg-white border-slate-300 hover:border-emerald-500 text-slate-300 hover:text-emerald-500'
+                        : 'bg-surface border-border-default hover:border-emerald-500 text-slate-300 hover:text-emerald-500'
                     }`}
                     title={isDone ? (isMs ? 'Tanda belum selesai' : 'Mark as pending') : (isMs ? 'Tanda telah selesai' : 'Mark as completed')}
                   >
@@ -253,24 +253,24 @@ export const StaffDeadlinePage: React.FC = () => {
                     <div className="flex items-center gap-2 flex-wrap">
                       <h3
                         className={`text-base font-extrabold ${
-                          isDone ? 'line-through text-slate-400' : 'text-slate-900'
+                          isDone ? 'line-through text-slate-400' : 'text-text-primary'
                         }`}
                       >
                         {dl.tajuk}
                       </h3>
-                      <span className="text-[10px] px-2.5 py-0.5 rounded-full font-mono font-bold bg-slate-100 text-slate-700 border border-slate-200 uppercase">
+                      <span className="text-[10px] px-2.5 py-0.5 rounded-full font-mono font-bold bg-subtle text-text-secondary border border-border-default uppercase">
                         {dl.kategori}
                       </span>
                     </div>
 
-                    <p className="text-xs text-slate-600 mt-1 max-w-2xl font-medium leading-relaxed">
+                    <p className="text-xs text-text-muted mt-1 max-w-2xl font-medium leading-relaxed">
                       {dl.penerangan}
                     </p>
 
                     <div className="flex items-center gap-4 mt-2 text-xs text-slate-400 font-mono">
-                      <span>{isMs ? 'Tarikh Serahan:' : 'Deadline:'} <strong className="text-slate-700">{dl.tarikh_akhir}</strong></span>
+                      <span>{isMs ? 'Tarikh Serahan:' : 'Deadline:'} <strong className="text-text-secondary">{dl.tarikh_akhir}</strong></span>
                       {dl.creator?.full_name && (
-                        <span>{isMs ? 'Pegawai:' : 'Officer:'} <strong className="text-slate-700">{dl.creator.full_name}</strong></span>
+                        <span>{isMs ? 'Pegawai:' : 'Officer:'} <strong className="text-text-secondary">{dl.creator.full_name}</strong></span>
                       )}
                     </div>
                   </div>
@@ -281,10 +281,10 @@ export const StaffDeadlinePage: React.FC = () => {
                     <div
                       className={`text-center px-4 py-2 rounded-2xl border font-mono font-bold text-xs ${
                         isPast
-                          ? 'bg-rose-50 text-rose-700 border-rose-200'
+                          ? 'bg-rose-500/10 text-rose-700 border-rose-500/20'
                           : isUrgent
-                          ? 'bg-amber-50 text-amber-700 border-amber-200 animate-pulse'
-                          : 'bg-slate-50 text-slate-700 border-slate-200'
+                          ? 'bg-amber-500/10 text-amber-700 border-amber-500/20 animate-pulse'
+                          : 'bg-subtle/50 text-text-secondary border-border-default'
                       }`}
                     >
                       <div className="text-lg font-black">{Math.abs(daysLeft)}</div>
@@ -295,7 +295,7 @@ export const StaffDeadlinePage: React.FC = () => {
                   )}
 
                   {isDone && (
-                    <span className="text-xs font-bold px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span className="text-xs font-bold px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
                       {isMs ? 'Selesai' : 'Completed'}
                     </span>
                   )}
@@ -316,13 +316,13 @@ export const StaffDeadlinePage: React.FC = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
+              <label className="block text-xs font-bold text-text-secondary mb-1">
                 {isMs ? 'Kategori Laporan' : 'Report Category'} <span className="text-rose-500">*</span>
               </label>
               <select
                 value={formCategory}
                 onChange={e => setFormCategory(e.target.value as DeadlineCategory)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-medium"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-border-default text-sm font-medium"
               >
                 <option value="laporan">{isMs ? 'Laporan Bulanan Jabatan' : 'Monthly Department Report'}</option>
                 <option value="anggaran">{isMs ? 'Unjuran & Pesanan APPL' : 'APPL Forecast & Order'}</option>
@@ -333,7 +333,7 @@ export const StaffDeadlinePage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
+              <label className="block text-xs font-bold text-text-secondary mb-1">
                 {isMs ? 'Tajuk Laporan / Serahan' : 'Report / Deadline Title'} <span className="text-rose-500">*</span>
               </label>
               <input
@@ -342,14 +342,14 @@ export const StaffDeadlinePage: React.FC = () => {
                 value={formTitle}
                 onChange={e => setFormTitle(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-border-default text-sm"
               />
             </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
+              <label className="block text-xs font-bold text-text-secondary mb-1">
                 {isMs ? 'Tarikh Akhir (Deadline)' : 'Deadline Date'} <span className="text-rose-500">*</span>
               </label>
               <input
@@ -357,18 +357,18 @@ export const StaffDeadlinePage: React.FC = () => {
                 value={formDate}
                 onChange={e => setFormDate(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-border-default text-sm font-mono"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
+              <label className="block text-xs font-bold text-text-secondary mb-1">
                 {isMs ? 'Tahap Keutamaan' : 'Priority Level'}
               </label>
               <select
                 value={formPriority}
                 onChange={e => setFormPriority(e.target.value as DeadlinePriority)}
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-medium"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-border-default text-sm font-medium"
               >
                 <option value="critical">{isMs ? 'Kritikal (Hukuman/Kesan Peruntukan)' : 'Critical (Funding Impact)'}</option>
                 <option value="high">{isMs ? 'Tinggi (Kewangan / KKM Deadline)' : 'High (Finance / MOH Deadline)'}</option>
@@ -379,7 +379,7 @@ export const StaffDeadlinePage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
+            <label className="block text-xs font-bold text-text-secondary mb-1">
               {isMs ? 'Keterangan / Panduan Serahan' : 'Description / Guidelines'}
             </label>
             <textarea
@@ -387,16 +387,16 @@ export const StaffDeadlinePage: React.FC = () => {
               placeholder={isMs ? "Format fail, pautan borang, atau arahan khusus HOD..." : "File format, form link, or specific instructions..."}
               value={formDesc}
               onChange={e => setFormDesc(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-border-default text-sm"
             />
           </div>
 
-          <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+          <div className="flex justify-end gap-3 pt-4 border-t border-border-subtle">
             <Button
               type="button"
               variant="outline"
               onClick={() => setIsModalOpen(false)}
-              className="border-slate-200 hover:bg-slate-50 text-slate-700 font-bold"
+              className="border-border-default hover:bg-subtle/50 text-text-secondary font-bold"
             >
               {isMs ? 'Batal' : 'Cancel'}
             </Button>

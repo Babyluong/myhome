@@ -52,10 +52,10 @@ export const PrintPriviledgingPage: React.FC = () => {
         />
 
         {/* Staff Switcher Bar (Hidden during print) */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-4 mb-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-800 rounded-2xl p-4 mb-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <User className="w-4 h-4 text-emerald-700 dark:text-emerald-400" />
-            <span className="text-xs font-bold text-slate-700 dark:text-slate-300">
+            <span className="text-xs font-bold text-text-secondary dark:text-slate-300">
               Select Officer for Certificate Printing:
             </span>
           </div>
@@ -63,7 +63,7 @@ export const PrintPriviledgingPage: React.FC = () => {
           <select
             value={selectedStaffId}
             onChange={(e) => handleStaffChange(e.target.value)}
-            className="px-3.5 py-2 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
+            className="px-3.5 py-2 bg-subtle/50 dark:bg-slate-800 border border-border-default dark:border-slate-700 rounded-xl text-xs md:text-sm font-semibold text-text-primary dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
           >
             {staffProfiles.map((s) => (
               <option key={s.id} value={s.id}>
@@ -81,8 +81,8 @@ export const PrintPriviledgingPage: React.FC = () => {
           onBack={() => navigate('/priviledging')}
         />
       ) : (
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-12 text-center">
-          <p className="text-sm font-bold text-slate-600 dark:text-slate-400">
+        <div className="bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-800 rounded-2xl p-12 text-center">
+          <p className="text-sm font-bold text-text-muted dark:text-slate-400">
             Officer profile not found.
           </p>
         </div>

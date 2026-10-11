@@ -87,7 +87,7 @@ export const OfflineSyncDrawer: React.FC<OfflineSyncDrawerProps> = ({ isOpen, on
 
             {/* Module Breakdown Badges */}
             <div className="py-3">
-              <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <h4 className="text-xs font-semibold text-text-secondary font-bold uppercase tracking-wider mb-2 flex items-center gap-1.5">
                 <Layers className="w-3.5 h-3.5 text-teal-400" />
                 Pecahan Modul Menunggu ({pendingCount})
               </h4>
@@ -115,7 +115,7 @@ export const OfflineSyncDrawer: React.FC<OfflineSyncDrawerProps> = ({ isOpen, on
 
             {/* Queue List */}
             <div className="flex-1 overflow-y-auto space-y-2 pr-1 my-2">
-              <h4 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+              <h4 className="text-xs font-semibold text-text-secondary font-bold uppercase tracking-wider mb-2 flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-teal-400" />
                 Senarai Baris Gilir Mutasi
               </h4>
@@ -168,7 +168,7 @@ export const OfflineSyncDrawer: React.FC<OfflineSyncDrawerProps> = ({ isOpen, on
               <button
                 onClick={() => void syncNow()}
                 disabled={!isOnline || isSyncing || pendingCount === 0}
-                className="flex-1 py-2.5 px-4 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-semibold text-xs transition-all active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-teal-900/30"
+                className="flex-1 py-2.5 px-4 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-semibold text-xs transition-colors active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-lg shadow-teal-900/30"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
                 {isSyncing ? 'Sedang Menyegerak...' : 'Segerakkan Sekarang'}

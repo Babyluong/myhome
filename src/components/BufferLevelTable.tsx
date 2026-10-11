@@ -127,25 +127,25 @@ export default function BufferLevelTable({ items, onHandByItem, batches = [] }: 
     switch (status) {
       case 'critical': return 'text-red-600 bg-red-50';
       case 'low': return 'text-orange-600 bg-orange-50';
-      case 'overstock': return 'text-blue-600 bg-blue-50';
+      case 'overstock': return 'text-blue-600 bg-blue-500/10';
       case 'normal': return 'text-green-600 bg-green-50';
-      default: return 'text-gray-600 bg-gray-50';
+      default: return 'text-text-secondary bg-subtle/50';
     }
   };
 
   return (
-    <div className="rounded-2xl bg-white p-8 shadow-xl border border-slate-200/50">
+    <div className="rounded-2xl bg-surface p-8 shadow-xl border border-border-default">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">Buffer Level Configuration</h2>
-          <p className="text-slate-600 mt-1">Configure inventory parameters for optimal stock management</p>
+          <h2 className="text-2xl font-bold text-text-primary">Buffer Level Configuration</h2>
+          <p className="text-text-secondary mt-1">Configure inventory parameters for optimal stock management</p>
         </div>
         
         {/* Search and Filter */}
         <div className="flex items-center gap-4">
           <div className="relative">
             <input
-              className="w-80 rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 pl-10 text-slate-900 placeholder-slate-500 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 transition-all duration-200"
+              className="w-80 rounded-xl border border-border-default bg-subtle/50 px-4 py-3 pl-10 text-text-primary placeholder-slate-500 focus:border-blue-500 focus:bg-surface focus:ring-4 focus:ring-blue-100 transition-[transform,opacity,box-shadow,border-color] duration-200"
               placeholder="Search items..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -156,7 +156,7 @@ export default function BufferLevelTable({ items, onHandByItem, batches = [] }: 
           </div>
           
           <select
-            className="rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 text-slate-900 focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+            className="rounded-xl border border-border-default bg-subtle/50 px-4 py-3 text-text-primary focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
           >
@@ -167,23 +167,23 @@ export default function BufferLevelTable({ items, onHandByItem, batches = [] }: 
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-slate-200">
+      <div className="overflow-hidden rounded-xl border border-border-default">
         <table className="min-w-full">
-          <thead className="bg-gradient-to-r from-slate-50 to-slate-100">
+          <thead className="bg-subtle/50">
             <tr>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700 uppercase tracking-wider">Item Info</th>
-              <th className="px-6 py-4 text-center text-sm font-semibold text-slate-700 uppercase tracking-wider">Current Stock</th>
-              <th className="px-6 py-4 text-center text-sm font-semibold text-slate-700 uppercase tracking-wider">Min Level</th>
-              <th className="px-6 py-4 text-center text-sm font-semibold text-slate-700 uppercase tracking-wider">Max Level</th>
-              <th className="px-6 py-4 text-center text-sm font-semibold text-slate-700 uppercase tracking-wider">Buffer Level</th>
-              <th className="px-6 py-4 text-center text-sm font-semibold text-slate-700 uppercase tracking-wider">Reorder Point</th>
-              <th className="px-6 py-4 text-center text-sm font-semibold text-slate-700 uppercase tracking-wider">Reorder Qty</th>
-              <th className="px-6 py-4 text-center text-sm font-semibold text-slate-700 uppercase tracking-wider">Lead Time</th>
-              <th className="px-6 py-4 text-center text-sm font-semibold text-slate-700 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-4 text-center text-sm font-semibold text-slate-700 uppercase tracking-wider">Actions</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-text-secondary uppercase tracking-wider">Item Info</th>
+              <th className="px-6 py-4 text-center text-sm font-semibold text-text-secondary uppercase tracking-wider">Current Stock</th>
+              <th className="px-6 py-4 text-center text-sm font-semibold text-text-secondary uppercase tracking-wider">Min Level</th>
+              <th className="px-6 py-4 text-center text-sm font-semibold text-text-secondary uppercase tracking-wider">Max Level</th>
+              <th className="px-6 py-4 text-center text-sm font-semibold text-text-secondary uppercase tracking-wider">Buffer Level</th>
+              <th className="px-6 py-4 text-center text-sm font-semibold text-text-secondary uppercase tracking-wider">Reorder Point</th>
+              <th className="px-6 py-4 text-center text-sm font-semibold text-text-secondary uppercase tracking-wider">Reorder Qty</th>
+              <th className="px-6 py-4 text-center text-sm font-semibold text-text-secondary uppercase tracking-wider">Lead Time</th>
+              <th className="px-6 py-4 text-center text-sm font-semibold text-text-secondary uppercase tracking-wider">Status</th>
+              <th className="px-6 py-4 text-center text-sm font-semibold text-text-secondary uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-slate-100">
+          <tbody className="bg-surface divide-y divide-border-subtle">
             {paginatedItems.map(item => {
               const currentStock = onHandByItem.get(item.id) || 0;
               const config = bufferConfigs.get(item.id);
@@ -192,22 +192,22 @@ export default function BufferLevelTable({ items, onHandByItem, batches = [] }: 
               if (!config) return null;
 
               return (
-                <tr key={item.id} className="hover:bg-slate-50 transition-colors duration-150">
+                <tr key={item.id} className="hover:bg-subtle/50 transition-colors duration-150">
                   <td className="px-6 py-4">
                     <div className="flex flex-col">
                       <button
                         onClick={() => setSelectedItem(item)}
-                        className="text-sm font-semibold text-blue-600 hover:text-blue-800 hover:underline text-left transition-colors duration-200"
+                        className="text-sm font-semibold text-blue-600 hover:text-blue-400 hover:underline text-left transition-colors duration-200"
                       >
                         {item.name}
                       </button>
-                      <div className="text-xs text-slate-500">{item.drugCode} â€¢ {item.brandName}</div>
+                      <div className="text-xs text-text-muted">{item.drugCode} â€¢ {item.brandName}</div>
                       <div className="text-xs text-slate-400">{item.category}</div>
                     </div>
                   </td>
                   
                   <td className="px-6 py-4 text-center">
-                    <div className="text-lg font-bold text-slate-900">{currentStock}</div>
+                    <div className="text-lg font-bold text-text-primary">{currentStock}</div>
                   </td>
                   
                   <td className="px-6 py-4 text-center">
@@ -216,10 +216,10 @@ export default function BufferLevelTable({ items, onHandByItem, batches = [] }: 
                         type="number"
                         value={config.minLevel}
                         onChange={(e) => handleConfigUpdate(item.id, 'minLevel', parseInt(e.target.value) || 0)}
-                        className="w-20 text-center border border-slate-300 rounded px-2 py-1 text-sm"
+                        className="w-20 text-center border border-border-default rounded px-2 py-1 text-sm"
                       />
                     ) : (
-                      <div className="text-sm font-semibold text-slate-700">{config.minLevel}</div>
+                      <div className="text-sm font-semibold text-text-secondary">{config.minLevel}</div>
                     )}
                   </td>
                   
@@ -229,10 +229,10 @@ export default function BufferLevelTable({ items, onHandByItem, batches = [] }: 
                         type="number"
                         value={config.maxLevel}
                         onChange={(e) => handleConfigUpdate(item.id, 'maxLevel', parseInt(e.target.value) || 0)}
-                        className="w-20 text-center border border-slate-300 rounded px-2 py-1 text-sm"
+                        className="w-20 text-center border border-border-default rounded px-2 py-1 text-sm"
                       />
                     ) : (
-                      <div className="text-sm font-semibold text-slate-700">{config.maxLevel}</div>
+                      <div className="text-sm font-semibold text-text-secondary">{config.maxLevel}</div>
                     )}
                   </td>
                   
@@ -242,10 +242,10 @@ export default function BufferLevelTable({ items, onHandByItem, batches = [] }: 
                         type="number"
                         value={config.bufferLevel}
                         onChange={(e) => handleConfigUpdate(item.id, 'bufferLevel', parseInt(e.target.value) || 0)}
-                        className="w-20 text-center border border-slate-300 rounded px-2 py-1 text-sm"
+                        className="w-20 text-center border border-border-default rounded px-2 py-1 text-sm"
                       />
                     ) : (
-                      <div className="text-sm font-semibold text-slate-700">{config.bufferLevel}</div>
+                      <div className="text-sm font-semibold text-text-secondary">{config.bufferLevel}</div>
                     )}
                   </td>
                   
@@ -255,10 +255,10 @@ export default function BufferLevelTable({ items, onHandByItem, batches = [] }: 
                         type="number"
                         value={config.reorderPoint}
                         onChange={(e) => handleConfigUpdate(item.id, 'reorderPoint', parseInt(e.target.value) || 0)}
-                        className="w-20 text-center border border-slate-300 rounded px-2 py-1 text-sm"
+                        className="w-20 text-center border border-border-default rounded px-2 py-1 text-sm"
                       />
                     ) : (
-                      <div className="text-sm font-semibold text-slate-700">{config.reorderPoint}</div>
+                      <div className="text-sm font-semibold text-text-secondary">{config.reorderPoint}</div>
                     )}
                   </td>
                   
@@ -268,10 +268,10 @@ export default function BufferLevelTable({ items, onHandByItem, batches = [] }: 
                         type="number"
                         value={config.reorderQuantity}
                         onChange={(e) => handleConfigUpdate(item.id, 'reorderQuantity', parseInt(e.target.value) || 0)}
-                        className="w-20 text-center border border-slate-300 rounded px-2 py-1 text-sm"
+                        className="w-20 text-center border border-border-default rounded px-2 py-1 text-sm"
                       />
                     ) : (
-                      <div className="text-sm font-semibold text-slate-700">{config.reorderQuantity}</div>
+                      <div className="text-sm font-semibold text-text-secondary">{config.reorderQuantity}</div>
                     )}
                   </td>
                   
@@ -281,10 +281,10 @@ export default function BufferLevelTable({ items, onHandByItem, batches = [] }: 
                         type="number"
                         value={config.leadTimeDays}
                         onChange={(e) => handleConfigUpdate(item.id, 'leadTimeDays', parseInt(e.target.value) || 0)}
-                        className="w-20 text-center border border-slate-300 rounded px-2 py-1 text-sm"
+                        className="w-20 text-center border border-border-default rounded px-2 py-1 text-sm"
                       />
                     ) : (
-                      <div className="text-sm font-semibold text-slate-700">{config.leadTimeDays} days</div>
+                      <div className="text-sm font-semibold text-text-secondary">{config.leadTimeDays} days</div>
                     )}
                   </td>
                   
@@ -306,7 +306,7 @@ export default function BufferLevelTable({ items, onHandByItem, batches = [] }: 
                           </button>
                           <button
                             onClick={() => setEditingItem(null)}
-                            className="text-gray-600 hover:text-gray-800 text-sm font-medium"
+                            className="text-text-secondary hover:text-text-primary text-sm font-medium"
                           >
                             Cancel
                           </button>
@@ -314,7 +314,7 @@ export default function BufferLevelTable({ items, onHandByItem, batches = [] }: 
                       ) : (
                         <button
                           onClick={() => setEditingItem(item.id)}
-                          className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                          className="text-blue-600 hover:text-blue-400 text-sm font-medium"
                         >
                           Edit
                         </button>
@@ -330,14 +330,14 @@ export default function BufferLevelTable({ items, onHandByItem, batches = [] }: 
 
       {/* Pagination Controls */}
       <div className="mt-6 flex items-center justify-between">
-        <div className="text-sm text-slate-600">
+        <div className="text-sm text-text-secondary">
           Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} items
         </div>
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
-            className="px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+            className="px-3 py-2 text-sm font-medium text-text-muted bg-surface border border-border-default rounded-lg hover:bg-subtle/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
           >
             Previous
           </button>
@@ -362,7 +362,7 @@ export default function BufferLevelTable({ items, onHandByItem, batches = [] }: 
                   className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${
                     currentPage === pageNum
                       ? 'bg-blue-600 text-white'
-                      : 'text-slate-700 bg-white border border-slate-300 hover:bg-slate-50'
+                      : 'text-text-secondary bg-surface border border-border-default hover:bg-subtle/50'
                   }`}
                 >
                   {pageNum}
@@ -374,7 +374,7 @@ export default function BufferLevelTable({ items, onHandByItem, batches = [] }: 
           <button
             onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
             disabled={currentPage === totalPages}
-            className="px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+            className="px-3 py-2 text-sm font-medium text-text-muted bg-surface border border-border-default rounded-lg hover:bg-subtle/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
           >
             Next
           </button>

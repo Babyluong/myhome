@@ -391,14 +391,14 @@ export default function OrderTrackingPage() {
     switch (status) {
       case 'fully_delivered':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-700 border border-emerald-200">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
             <CheckCircle2 className="w-3.5 h-3.5" />
             Fully Delivered
           </span>
         )
       case 'partially_delivered':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-700 border border-amber-200">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-700 border border-amber-500/20">
             <Truck className="w-3.5 h-3.5" />
             Partially Delivered
           </span>
@@ -412,7 +412,7 @@ export default function OrderTrackingPage() {
         )
       case 'cancelled':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-500/10 text-gray-700 border border-gray-200">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-500/10 text-text-secondary border border-border-default">
             <XCircle className="w-3.5 h-3.5" />
             Cancelled
           </span>
@@ -441,20 +441,20 @@ export default function OrderTrackingPage() {
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
           <span className="text-slate-400">Procurement</span>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-          <span className="text-slate-800 font-extrabold tracking-wide">Order Tracking</span>
+          <span className="text-text-primary font-extrabold tracking-wide">Order Tracking</span>
         </nav>
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative z-20">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-gradient-to-tr from-slate-900 to-indigo-950 border border-slate-800/80 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/10 hover:rotate-2 transition-transform duration-300">
+            <div className="w-14 h-14 bg-surface border border-border-default rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/10 hover:rotate-2 transition-transform duration-300">
               <Truck className="h-6 w-6 text-white" />
             </div>
             <div className="space-y-0.5">
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900">
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-transparent bg-clip-text bg-surface border border-border-default">
                 Order Tracking
               </h1>
-              <p className="text-slate-500 font-semibold text-[11px] flex items-center gap-1.5">
+              <p className="text-text-muted font-semibold text-[11px] flex items-center gap-1.5">
                 <Sparkles className="w-3 h-3 text-indigo-500" />
                 Monitor procurement cycles, supplier ETAs, and delivery performance.
               </p>
@@ -463,7 +463,7 @@ export default function OrderTrackingPage() {
           <div className="flex items-center gap-2.5">
             <button
               onClick={() => { setRefreshing(true); fetchData(); }}
-              className={`p-2 h-10 w-10 flex items-center justify-center bg-white rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors shadow-sm ${refreshing ? 'animate-spin' : ''}`}
+              className={`p-2 h-10 w-10 flex items-center justify-center bg-surface rounded-xl border border-border-default text-text-muted hover:bg-subtle/50 transition-colors shadow-sm ${refreshing ? 'animate-spin' : ''}`}
               title="Refresh Data"
             >
               <RefreshCw className="w-5 h-5" />
@@ -472,7 +472,7 @@ export default function OrderTrackingPage() {
             <button
               onClick={handleSync}
               disabled={syncing}
-              className="h-10 px-5 bg-gradient-to-r from-slate-900 to-indigo-950 hover:from-slate-950 hover:to-black text-white font-bold text-xs rounded-xl shadow-md transition-all duration-200 flex items-center gap-1.5 active:scale-95 hover:shadow-lg disabled:opacity-50"
+              className="h-10 px-5 bg-surface border border-border-default hover:from-slate-950 hover:to-black text-white font-bold text-xs rounded-xl shadow-md transition-colors duration-150 flex items-center gap-1.5 active:scale-95 hover:shadow-lg disabled:opacity-50"
             >
               {syncing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Activity className="w-4 h-4" />}
               <span>{syncing ? syncProgress || 'Syncing...' : 'Sync Tracking'}</span>
@@ -481,7 +481,7 @@ export default function OrderTrackingPage() {
             <button
               onClick={handleAutoRepair}
               disabled={syncing}
-              className="h-10 px-5 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-bold text-xs rounded-xl shadow-md transition-all duration-200 flex items-center gap-1.5 active:scale-95 hover:shadow-lg disabled:opacity-50"
+              className="h-10 px-5 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-bold text-xs rounded-xl shadow-md transition-colors duration-150 flex items-center gap-1.5 active:scale-95 hover:shadow-lg disabled:opacity-50"
               title="Automatically scan historic PDF LPOs and repair deadlines"
             >
               {syncing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <ShieldAlert className="w-4 h-4" />}
@@ -491,21 +491,21 @@ export default function OrderTrackingPage() {
         </div>
 
       {/* Elevated Dashboard KPI Metrics Section wrapped in a luxurious white background card */}
-      <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] border border-slate-200 shadow-xl mb-10 relative z-10">
+      <div className="bg-surface p-6 sm:p-8 rounded-2xl border border-border-default shadow-xl mb-10 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-slate-50/50 border-2 border-slate-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:border-slate-200 hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-all duration-300 cursor-default"
+            className="bg-surface border border-border-default hover:border-slate-500/40 p-6 rounded-2xl relative overflow-hidden group hover:border-border-default hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-colors duration-150 cursor-default"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/[0.03] rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
             <div className="flex items-start gap-4 relative z-10">
-              <div className="w-12 h-12 bg-slate-100 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-700 shadow-sm group-hover:scale-110 transition-transform duration-300">
+              <div className="w-11 h-11 bg-slate-500/10 border border-slate-500/20 rounded-xl flex items-center justify-center text-slate-300 shadow-xs shrink-0 group-hover:scale-110 transition-transform duration-300">
                 <FileText className="w-6 h-6" />
               </div>
               <div className="space-y-1 flex-1">
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Total LPO</p>
-                <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight tabular-nums">{stats?.total_tracked || 0}</h3>
+                <h3 className="text-2xl sm:text-3xl font-black text-text-primary tracking-tight tabular-nums">{stats?.total_tracked || 0}</h3>
               </div>
             </div>
           </motion.div>
@@ -515,16 +515,16 @@ export default function OrderTrackingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-slate-50/50 border-2 border-slate-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:border-slate-200 hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-all duration-300 cursor-default"
+            className="bg-surface border border-border-default hover:border-slate-500/40 p-6 rounded-2xl relative overflow-hidden group hover:border-border-default hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-colors duration-150 cursor-default"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/[0.03] rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
             <div className="flex items-start gap-4 relative z-10">
-              <div className="w-12 h-12 bg-slate-100 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-700 shadow-sm group-hover:scale-110 transition-transform duration-300">
+              <div className="w-11 h-11 bg-slate-500/10 border border-slate-500/20 rounded-xl flex items-center justify-center text-slate-300 shadow-xs shrink-0 group-hover:scale-110 transition-transform duration-300">
                 <Activity className="w-6 h-6" />
               </div>
               <div className="space-y-1 flex-1">
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Active LPO</p>
-                <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight tabular-nums">
+                <h3 className="text-2xl sm:text-3xl font-black text-text-primary tracking-tight tabular-nums">
                   {(stats?.pending_count || 0) + (stats?.overdue_count || 0) + (stats?.partially_delivered_count || 0)}
                 </h3>
               </div>
@@ -536,16 +536,16 @@ export default function OrderTrackingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-slate-50/50 border-2 border-slate-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:border-slate-200 hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-all duration-300 cursor-default"
+            className="bg-surface border border-border-default hover:border-slate-500/40 p-6 rounded-2xl relative overflow-hidden group hover:border-border-default hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-colors duration-150 cursor-default"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/[0.03] rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
             <div className="flex items-start gap-4 relative z-10">
-              <div className="w-12 h-12 bg-slate-100 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-700 shadow-sm group-hover:scale-110 transition-transform duration-300">
+              <div className="w-11 h-11 bg-slate-500/10 border border-slate-500/20 rounded-xl flex items-center justify-center text-slate-300 shadow-xs shrink-0 group-hover:scale-110 transition-transform duration-300">
                 <Clock className="w-6 h-6" />
               </div>
               <div className="space-y-1 flex-1">
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Pending Del.</p>
-                <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight tabular-nums">
+                <h3 className="text-2xl sm:text-3xl font-black text-text-primary tracking-tight tabular-nums">
                   {(stats?.pending_count || 0) + (stats?.partially_delivered_count || 0)}
                 </h3>
               </div>
@@ -557,16 +557,16 @@ export default function OrderTrackingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-slate-50/50 border-2 border-slate-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:border-slate-200 hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-all duration-300 cursor-default"
+            className="bg-surface border border-border-default hover:border-slate-500/40 p-6 rounded-2xl relative overflow-hidden group hover:border-border-default hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-colors duration-150 cursor-default"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/[0.03] rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
             <div className="flex items-start gap-4 relative z-10">
-              <div className="w-12 h-12 bg-slate-100 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-700 shadow-sm group-hover:scale-110 transition-transform duration-300">
+              <div className="w-11 h-11 bg-slate-500/10 border border-slate-500/20 rounded-xl flex items-center justify-center text-slate-300 shadow-xs shrink-0 group-hover:scale-110 transition-transform duration-300">
                 <AlertTriangle className="w-6 h-6" />
               </div>
               <div className="space-y-1 flex-1">
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Late Delivery</p>
-                <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight tabular-nums">{stats?.overdue_count || 0}</h3>
+                <h3 className="text-2xl sm:text-3xl font-black text-text-primary tracking-tight tabular-nums">{stats?.overdue_count || 0}</h3>
               </div>
             </div>
           </motion.div>
@@ -576,16 +576,16 @@ export default function OrderTrackingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-slate-50/50 border-2 border-slate-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:border-slate-200 hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-all duration-300 cursor-default"
+            className="bg-surface border border-border-default hover:border-slate-500/40 p-6 rounded-2xl relative overflow-hidden group hover:border-border-default hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-colors duration-150 cursor-default"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/[0.03] rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
             <div className="flex items-start gap-4 relative z-10">
-              <div className="w-12 h-12 bg-slate-100 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-700 shadow-sm group-hover:scale-110 transition-transform duration-300">
+              <div className="w-11 h-11 bg-slate-500/10 border border-slate-500/20 rounded-xl flex items-center justify-center text-slate-300 shadow-xs shrink-0 group-hover:scale-110 transition-transform duration-300">
                 <CheckCircle2 className="w-6 h-6" />
               </div>
               <div className="space-y-1 flex-1">
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Complete LPO</p>
-                <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight tabular-nums">{stats?.fully_delivered_count || 0}</h3>
+                <h3 className="text-2xl sm:text-3xl font-black text-text-primary tracking-tight tabular-nums">{stats?.fully_delivered_count || 0}</h3>
               </div>
             </div>
           </motion.div>
@@ -595,16 +595,16 @@ export default function OrderTrackingPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
-            className="bg-slate-50/50 border-2 border-slate-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:border-slate-200 hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-all duration-300 cursor-default"
+            className="bg-surface border border-border-default hover:border-slate-500/40 p-6 rounded-2xl relative overflow-hidden group hover:border-border-default hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-colors duration-150 cursor-default"
           >
             <div className="absolute top-0 right-0 w-32 h-32 bg-slate-500/[0.03] rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
             <div className="flex items-start gap-4 relative z-10">
-              <div className="w-12 h-12 bg-slate-100 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-700 shadow-sm group-hover:scale-110 transition-transform duration-300">
+              <div className="w-11 h-11 bg-slate-500/10 border border-slate-500/20 rounded-xl flex items-center justify-center text-slate-300 shadow-xs shrink-0 group-hover:scale-110 transition-transform duration-300">
                 <XCircle className="w-6 h-6" />
               </div>
               <div className="space-y-1 flex-1">
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Cancelled LPO</p>
-                <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight tabular-nums">{stats?.cancelled_count || 0}</h3>
+                <h3 className="text-2xl sm:text-3xl font-black text-text-primary tracking-tight tabular-nums">{stats?.cancelled_count || 0}</h3>
               </div>
             </div>
           </motion.div>
@@ -612,9 +612,9 @@ export default function OrderTrackingPage() {
       </div>
 
       {/* Main Content Area */}
-      <div className="bg-white border border-slate-200 rounded-[2.5rem] p-6 sm:p-8 shadow-xl overflow-hidden">
+      <div className="bg-surface border border-border-default rounded-2xl p-6 sm:p-8 shadow-xl overflow-hidden">
         {/* Filters */}
-        <div className="bg-slate-50/50 p-4 rounded-3xl border border-slate-200/60 shadow-sm mb-6">
+        <div className="bg-subtle/50 p-4 rounded-3xl border border-border-default shadow-sm mb-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -623,14 +623,14 @@ export default function OrderTrackingPage() {
                 placeholder="Search PO, LPO, supplier or item name..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-11 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm"
+                className="w-full pl-11 pr-4 py-2.5 bg-surface border border-border-default rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors text-sm"
               />
             </div>
             <div className="flex flex-wrap sm:flex-nowrap gap-2 w-full sm:w-auto">
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value as DeliveryProgress | 'all')}
-                className="flex-1 sm:flex-none pl-4 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-bold text-slate-700 text-sm"
+                className="flex-1 sm:flex-none pl-4 pr-10 py-2.5 bg-surface border border-border-default rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors font-bold text-text-secondary text-sm"
               >
                 <option value="all">All Statuses</option>
                 <option value="pending">Pending</option>
@@ -642,7 +642,7 @@ export default function OrderTrackingPage() {
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="flex-1 sm:flex-none pl-4 pr-10 py-2.5 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all font-bold text-slate-700 text-sm"
+                className="flex-1 sm:flex-none pl-4 pr-10 py-2.5 bg-surface border border-border-default rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors font-bold text-text-secondary text-sm"
               >
                 <option value="all">All Categories</option>
                 <option value="APPL">APPL (Pharmaniaga)</option>
@@ -657,23 +657,23 @@ export default function OrderTrackingPage() {
         </div>
 
         {/* Table - Desktop View, Mobile Cards */}
-        <div className="hidden lg:block overflow-x-auto rounded-[2rem] border border-slate-100 shadow-sm">
+        <div className="hidden lg:block overflow-x-auto rounded-xl border border-border-subtle shadow-sm">
           <table className="w-full border-collapse text-left">
-            <thead className="bg-slate-50/80">
+            <thead className="bg-subtle/50">
               <tr>
-                <th className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Reference</th>
-                <th className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Supplier</th>
-                <th className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Vote Code</th>
-                <th className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Delivery Progress</th>
-                <th className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Est. Delivery</th>
-                <th className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Overdue</th>
-                <th className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Status</th>
+                <th className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Reference</th>
+                <th className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Supplier</th>
+                <th className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Vote Code</th>
+                <th className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Delivery Progress</th>
+                <th className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Est. Delivery</th>
+                <th className="px-8 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Overdue</th>
+                <th className="px-8 py-5 text-right text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
+            <tbody className="divide-y divide-border-subtle">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={7} className="px-6 py-12 text-center text-text-muted">
                     <div className="flex flex-col items-center gap-3">
                       <RefreshCw className="w-8 h-8 text-indigo-500 animate-spin" />
                       <p>Loading tracking data...</p>
@@ -682,22 +682,22 @@ export default function OrderTrackingPage() {
                 </tr>
               ) : items.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-gray-500">
+                  <td colSpan={7} className="px-6 py-12 text-center text-text-muted">
                     <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                    <p className="text-lg font-medium text-gray-900">No tracking records found</p>
-                    <p className="text-gray-500">Try adjusting your search or filters.</p>
+                    <p className="text-lg font-medium text-text-primary">No tracking records found</p>
+                    <p className="text-text-muted">Try adjusting your search or filters.</p>
                   </td>
                 </tr>
               ) : (
                 items.map((item) => (
                   <tr 
                     key={item.lpo_id} 
-                    className="hover:bg-gray-50/50 transition-colors group cursor-pointer"
+                    className="hover:bg-subtle/50 transition-colors group cursor-pointer"
                     onClick={() => handleViewDetail(item.lpo_id)}
                   >
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
-                        <span className="font-semibold text-gray-900">{item.po_number}</span>
+                        <span className="font-semibold text-text-primary">{item.po_number}</span>
                         <div className="flex items-center gap-2 mt-1">
                           {item.document_url ? (
                             <a 
@@ -711,9 +711,9 @@ export default function OrderTrackingPage() {
                               {item.lpo_number}
                             </a>
                           ) : (
-                            <span className="text-gray-500 text-[10px] font-medium">{item.lpo_number}</span>
+                            <span className="text-text-muted text-[10px] font-medium">{item.lpo_number}</span>
                           )}
-                          <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-600">
+                          <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-subtle text-text-muted">
                             {item.category}
                           </span>
                         </div>
@@ -721,9 +721,9 @@ export default function OrderTrackingPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
-                        <span className="font-medium text-gray-900">{item.supplier_name}</span>
+                        <span className="font-medium text-text-primary">{item.supplier_name}</span>
                         {item.kkm_contract_number && (
-                          <span className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                          <span className="text-xs text-text-muted mt-1 flex items-center gap-1">
                             <FileText className="w-3 h-3" />
                             {item.kkm_contract_number}
                           </span>
@@ -731,15 +731,15 @@ export default function OrderTrackingPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className="font-semibold text-slate-700">{item.vote_code || '-'}</span>
+                      <span className="font-semibold text-text-secondary">{item.vote_code || '-'}</span>
                     </td>
                     <td className="px-6 py-4">
                       <div className="w-full max-w-[150px]">
                         <div className="flex justify-between text-xs mb-1.5 font-medium">
-                          <span className="text-gray-700">{item.delivered_items} of {item.total_items} items</span>
-                          <span className="text-gray-500">{Math.round((item.delivered_items / Math.max(item.total_items, 1)) * 100)}%</span>
+                          <span className="text-text-secondary">{item.delivered_items} of {item.total_items} items</span>
+                          <span className="text-text-muted">{Math.round((item.delivered_items / Math.max(item.total_items, 1)) * 100)}%</span>
                         </div>
-                        <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-2 w-full bg-subtle rounded-full overflow-hidden">
                           <div 
                             className={`h-full rounded-full ${
                               item.delivered_items === item.total_items ? 'bg-emerald-500' :
@@ -752,7 +752,7 @@ export default function OrderTrackingPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex flex-col">
-                        <span className="font-medium text-gray-900">{formatDate(item.latest_eta)}</span>
+                        <span className="font-medium text-text-primary">{formatDate(item.latest_eta)}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -771,7 +771,7 @@ export default function OrderTrackingPage() {
                       <div className="flex flex-col items-end gap-2 text-right">
                         {renderStatusBadge(item.delivery_progress)}
                         {item.reminder_count > 0 && (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-medium text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100">
+                          <span className="inline-flex items-center gap-1 text-[10px] font-medium text-indigo-600 bg-indigo-500/10 px-1.5 py-0.5 rounded border border-indigo-100">
                             <Bell className="w-3 h-3" />
                             {item.reminder_count} Reminders
                           </span>
@@ -799,7 +799,7 @@ export default function OrderTrackingPage() {
               <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Syncing tracker...</p>
             </div>
           ) : items.length === 0 ? (
-            <div className="bg-gray-50 rounded-3xl p-12 text-center border border-dashed border-gray-200">
+            <div className="bg-subtle/50 rounded-3xl p-12 text-center border border-dashed border-border-default">
               <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
               <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">No active orders tracked</p>
             </div>
@@ -808,12 +808,12 @@ export default function OrderTrackingPage() {
               <div 
                 key={item.lpo_id}
                 onClick={() => handleViewDetail(item.lpo_id)}
-                className="bg-white border border-gray-100 rounded-[2rem] p-5 shadow-sm active:scale-[0.98] transition-all space-y-5"
+                className="bg-surface border border-border-subtle rounded-xl p-5 shadow-sm active:scale-[0.98] transition-colors space-y-5"
               >
                 <div className="flex justify-between items-start">
                   <div className="space-y-1">
                     <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">PO & LPO Reference</span>
-                    <h4 className="text-sm font-black text-gray-900 uppercase tracking-tight leading-none">
+                    <h4 className="text-sm font-black text-text-primary uppercase tracking-tight leading-none">
                       {item.po_number}
                     </h4>
                     <p className="text-[11px] font-bold text-indigo-600 uppercase">{item.lpo_number}</p>
@@ -824,16 +824,16 @@ export default function OrderTrackingPage() {
                 <div className="grid grid-cols-3 gap-4 py-4 border-y border-gray-50">
                   <div className="space-y-1">
                     <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Supplier</span>
-                    <p className="text-sm font-bold text-gray-900 leading-tight truncate">{item.supplier_name}</p>
+                    <p className="text-sm font-bold text-text-primary leading-tight truncate">{item.supplier_name}</p>
                   </div>
                   <div className="space-y-1 text-center">
                     <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Vote Code</span>
-                    <p className="text-sm font-bold text-gray-700 leading-tight">{item.vote_code || '-'}</p>
+                    <p className="text-sm font-bold text-text-secondary leading-tight">{item.vote_code || '-'}</p>
                   </div>
                   <div className="space-y-1 text-right">
                     <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Category</span>
                     <div>
-                      <span className="px-2 py-0.5 rounded text-[10px] font-black bg-gray-100 text-gray-600 uppercase">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-black bg-subtle text-text-muted uppercase">
                         {item.category}
                       </span>
                     </div>
@@ -844,13 +844,13 @@ export default function OrderTrackingPage() {
                   <div className="flex justify-between items-end">
                     <div className="space-y-1">
                       <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Progress</span>
-                      <p className="text-sm font-black text-gray-900">{item.delivered_items} / {item.total_items} <span className="text-[10px] font-bold text-gray-400">Items</span></p>
+                      <p className="text-sm font-black text-text-primary">{item.delivered_items} / {item.total_items} <span className="text-[10px] font-bold text-gray-400">Items</span></p>
                     </div>
-                    <span className="text-sm font-black text-gray-900">{Math.round((item.delivered_items / Math.max(item.total_items, 1)) * 100)}%</span>
+                    <span className="text-sm font-black text-text-primary">{Math.round((item.delivered_items / Math.max(item.total_items, 1)) * 100)}%</span>
                   </div>
-                  <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                  <div className="h-2 w-full bg-subtle rounded-full overflow-hidden">
                     <div 
-                      className={`h-full rounded-full transition-all duration-500 ${
+                      className={`h-full rounded-full transition-colors duration-500 ${
                         item.delivered_items === item.total_items ? 'bg-emerald-500' :
                         item.delivered_items > 0 ? 'bg-amber-500' : 'bg-sky-500'
                       }`}
@@ -864,7 +864,7 @@ export default function OrderTrackingPage() {
                     <Clock className="w-4 h-4 text-gray-400" />
                     <div>
                       <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest block leading-none">Est. Delivery</span>
-                      <span className="text-xs font-bold text-gray-900">{formatDate(item.latest_eta)}</span>
+                      <span className="text-xs font-bold text-text-primary">{formatDate(item.latest_eta)}</span>
                     </div>
                   </div>
                   {item.delivery_progress === 'overdue' && (
@@ -874,7 +874,7 @@ export default function OrderTrackingPage() {
                     </div>
                   )}
                   {item.reminder_count > 0 && item.delivery_progress !== 'overdue' && (
-                    <div className="flex items-center gap-1.5 px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full">
+                    <div className="flex items-center gap-1.5 px-3 py-1 bg-indigo-500/10 text-indigo-600 rounded-full">
                       <Bell className="w-3.5 h-3.5" />
                       <span className="text-[10px] font-black uppercase">{item.reminder_count}</span>
                     </div>
@@ -886,15 +886,15 @@ export default function OrderTrackingPage() {
         </div>
         
         {/* Advanced Premium Pagination Controls */}
-        <div className="px-8 py-6 bg-slate-50/50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs font-bold text-slate-500 uppercase tracking-wider text-center sm:text-left">
-            Showing <span className="text-slate-900 font-extrabold">{totalItems > 0 ? (page - 1) * pageSize + 1 : 0}</span> to <span className="text-slate-900 font-extrabold">{Math.min(page * pageSize, totalItems)}</span> of <span className="text-slate-900 font-extrabold">{totalItems}</span> entries
+        <div className="px-8 py-6 bg-subtle/50 border-t border-border-subtle flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs font-bold text-text-muted uppercase tracking-wider text-center sm:text-left">
+            Showing <span className="text-text-primary font-extrabold">{totalItems > 0 ? (page - 1) * pageSize + 1 : 0}</span> to <span className="text-text-primary font-extrabold">{Math.min(page * pageSize, totalItems)}</span> of <span className="text-text-primary font-extrabold">{totalItems}</span> entries
           </p>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
-              className="h-10 px-4 bg-white border border-slate-200 hover:border-slate-300 disabled:opacity-40 disabled:hover:border-slate-200 text-slate-700 font-bold text-xs rounded-xl shadow-sm hover:shadow transition-all flex items-center gap-1 active:scale-95 disabled:pointer-events-none"
+              className="h-10 px-4 bg-surface border border-border-default hover:border-border-default disabled:opacity-40 disabled:hover:border-border-default text-text-secondary font-bold text-xs rounded-xl shadow-sm hover:shadow transition-colors flex items-center gap-1 active:scale-95 disabled:pointer-events-none"
             >
               <ChevronLeft className="w-4 h-4" />
               <span>Previous</span>
@@ -902,7 +902,7 @@ export default function OrderTrackingPage() {
             <button
               onClick={() => setPage((p) => p + 1)}
               disabled={page * pageSize >= totalItems}
-              className="h-10 px-4 bg-white border border-slate-200 hover:border-slate-300 disabled:opacity-40 disabled:hover:border-slate-200 text-slate-700 font-bold text-xs rounded-xl shadow-sm hover:shadow transition-all flex items-center gap-1 active:scale-95 disabled:pointer-events-none"
+              className="h-10 px-4 bg-surface border border-border-default hover:border-border-default disabled:opacity-40 disabled:hover:border-border-default text-text-secondary font-bold text-xs rounded-xl shadow-sm hover:shadow transition-colors flex items-center gap-1 active:scale-95 disabled:pointer-events-none"
             >
               <span>Next</span>
               <ChevronRight className="w-4 h-4" />
@@ -925,7 +925,7 @@ export default function OrderTrackingPage() {
       >
         <div className={cn(
           "h-full flex flex-col md:flex-row",
-          (isReceivingOpen || !!selectedGRId) ? "divide-x divide-gray-200" : ""
+          (isReceivingOpen || !!selectedGRId) ? "divide-x divide-border-default" : ""
         )}>
           {/* Column 1: Tracking Detail */}
           <div className={cn(
@@ -940,20 +940,20 @@ export default function OrderTrackingPage() {
               <div className="space-y-5">
                 {/* Header Info - More Compact */}
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-gray-50/80 border border-gray-100 rounded-2xl px-4 py-3">
+                  <div className="bg-subtle/50 border border-border-subtle rounded-2xl px-4 py-3">
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Department</p>
-                    <p className="text-sm font-bold text-gray-900 uppercase tracking-tight">{detailData.department || '-'}</p>
+                    <p className="text-sm font-bold text-text-primary uppercase tracking-tight">{detailData.department || '-'}</p>
                   </div>
-                  <div className="bg-gray-50/80 border border-gray-100 rounded-2xl px-4 py-3">
+                  <div className="bg-subtle/50 border border-border-subtle rounded-2xl px-4 py-3">
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Order Date</p>
-                    <p className="text-sm font-bold text-gray-900 tracking-tight">{formatDate(detailData.order_date)}</p>
+                    <p className="text-sm font-bold text-text-primary tracking-tight">{formatDate(detailData.order_date)}</p>
                   </div>
                 </div>
 
                 {/* Procurement Metadata Grid - Tighter spacing */}
-                <div className="bg-white border border-gray-200 rounded-2xl px-6 py-4 shadow-sm">
+                <div className="bg-surface border border-border-default rounded-2xl px-6 py-4 shadow-sm">
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-[10px] font-black text-gray-900 uppercase tracking-[0.2em] flex items-center gap-2">
+                      <h3 className="text-[10px] font-black text-text-primary uppercase tracking-[0.2em] flex items-center gap-2">
                         <Building2 className="w-4 h-4 text-indigo-500" />
                         Procurement Details
                       </h3>
@@ -963,7 +963,7 @@ export default function OrderTrackingPage() {
                             href={detailData.document_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border shadow-sm bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+                            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors border shadow-sm bg-surface text-text-muted border-border-default hover:bg-subtle/50"
                           >
                             <FileText className="w-3.5 h-3.5" /> View LPO
                           </a>
@@ -972,10 +972,10 @@ export default function OrderTrackingPage() {
                           <button
                             onClick={() => openReminderModal(detailData.lpo_id, detailData.delivery_progress === 'overdue' ? 'late' : 'eta')}
                             className={cn(
-                              "flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border shadow-sm",
+                              "flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors border shadow-sm",
                               detailData.delivery_progress === 'overdue' 
                                 ? "bg-red-50 text-red-600 border-red-100 hover:bg-red-100" 
-                                : "bg-indigo-50 text-indigo-600 border-indigo-100 hover:bg-indigo-100"
+                                : "bg-indigo-500/10 text-indigo-600 border-indigo-100 hover:bg-indigo-100"
                             )}
                           >
                             {detailData.delivery_progress === 'overdue' ? (
@@ -988,7 +988,7 @@ export default function OrderTrackingPage() {
                         {!isReceivingOpen && detailData.delivery_progress !== 'cancelled' && (
                           <button
                             onClick={() => setIsCancelModalOpen(true)}
-                            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all border shadow-sm bg-white text-rose-600 border-rose-100 hover:bg-rose-50"
+                            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors border shadow-sm bg-surface text-rose-600 border-rose-100 hover:bg-rose-500/10"
                           >
                             <XCircle className="w-3.5 h-3.5" /> Cancel LPO
                           </button>
@@ -1001,28 +1001,28 @@ export default function OrderTrackingPage() {
                   )}>
                     <div className={isReceivingOpen ? "col-span-2" : "col-span-1"}>
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Supplier</p>
-                      <p className="text-sm font-bold text-gray-900 leading-tight">{detailData.supplier_name}</p>
+                      <p className="text-sm font-bold text-text-primary leading-tight">{detailData.supplier_name}</p>
                       <p className="text-[11px] text-indigo-600 mt-0.5">{detailData.supplier_email || '-'}</p>
                     </div>
                     <div>
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Vote Code</p>
-                      <p className="text-sm font-bold text-gray-900 tracking-tight">{detailData.vote_code}</p>
+                      <p className="text-sm font-bold text-text-primary tracking-tight">{detailData.vote_code}</p>
                     </div>
                     <div>
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Category</p>
-                      <p className="text-sm font-bold text-gray-900 uppercase tracking-tight">{detailData.category}</p>
+                      <p className="text-sm font-bold text-text-primary uppercase tracking-tight">{detailData.category}</p>
                     </div>
                     <div>
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Contract No.</p>
-                      <p className="text-sm font-bold text-gray-900 tracking-tight">{detailData.kkm_contract_number || 'No Contract'}</p>
+                      <p className="text-sm font-bold text-text-primary tracking-tight">{detailData.kkm_contract_number || 'No Contract'}</p>
                     </div>
                     <div>
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Disediakan Oleh</p>
-                      <p className="text-sm font-bold text-gray-900 tracking-tight">{detailData.created_by_name || '-'}</p>
+                      <p className="text-sm font-bold text-text-primary tracking-tight">{detailData.created_by_name || '-'}</p>
                     </div>
                     <div>
                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Disahkan Oleh</p>
-                      <p className="text-sm font-bold text-gray-900 tracking-tight">{detailData.approved_by_name || '-'}</p>
+                      <p className="text-sm font-bold text-text-primary tracking-tight">{detailData.approved_by_name || '-'}</p>
                       {detailData.approved_at && (
                         <p className="text-[10px] text-gray-400 mt-0.5">{formatDate(detailData.approved_at)}</p>
                       )}
@@ -1031,14 +1031,14 @@ export default function OrderTrackingPage() {
                 </div>
 
                 {/* Unified Items & Tracking Table - Premium Redesign */}
-                <div className="bg-white border border-gray-200 rounded-[2.5rem] overflow-hidden shadow-sm">
-                  <div className="px-8 py-6 border-b border-gray-100 bg-gray-50/30 flex justify-between items-center">
+                <div className="bg-surface border border-border-default rounded-2xl overflow-hidden shadow-sm">
+                  <div className="px-8 py-6 border-b border-border-subtle bg-subtle/50 flex justify-between items-center">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-2xl bg-indigo-50 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 flex items-center justify-center">
                         <Package className="w-5 h-5 text-indigo-600" />
                       </div>
                       <div>
-                        <h3 className="text-[11px] font-black text-gray-900 uppercase tracking-[0.25em]">
+                        <h3 className="text-[11px] font-black text-text-primary uppercase tracking-[0.25em]">
                           Order Items & Tracking
                         </h3>
                         <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-0.5">
@@ -1051,7 +1051,7 @@ export default function OrderTrackingPage() {
                   <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-gray-200">
                     <table className="w-full text-left border-collapse">
                       <thead>
-                        <tr className="text-gray-400 font-black text-[10px] uppercase tracking-[0.15em] border-b border-gray-100 bg-white">
+                        <tr className="text-gray-400 font-black text-[10px] uppercase tracking-[0.15em] border-b border-border-subtle bg-surface">
                           <th className={cn("py-5 w-16 text-center", isReceivingOpen ? "px-4" : "px-8")}>#</th>
                           <th className={cn("py-5", isReceivingOpen ? "px-2 min-w-[200px]" : "px-4 min-w-[300px]")}>Item Information</th>
                           <th className={cn("py-5 text-center", isReceivingOpen ? "px-2" : "px-4")}>Qty</th>
@@ -1064,18 +1064,18 @@ export default function OrderTrackingPage() {
                         {detailData.po_items?.map((item, idx) => {
                           const trackingItem = detailData.items.find(ti => ti.item_id === item.item_id);
                           return (
-                            <tr key={item.id || idx} className="group hover:bg-gray-50/50 transition-all duration-300">
+                            <tr key={item.id || idx} className="group hover:bg-subtle/50 transition-colors duration-150">
                               <td className={cn("py-6 text-center align-top", isReceivingOpen ? "px-4" : "px-8")}>
-                                <span className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-gray-50 text-gray-400 font-bold text-[11px] group-hover:bg-white group-hover:shadow-sm transition-all">
+                                <span className="inline-flex items-center justify-center w-8 h-8 rounded-xl bg-subtle/50 text-gray-400 font-bold text-[11px] group-hover:bg-surface group-hover:shadow-sm transition-colors">
                                   {idx + 1}
                                 </span>
                               </td>
                               <td className={cn("py-6 align-top", isReceivingOpen ? "px-2" : "px-4")}>
-                                <div className="font-black text-gray-900 text-sm leading-tight mb-2 tracking-tight">
+                                <div className="font-black text-text-primary text-sm leading-tight mb-2 tracking-tight">
                                   {item.item_name || item.packaging_description || item.item_id}
                                 </div>
                                 <div className="flex flex-wrap items-center gap-2">
-                                  <span className="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-600 text-[9px] font-black uppercase tracking-wider">
+                                  <span className="px-2 py-0.5 rounded-md bg-indigo-500/10 text-indigo-600 text-[9px] font-black uppercase tracking-wider">
                                     {item.item_code}
                                   </span>
                                   {detailData.penalties?.find(p => 
@@ -1091,18 +1091,18 @@ export default function OrderTrackingPage() {
                                   )}
                                   {item.packaging_description && (
                                     <span className="text-[10px] text-gray-400 font-medium flex items-center gap-1.5">
-                                      <span className="w-1 h-1 rounded-full bg-gray-200" />
+                                      <span className="w-1 h-1 rounded-full bg-subtle" />
                                       {item.packaging_description}
                                     </span>
                                   )}
                                 </div>
                               </td>
                               <td className={cn("py-6 text-center align-top", isReceivingOpen ? "px-2" : "px-4")}>
-                                <div className="text-sm font-black text-gray-900">{item.quantity_ordered}</div>
+                                <div className="text-sm font-black text-text-primary">{item.quantity_ordered}</div>
                                 <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-1">Units</p>
                               </td>
                               <td className={cn("py-6 text-right align-top", isReceivingOpen ? "px-2" : "px-4")}>
-                                <div className="text-sm font-black text-gray-900">{formatCurrency(item.total_price)}</div>
+                                <div className="text-sm font-black text-text-primary">{formatCurrency(item.total_price)}</div>
                                 <div className="text-[10px] text-gray-400 font-medium mt-1">
                                   {formatCurrency(item.unit_price)} / unit
                                 </div>
@@ -1110,7 +1110,7 @@ export default function OrderTrackingPage() {
                               <td className={cn("py-6 text-center align-top", isReceivingOpen ? "px-2" : "px-4")}>
                                 {trackingItem ? (
                                   <>
-                                    <div className={cn("text-sm font-black", trackingItem.is_overdue ? 'text-red-600' : 'text-gray-900')}>
+                                    <div className={cn("text-sm font-black", trackingItem.is_overdue ? 'text-red-600' : 'text-text-primary')}>
                                       {formatDate(trackingItem.expected_delivery_date)}
                                     </div>
                                     {trackingItem.status === 'delivered' && trackingItem.actual_delivery_date ? (
@@ -1134,7 +1134,7 @@ export default function OrderTrackingPage() {
                                 {trackingItem ? (
                                   <span className={cn(
                                     "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider",
-                                    trackingItem.status === 'delivered' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' :
+                                    trackingItem.status === 'delivered' ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-100' :
                                     trackingItem.is_overdue ? 'bg-red-600 text-white shadow-lg shadow-red-200' : 
                                     'bg-sky-50 text-sky-600 border border-sky-100'
                                   )}>
@@ -1175,16 +1175,16 @@ export default function OrderTrackingPage() {
                 </div>
 
                 {/* Receiving History */}
-                <div className="bg-gray-50/50 rounded-[2rem] p-6 border border-gray-200">
+                <div className="bg-subtle/50 rounded-xl p-6 border border-border-default">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
-                    <h3 className="text-[10px] font-black text-gray-900 uppercase tracking-[0.2em] flex items-center gap-2">
+                    <h3 className="text-[10px] font-black text-text-primary uppercase tracking-[0.2em] flex items-center gap-2">
                       <Package className="w-4 h-4 text-emerald-500" />
                       Receiving History ({detailData.goods_receipts?.length || 0})
                     </h3>
                     {detailData.delivery_progress !== 'fully_delivered' && !isReceivingOpen && (
                       <button
                         onClick={() => setIsReceivingOpen(true)}
-                        className="text-[10px] font-black uppercase tracking-wider px-4 py-2 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl transition-all shadow-sm flex items-center gap-2"
+                        className="text-[10px] font-black uppercase tracking-wider px-4 py-2 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl transition-colors shadow-sm flex items-center gap-2"
                       >
                         <Plus className="w-3.5 h-3.5" />
                         Receive Goods
@@ -1193,26 +1193,26 @@ export default function OrderTrackingPage() {
                   </div>
                   
                   {(!detailData.goods_receipts || detailData.goods_receipts.length === 0) ? (
-                    <div className="bg-white border border-gray-200 border-dashed rounded-3xl p-10 text-center">
-                      <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <div className="bg-surface border border-border-default border-dashed rounded-3xl p-10 text-center">
+                      <div className="w-16 h-16 bg-subtle/50 rounded-full flex items-center justify-center mx-auto mb-4">
                         <Package className="w-8 h-8 text-gray-300" />
                       </div>
-                      <p className="text-sm font-bold text-gray-900 tracking-tight">No receipts yet.</p>
+                      <p className="text-sm font-bold text-text-primary tracking-tight">No receipts yet.</p>
                       <p className="text-xs text-gray-400 mt-1">Goods receipts will appear here once items are delivered.</p>
                     </div>
                   ) : (
-                    <div className="bg-white border border-gray-200 rounded-3xl overflow-hidden shadow-sm">
-                      <div className="divide-y divide-gray-100 text-sm">
+                    <div className="bg-surface border border-border-default rounded-3xl overflow-hidden shadow-sm">
+                      <div className="divide-y divide-border-subtle text-sm">
                         {detailData.goods_receipts.map((gr, idx) => (
-                          <div key={gr.id} className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors group">
+                          <div key={gr.id} className="p-4 flex items-center justify-between hover:bg-subtle/50 transition-colors group">
                             <div 
-                              className="flex items-center gap-4 cursor-pointer group/item transition-all"
+                              className="flex items-center gap-4 cursor-pointer group/item transition-colors"
                               onClick={() => {
                                 setSelectedGRId(gr.id);
                                 fetchGRDetail(gr.id);
                               }}
                             >
-                              <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-inner bg-emerald-50 text-emerald-600 group-hover/item:bg-emerald-600 group-hover/item:text-white transition-colors">
+                              <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-inner bg-emerald-500/10 text-emerald-600 group-hover/item:bg-emerald-600 group-hover/item:text-white transition-colors">
                                 #{detailData.goods_receipts!.length - idx}
                               </div>
                               <div>
@@ -1220,7 +1220,7 @@ export default function OrderTrackingPage() {
                                   <span className="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-emerald-100 text-emerald-700 group-hover/item:bg-emerald-600 group-hover/item:text-white transition-colors">
                                     {gr.gr_number}
                                   </span>
-                                  <p className="text-sm font-bold text-gray-900 group-hover/item:text-emerald-600 transition-colors">
+                                  <p className="text-sm font-bold text-text-primary group-hover/item:text-emerald-600 transition-colors">
                                     {formatDate(gr.receipt_date)}
                                   </p>
                                   {detailData.penalties?.some(p => 
@@ -1228,19 +1228,19 @@ export default function OrderTrackingPage() {
                                     (p as any).receiving_id === gr.id || 
                                     (p.lpo_id === detailData.lpo_id)
                                   ) && (
-                                    <span className="px-1.5 py-0.5 rounded bg-rose-50 text-rose-600 text-[8px] font-black uppercase tracking-widest border border-rose-100">
+                                    <span className="px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-600 text-[8px] font-black uppercase tracking-widest border border-rose-100">
                                       Penalty Alert
                                     </span>
                                   )}
                                 </div>
-                                <div className="flex flex-col gap-0.5 text-xs text-gray-500">
+                                <div className="flex flex-col gap-0.5 text-xs text-text-muted">
                                   <p className="flex items-center gap-1">
                                     <FileText className="w-3 h-3" />
                                     Inv: {gr.invoice_number || '-'} | DO: {gr.delivery_note_number || '-'}
                                   </p>
                                   <p className="flex items-center gap-1">
                                     <Activity className="w-3 h-3" />
-                                    By: <span className="font-medium text-gray-700">{gr.received_by_user?.full_name || 'System'}</span>
+                                    By: <span className="font-medium text-text-secondary">{gr.received_by_user?.full_name || 'System'}</span>
                                   </p>
                                 </div>
                               </div>
@@ -1248,9 +1248,9 @@ export default function OrderTrackingPage() {
                             <div className="flex items-center gap-2">
                               <span className={cn(
                                 "px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border",
-                                gr.status === 'completed' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-                                gr.status === 'draft' ? "bg-amber-50 text-amber-600 border-amber-100" :
-                                "bg-gray-50 text-gray-600 border-gray-200"
+                                gr.status === 'completed' ? "bg-emerald-500/10 text-emerald-600 border-emerald-100" :
+                                gr.status === 'draft' ? "bg-amber-500/10 text-amber-600 border-amber-100" :
+                                "bg-subtle/50 text-text-muted border-border-default"
                               )}>
                                 {gr.status}
                               </span>
@@ -1259,7 +1259,7 @@ export default function OrderTrackingPage() {
                                   e.stopPropagation();
                                   generateGoodsReceiptPdf(gr as any);
                                 }}
-                                className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors border border-transparent hover:border-indigo-100"
+                                className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-500/10 transition-colors border border-transparent hover:border-indigo-100"
                                 title="Print Goods Receipt Note"
                               >
                                 <Printer className="w-4 h-4" />
@@ -1269,7 +1269,7 @@ export default function OrderTrackingPage() {
                                   e.stopPropagation();
                                   handleDeleteGR(gr.id);
                                 }}
-                                className="p-1.5 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition-colors border border-transparent hover:border-rose-100"
+                                className="p-1.5 rounded-lg text-gray-400 hover:text-rose-600 hover:bg-rose-500/10 transition-colors border border-transparent hover:border-rose-100"
                                 title="Delete Goods Receipt"
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -1285,16 +1285,16 @@ export default function OrderTrackingPage() {
 
                 {/* Reminder History */}
                 {!isReceivingOpen && (
-                  <div className="bg-gray-50/50 rounded-[2rem] p-6 border border-gray-200">
+                  <div className="bg-subtle/50 rounded-xl p-6 border border-border-default">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
-                      <h3 className="text-[10px] font-black text-gray-900 uppercase tracking-[0.2em] flex items-center gap-2">
+                      <h3 className="text-[10px] font-black text-text-primary uppercase tracking-[0.2em] flex items-center gap-2">
                         <Bell className="w-4 h-4 text-indigo-500" />
                         Reminder Audit ({detailData.reminders.length})
                       </h3>
                       <div className="flex gap-2 w-full sm:w-auto">
                         <button
                           onClick={() => openReminderModal(detailData.lpo_id, 'eta')}
-                          className="flex-1 sm:flex-none text-[10px] font-black uppercase tracking-wider px-4 py-2 bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
+                          className="flex-1 sm:flex-none text-[10px] font-black uppercase tracking-wider px-4 py-2 bg-surface border border-border-default text-text-secondary hover:bg-subtle/50 rounded-xl transition-colors shadow-sm flex items-center justify-center gap-2"
                         >
                           <Mail className="w-3.5 h-3.5" />
                           Ask ETA
@@ -1302,7 +1302,7 @@ export default function OrderTrackingPage() {
                         {detailData.delivery_progress === 'overdue' && (
                           <button
                             onClick={() => openReminderModal(detailData.lpo_id, 'late')}
-                            className="flex-1 sm:flex-none text-[10px] font-black uppercase tracking-wider px-4 py-2 bg-red-600 text-white hover:bg-red-700 rounded-xl transition-all shadow-sm shadow-red-200 flex items-center justify-center gap-2"
+                            className="flex-1 sm:flex-none text-[10px] font-black uppercase tracking-wider px-4 py-2 bg-red-600 text-white hover:bg-red-700 rounded-xl transition-colors shadow-sm shadow-red-200 flex items-center justify-center gap-2"
                           >
                             <AlertTriangle className="w-3.5 h-3.5" />
                             Late Notice
@@ -1312,22 +1312,22 @@ export default function OrderTrackingPage() {
                     </div>
                     
                     {detailData.reminders.length === 0 ? (
-                      <div className="bg-white border border-gray-200 border-dashed rounded-3xl p-10 text-center">
-                        <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <div className="bg-surface border border-border-default border-dashed rounded-3xl p-10 text-center">
+                        <div className="w-16 h-16 bg-subtle/50 rounded-full flex items-center justify-center mx-auto mb-4">
                           <Bell className="w-8 h-8 text-gray-300" />
                         </div>
-                        <p className="text-sm font-bold text-gray-900 tracking-tight">No reminders sent yet.</p>
+                        <p className="text-sm font-bold text-text-primary tracking-tight">No reminders sent yet.</p>
                         <p className="text-xs text-gray-400 mt-1">Supplier communication will be logged here.</p>
                       </div>
                     ) : (
-                      <div className="bg-white border border-gray-200 rounded-3xl overflow-hidden shadow-sm">
-                        <div className="divide-y divide-gray-100 text-sm">
+                      <div className="bg-surface border border-border-default rounded-3xl overflow-hidden shadow-sm">
+                        <div className="divide-y divide-border-subtle text-sm">
                           {detailData.reminders.map((reminder, idx) => (
-                            <div key={reminder.id} className="p-4 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                            <div key={reminder.id} className="p-4 flex items-center justify-between hover:bg-subtle/50 transition-colors">
                               <div className="flex items-center gap-4">
                                 <div className={cn(
                                   "w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-inner",
-                                  reminder.reminder_type === 'eta' ? "bg-indigo-50 text-indigo-600" : "bg-red-50 text-red-600"
+                                  reminder.reminder_type === 'eta' ? "bg-indigo-500/10 text-indigo-600" : "bg-red-50 text-red-600"
                                 )}>
                                   #{detailData.reminders.length - idx}
                                 </div>
@@ -1339,18 +1339,18 @@ export default function OrderTrackingPage() {
                                     )}>
                                       {reminder.reminder_type === 'eta' ? 'ETA REQUEST' : 'LATE NOTICE'}
                                     </span>
-                                    <p className="text-sm font-bold text-gray-900">
+                                    <p className="text-sm font-bold text-text-primary">
                                       {formatDateTime(reminder.sent_at)}
                                     </p>
                                   </div>
-                                  <div className="flex flex-col gap-0.5 text-xs text-gray-500">
+                                  <div className="flex flex-col gap-0.5 text-xs text-text-muted">
                                     <p className="flex items-center gap-1">
                                       <Mail className="w-3 h-3" />
                                       {reminder.recipient_email}
                                     </p>
                                     <p className="flex items-center gap-1">
                                       <Activity className="w-3 h-3" />
-                                      By: <span className="font-medium text-gray-700">{reminder.sender?.full_name || (reminder.sent_by ? `User ${reminder.sent_by.slice(0, 8)}` : 'System')}</span>
+                                      By: <span className="font-medium text-text-secondary">{reminder.sender?.full_name || (reminder.sent_by ? `User ${reminder.sent_by.slice(0, 8)}` : 'System')}</span>
                                     </p>
                                   </div>
                                 </div>
@@ -1365,10 +1365,10 @@ export default function OrderTrackingPage() {
                                     }}
                                     disabled={deletingId === reminder.id}
                                     className={cn(
-                                      "p-2 rounded-xl transition-all border",
+                                      "p-2 rounded-xl transition-colors border",
                                       deletingId === reminder.id
-                                        ? "bg-gray-50 text-gray-300 border-gray-100 cursor-not-allowed"
-                                        : "bg-white text-gray-400 hover:text-red-600 hover:bg-red-50 border-gray-200 hover:border-red-100 shadow-sm"
+                                        ? "bg-subtle/50 text-gray-300 border-border-subtle cursor-not-allowed"
+                                        : "bg-surface text-gray-400 hover:text-red-600 hover:bg-red-50 border-border-default hover:border-red-100 shadow-sm"
                                     )}
                                     title="Delete reminder"
                                   >
@@ -1403,7 +1403,7 @@ export default function OrderTrackingPage() {
                                         window.open(url, '_blank');
                                       }
                                     }}
-                                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest text-indigo-600 hover:bg-indigo-50 transition-all border border-transparent hover:border-indigo-100"
+                                    className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest text-indigo-600 hover:bg-indigo-500/10 transition-colors border border-transparent hover:border-indigo-100"
                                   >
                                     <Download className="w-3.5 h-3.5" />
                                     View PDF
@@ -1423,7 +1423,7 @@ export default function OrderTrackingPage() {
 
           {/* Column 2: Goods Receiving Form */}
           {isReceivingOpen && detailData && (
-            <div className="flex-1 h-full overflow-hidden bg-white">
+            <div className="flex-1 h-full overflow-hidden bg-surface">
               <GoodsReceivingForm
                 isOpen={true}
                 isEmbedded={true}
@@ -1446,22 +1446,22 @@ export default function OrderTrackingPage() {
 
           {/* Column 3: Goods Receipt Summary */}
           {selectedGRId && (
-            <div className="flex-1 h-full overflow-y-auto bg-gray-50/30 p-8">
+            <div className="flex-1 h-full overflow-y-auto bg-subtle/50 p-8">
               {loadingGR ? (
                 <div className="h-full flex items-center justify-center">
                   <div className="flex flex-col items-center gap-4">
                     <RefreshCw className="w-10 h-10 text-indigo-500 animate-spin" />
-                    <p className="text-sm font-bold text-gray-500 uppercase tracking-widest">Fetching Receipt Details...</p>
+                    <p className="text-sm font-bold text-text-muted uppercase tracking-widest">Fetching Receipt Details...</p>
                   </div>
                 </div>
               ) : grDetail ? (
                 <div className="max-w-3xl mx-auto space-y-8">
                   {/* Summary Header */}
-                  <div className="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm">
+                  <div className="bg-surface rounded-2xl p-8 border border-border-subtle shadow-sm">
                     <div className="flex justify-between items-start mb-6">
                       <div>
                         <div className="flex items-center gap-3 mb-2">
-                          <span className="px-3 py-1 rounded-xl bg-emerald-50 text-emerald-600 text-[10px] font-black uppercase tracking-widest border border-emerald-100">
+                          <span className="px-3 py-1 rounded-xl bg-emerald-500/10 text-emerald-600 text-[10px] font-black uppercase tracking-widest border border-emerald-100">
                             {grDetail.gr_number}
                           </span>
                           <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
@@ -1469,7 +1469,7 @@ export default function OrderTrackingPage() {
                           </span>
                         </div>
                         <div className="flex items-center gap-4">
-                          <h2 className="text-3xl font-black text-gray-900 tracking-tight">Receipt Summary</h2>
+                          <h2 className="text-3xl font-black text-text-primary tracking-tight">Receipt Summary</h2>
                           {(() => {
                             const sourcePenalties = (grDetail.penalties && grDetail.penalties.length > 0) ? grDetail.penalties : detailData.penalties;
                             const grPenalties = sourcePenalties?.filter(p => 
@@ -1481,7 +1481,7 @@ export default function OrderTrackingPage() {
                             const maxDays = Math.max(...grPenalties.map(p => p.days_delayed || 0));
                             
                             return (
-                              <div className="px-3 py-1.5 rounded-2xl bg-rose-50 border border-rose-100 flex items-center gap-2 animate-pulse">
+                              <div className="px-3 py-1.5 rounded-2xl bg-rose-500/10 border border-rose-100 flex items-center gap-2 animate-pulse">
                                 <Gavel className="w-4 h-4 text-rose-500" />
                                 <span className="text-xs font-black text-rose-600 uppercase tracking-widest">
                                   Penalty Alert {maxDays > 0 && `• ${maxDays} ${maxDays === 1 ? 'Day' : 'Days'} Late`}
@@ -1493,7 +1493,7 @@ export default function OrderTrackingPage() {
                       </div>
                       <button 
                         onClick={() => setSelectedGRId(null)}
-                        className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+                        className="p-2 hover:bg-subtle rounded-xl transition-colors"
                       >
                         <X className="w-6 h-6 text-gray-400" />
                       </button>
@@ -1503,15 +1503,15 @@ export default function OrderTrackingPage() {
                       <div>
                         <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Delivery Details</p>
                         <div className="space-y-1">
-                          <p className="text-sm font-black text-gray-900 flex items-center gap-2">
+                          <p className="text-sm font-black text-text-primary flex items-center gap-2">
                             <FileText className="w-4 h-4 text-gray-400" />
                             Invoice: <span className="text-indigo-600">{grDetail.invoice_number || '-'}</span>
                           </p>
-                          <p className="text-sm font-black text-gray-900 flex items-center gap-2">
+                          <p className="text-sm font-black text-text-primary flex items-center gap-2">
                             <Truck className="w-4 h-4 text-gray-400" />
                             Delivery Order No. (DO): <span className="text-indigo-600">{grDetail.delivery_note_number || '-'}</span>
                           </p>
-                          <p className="text-sm font-black text-gray-900 flex items-center gap-2">
+                          <p className="text-sm font-black text-text-primary flex items-center gap-2">
                             <Building2 className="w-4 h-4 text-gray-400" />
                             Supplier: <span className="text-indigo-600">{grDetail.purchase_order?.supplier?.company_name || grDetail.purchase_order?.manual_supplier_name || '-'}</span>
                           </p>
@@ -1520,11 +1520,11 @@ export default function OrderTrackingPage() {
                       <div>
                         <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Received By</p>
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center font-black text-gray-400 shadow-inner">
+                          <div className="w-10 h-10 rounded-full bg-subtle flex items-center justify-center font-black text-gray-400 shadow-inner">
                             {grDetail.received_by_user?.full_name?.charAt(0) || 'S'}
                           </div>
                           <div>
-                            <p className="text-sm font-black text-gray-900">{grDetail.received_by_user?.full_name || 'System User'}</p>
+                            <p className="text-sm font-black text-text-primary">{grDetail.received_by_user?.full_name || 'System User'}</p>
                             <p className="text-[10px] font-bold text-gray-400 uppercase">Pharmacy Personnel</p>
                           </div>
                         </div>
@@ -1532,18 +1532,18 @@ export default function OrderTrackingPage() {
                     </div>
 
                     {grDetail.notes && (
-                      <div className="mt-6 p-4 bg-amber-50 rounded-2xl border border-amber-100">
+                      <div className="mt-6 p-4 bg-amber-500/10 rounded-2xl border border-amber-100">
                         <p className="text-[10px] font-black text-amber-600 uppercase tracking-widest mb-1">Internal Notes</p>
-                        <p className="text-sm text-amber-900 font-medium">{grDetail.notes}</p>
+                        <p className="text-sm text-text-primary font-medium">{grDetail.notes}</p>
                       </div>
                     )}
                   </div>
 
                   {/* Items Table */}
-                  <div className="bg-white rounded-[2.5rem] overflow-hidden border border-gray-100 shadow-sm">
-                    <div className="px-8 py-6 border-b border-gray-100 bg-gray-50/30 flex justify-between items-center">
-                      <h3 className="text-[11px] font-black text-gray-900 uppercase tracking-[0.25em]">Received Items</h3>
-                      <span className="px-3 py-1 rounded-lg bg-white border border-gray-200 text-[10px] font-black text-gray-600">
+                  <div className="bg-surface rounded-2xl overflow-hidden border border-border-subtle shadow-sm">
+                    <div className="px-8 py-6 border-b border-border-subtle bg-subtle/50 flex justify-between items-center">
+                      <h3 className="text-[11px] font-black text-text-primary uppercase tracking-[0.25em]">Received Items</h3>
+                      <span className="px-3 py-1 rounded-lg bg-surface border border-border-default text-[10px] font-black text-text-muted">
                         {grDetail.items?.length || 0} POSITIONS
                       </span>
                     </div>
@@ -1558,11 +1558,11 @@ export default function OrderTrackingPage() {
                         </thead>
                         <tbody className="divide-y divide-gray-50">
                           {grDetail.items?.map((item: any, i: number) => (
-                            <tr key={item.id || i} className="group hover:bg-gray-50/50 transition-colors">
+                            <tr key={item.id || i} className="group hover:bg-subtle/50 transition-colors">
                               <td className="px-8 py-4">
-                                <p className="text-sm font-black text-gray-900 mb-1">{item.po_item?.item_name || 'Unknown Item'}</p>
+                                <p className="text-sm font-black text-text-primary mb-1">{item.po_item?.item_name || 'Unknown Item'}</p>
                                 <div className="flex items-center gap-2">
-                                  <span className="px-1.5 py-0.5 rounded bg-gray-100 text-gray-500 text-[9px] font-black uppercase">
+                                  <span className="px-1.5 py-0.5 rounded bg-subtle text-text-muted text-[9px] font-black uppercase">
                                     {item.po_item?.item_code || '-'}
                                   </span>
                                   {item.batch_number && (
@@ -1578,15 +1578,15 @@ export default function OrderTrackingPage() {
                                 </div>
                               </td>
                               <td className="px-4 py-4 text-center">
-                                <p className="text-sm font-black text-gray-900">{item.quantity_received}</p>
+                                <p className="text-sm font-black text-text-primary">{item.quantity_received}</p>
                                 <p className="text-[9px] font-bold text-gray-400 uppercase tracking-tighter">Units</p>
                               </td>
                               <td className="px-8 py-4 text-right">
                                 <span className={cn(
                                   "px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border",
-                                  item.disposition === 'accepted' ? "bg-emerald-50 text-emerald-600 border-emerald-100" :
-                                  item.disposition === 'credit_note' ? "bg-amber-50 text-amber-600 border-amber-100" :
-                                  "bg-rose-50 text-rose-600 border-rose-100"
+                                  item.disposition === 'accepted' ? "bg-emerald-500/10 text-emerald-600 border-emerald-100" :
+                                  item.disposition === 'credit_note' ? "bg-amber-500/10 text-amber-600 border-amber-100" :
+                                  "bg-rose-500/10 text-rose-600 border-rose-100"
                                 )}>
                                   {item.disposition || 'received'}
                                 </span>
@@ -1603,7 +1603,7 @@ export default function OrderTrackingPage() {
                                     if (!itemPenalty) return null;
                                     return (
                                       <div className="mt-1 flex items-center gap-1">
-                                        <div className="px-1.5 py-0.5 rounded bg-rose-50 border border-rose-100 flex items-center gap-1">
+                                        <div className="px-1.5 py-0.5 rounded bg-rose-500/10 border border-rose-100 flex items-center gap-1">
                                           <AlertCircle className="w-2.5 h-2.5 text-rose-500" />
                                           <span className="text-[9px] font-black text-rose-600 uppercase tracking-tighter">
                                             {itemPenalty.penalty_type.replace('_', ' ')}
@@ -1628,14 +1628,14 @@ export default function OrderTrackingPage() {
                     <div className="flex gap-4">
                       <button 
                         onClick={() => generateGoodsReceiptPdf(grDetail)}
-                        className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white border border-gray-200 text-[11px] font-black uppercase tracking-widest text-gray-600 hover:bg-gray-50 transition-all shadow-sm active:scale-95"
+                        className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-surface border border-border-default text-[11px] font-black uppercase tracking-widest text-text-muted hover:bg-subtle/50 transition-colors shadow-sm active:scale-95"
                       >
                         <Printer className="w-4 h-4" />
                         Print Copy
                       </button>
                       <button 
                         onClick={() => setSelectedGRId(null)}
-                        className="px-8 py-3 bg-gray-900 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-black transition-all shadow-lg active:scale-95"
+                        className="px-8 py-3 bg-gray-900 text-white rounded-2xl text-[11px] font-black uppercase tracking-widest hover:bg-black transition-colors shadow-lg active:scale-95"
                       >
                         Done Viewing
                       </button>
@@ -1661,73 +1661,73 @@ export default function OrderTrackingPage() {
       >
         {detailData ? (
           <div>
-            <div className="bg-gray-50 rounded-xl p-4 mb-6 border border-gray-100">
+            <div className="bg-subtle/50 rounded-xl p-4 mb-6 border border-border-subtle">
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-gray-500 font-medium mb-0.5">PO Number</p>
-                  <p className="font-semibold text-gray-900">{detailData.po_number}</p>
+                  <p className="text-text-muted font-medium mb-0.5">PO Number</p>
+                  <p className="font-semibold text-text-primary">{detailData.po_number}</p>
                 </div>
                 <div>
-                  <p className="text-gray-500 font-medium mb-0.5">LPO Number</p>
-                  <p className="font-semibold text-gray-900">{detailData.lpo_number}</p>
+                  <p className="text-text-muted font-medium mb-0.5">LPO Number</p>
+                  <p className="font-semibold text-text-primary">{detailData.lpo_number}</p>
                 </div>
                 <div className="col-span-2">
-                  <p className="text-gray-500 font-medium mb-0.5">Supplier</p>
-                  <p className="font-semibold text-gray-900">{detailData.supplier_name}</p>
+                  <p className="text-text-muted font-medium mb-0.5">Supplier</p>
+                  <p className="font-semibold text-text-primary">{detailData.supplier_name}</p>
                   <p className="text-indigo-600">{detailData.supplier_email || 'No email on file'}</p>
                 </div>
               </div>
             </div>
 
             <div className="space-y-4 mb-8">
-              <label className="text-sm font-bold text-gray-900 uppercase tracking-wider block">
+              <label className="text-sm font-bold text-text-primary uppercase tracking-wider block">
                 Reminder Type
               </label>
               <div className="grid grid-cols-2 gap-3">
                 <button
                   onClick={() => setReminderType('eta')}
-                  className={`p-4 border-2 rounded-xl text-left transition-all ${
+                  className={`p-4 border-2 rounded-xl text-left transition-colors ${
                     reminderType === 'eta' 
-                      ? 'border-indigo-500 bg-indigo-50/50' 
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-indigo-500 bg-indigo-500/10' 
+                      : 'border-border-default hover:border-border-default'
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
-                      reminderType === 'eta' ? 'border-indigo-500 bg-indigo-500' : 'border-gray-300'
+                      reminderType === 'eta' ? 'border-indigo-500 bg-indigo-500' : 'border-border-default'
                     }`}>
-                      {reminderType === 'eta' && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                      {reminderType === 'eta' && <div className="w-1.5 h-1.5 bg-surface rounded-full" />}
                     </div>
-                    <span className="font-semibold text-gray-900">Ask for ETA</span>
+                    <span className="font-semibold text-text-primary">Ask for ETA</span>
                   </div>
-                  <p className="text-xs text-gray-500 pl-6">Request delivery status update</p>
+                  <p className="text-xs text-text-muted pl-6">Request delivery status update</p>
                 </button>
 
                 <button
                   onClick={() => setReminderType('late')}
-                  className={`p-4 border-2 rounded-xl text-left transition-all ${
+                  className={`p-4 border-2 rounded-xl text-left transition-colors ${
                     reminderType === 'late' 
                       ? 'border-red-500 bg-red-50/50' 
-                      : 'border-gray-200 hover:border-gray-300'
+                      : 'border-border-default hover:border-border-default'
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-1">
                     <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
-                      reminderType === 'late' ? 'border-red-500 bg-red-500' : 'border-gray-300'
+                      reminderType === 'late' ? 'border-red-500 bg-red-500' : 'border-border-default'
                     }`}>
-                      {reminderType === 'late' && <div className="w-1.5 h-1.5 bg-white rounded-full" />}
+                      {reminderType === 'late' && <div className="w-1.5 h-1.5 bg-surface rounded-full" />}
                     </div>
-                    <span className="font-semibold text-gray-900">Late Notice</span>
+                    <span className="font-semibold text-text-primary">Late Notice</span>
                   </div>
-                  <p className="text-xs text-gray-500 pl-6">Formal overdue notification</p>
+                  <p className="text-xs text-text-muted pl-6">Formal overdue notification</p>
                 </button>
               </div>
             </div>
 
-            <div className="bg-indigo-50 rounded-xl p-4 flex items-start gap-3">
+            <div className="bg-indigo-500/10 rounded-xl p-4 flex items-start gap-3">
               <FileText className="w-5 h-5 text-indigo-500 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-semibold text-indigo-900">
+                <p className="text-sm font-semibold text-text-primary">
                   This will generate Reminder #{ (detailData.reminder_count || 0) + 1 }
                 </p>
                 <p className="text-xs text-indigo-700 mt-1">
@@ -1739,7 +1739,7 @@ export default function OrderTrackingPage() {
             <div className="mt-8 flex justify-end gap-3">
               <button
                 onClick={() => setIsReminderOpen(false)}
-                className="px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 rounded-xl transition-colors"
+                className="px-4 py-2 text-sm font-semibold text-text-secondary hover:bg-subtle rounded-xl transition-colors"
                 disabled={sendingReminder}
               >
                 Cancel
@@ -1747,7 +1747,7 @@ export default function OrderTrackingPage() {
               <button
                 onClick={handleSendReminder}
                 disabled={sendingReminder || !detailData}
-                className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl shadow-lg shadow-indigo-200 transition-all active:scale-95 flex items-center gap-2 disabled:opacity-70"
+                className="px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-xl shadow-lg shadow-indigo-200 transition-colors active:scale-95 flex items-center gap-2 disabled:opacity-70"
               >
                 {sendingReminder ? (
                   <>
@@ -1778,10 +1778,10 @@ export default function OrderTrackingPage() {
         size="md"
       >
         <div className="space-y-6">
-          <div className="p-4 bg-rose-50 rounded-2xl border border-rose-100 flex items-start gap-3">
+          <div className="p-4 bg-rose-500/10 rounded-2xl border border-rose-100 flex items-start gap-3">
             <AlertTriangle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
             <div>
-              <p className="text-sm font-bold text-rose-900">Are you sure you want to cancel this LPO?</p>
+              <p className="text-sm font-bold text-rose-400 dark:text-rose-300 font-bold">Are you sure you want to cancel this LPO?</p>
               <p className="text-xs text-rose-700 mt-1">
                 This will mark the Purchase Order as <strong>Cancelled</strong> and restore the committed funds to the budget allocation. This action cannot be undone.
               </p>
@@ -1796,7 +1796,7 @@ export default function OrderTrackingPage() {
               value={cancellationReason}
               onChange={(e) => setCancellationReason(e.target.value)}
               placeholder="e.g., Supplier unable to fulfill, item discontinued, or price mismatch..."
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-rose-500 focus:border-rose-500 text-sm min-h-[100px] transition-all"
+              className="w-full px-4 py-3 rounded-xl border border-border-default focus:ring-2 focus:ring-rose-500 focus:border-rose-500 text-sm min-h-[100px] transition-colors"
               disabled={cancelling}
             />
           </div>
@@ -1804,7 +1804,7 @@ export default function OrderTrackingPage() {
           <div className="flex gap-3 pt-2">
             <button
               onClick={() => setIsCancelModalOpen(false)}
-              className="flex-1 px-6 py-3 rounded-xl border border-gray-200 text-sm font-bold text-gray-600 hover:bg-gray-50 transition-all"
+              className="flex-1 px-6 py-3 rounded-xl border border-border-default text-sm font-bold text-text-muted hover:bg-subtle/50 transition-colors"
               disabled={cancelling}
             >
               Back
@@ -1812,7 +1812,7 @@ export default function OrderTrackingPage() {
             <button
               onClick={handleCancelLPO}
               disabled={cancelling || !cancellationReason.trim()}
-              className="flex-[2] px-6 py-3 rounded-xl bg-rose-600 text-white text-sm font-bold hover:bg-rose-700 transition-all shadow-lg shadow-rose-200 disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2"
+              className="flex-[2] px-6 py-3 rounded-xl bg-rose-600 text-white text-sm font-bold hover:bg-rose-700 transition-colors shadow-lg shadow-rose-200 disabled:opacity-50 disabled:shadow-none flex items-center justify-center gap-2"
             >
               {cancelling ? (
                 <>

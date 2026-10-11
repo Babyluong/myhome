@@ -213,10 +213,11 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           type="submit"
           disabled={isLoading}
           className={cn(
-            'w-full h-11 text-sm font-medium rounded-lg transition-all duration-150',
-            'bg-ink text-ink-text hover:bg-ink-hover disabled:opacity-50 disabled:pointer-events-none',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-base focus-visible:ring-offset-2 focus-visible:ring-offset-canvas',
-            'shadow-2xs active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer border border-border-default'
+            'w-full h-11 text-sm font-semibold rounded-lg transition-all duration-150',
+            'bg-accent-base text-accent-foreground hover:bg-accent-hover hover:shadow-elevation-2 active:scale-[0.98]',
+            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-base focus-visible:ring-offset-2 focus-visible:ring-offset-surface',
+            'shadow-elevation-1 flex items-center justify-center gap-2 cursor-pointer border border-accent-hover/30',
+            'disabled:opacity-50 disabled:pointer-events-none'
           )}
         >
           {isLoading ? (

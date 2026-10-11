@@ -362,9 +362,9 @@ export const Sidebar: React.FC = () => {
             }}
             className={({ isActive }) =>
               cn(
-                'flex items-center gap-2.5 px-3 py-2.5 min-h-[42px] rounded-lg text-xs font-medium transition-all duration-200 group relative',
+                'flex items-center gap-2.5 px-3 py-2.5 min-h-[42px] rounded-xl text-xs font-medium transition-[transform,opacity,box-shadow,border-color] duration-150 active:scale-[0.98] duration-150 group relative',
                 isActive
-                  ? 'text-accent-base font-semibold bg-accent-subtle border border-accent-base/30 shadow-2xs'
+                  ? 'text-accent-base font-semibold bg-accent-subtle border border-accent-base/30 shadow-elevation-1'
                   : 'text-text-secondary hover:text-text-primary hover:bg-subtle border border-transparent'
               )
             }
@@ -372,7 +372,7 @@ export const Sidebar: React.FC = () => {
             {({ isActive }) => (
               <>
                 <span className={cn(
-                  "w-1.5 h-1.5 rounded-full transition-all duration-200 flex-shrink-0",
+                  "w-1.5 h-1.5 rounded-full transition-colors duration-150 flex-shrink-0",
                   isActive 
                     ? "bg-accent-base scale-125" 
                     : "bg-text-muted/60 group-hover:bg-text-secondary"
@@ -399,9 +399,9 @@ export const Sidebar: React.FC = () => {
             transition={{ type: 'spring', stiffness: 400, damping: 28 }}
             onClick={() => toggleExpanded(item.href)}
             className={cn(
-              'w-full flex items-center gap-3 px-3 py-2.5 min-h-[46px] rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 group relative',
+              'w-full flex items-center gap-3 px-3 py-2.5 min-h-[46px] rounded-xl text-xs font-semibold tracking-wide transition-colors duration-150 group relative',
               activeState
-                ? 'text-accent-base bg-accent-subtle/50 border border-accent-base/30 shadow-2xs'
+                ? 'text-accent-base bg-accent-subtle/50 border border-accent-base/30 shadow-elevation-1'
                 : 'text-text-secondary hover:text-text-primary hover:bg-subtle border border-transparent'
             )}
           >
@@ -410,7 +410,7 @@ export const Sidebar: React.FC = () => {
             )}
             
             <div className={cn(
-              "w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 flex-shrink-0",
+              "w-8 h-8 rounded-lg flex items-center justify-center transition-colors duration-150 flex-shrink-0",
               activeState 
                 ? "bg-accent-subtle text-accent-base border border-accent-base/30 shadow-xs" 
                 : "bg-subtle text-text-muted group-hover:bg-muted-surface group-hover:text-text-primary"
@@ -522,7 +522,7 @@ export const Sidebar: React.FC = () => {
           </div>
           <button
             onClick={() => setSidebarOpen(false)}
-            className="lg:hidden w-8 h-8 flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-subtle active:scale-95 rounded-lg transition-all"
+            className="lg:hidden w-8 h-8 flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-subtle active:scale-95 rounded-lg transition-colors"
             aria-label="Close Navigation Panel"
           >
             <X className="w-4 h-4" />
@@ -551,7 +551,7 @@ export const Sidebar: React.FC = () => {
       <div className="p-3 border-t border-border-default bg-surface/50">
         <div
           className={cn(
-            'flex items-center gap-3 p-2.5 rounded-xl bg-surface border border-border-default shadow-2xs group hover:border-border-strong transition-all duration-200'
+            'flex items-center gap-3 p-2.5 rounded-xl bg-surface border border-border-default shadow-elevation-1 group hover:border-border-strong transition-colors duration-150'
           )}
         >
           <div className="relative">
@@ -559,7 +559,7 @@ export const Sidebar: React.FC = () => {
               src={user?.profile_photo_url}
               name={user?.full_name}
               size="sm"
-              className="ring-2 ring-accent-base/30 group-hover:ring-accent-base/60 transition-all"
+              className="ring-2 ring-accent-base/30 group-hover:ring-accent-base/60 transition-colors"
             />
             <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 border-surface" />
           </div>
@@ -613,7 +613,7 @@ export const Sidebar: React.FC = () => {
             exit={{ x: '-100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 320 }}
             className={cn(
-              'fixed top-0 bottom-0 left-0 bg-surface border-r border-border-default',
+              'fixed top-0 bottom-0 left-0 bg-surface/90 backdrop-blur-xl border-r border-border-default',
               'flex flex-col z-[50] transition-colors duration-150',
               'w-[290px] max-w-[85vw] shadow-2xl lg:hidden'
             )}
@@ -626,7 +626,7 @@ export const Sidebar: React.FC = () => {
       {/* Desktop Static Sidebar */}
       <aside
         className={cn(
-          'hidden lg:flex fixed left-0 bg-surface/95 backdrop-blur-md border-r border-border-default',
+          'hidden lg:flex fixed left-0 bg-surface/80 backdrop-blur-xl border-r border-border-default',
           'flex-col z-[35] transition-colors duration-150',
           'sidebar-top-offset',
           'w-[280px]'

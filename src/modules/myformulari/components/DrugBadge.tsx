@@ -13,18 +13,18 @@ export const PrescriberBadge: React.FC<PrescriberBadgeProps> = ({ category, size
   const getStyle = (cat: PrescriberCategory) => {
     switch (cat) {
       case 'A*':
-        return 'bg-purple-100 text-purple-800 border-purple-300 font-bold'
+        return 'bg-purple-100 text-indigo-400 border-purple-300 font-bold'
       case 'A':
-        return 'bg-indigo-100 text-indigo-800 border-indigo-300 font-semibold'
+        return 'bg-indigo-100 text-indigo-400 border-indigo-300 font-semibold'
       case 'A/KK':
-        return 'bg-blue-100 text-blue-800 border-blue-300 font-medium'
+        return 'bg-blue-100 text-blue-400 border-blue-300 font-medium'
       case 'B':
         return 'bg-teal-100 text-teal-800 border-teal-300 font-medium'
       case 'C':
       case 'C+':
-        return 'bg-slate-100 text-slate-700 border-slate-300 font-normal'
+        return 'bg-subtle text-text-secondary border-border-default font-normal'
       default:
-        return 'bg-gray-100 text-gray-700 border-gray-300'
+        return 'bg-subtle text-text-secondary border-border-default'
     }
   }
 
@@ -75,7 +75,7 @@ export const HAMBadge: React.FC<HAMBadgeProps> = ({
       case 'CRITICAL':
         return 'bg-rose-600 text-white border-rose-700 animate-pulse'
       case 'HIGH':
-        return 'bg-rose-100 text-rose-800 border-rose-300'
+        return 'bg-rose-100 text-rose-400 border-rose-300'
       default:
         return 'bg-orange-100 text-orange-800 border-orange-300'
     }
@@ -102,7 +102,7 @@ export const LASABadge: React.FC<LASABadgeProps> = ({ size = 'md', pairCount }) 
 
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full font-semibold bg-amber-100 text-amber-800 border border-amber-300 shadow-sm ${sizeClasses}`}
+      className={`inline-flex items-center gap-1 rounded-full font-semibold bg-amber-100 text-amber-400 border border-amber-300 shadow-sm ${sizeClasses}`}
       title="Look-Alike Sound-Alike (LASA) - Amalkan TALL-Man Lettering dan Semakan Berganda"
     >
       <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
@@ -126,11 +126,11 @@ export const PoisonBadge: React.FC<PoisonBadgeProps> = ({ poison, size = 'md' })
       case 'Psychotropic (PS)':
         return 'bg-pink-900 text-pink-100 border-pink-700 font-bold'
       case 'Group B':
-        return 'bg-blue-50 text-blue-700 border-blue-200'
+        return 'bg-blue-500/10 text-blue-700 border-blue-500/20'
       case 'Group C':
-        return 'bg-slate-100 text-slate-700 border-slate-200'
+        return 'bg-subtle text-text-secondary border-border-default'
       default:
-        return 'bg-gray-50 text-gray-600 border-gray-200'
+        return 'bg-subtle/50 text-text-muted border-border-default'
     }
   }
 
@@ -156,9 +156,9 @@ export const NAGBadge: React.FC<NAGBadgeProps> = ({ tier, size = 'md' }) => {
       case 'Reserve (Rsv)':
         return 'bg-red-100 text-red-800 border-red-300 font-bold'
       case 'Restricted (R)':
-        return 'bg-amber-100 text-amber-800 border-amber-300 font-semibold'
+        return 'bg-amber-100 text-amber-400 border-amber-300 font-semibold'
       default:
-        return 'bg-emerald-100 text-emerald-800 border-emerald-300 font-medium'
+        return 'bg-emerald-100 text-emerald-400 border-emerald-300 font-medium'
     }
   }
 
@@ -188,21 +188,21 @@ export const PregnancyBadge: React.FC<PregnancyBadgeProps> = ({ category = 'C', 
     }
     switch (category) {
       case 'A':
-        return 'bg-emerald-100 text-emerald-900 border-emerald-300 font-bold'
+        return 'bg-emerald-100 text-emerald-400 dark:text-emerald-300 font-bold border-emerald-300 font-bold'
       case 'B':
         return 'bg-teal-100 text-teal-900 border-teal-300 font-bold'
       case 'C':
-        return 'bg-amber-100 text-amber-900 border-amber-300 font-semibold'
+        return 'bg-amber-100 text-amber-400 dark:text-amber-300 font-bold border-amber-300 font-semibold'
       case 'D':
         return 'bg-orange-100 text-orange-950 border-orange-300 font-bold'
       default:
-        return 'bg-slate-100 text-slate-700 border-slate-300 font-medium'
+        return 'bg-subtle text-text-secondary border-border-default font-medium'
     }
   }
 
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full border shadow-2xs ${sizeClasses} ${getStyle()}`}
+      className={`inline-flex items-center gap-1 rounded-full border shadow-elevation-1 ${sizeClasses} ${getStyle()}`}
       title={`Kategori Keselamatan Kehamilan (FDA Category ${category})${isContraindicated ? ' - KONTRAINDIKASI SEMASA KEHAMILAN' : ''}`}
     >
       <span className="w-1.5 h-1.5 rounded-full bg-current opacity-80"></span>
@@ -223,7 +223,7 @@ export const LactationBadge: React.FC<LactationBadgeProps> = ({ isContraindicate
   if (isContraindicated) {
     return (
       <span
-        className={`inline-flex items-center gap-1 rounded-full font-bold bg-rose-50 text-rose-800 border border-rose-200 shadow-2xs ${sizeClasses}`}
+        className={`inline-flex items-center gap-1 rounded-full font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20 shadow-elevation-1 ${sizeClasses}`}
         title="Penyusuan: KONTRAINDIKASI / Tidak Disyorkan semasa menyusukan bayi"
       >
         <span className="w-1.5 h-1.5 rounded-full bg-rose-600"></span>
@@ -234,7 +234,7 @@ export const LactationBadge: React.FC<LactationBadgeProps> = ({ isContraindicate
 
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-2xs ${sizeClasses}`}
+      className={`inline-flex items-center gap-1 rounded-full font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-elevation-1 ${sizeClasses}`}
       title="Penyusuan: Serasi / Boleh digunakan dengan pemantauan klinikal"
     >
       <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>

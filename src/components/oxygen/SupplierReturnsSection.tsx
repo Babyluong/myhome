@@ -788,7 +788,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
     }
     if (changes.length === 0) return null;
     return (
-      <ul className="mt-1.5 pl-4 list-disc text-[11px] text-slate-500 space-y-0.5">
+      <ul className="mt-1.5 pl-4 list-disc text-[11px] text-text-muted space-y-0.5">
         {changes.map((c, i) => <li key={i}>{c}</li>)}
       </ul>
     );
@@ -962,24 +962,24 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
   return (
     <div className="space-y-6">
       {/* Executive Header & KPI Summary Card with Integrated Workflow Switcher */}
-      <div className="bg-white border border-slate-200/90 rounded-2xl p-5 md:p-6 shadow-xs space-y-5">
+      <div className="bg-surface border border-border-default rounded-2xl p-5 md:p-6 shadow-xs space-y-5">
         {/* Top Control Bar: Segmented Workflow Switcher (Left) + Contextual Actions (Right) */}
-        <div className={`flex flex-col lg:flex-row lg:items-center justify-between gap-4 ${subTab === 'tracking' ? '' : 'pb-4 border-b border-slate-100'}`}>
+        <div className={`flex flex-col lg:flex-row lg:items-center justify-between gap-4 ${subTab === 'tracking' ? '' : 'pb-4 border-b border-border-subtle'}`}>
           {/* Executive Segmented Workflow Selector */}
           {!hideSubTabBar && (
-            <div className="inline-flex flex-wrap sm:flex-nowrap items-center bg-slate-100/80 p-1 rounded-xl border border-slate-200/70 gap-1 w-full sm:w-auto">
+            <div className="inline-flex flex-wrap sm:flex-nowrap items-center bg-subtle p-1 rounded-xl border border-border-default gap-1 w-full sm:w-auto">
               <button
                 onClick={() => setSubTab('returns')}
-                className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+                className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition-[transform,opacity,box-shadow,border-color] duration-150 flex items-center justify-center gap-2 cursor-pointer ${
                   subTab === 'returns'
-                    ? 'bg-white text-rose-700 shadow-xs ring-1 ring-slate-200/80 font-extrabold'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                    ? 'bg-surface text-rose-400 shadow-xs ring-1 ring-border-default font-extrabold'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-subtle'
                 }`}
               >
                 <Truck className={`w-3.5 h-3.5 ${subTab === 'returns' ? 'text-rose-600' : 'text-slate-400'}`} />
                 <span>{language === 'ms' ? 'Pemulangan' : 'Returns'}</span>
                 <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold ${
-                  subTab === 'returns' ? 'bg-rose-100 text-rose-700' : 'bg-slate-200/80 text-slate-600'
+                  subTab === 'returns' ? 'bg-rose-500/20 text-rose-400' : 'bg-slate-200/80 text-text-secondary'
                 }`}>
                   {documents.length}
                 </span>
@@ -987,16 +987,16 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
 
               <button
                 onClick={() => setSubTab('requests')}
-                className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+                className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition-[transform,opacity,box-shadow,border-color] duration-150 flex items-center justify-center gap-2 cursor-pointer ${
                   subTab === 'requests'
-                    ? 'bg-white text-blue-700 shadow-xs ring-1 ring-slate-200/80 font-extrabold'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                    ? 'bg-surface text-blue-400 shadow-xs ring-1 ring-border-default font-extrabold'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-subtle'
                 }`}
               >
                 <FileCheck className={`w-3.5 h-3.5 ${subTab === 'requests' ? 'text-blue-600' : 'text-slate-400'}`} />
                 <span>{language === 'ms' ? 'Pesanan / Inden' : 'Requests'}</span>
                 <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold ${
-                  subTab === 'requests' ? 'bg-blue-100 text-blue-700' : 'bg-slate-200/80 text-slate-600'
+                  subTab === 'requests' ? 'bg-blue-500/20 text-blue-400' : 'bg-slate-200/80 text-text-secondary'
                 }`}>
                   {requestDocuments.length}
                 </span>
@@ -1004,16 +1004,16 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
 
               <button
                 onClick={() => setSubTab('received')}
-                className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+                className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition-[transform,opacity,box-shadow,border-color] duration-150 flex items-center justify-center gap-2 cursor-pointer ${
                   subTab === 'received'
-                    ? 'bg-white text-emerald-700 shadow-xs ring-1 ring-slate-200/80 font-extrabold'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                    ? 'bg-surface text-emerald-400 shadow-xs ring-1 ring-border-default font-extrabold'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-subtle'
                 }`}
               >
                 <PackageCheck className={`w-3.5 h-3.5 ${subTab === 'received' ? 'text-emerald-600' : 'text-slate-400'}`} />
                 <span>{language === 'ms' ? 'Penerimaan' : 'Received'}</span>
                 <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold ${
-                  subTab === 'received' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200/80 text-slate-600'
+                  subTab === 'received' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-slate-200/80 text-text-secondary'
                 }`}>
                   {receiveDocuments.length}
                 </span>
@@ -1021,16 +1021,16 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
 
               <button
                 onClick={() => setSubTab('tracking')}
-                className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+                className={`flex-1 sm:flex-initial px-3.5 py-1.5 rounded-lg text-xs font-bold transition-[transform,opacity,box-shadow,border-color] duration-150 flex items-center justify-center gap-2 cursor-pointer ${
                   subTab === 'tracking'
-                    ? 'bg-white text-indigo-700 shadow-xs ring-1 ring-slate-200/80 font-extrabold'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                    ? 'bg-surface text-indigo-700 shadow-xs ring-1 ring-border-default font-extrabold'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-subtle'
                 }`}
               >
                 <ShieldCheck className={`w-3.5 h-3.5 ${subTab === 'tracking' ? 'text-indigo-600' : 'text-slate-400'}`} />
                 <span>{language === 'ms' ? 'Pengesanan Silinder' : 'Cylinder Tracking'}</span>
                 <span className={`text-[10px] px-2 py-0.5 rounded-full font-mono font-bold ${
-                  subTab === 'tracking' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-200/80 text-slate-600'
+                  subTab === 'tracking' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-200/80 text-text-secondary'
                 }`}>
                   {trackingSummary?.totalTracked ?? 0}
                 </span>
@@ -1047,7 +1047,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                   onClick={onScanClick}
                   disabled={isViewOnly}
                   title={isViewOnly ? 'View-only for Office Admin' : language === 'ms' ? 'Buka Pengimbas Silinder Pantas' : 'Open Quick Cylinder Scanner'}
-                  className={`px-3 py-2 rounded-xl bg-white border border-slate-200/90 hover:bg-slate-50 text-slate-700 font-semibold text-xs shadow-2xs hover:border-slate-300 active:scale-95 transition-all duration-150 flex items-center justify-center gap-1.5 cursor-pointer ${
+                  className={`px-3 py-2 rounded-xl bg-surface border border-border-default hover:bg-subtle/50 text-text-secondary font-semibold text-xs shadow-elevation-1 hover:border-border-default active:scale-95 transition-[transform,opacity,box-shadow,border-color] duration-150 flex items-center justify-center gap-1.5 cursor-pointer ${
                     isViewOnly ? 'opacity-60 grayscale cursor-not-allowed' : ''
                   }`}
                 >
@@ -1060,7 +1060,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                   onClick={onCreateClick}
                   disabled={isViewOnly}
                   title={isViewOnly ? 'View-only for Office Admin' : undefined}
-                  className={`px-4 py-2 rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-bold text-xs shadow-sm shadow-rose-500/25 active:scale-95 transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+                  className={`px-4 py-2 rounded-xl bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-700 hover:to-pink-700 text-white font-bold text-xs shadow-sm shadow-rose-500/25 active:scale-95 transition-[transform,opacity,box-shadow,border-color] duration-150 flex items-center justify-center gap-2 cursor-pointer ${
                     isViewOnly ? 'opacity-60 grayscale cursor-not-allowed' : ''
                   }`}
                 >
@@ -1074,7 +1074,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                 onClick={onCreateRequestClick}
                 disabled={isViewOnly}
                 title={isViewOnly ? 'View-only for Office Admin' : undefined}
-                className={`px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs shadow-sm shadow-blue-500/25 active:scale-95 transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+                className={`px-4 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs shadow-sm shadow-blue-500/25 active:scale-95 transition-[transform,opacity,box-shadow,border-color] duration-150 flex items-center justify-center gap-2 cursor-pointer ${
                   isViewOnly ? 'opacity-60 grayscale cursor-not-allowed' : ''
                 }`}
               >
@@ -1087,7 +1087,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                 onClick={onCreateReceiveClick}
                 disabled={isViewOnly}
                 title={isViewOnly ? 'View-only for Office Admin' : undefined}
-                className={`px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-xs shadow-sm shadow-emerald-500/25 active:scale-95 transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+                className={`px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold text-xs shadow-sm shadow-emerald-500/25 active:scale-95 transition-[transform,opacity,box-shadow,border-color] duration-150 flex items-center justify-center gap-2 cursor-pointer ${
                   isViewOnly ? 'opacity-60 grayscale cursor-not-allowed' : ''
                 }`}
               >
@@ -1104,10 +1104,10 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
             <div className="flex items-center space-x-3.5">
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center border shrink-0 ${
             subTab === 'returns' 
-              ? 'bg-rose-50 border-rose-200/80 text-rose-600' 
+              ? 'bg-rose-500/10 border-rose-500/20 text-rose-600' 
               : subTab === 'requests'
-              ? 'bg-blue-50 border-blue-200/80 text-blue-600'
-              : 'bg-emerald-50 border-emerald-200/80 text-emerald-600'
+              ? 'bg-blue-500/10 border-blue-500/20 text-blue-600'
+              : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600'
           }`}>
             {subTab === 'returns' ? (
               <Truck className="w-5 h-5" />
@@ -1119,7 +1119,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-base font-bold text-slate-900 tracking-tight">
+              <h3 className="text-base font-bold text-text-primary tracking-tight">
                 {subTab === 'returns'
                   ? (language === 'ms' ? 'Pemulangan Pembekal' : 'Supplier Returns')
                   : subTab === 'requests'
@@ -1128,15 +1128,15 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
               </h3>
               <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
                 subTab === 'returns'
-                  ? 'bg-rose-100/80 text-rose-700'
+                  ? 'bg-rose-500/20/80 text-rose-400'
                   : subTab === 'requests'
-                  ? 'bg-blue-100/80 text-blue-700'
-                  : 'bg-emerald-100/80 text-emerald-700'
+                  ? 'bg-blue-500/20/80 text-blue-400'
+                  : 'bg-emerald-500/20/80 text-emerald-400'
               }`}>
                 {subTab === 'returns' ? 'Outbound Fleet' : subTab === 'requests' ? 'Procurement Indent' : 'Inbound Fleet'}
               </span>
             </div>
-            <p className="text-slate-500 text-xs mt-0.5">
+            <p className="text-text-muted text-xs mt-0.5">
               {subTab === 'returns' 
                 ? (language === 'ms' ? 'Dokumen penghantaran balik silinder gas ke pembekal perubatan rasmi.' : 'Official return document dispatch to medical gas suppliers.')
                 : subTab === 'requests'
@@ -1147,11 +1147,11 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
         </div>
 
         {/* Live Operational Metrics Chip Row */}
-        <div className={`grid grid-cols-2 ${subTab === 'returns' ? 'sm:grid-cols-5' : 'sm:grid-cols-4'} gap-3 pt-4 border-t border-slate-100`}>
+        <div className={`grid grid-cols-2 ${subTab === 'returns' ? 'sm:grid-cols-5' : 'sm:grid-cols-4'} gap-3 pt-4 border-t border-border-subtle`}>
           {subTab === 'returns' && (
             <div 
               onClick={onOpenEmptyListModal || onScanClick}
-              className="bg-amber-50/70 hover:bg-amber-50 border border-amber-200/80 rounded-xl p-3 cursor-pointer transition-all hover:border-amber-300 group"
+              className="bg-amber-500/10 hover:bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 cursor-pointer transition-[transform,opacity,box-shadow,border-color] hover:border-amber-300 group"
             >
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-amber-700 block">
@@ -1161,7 +1161,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                   {language === 'ms' ? 'View List' : 'View Manifest'} &rarr;
                 </span>
               </div>
-              <div className="text-lg font-extrabold text-amber-900 font-mono mt-0.5">
+              <div className="text-lg font-extrabold text-amber-400 dark:text-amber-300 font-bold font-mono mt-0.5">
                 {storeEmptyCount}
                 <span className="text-xs font-sans font-normal text-amber-700 ml-1">cyl</span>
               </div>
@@ -1171,19 +1171,19 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
             </div>
           )}
 
-          <div className="bg-slate-50/80 border border-slate-200/70 rounded-xl p-3">
+          <div className="bg-subtle/50 border border-border-default rounded-xl p-3">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
               {language === 'ms' ? 'Jumlah Dokumen' : 'Total Documents'}
             </span>
-            <div className="text-lg font-extrabold text-slate-900 font-mono mt-0.5">
+            <div className="text-lg font-extrabold text-text-primary font-mono mt-0.5">
               {kpiStats.totalDocs}
             </div>
-            <span className="text-[10px] text-slate-500 font-medium">
+            <span className="text-[10px] text-text-muted font-medium">
               {kpiStats.completedCount} {language === 'ms' ? 'selesai' : 'completed'}
             </span>
           </div>
 
-          <div className="bg-slate-50/80 border border-slate-200/70 rounded-xl p-3">
+          <div className="bg-subtle/50 border border-border-default rounded-xl p-3">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
               {subTab === 'returns' 
                 ? (language === 'ms' ? 'Silinder Dipulangkan' : 'Cylinders Returned')
@@ -1191,34 +1191,34 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                 ? (language === 'ms' ? 'Kuantiti Dipesan' : 'Quantities Requested')
                 : (language === 'ms' ? 'Silinder Diterima' : 'Cylinders Received')}
             </span>
-            <div className="text-lg font-extrabold text-slate-900 font-mono mt-0.5">
+            <div className="text-lg font-extrabold text-text-primary font-mono mt-0.5">
               {kpiStats.totalCylinders}
-              <span className="text-xs font-sans font-normal text-slate-500 ml-1">cyl</span>
+              <span className="text-xs font-sans font-normal text-text-muted ml-1">cyl</span>
             </div>
-            <span className="text-[10px] text-slate-500 font-medium">
+            <span className="text-[10px] text-text-muted font-medium">
               {subTab === 'requests' && (kpiStats.totalVieM3 || 0) > 0
                 ? `+ ${(kpiStats.totalVieM3 || 0).toLocaleString()} m³ VIE Tank`
                 : (language === 'ms' ? 'Rentang keseluruhan' : 'Across all records')}
             </span>
           </div>
 
-          <div className="bg-slate-50/80 border border-slate-200/70 rounded-xl p-3">
+          <div className="bg-subtle/50 border border-border-default rounded-xl p-3">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
               {language === 'ms' ? 'Pembekal Terlibat' : 'Active Suppliers'}
             </span>
-            <div className="text-lg font-extrabold text-slate-900 font-mono mt-0.5">
+            <div className="text-lg font-extrabold text-text-primary font-mono mt-0.5">
               {kpiStats.suppliersCount}
             </div>
-            <span className="text-[10px] text-slate-500 font-medium truncate block">
+            <span className="text-[10px] text-text-muted font-medium truncate block">
               {availableFilterSuppliers.length > 0 ? availableFilterSuppliers.join(', ') : 'Borneo Indah / Linde'}
             </span>
           </div>
 
-          <div className="bg-slate-50/80 border border-slate-200/70 rounded-xl p-3">
+          <div className="bg-subtle/50 border border-border-default rounded-xl p-3">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
               {language === 'ms' ? 'Aktiviti Terkini' : 'Latest Activity'}
             </span>
-            <div className="text-sm font-bold text-slate-900 mt-1 truncate">
+            <div className="text-sm font-bold text-text-primary mt-1 truncate">
               {kpiStats.latestDate}
             </div>
             <span className="text-[10px] text-emerald-600 font-bold flex items-center gap-1 mt-0.5">
@@ -1243,7 +1243,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
       ) : (
         <>
       {/* Search & Filter Toolbar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white border border-slate-200/80 rounded-2xl p-3 shadow-xs">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-surface border border-border-default rounded-2xl p-3 shadow-xs">
         <div className="flex flex-1 flex-wrap items-center gap-2">
           <div className="relative flex-1 min-w-[200px] max-w-md">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -1252,12 +1252,12 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder={language === 'ms' ? 'Cari no. dokumen atau pembekal...' : 'Search document # or supplier...'}
-              className="w-full pl-9 pr-8 py-2 bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-600 transition-all"
+              className="w-full pl-9 pr-8 py-2 bg-subtle/50 hover:bg-subtle focus:bg-surface border border-border-default rounded-xl text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-600 transition-[transform,opacity,box-shadow,border-color]"
             />
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-text-secondary cursor-pointer"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -1268,7 +1268,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
           <select
             value={supplierFilter}
             onChange={(e) => setSupplierFilter(e.target.value)}
-            className="px-3 py-2 bg-slate-50 hover:bg-slate-100/70 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500/20 cursor-pointer"
+            className="px-3 py-2 bg-subtle/50 hover:bg-subtle border border-border-default rounded-xl text-xs font-medium text-text-secondary focus:outline-none focus:ring-2 focus:ring-teal-500/20 cursor-pointer"
           >
             <option value="all">{language === 'ms' ? 'Semua Pembekal' : 'All Suppliers'}</option>
             {availableFilterSuppliers.map(sup => (
@@ -1280,7 +1280,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 bg-slate-50 hover:bg-slate-100/70 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-500/20 cursor-pointer"
+            className="px-3 py-2 bg-subtle/50 hover:bg-subtle border border-border-default rounded-xl text-xs font-medium text-text-secondary focus:outline-none focus:ring-2 focus:ring-teal-500/20 cursor-pointer"
           >
             <option value="all">{language === 'ms' ? 'Semua Status' : 'All Status'}</option>
             <option value="completed">{language === 'ms' ? 'Selesai' : 'Completed'}</option>
@@ -1289,14 +1289,14 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
           </select>
         </div>
 
-        <div className="flex items-center justify-between sm:justify-end gap-3 text-xs text-slate-500 font-medium px-1">
+        <div className="flex items-center justify-between sm:justify-end gap-3 text-xs text-text-muted font-medium px-1">
           <span>
             {language === 'ms' ? 'Memaparkan' : 'Showing'}{' '}
-            <strong className="text-slate-800 font-mono">
+            <strong className="text-text-primary font-mono">
               {subTab === 'returns' ? filteredDocuments.length : subTab === 'requests' ? filteredRequestDocuments.length : filteredReceiveDocuments.length}
             </strong>{' '}
             {language === 'ms' ? 'daripada' : 'of'}{' '}
-            <strong className="text-slate-800 font-mono">
+            <strong className="text-text-primary font-mono">
               {subTab === 'returns' ? documents.length : subTab === 'requests' ? requestDocuments.length : receiveDocuments.length}
             </strong>
           </span>
@@ -1318,17 +1318,17 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
       </div>
 
       {/* Documents List */}
-      <div className="bg-white border border-slate-200/80 rounded-2xl shadow-xs overflow-hidden">
+      <div className="bg-surface border border-border-default rounded-2xl shadow-xs overflow-hidden">
         {subTab === 'returns' ? (
           <>
             {/* Mobile View: Cards Layout */}
-            <div className="block md:hidden divide-y divide-slate-100 text-slate-700 font-medium">
+            <div className="block md:hidden divide-y divide-border-subtle text-text-secondary font-medium">
               {filteredDocuments.length === 0 ? (
                 <div className="py-12 px-4 text-center">
-                  <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 mx-auto mb-3">
+                  <div className="w-12 h-12 rounded-2xl bg-subtle flex items-center justify-center text-slate-400 mx-auto mb-3">
                     <Truck className="w-6 h-6" />
                   </div>
-                  <p className="text-slate-800 font-bold text-sm">
+                  <p className="text-text-primary font-bold text-sm">
                     {searchTerm || supplierFilter !== 'all' || statusFilter !== 'all'
                       ? 'No matching return documents'
                       : 'No return documents found'}
@@ -1344,16 +1344,16 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                   const itemsCount = doc.items?.length || 0;
                   const isCopied = copiedId === doc.id;
                   return (
-                    <div key={doc.id} className="p-4 space-y-3 hover:bg-slate-50/60 transition-colors">
+                    <div key={doc.id} className="p-4 space-y-3 hover:bg-subtle/50 transition-colors">
                       <div className="flex items-start justify-between gap-2">
                         <div className="space-y-1">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Return Document #</span>
-                          <div className="font-mono font-bold text-slate-900 flex items-center gap-1.5 text-xs">
+                          <span className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider block">Return Document #</span>
+                          <div className="font-mono font-bold text-text-primary flex items-center gap-1.5 text-xs">
                             <FileText className="w-4 h-4 text-rose-500 shrink-0" />
                             <span>{doc.document_number}</span>
                             <button
                               onClick={() => handleCopy(doc.document_number, doc.id)}
-                              className="p-1 text-slate-400 hover:text-slate-700 rounded transition-all cursor-pointer"
+                              className="p-1 text-slate-400 hover:text-text-secondary rounded transition-[transform,opacity,box-shadow,border-color] cursor-pointer"
                               title="Copy Document #"
                             >
                               {isCopied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
@@ -1363,10 +1363,10 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                         <div className="flex items-center gap-2 relative">
                           <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ${
                             doc.status === 'completed' 
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200/80 ring-1 ring-emerald-500/10' 
+                              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 ring-1 ring-emerald-500/10' 
                               : doc.status === 'cancelled'
-                              ? 'bg-rose-50 text-rose-700 border-rose-200/80'
-                              : 'bg-amber-50 text-amber-700 border-amber-200/80'
+                              ? 'bg-rose-500/10 text-rose-400 border-rose-500/20'
+                              : 'bg-amber-500/10 text-amber-700 border-amber-500/20'
                           }`}>
                             <span className={`w-1.5 h-1.5 rounded-full ${
                               doc.status === 'completed' ? 'bg-emerald-500 animate-pulse' : doc.status === 'cancelled' ? 'bg-rose-500' : 'bg-amber-500'
@@ -1375,14 +1375,14 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                           </span>
                           <button
                             onClick={(e) => toggleDropdown(e, doc.id)}
-                            className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 transition-colors duration-150 cursor-pointer"
+                            className="p-1.5 hover:bg-subtle rounded-lg text-text-muted transition-colors duration-150 cursor-pointer"
                           >
                             <MoreVertical className="w-4 h-4" />
                           </button>
                           
                           {activeDropdownId === doc.id && (
                             <div 
-                              className="absolute right-0 top-9 bg-white border border-slate-200 shadow-xl rounded-2xl p-1.5 z-30 min-w-[160px] animate-in fade-in zoom-in-95 duration-100 text-left font-medium text-slate-700"
+                              className="absolute right-0 top-9 bg-surface border border-border-default shadow-xl rounded-2xl p-1.5 z-30 min-w-[160px] animate-in fade-in zoom-in-95 duration-100 text-left font-medium text-text-secondary"
                               onClick={(e) => e.stopPropagation()}
                             >
                               <button
@@ -1390,7 +1390,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                   setActiveDropdownId(null);
                                   onPrintClick(doc.id);
                                 }}
-                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-subtle/50 transition-colors duration-150 cursor-pointer"
                               >
                                 <Printer className="w-3.5 h-3.5 text-slate-400" />
                                 Print Document
@@ -1400,7 +1400,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                   setActiveDropdownId(null);
                                   openHistoryModal(doc, 'returns');
                                 }}
-                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-subtle/50 transition-colors duration-150 cursor-pointer"
                               >
                                 <HistoryIcon className="w-3.5 h-3.5 text-slate-400" />
                                 View History
@@ -1411,12 +1411,12 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                   openEditModal(doc, 'returns');
                                 }}
                                 disabled={isViewOnly}
-                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 disabled:opacity-40 cursor-pointer"
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-subtle/50 transition-colors duration-150 disabled:opacity-40 cursor-pointer"
                               >
                                 <Edit2 className="w-3.5 h-3.5 text-slate-400" />
                                 Edit Document
                               </button>
-                              <div className="my-1 border-t border-slate-100" />
+                              <div className="my-1 border-t border-border-subtle" />
                               <button
                                 onClick={() => {
                                   setActiveDropdownId(null);
@@ -1433,10 +1433,10 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-slate-100">
+                      <div className="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-border-subtle">
                         <div>
                           <span className="text-[10px] text-slate-400 font-bold block">DATE</span>
-                          <span className="font-medium text-slate-700">
+                          <span className="font-medium text-text-secondary">
                             {new Date(doc.returned_date).toLocaleDateString(undefined, {
                               year: 'numeric',
                               month: 'short',
@@ -1446,14 +1446,14 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                         </div>
                         <div>
                           <span className="text-[10px] text-slate-400 font-bold block">SUPPLIER</span>
-                          <span className="font-semibold text-slate-800 truncate block">
+                          <span className="font-semibold text-text-primary truncate block">
                             {doc.supplier?.company_name || 'Linde Malaysia'}
                           </span>
                         </div>
                         <div className="col-span-2">
                           <span className="text-[10px] text-slate-400 font-bold block">CYLINDERS RETURNED</span>
-                          <span className="inline-flex items-center gap-1 font-mono font-bold text-slate-900 text-xs mt-0.5">
-                            {itemsCount} <span className="font-sans font-normal text-slate-500">cylinders</span>
+                          <span className="inline-flex items-center gap-1 font-mono font-bold text-text-primary text-xs mt-0.5">
+                            {itemsCount} <span className="font-sans font-normal text-text-muted">cylinders</span>
                           </span>
                         </div>
                       </div>
@@ -1466,8 +1466,8 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
             {/* Desktop View: Standard Table */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
-                <thead className="bg-slate-50/75 border-b border-slate-200/80">
-                  <tr className="text-slate-500 font-semibold text-[11px] uppercase tracking-wider">
+                <thead className="bg-subtle/50 border-b border-border-default">
+                  <tr className="text-text-muted font-semibold text-[11px] uppercase tracking-wider">
                     <th className="py-3.5 px-6">Return Document #</th>
                     <th className="py-3.5 px-6">Date</th>
                     <th className="py-3.5 px-6">Supplier</th>
@@ -1476,15 +1476,15 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                     <th className="py-3.5 px-6 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-slate-700 font-medium text-xs">
+                <tbody className="divide-y divide-border-subtle text-text-secondary font-medium text-xs">
                   {filteredDocuments.length === 0 ? (
                     <tr>
                       <td colSpan={6} className="py-16 text-center">
                         <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
-                          <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
+                          <div className="w-12 h-12 rounded-2xl bg-subtle flex items-center justify-center text-slate-400 mb-3">
                             <Truck className="w-6 h-6" />
                           </div>
-                          <p className="text-slate-800 font-bold text-sm">
+                          <p className="text-text-primary font-bold text-sm">
                             {searchTerm || supplierFilter !== 'all' || statusFilter !== 'all'
                               ? 'No matching return documents'
                               : 'No return documents found'}
@@ -1504,26 +1504,26 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                       return (
                         <tr
                           key={doc.id}
-                          className="hover:bg-slate-50/70 transition-colors duration-150 group"
+                          className="hover:bg-subtle/50 transition-colors duration-150 group"
                         >
                           <td className="py-3.5 px-6">
                             <div className="flex items-center gap-2">
-                              <div className="w-7 h-7 rounded-lg bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600 shrink-0">
+                              <div className="w-7 h-7 rounded-lg bg-rose-500/10 border border-rose-100 flex items-center justify-center text-rose-600 shrink-0">
                                 <FileText className="w-3.5 h-3.5" />
                               </div>
-                              <span className="font-mono font-bold text-slate-900 text-xs tracking-tight">
+                              <span className="font-mono font-bold text-text-primary text-xs tracking-tight">
                                 {doc.document_number}
                               </span>
                               <button
                                 onClick={() => handleCopy(doc.document_number, doc.id)}
-                                className="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-slate-700 rounded transition-all cursor-pointer"
+                                className="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-text-secondary rounded transition-[transform,opacity,box-shadow,border-color] cursor-pointer"
                                 title="Copy Document #"
                               >
                                 {isCopied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
                               </button>
                             </div>
                           </td>
-                          <td className="py-3.5 px-6 text-slate-600">
+                          <td className="py-3.5 px-6 text-text-secondary">
                             <div className="flex items-center gap-1.5">
                               <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                               <span>
@@ -1536,7 +1536,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                             </div>
                           </td>
                           <td className="py-3.5 px-6">
-                            <div className="flex items-center gap-1.5 font-medium text-slate-800">
+                            <div className="flex items-center gap-1.5 font-medium text-text-primary">
                               <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                               <span className="truncate max-w-[220px]">
                                 {doc.supplier?.company_name || 'Linde Malaysia'}
@@ -1544,7 +1544,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                             </div>
                           </td>
                           <td className="py-3.5 px-6 text-center">
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 font-mono font-bold text-xs">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-subtle text-text-primary font-mono font-bold text-xs">
                               {itemsCount}
                               <span className="text-[10px] text-slate-400 font-sans font-normal">cyl</span>
                             </span>
@@ -1552,10 +1552,10 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                           <td className="py-3.5 px-6 text-center">
                             <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ${
                               doc.status === 'completed' 
-                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200/80 ring-1 ring-emerald-500/10' 
+                                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 ring-1 ring-emerald-500/10' 
                                 : doc.status === 'cancelled'
-                                ? 'bg-rose-50 text-rose-700 border-rose-200/80'
-                                : 'bg-amber-50 text-amber-700 border-amber-200/80'
+                                ? 'bg-rose-500/10 text-rose-400 border-rose-500/20'
+                                : 'bg-amber-500/10 text-amber-700 border-amber-500/20'
                             }`}>
                               <span className={`w-1.5 h-1.5 rounded-full ${
                                 doc.status === 'completed' 
@@ -1571,14 +1571,14 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                             <div className="flex items-center justify-end">
                               <button
                                 onClick={(e) => toggleDropdown(e, doc.id)}
-                                className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-800 transition-colors duration-150 cursor-pointer"
+                                className="p-1.5 hover:bg-subtle rounded-lg text-text-muted hover:text-text-primary transition-colors duration-150 cursor-pointer"
                               >
                                 <MoreVertical className="w-4 h-4" />
                               </button>
                               
                               {activeDropdownId === doc.id && (
                                 <div 
-                                  className="absolute right-6 top-10 bg-white border border-slate-200 shadow-xl rounded-2xl p-1.5 z-30 min-w-[160px] animate-in fade-in zoom-in-95 duration-100 text-left font-medium text-slate-700"
+                                  className="absolute right-6 top-10 bg-surface border border-border-default shadow-xl rounded-2xl p-1.5 z-30 min-w-[160px] animate-in fade-in zoom-in-95 duration-100 text-left font-medium text-text-secondary"
                                   onClick={(e) => e.stopPropagation()}
                                 >
                                   <button
@@ -1586,7 +1586,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                       setActiveDropdownId(null);
                                       onPrintClick(doc.id);
                                     }}
-                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-subtle/50 transition-colors duration-150 cursor-pointer"
                                   >
                                     <Printer className="w-3.5 h-3.5 text-slate-400" />
                                     Print Document
@@ -1596,7 +1596,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                       setActiveDropdownId(null);
                                       openHistoryModal(doc, 'returns');
                                     }}
-                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-subtle/50 transition-colors duration-150 cursor-pointer"
                                   >
                                     <HistoryIcon className="w-3.5 h-3.5 text-slate-400" />
                                     View History
@@ -1607,12 +1607,12 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                       openEditModal(doc, 'returns');
                                     }}
                                     disabled={isViewOnly}
-                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 disabled:opacity-40 cursor-pointer"
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-subtle/50 transition-colors duration-150 disabled:opacity-40 cursor-pointer"
                                   >
                                     <Edit2 className="w-3.5 h-3.5 text-slate-400" />
                                     Edit Document
                                   </button>
-                                  <div className="my-1 border-t border-slate-100" />
+                                  <div className="my-1 border-t border-border-subtle" />
                                   <button
                                     onClick={() => {
                                       setActiveDropdownId(null);
@@ -1639,13 +1639,13 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
         ) : subTab === 'requests' ? (
           <>
             {/* Mobile View: Cards Layout */}
-            <div className="block md:hidden divide-y divide-slate-100 text-slate-700 font-medium">
+            <div className="block md:hidden divide-y divide-border-subtle text-text-secondary font-medium">
               {filteredRequestDocuments.length === 0 ? (
                 <div className="py-12 px-4 text-center">
-                  <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 mx-auto mb-3">
+                  <div className="w-12 h-12 rounded-2xl bg-subtle flex items-center justify-center text-slate-400 mx-auto mb-3">
                     <FileCheck className="w-6 h-6" />
                   </div>
-                  <p className="text-slate-800 font-bold text-sm">
+                  <p className="text-text-primary font-bold text-sm">
                     {searchTerm || supplierFilter !== 'all' || statusFilter !== 'all'
                       ? 'No matching request documents'
                       : 'No request documents found'}
@@ -1668,16 +1668,16 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                   }).reduce((s, i) => s + (Number(i.quantity) || 0), 0) || 0;
                   const isCopied = copiedId === doc.id;
                   return (
-                    <div key={doc.id} className="p-4 space-y-3 hover:bg-slate-50/60 transition-colors">
+                    <div key={doc.id} className="p-4 space-y-3 hover:bg-subtle/50 transition-colors">
                       <div className="flex items-start justify-between gap-2">
                         <div className="space-y-1">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Request Document #</span>
-                          <div className="font-mono font-bold text-slate-900 flex items-center gap-1.5 text-xs">
+                          <span className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider block">Request Document #</span>
+                          <div className="font-mono font-bold text-text-primary flex items-center gap-1.5 text-xs">
                             <FileText className="w-4 h-4 text-blue-500 shrink-0" />
                             <span>{doc.document_number}</span>
                             <button
                               onClick={() => handleCopy(doc.document_number, doc.id)}
-                              className="p-1 text-slate-400 hover:text-slate-700 rounded transition-all cursor-pointer"
+                              className="p-1 text-slate-400 hover:text-text-secondary rounded transition-[transform,opacity,box-shadow,border-color] cursor-pointer"
                               title="Copy Document #"
                             >
                               {isCopied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
@@ -1687,10 +1687,10 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                         <div className="flex items-center gap-2 relative">
                           <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ${
                             doc.status === 'completed' 
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200/80 ring-1 ring-emerald-500/10' 
+                              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 ring-1 ring-emerald-500/10' 
                               : doc.status === 'cancelled'
-                              ? 'bg-rose-50 text-rose-700 border-rose-200/80'
-                              : 'bg-amber-50 text-amber-700 border-amber-200/80'
+                              ? 'bg-rose-500/10 text-rose-400 border-rose-500/20'
+                              : 'bg-amber-500/10 text-amber-700 border-amber-500/20'
                           }`}>
                             <span className={`w-1.5 h-1.5 rounded-full ${
                               doc.status === 'completed' ? 'bg-emerald-500 animate-pulse' : doc.status === 'cancelled' ? 'bg-rose-500' : 'bg-amber-500'
@@ -1699,14 +1699,14 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                           </span>
                           <button
                             onClick={(e) => toggleDropdown(e, doc.id)}
-                            className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 transition-colors duration-150 cursor-pointer"
+                            className="p-1.5 hover:bg-subtle rounded-lg text-text-muted transition-colors duration-150 cursor-pointer"
                           >
                             <MoreVertical className="w-4 h-4" />
                           </button>
                           
                           {activeDropdownId === doc.id && (
                             <div 
-                              className="absolute right-0 top-9 bg-white border border-slate-200 shadow-xl rounded-2xl p-1.5 z-30 min-w-[160px] animate-in fade-in zoom-in-95 duration-100 text-left font-medium text-slate-700"
+                              className="absolute right-0 top-9 bg-surface border border-border-default shadow-xl rounded-2xl p-1.5 z-30 min-w-[160px] animate-in fade-in zoom-in-95 duration-100 text-left font-medium text-text-secondary"
                               onClick={(e) => e.stopPropagation()}
                             >
                               <button
@@ -1714,7 +1714,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                   setActiveDropdownId(null);
                                   onPrintRequestClick(doc.id);
                                 }}
-                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-subtle/50 transition-colors duration-150 cursor-pointer"
                               >
                                 <Printer className="w-3.5 h-3.5 text-slate-400" />
                                 Print Document
@@ -1724,7 +1724,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                   setActiveDropdownId(null);
                                   openHistoryModal(doc, 'requests');
                                 }}
-                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-subtle/50 transition-colors duration-150 cursor-pointer"
                               >
                                 <HistoryIcon className="w-3.5 h-3.5 text-slate-400" />
                                 View History
@@ -1735,12 +1735,12 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                   openEditModal(doc, 'requests');
                                 }}
                                 disabled={isViewOnly}
-                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 disabled:opacity-40 cursor-pointer"
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-subtle/50 transition-colors duration-150 disabled:opacity-40 cursor-pointer"
                               >
                                 <Edit2 className="w-3.5 h-3.5 text-slate-400" />
                                 Edit Document
                               </button>
-                              <div className="my-1 border-t border-slate-100" />
+                              <div className="my-1 border-t border-border-subtle" />
                               <button
                                 onClick={() => {
                                   setActiveDropdownId(null);
@@ -1757,10 +1757,10 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-slate-100">
+                      <div className="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-border-subtle">
                         <div>
                           <span className="text-[10px] text-slate-400 font-bold block">DATE</span>
-                          <span className="font-medium text-slate-700">
+                          <span className="font-medium text-text-secondary">
                             {new Date(doc.requested_date).toLocaleDateString(undefined, {
                               year: 'numeric',
                               month: 'short',
@@ -1770,7 +1770,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                         </div>
                         <div>
                           <span className="text-[10px] text-slate-400 font-bold block">SUPPLIER</span>
-                          <span className="font-semibold text-slate-800 truncate block">
+                          <span className="font-semibold text-text-primary truncate block">
                             {doc.supplier?.company_name || 'Linde Malaysia'}
                           </span>
                         </div>
@@ -1778,12 +1778,12 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                           <span className="text-[10px] text-slate-400 font-bold block">QUANTITIES REQUESTED</span>
                           <div className="flex flex-wrap items-center gap-1.5 mt-0.5">
                             {cylQty > 0 && (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 font-mono font-bold text-slate-900 text-xs">
-                                {cylQty} <span className="font-sans font-normal text-slate-500 text-[10px]">cyl</span>
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-subtle font-mono font-bold text-text-primary text-xs">
+                                {cylQty} <span className="font-sans font-normal text-text-muted text-[10px]">cyl</span>
                               </span>
                             )}
                             {vieQty > 0 && (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 border border-blue-200/60 font-mono font-bold text-blue-700 text-xs">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-500/10 border border-blue-500/20 font-mono font-bold text-blue-400 text-xs">
                                 {vieQty.toLocaleString()} <span className="font-sans font-semibold text-blue-500 text-[10px]">m³ VIE</span>
                               </span>
                             )}
@@ -1802,8 +1802,8 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
             {/* Desktop View: Standard Table */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
-                <thead className="bg-slate-50/75 border-b border-slate-200/80">
-                  <tr className="text-slate-500 font-semibold text-[11px] uppercase tracking-wider">
+                <thead className="bg-subtle/50 border-b border-border-default">
+                  <tr className="text-text-muted font-semibold text-[11px] uppercase tracking-wider">
                     <th className="py-3.5 px-6">Request Document #</th>
                     <th className="py-3.5 px-6">Date</th>
                     <th className="py-3.5 px-6">Supplier</th>
@@ -1812,15 +1812,15 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                     <th className="py-3.5 px-6 text-right">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-slate-700 font-medium text-xs">
+                <tbody className="divide-y divide-border-subtle text-text-secondary font-medium text-xs">
                   {filteredRequestDocuments.length === 0 ? (
                     <tr>
                       <td colSpan={6} className="py-16 text-center">
                         <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
-                          <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
+                          <div className="w-12 h-12 rounded-2xl bg-subtle flex items-center justify-center text-slate-400 mb-3">
                             <FileCheck className="w-6 h-6" />
                           </div>
-                          <p className="text-slate-800 font-bold text-sm">
+                          <p className="text-text-primary font-bold text-sm">
                             {searchTerm || supplierFilter !== 'all' || statusFilter !== 'all'
                               ? 'No matching request documents'
                               : 'No request documents found'}
@@ -1847,26 +1847,26 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                       return (
                         <tr
                           key={doc.id}
-                          className="hover:bg-slate-50/70 transition-colors duration-150 group"
+                          className="hover:bg-subtle/50 transition-colors duration-150 group"
                         >
                           <td className="py-3.5 px-6">
                             <div className="flex items-center gap-2">
-                              <div className="w-7 h-7 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0">
+                              <div className="w-7 h-7 rounded-lg bg-blue-500/10 border border-blue-100 flex items-center justify-center text-blue-600 shrink-0">
                                 <FileText className="w-3.5 h-3.5" />
                               </div>
-                              <span className="font-mono font-bold text-slate-900 text-xs tracking-tight">
+                              <span className="font-mono font-bold text-text-primary text-xs tracking-tight">
                                 {doc.document_number}
                               </span>
                               <button
                                 onClick={() => handleCopy(doc.document_number, doc.id)}
-                                className="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-slate-700 rounded transition-all cursor-pointer"
+                                className="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-text-secondary rounded transition-[transform,opacity,box-shadow,border-color] cursor-pointer"
                                 title="Copy Document #"
                               >
                                 {isCopied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
                               </button>
                             </div>
                           </td>
-                          <td className="py-3.5 px-6 text-slate-600">
+                          <td className="py-3.5 px-6 text-text-secondary">
                             <div className="flex items-center gap-1.5">
                               <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                               <span>
@@ -1879,7 +1879,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                             </div>
                           </td>
                           <td className="py-3.5 px-6">
-                            <div className="flex items-center gap-1.5 font-medium text-slate-800">
+                            <div className="flex items-center gap-1.5 font-medium text-text-primary">
                               <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                               <span className="truncate max-w-[220px]">
                                 {doc.supplier?.company_name || 'Linde Malaysia'}
@@ -1889,13 +1889,13 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                           <td className="py-3.5 px-6 text-center">
                             <div className="inline-flex flex-wrap items-center justify-center gap-1.5">
                               {cylQty > 0 && (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 font-mono font-bold text-xs">
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-subtle text-text-primary font-mono font-bold text-xs">
                                   {cylQty}
                                   <span className="text-[10px] text-slate-400 font-sans font-normal">cyl</span>
                                 </span>
                               )}
                               {vieQty > 0 && (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/60 font-mono font-bold text-xs">
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono font-bold text-xs">
                                   {vieQty.toLocaleString()}
                                   <span className="text-[10px] text-blue-500 font-sans font-bold">m³</span>
                                 </span>
@@ -1908,10 +1908,10 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                           <td className="py-3.5 px-6 text-center">
                             <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ${
                               doc.status === 'completed' 
-                                ? 'bg-emerald-50 text-emerald-700 border-emerald-200/80 ring-1 ring-emerald-500/10' 
+                                ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 ring-1 ring-emerald-500/10' 
                                 : doc.status === 'cancelled'
-                                ? 'bg-rose-50 text-rose-700 border-rose-200/80'
-                                : 'bg-amber-50 text-amber-700 border-amber-200/80'
+                                ? 'bg-rose-500/10 text-rose-400 border-rose-500/20'
+                                : 'bg-amber-500/10 text-amber-700 border-amber-500/20'
                             }`}>
                               <span className={`w-1.5 h-1.5 rounded-full ${
                                 doc.status === 'completed' 
@@ -1927,14 +1927,14 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                             <div className="flex items-center justify-end">
                               <button
                                 onClick={(e) => toggleDropdown(e, doc.id)}
-                                className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-800 transition-colors duration-150 cursor-pointer"
+                                className="p-1.5 hover:bg-subtle rounded-lg text-text-muted hover:text-text-primary transition-colors duration-150 cursor-pointer"
                               >
                                 <MoreVertical className="w-4 h-4" />
                               </button>
                               
                               {activeDropdownId === doc.id && (
                                 <div 
-                                  className="absolute right-6 top-10 bg-white border border-slate-200 shadow-xl rounded-2xl p-1.5 z-30 min-w-[160px] animate-in fade-in zoom-in-95 duration-100 text-left font-medium text-slate-700"
+                                  className="absolute right-6 top-10 bg-surface border border-border-default shadow-xl rounded-2xl p-1.5 z-30 min-w-[160px] animate-in fade-in zoom-in-95 duration-100 text-left font-medium text-text-secondary"
                                   onClick={(e) => e.stopPropagation()}
                                 >
                                   <button
@@ -1942,7 +1942,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                       setActiveDropdownId(null);
                                       onPrintRequestClick(doc.id);
                                     }}
-                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-subtle/50 transition-colors duration-150 cursor-pointer"
                                   >
                                     <Printer className="w-3.5 h-3.5 text-slate-400" />
                                     Print Document
@@ -1952,7 +1952,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                       setActiveDropdownId(null);
                                       openHistoryModal(doc, 'requests');
                                     }}
-                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-subtle/50 transition-colors duration-150 cursor-pointer"
                                   >
                                     <HistoryIcon className="w-3.5 h-3.5 text-slate-400" />
                                     View History
@@ -1963,12 +1963,12 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                       openEditModal(doc, 'requests');
                                     }}
                                     disabled={isViewOnly}
-                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 disabled:opacity-40 cursor-pointer"
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-subtle/50 transition-colors duration-150 disabled:opacity-40 cursor-pointer"
                                   >
                                     <Edit2 className="w-3.5 h-3.5 text-slate-400" />
                                     Edit Document
                                   </button>
-                                  <div className="my-1 border-t border-slate-100" />
+                                  <div className="my-1 border-t border-border-subtle" />
                                   <button
                                     onClick={() => {
                                       setActiveDropdownId(null);
@@ -1995,13 +1995,13 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
         ) : (
           <>
             {/* Supplier Received: Mobile View */}
-            <div className="block md:hidden divide-y divide-slate-100 text-slate-700 font-medium">
+            <div className="block md:hidden divide-y divide-border-subtle text-text-secondary font-medium">
               {filteredReceiveDocuments.length === 0 ? (
                 <div className="py-12 px-4 text-center">
-                  <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 mx-auto mb-3">
+                  <div className="w-12 h-12 rounded-2xl bg-subtle flex items-center justify-center text-slate-400 mx-auto mb-3">
                     <PackageCheck className="w-6 h-6" />
                   </div>
-                  <p className="text-slate-800 font-bold text-sm">
+                  <p className="text-text-primary font-bold text-sm">
                     {searchTerm || supplierFilter !== 'all' || statusFilter !== 'all'
                       ? 'No matching receive documents'
                       : (language === 'ms' ? 'Tiada rekod penerimaan silinder dijumpai.' : 'No receive documents found.')}
@@ -2015,16 +2015,16 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                   const itemsCount = doc.items?.length || 0;
                   const isCopied = copiedId === doc.id;
                   return (
-                    <div key={doc.id} className="p-4 space-y-3 hover:bg-slate-50/60 transition-colors">
+                    <div key={doc.id} className="p-4 space-y-3 hover:bg-subtle/50 transition-colors">
                       <div className="flex items-start justify-between gap-2">
                         <div className="space-y-1">
-                          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Receive Document #</span>
-                          <div className="font-mono font-bold text-slate-900 flex items-center gap-1.5 text-xs">
+                          <span className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider block">Receive Document #</span>
+                          <div className="font-mono font-bold text-text-primary flex items-center gap-1.5 text-xs">
                             <PackageCheck className="w-4 h-4 text-emerald-600 shrink-0" />
                             <span>{doc.document_number}</span>
                             <button
                               onClick={() => handleCopy(doc.document_number, doc.id)}
-                              className="p-1 text-slate-400 hover:text-slate-700 rounded transition-all cursor-pointer"
+                              className="p-1 text-slate-400 hover:text-text-secondary rounded transition-[transform,opacity,box-shadow,border-color] cursor-pointer"
                               title="Copy Document #"
                             >
                               {isCopied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
@@ -2034,10 +2034,10 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                         <div className="flex items-center gap-2 relative">
                           <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border ${
                             doc.status === 'completed' 
-                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200/80 ring-1 ring-emerald-500/10' 
+                              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 ring-1 ring-emerald-500/10' 
                               : doc.status === 'cancelled'
-                              ? 'bg-rose-50 text-rose-700 border-rose-200/80'
-                              : 'bg-amber-50 text-amber-700 border-amber-200/80'
+                              ? 'bg-rose-500/10 text-rose-400 border-rose-500/20'
+                              : 'bg-amber-500/10 text-amber-700 border-amber-500/20'
                           }`}>
                             <span className={`w-1.5 h-1.5 rounded-full ${
                               doc.status === 'completed' ? 'bg-emerald-500 animate-pulse' : doc.status === 'cancelled' ? 'bg-rose-500' : 'bg-amber-500'
@@ -2046,14 +2046,14 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                           </span>
                           <button
                             onClick={(e) => toggleDropdown(e, doc.id)}
-                            className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 transition-colors duration-150 cursor-pointer"
+                            className="p-1.5 hover:bg-subtle rounded-lg text-text-muted transition-colors duration-150 cursor-pointer"
                           >
                             <MoreVertical className="w-4 h-4" />
                           </button>
                           
                           {activeDropdownId === doc.id && (
                             <div 
-                              className="absolute right-0 top-9 bg-white border border-slate-200 shadow-xl rounded-2xl p-1.5 z-30 min-w-[160px] animate-in fade-in zoom-in-95 duration-100 text-left font-medium text-slate-700"
+                              className="absolute right-0 top-9 bg-surface border border-border-default shadow-xl rounded-2xl p-1.5 z-30 min-w-[160px] animate-in fade-in zoom-in-95 duration-100 text-left font-medium text-text-secondary"
                               onClick={(e) => e.stopPropagation()}
                             >
                               <button
@@ -2062,7 +2062,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                   setViewCylindersDoc(doc);
                                   setIsViewCylindersOpen(true);
                                 }}
-                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-subtle/50 transition-colors duration-150 cursor-pointer"
                               >
                                 <Eye className="w-3.5 h-3.5 text-slate-400" />
                                 View Cylinders
@@ -2072,7 +2072,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                   setActiveDropdownId(null);
                                   onPrintReceiveClick(doc.id);
                                 }}
-                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-subtle/50 transition-colors duration-150 cursor-pointer"
                               >
                                 <Printer className="w-3.5 h-3.5 text-slate-400" />
                                 Print Document
@@ -2082,7 +2082,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                   setActiveDropdownId(null);
                                   openHistoryModal(doc, 'received');
                                 }}
-                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-subtle/50 transition-colors duration-150 cursor-pointer"
                               >
                                 <HistoryIcon className="w-3.5 h-3.5 text-slate-400" />
                                 View History
@@ -2093,12 +2093,12 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                   openEditModal(doc, 'received');
                                 }}
                                 disabled={isViewOnly}
-                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 disabled:opacity-40 cursor-pointer"
+                                className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-subtle/50 transition-colors duration-150 disabled:opacity-40 cursor-pointer"
                               >
                                 <Edit2 className="w-3.5 h-3.5 text-slate-400" />
                                 Edit Document
                               </button>
-                              <div className="my-1 border-t border-slate-100" />
+                              <div className="my-1 border-t border-border-subtle" />
                               <button
                                 onClick={() => {
                                   setActiveDropdownId(null);
@@ -2115,10 +2115,10 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-slate-100">
+                      <div className="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-border-subtle">
                         <div>
                           <span className="text-[10px] text-slate-400 font-bold block">DATE</span>
-                          <span className="font-medium text-slate-700">
+                          <span className="font-medium text-text-secondary">
                             {new Date(doc.received_date || doc.created_at).toLocaleDateString(undefined, {
                               year: 'numeric',
                               month: 'short',
@@ -2128,15 +2128,15 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                         </div>
                         <div>
                           <span className="text-[10px] text-slate-400 font-bold block">DO # / SURAT HANTARAN</span>
-                          <span className="font-mono font-medium text-slate-800">{doc.delivery_order_no || '-'}</span>
+                          <span className="font-mono font-medium text-text-primary">{doc.delivery_order_no || '-'}</span>
                         </div>
                         <div>
                           <span className="text-[10px] text-slate-400 font-bold block">SUPPLIER</span>
-                          <span className="font-semibold text-slate-800 truncate block">{doc.supplier?.company_name || 'Pembekal'}</span>
+                          <span className="font-semibold text-text-primary truncate block">{doc.supplier?.company_name || 'Pembekal'}</span>
                         </div>
                         <div>
                           <span className="text-[10px] text-slate-400 font-bold block">CYLINDERS RECEIVED</span>
-                          <span className="font-mono font-bold text-emerald-700">{itemsCount} units</span>
+                          <span className="font-mono font-bold text-emerald-400">{itemsCount} units</span>
                         </div>
                       </div>
                     </div>
@@ -2148,8 +2148,8 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
             {/* Supplier Received: Desktop Table */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
-                <thead className="bg-slate-50/75 border-b border-slate-200/80">
-                  <tr className="text-slate-500 font-semibold text-[11px] uppercase tracking-wider">
+                <thead className="bg-subtle/50 border-b border-border-default">
+                  <tr className="text-text-muted font-semibold text-[11px] uppercase tracking-wider">
                     <th className="py-3.5 px-6">RECEIVE DOCUMENT #</th>
                     <th className="py-3.5 px-6">DATE</th>
                     <th className="py-3.5 px-6">SUPPLIER</th>
@@ -2159,15 +2159,15 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                     <th className="py-3.5 px-6 text-right">ACTIONS</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-slate-700 font-medium text-xs">
+                <tbody className="divide-y divide-border-subtle text-text-secondary font-medium text-xs">
                   {filteredReceiveDocuments.length === 0 ? (
                     <tr>
                       <td colSpan={7} className="py-16 text-center">
                         <div className="flex flex-col items-center justify-center max-w-sm mx-auto">
-                          <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 mb-3">
+                          <div className="w-12 h-12 rounded-2xl bg-subtle flex items-center justify-center text-slate-400 mb-3">
                             <PackageCheck className="w-6 h-6" />
                           </div>
-                          <p className="text-slate-800 font-bold text-sm">
+                          <p className="text-text-primary font-bold text-sm">
                             {searchTerm || supplierFilter !== 'all' || statusFilter !== 'all'
                               ? 'No matching receive documents'
                               : (language === 'ms' ? 'Tiada dokumen penerimaan silinder dijumpai.' : 'No receive documents found.')}
@@ -2183,23 +2183,23 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                       const itemsCount = doc.items?.length || 0;
                       const isCopied = copiedId === doc.id;
                       return (
-                        <tr key={doc.id} className="hover:bg-slate-50/70 transition-colors duration-150 group">
+                        <tr key={doc.id} className="hover:bg-subtle/50 transition-colors duration-150 group">
                           <td className="py-3.5 px-6">
                             <div className="flex items-center gap-2">
-                              <div className="w-7 h-7 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center shrink-0">
+                              <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center shrink-0">
                                 <PackageCheck className="w-3.5 h-3.5 text-emerald-600" />
                               </div>
-                              <span className="font-mono font-bold text-slate-900 text-xs tracking-tight">{doc.document_number}</span>
+                              <span className="font-mono font-bold text-text-primary text-xs tracking-tight">{doc.document_number}</span>
                               <button
                                 onClick={() => handleCopy(doc.document_number, doc.id)}
-                                className="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-slate-700 rounded transition-all cursor-pointer"
+                                className="opacity-0 group-hover:opacity-100 p-1 text-slate-400 hover:text-text-secondary rounded transition-[transform,opacity,box-shadow,border-color] cursor-pointer"
                                 title="Copy Document #"
                               >
                                 {isCopied ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
                               </button>
                             </div>
                           </td>
-                          <td className="py-3.5 px-6 text-slate-600">
+                          <td className="py-3.5 px-6 text-text-secondary">
                             <div className="flex items-center gap-1.5">
                               <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                               <span>
@@ -2212,7 +2212,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                             </div>
                           </td>
                           <td className="py-3.5 px-6">
-                            <div className="flex items-center gap-1.5 font-medium text-slate-800">
+                            <div className="flex items-center gap-1.5 font-medium text-text-primary">
                               <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                               <span className="truncate max-w-[220px]">
                                 {doc.supplier?.company_name || 'Pembekal Oksigen'}
@@ -2220,18 +2220,18 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                             </div>
                           </td>
                           <td className="py-3.5 px-6">
-                            <span className="font-mono font-bold text-slate-700 text-xs bg-slate-100 px-2 py-0.5 rounded">
+                            <span className="font-mono font-bold text-text-secondary text-xs bg-subtle px-2 py-0.5 rounded">
                               {doc.delivery_order_no || '-'}
                             </span>
                           </td>
                           <td className="py-3.5 px-6 text-center">
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 font-mono font-bold text-xs border border-emerald-100">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 font-mono font-bold text-xs border border-emerald-100">
                               {itemsCount}
                               <span className="text-[10px] text-emerald-600 font-sans font-normal">units</span>
                             </span>
                           </td>
                           <td className="py-3.5 px-6 text-center">
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border bg-emerald-50 text-emerald-700 border-emerald-200/80 ring-1 ring-emerald-500/10">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold border bg-emerald-500/10 text-emerald-400 border-emerald-500/20 ring-1 ring-emerald-500/10">
                               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                               <span className="capitalize">{doc.status}</span>
                             </span>
@@ -2240,14 +2240,14 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                             <div className="flex items-center justify-end">
                               <button
                                 onClick={(e) => toggleDropdown(e, doc.id)}
-                                className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-800 transition-colors duration-150 cursor-pointer"
+                                className="p-1.5 hover:bg-subtle rounded-lg text-text-muted hover:text-text-primary transition-colors duration-150 cursor-pointer"
                               >
                                 <MoreVertical className="w-4 h-4" />
                               </button>
                               
                               {activeDropdownId === doc.id && (
                                 <div 
-                                  className="absolute right-6 top-10 bg-white border border-slate-200 shadow-xl rounded-2xl p-1.5 z-30 min-w-[160px] animate-in fade-in zoom-in-95 duration-100 text-left font-medium text-slate-700"
+                                  className="absolute right-6 top-10 bg-surface border border-border-default shadow-xl rounded-2xl p-1.5 z-30 min-w-[160px] animate-in fade-in zoom-in-95 duration-100 text-left font-medium text-text-secondary"
                                   onClick={(e) => e.stopPropagation()}
                                 >
                                   <button
@@ -2256,7 +2256,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                       setViewCylindersDoc(doc);
                                       setIsViewCylindersOpen(true);
                                     }}
-                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-subtle/50 transition-colors duration-150 cursor-pointer"
                                   >
                                     <Eye className="w-3.5 h-3.5 text-slate-400" />
                                     View Cylinders
@@ -2266,7 +2266,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                       setActiveDropdownId(null);
                                       onPrintReceiveClick(doc.id);
                                     }}
-                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-subtle/50 transition-colors duration-150 cursor-pointer"
                                   >
                                     <Printer className="w-3.5 h-3.5 text-slate-400" />
                                     Print Document
@@ -2276,7 +2276,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                       setActiveDropdownId(null);
                                       openHistoryModal(doc, 'received');
                                     }}
-                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 cursor-pointer"
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-subtle/50 transition-colors duration-150 cursor-pointer"
                                   >
                                     <HistoryIcon className="w-3.5 h-3.5 text-slate-400" />
                                     View History
@@ -2287,12 +2287,12 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                       openEditModal(doc, 'received');
                                     }}
                                     disabled={isViewOnly}
-                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-slate-50 transition-colors duration-150 disabled:opacity-40 cursor-pointer"
+                                    className="w-full flex items-center gap-2 px-3 py-2 rounded-xl text-xs hover:bg-subtle/50 transition-colors duration-150 disabled:opacity-40 cursor-pointer"
                                   >
                                     <Edit2 className="w-3.5 h-3.5 text-slate-400" />
                                     Edit Document
                                   </button>
-                                  <div className="my-1 border-t border-slate-100" />
+                                  <div className="my-1 border-t border-border-subtle" />
                                   <button
                                     onClick={() => {
                                       setActiveDropdownId(null);
@@ -2324,17 +2324,17 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
       {/* View Cylinders Modal for Received Document */}
       {isViewCylindersOpen && viewCylindersDoc && (
         <div className="fixed inset-0 z-[999] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="bg-white border border-slate-200 rounded-3xl shadow-2xl max-w-xl w-full flex flex-col max-h-[85vh] overflow-hidden">
-            <div className="flex items-center justify-between p-5 border-b border-slate-100 bg-slate-50/60">
+          <div className="bg-surface border border-border-default rounded-3xl shadow-2xl max-w-xl w-full flex flex-col max-h-[85vh] overflow-hidden">
+            <div className="flex items-center justify-between p-5 border-b border-border-subtle bg-subtle/50">
               <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                <div className="w-9 h-9 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
                   <PackageCheck className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-sm font-extrabold text-slate-900">
+                  <h3 className="text-sm font-extrabold text-text-primary">
                     Senarai Silinder Diterima
                   </h3>
-                  <p className="text-xs text-slate-500 font-mono font-bold">
+                  <p className="text-xs text-text-muted font-mono font-bold">
                     {viewCylindersDoc.document_number} {viewCylindersDoc.delivery_order_no ? `• DO: ${viewCylindersDoc.delivery_order_no}` : ''}
                   </p>
                 </div>
@@ -2344,34 +2344,34 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                   setIsViewCylindersOpen(false);
                   setViewCylindersDoc(null);
                 }}
-                className="p-2 text-slate-400 hover:text-slate-600 rounded-xl"
+                className="p-2 text-slate-400 hover:text-text-secondary rounded-xl"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             <div className="p-5 flex-1 overflow-y-auto space-y-3">
-              <div className="flex items-center justify-between text-xs text-slate-500 font-semibold px-1">
-                <span>Pembekal: <strong className="text-slate-800">{viewCylindersDoc.supplier?.company_name || 'Pembekal'}</strong></span>
-                <span>Jumlah: <strong className="text-emerald-700">{viewCylindersDoc.items?.length || 0} unit</strong></span>
+              <div className="flex items-center justify-between text-xs text-text-muted font-semibold px-1">
+                <span>Pembekal: <strong className="text-text-primary">{viewCylindersDoc.supplier?.company_name || 'Pembekal'}</strong></span>
+                <span>Jumlah: <strong className="text-emerald-400">{viewCylindersDoc.items?.length || 0} unit</strong></span>
               </div>
 
-              <div className="border border-slate-200 rounded-2xl overflow-hidden divide-y divide-slate-100 max-h-[300px] overflow-y-auto">
+              <div className="border border-border-default rounded-2xl overflow-hidden divide-y divide-border-subtle max-h-[300px] overflow-y-auto">
                 {(viewCylindersDoc.items || []).map((it: any, idx: number) => {
                   const cyl = it.cylinder;
                   return (
-                    <div key={it.id || idx} className="p-3 flex items-center justify-between hover:bg-slate-50/60">
+                    <div key={it.id || idx} className="p-3 flex items-center justify-between hover:bg-subtle/50">
                       <div className="flex items-center gap-2.5">
                         <span className="text-[10px] font-mono font-bold text-slate-400 w-5">#{idx + 1}</span>
-                        <span className="font-mono text-xs font-extrabold text-slate-900">
+                        <span className="font-mono text-xs font-extrabold text-text-primary">
                           {cyl?.serial_number || 'N/A'}
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-[11px] text-slate-500 font-medium">
+                        <span className="text-[11px] text-text-muted font-medium">
                           {cyl?.combo?.display_name || cyl?.type_info?.type_name || 'Standard Cylinder'}
                         </span>
-                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                           Tersedia di Stor
                         </span>
                       </div>
@@ -2381,13 +2381,13 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
               </div>
             </div>
 
-            <div className="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
+            <div className="p-4 border-t border-border-subtle bg-subtle/50 flex items-center justify-between">
               <button
                 onClick={() => {
                   setIsViewCylindersOpen(false);
                   setViewCylindersDoc(null);
                 }}
-                className="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 rounded-xl cursor-pointer"
+                className="px-4 py-2 text-xs font-bold text-text-secondary hover:text-text-primary hover:bg-subtle rounded-xl cursor-pointer"
               >
                 Tutup
               </button>
@@ -2400,7 +2400,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                       setViewCylindersDoc(null);
                       openEditModal(docToEdit, 'received');
                     }}
-                    className="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+                    className="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-extrabold flex items-center gap-1.5 shadow-sm transition-[transform,opacity,box-shadow,border-color] cursor-pointer"
                   >
                     <Edit2 className="w-3.5 h-3.5" />
                     <span>{language === 'ms' ? 'Edit Dokumen / Silinder' : 'Edit Document / Cylinders'}</span>
@@ -2432,19 +2432,19 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
         }`}
       />
       <div 
-        className={`fixed inset-y-0 right-0 z-[100] w-full max-w-4xl bg-white shadow-2xl flex flex-col transform transition-transform duration-300 ease-out border-l border-slate-200 ${
+        className={`fixed inset-y-0 right-0 z-[100] w-full max-w-4xl bg-surface shadow-2xl flex flex-col transform transition-transform duration-300 ease-out border-l border-border-default ${
           isEditOpen && selectedDoc ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
         {selectedDoc && (
-          <div className="flex flex-col h-full bg-white">
-            <div className="flex items-center justify-between border-b border-slate-100 p-5 flex-shrink-0">
+          <div className="flex flex-col h-full bg-surface">
+            <div className="flex items-center justify-between border-b border-border-subtle p-5 flex-shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-100 flex items-center justify-center">
                   <Edit2 className="w-5 h-5 text-amber-500" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-slate-800">
+                  <h3 className="text-lg font-bold text-text-primary">
                     Edit Document
                   </h3>
                   <p className="text-xs text-slate-400 font-semibold font-mono">
@@ -2454,7 +2454,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
               </div>
               <button
                 onClick={() => setIsEditOpen(false)}
-                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-xl transition-colors duration-200"
+                className="p-2 text-slate-400 hover:text-text-secondary hover:bg-subtle/50 rounded-xl transition-colors duration-200"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -2471,7 +2471,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                     required
                     value={editDate}
                     onChange={(e) => setEditDate(e.target.value)}
-                    className="w-full bg-slate-50/50 border border-slate-200 hover:border-slate-350 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 rounded-xl px-3 py-2 text-sm text-slate-800 transition-all duration-200 outline-none"
+                    className="w-full bg-subtle/50 border border-border-default hover:border-slate-350 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 rounded-xl px-3 py-2 text-sm text-text-primary transition-[transform,opacity,box-shadow,border-color] duration-200 outline-none"
                   />
                 </div>
 
@@ -2482,7 +2482,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                   <select
                     value={editStatus}
                     onChange={(e) => setEditStatus(e.target.value as any)}
-                    className="w-full bg-slate-50/50 border border-slate-200 hover:border-slate-350 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 rounded-xl px-3 py-2 text-sm text-slate-800 transition-all duration-200 outline-none"
+                    className="w-full bg-subtle/50 border border-border-default hover:border-slate-350 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 rounded-xl px-3 py-2 text-sm text-text-primary transition-[transform,opacity,box-shadow,border-color] duration-200 outline-none"
                   >
                     <option value="draft">draft</option>
                     <option value="completed">completed</option>
@@ -2500,7 +2500,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                     required
                     value={editSupplierId}
                     onChange={(e) => setEditSupplierId(e.target.value)}
-                    className="w-full bg-slate-50/50 border border-slate-200 hover:border-slate-350 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 rounded-xl px-3 py-2 text-sm text-slate-800 transition-all duration-200 outline-none"
+                    className="w-full bg-subtle/50 border border-border-default hover:border-slate-350 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 rounded-xl px-3 py-2 text-sm text-text-primary transition-[transform,opacity,box-shadow,border-color] duration-200 outline-none"
                   >
                     <option value="">Select Supplier</option>
                     {suppliers.map((s) => (
@@ -2521,7 +2521,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                       placeholder={language === 'ms' ? 'cth: DO-2026-98102' : 'e.g. DO-2026-98102'}
                       value={editDeliveryOrderNo}
                       onChange={(e) => setEditDeliveryOrderNo(e.target.value)}
-                      className="w-full bg-slate-50/50 border border-slate-200 hover:border-slate-350 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 rounded-xl px-3 py-2 text-sm font-mono text-slate-800 transition-all duration-200 outline-none"
+                      className="w-full bg-subtle/50 border border-border-default hover:border-slate-350 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 rounded-xl px-3 py-2 text-sm font-mono text-text-primary transition-[transform,opacity,box-shadow,border-color] duration-200 outline-none"
                     />
                   </div>
                 )}
@@ -2534,7 +2534,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                 <textarea
                   value={editRemarks}
                   onChange={(e) => setEditRemarks(e.target.value)}
-                  className="w-full bg-slate-50/50 border border-slate-200 hover:border-slate-350 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 rounded-xl px-3 py-2 text-sm text-slate-800 transition-all duration-200 outline-none h-20 resize-none"
+                  className="w-full bg-subtle/50 border border-border-default hover:border-slate-350 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 rounded-xl px-3 py-2 text-sm text-text-primary transition-[transform,opacity,box-shadow,border-color] duration-200 outline-none h-20 resize-none"
                   placeholder="Additional remarks..."
                 />
               </div>
@@ -2542,9 +2542,9 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
               {docType === 'returns' && (
                 <div className="space-y-4">
                   {/* Standard Cylinders */}
-                  <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3">
+                  <div className="bg-subtle/50 border border-border-default rounded-2xl p-4 space-y-3">
                     <div className="flex justify-between items-center flex-wrap gap-2">
-                      <label className="block text-slate-700 font-bold text-xs uppercase tracking-wide">
+                      <label className="block text-text-secondary font-bold text-xs uppercase tracking-wide">
                         Standard / Hospital Owned Cylinders (Private Cylinders)
                       </label>
                       {(() => {
@@ -2560,10 +2560,10 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                   key={sizeName}
                                   type="button"
                                   onClick={() => setPrivateSizeFilter(sizeName)}
-                                  className={`px-2 py-0.5 rounded-md transition-all ${
+                                  className={`px-2 py-0.5 rounded-md transition-[transform,opacity,box-shadow,border-color] ${
                                     isSelected
                                       ? 'bg-rose-500 text-white shadow-xs'
-                                      : 'text-slate-600 hover:text-slate-800 hover:bg-slate-300/40'
+                                      : 'text-text-secondary hover:text-text-primary hover:bg-slate-300/40'
                                   }`}
                                 >
                                   {sizeName} ({count})
@@ -2580,7 +2580,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                       );
                       if (displayedCyls.length === 0) {
                         return (
-                          <p className="text-[11px] text-slate-400 font-semibold italic text-center py-4 bg-white border border-dashed border-slate-200 rounded-xl">
+                          <p className="text-[11px] text-slate-400 font-semibold italic text-center py-4 bg-surface border border-dashed border-border-default rounded-xl">
                             Select a size above to display available cylinders.
                           </p>
                         );
@@ -2603,10 +2603,10 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                     setSelectedCylIdList([...selectedCylIdList, cyl.id]);
                                   }
                                 }}
-                                className={`flex items-center justify-between gap-2 p-2 border rounded-xl cursor-pointer transition-all select-none hover:bg-slate-100/50 ${
+                                className={`flex items-center justify-between gap-2 p-2 border rounded-xl cursor-pointer transition-[transform,opacity,box-shadow,border-color] select-none hover:bg-subtle ${
                                   isSelected
-                                    ? 'border-rose-400 bg-rose-50/20 text-rose-800 ring-2 ring-rose-500/5'
-                                    : 'border-slate-200 bg-white text-slate-700'
+                                    ? 'border-rose-400 bg-rose-500/10 text-rose-400 ring-2 ring-rose-500/5'
+                                    : 'border-border-default bg-surface text-text-secondary'
                                 }`}
                               >
                                 <div className="flex items-center gap-2 min-w-0">
@@ -2614,7 +2614,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                     type="checkbox"
                                     checked={isSelected}
                                     onChange={() => {}} // Handled by parent container click
-                                    className="rounded border-slate-300 text-rose-600 w-3.5 h-3.5 cursor-pointer shrink-0"
+                                    className="rounded border-border-default text-rose-600 w-3.5 h-3.5 cursor-pointer shrink-0"
                                   />
                                   <div className="flex flex-col min-w-0">
                                     <span className="text-[10px] font-mono font-bold truncate leading-none mb-0.5">{cyl.serial_number}</span>
@@ -2627,10 +2627,10 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                     type="button"
                                     title={`Click to switch valve type to ${isPI ? 'Bullnose (BN)' : 'Pin Index (PI)'}`}
                                     onClick={(e) => handleToggleValveType(e, cyl)}
-                                    className={`shrink-0 text-[8px] font-black uppercase px-1.5 py-0.5 rounded-md border transition-all hover:scale-105 active:scale-95 shadow-2xs ${
+                                    className={`shrink-0 text-[8px] font-black uppercase px-1.5 py-0.5 rounded-md border transition-[transform,opacity,box-shadow,border-color] hover:scale-105 active:scale-95 shadow-elevation-1 ${
                                       isPI 
-                                        ? 'bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100' 
-                                        : 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'
+                                        ? 'bg-indigo-500/10 text-purple-700 border-indigo-500/20 hover:bg-purple-100' 
+                                        : 'bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20'
                                     }`}
                                   >
                                     {isPI ? '➔ BN' : '➔ PI'}
@@ -2645,9 +2645,9 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                   </div>
 
                   {/* Supplier-Tagged Loan Cylinders */}
-                  <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-3">
+                  <div className="bg-subtle/50 border border-border-default rounded-2xl p-4 space-y-3">
                     <div className="flex justify-between items-center flex-wrap gap-2">
-                      <label className="block text-slate-700 font-bold text-xs uppercase tracking-wide">
+                      <label className="block text-text-secondary font-bold text-xs uppercase tracking-wide">
                         Supplier Tagged Loan Cylinders
                       </label>
                       
@@ -2665,10 +2665,10 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                   key={filterVal}
                                   type="button"
                                   onClick={() => setSupplierSizeFilter(filterVal as any)}
-                                  className={`px-2 py-0.5 rounded-md transition-all ${
+                                  className={`px-2 py-0.5 rounded-md transition-[transform,opacity,box-shadow,border-color] ${
                                     isSelected
                                       ? 'bg-rose-500 text-white shadow-xs'
-                                      : 'text-slate-600 hover:text-slate-800 hover:bg-slate-300/40'
+                                      : 'text-text-secondary hover:text-text-primary hover:bg-slate-300/40'
                                   }`}
                                 >
                                   {filterVal} ({count})
@@ -2684,7 +2684,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                       const displayedCyls = supplierCylinders.filter(c => !supplierSizeFilter || supplierSizeFilter === 'all' || c.size_info?.code === supplierSizeFilter);
                       if (displayedCyls.length === 0) {
                         return (
-                          <p className="text-[11px] text-slate-400 font-semibold italic text-center py-4 bg-white border border-dashed border-slate-200 rounded-xl">
+                          <p className="text-[11px] text-slate-400 font-semibold italic text-center py-4 bg-surface border border-dashed border-border-default rounded-xl">
                             Select a size above to display loan cylinders.
                           </p>
                         );
@@ -2696,10 +2696,10 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                             return (
                               <label
                                 key={cyl.id}
-                                className={`flex items-center gap-2 p-2 border rounded-xl cursor-pointer transition-all select-none hover:bg-slate-100/50 ${
+                                className={`flex items-center gap-2 p-2 border rounded-xl cursor-pointer transition-[transform,opacity,box-shadow,border-color] select-none hover:bg-subtle ${
                                   isSelected
-                                    ? 'border-rose-400 bg-rose-50/20 text-rose-800 ring-2 ring-rose-500/5'
-                                    : 'border-slate-200 bg-white text-slate-700'
+                                    ? 'border-rose-400 bg-rose-500/10 text-rose-400 ring-2 ring-rose-500/5'
+                                    : 'border-border-default bg-surface text-text-secondary'
                                 }`}
                               >
                                 <input
@@ -2712,7 +2712,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                       setSelectedCylIdList([...selectedCylIdList, cyl.id]);
                                     }
                                   }}
-                                  className="rounded border-slate-300 text-rose-600 w-3.5 h-3.5 cursor-pointer"
+                                  className="rounded border-border-default text-rose-600 w-3.5 h-3.5 cursor-pointer"
                                 />
                                 <div className="flex flex-col min-w-0">
                                   <span className="text-[10px] font-mono font-bold truncate leading-none mb-0.5">{cyl.serial_number}</span>
@@ -2729,16 +2729,16 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
               )}
 
               {docType === 'received' && (
-                <div className="space-y-3.5 bg-slate-50/70 border border-slate-200/90 rounded-2xl p-4">
+                <div className="space-y-3.5 bg-subtle/50 border border-border-default rounded-2xl p-4">
                   <div className="flex items-center justify-between flex-wrap gap-2">
                     <div>
                       <div className="flex items-center gap-2">
                         <PackageCheck className="w-4 h-4 text-emerald-600" />
-                        <label className="block text-slate-800 font-bold text-xs uppercase tracking-wide">
+                        <label className="block text-text-primary font-bold text-xs uppercase tracking-wide">
                           {language === 'ms' ? 'Silinder Diterima & Nombor Siri' : 'Received Cylinders & Serial Numbers'}
                         </label>
                       </div>
-                      <p className="text-[11px] text-slate-500 font-medium mt-0.5">
+                      <p className="text-[11px] text-text-muted font-medium mt-0.5">
                         {language === 'ms' 
                           ? 'Edit nombor siri silinder yang diterima jika terdapat kesilapan ejaan atau pertukaran tag.' 
                           : 'Edit received cylinder serial numbers directly to correct typos or tag mismatches.'}
@@ -2746,14 +2746,14 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                     </div>
 
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="text-[10px] font-bold font-mono px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 border border-slate-200">
+                      <span className="text-[10px] font-bold font-mono px-2.5 py-1 rounded-lg bg-subtle text-text-primary border border-border-default">
                         {editReceivedCylinders.filter(c => !c.isRemoved).length} {language === 'ms' ? 'silinder' : 'cylinders'}
                       </span>
                       {(() => {
                         const addedCount = editReceivedCylinders.filter(c => !c.itemId && !c.isRemoved).length;
                         if (addedCount === 0) return null;
                         return (
-                          <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center gap-1">
+                          <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
                             <span>+{addedCount} {language === 'ms' ? 'ditambah' : 'added'}</span>
                           </span>
                         );
@@ -2762,7 +2762,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                         const modCount = editReceivedCylinders.filter(c => !c.isRemoved && c.originalSerial && c.serialNumber.trim().toUpperCase() !== c.originalSerial.trim().toUpperCase()).length;
                         if (modCount === 0) return null;
                         return (
-                          <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 border border-amber-200 flex items-center gap-1 animate-pulse">
+                          <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center gap-1 animate-pulse">
                             <span>{modCount} {language === 'ms' ? 'diubah' : 'modified'}</span>
                           </span>
                         );
@@ -2771,7 +2771,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                         const remCount = editReceivedCylinders.filter(c => c.isRemoved).length;
                         if (remCount === 0) return null;
                         return (
-                          <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-rose-50 text-rose-800 border border-rose-200">
+                          <span className="text-[10px] font-bold px-2.5 py-1 rounded-lg bg-rose-500/10 text-rose-400 border border-rose-500/20">
                             {remCount} {language === 'ms' ? 'dikeluarkan' : 'removed'}
                           </span>
                         );
@@ -2779,9 +2779,9 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                       <button
                         type="button"
                         onClick={() => setIsAddingReceivedCyl(!isAddingReceivedCyl)}
-                        className="px-2.5 py-1 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-lg text-[11px] font-bold flex items-center gap-1 shadow-2xs transition-all cursor-pointer"
+                        className="px-2.5 py-1 bg-surface hover:bg-subtle text-text-secondary border border-border-default rounded-lg text-[11px] font-bold flex items-center gap-1 shadow-elevation-1 transition-[transform,opacity,box-shadow,border-color] cursor-pointer"
                       >
-                        <Plus className="w-3 h-3 text-slate-600" />
+                        <Plus className="w-3 h-3 text-text-secondary" />
                         <span>{language === 'ms' ? 'Tambah Silinder' : 'Add Cylinder'}</span>
                       </button>
                     </div>
@@ -2789,9 +2789,9 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
 
                   {/* Add Cylinder Form */}
                   {isAddingReceivedCyl && (
-                    <div className="p-3.5 bg-white border border-emerald-200/90 rounded-2xl space-y-3 shadow-md animate-in fade-in duration-200">
+                    <div className="p-3.5 bg-surface border border-emerald-500/20 rounded-2xl space-y-3 shadow-md animate-in fade-in duration-200">
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                        <span className="text-xs font-bold text-text-primary flex items-center gap-1.5">
                           <Plus className="w-3.5 h-3.5 text-emerald-600" />
                           {language === 'ms' ? 'Tambah Silinder ke Dokumen Penerimaan' : 'Add Cylinder to Receive Document'}
                         </span>
@@ -2804,7 +2804,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                             setDbSearchResults([]);
                             setHasSearchedDb(false);
                           }}
-                          className="text-slate-400 hover:text-slate-600 p-1 cursor-pointer"
+                          className="text-slate-400 hover:text-text-secondary p-1 cursor-pointer"
                         >
                           <X className="w-3.5 h-3.5" />
                         </button>
@@ -2812,10 +2812,10 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div className="relative">
-                          <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1 flex items-center justify-between">
+                          <label className="block text-[10px] font-bold text-text-muted uppercase tracking-wider mb-1 flex items-center justify-between">
                             <span>{language === 'ms' ? 'Nombor Siri / Tag' : 'Serial Number / Tag'} *</span>
                             {selectedDbCylinder && (
-                              <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
+                              <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-1.5 py-0.2 rounded border border-emerald-500/20">
                                 ✓ Database
                               </span>
                             )}
@@ -2830,7 +2830,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                 setNewReceivedCylSerial(e.target.value.toUpperCase());
                                 setSelectedDbCylinder(null);
                               }}
-                              className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-8 pr-8 py-1.5 text-xs font-mono font-bold text-slate-800 uppercase focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 outline-none transition-all"
+                              className="w-full bg-subtle/50 border border-border-default rounded-lg pl-8 pr-8 py-1.5 text-xs font-mono font-bold text-text-primary uppercase focus:bg-surface focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 outline-none transition-[transform,opacity,box-shadow,border-color]"
                             />
                             {isSearchingDb ? (
                               <div className="w-3.5 h-3.5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin absolute right-2.5 top-1/2 -translate-y-1/2" />
@@ -2843,7 +2843,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                   setDbSearchResults([]);
                                   setHasSearchedDb(false);
                                 }}
-                                className="text-slate-400 hover:text-slate-600 p-1 absolute right-1.5 top-1/2 -translate-y-1/2 cursor-pointer"
+                                className="text-slate-400 hover:text-text-secondary p-1 absolute right-1.5 top-1/2 -translate-y-1/2 cursor-pointer"
                               >
                                 <X className="w-3 h-3" />
                               </button>
@@ -2852,7 +2852,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
 
                           {/* Database Search Results Dropdown */}
                           {newReceivedCylSerial.trim() && (
-                            <div className="mt-1.5 border border-slate-200 bg-white rounded-xl shadow-lg overflow-hidden max-h-52 overflow-y-auto divide-y divide-slate-100 z-20 relative">
+                            <div className="mt-1.5 border border-border-default bg-surface rounded-xl shadow-lg overflow-hidden max-h-52 overflow-y-auto divide-y divide-border-subtle z-20 relative">
                               {isSearchingDb ? (
                                 <div className="p-3 text-center text-xs text-slate-400 flex items-center justify-center gap-2">
                                   <div className="w-3.5 h-3.5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
@@ -2860,9 +2860,9 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                 </div>
                               ) : dbSearchResults.length > 0 ? (
                                 <>
-                                  <div className="px-2.5 py-1 bg-slate-50 text-[10px] font-bold text-slate-500 uppercase tracking-wider flex items-center justify-between">
+                                  <div className="px-2.5 py-1 bg-subtle/50 text-[10px] font-bold text-text-muted uppercase tracking-wider flex items-center justify-between">
                                     <span>{language === 'ms' ? 'Silinder Dijumpai dalam Database' : 'Cylinders Found in Database'}</span>
-                                    <span className="text-emerald-700 font-bold">{dbSearchResults.length} rekod</span>
+                                    <span className="text-emerald-400 font-bold">{dbSearchResults.length} rekod</span>
                                   </div>
                                   {dbSearchResults.map((cyl) => {
                                     const isAlreadyInDoc = editReceivedCylinders.some(
@@ -2879,27 +2879,27 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                         }}
                                         className={`p-2 flex items-center justify-between gap-2 transition-colors ${
                                           isAlreadyInDoc
-                                            ? 'bg-slate-50/70 opacity-60 cursor-not-allowed'
-                                            : 'hover:bg-emerald-50/50 cursor-pointer'
+                                            ? 'bg-subtle/50 opacity-60 cursor-not-allowed'
+                                            : 'hover:bg-emerald-500/10 cursor-pointer'
                                         }`}
                                       >
                                         <div className="min-w-0">
                                           <div className="flex items-center gap-2 flex-wrap">
-                                            <span className="font-mono text-xs font-bold text-slate-800">
+                                            <span className="font-mono text-xs font-bold text-text-primary">
                                               {cyl.serial_number}
                                             </span>
-                                            <span className="text-[10px] font-semibold text-slate-600 bg-slate-100 px-1.5 py-0.2 rounded border border-slate-200">
+                                            <span className="text-[10px] font-semibold text-text-secondary bg-subtle px-1.5 py-0.2 rounded border border-border-default">
                                               {typeName}
                                             </span>
                                           </div>
                                           <div className="text-[10px] text-slate-400 mt-0.5">
-                                            Lokasi: <span className="font-medium text-slate-600">{location}</span> • Status: <span className="font-medium text-slate-600">{cyl.status}</span>
+                                            Lokasi: <span className="font-medium text-text-secondary">{location}</span> • Status: <span className="font-medium text-text-secondary">{cyl.status}</span>
                                           </div>
                                         </div>
 
                                         <div className="shrink-0 flex items-center gap-1.5">
                                           {isAlreadyInDoc ? (
-                                            <span className="text-[9px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded">
+                                            <span className="text-[9px] font-bold text-slate-400 bg-subtle px-2 py-0.5 rounded">
                                               {language === 'ms' ? 'Sudah Ada' : 'In Document'}
                                             </span>
                                           ) : (
@@ -2909,7 +2909,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                                 e.stopPropagation();
                                                 handleAddNewReceivedCylinder(cyl);
                                               }}
-                                              className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-[10px] font-bold shadow-2xs transition-all cursor-pointer flex items-center gap-1"
+                                              className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-[10px] font-bold shadow-elevation-1 transition-[transform,opacity,box-shadow,border-color] cursor-pointer flex items-center gap-1"
                                             >
                                               <Plus className="w-2.5 h-2.5" />
                                               <span>{language === 'ms' ? 'Pilih & Tambah' : 'Add'}</span>
@@ -2921,8 +2921,8 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                   })}
                                 </>
                               ) : hasSearchedDb ? (
-                                <div className="p-3 text-center text-xs text-slate-500">
-                                  <p className="font-semibold text-slate-700">
+                                <div className="p-3 text-center text-xs text-text-muted">
+                                  <p className="font-semibold text-text-secondary">
                                     {language === 'ms' ? `Tiada rekod silinder untuk "${newReceivedCylSerial}"` : `No cylinder record for "${newReceivedCylSerial}"`}
                                   </p>
                                   <p className="text-[10px] text-slate-400 mt-0.5">
@@ -2937,13 +2937,13 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                         </div>
 
                         <div>
-                          <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">
+                          <label className="block text-[10px] font-bold text-text-muted uppercase tracking-wider mb-1">
                             {language === 'ms' ? 'Saiz & Jenis Injap' : 'Size & Valve Type'}
                           </label>
                           <select
                             value={newReceivedCylComboId}
                             onChange={(e) => setNewReceivedCylComboId(e.target.value)}
-                            className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-medium text-slate-800 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 outline-none"
+                            className="w-full bg-subtle/50 border border-border-default rounded-lg px-2.5 py-1.5 text-xs font-medium text-text-primary focus:bg-surface focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10 outline-none"
                           >
                             <option value="">Standard Cylinder (Default)</option>
                             {availableCombos.map(c => (
@@ -2958,7 +2958,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                         </div>
                       </div>
 
-                      <div className="flex justify-end gap-2 pt-1 border-t border-slate-100">
+                      <div className="flex justify-end gap-2 pt-1 border-t border-border-subtle">
                         <button
                           type="button"
                           onClick={() => {
@@ -2968,7 +2968,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                             setDbSearchResults([]);
                             setHasSearchedDb(false);
                           }}
-                          className="px-3 py-1 text-xs text-slate-500 hover:text-slate-700 font-semibold cursor-pointer"
+                          className="px-3 py-1 text-xs text-text-muted hover:text-text-secondary font-semibold cursor-pointer"
                         >
                           {language === 'ms' ? 'Batal' : 'Cancel'}
                         </button>
@@ -2976,7 +2976,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                           type="button"
                           onClick={() => handleAddNewReceivedCylinder()}
                           disabled={!newReceivedCylSerial.trim()}
-                          className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-lg text-xs font-bold shadow-xs transition-all cursor-pointer flex items-center gap-1.5"
+                          className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-lg text-xs font-bold shadow-xs transition-[transform,opacity,box-shadow,border-color] cursor-pointer flex items-center gap-1.5"
                         >
                           <Plus className="w-3 h-3" />
                           <span>{language === 'ms' ? 'Masuk ke Senarai Dokumen' : 'Add to Document List'}</span>
@@ -2994,7 +2994,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                         placeholder={language === 'ms' ? 'Cari nombor siri silinder dalam dokumen ini (cth: 0189)...' : 'Filter cylinder serial numbers in this document (e.g. 0189)...'}
                         value={receivedCylSearchTerm}
                         onChange={(e) => setReceivedCylSearchTerm(e.target.value)}
-                        className="w-full pl-8 pr-20 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-mono text-slate-700 placeholder-slate-400 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/10 transition-all"
+                        className="w-full pl-8 pr-20 py-1.5 bg-surface border border-border-default rounded-xl text-xs font-mono text-text-secondary placeholder-slate-400 outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/10 transition-[transform,opacity,box-shadow,border-color]"
                       />
                       {receivedCylSearchTerm && (
                         <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
@@ -3007,7 +3007,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                           <button 
                             type="button" 
                             onClick={() => setReceivedCylSearchTerm('')}
-                            className="text-slate-400 hover:text-slate-600 p-0.5 cursor-pointer"
+                            className="text-slate-400 hover:text-text-secondary p-0.5 cursor-pointer"
                           >
                             <X className="w-3 h-3" />
                           </button>
@@ -3017,7 +3017,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                   )}
 
                   {/* Cylinder Items List */}
-                  <div className="border border-slate-200/80 bg-white rounded-xl divide-y divide-slate-100 max-h-[360px] overflow-y-auto shadow-2xs">
+                  <div className="border border-border-default bg-surface rounded-xl divide-y divide-border-subtle max-h-[360px] overflow-y-auto shadow-elevation-1">
                     {isLoadingReceivedCyls ? (
                       <div className="py-8 text-center text-xs text-slate-400 flex items-center justify-center gap-2">
                         <div className="w-4 h-4 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
@@ -3054,10 +3054,10 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                             key={cyl.cylinderId || idx}
                             className={`p-2.5 sm:p-3 flex items-center justify-between gap-3 transition-colors ${
                               cyl.isRemoved 
-                                ? 'bg-rose-50/40 opacity-60' 
+                                ? 'bg-rose-500/10 opacity-60' 
                                 : isChanged 
-                                ? 'bg-amber-50/30' 
-                                : 'hover:bg-slate-50/70'
+                                ? 'bg-amber-500/10' 
+                                : 'hover:bg-subtle/50'
                             }`}
                           >
                             <div className="flex items-center gap-2.5 flex-1 min-w-0">
@@ -3072,12 +3072,12 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                     disabled={cyl.isRemoved}
                                     value={cyl.serialNumber}
                                     onChange={(e) => handleReceivedCylSerialChange(cyl.cylinderId, e.target.value)}
-                                    className={`w-full font-mono text-xs font-bold px-2.5 py-1.5 rounded-lg border transition-all outline-none ${
+                                    className={`w-full font-mono text-xs font-bold px-2.5 py-1.5 rounded-lg border transition-[transform,opacity,box-shadow,border-color] outline-none ${
                                       cyl.isRemoved
-                                        ? 'line-through bg-slate-100 text-slate-400 border-slate-200'
+                                        ? 'line-through bg-subtle text-slate-400 border-border-default'
                                         : isChanged
-                                        ? 'border-amber-400 bg-amber-50/60 text-amber-900 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 shadow-2xs'
-                                        : 'border-slate-200 bg-slate-50/50 text-slate-800 focus:bg-white focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10'
+                                        ? 'border-amber-400 bg-amber-500/10 text-amber-400 dark:text-amber-300 font-bold focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 shadow-elevation-1'
+                                        : 'border-border-default bg-subtle/50 text-text-primary focus:bg-surface focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/10'
                                     }`}
                                     placeholder="Serial Number..."
                                   />
@@ -3086,7 +3086,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                       type="button"
                                       onClick={() => handleRevertReceivedCylSerial(cyl.cylinderId)}
                                       title={language === 'ms' ? `Kembalikan ke: ${cyl.originalSerial}` : `Revert to: ${cyl.originalSerial}`}
-                                      className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-200/60 transition-all shrink-0 cursor-pointer"
+                                      className="p-1.5 rounded-lg text-slate-400 hover:text-text-secondary hover:bg-subtle transition-[transform,opacity,box-shadow,border-color] shrink-0 cursor-pointer"
                                     >
                                       <RotateCcw className="w-3.5 h-3.5" />
                                     </button>
@@ -3095,11 +3095,11 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
 
                                 {!cyl.itemId && (
                                   <div className="flex items-center gap-1.5 mt-1 pl-1">
-                                    <span className="text-[9px] font-bold uppercase px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 border border-emerald-200">
+                                    <span className="text-[9px] font-bold uppercase px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/20">
                                       {language === 'ms' ? '+ Ditambah' : '+ Added'}
                                     </span>
                                     {cyl.cylinder && (
-                                      <span className="text-[9px] font-semibold text-slate-500">
+                                      <span className="text-[9px] font-semibold text-text-muted">
                                         ({language === 'ms' ? 'Dari Database' : 'From Database'})
                                       </span>
                                     )}
@@ -3107,7 +3107,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                 )}
                                 {cyl.itemId && isChanged && (
                                   <div className="flex items-center gap-1.5 mt-1 pl-1">
-                                    <span className="text-[9px] font-bold uppercase px-1.5 py-0.2 rounded bg-amber-100/80 text-amber-800 border border-amber-200">
+                                    <span className="text-[9px] font-bold uppercase px-1.5 py-0.2 rounded bg-amber-100/80 text-amber-400 border border-amber-500/20">
                                       {language === 'ms' ? 'Diubah' : 'Modified'}
                                     </span>
                                     <span className="text-[10px] text-slate-400 font-mono">
@@ -3120,7 +3120,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
 
                             {/* Badge and Actions */}
                             <div className="flex items-center gap-2 shrink-0">
-                              <span className="text-[10px] font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200 max-w-[140px] truncate hidden sm:inline-block">
+                              <span className="text-[10px] font-semibold text-text-secondary bg-subtle px-2 py-0.5 rounded-md border border-border-default max-w-[140px] truncate hidden sm:inline-block">
                                 {cyl.typeName || 'Standard'}
                               </span>
 
@@ -3129,10 +3129,10 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                   type="button"
                                   title={`Tukar jenis injap kepada ${isPI ? 'Bullnose (BN)' : 'Pin Index (PI)'}`}
                                   onClick={() => handleToggleReceivedCylValve(cyl.cylinderId)}
-                                  className={`text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-md border transition-all hover:scale-105 active:scale-95 shadow-2xs cursor-pointer ${
+                                  className={`text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-md border transition-[transform,opacity,box-shadow,border-color] hover:scale-105 active:scale-95 shadow-elevation-1 cursor-pointer ${
                                     isPI 
-                                      ? 'bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100' 
-                                      : 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100'
+                                      ? 'bg-indigo-500/10 text-purple-700 border-indigo-500/20 hover:bg-purple-100' 
+                                      : 'bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20'
                                   }`}
                                 >
                                   {isPI ? '➔ BN' : '➔ PI'}
@@ -3145,9 +3145,9 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                 title={cyl.isRemoved 
                                   ? (language === 'ms' ? 'Pulihkan silinder ini' : 'Restore this cylinder') 
                                   : (language === 'ms' ? 'Keluarkan silinder dari dokumen penerimaan' : 'Remove from receive document')}
-                                className={`p-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                                className={`p-1.5 rounded-lg text-xs font-bold transition-[transform,opacity,box-shadow,border-color] cursor-pointer ${
                                   cyl.isRemoved
-                                    ? 'text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200'
+                                    ? 'text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20'
                                     : 'text-slate-400 hover:text-red-600 hover:bg-red-50 border border-transparent'
                                 }`}
                               >
@@ -3166,8 +3166,8 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                 </div>
               )}
 
-              <div className="bg-amber-50/50 border border-amber-200/50 rounded-2xl p-4 space-y-2">
-                <label className="block text-[11px] font-bold text-amber-800 uppercase tracking-wider flex items-center gap-1.5">
+              <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4 space-y-2">
+                <label className="block text-[11px] font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
                   <AlertTriangle className="w-4 h-4 text-amber-600" />
                   Reason for Edit (Required for Audit Log)
                 </label>
@@ -3175,23 +3175,23 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                   required
                   value={editReason}
                   onChange={(e) => setEditReason(e.target.value)}
-                  className="w-full bg-white border border-amber-250 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 rounded-xl px-3 py-2 text-sm text-slate-800 transition-all duration-200 outline-none h-16 resize-none"
+                  className="w-full bg-surface border border-amber-250 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 rounded-xl px-3 py-2 text-sm text-text-primary transition-[transform,opacity,box-shadow,border-color] duration-200 outline-none h-16 resize-none"
                   placeholder="Specify details or reason for editing this document..."
                 />
               </div>
 
-              <div className="flex gap-3 justify-end pt-2 border-t border-slate-100">
+              <div className="flex gap-3 justify-end pt-2 border-t border-border-subtle">
                 <button
                   type="button"
                   onClick={() => setIsEditOpen(false)}
-                  className="px-4 py-2 text-sm font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-700 rounded-xl transition-all duration-200"
+                  className="px-4 py-2 text-sm font-bold text-text-muted hover:bg-subtle/50 hover:text-text-secondary rounded-xl transition-[transform,opacity,box-shadow,border-color] duration-200"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSaving || !editReason.trim()}
-                  className="px-5 py-2 text-sm font-bold text-white bg-amber-500 hover:bg-amber-600 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl shadow-md transition-all duration-200"
+                  className="px-5 py-2 text-sm font-bold text-white bg-amber-500 hover:bg-amber-600 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl shadow-md transition-[transform,opacity,box-shadow,border-color] duration-200"
                 >
                   {isSaving ? 'Saving Changes...' : 'Save Changes'}
                 </button>
@@ -3203,15 +3203,15 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
 
       {/* Delete Document Modal */}
       {isDeleteOpen && selectedDoc && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all duration-300">
-          <div className="w-full max-w-md bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-slate-100 p-5">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-[transform,opacity,box-shadow,border-color] duration-300">
+          <div className="w-full max-w-md bg-surface border border-border-default rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-border-subtle p-5">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center">
                   <Trash2 className="w-5 h-5 text-red-500" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-slate-800">
+                  <h3 className="text-lg font-bold text-text-primary">
                     Delete Document
                   </h3>
                   <p className="text-xs text-slate-400 font-semibold font-mono">
@@ -3221,14 +3221,14 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
               </div>
               <button
                 onClick={() => setIsDeleteOpen(false)}
-                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-xl transition-colors duration-200"
+                className="p-2 text-slate-400 hover:text-text-secondary hover:bg-subtle/50 rounded-xl transition-colors duration-200"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <form onSubmit={handleDeleteConfirm} className="p-5 space-y-4">
-              <div className="text-sm text-slate-600 font-medium leading-relaxed">
+              <div className="text-sm text-text-secondary font-medium leading-relaxed">
                 Are you sure you want to permanently delete this {docType === 'returns' ? 'return' : 'request'} document? This action cannot be undone.
               </div>
 
@@ -3241,23 +3241,23 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                   required
                   value={deleteReason}
                   onChange={(e) => setDeleteReason(e.target.value)}
-                  className="w-full bg-white border border-red-250 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 rounded-xl px-3 py-2 text-sm text-slate-800 transition-all duration-200 outline-none h-20 resize-none"
+                  className="w-full bg-surface border border-red-250 focus:border-red-500 focus:ring-4 focus:ring-red-500/10 rounded-xl px-3 py-2 text-sm text-text-primary transition-[transform,opacity,box-shadow,border-color] duration-200 outline-none h-20 resize-none"
                   placeholder="Specify the reason for deleting this document..."
                 />
               </div>
 
-              <div className="flex gap-3 justify-end pt-2 border-t border-slate-100">
+              <div className="flex gap-3 justify-end pt-2 border-t border-border-subtle">
                 <button
                   type="button"
                   onClick={() => setIsDeleteOpen(false)}
-                  className="px-4 py-2 text-sm font-bold text-slate-500 hover:bg-slate-50 hover:text-slate-700 rounded-xl transition-all duration-200"
+                  className="px-4 py-2 text-sm font-bold text-text-muted hover:bg-subtle/50 hover:text-text-secondary rounded-xl transition-[transform,opacity,box-shadow,border-color] duration-200"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isDeleting || !deleteReason.trim()}
-                  className="px-5 py-2 text-sm font-bold text-white bg-red-650 hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl shadow-md transition-all duration-200"
+                  className="px-5 py-2 text-sm font-bold text-white bg-red-650 hover:bg-red-700 disabled:opacity-40 disabled:cursor-not-allowed rounded-xl shadow-md transition-[transform,opacity,box-shadow,border-color] duration-200"
                 >
                   {isDeleting ? 'Deleting...' : 'Delete Document'}
                 </button>
@@ -3269,15 +3269,15 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
 
       {/* History Modal */}
       {isHistoryOpen && selectedDoc && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-all duration-300">
-          <div className="w-full max-w-lg bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between border-b border-slate-100 p-5">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm transition-[transform,opacity,box-shadow,border-color] duration-300">
+          <div className="w-full max-w-lg bg-surface border border-border-default rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between border-b border-border-subtle p-5">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center">
+                <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-100 flex items-center justify-center">
                   <HistoryIcon className="w-5 h-5 text-blue-500" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-slate-800">
+                  <h3 className="text-lg font-bold text-text-primary">
                     Document Audit History
                   </h3>
                   <p className="text-xs text-slate-400 font-semibold font-mono">
@@ -3287,7 +3287,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
               </div>
               <button
                 onClick={() => setIsHistoryOpen(false)}
-                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-50 rounded-xl transition-colors duration-200"
+                className="p-2 text-slate-400 hover:text-text-secondary hover:bg-subtle/50 rounded-xl transition-colors duration-200"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -3304,23 +3304,23 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                   No log history recorded for this document.
                 </div>
               ) : (
-                <div className="relative border-l border-slate-100 pl-6 space-y-6">
+                <div className="relative border-l border-border-subtle pl-6 space-y-6">
                   {historyLogs.map((log, idx) => {
                     const isEdit = log.action.includes('EDIT');
                     const isDelete = log.action.includes('DELETE');
                     const isCreate = log.action.includes('CREATE') || log.action === 'CREATE_DOCUMENT';
 
                     let actionLabel = 'Action Logged';
-                    let badgeColor = 'bg-slate-50 text-slate-700 border-slate-100';
+                    let badgeColor = 'bg-subtle/50 text-text-secondary border-border-subtle';
                     if (isEdit) {
                       actionLabel = 'Document Edited';
-                      badgeColor = 'bg-amber-50 text-amber-700 border-amber-100';
+                      badgeColor = 'bg-amber-500/10 text-amber-700 border-amber-100';
                     } else if (isDelete) {
                       actionLabel = 'Document Deleted';
                       badgeColor = 'bg-red-50 text-red-700 border-red-100';
                     } else if (isCreate) {
                       actionLabel = 'Document Created';
-                      badgeColor = 'bg-emerald-50 text-emerald-700 border-emerald-100';
+                      badgeColor = 'bg-emerald-500/10 text-emerald-400 border-emerald-100';
                     }
 
                     const reasonText = log.new_values?.edit_reason || log.new_values?.delete_reason || log.new_values?.reason || log.remarks;
@@ -3328,17 +3328,17 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                     return (
                       <div key={log.id || idx} className="relative">
                         {/* Timeline dot */}
-                        <span className={`absolute -left-[31px] top-1.5 w-2.5 h-2.5 rounded-full border-2 bg-white ${
+                        <span className={`absolute -left-[31px] top-1.5 w-2.5 h-2.5 rounded-full border-2 bg-surface ${
                           isDelete ? 'border-red-500' : isEdit ? 'border-amber-500' : 'border-emerald-500'
                         }`} />
                         
                         <div className="space-y-1">
                           <div className="flex flex-wrap items-center gap-2">
-                            <span className="text-xs font-bold text-slate-800">
+                            <span className="text-xs font-bold text-text-primary">
                               {log.user?.full_name || 'System / Officer'}
                             </span>
                             {log.user?.jawatan && (
-                              <span className="text-[10px] text-slate-400 font-semibold bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100">
+                              <span className="text-[10px] text-slate-400 font-semibold bg-subtle/50 px-1.5 py-0.5 rounded border border-border-subtle">
                                 {log.user.jawatan}
                               </span>
                             )}
@@ -3357,7 +3357,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                           </div>
 
                           {reasonText && (
-                            <p className="text-xs text-slate-650 bg-slate-50 border border-slate-100 rounded-xl p-2.5 mt-1.5 leading-relaxed font-semibold italic">
+                            <p className="text-xs text-slate-650 bg-subtle/50 border border-border-subtle rounded-xl p-2.5 mt-1.5 leading-relaxed font-semibold italic">
                               &ldquo;{reasonText}&rdquo;
                             </p>
                           )}
@@ -3371,11 +3371,11 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
               )}
             </div>
 
-            <div className="flex justify-end p-5 border-t border-slate-100">
+            <div className="flex justify-end p-5 border-t border-border-subtle">
               <button
                 type="button"
                 onClick={() => setIsHistoryOpen(false)}
-                className="px-5 py-2 text-sm font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 active:scale-95 rounded-xl transition-all duration-200"
+                className="px-5 py-2 text-sm font-bold text-text-secondary bg-subtle hover:bg-subtle active:scale-95 rounded-xl transition-[transform,opacity,box-shadow,border-color] duration-200"
               >
                 Close
               </button>

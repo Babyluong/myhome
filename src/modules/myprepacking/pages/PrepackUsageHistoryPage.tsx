@@ -101,7 +101,7 @@ export const PrepackUsageHistoryPage: React.FC = () => {
           <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={() => setUsageModalOpen(true)}
-              className="min-h-[38px] px-3.5 py-2 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-teal-500/40"
+              className="min-h-[38px] px-3.5 py-2 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-teal-500/40"
             >
               <Send className="w-4 h-4" />
               <span>New Ward Dispatch</span>
@@ -110,7 +110,7 @@ export const PrepackUsageHistoryPage: React.FC = () => {
             <button
               onClick={loadData}
               title="Refresh Logs"
-              className="min-h-[38px] min-w-[38px] flex items-center justify-center p-2 bg-surface hover:bg-subtle active:scale-[0.98] text-text-muted hover:text-text-primary rounded-lg border border-border-default hover:border-border-strong transition-all cursor-pointer shadow-xs"
+              className="min-h-[38px] min-w-[38px] flex items-center justify-center p-2 bg-surface hover:bg-subtle active:scale-[0.98] text-text-muted hover:text-text-primary rounded-lg border border-border-default hover:border-border-strong transition-colors cursor-pointer shadow-xs"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
             </button>

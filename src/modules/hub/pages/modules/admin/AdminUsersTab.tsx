@@ -327,7 +327,7 @@ export const AdminUsersTab: React.FC = () => {
       {/* Filtering Header */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-center bg-slate-900/60 p-3.5 sm:p-4 rounded-xl border border-slate-800">
         <div className="relative lg:col-span-2">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-500" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-muted" />
           <input
             type="text"
             placeholder="Cari nama, emel, no pekerja..."
@@ -392,7 +392,7 @@ export const AdminUsersTab: React.FC = () => {
           </div>
         ) : users.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center space-y-3 px-4">
-            <AlertCircle className="w-10 h-10 text-slate-600" />
+            <AlertCircle className="w-10 h-10 text-text-muted" />
             <div>
               <p className="text-white font-bold text-sm sm:text-base">Tiada pengguna ditemui</p>
               <p className="text-slate-400 text-xs sm:text-sm mt-1">Cuba laraskan carian atau pilihan tapisan.</p>
@@ -434,13 +434,13 @@ export const AdminUsersTab: React.FC = () => {
                       </td>
                       <td className="p-3.5">
                         <div className="flex items-center gap-1.5 text-slate-300 text-xs font-semibold">
-                          <Shield className="w-3.5 h-3.5 text-slate-500" />
+                          <Shield className="w-3.5 h-3.5 text-text-muted" />
                           <span>{u.role?.role_name || 'Tiada Peranan'}</span>
                         </div>
                       </td>
                       <td className="p-3.5">
                         <div className="flex items-center gap-1.5 text-slate-400 text-xs">
-                          <Building2 className="w-3.5 h-3.5 text-slate-600" />
+                          <Building2 className="w-3.5 h-3.5 text-text-muted" />
                           <span>{u.department?.department_name || 'Belum Ditetapkan'}</span>
                         </div>
                       </td>
@@ -493,14 +493,14 @@ export const AdminUsersTab: React.FC = () => {
                     <div className="space-y-0.5">
                       <span className="text-[11px] text-slate-400">Peranan</span>
                       <div className="font-semibold text-slate-200 truncate flex items-center gap-1">
-                        <Shield className="w-3 h-3 text-slate-500" />
+                        <Shield className="w-3 h-3 text-text-muted" />
                         <span>{u.role?.role_name || 'Tiada'}</span>
                       </div>
                     </div>
                     <div className="space-y-0.5">
                       <span className="text-[11px] text-slate-400">Jabatan</span>
                       <div className="font-medium text-slate-200 truncate flex items-center gap-1">
-                        <Building2 className="w-3 h-3 text-slate-500" />
+                        <Building2 className="w-3 h-3 text-text-muted" />
                         <span>{u.department?.department_name || 'Belum'}</span>
                       </div>
                     </div>
@@ -760,7 +760,7 @@ export const AdminUsersTab: React.FC = () => {
                                     <button
                                       type="button"
                                       onClick={handleGeneratePassword}
-                                      className="inline-flex items-center gap-1 text-[11px] text-amber-400 hover:text-amber-300 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 px-2.5 py-1 rounded-md transition-all font-medium"
+                                      className="inline-flex items-center gap-1 text-[11px] text-amber-400 hover:text-amber-300 bg-amber-500/15 hover:bg-amber-500/25 border border-amber-500/30 px-2.5 py-1 rounded-md transition-colors font-medium"
                                     >
                                       <Sparkles className="w-3.5 h-3.5" />
                                       Jana Rawak (Generate)
@@ -774,7 +774,7 @@ export const AdminUsersTab: React.FC = () => {
                                         value={newPassword}
                                         onChange={(e) => setNewPassword(e.target.value)}
                                         placeholder="Masukkan atau jana kata laluan baharu..."
-                                        className="w-full bg-slate-950 border border-white/10 rounded-lg pl-3 pr-10 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 font-mono transition-all"
+                                        className="w-full bg-slate-950 border border-white/10 rounded-lg pl-3 pr-10 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 font-mono transition-colors"
                                       />
                                       <button
                                         type="button"
@@ -790,7 +790,7 @@ export const AdminUsersTab: React.FC = () => {
                                       <button
                                         type="button"
                                         onClick={handleCopyPassword}
-                                        className="px-2.5 py-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/10 text-xs transition-colors flex items-center gap-1.5 flex-shrink-0"
+                                        className="px-2.5 py-2.5 rounded-lg bg-white/5 hover:bg-surface/10 text-slate-300 hover:text-white border border-white/10 text-xs transition-colors flex items-center gap-1.5 flex-shrink-0"
                                         title="Salin kata laluan"
                                       >
                                         {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
@@ -805,7 +805,7 @@ export const AdminUsersTab: React.FC = () => {
                                       type="button"
                                       onClick={handleDirectPasswordReset}
                                       disabled={isResettingPassword || !newPassword || newPassword.length < 6}
-                                      className="w-full py-2.5 px-3 rounded-lg text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-amber-500/20 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                                      className="w-full py-2.5 px-3 rounded-lg text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 flex items-center justify-center gap-2 transition-colors shadow-md hover:shadow-amber-500/20 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                                     >
                                       {isResettingPassword ? (
                                         <>
@@ -825,7 +825,7 @@ export const AdminUsersTab: React.FC = () => {
                                 {/* Separator / Alternative option */}
                                 <div className="relative flex py-1 items-center">
                                   <div className="flex-grow border-t border-white/5"></div>
-                                  <span className="flex-shrink mx-2 text-[10px] uppercase text-slate-500 font-semibold tracking-wider">Atau Pilihan Emel</span>
+                                  <span className="flex-shrink mx-2 text-[10px] uppercase text-text-muted font-semibold tracking-wider">Atau Pilihan Emel</span>
                                   <div className="flex-grow border-t border-white/5"></div>
                                 </div>
 
@@ -835,7 +835,7 @@ export const AdminUsersTab: React.FC = () => {
                                     type="button"
                                     onClick={handleSendResetEmail}
                                     disabled={isSendingResetEmail || !(editEmail || editingUser.email)}
-                                    className="w-full py-2 px-3 rounded-lg text-xs font-semibold bg-slate-800/80 hover:bg-slate-700/80 text-slate-200 border border-white/10 hover:border-white/20 flex items-center justify-center gap-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                                    className="w-full py-2 px-3 rounded-lg text-xs font-semibold bg-slate-800/80 hover:bg-slate-700/80 text-slate-200 border border-white/10 hover:border-white/20 flex items-center justify-center gap-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                                   >
                                     {isSendingResetEmail ? (
                                       <>

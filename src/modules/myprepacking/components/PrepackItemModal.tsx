@@ -462,7 +462,7 @@ export const PrepackItemModal: React.FC<PrepackItemModalProps> = ({
               <button
                 type="submit"
                 disabled={loading}
-                className="px-5 py-2.5 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] text-white rounded-lg text-xs font-bold flex items-center gap-2 shadow-xs transition-all disabled:opacity-50 cursor-pointer"
+                className="px-5 py-2.5 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] text-white rounded-lg text-xs font-bold flex items-center gap-2 shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
               >
                 {loading ? (
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />

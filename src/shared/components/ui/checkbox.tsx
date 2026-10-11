@@ -10,7 +10,7 @@ export function Checkbox({ className = "", onCheckedChange, onChange, ...props }
   return (
     <input
       type="checkbox"
-      className={`h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 ${className}`}
+      className={`h-4 w-4 rounded border-border-default text-blue-600 focus:ring-blue-500 ${className}`}
       onChange={(e) => {
         onChange?.(e);
         onCheckedChange?.(e.currentTarget.checked);

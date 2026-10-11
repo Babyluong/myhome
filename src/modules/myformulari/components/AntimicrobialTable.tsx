@@ -68,13 +68,13 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
 
   if (filtered.length === 0) {
     return (
-      <div className="p-12 text-center bg-white rounded-3xl border border-slate-200 text-slate-500 shadow-xs space-y-3">
-        <div className="w-14 h-14 rounded-2xl bg-emerald-50 text-emerald-700 flex items-center justify-center mx-auto shadow-inner">
+      <div className="p-12 text-center bg-surface rounded-3xl border border-border-default text-text-muted shadow-xs space-y-3">
+        <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 text-emerald-700 flex items-center justify-center mx-auto shadow-inner">
           <ShieldCheck className="w-7 h-7" />
         </div>
         <div>
-          <h4 className="font-bold text-base text-slate-800">Tiada Garis Panduan Ditemui</h4>
-          <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto leading-relaxed">
+          <h4 className="font-bold text-base text-text-primary">Tiada Garis Panduan Ditemui</h4>
+          <p className="text-xs text-text-muted mt-1 max-w-md mx-auto leading-relaxed">
             Please check your search keywords, or select another organ system category from the directory above.
           </p>
         </div>
@@ -92,7 +92,7 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
           <div
             key={item.id}
             id={item.id}
-            className="bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden hover:border-emerald-500/60 hover:shadow-md transition-all duration-200"
+            className="bg-surface rounded-3xl border border-border-default shadow-sm overflow-hidden hover:border-emerald-500/60 hover:shadow-md transition-colors duration-150"
           >
             {/* Top Clinical Header */}
             <div
@@ -154,10 +154,10 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
                 <button
                   type="button"
                   onClick={() => handleCopyPrescription(item)}
-                  className={`px-3 py-2 text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-all cursor-pointer ${
+                  className={`px-3 py-2 text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer ${
                     isCopied
                       ? 'bg-emerald-600 text-white'
-                      : 'bg-white/10 hover:bg-white/20 text-slate-100 border border-white/15'
+                      : 'bg-white/10 hover:bg-surface/20 text-slate-100 border border-white/15'
                   }`}
                   title="Salin ringkasan preskripsi ke papan keratan"
                 >
@@ -182,7 +182,7 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
                       const firstDrug = item.firstLineDrugs?.[0] || 'amoxicillin'
                       onOpenCalculator(firstDrug)
                     }}
-                    className="px-3 py-2 bg-cyan-500/30 hover:bg-cyan-500/50 border border-cyan-400/40 text-cyan-100 text-xs font-black rounded-xl shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
+                    className="px-3 py-2 bg-cyan-500/30 hover:bg-cyan-500/50 border border-cyan-400/40 text-cyan-100 text-xs font-black rounded-xl shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
                   >
                     <Calculator className="w-3.5 h-3.5 text-cyan-300" />
                     <span>Kira Dos (mg/kg)</span>
@@ -219,7 +219,7 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
                     <button
                       type="button"
                       onClick={() => onOpenCalculator(item.firstLineDrugs?.[0])}
-                      className="px-3 py-1.5 bg-cyan-700 hover:bg-cyan-800 text-white rounded-xl font-black text-xs shadow-2xs self-start sm:self-auto cursor-pointer"
+                      className="px-3 py-1.5 bg-cyan-700 hover:bg-cyan-800 text-white rounded-xl font-black text-xs shadow-elevation-1 self-start sm:self-auto cursor-pointer"
                     >
                       Buka Pengira Dos &rarr;
                     </button>
@@ -228,14 +228,14 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
               )}
 
               {/* Primary Pathogens Bar */}
-              <div className="text-xs text-slate-700 bg-slate-50 p-3.5 rounded-2xl border border-slate-200/80 flex flex-wrap items-center gap-2">
-                <span className="font-black text-slate-900 uppercase tracking-wider text-[11px]">
+              <div className="text-xs text-text-secondary bg-subtle/50 p-3.5 rounded-2xl border border-border-default flex flex-wrap items-center gap-2">
+                <span className="font-black text-text-primary uppercase tracking-wider text-[11px]">
                   Mikroorganisma / Patogen Utama:
                 </span>
                 {item.primaryPathogens.map((p, idx) => (
                   <span
                     key={idx}
-                    className="italic text-slate-800 bg-white px-2.5 py-1 rounded-lg border border-slate-200 font-semibold shadow-2xs"
+                    className="italic text-text-primary bg-surface px-2.5 py-1 rounded-lg border border-border-default font-semibold shadow-elevation-1"
                   >
                     {p}
                   </span>
@@ -245,39 +245,39 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
               {/* Clinical Regimens Grid (3 Cards) */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 {/* 1. First Line Therapy */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-emerald-50/70 border-2 border-emerald-300/80 space-y-2.5 flex flex-col justify-between">
+                <div className="p-4 sm:p-5 rounded-2xl bg-emerald-500/10 border-2 border-emerald-300/80 space-y-2.5 flex flex-col justify-between">
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
                         <CheckCircle2 className="w-4 h-4 text-emerald-700" />
-                        <h4 className="text-[11px] font-black text-emerald-950 uppercase tracking-wider">
+                        <h4 className="text-[11px] font-black text-emerald-400 dark:text-emerald-300 font-bold uppercase tracking-wider">
                           First-Line Treatment (1st-Line)
                         </h4>
                       </div>
-                      <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-emerald-200 text-emerald-900">
+                      <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-emerald-200 text-emerald-400 dark:text-emerald-300 font-bold">
                         Primary Choice
                       </span>
                     </div>
 
-                    <div className="text-sm sm:text-base font-black text-emerald-950 leading-snug">
+                    <div className="text-sm sm:text-base font-black text-emerald-400 dark:text-emerald-300 font-bold leading-snug">
                       {item.firstLineTherapy.regimen}
                     </div>
 
-                    <div className="text-xs text-emerald-900 leading-relaxed bg-white/80 p-3 rounded-xl border border-emerald-200 font-medium space-y-1">
-                      <strong className="text-emerald-950 block text-[11px] uppercase tracking-wider">
+                    <div className="text-xs text-emerald-400 dark:text-emerald-300 font-bold leading-relaxed bg-surface p-3 rounded-xl border border-emerald-500/20 font-medium space-y-1">
+                      <strong className="text-emerald-400 dark:text-emerald-300 font-bold block text-[11px] uppercase tracking-wider">
                         Dosage &amp; Route:
                       </strong>
-                      <span className="text-slate-800">{item.firstLineTherapy.routeAndDose}</span>
+                      <span className="text-text-primary">{item.firstLineTherapy.routeAndDose}</span>
                     </div>
                   </div>
 
-                  <div className="space-y-2 pt-2 border-t border-emerald-200/70">
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-950">
+                  <div className="space-y-2 pt-2 border-t border-emerald-500/20">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-400 dark:text-emerald-300 font-bold">
                       <Clock className="w-3.5 h-3.5 text-emerald-700 flex-shrink-0" />
                       <span>Treatment Duration: {item.firstLineTherapy.durationDays}</span>
                     </div>
                     {item.firstLineTherapy.remarks && (
-                      <p className="text-[11px] text-emerald-800 italic leading-relaxed">
+                      <p className="text-[11px] text-emerald-400 italic leading-relaxed">
                         * {item.firstLineTherapy.remarks}
                       </p>
                     )}
@@ -285,39 +285,39 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
                 </div>
 
                 {/* 2. Second Line Therapy */}
-                <div className="p-4 sm:p-5 rounded-2xl bg-blue-50/70 border-2 border-blue-300/80 space-y-2.5 flex flex-col justify-between">
+                <div className="p-4 sm:p-5 rounded-2xl bg-blue-500/10 border-2 border-blue-300/80 space-y-2.5 flex flex-col justify-between">
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5">
                         <FileText className="w-4 h-4 text-blue-700" />
-                        <h4 className="text-[11px] font-black text-blue-950 uppercase tracking-wider">
+                        <h4 className="text-[11px] font-black text-blue-400 dark:text-blue-300 font-bold uppercase tracking-wider">
                           Second-Line Treatment (Alternative)
                         </h4>
                       </div>
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-200 text-blue-900">
+                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-200 text-blue-400 dark:text-blue-300 font-bold">
                         Alternatif
                       </span>
                     </div>
 
-                    <div className="text-sm sm:text-base font-black text-blue-950 leading-snug">
+                    <div className="text-sm sm:text-base font-black text-blue-400 dark:text-blue-300 font-bold leading-snug">
                       {item.secondLineTherapy.regimen}
                     </div>
 
-                    <div className="text-xs text-blue-900 leading-relaxed bg-white/80 p-3 rounded-xl border border-blue-200 font-medium space-y-1">
-                      <strong className="text-blue-950 block text-[11px] uppercase tracking-wider">
+                    <div className="text-xs text-blue-400 dark:text-blue-300 font-bold leading-relaxed bg-surface p-3 rounded-xl border border-blue-500/20 font-medium space-y-1">
+                      <strong className="text-blue-400 dark:text-blue-300 font-bold block text-[11px] uppercase tracking-wider">
                         Dosage &amp; Route:
                       </strong>
-                      <span className="text-slate-800">{item.secondLineTherapy.routeAndDose}</span>
+                      <span className="text-text-primary">{item.secondLineTherapy.routeAndDose}</span>
                     </div>
                   </div>
 
-                  <div className="space-y-2 pt-2 border-t border-blue-200/70">
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-blue-950">
+                  <div className="space-y-2 pt-2 border-t border-blue-500/20">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-blue-400 dark:text-blue-300 font-bold">
                       <Clock className="w-3.5 h-3.5 text-blue-700 flex-shrink-0" />
                       <span>Treatment Duration: {item.secondLineTherapy.durationDays}</span>
                     </div>
                     {item.secondLineTherapy.remarks && (
-                      <p className="text-[11px] text-blue-800 italic leading-relaxed">
+                      <p className="text-[11px] text-blue-400 italic leading-relaxed">
                         * {item.secondLineTherapy.remarks}
                       </p>
                     )}
@@ -326,46 +326,46 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
 
                 {/* 3. Penicillin Allergy Safety Block */}
                 {item.penicillinAllergyOption ? (
-                  <div className="p-4 sm:p-5 rounded-2xl bg-amber-50/70 border-2 border-amber-300/80 space-y-2.5 flex flex-col justify-between">
+                  <div className="p-4 sm:p-5 rounded-2xl bg-amber-500/10 border-2 border-amber-300/80 space-y-2.5 flex flex-col justify-between">
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-1.5">
                           <AlertTriangle className="w-4 h-4 text-amber-700" />
-                          <h4 className="text-[11px] font-black text-amber-950 uppercase tracking-wider">
+                          <h4 className="text-[11px] font-black text-amber-400 dark:text-amber-300 font-bold uppercase tracking-wider">
                             If Penicillin Allergy
                           </h4>
                         </div>
-                        <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-amber-200 text-amber-900">
+                        <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-amber-200 text-amber-400 dark:text-amber-300 font-bold">
                           Safety Warning
                         </span>
                       </div>
 
-                      <div className="text-sm sm:text-base font-black text-amber-950 leading-snug">
+                      <div className="text-sm sm:text-base font-black text-amber-400 dark:text-amber-300 font-bold leading-snug">
                         {item.penicillinAllergyOption.regimen}
                       </div>
 
-                      <div className="text-xs text-amber-900 leading-relaxed bg-white/80 p-3 rounded-xl border border-amber-200 font-medium space-y-1">
-                        <strong className="text-amber-950 block text-[11px] uppercase tracking-wider">
+                      <div className="text-xs text-amber-400 dark:text-amber-300 font-bold leading-relaxed bg-surface p-3 rounded-xl border border-amber-500/20 font-medium space-y-1">
+                        <strong className="text-amber-400 dark:text-amber-300 font-bold block text-[11px] uppercase tracking-wider">
                           Dosage &amp; Route:
                         </strong>
-                        <span className="text-slate-800">{item.penicillinAllergyOption.routeAndDose}</span>
+                        <span className="text-text-primary">{item.penicillinAllergyOption.routeAndDose}</span>
                       </div>
                     </div>
 
                     {item.penicillinAllergyOption.remarks && (
-                      <div className="pt-2 border-t border-amber-200/70">
-                        <p className="text-[11px] text-amber-900 italic leading-relaxed">
+                      <div className="pt-2 border-t border-amber-500/20">
+                        <p className="text-[11px] text-amber-400 dark:text-amber-300 font-bold italic leading-relaxed">
                           * {item.penicillinAllergyOption.remarks}
                         </p>
                       </div>
                     )}
                   </div>
                 ) : (
-                  <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 border-2 border-slate-200 text-xs text-slate-600 flex flex-col items-center justify-center text-center space-y-2">
+                  <div className="p-4 sm:p-5 rounded-2xl bg-subtle/50 border-2 border-border-default text-xs text-text-muted flex flex-col items-center justify-center text-center space-y-2">
                     <AlertCircle className="w-6 h-6 text-slate-400" />
                     <div>
-                      <p className="font-bold text-slate-800">No Specific Allergy Data</p>
-                      <p className="text-[11px] text-slate-500 mt-0.5">
+                      <p className="font-bold text-text-primary">No Specific Allergy Data</p>
+                      <p className="text-[11px] text-text-muted mt-0.5">
                         Refer to Physician / Infectious Disease (ID) Specialist for severe penicillin allergy cases.
                       </p>
                     </div>
@@ -375,22 +375,22 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
 
               {/* Oral Step-Down Protocol Banner */}
               {item.oralStepDownOption && (
-                <div className="p-4 bg-gradient-to-r from-indigo-50/90 to-blue-50/90 border-2 border-indigo-200/80 rounded-2xl text-xs space-y-2">
+                <div className="p-4 bg-gradient-to-r from-indigo-50/90 to-blue-50/90 border-2 border-indigo-500/20 rounded-2xl text-xs space-y-2">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                    <span className="font-black text-indigo-950 flex items-center gap-2">
+                    <span className="font-black text-indigo-400 dark:text-indigo-300 font-bold flex items-center gap-2">
                       <ArrowRightLeft className="w-4 h-4 text-indigo-600" />
                       <span>MOH Oral Step-Down Protocol:</span>
                     </span>
-                    <span className="text-[10px] bg-indigo-200 text-indigo-950 px-2.5 py-0.5 rounded-full font-extrabold self-start sm:self-auto">
+                    <span className="text-[10px] bg-indigo-200 text-indigo-400 dark:text-indigo-300 font-bold px-2.5 py-0.5 rounded-full font-extrabold self-start sm:self-auto">
                       Clinically Stable &amp; Afebrile &gt;24-48 Hours
                     </span>
                   </div>
-                  <div className="p-3 bg-white/90 rounded-xl border border-indigo-100">
-                    <p className="text-indigo-950 font-black text-xs sm:text-sm">
+                  <div className="p-3 bg-surface rounded-xl border border-indigo-100">
+                    <p className="text-indigo-400 dark:text-indigo-300 font-bold font-black text-xs sm:text-sm">
                       {item.oralStepDownOption.regimen}
                     </p>
-                    <p className="text-indigo-900 text-[11px] leading-relaxed mt-1">
-                      <strong className="text-indigo-950">Switch Criteria: </strong>
+                    <p className="text-indigo-400 dark:text-indigo-300 font-bold text-[11px] leading-relaxed mt-1">
+                      <strong className="text-indigo-400 dark:text-indigo-300 font-bold">Switch Criteria: </strong>
                       {item.oralStepDownOption.criteria}
                     </p>
                   </div>
@@ -399,12 +399,12 @@ export const AntimicrobialTable: React.FC<AntimicrobialTableProps> = ({
 
               {/* AMS Antimicrobial Stewardship Notes */}
               {item.amsNotes && item.amsNotes.length > 0 && (
-                <div className="bg-slate-50 p-4 sm:p-5 rounded-2xl border border-slate-200 text-xs text-slate-700 space-y-2">
-                  <h5 className="font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                <div className="bg-subtle/50 p-4 sm:p-5 rounded-2xl border border-border-default text-xs text-text-secondary space-y-2">
+                  <h5 className="font-black text-text-primary uppercase tracking-wider flex items-center gap-2">
                     <ShieldCheck className="w-4 h-4 text-emerald-700" />
                     <span>Antimicrobial Stewardship Notes (MOH AMS Policy):</span>
                   </h5>
-                  <ul className="space-y-1.5 list-disc list-inside text-slate-700">
+                  <ul className="space-y-1.5 list-disc list-inside text-text-secondary">
                     {item.amsNotes.map((note, idx) => (
                       <li key={idx} className="leading-relaxed">
                         {note}

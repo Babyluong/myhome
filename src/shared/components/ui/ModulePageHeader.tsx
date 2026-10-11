@@ -44,13 +44,13 @@ export const ModulePageHeader: React.FC<ModulePageHeaderProps> = ({
   return (
     <div
       className={cn(
-        'flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 sm:p-6 rounded-xl bg-surface border border-border-default shadow-2xs transition-colors duration-150',
+        'flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 p-5 sm:p-6 rounded-2xl bg-surface border border-border-default shadow-elevation-1 transition-colors duration-150',
         className
       )}
     >
       <div className="flex items-start sm:items-center gap-3.5 min-w-0">
         {icon && (
-          <div className="p-2.5 sm:p-3 rounded-lg bg-accent-subtle text-accent-base border border-accent-base/20 shrink-0 flex items-center justify-center">
+          <div className="p-2.5 sm:p-3 rounded-xl bg-accent-subtle text-accent-base border border-accent-base/20 shrink-0 flex items-center justify-center">
             {renderIcon()}
           </div>
         )}
@@ -61,7 +61,7 @@ export const ModulePageHeader: React.FC<ModulePageHeaderProps> = ({
                 <span
                   key={idx}
                   className={cn(
-                    'px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase border',
+                    'px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] font-semibold tracking-wide uppercase border',
                     b.variant === 'accent'
                       ? 'bg-accent-subtle text-accent-base border-accent-base/25'
                       : b.variant === 'warning'

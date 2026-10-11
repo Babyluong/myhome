@@ -85,7 +85,7 @@ export const MainLayout: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-canvas">
         <div className="text-center">
-          <div className="w-12 h-12 border-3 border-teal-500/20 border-t-teal-600 rounded-full animate-spin mx-auto mb-4" />
+          <div className="w-12 h-12 border-3 border-accent-base/20 border-t-accent-base rounded-full animate-spin mx-auto mb-4" />
           <p className="text-xs font-semibold text-text-muted tracking-wide uppercase">Loading H.O.M.E. Ecosystem...</p>
         </div>
       </div>
@@ -98,7 +98,7 @@ export const MainLayout: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-canvas text-primary flex flex-col antialiased selection:bg-teal-500/20 selection:text-teal-800 dark:selection:text-teal-300 w-full max-w-full overflow-x-hidden transition-colors duration-150">
+    <div className="min-h-screen bg-canvas text-primary flex flex-col antialiased selection:bg-accent-base/20 selection:text-accent-base w-full max-w-full overflow-x-hidden transition-colors duration-150">
       {/* Header - Fixed Full width at top */}
       <Header onOpenSyncDrawer={() => setIsSyncDrawerOpen(true)} />
 

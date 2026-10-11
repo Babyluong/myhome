@@ -7,7 +7,7 @@ import { ROUTES } from '@/lib/constants'
 
 export const NotFoundPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-subtle/50 flex items-center justify-center p-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -25,10 +25,10 @@ export const NotFoundPage: React.FC = () => {
           </motion.div>
         </div>
 
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl font-bold text-text-primary mb-2">
           Page Not Found
         </h1>
-        <p className="text-gray-600 mb-8">
+        <p className="text-text-secondary mb-8">
           Oops! The page you're looking for doesn't exist or has been moved.
         </p>
 

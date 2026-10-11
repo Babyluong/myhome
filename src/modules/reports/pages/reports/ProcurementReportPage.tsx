@@ -77,13 +77,13 @@ const TABS = [
 const CustomTooltip = ({ active, payload, label }: any) => {
   if (!active || !payload?.length) return null
   return (
-    <div className="bg-white/95 backdrop-blur-md text-slate-800 px-4 py-3 rounded-xl shadow-2xl border border-slate-200/80">
+    <div className="bg-white/95 backdrop-blur-md text-text-primary px-4 py-3 rounded-xl shadow-2xl border border-border-default">
       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1.5">{label}</p>
       {payload.map((entry: any, idx: number) => (
         <p key={idx} className="text-xs font-bold flex items-center gap-2 mt-1">
           <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: entry.color }} />
-          <span className="text-slate-500 font-semibold">{entry.name}:</span>
-          <span className="text-slate-800 font-extrabold">{typeof entry.value === 'number' && entry.value > 1000 ? formatCurrency(entry.value).replace('MYR', 'RM') : entry.value}</span>
+          <span className="text-text-muted font-semibold">{entry.name}:</span>
+          <span className="text-text-primary font-extrabold">{typeof entry.value === 'number' && entry.value > 1000 ? formatCurrency(entry.value).replace('MYR', 'RM') : entry.value}</span>
         </p>
       ))}
     </div>
@@ -134,8 +134,8 @@ function MiniDonut({ data, colors, size = 160 }: { data: { name: string, value: 
         </PieChart>
       </ResponsiveContainer>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-2xl font-black text-slate-800">{total}</span>
-        <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">Total</span>
+        <span className="text-2xl font-black text-text-primary">{total}</span>
+        <span className="text-[9px] font-bold text-text-muted uppercase tracking-widest">Total</span>
       </div>
     </div>
   )
@@ -170,14 +170,14 @@ function KpiCard({ label, value, prefix, suffix, icon: Icon, color, delay = 0, d
   label: string, value: number, prefix?: string, suffix?: string, icon: any, color: string, delay?: number, decimals?: number
 }) {
   const colorMap: Record<string, { bg: string, border: string, text: string, iconBg: string }> = {
-    indigo: { bg: 'bg-gradient-to-br from-indigo-50 to-indigo-100/50', border: 'border-indigo-200/60', text: 'text-indigo-700', iconBg: 'bg-indigo-600' },
-    emerald: { bg: 'bg-gradient-to-br from-emerald-50 to-emerald-100/50', border: 'border-emerald-200/60', text: 'text-emerald-700', iconBg: 'bg-emerald-600' },
-    rose: { bg: 'bg-gradient-to-br from-rose-50 to-rose-100/50', border: 'border-rose-200/60', text: 'text-rose-700', iconBg: 'bg-rose-600' },
-    amber: { bg: 'bg-gradient-to-br from-amber-50 to-amber-100/50', border: 'border-amber-200/60', text: 'text-amber-700', iconBg: 'bg-amber-600' },
-    blue: { bg: 'bg-gradient-to-br from-blue-50 to-blue-100/50', border: 'border-blue-200/60', text: 'text-blue-700', iconBg: 'bg-blue-600' },
+    indigo: { bg: 'bg-gradient-to-br from-indigo-50 to-indigo-100/50', border: 'border-indigo-500/20', text: 'text-indigo-700', iconBg: 'bg-indigo-600' },
+    emerald: { bg: 'bg-gradient-to-br from-emerald-50 to-emerald-100/50', border: 'border-emerald-500/20', text: 'text-emerald-700', iconBg: 'bg-emerald-600' },
+    rose: { bg: 'bg-gradient-to-br from-rose-50 to-rose-100/50', border: 'border-rose-500/20', text: 'text-rose-700', iconBg: 'bg-rose-600' },
+    amber: { bg: 'bg-gradient-to-br from-amber-50 to-amber-100/50', border: 'border-amber-500/20', text: 'text-amber-700', iconBg: 'bg-amber-600' },
+    blue: { bg: 'bg-gradient-to-br from-blue-50 to-blue-100/50', border: 'border-blue-500/20', text: 'text-blue-700', iconBg: 'bg-blue-600' },
     violet: { bg: 'bg-gradient-to-br from-violet-50 to-violet-100/50', border: 'border-violet-200/60', text: 'text-violet-700', iconBg: 'bg-violet-600' },
-    teal: { bg: 'bg-gradient-to-br from-teal-50 to-teal-100/50', border: 'border-teal-200/60', text: 'text-teal-700', iconBg: 'bg-teal-600' },
-    slate: { bg: 'bg-gradient-to-br from-slate-50 to-slate-100/50', border: 'border-slate-200/60', text: 'text-slate-700', iconBg: 'bg-slate-600' },
+    teal: { bg: 'bg-gradient-to-br from-teal-50 to-teal-100/50', border: 'border-accent-base/20', text: 'text-teal-700', iconBg: 'bg-teal-600' },
+    slate: { bg: 'bg-gradient-to-br from-slate-50 to-slate-100/50', border: 'border-border-default', text: 'text-text-secondary', iconBg: 'bg-slate-600' },
   }
   const c = colorMap[color] || colorMap.indigo
   return (
@@ -186,7 +186,7 @@ function KpiCard({ label, value, prefix, suffix, icon: Icon, color, delay = 0, d
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.5, delay, ease: 'easeOut' }}
       className={cn(
-        "relative group rounded-2xl p-5 border backdrop-blur-sm overflow-hidden transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/5 hover:-translate-y-0.5",
+        "relative group rounded-2xl p-5 border backdrop-blur-sm overflow-hidden transition-colors duration-150 hover:shadow-lg hover:shadow-indigo-500/5 hover:-translate-y-0.5",
         c.bg, c.border
       )}
     >
@@ -199,7 +199,7 @@ function KpiCard({ label, value, prefix, suffix, icon: Icon, color, delay = 0, d
       <div className={cn("text-2xl font-black tracking-tight mb-1", c.text)}>
         <AnimatedNumber value={value} prefix={prefix} suffix={suffix} decimals={decimals} />
       </div>
-      <div className="text-[10px] font-bold text-slate-600 uppercase tracking-[0.15em]">{label}</div>
+      <div className="text-[10px] font-bold text-text-muted uppercase tracking-[0.15em]">{label}</div>
     </motion.div>
   )
 }
@@ -209,13 +209,13 @@ function SectionHeader({ title, subtitle, icon: Icon }: { title: string, subtitl
   return (
     <div className="flex items-center gap-3 mb-6">
       {Icon && (
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+        <div className="w-10 h-10 rounded-xl bg-surface border border-border-default flex items-center justify-center shadow-lg shadow-indigo-500/20">
           <Icon className="w-5 h-5 text-white" />
         </div>
       )}
       <div>
-        <h4 className="text-base font-black text-slate-800 tracking-tight">{title}</h4>
-        {subtitle && <p className="text-[10px] font-bold text-slate-600 uppercase tracking-widest mt-0.5">{subtitle}</p>}
+        <h4 className="text-base font-black text-text-primary tracking-tight">{title}</h4>
+        {subtitle && <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mt-0.5">{subtitle}</p>}
       </div>
     </div>
   )
@@ -227,8 +227,8 @@ function HorizontalBar({ label, value, max, color, delay = 0 }: { label: string,
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-bold text-slate-600 capitalize">{label.replace(/_/g, ' ')}</span>
-        <span className="text-xs font-black text-slate-800">{value}</span>
+        <span className="text-xs font-bold text-text-muted capitalize">{label.replace(/_/g, ' ')}</span>
+        <span className="text-xs font-black text-text-primary">{value}</span>
       </div>
       <div className="h-2.5 bg-slate-200/60 rounded-full overflow-hidden">
         <motion.div
@@ -530,7 +530,7 @@ export default function ProcurementReportPage() {
 
   // â”€â”€ RENDER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   return (
-    <div className="min-h-screen bg-[#f8fafc] relative overflow-hidden font-sans selection:bg-indigo-500 selection:text-white text-slate-800 pb-20">
+    <div className="min-h-screen bg-[#f8fafc] relative overflow-hidden font-sans selection:bg-indigo-500 selection:text-white text-text-primary pb-20">
       {/* Ambient background effects */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-gradient-to-b from-indigo-500/[0.03] via-slate-100/10 to-transparent rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-blue-500/[0.02] to-transparent rounded-full blur-[100px] pointer-events-none" />
@@ -538,9 +538,9 @@ export default function ProcurementReportPage() {
 
       <div className="w-full p-6 lg:p-8 space-y-6 relative z-10">
         {/* â”€â”€ Breadcrumbs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-        <nav className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+        <nav className="flex items-center gap-2 text-[10px] font-bold text-text-muted uppercase tracking-widest">
           <Link to={ROUTES.PHARMACY_REPORTS} className="hover:text-indigo-400 transition-colors">Reports</Link>
-          <ChevronRight className="w-3 h-3 text-slate-600" />
+          <ChevronRight className="w-3 h-3 text-text-muted" />
           <span className="text-indigo-400 font-extrabold">Procurement Intelligence</span>
         </nav>
 
@@ -556,37 +556,37 @@ export default function ProcurementReportPage() {
               <BarChart3 className="h-6 w-6 text-white" />
             </motion.div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-800">
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-text-primary">
                 Procurement Report
               </h1>
-              <p className="text-slate-500 font-semibold text-[11px] flex items-center gap-1.5 mt-0.5">
+              <p className="text-text-muted font-semibold text-[11px] flex items-center gap-1.5 mt-0.5">
                 <Sparkles className="w-3 h-3 text-indigo-400" />
                 Interactive Analytics Dashboard â€¢ Real-time Insights
               </p>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 bg-white p-2.5 rounded-2xl border border-slate-200/80 shadow-md shadow-slate-100/50 w-full xl:w-auto">
+          <div className="flex flex-wrap items-center gap-3 bg-surface p-2.5 rounded-2xl border border-border-default shadow-md shadow-slate-100/50 w-full xl:w-auto">
             <div className="flex items-center gap-2 px-3 border-r border-white/10">
               <Calendar className="w-4 h-4 text-indigo-400" />
               <input
                 type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)}
-                className="text-xs font-bold text-slate-700 bg-slate-50 border border-slate-200/60 rounded-lg p-1 outline-none focus:ring-1 focus:ring-indigo-500 w-[120px] [color-scheme:light]"
+                className="text-xs font-bold text-text-secondary bg-subtle/50 border border-border-default rounded-lg p-1 outline-none focus:ring-1 focus:ring-indigo-500 w-[120px] [color-scheme:light]"
               />
-              <span className="text-slate-600 font-black text-[10px]">TO</span>
+              <span className="text-text-muted font-black text-[10px]">TO</span>
               <input
                 type="date" value={dateTo} onChange={e => setDateTo(e.target.value)}
-                className="text-xs font-bold text-slate-700 bg-slate-50 border border-slate-200/60 rounded-lg p-1 outline-none focus:ring-1 focus:ring-indigo-500 w-[120px] [color-scheme:light]"
+                className="text-xs font-bold text-text-secondary bg-subtle/50 border border-border-default rounded-lg p-1 outline-none focus:ring-1 focus:ring-indigo-500 w-[120px] [color-scheme:light]"
               />
             </div>
             <button onClick={handleGenerate} disabled={isGenerating}
-              className="flex items-center gap-2 px-4 py-2.5 bg-indigo-50 text-indigo-600 hover:bg-indigo-100 rounded-xl font-bold text-xs transition-all duration-200 border border-indigo-200/60"
+              className="flex items-center gap-2 px-4 py-2.5 bg-indigo-500/10 text-indigo-600 hover:bg-indigo-100 rounded-xl font-bold text-xs transition-colors duration-150 border border-indigo-500/20"
             >
               <RefreshCw className={cn("w-3.5 h-3.5", isGenerating && "animate-spin")} />
               {isGenerating ? 'Generating...' : 'Generate'}
             </button>
             <button onClick={handleDownload} disabled={isDownloading || !reportData}
-              className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-600 hover:to-purple-700 disabled:opacity-30 disabled:from-slate-700 disabled:to-slate-700 rounded-xl font-bold text-xs transition-all duration-200 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30"
+              className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-600 hover:to-purple-700 disabled:opacity-30 disabled:from-slate-700 disabled:to-slate-700 rounded-xl font-bold text-xs transition-colors duration-150 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30"
             >
               {isDownloading ? <Spinner size="sm" className="text-white" /> : <Download className="w-3.5 h-3.5" />}
               {isDownloading ? 'Downloading...' : 'Download PDF'}
@@ -601,18 +601,18 @@ export default function ProcurementReportPage() {
               <div className="w-20 h-20 rounded-full border-4 border-indigo-500/20 border-t-indigo-500 animate-spin" />
               <Activity className="w-8 h-8 text-indigo-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
             </div>
-            <p className="text-slate-500 font-bold uppercase tracking-widest text-xs animate-pulse">Aggregating Procurement Intelligence...</p>
+            <p className="text-text-muted font-bold uppercase tracking-widest text-xs animate-pulse">Aggregating Procurement Intelligence...</p>
           </div>
         )}
 
         {/* â”€â”€ Empty â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         {!isGenerating && !reportData && (
-          <div className="bg-white backdrop-blur-xl rounded-3xl p-16 text-center border border-slate-200/80 shadow-sm">
+          <div className="bg-surface backdrop-blur-xl rounded-3xl p-16 text-center border border-border-default shadow-sm">
             <div className="w-20 h-20 bg-white/[0.05] rounded-full flex items-center justify-center mx-auto mb-6 border border-white/10">
-              <BarChart3 className="w-8 h-8 text-slate-600" />
+              <BarChart3 className="w-8 h-8 text-text-muted" />
             </div>
             <h3 className="text-xl font-black text-slate-300 mb-2">No Report Data</h3>
-            <p className="text-slate-500 font-semibold text-sm max-w-md mx-auto">
+            <p className="text-text-muted font-semibold text-sm max-w-md mx-auto">
               Select a date range and click Generate to view the interactive procurement analytics.
             </p>
           </div>
@@ -640,12 +640,12 @@ export default function ProcurementReportPage() {
               {/* Monthly PO Trend Area Chart */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-                className="bg-white backdrop-blur-xl rounded-2xl border border-slate-200/80 shadow-sm p-5"
+                className="bg-surface backdrop-blur-xl rounded-2xl border border-border-default shadow-sm p-5"
               >
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h4 className="text-sm font-black text-slate-800">Monthly PO Trend</h4>
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Count & Value over time</p>
+                    <h4 className="text-sm font-black text-text-primary">Monthly PO Trend</h4>
+                    <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Count & Value over time</p>
                   </div>
                   <TrendingUp className="w-5 h-5 text-indigo-400" />
                 </div>
@@ -671,12 +671,12 @@ export default function ProcurementReportPage() {
               {/* PO Status Donut */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}
-                className="bg-white backdrop-blur-xl rounded-2xl border border-slate-200/80 shadow-sm p-5"
+                className="bg-surface backdrop-blur-xl rounded-2xl border border-border-default shadow-sm p-5"
               >
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h4 className="text-sm font-black text-slate-800">PO Status Distribution</h4>
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Breakdown by status</p>
+                    <h4 className="text-sm font-black text-text-primary">PO Status Distribution</h4>
+                    <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Breakdown by status</p>
                   </div>
                   <PieChartIcon className="w-5 h-5 text-purple-400" />
                 </div>
@@ -686,8 +686,8 @@ export default function ProcurementReportPage() {
                     {poStatusPieData.map((d, i) => (
                       <div key={d.name} className="flex items-center gap-2 text-xs">
                         <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
-                        <span className="text-slate-600 capitalize truncate">{d.name}</span>
-                        <span className="font-black text-slate-800 ml-auto">{d.value}</span>
+                        <span className="text-text-muted capitalize truncate">{d.name}</span>
+                        <span className="font-black text-text-primary ml-auto">{d.value}</span>
                       </div>
                     ))}
                   </div>
@@ -697,12 +697,12 @@ export default function ProcurementReportPage() {
               {/* Monthly Value Bar Chart */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-                className="bg-white backdrop-blur-xl rounded-2xl border border-slate-200/80 shadow-sm p-5"
+                className="bg-surface backdrop-blur-xl rounded-2xl border border-border-default shadow-sm p-5"
               >
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h4 className="text-sm font-black text-slate-800">Monthly PO Value</h4>
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Value in RM</p>
+                    <h4 className="text-sm font-black text-text-primary">Monthly PO Value</h4>
+                    <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Value in RM</p>
                   </div>
                   <BarChart3 className="w-5 h-5 text-emerald-400" />
                 </div>
@@ -727,7 +727,7 @@ export default function ProcurementReportPage() {
             </div>
 
             {/* â”€â”€ TAB NAVIGATION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-            <div className="flex items-center gap-1.5 flex-wrap pb-2 bg-slate-50/50 backdrop-blur-xl rounded-2xl border border-slate-200/80 shadow-sm p-1.5">
+            <div className="flex items-center gap-1.5 flex-wrap pb-2 bg-subtle/50 backdrop-blur-xl rounded-2xl border border-border-default shadow-sm p-1.5">
               {TABS.map(tab => {
                 const Icon = tab.icon
                 const isActive = activeTab === tab.id
@@ -736,13 +736,13 @@ export default function ProcurementReportPage() {
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={cn(
-                      "flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs transition-all duration-300 whitespace-nowrap shrink-0 relative",
+                      "flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors duration-150 whitespace-nowrap shrink-0 relative",
                       isActive
                         ? "bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/20"
-                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/50"
+                        : "text-text-muted hover:text-text-primary hover:bg-subtle"
                     )}
                   >
-                    <Icon className={cn("w-3.5 h-3.5", isActive ? "text-indigo-200" : "text-slate-600")} />
+                    <Icon className={cn("w-3.5 h-3.5", isActive ? "text-indigo-200" : "text-text-muted")} />
                     {tab.label}
                   </button>
                 )
@@ -757,7 +757,7 @@ export default function ProcurementReportPage() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -16 }}
                 transition={{ duration: 0.3 }}
-                className="bg-white backdrop-blur-xl rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden min-h-[520px]"
+                className="bg-surface backdrop-blur-xl rounded-3xl border border-border-default shadow-sm overflow-hidden min-h-[520px]"
               >
 
                 {/* â•â•â•â•â•â•â•â• PURCHASE ORDERS â•â•â•â•â•â•â•â• */}
@@ -766,12 +766,12 @@ export default function ProcurementReportPage() {
                     <SectionHeader title="Purchase Orders Analytics" subtitle="Comprehensive PO analysis with trends and breakdowns" icon={FileSpreadsheet} />
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       {/* Status Breakdown */}
-                      <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-6">
-                        <h5 className="text-sm font-black text-slate-800 mb-5 flex items-center gap-2">
+                      <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-6">
+                        <h5 className="text-sm font-black text-text-primary mb-5 flex items-center gap-2">
                           <PieChartIcon className="w-4 h-4 text-indigo-400" /> Status Breakdown
                         </h5>
                         {poStatusPieData.length === 0 ? (
-                          <p className="text-xs text-slate-500 text-center py-8">No data available</p>
+                          <p className="text-xs text-text-muted text-center py-8">No data available</p>
                         ) : (
                           <div className="space-y-3">
                             {poStatusPieData.map((d, i) => (
@@ -782,12 +782,12 @@ export default function ProcurementReportPage() {
                       </div>
 
                       {/* Category Breakdown */}
-                      <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-6">
-                        <h5 className="text-sm font-black text-slate-800 mb-5 flex items-center gap-2">
+                      <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-6">
+                        <h5 className="text-sm font-black text-text-primary mb-5 flex items-center gap-2">
                           <BarChart3 className="w-4 h-4 text-purple-400" /> Category Distribution
                         </h5>
                         {poCategoryPieData.length === 0 ? (
-                          <p className="text-xs text-slate-500 text-center py-8">No data available</p>
+                          <p className="text-xs text-text-muted text-center py-8">No data available</p>
                         ) : (
                           <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
                             {/* Donut Chart with Centered Total */}
@@ -804,7 +804,7 @@ export default function ProcurementReportPage() {
                               </div>
                               <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                                 <span className="text-2xl font-black text-white">{poCategoryPieData.reduce((acc, curr) => acc + curr.value, 0)}</span>
-                                <span className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">Total POs</span>
+                                <span className="text-[9px] font-bold text-text-muted uppercase tracking-widest">Total POs</span>
                               </div>
                             </div>
 
@@ -819,14 +819,14 @@ export default function ProcurementReportPage() {
                                     <div className="flex items-center justify-between text-xs font-bold">
                                       <div className="flex items-center gap-2">
                                         <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: color }} />
-                                        <span className="text-slate-700 truncate max-w-[150px]">{item.name}</span>
+                                        <span className="text-text-secondary truncate max-w-[150px]">{item.name}</span>
                                       </div>
-                                      <div className="flex items-center gap-1.5 font-black text-slate-800">
+                                      <div className="flex items-center gap-1.5 font-black text-text-primary">
                                         <span>{item.value}</span>
-                                        <span className="text-[10px] text-slate-500 font-semibold">({percentage.toFixed(1)}%)</span>
+                                        <span className="text-[10px] text-text-muted font-semibold">({percentage.toFixed(1)}%)</span>
                                       </div>
                                     </div>
-                                    <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                    <div className="h-1.5 bg-subtle rounded-full overflow-hidden">
                                       <motion.div
                                         className="h-full rounded-full"
                                         style={{ backgroundColor: color }}
@@ -845,8 +845,8 @@ export default function ProcurementReportPage() {
                     </div>
 
                     {/* Combined Monthly Trend Chart */}
-                    <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-6">
-                      <h5 className="text-sm font-black text-slate-800 mb-5 flex items-center gap-2">
+                    <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-6">
+                      <h5 className="text-sm font-black text-text-primary mb-5 flex items-center gap-2">
                         <Activity className="w-4 h-4 text-emerald-400" /> Monthly Trend (Count & Value)
                       </h5>
                       <div className="h-[280px]">
@@ -863,7 +863,7 @@ export default function ProcurementReportPage() {
                             <YAxis yAxisId="left" tick={{ fontSize: 10, fill: '#475569', fontWeight: 600 }} axisLine={false} tickLine={false} />
                             <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10, fill: '#475569', fontWeight: 600 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} />
                             <Tooltip content={<CustomTooltip />} />
-                            <Legend formatter={(value) => <span className="text-xs text-slate-600">{value}</span>} />
+                            <Legend formatter={(value) => <span className="text-xs text-text-muted">{value}</span>} />
                             <Bar yAxisId="left" dataKey="count" name="Order Count" fill="#6366f1" radius={[4, 4, 0, 0]} barSize={28} />
                             <Line yAxisId="right" type="monotone" dataKey="value" name="Value (RM)" stroke="#10b981" strokeWidth={2.5} dot={{ fill: '#10b981', r: 4 }} />
                           </ComposedChart>
@@ -885,8 +885,8 @@ export default function ProcurementReportPage() {
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                       {/* LPO Status Donut */}
-                      <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-6 flex flex-col items-center">
-                        <h5 className="text-sm font-black text-slate-800 mb-4 self-start flex items-center gap-2">
+                      <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-6 flex flex-col items-center">
+                        <h5 className="text-sm font-black text-text-primary mb-4 self-start flex items-center gap-2">
                           <PieChartIcon className="w-4 h-4 text-violet-400" /> Status Distribution
                         </h5>
                         <MiniDonut data={lpoStatusPieData} colors={['#10b981', '#3b82f6', '#f59e0b']} size={180} />
@@ -894,24 +894,24 @@ export default function ProcurementReportPage() {
                           {lpoStatusPieData.map((d, i) => (
                             <div key={d.name} className="flex items-center gap-1.5 text-xs">
                               <span className="w-2 h-2 rounded-full" style={{ backgroundColor: ['#10b981', '#3b82f6', '#f59e0b'][i] }} />
-                              <span className="text-slate-600">{d.name}</span>
+                              <span className="text-text-muted">{d.name}</span>
                             </div>
                           ))}
                         </div>
                       </div>
 
                       {/* Coverage Rate Ring */}
-                      <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-6 flex flex-col items-center justify-center">
-                        <h5 className="text-sm font-black text-slate-800 mb-4 self-start flex items-center gap-2">
+                      <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-6 flex flex-col items-center justify-center">
+                        <h5 className="text-sm font-black text-text-primary mb-4 self-start flex items-center gap-2">
                           <Zap className="w-4 h-4 text-amber-400" /> LPO Coverage Rate
                         </h5>
                         <ProgressRing percentage={reportData.lpo.coverageRate} size={140} strokeWidth={10} color="#8b5cf6" />
-                        <p className="text-xs text-slate-500 mt-3 text-center">Percentage of POs covered by LPOs</p>
+                        <p className="text-xs text-text-muted mt-3 text-center">Percentage of POs covered by LPOs</p>
                       </div>
 
                       {/* Document Status */}
-                      <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-6">
-                        <h5 className="text-sm font-black text-slate-800 mb-5 flex items-center gap-2">
+                      <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-6">
+                        <h5 className="text-sm font-black text-text-primary mb-5 flex items-center gap-2">
                           <Eye className="w-4 h-4 text-blue-400" /> Document Status
                         </h5>
                         <div className="h-[180px]">
@@ -949,12 +949,12 @@ export default function ProcurementReportPage() {
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       {/* Tracking Status Donut */}
-                      <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-6">
-                        <h5 className="text-sm font-black text-slate-800 mb-5 flex items-center gap-2">
+                      <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-6">
+                        <h5 className="text-sm font-black text-text-primary mb-5 flex items-center gap-2">
                           <PieChartIcon className="w-4 h-4 text-blue-400" /> Tracking Status Distribution
                         </h5>
                         {trackingStatusData.length === 0 ? (
-                          <p className="text-xs text-slate-500 text-center py-12">No tracking data available</p>
+                          <p className="text-xs text-text-muted text-center py-12">No tracking data available</p>
                         ) : (
                           <div className="flex items-center justify-center gap-6">
                             <div className="h-[220px] w-[220px]">
@@ -971,7 +971,7 @@ export default function ProcurementReportPage() {
                               {trackingStatusData.map(d => (
                                 <div key={d.name} className="flex items-center gap-2.5 text-xs">
                                   <span className="w-3 h-3 rounded-md" style={{ backgroundColor: d.fill }} />
-                                  <span className="text-slate-600 w-20">{d.name}</span>
+                                  <span className="text-text-muted w-20">{d.name}</span>
                                   <span className="font-black text-white text-sm">{d.value}</span>
                                 </div>
                               ))}
@@ -981,8 +981,8 @@ export default function ProcurementReportPage() {
                       </div>
 
                       {/* Overdue Analysis */}
-                      <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-6">
-                        <h5 className="text-sm font-black text-slate-800 flex items-center gap-2">
+                      <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-6 space-y-6">
+                        <h5 className="text-sm font-black text-text-primary flex items-center gap-2">
                           <AlertTriangle className="w-4 h-4 text-rose-400" /> Overdue Analysis
                         </h5>
                         <div className="grid grid-cols-2 gap-4">
@@ -1021,21 +1021,21 @@ export default function ProcurementReportPage() {
                     {/* â˜… PANEL A: ETA & LATE DOCUMENT ACTIONS */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                       {/* Approaching ETA Card */}
-                      <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-6 flex flex-col justify-between space-y-4">
+                      <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-6 flex flex-col justify-between space-y-4">
                         <div>
                           <div className="flex items-center justify-between">
-                            <h6 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Menghampiri Tarikh ETA (7 Hari)</h6>
+                            <h6 className="text-xs font-bold text-text-muted uppercase tracking-wider">Menghampiri Tarikh ETA (7 Hari)</h6>
                             <span className="p-2 rounded-xl bg-blue-500/10 text-blue-500"><Clock className="w-4 h-4" /></span>
                           </div>
-                          <p className="text-3xl font-black text-slate-800 mt-2">
+                          <p className="text-3xl font-black text-text-primary mt-2">
                             {reportData.orderTracking.etaSummary.approachingETA}
                           </p>
-                          <p className="text-xs text-slate-500 mt-1">Pesanan belian yang dijangka tiba dalam tempoh terdekat.</p>
+                          <p className="text-xs text-text-muted mt-1">Pesanan belian yang dijangka tiba dalam tempoh terdekat.</p>
                         </div>
                         <button
                           onClick={handleDownloadETA}
                           disabled={isDownloadingETA || reportData.orderTracking.etaSummary.approachingETA === 0}
-                          className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:bg-slate-250 disabled:text-slate-400 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm"
+                          className="w-full py-2.5 px-4 rounded-xl bg-blue-600 hover:bg-blue-700 disabled:bg-slate-250 disabled:text-slate-400 text-white text-xs font-bold transition-colors flex items-center justify-center gap-2 shadow-sm"
                         >
                           {isDownloadingETA ? (
                             <Spinner className="w-3.5 h-3.5 animate-spin" />
@@ -1047,21 +1047,21 @@ export default function ProcurementReportPage() {
                       </div>
 
                       {/* Overdue/Late LPO Card */}
-                      <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-6 flex flex-col justify-between space-y-4">
+                      <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-6 flex flex-col justify-between space-y-4">
                         <div>
                           <div className="flex items-center justify-between">
-                            <h6 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Melebihi Tarikh ETA (Lewat / Late)</h6>
+                            <h6 className="text-xs font-bold text-text-muted uppercase tracking-wider">Melebihi Tarikh ETA (Lewat / Late)</h6>
                             <span className="p-2 rounded-xl bg-rose-500/10 text-rose-500"><AlertTriangle className="w-4 h-4" /></span>
                           </div>
                           <p className="text-3xl font-black text-rose-600 mt-2">
                             {reportData.orderTracking.etaSummary.pastETA}
                           </p>
-                          <p className="text-xs text-slate-500 mt-1">Pesanan belian aktif yang telah melepasi tarikh jangkaan serahan.</p>
+                          <p className="text-xs text-text-muted mt-1">Pesanan belian aktif yang telah melepasi tarikh jangkaan serahan.</p>
                         </div>
                         <button
                           onClick={handleDownloadLate}
                           disabled={isDownloadingLate || reportData.orderTracking.etaSummary.pastETA === 0}
-                          className="w-full py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 disabled:bg-slate-250 disabled:text-slate-400 text-white text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-sm"
+                          className="w-full py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 disabled:bg-slate-250 disabled:text-slate-400 text-white text-xs font-bold transition-colors flex items-center justify-center gap-2 shadow-sm"
                         >
                           {isDownloadingLate ? (
                             <Spinner className="w-3.5 h-3.5 animate-spin" />
@@ -1073,30 +1073,30 @@ export default function ProcurementReportPage() {
                       </div>
 
                       {/* No ETA Set Card */}
-                      <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-6 flex flex-col justify-between space-y-4">
+                      <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-6 flex flex-col justify-between space-y-4">
                         <div>
                           <div className="flex items-center justify-between">
-                            <h6 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Tiada Tarikh Jangkaan (No ETA)</h6>
+                            <h6 className="text-xs font-bold text-text-muted uppercase tracking-wider">Tiada Tarikh Jangkaan (No ETA)</h6>
                             <span className="p-2 rounded-xl bg-amber-500/10 text-amber-500"><FileWarning className="w-4 h-4" /></span>
                           </div>
-                          <p className="text-3xl font-black text-slate-800 mt-2">
+                          <p className="text-3xl font-black text-text-primary mt-2">
                             {reportData.orderTracking.etaSummary.noETA}
                           </p>
-                          <p className="text-xs text-slate-500 mt-1">LPO yang diluluskan tetapi belum dikemas kini tarikh jangkaan tiba.</p>
+                          <p className="text-xs text-text-muted mt-1">LPO yang diluluskan tetapi belum dikemas kini tarikh jangkaan tiba.</p>
                         </div>
-                        <div className="py-2.5 text-center bg-slate-100 rounded-xl text-slate-500 text-xs font-black">
+                        <div className="py-2.5 text-center bg-subtle rounded-xl text-text-muted text-xs font-black">
                           Sila Kemas Kini Tarikh Jangkaan di Menu Tracking
                         </div>
                       </div>
                     </div>
 
                     {/* â˜… PANEL B: SUPPLIER LPO DELIVERY BREAKDOWN CHART */}
-                    <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-6">
-                      <h5 className="text-sm font-black text-slate-800 mb-5 flex items-center gap-2">
+                    <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-6">
+                      <h5 className="text-sm font-black text-text-primary mb-5 flex items-center gap-2">
                         <BarChart3 className="w-4 h-4 text-indigo-400" /> Analisis Prestasi Penghantaran LPO Mengikut Pembekal (Top 8)
                       </h5>
                       {supplierChartData.length === 0 ? (
-                        <p className="text-xs text-slate-500 text-center py-12">Tiada data pembekal direkodkan</p>
+                        <p className="text-xs text-text-muted text-center py-12">Tiada data pembekal direkodkan</p>
                       ) : (
                         <div className="h-[280px] w-full">
                           <ResponsiveContainer>
@@ -1117,27 +1117,27 @@ export default function ProcurementReportPage() {
                     </div>
 
                     {/* â˜… PANEL C: SUPPLIER BREAKDOWN TABLE WITH EXPANDABLE DRILL-DOWN */}
-                    <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-6 space-y-4">
+                    <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-6 space-y-4">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                        <h5 className="text-sm font-black text-slate-800 flex items-center gap-2">
-                          <FileText className="w-4 h-4 text-slate-500" /> Pecahan Prestasi Setiap Pembekal
+                        <h5 className="text-sm font-black text-text-primary flex items-center gap-2">
+                          <FileText className="w-4 h-4 text-text-muted" /> Pecahan Prestasi Setiap Pembekal
                         </h5>
                         <div className="relative">
                           <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
                           <input
                             type="text"
                             placeholder="Cari pembekal atau LPO..."
-                            className="pl-9 pr-4 py-2 text-xs rounded-xl bg-slate-100 border border-slate-200 text-slate-700 w-full sm:w-64 focus:outline-none focus:ring-1 focus:ring-slate-400"
+                            className="pl-9 pr-4 py-2 text-xs rounded-xl bg-subtle border border-border-default text-text-secondary w-full sm:w-64 focus:outline-none focus:ring-1 focus:ring-slate-400"
                             value={orderTrackingSearch}
                             onChange={(e) => setOrderTrackingSearch(e.target.value)}
                           />
                         </div>
                       </div>
 
-                      <div className="overflow-x-auto rounded-xl border border-slate-200">
+                      <div className="overflow-x-auto rounded-xl border border-border-default">
                         <table className="w-full text-left border-collapse">
                           <thead>
-                            <tr className="bg-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-wider border-b border-slate-200">
+                            <tr className="bg-subtle text-text-muted text-[10px] font-black uppercase tracking-wider border-b border-border-default">
                               <th className="py-3 px-4">Pembekal (Supplier)</th>
                               <th className="py-3 px-2 text-center font-bold">Total LPO</th>
                               <th className="py-3 px-2 text-center text-rose-600 bg-rose-500/5 font-bold">Lewat (Late)</th>
@@ -1148,10 +1148,10 @@ export default function ProcurementReportPage() {
                               <th className="py-3 px-4 text-center font-bold">Perincian</th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-slate-200 text-xs bg-white">
+                          <tbody className="divide-y divide-border-default text-xs bg-surface">
                             {filteredSupplierBreakdown.length === 0 ? (
                               <tr>
-                                <td colSpan={8} className="py-8 text-center text-slate-500 text-xs">
+                                <td colSpan={8} className="py-8 text-center text-text-muted text-xs">
                                   Tiada rekod pembekal ditemui matching carian anda
                                 </td>
                               </tr>
@@ -1160,8 +1160,8 @@ export default function ProcurementReportPage() {
                                 const isExpanded = !!expandedSuppliers[s.supplierName]
                                 return (
                                   <React.Fragment key={s.supplierName}>
-                                    <tr className="hover:bg-slate-50/50 transition-colors">
-                                      <td className="py-3 px-4 font-bold text-slate-800">{s.supplierName}</td>
+                                    <tr className="hover:bg-subtle/50 transition-colors">
+                                      <td className="py-3 px-4 font-bold text-text-primary">{s.supplierName}</td>
                                       <td className="py-3 px-2 text-center font-bold">{s.totalLPOs}</td>
                                       <td className="py-3 px-2 text-center font-black text-rose-600 bg-rose-500/5">{s.lateLPOs}</td>
                                       <td className="py-3 px-2 text-center font-bold text-emerald-600 bg-emerald-500/5">{s.fullyArrivedLPOs}</td>
@@ -1170,8 +1170,8 @@ export default function ProcurementReportPage() {
                                       <td className="py-3 px-2 text-center">
                                         <span className={cn(
                                           "px-2 py-0.5 rounded-full font-black text-[10px]",
-                                          s.onTimeRate >= 80 ? "bg-emerald-100 text-emerald-800" :
-                                          s.onTimeRate >= 50 ? "bg-amber-100 text-amber-800" : "bg-rose-100 text-rose-800"
+                                          s.onTimeRate >= 80 ? "bg-emerald-100 text-emerald-400" :
+                                          s.onTimeRate >= 50 ? "bg-amber-100 text-amber-400" : "bg-rose-100 text-rose-400"
                                         )}>
                                           {s.onTimeRate.toFixed(1)}%
                                         </span>
@@ -1179,7 +1179,7 @@ export default function ProcurementReportPage() {
                                       <td className="py-3 px-4 text-center">
                                         <button
                                           onClick={() => toggleSupplierExpanded(s.supplierName)}
-                                          className="p-1 rounded-lg hover:bg-slate-100 text-slate-500 transition-all flex items-center justify-center mx-auto"
+                                          className="p-1 rounded-lg hover:bg-subtle text-text-muted transition-colors flex items-center justify-center mx-auto"
                                         >
                                           {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                                         </button>
@@ -1189,17 +1189,17 @@ export default function ProcurementReportPage() {
                                     {/* EXPANDED DRILL-DOWN PANEL */}
                                     {isExpanded && (
                                       <tr>
-                                        <td colSpan={8} className="bg-slate-50/80 p-4 border-l-4 border-indigo-500">
+                                        <td colSpan={8} className="bg-subtle/50 p-4 border-l-4 border-indigo-500">
                                           <div className="space-y-3">
                                             <div className="flex justify-between items-center">
-                                              <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest block">Senarai Terperinci LPO â€” {s.supplierName}</span>
-                                              <span className="text-xs text-slate-600">Purata Kelewatan: <strong className="text-rose-600">{s.avgDaysOverdue.toFixed(1)} hari</strong></span>
+                                              <span className="text-[10px] font-black text-text-muted uppercase tracking-widest block">Senarai Terperinci LPO â€” {s.supplierName}</span>
+                                              <span className="text-xs text-text-muted">Purata Kelewatan: <strong className="text-rose-600">{s.avgDaysOverdue.toFixed(1)} hari</strong></span>
                                             </div>
                                             
-                                            <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+                                            <div className="overflow-x-auto rounded-lg border border-border-default bg-surface">
                                               <table className="w-full text-left text-xs border-collapse">
                                                 <thead>
-                                                  <tr className="bg-slate-50 text-slate-600 text-[9px] font-black uppercase tracking-wider border-b border-slate-200">
+                                                  <tr className="bg-subtle/50 text-text-muted text-[9px] font-black uppercase tracking-wider border-b border-border-default">
                                                     <th className="py-2 px-3">LPO Number</th>
                                                     <th className="py-2 px-3">PO Number</th>
                                                     <th className="py-2 px-3">Tarikh Jangkaan (ETA)</th>
@@ -1208,19 +1208,19 @@ export default function ProcurementReportPage() {
                                                     <th className="py-2 px-3 text-center">Surat Peringatan</th>
                                                   </tr>
                                                 </thead>
-                                                <tbody className="divide-y divide-slate-200">
+                                                <tbody className="divide-y divide-border-default">
                                                   {s.lpoDetails.map((detail) => (
-                                                    <tr key={detail.lpoNumber} className="hover:bg-slate-50/50">
-                                                      <td className="py-2 px-3 font-semibold text-slate-800">{detail.lpoNumber}</td>
-                                                      <td className="py-2 px-3 text-slate-600">{detail.poNumber}</td>
-                                                      <td className="py-2 px-3 text-slate-600">{detail.expectedDeliveryDate || 'â€”'}</td>
+                                                    <tr key={detail.lpoNumber} className="hover:bg-subtle/50">
+                                                      <td className="py-2 px-3 font-semibold text-text-primary">{detail.lpoNumber}</td>
+                                                      <td className="py-2 px-3 text-text-muted">{detail.poNumber}</td>
+                                                      <td className="py-2 px-3 text-text-muted">{detail.expectedDeliveryDate || 'â€”'}</td>
                                                       <td className="py-2 px-3 text-center">
                                                         <span className={cn(
                                                           "px-2 py-0.5 rounded-full font-black text-[9px]",
-                                                          detail.status === 'fully_delivered' ? "bg-emerald-100 text-emerald-800" :
+                                                          detail.status === 'fully_delivered' ? "bg-emerald-100 text-emerald-400" :
                                                           detail.status === 'partially_delivered' ? "bg-violet-100 text-violet-800" :
-                                                          detail.status === 'overdue' ? "bg-rose-100 text-rose-800" :
-                                                          detail.status === 'cancelled' ? "bg-slate-100 text-slate-800" : "bg-blue-100 text-blue-800"
+                                                          detail.status === 'overdue' ? "bg-rose-100 text-rose-400" :
+                                                          detail.status === 'cancelled' ? "bg-subtle text-text-primary" : "bg-blue-100 text-blue-400"
                                                         )}>
                                                           {detail.status === 'fully_delivered' ? 'Fully Delivered' :
                                                            detail.status === 'partially_delivered' ? 'Partially Delivered' :
@@ -1228,12 +1228,12 @@ export default function ProcurementReportPage() {
                                                            detail.status === 'cancelled' ? 'Cancelled' : 'Pending'}
                                                         </span>
                                                       </td>
-                                                      <td className="py-2 px-3 text-center font-bold text-slate-700">
+                                                      <td className="py-2 px-3 text-center font-bold text-text-secondary">
                                                         {detail.deliveredItems} / {detail.totalItems}
                                                       </td>
                                                       <td className="py-2 px-3 text-center">
                                                         {detail.reminderCount > 0 ? (
-                                                          <span className="font-bold text-rose-650 bg-rose-50 px-1.5 py-0.5 rounded">
+                                                          <span className="font-bold text-rose-650 bg-rose-500/10 px-1.5 py-0.5 rounded">
                                                             {detail.reminderCount} kali dihantar
                                                           </span>
                                                         ) : (
@@ -1272,8 +1272,8 @@ export default function ProcurementReportPage() {
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       {/* Accept/Reject donut */}
-                      <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-6">
-                        <h5 className="text-sm font-black text-slate-800 mb-5 flex items-center gap-2">
+                      <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-6">
+                        <h5 className="text-sm font-black text-text-primary mb-5 flex items-center gap-2">
                           <Shield className="w-4 h-4 text-emerald-400" /> Acceptance Rate
                         </h5>
                         <div className="flex items-center justify-center gap-6">
@@ -1285,11 +1285,11 @@ export default function ProcurementReportPage() {
                           />
                           <div className="space-y-4">
                             <div>
-                              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">Accepted</span>
+                              <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest block">Accepted</span>
                               <span className="text-xl font-black text-emerald-400">{reportData.receivedItems.stats.acceptedItems.toLocaleString()}</span>
                             </div>
                             <div>
-                              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">Rejected</span>
+                              <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest block">Rejected</span>
                               <span className="text-xl font-black text-rose-400">{reportData.receivedItems.stats.rejectedItems.toLocaleString()}</span>
                             </div>
                           </div>
@@ -1297,13 +1297,13 @@ export default function ProcurementReportPage() {
                       </div>
 
                       {/* Monthly GR trend */}
-                      <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-6">
-                        <h5 className="text-sm font-black text-slate-800 mb-5 flex items-center gap-2">
+                      <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-6">
+                        <h5 className="text-sm font-black text-text-primary mb-5 flex items-center gap-2">
                           <Activity className="w-4 h-4 text-blue-400" /> Monthly Goods Receipts
                         </h5>
                         <div className="h-[220px]">
                           {receivedMonthlyData.length === 0 ? (
-                            <p className="text-xs text-slate-500 text-center py-16">No monthly data available</p>
+                            <p className="text-xs text-text-muted text-center py-16">No monthly data available</p>
                           ) : (
                             <ResponsiveContainer>
                               <BarChart data={receivedMonthlyData} barCategoryGap="25%">
@@ -1338,12 +1338,12 @@ export default function ProcurementReportPage() {
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       {/* Payment Status */}
-                      <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-6">
-                        <h5 className="text-sm font-black text-slate-800 mb-5 flex items-center gap-2">
+                      <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-6">
+                        <h5 className="text-sm font-black text-text-primary mb-5 flex items-center gap-2">
                           <PieChartIcon className="w-4 h-4 text-teal-400" /> Payment Status
                         </h5>
                         {paymentStatusData.length === 0 ? (
-                          <p className="text-xs text-slate-500 text-center py-12">No data</p>
+                          <p className="text-xs text-text-muted text-center py-12">No data</p>
                         ) : (
                           <div className="flex items-center justify-center gap-6">
                             <MiniDonut data={paymentStatusData} size={170} colors={['#10b981', '#f59e0b', '#6366f1', '#ef4444']} />
@@ -1351,8 +1351,8 @@ export default function ProcurementReportPage() {
                               {paymentStatusData.map((d, i) => (
                                 <div key={d.name} className="flex items-center gap-2 text-xs">
                                   <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: ['#10b981', '#f59e0b', '#6366f1', '#ef4444'][i % 4] }} />
-                                  <span className="text-slate-600 capitalize truncate">{d.name}</span>
-                                  <span className="font-black text-slate-800 ml-auto">{d.value}</span>
+                                  <span className="text-text-muted capitalize truncate">{d.name}</span>
+                                  <span className="font-black text-text-primary ml-auto">{d.value}</span>
                                 </div>
                               ))}
                             </div>
@@ -1361,12 +1361,12 @@ export default function ProcurementReportPage() {
                       </div>
 
                       {/* Vote Code Breakdown */}
-                      <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-6">
-                        <h5 className="text-sm font-black text-slate-800 mb-5 flex items-center gap-2">
+                      <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-6">
+                        <h5 className="text-sm font-black text-text-primary mb-5 flex items-center gap-2">
                           <BarChart3 className="w-4 h-4 text-indigo-400" /> Vote Code Breakdown
                         </h5>
                         {Object.entries(reportData.payment.voteCodeBreakdown || {}).length === 0 ? (
-                          <p className="text-xs text-slate-500 text-center py-12">No data</p>
+                          <p className="text-xs text-text-muted text-center py-12">No data</p>
                         ) : (
                           <div className="space-y-3">
                             {Object.entries(reportData.payment.voteCodeBreakdown).map(([vote, count], i) => (
@@ -1378,8 +1378,8 @@ export default function ProcurementReportPage() {
                     </div>
 
                     {/* Paid vs Outstanding visual */}
-                    <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-6">
-                      <h5 className="text-sm font-black text-slate-800 mb-5 flex items-center gap-2">
+                    <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-6">
+                      <h5 className="text-sm font-black text-text-primary mb-5 flex items-center gap-2">
                         <TrendingUp className="w-4 h-4 text-emerald-400" /> Paid vs Outstanding
                       </h5>
                       <div className="h-[200px]">
@@ -1414,12 +1414,12 @@ export default function ProcurementReportPage() {
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       {/* Reason donut */}
-                      <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-6">
-                        <h5 className="text-sm font-black text-slate-800 mb-5 flex items-center gap-2">
+                      <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-6">
+                        <h5 className="text-sm font-black text-text-primary mb-5 flex items-center gap-2">
                           <PieChartIcon className="w-4 h-4 text-amber-400" /> Reason Distribution
                         </h5>
                         {creditNoteReasonData.length === 0 ? (
-                          <p className="text-xs text-slate-500 text-center py-12">No data</p>
+                          <p className="text-xs text-text-muted text-center py-12">No data</p>
                         ) : (
                           <div className="flex items-center justify-center gap-6">
                             <MiniDonut data={creditNoteReasonData} size={180} />
@@ -1428,7 +1428,7 @@ export default function ProcurementReportPage() {
                                 <div key={d.name} className="flex items-center gap-2 text-xs">
                                   <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
                                   <span className="text-slate-655 capitalize truncate">{d.name}</span>
-                                  <span className="font-black text-slate-800 ml-auto">{d.value}</span>
+                                  <span className="font-black text-text-primary ml-auto">{d.value}</span>
                                 </div>
                               ))}
                             </div>
@@ -1437,12 +1437,12 @@ export default function ProcurementReportPage() {
                       </div>
 
                       {/* Reason horizontal bars */}
-                      <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-6">
-                        <h5 className="text-sm font-black text-slate-800 mb-5 flex items-center gap-2">
+                      <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-6">
+                        <h5 className="text-sm font-black text-text-primary mb-5 flex items-center gap-2">
                           <BarChart3 className="w-4 h-4 text-rose-400" /> Reason Breakdown
                         </h5>
                         {creditNoteReasonData.length === 0 ? (
-                          <p className="text-xs text-slate-500 text-center py-12">No data</p>
+                          <p className="text-xs text-text-muted text-center py-12">No data</p>
                         ) : (
                           <div className="space-y-4">
                             {creditNoteReasonData.map((d, i) => (
@@ -1547,7 +1547,7 @@ export default function ProcurementReportPage() {
                         <SectionHeader title="Penalty Intelligence Hub" subtitle="Advanced dual-type penalty auditing, trends & supplier compliance advisor" icon={ShieldAlert} />
                         <div className="flex items-center gap-2">
                           <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Auditing Period:</span>
-                          <span className="px-3 py-1 bg-rose-50 border border-rose-100 rounded-full text-rose-700 text-xs font-black">
+                          <span className="px-3 py-1 bg-rose-500/10 border border-rose-100 rounded-full text-rose-700 text-xs font-black">
                             {new Date(dateFrom).toLocaleDateString('en-MY', { day: '2-digit', month: 'short' })} - {new Date(dateTo).toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric' })}
                           </span>
                         </div>
@@ -1573,22 +1573,22 @@ export default function ProcurementReportPage() {
                           className={cn(
                             "rounded-3xl border p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden backdrop-blur-md",
                             hasSignificantPenalties 
-                              ? "bg-rose-50/40 border-rose-200/60 shadow-sm"
-                              : "bg-slate-50/40 border-slate-200/60 shadow-sm"
+                              ? "bg-rose-500/10 border-rose-500/20 shadow-sm"
+                              : "bg-subtle/50 border-border-default shadow-sm"
                           )}
                         >
                           <div className="flex items-center gap-4">
                             <div className={cn(
                               "p-3 rounded-2xl shrink-0",
-                              hasSignificantPenalties ? "bg-rose-100/80 text-rose-600" : "bg-slate-100/80 text-slate-600"
+                              hasSignificantPenalties ? "bg-rose-100/80 text-rose-600" : "bg-subtle text-text-muted"
                             )}>
                               <ShieldAlert className="w-6 h-6" />
                             </div>
                             <div>
-                              <h4 className="text-sm font-black text-slate-800">
-                                Supplier Compliance Alert â€” <span className={hasSignificantPenalties ? "text-rose-600" : "text-slate-700"}>{topOffender.name}</span>
+                              <h4 className="text-sm font-black text-text-primary">
+                                Supplier Compliance Alert â€” <span className={hasSignificantPenalties ? "text-rose-600" : "text-text-secondary"}>{topOffender.name}</span>
                               </h4>
-                              <p className="text-[11px] font-semibold text-slate-500 mt-1 max-w-2xl leading-relaxed">
+                              <p className="text-[11px] font-semibold text-text-muted mt-1 max-w-2xl leading-relaxed">
                                 {hasSignificantPenalties 
                                   ? `Critical: ${topOffender.name} has accumulated ${topOffender.count} breaches totaling ${formatCurrency(topOffender.value)}. Contractual performance review is highly advised to mitigate ongoing operational delay risks.`
                                   : `${topOffender.name} is the leading penalized entity with ${topOffender.count} incidents totaling ${formatCurrency(topOffender.value)}. Compliance is currently within tolerable threshold limits.`
@@ -1608,10 +1608,10 @@ export default function ProcurementReportPage() {
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                         {/* â”€â”€ Card 1: Fine Value by Penalty Type â”€â”€ */}
-                        <div className="bg-white rounded-3xl border border-slate-200/60 shadow-sm p-6 relative overflow-hidden group hover:shadow-lg hover:shadow-rose-500/5 transition-all duration-300">
+                        <div className="bg-surface rounded-3xl border border-border-default shadow-sm p-6 relative overflow-hidden group hover:shadow-lg hover:shadow-rose-500/5 transition-colors duration-150">
                           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-rose-500/[0.03] to-transparent rounded-full pointer-events-none" />
-                          <h5 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.15em] mb-6 flex items-center gap-2.5">
-                            <span className="p-1.5 bg-rose-50 rounded-lg border border-rose-100"><BarChart3 className="w-3.5 h-3.5 text-rose-500" /></span>
+                          <h5 className="text-[11px] font-black text-text-muted uppercase tracking-[0.15em] mb-6 flex items-center gap-2.5">
+                            <span className="p-1.5 bg-rose-500/10 rounded-lg border border-rose-100"><BarChart3 className="w-3.5 h-3.5 text-rose-500" /></span>
                             Fine Value By Penalty Type
                           </h5>
                           <div className="h-[240px]">
@@ -1641,27 +1641,27 @@ export default function ProcurementReportPage() {
                               </BarChart>
                             </ResponsiveContainer>
                           </div>
-                          <div className="flex items-center gap-5 mt-4 pt-4 border-t border-slate-100">
+                          <div className="flex items-center gap-5 mt-4 pt-4 border-t border-border-subtle">
                             <div className="flex items-center gap-2 text-[10px] font-bold">
                               <span className="w-3 h-1.5 rounded-full bg-gradient-to-r from-rose-400 to-rose-600" />
-                              <span className="text-slate-500">APPL â€” RM {(reportData.penalties.stats.applValue || 0).toLocaleString('en-MY', { minimumFractionDigits: 2 })}</span>
+                              <span className="text-text-muted">APPL â€” RM {(reportData.penalties.stats.applValue || 0).toLocaleString('en-MY', { minimumFractionDigits: 2 })}</span>
                             </div>
                             <div className="flex items-center gap-2 text-[10px] font-bold">
                               <span className="w-3 h-1.5 rounded-full bg-gradient-to-r from-amber-400 to-amber-600" />
-                              <span className="text-slate-500">CC â€” RM {(reportData.penalties.stats.ccValue || 0).toLocaleString('en-MY', { minimumFractionDigits: 2 })}</span>
+                              <span className="text-text-muted">CC â€” RM {(reportData.penalties.stats.ccValue || 0).toLocaleString('en-MY', { minimumFractionDigits: 2 })}</span>
                             </div>
                           </div>
                         </div>
 
                         {/* â”€â”€ Card 2: Top Penalized Suppliers â”€â”€ */}
-                        <div className="bg-white rounded-3xl border border-slate-200/60 shadow-sm p-6 relative overflow-hidden group hover:shadow-lg hover:shadow-amber-500/5 transition-all duration-300">
+                        <div className="bg-surface rounded-3xl border border-border-default shadow-sm p-6 relative overflow-hidden group hover:shadow-lg hover:shadow-amber-500/5 transition-colors duration-150">
                           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-amber-500/[0.03] to-transparent rounded-full pointer-events-none" />
-                          <h5 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.15em] mb-6 flex items-center gap-2.5">
-                            <span className="p-1.5 bg-amber-50 rounded-lg border border-amber-100"><TrendingDown className="w-3.5 h-3.5 text-amber-500" /></span>
+                          <h5 className="text-[11px] font-black text-text-muted uppercase tracking-[0.15em] mb-6 flex items-center gap-2.5">
+                            <span className="p-1.5 bg-amber-500/10 rounded-lg border border-amber-100"><TrendingDown className="w-3.5 h-3.5 text-amber-500" /></span>
                             Top Penalized Suppliers
                           </h5>
                           {topSuppliersData.length === 0 ? (
-                            <div className="h-[240px] flex items-center justify-center text-xs text-slate-400 font-bold uppercase tracking-wider">No breaches recorded</div>
+                            <div className="h-[240px] flex items-center justify-center text-xs text-text-secondary font-bold font-bold uppercase tracking-wider">No breaches recorded</div>
                           ) : (
                             <div className="h-[240px]">
                               <ResponsiveContainer>
@@ -1682,19 +1682,19 @@ export default function ProcurementReportPage() {
                             </div>
                           )}
                           {topSuppliersData.length > 0 && (
-                            <div className="mt-4 pt-4 border-t border-slate-100">
+                            <div className="mt-4 pt-4 border-t border-border-subtle">
                               <p className="text-[10px] font-bold text-slate-400">
-                                Highest offender: <span className="text-slate-700 font-extrabold">{topSuppliersData[0]?.name}</span> â€” {topSuppliersData[0]?.count} breaches totaling <span className="text-rose-600 font-extrabold">RM {(topSuppliersData[0]?.value || 0).toLocaleString('en-MY', { minimumFractionDigits: 2 })}</span>
+                                Highest offender: <span className="text-text-secondary font-extrabold">{topSuppliersData[0]?.name}</span> â€” {topSuppliersData[0]?.count} breaches totaling <span className="text-rose-600 font-extrabold">RM {(topSuppliersData[0]?.value || 0).toLocaleString('en-MY', { minimumFractionDigits: 2 })}</span>
                               </p>
                             </div>
                           )}
                         </div>
 
                         {/* â”€â”€ Card 3: Payment Collection Status â”€â”€ */}
-                        <div className="bg-white rounded-3xl border border-slate-200/60 shadow-sm p-6 relative overflow-hidden group hover:shadow-lg hover:shadow-emerald-500/5 transition-all duration-300">
+                        <div className="bg-surface rounded-3xl border border-border-default shadow-sm p-6 relative overflow-hidden group hover:shadow-lg hover:shadow-emerald-500/5 transition-colors duration-150">
                           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-500/[0.03] to-transparent rounded-full pointer-events-none" />
-                          <h5 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.15em] mb-6 flex items-center gap-2.5">
-                            <span className="p-1.5 bg-emerald-50 rounded-lg border border-emerald-100"><PieChartIcon className="w-3.5 h-3.5 text-emerald-500" /></span>
+                          <h5 className="text-[11px] font-black text-text-muted uppercase tracking-[0.15em] mb-6 flex items-center gap-2.5">
+                            <span className="p-1.5 bg-emerald-500/10 rounded-lg border border-emerald-100"><PieChartIcon className="w-3.5 h-3.5 text-emerald-500" /></span>
                             Payment Collection Status
                           </h5>
                           <div className="flex items-center justify-center gap-8 h-[200px]">
@@ -1707,21 +1707,21 @@ export default function ProcurementReportPage() {
                               colors={['#10b981', '#ef4444']} 
                             />
                             <div className="space-y-4 flex-1 min-w-0">
-                              <div className="p-3.5 bg-emerald-50/60 rounded-xl border border-emerald-100/60">
+                              <div className="p-3.5 bg-emerald-500/10 rounded-xl border border-emerald-100/60">
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-2.5">
                                     <span className="w-3 h-3 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/30" />
-                                    <span className="text-xs font-bold text-slate-700">Telah Dibayar (Paid)</span>
+                                    <span className="text-xs font-bold text-text-secondary">Telah Dibayar (Paid)</span>
                                   </div>
                                   <span className="text-sm font-black text-emerald-700">{paidCount}</span>
                                 </div>
                                 <p className="text-[10px] font-semibold text-emerald-600/70 mt-1 pl-5.5">RM {paidValue.toLocaleString('en-MY', { minimumFractionDigits: 2 })}</p>
                               </div>
-                              <div className="p-3.5 bg-rose-50/60 rounded-xl border border-rose-100/60">
+                              <div className="p-3.5 bg-rose-500/10 rounded-xl border border-rose-100/60">
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-2.5">
                                     <span className="w-3 h-3 rounded-full bg-red-500 shadow-sm shadow-red-500/30" />
-                                    <span className="text-xs font-bold text-slate-700">Belum Lunas (Unpaid)</span>
+                                    <span className="text-xs font-bold text-text-secondary">Belum Lunas (Unpaid)</span>
                                   </div>
                                   <span className="text-sm font-black text-rose-700">{unpaidCount}</span>
                                 </div>
@@ -1729,22 +1729,22 @@ export default function ProcurementReportPage() {
                               </div>
                             </div>
                           </div>
-                          <div className="mt-4 pt-4 border-t border-slate-100">
+                          <div className="mt-4 pt-4 border-t border-border-subtle">
                             <div className="flex items-center justify-between text-[10px] font-bold text-slate-400">
                               <span>Collection Rate</span>
-                              <span className="text-slate-700 font-extrabold">{totalCount > 0 ? ((paidCount / totalCount) * 100).toFixed(1) : '0.0'}%</span>
+                              <span className="text-text-secondary font-extrabold">{totalCount > 0 ? ((paidCount / totalCount) * 100).toFixed(1) : '0.0'}%</span>
                             </div>
-                            <div className="mt-2 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                              <div className="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full transition-all duration-700" style={{ width: `${totalCount > 0 ? (paidCount / totalCount) * 100 : 0}%` }} />
+                            <div className="mt-2 h-1.5 bg-subtle rounded-full overflow-hidden">
+                              <div className="h-full bg-gradient-to-r from-emerald-400 to-emerald-500 rounded-full transition-colors duration-700" style={{ width: `${totalCount > 0 ? (paidCount / totalCount) * 100 : 0}%` }} />
                             </div>
                           </div>
                         </div>
 
                         {/* â”€â”€ Card 4: Kaedah Tuntutan Denda â”€â”€ */}
-                        <div className="bg-white rounded-3xl border border-slate-200/60 shadow-sm p-6 relative overflow-hidden group hover:shadow-lg hover:shadow-indigo-500/5 transition-all duration-300">
+                        <div className="bg-surface rounded-3xl border border-border-default shadow-sm p-6 relative overflow-hidden group hover:shadow-lg hover:shadow-indigo-500/5 transition-colors duration-150">
                           <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-500/[0.03] to-transparent rounded-full pointer-events-none" />
-                          <h5 className="text-[11px] font-black text-slate-500 uppercase tracking-[0.15em] mb-6 flex items-center gap-2.5">
-                            <span className="p-1.5 bg-indigo-50 rounded-lg border border-indigo-100"><CreditCard className="w-3.5 h-3.5 text-indigo-500" /></span>
+                          <h5 className="text-[11px] font-black text-text-muted uppercase tracking-[0.15em] mb-6 flex items-center gap-2.5">
+                            <span className="p-1.5 bg-indigo-500/10 rounded-lg border border-indigo-100"><CreditCard className="w-3.5 h-3.5 text-indigo-500" /></span>
                             Kaedah Tuntutan Denda
                           </h5>
                           <div className="flex items-center justify-center gap-8 h-[200px]">
@@ -1757,11 +1757,11 @@ export default function ProcurementReportPage() {
                               colors={['#6366f1', '#a78bfa']} 
                             />
                             <div className="space-y-4 flex-1 min-w-0">
-                              <div className="p-3.5 bg-indigo-50/60 rounded-xl border border-indigo-100/60">
+                              <div className="p-3.5 bg-indigo-500/10 rounded-xl border border-indigo-100/60">
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-2.5">
                                     <span className="w-3 h-3 rounded-full bg-indigo-500 shadow-sm shadow-indigo-500/30" />
-                                    <span className="text-xs font-bold text-slate-700">Kaedah 1 â€” Potongan Baucer</span>
+                                    <span className="text-xs font-bold text-text-secondary">Kaedah 1 â€” Potongan Baucer</span>
                                   </div>
                                   <span className="text-sm font-black text-indigo-700">{methodVoucherCount} Kes</span>
                                 </div>
@@ -1771,7 +1771,7 @@ export default function ProcurementReportPage() {
                                 <div className="flex items-center justify-between">
                                   <div className="flex items-center gap-2.5">
                                     <span className="w-3 h-3 rounded-full bg-violet-400 shadow-sm shadow-violet-400/30" />
-                                    <span className="text-xs font-bold text-slate-700">Kaedah 2 â€” Bayaran Cek</span>
+                                    <span className="text-xs font-bold text-text-secondary">Kaedah 2 â€” Bayaran Cek</span>
                                   </div>
                                   <span className="text-sm font-black text-violet-700">{methodChequeCount} Kes</span>
                                 </div>
@@ -1779,10 +1779,10 @@ export default function ProcurementReportPage() {
                               </div>
                             </div>
                           </div>
-                          <div className="mt-4 pt-4 border-t border-slate-100">
+                          <div className="mt-4 pt-4 border-t border-border-subtle">
                             <div className="flex items-center justify-between text-[10px] font-bold text-slate-400">
                               <span>Total Tuntutan Direkodkan</span>
-                              <span className="text-slate-700 font-extrabold">{methodVoucherCount + methodChequeCount} Kes</span>
+                              <span className="text-text-secondary font-extrabold">{methodVoucherCount + methodChequeCount} Kes</span>
                             </div>
                           </div>
                         </div>
@@ -1804,12 +1804,12 @@ export default function ProcurementReportPage() {
                     </div>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                       {/* LOU Status Donut */}
-                      <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-6">
-                        <h5 className="text-sm font-black text-slate-800 mb-5 flex items-center gap-2">
+                      <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-6">
+                        <h5 className="text-sm font-black text-text-primary mb-5 flex items-center gap-2">
                           <PieChartIcon className="w-4 h-4 text-purple-400" /> Status Distribution
                         </h5>
                         {louStatusPieData.length === 0 ? (
-                          <p className="text-xs text-slate-500 text-center py-12">No data</p>
+                          <p className="text-xs text-text-muted text-center py-12">No data</p>
                         ) : (
                           <div className="flex items-center justify-center gap-6">
                             <MiniDonut data={louStatusPieData} size={180} colors={['#10b981', '#8b5cf6', '#ef4444', '#f59e0b']} />
@@ -1817,8 +1817,8 @@ export default function ProcurementReportPage() {
                               {louStatusPieData.map((d, i) => (
                                 <div key={d.name} className="flex items-center gap-2 text-xs">
                                   <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: ['#10b981', '#8b5cf6', '#ef4444', '#f59e0b'][i % 4] }} />
-                                  <span className="text-slate-600 capitalize truncate">{d.name}</span>
-                                  <span className="font-black text-slate-800 ml-auto">{d.value}</span>
+                                  <span className="text-text-muted capitalize truncate">{d.name}</span>
+                                  <span className="font-black text-text-primary ml-auto">{d.value}</span>
                                 </div>
                               ))}
                             </div>
@@ -1827,8 +1827,8 @@ export default function ProcurementReportPage() {
                       </div>
 
                       {/* Active vs Expired */}
-                      <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-6">
-                        <h5 className="text-sm font-black text-slate-800 mb-5 flex items-center gap-2">
+                      <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-6">
+                        <h5 className="text-sm font-black text-text-primary mb-5 flex items-center gap-2">
                           <BarChart3 className="w-4 h-4 text-indigo-400" /> Active vs Expired
                         </h5>
                         <div className="h-[220px]">
@@ -1866,7 +1866,7 @@ export default function ProcurementReportPage() {
                     </div>
 
                     {/* Sleek Search & Limit Scale Filters Toolbar */}
-                    <div className="bg-slate-50/60 rounded-2xl border border-slate-200/60 shadow-sm p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
                       <div className="relative w-full sm:w-80">
                         <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none">
                           <Eye className="w-4 h-4 text-slate-400" />
@@ -1876,13 +1876,13 @@ export default function ProcurementReportPage() {
                           placeholder="Search evaluated suppliers..."
                           value={supplierSearch}
                           onChange={(e) => setSupplierSearch(e.target.value)}
-                          className="w-full text-xs font-semibold pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-all text-slate-800 placeholder-slate-400 shadow-sm"
+                          className="w-full text-xs font-semibold pl-10 pr-4 py-2.5 bg-surface border border-border-default rounded-xl focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-colors text-text-primary placeholder-slate-400 shadow-sm"
                         />
                       </div>
                       
                       <div className="flex items-center gap-3 shrink-0">
-                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">Display Limit:</span>
-                        <div className="flex bg-slate-200/50 rounded-xl p-0.5 border border-slate-200/40 shadow-inner">
+                        <span className="text-[10px] font-black text-text-muted uppercase tracking-widest">Display Limit:</span>
+                        <div className="flex bg-slate-200/50 rounded-xl p-0.5 border border-border-default shadow-inner">
                           {['5', '10', '25', 'All'].map((val) => {
                             const num = val === 'All' ? 0 : parseInt(val)
                             const active = supplierLimit === num
@@ -1891,8 +1891,8 @@ export default function ProcurementReportPage() {
                                 key={val}
                                 onClick={() => setSupplierLimit(num)}
                                 className={cn(
-                                  "text-[10px] font-black px-3 py-1.5 rounded-lg transition-all uppercase tracking-wider",
-                                  active ? "bg-white text-indigo-600 shadow-sm" : "text-slate-500 hover:text-slate-800"
+                                  "text-[10px] font-black px-3 py-1.5 rounded-lg transition-colors uppercase tracking-wider",
+                                  active ? "bg-surface text-indigo-600 shadow-sm" : "text-text-muted hover:text-text-primary"
                                 )}
                               >
                                 {val}
@@ -1906,8 +1906,8 @@ export default function ProcurementReportPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                       {/* Performance Rankings */}
-                      <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-6">
-                        <h5 className="text-sm font-black text-slate-800 mb-5 flex items-center gap-2">
+                      <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-6">
+                        <h5 className="text-sm font-black text-text-primary mb-5 flex items-center gap-2">
                           <BarChart3 className="w-4 h-4 text-purple-400" /> Performance Rankings
                         </h5>
                         <div className="h-[300px]">
@@ -1929,16 +1929,16 @@ export default function ProcurementReportPage() {
                       </div>
 
                       {/* Radar Chart */}
-                      <div className="bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-6">
+                      <div className="bg-subtle/50 rounded-2xl border border-border-default shadow-sm p-6">
                         <div className="flex justify-between items-center mb-5">
-                          <h5 className="text-sm font-black text-slate-800 flex items-center gap-2">
+                          <h5 className="text-sm font-black text-text-primary flex items-center gap-2">
                             <Activity className="w-4 h-4 text-indigo-400" /> Performance Radar
                           </h5>
                           {reportData.supplierPerformance.list?.length > 0 && (
                             <select
                               value={selectedRadarSupplier}
                               onChange={(e) => setSelectedRadarSupplier(e.target.value)}
-                              className="text-xs font-bold text-slate-700 bg-white border border-slate-200 rounded-lg px-2.5 py-1 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer shadow-sm hover:border-slate-300 transition-colors"
+                              className="text-xs font-bold text-text-secondary bg-surface border border-border-default rounded-lg px-2.5 py-1 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer shadow-sm hover:border-border-default transition-colors"
                             >
                               {reportData.supplierPerformance.list.map((sup: any) => (
                                 <option key={sup.supplierName} value={sup.supplierName}>
@@ -1964,10 +1964,10 @@ export default function ProcurementReportPage() {
                     </div>
 
                     {/* Premium Assessed Supplier Profile Grid */}
-                    <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-6 mt-6">
+                    <div className="bg-surface rounded-2xl border border-border-default shadow-sm p-6 mt-6">
                       <div className="flex justify-between items-center mb-6">
                         <div>
-                          <h5 className="text-sm font-black text-slate-800 flex items-center gap-2">
+                          <h5 className="text-sm font-black text-text-primary flex items-center gap-2">
                             <Activity className="w-4 h-4 text-indigo-500" /> Active Supplier Evaluations Registry
                           </h5>
                           <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-0.5">Real Assessed Supplier Lifecycle Metrics</p>
@@ -1975,29 +1975,29 @@ export default function ProcurementReportPage() {
                       </div>
 
                       {(!filteredSuppliers || filteredSuppliers.length === 0) ? (
-                        <div className="text-center py-16 bg-slate-50/50 rounded-2xl border border-dashed border-slate-200">
+                        <div className="text-center py-16 bg-subtle/50 rounded-2xl border border-dashed border-border-default">
                           <Star className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                          <p className="text-xs text-slate-500 font-bold uppercase tracking-widest">No Matching Suppliers Found</p>
+                          <p className="text-xs text-text-muted font-bold uppercase tracking-widest">No Matching Suppliers Found</p>
                         </div>
                       ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                           {filteredSuppliers.map((sup: any, idx: number) => {
                             const avgScore = sup.score
                             let color = '#10b981' // emerald
-                            let levelBg = 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                            let levelBg = 'bg-emerald-500/10 text-emerald-700 border-emerald-100'
                             if (avgScore === 0 || sup.level === 'Belum Dinilai') {
                               color = '#94a3b8' // slate
-                              levelBg = 'bg-slate-100 text-slate-600 border-slate-200'
+                              levelBg = 'bg-subtle text-text-muted border-border-default'
                             } else if (avgScore < 60) {
                               color = '#ef4444' // rose
-                              levelBg = 'bg-rose-50 text-rose-700 border-rose-100'
+                              levelBg = 'bg-rose-500/10 text-rose-700 border-rose-100'
                             } else if (avgScore < 80) {
                               color = '#f59e0b' // amber
-                              levelBg = 'bg-amber-50 text-amber-700 border-amber-100'
+                              levelBg = 'bg-amber-500/10 text-amber-700 border-amber-100'
                             }
 
                             return (
-                              <div key={idx} className="bg-slate-50/40 rounded-3xl border border-slate-200/60 p-6 flex flex-col justify-between hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">
+                              <div key={idx} className="bg-subtle/50 rounded-3xl border border-border-default p-6 flex flex-col justify-between hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1 transition-colors duration-150 relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-indigo-500/[0.02] to-transparent rounded-full pointer-events-none" />
                                 
                                 {/* Top Info */}
@@ -2006,7 +2006,7 @@ export default function ProcurementReportPage() {
                                     <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border mb-2", levelBg)}>
                                       {sup.level}
                                     </span>
-                                    <h4 className="text-lg font-black text-slate-800 tracking-tight leading-snug group-hover:text-indigo-600 transition-colors">
+                                    <h4 className="text-lg font-black text-text-primary tracking-tight leading-snug group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                                       {sup.supplierName}
                                     </h4>
                                   </div>
@@ -2014,71 +2014,71 @@ export default function ProcurementReportPage() {
                                 </div>
 
                                 {/* Summary Description */}
-                                <p className="text-xs text-slate-500 font-semibold mb-6 italic border-l-2 border-slate-200 pl-3">
+                                <p className="text-xs text-text-muted font-semibold mb-6 italic border-l-2 border-border-default pl-3">
                                   "{sup.analysis}"
                                 </p>
 
                                 {/* Micro KPIs */}
-                                <div className="grid grid-cols-2 min-[540px]:grid-cols-3 min-[850px]:grid-cols-5 gap-2 pt-5 border-t border-slate-100">
+                                <div className="grid grid-cols-2 min-[540px]:grid-cols-3 min-[850px]:grid-cols-5 gap-2 pt-5 border-t border-border-subtle">
                                   {/* LPOs */}
-                                  <div className="bg-white p-3 rounded-2xl border border-slate-200/50 shadow-sm flex flex-col justify-center">
+                                  <div className="bg-surface p-3 rounded-2xl border border-border-default shadow-sm flex flex-col justify-center">
                                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">LPOs Issued</span>
                                     <div className="flex items-center gap-1.5">
                                       <FileSignature className="w-4 h-4 text-indigo-500 shrink-0" />
-                                      <span className="text-sm font-black text-slate-800">{sup.lpoCount} LPOs</span>
+                                      <span className="text-sm font-black text-text-primary">{sup.lpoCount} LPOs</span>
                                     </div>
                                   </div>
 
                                   {/* DOs */}
-                                  <div className="bg-white p-3 rounded-2xl border border-slate-200/50 shadow-sm flex flex-col justify-center">
+                                  <div className="bg-surface p-3 rounded-2xl border border-border-default shadow-sm flex flex-col justify-center">
                                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">Total DOs</span>
                                     <div className="flex items-center gap-1.5">
                                       <Truck className="w-3.5 h-3.5 text-blue-500 shrink-0" />
-                                      <span className="text-xs font-black text-slate-800">{sup.doCount || 0} DOs</span>
+                                      <span className="text-xs font-black text-text-primary">{sup.doCount || 0} DOs</span>
                                     </div>
                                   </div>
 
                                   {/* Cost */}
-                                  <div className="bg-white p-3 rounded-2xl border border-slate-200/50 shadow-sm flex flex-col justify-center">
+                                  <div className="bg-surface p-3 rounded-2xl border border-border-default shadow-sm flex flex-col justify-center">
                                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">Total Cost</span>
                                     <div className="flex items-center gap-1.5">
                                       <TrendingUp className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                                      <span className="text-xs font-black text-slate-800 truncate">
+                                      <span className="text-xs font-black text-text-primary truncate">
                                         {formatCurrency(sup.cost).replace('MYR', 'RM')}
                                       </span>
                                     </div>
                                   </div>
 
                                   {/* Late Deliveries */}
-                                  <div className="bg-white p-3 rounded-2xl border border-slate-200/50 shadow-sm flex flex-col justify-center">
+                                  <div className="bg-surface p-3 rounded-2xl border border-border-default shadow-sm flex flex-col justify-center">
                                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">Late LPOs</span>
                                     <div className="flex items-center gap-1.5">
                                       <Clock className="w-3.5 h-3.5 text-amber-500 shrink-0" />
-                                      <span className="text-xs font-black text-slate-800">{sup.lateCount || 0} LPOs</span>
+                                      <span className="text-xs font-black text-text-primary">{sup.lateCount || 0} LPOs</span>
                                     </div>
                                   </div>
 
                                   {/* Penalties */}
-                                  <div className="bg-white p-3 rounded-2xl border border-slate-200/50 shadow-sm flex flex-col justify-center">
+                                  <div className="bg-surface p-3 rounded-2xl border border-border-default shadow-sm flex flex-col justify-center">
                                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1.5 block">Penalties</span>
                                     <div className="flex items-center gap-1.5">
                                       <FileWarning className="w-3.5 h-3.5 text-rose-500 shrink-0" />
-                                      <span className="text-xs font-black text-slate-800">{sup.penaltyCount || 0} Cases</span>
+                                      <span className="text-xs font-black text-text-primary">{sup.penaltyCount || 0} Cases</span>
                                     </div>
                                   </div>
                                 </div>
 
                                 {/* Multi-dimensional Ratings Visualizer */}
-                                <div className="mt-5 bg-white p-4 rounded-2xl border border-slate-200/50 shadow-sm space-y-3">
+                                <div className="mt-5 bg-surface p-4 rounded-2xl border border-border-default shadow-sm space-y-3">
                                   <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">Operational Evaluation Scorecard</span>
                                   
                                   {/* Quality */}
                                   <div className="space-y-1">
                                     <div className="flex items-center justify-between text-[11px] font-bold">
-                                      <span className="text-slate-500">Quality Index</span>
-                                      <span className="text-slate-800">{sup.quality}/5</span>
+                                      <span className="text-text-muted">Quality Index</span>
+                                      <span className="text-text-primary">{sup.quality}/5</span>
                                     </div>
-                                    <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                    <div className="h-1.5 bg-subtle rounded-full overflow-hidden">
                                       <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${(sup.quality/5)*100}%` }} />
                                     </div>
                                   </div>
@@ -2086,10 +2086,10 @@ export default function ProcurementReportPage() {
                                   {/* Delivery */}
                                   <div className="space-y-1">
                                     <div className="flex items-center justify-between text-[11px] font-bold">
-                                      <span className="text-slate-500">Delivery Accuracy</span>
-                                      <span className="text-slate-800">{sup.delivery}/5</span>
+                                      <span className="text-text-muted">Delivery Accuracy</span>
+                                      <span className="text-text-primary">{sup.delivery}/5</span>
                                     </div>
-                                    <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                    <div className="h-1.5 bg-subtle rounded-full overflow-hidden">
                                       <div className="h-full bg-blue-500 rounded-full" style={{ width: `${(sup.delivery/5)*100}%` }} />
                                     </div>
                                   </div>
@@ -2097,10 +2097,10 @@ export default function ProcurementReportPage() {
                                   {/* Support */}
                                   <div className="space-y-1">
                                     <div className="flex items-center justify-between text-[11px] font-bold">
-                                      <span className="text-slate-500">Support Response</span>
-                                      <span className="text-slate-800">{sup.support}/5</span>
+                                      <span className="text-text-muted">Support Response</span>
+                                      <span className="text-text-primary">{sup.support}/5</span>
                                     </div>
-                                    <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                    <div className="h-1.5 bg-subtle rounded-full overflow-hidden">
                                       <div className="h-full bg-amber-500 rounded-full" style={{ width: `${(sup.support/5)*100}%` }} />
                                     </div>
                                   </div>

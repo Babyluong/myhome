@@ -335,7 +335,7 @@ export const MyWarrantDashboard: React.FC = () => {
                     </div>
                     <div className="w-full h-2 bg-subtle rounded-full overflow-hidden relative border border-border-default">
                       <div 
-                        className="h-full bg-accent-base rounded-full transition-all duration-1000" 
+                        className="h-full bg-accent-base rounded-full transition-colors duration-1000" 
                         style={{ width: `${stats.utilizationPercent}%` }} 
                       />
                     </div>

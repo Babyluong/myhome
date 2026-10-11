@@ -62,7 +62,7 @@ export const RoleListPage: React.FC = () => {
       render: (_: unknown, row: Role) => (
         <div className="flex items-center gap-2">
           <Shield className="w-5 h-5 text-teal-600" />
-          <span className="font-mono font-semibold text-slate-900">{row.role_code}</span>
+          <span className="font-mono font-semibold text-text-primary">{row.role_code}</span>
         </div>
       ),
     },
@@ -72,8 +72,8 @@ export const RoleListPage: React.FC = () => {
       sortable: true,
       render: (_: unknown, row: Role) => (
         <div>
-          <div className="font-medium text-slate-900">{row.role_name}</div>
-          {row.description && <div className="text-sm text-slate-500">{row.description}</div>}
+          <div className="font-medium text-text-primary">{row.role_name}</div>
+          {row.description && <div className="text-sm text-text-muted">{row.description}</div>}
         </div>
       ),
     },
@@ -92,7 +92,7 @@ export const RoleListPage: React.FC = () => {
       label: 'Created',
       sortable: true,
       render: (_: unknown, row: Role) => (
-        <span className="text-sm text-slate-500">{formatDate(row.created_at)}</span>
+        <span className="text-sm text-text-muted">{formatDate(row.created_at)}</span>
       ),
     },
     {
@@ -121,8 +121,8 @@ export const RoleListPage: React.FC = () => {
       <div className="pb-4">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Role & Permission Management</h1>
-            <p className="text-sm text-slate-600 mt-1">Manage roles and their permissions</p>
+            <h1 className="text-2xl font-bold text-text-primary">Role & Permission Management</h1>
+            <p className="text-sm text-text-muted mt-1">Manage roles and their permissions</p>
           </div>
         </div>
 
@@ -159,9 +159,9 @@ export const RoleListPage: React.FC = () => {
       </div>
 
       {/* Table */}
-      <div className="flex-1 overflow-auto bg-white">
+      <div className="flex-1 overflow-auto bg-surface">
         <div className="p-6">
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="bg-surface rounded-xl border border-border-default shadow-sm overflow-hidden">
             <Table
               data={roles}
               columns={columns}

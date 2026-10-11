@@ -9,61 +9,73 @@ export interface StatCardProps {
   value: string | number
   change?: number
   icon: React.ElementType
-  color: 'primary' | 'success' | 'warning' | 'error' | 'info' | 'teal' | 'emerald' | 'sky' | 'amber' | 'rose' | 'indigo' | 'purple'
+  color?: 'primary' | 'success' | 'warning' | 'error' | 'info' | 'teal' | 'emerald' | 'sky' | 'amber' | 'rose' | 'indigo' | 'purple'
   link?: string
   subtitle?: string
   loading?: boolean
   className?: string
 }
 
-const colorClasses: Record<string, { icon: string; border: string }> = {
+const colorMap: Record<string, { icon: string; badge: string; highlight: string }> = {
   primary: {
-    icon: 'bg-accent-subtle text-accent-base border border-accent-base/20',
-    border: 'border-accent-base/20',
+    icon: 'bg-accent-base/10 text-accent-base border-accent-base/20',
+    badge: 'bg-accent-base/10 text-accent-base border-accent-base/20',
+    highlight: 'from-accent-base/20 to-transparent',
   },
   success: {
-    icon: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20',
-    border: 'border-emerald-500/20',
-  },
-  warning: {
-    icon: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20',
-    border: 'border-amber-500/20',
-  },
-  error: {
-    icon: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20',
-    border: 'border-rose-500/20',
-  },
-  info: {
-    icon: 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20',
-    border: 'border-sky-500/20',
-  },
-  teal: {
-    icon: 'bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20',
-    border: 'border-teal-500/20',
+    icon: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
+    badge: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
+    highlight: 'from-emerald-500/20 to-transparent',
   },
   emerald: {
-    icon: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20',
-    border: 'border-emerald-500/20',
+    icon: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
+    badge: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20',
+    highlight: 'from-emerald-500/20 to-transparent',
   },
-  sky: {
-    icon: 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20',
-    border: 'border-sky-500/20',
+  warning: {
+    icon: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
+    badge: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
+    highlight: 'from-amber-500/20 to-transparent',
   },
   amber: {
-    icon: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20',
-    border: 'border-amber-500/20',
+    icon: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
+    badge: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20',
+    highlight: 'from-amber-500/20 to-transparent',
+  },
+  error: {
+    icon: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20',
+    badge: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20',
+    highlight: 'from-rose-500/20 to-transparent',
   },
   rose: {
-    icon: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20',
-    border: 'border-rose-500/20',
+    icon: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20',
+    badge: 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20',
+    highlight: 'from-rose-500/20 to-transparent',
+  },
+  info: {
+    icon: 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20',
+    badge: 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20',
+    highlight: 'from-sky-500/20 to-transparent',
+  },
+  sky: {
+    icon: 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20',
+    badge: 'bg-sky-500/10 text-sky-600 dark:text-sky-400 border-sky-500/20',
+    highlight: 'from-sky-500/20 to-transparent',
+  },
+  teal: {
+    icon: 'bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/20',
+    badge: 'bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-500/20',
+    highlight: 'from-teal-500/20 to-transparent',
   },
   indigo: {
-    icon: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20',
-    border: 'border-indigo-500/20',
+    icon: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20',
+    badge: 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/20',
+    highlight: 'from-indigo-500/20 to-transparent',
   },
   purple: {
-    icon: 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20',
-    border: 'border-purple-500/20',
+    icon: 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20',
+    badge: 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20',
+    highlight: 'from-purple-500/20 to-transparent',
   },
 }
 
@@ -72,7 +84,7 @@ export const StatCard: React.FC<StatCardProps> = ({
   value,
   change,
   icon: Icon,
-  color,
+  color = 'primary',
   link,
   subtitle,
   loading = false,
@@ -80,74 +92,83 @@ export const StatCard: React.FC<StatCardProps> = ({
 }) => {
   if (loading) {
     return (
-      <div className={cn("p-5 rounded-xl border border-border-default bg-surface shadow-2xs animate-pulse-subtle", className)}>
+      <div className={cn("p-5 rounded-2xl border border-border-default bg-surface/80 backdrop-blur-sm shadow-elevation-1 animate-pulse-subtle", className)}>
         <div className="flex items-start justify-between mb-4">
-          <div className="w-12 h-12 rounded-lg bg-subtle animate-pulse" />
+          <div className="w-10 h-10 rounded-xl bg-subtle animate-pulse" />
         </div>
         <div className="space-y-2">
-          <div className="h-3.5 w-20 bg-subtle rounded animate-pulse" />
-          <div className="h-8 w-24 bg-subtle rounded animate-pulse" />
+          <div className="h-3 w-20 bg-subtle rounded animate-pulse" />
+          <div className="h-7 w-24 bg-subtle rounded animate-pulse" />
           <div className="h-2.5 w-32 bg-subtle/70 rounded animate-pulse mt-1" />
         </div>
       </div>
     )
   }
 
-  const colors = colorClasses[color] || colorClasses.primary
-  const isPositive = change !== undefined && change > 0
+  const theme = colorMap[color] || colorMap.primary
+  const isPositive = change !== undefined && change >= 0
 
   const content = (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 8 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       className={cn(
-        'group relative bg-surface p-5 rounded-xl border border-border-default shadow-2xs transition-all duration-150 hover:border-border-strong hover:bg-subtle/30',
-        link && 'cursor-pointer'
+        'group relative bg-surface/90 backdrop-blur-md p-5 rounded-2xl border border-border-default shadow-elevation-1 transition-[transform,opacity,box-shadow,border-color] duration-200 hover:border-border-strong hover:shadow-xs hover:-translate-y-0.5 active:scale-[0.98] overflow-hidden',
+        link && 'cursor-pointer',
+        className
       )}
     >
-      {/* Background Icon Pattern */}
-      <div className="absolute top-0 right-0 p-4 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity pointer-events-none text-text-primary">
-        <Icon size={72} strokeWidth={1} />
+      {/* Top subtle hairline highlight */}
+      <div className={cn("absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r opacity-60 group-hover:opacity-100 transition-opacity", theme.highlight)} />
+
+      {/* Background Icon Watermark */}
+      <div className="absolute top-2 right-2 p-3 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity pointer-events-none text-text-primary">
+        <Icon size={64} strokeWidth={1.2} />
       </div>
 
-      <div className="relative flex flex-col h-full">
-        <div className="flex items-start justify-between mb-4">
+      <div className="relative flex flex-col h-full justify-between">
+        <div className="flex items-center justify-between mb-3">
           <div className={cn(
-            'w-11 h-11 rounded-lg flex items-center justify-center transition-transform group-hover:scale-105 duration-150',
-            colors.icon
+            'w-10 h-10 rounded-xl border flex items-center justify-center transition-transform group-hover:scale-105 duration-200',
+            theme.icon
           )}>
             <Icon className="w-5 h-5" />
           </div>
+
           {change !== undefined && (
             <div
               className={cn(
-                'flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold',
-                isPositive ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-rose-500/10 text-rose-600 dark:text-rose-400'
+                'inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold border tabular-nums',
+                isPositive
+                  ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
+                  : 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/20'
               )}
             >
               <TrendingUp className={cn('w-3 h-3', !isPositive && 'rotate-180')} />
-              {Math.abs(change)}%
+              <span>{Math.abs(change)}%</span>
             </div>
           )}
         </div>
 
-        <div className="mt-auto">
-          <h3 className="text-2xl font-bold text-text-primary leading-none mb-1 tracking-tight tabular-nums">
-            {value}
-          </h3>
-          <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wider">
+        <div>
+          <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wider block mb-1">
             {title}
-          </p>
-          
-          <div className="flex items-center justify-between mt-3 pt-3 border-t border-border-default">
-            <span className="text-xs text-text-muted font-normal">
-              {subtitle || 'Click to view details'}
-            </span>
-            {link && (
-              <ChevronRight className="w-4 h-4 text-text-muted group-hover:text-text-primary group-hover:translate-x-0.5 transition-all" />
-            )}
+          </span>
+          <div className="text-2xl sm:text-3xl font-bold font-mono text-text-primary tracking-tight tabular-nums">
+            {value}
           </div>
+
+          {subtitle && (
+            <div className="flex items-center justify-between mt-3 pt-2.5 border-t border-border-default/80">
+              <span className="text-xs text-text-muted font-normal truncate">
+                {subtitle}
+              </span>
+              {link && (
+                <ChevronRight className="w-3.5 h-3.5 text-text-muted group-hover:text-text-primary group-hover:translate-x-0.5 transition-transform" />
+              )}
+            </div>
+          )}
         </div>
       </div>
     </motion.div>

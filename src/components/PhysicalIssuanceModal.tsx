@@ -198,11 +198,11 @@ export default function PhysicalIssuanceModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
-      <div className="relative w-full max-w-6xl h-[95vh] bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
+      <div className="relative w-full max-w-6xl h-[95vh] bg-surface rounded-3xl shadow-2xl overflow-hidden border border-border-default">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-6 right-6 z-20 p-3 rounded-full bg-white/90 text-slate-600 hover:bg-slate-100 transition-all duration-200 shadow-lg"
+          className="absolute top-6 right-6 z-20 p-3 rounded-full bg-surface text-text-secondary hover:bg-subtle transition-[transform,opacity,box-shadow,border-color] duration-200 shadow-lg"
         >
           <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -222,8 +222,8 @@ export default function PhysicalIssuanceModal({
                     </svg>
                   </div>
                   <div>
-                    <h2 className="text-3xl font-bold text-slate-800">Select Request to Issue</h2>
-                    <p className="text-slate-600">{approvedRequests.length} approved requests ready for issuance</p>
+                    <h2 className="text-3xl font-bold text-text-primary">Select Request to Issue</h2>
+                    <p className="text-text-secondary">{approvedRequests.length} approved requests ready for issuance</p>
                   </div>
                 </div>
               </div>
@@ -234,19 +234,19 @@ export default function PhysicalIssuanceModal({
                   <button
                     key={req.id}
                     onClick={() => handleRequestSelect(req)}
-                    className="p-6 bg-white border border-slate-200 rounded-xl hover:border-blue-300 hover:shadow-lg transition-all duration-200 text-left group"
+                    className="p-6 bg-surface border border-border-default rounded-xl hover:border-blue-300 hover:shadow-lg transition-[transform,opacity,box-shadow,border-color] duration-200 text-left group"
                   >
                     <div className="flex items-center justify-between mb-3">
-                      <div className="font-bold text-slate-800 text-lg">{req.requestNumber}</div>
+                      <div className="font-bold text-text-primary text-lg">{req.requestNumber}</div>
                       <span className={`text-xs px-2 py-1 rounded-full font-medium ${
                         req.priority === 'HIGH' ? 'bg-orange-100 text-orange-800' :
                         req.priority === 'URGENT' ? 'bg-red-100 text-red-800' :
-                        'bg-slate-100 text-slate-700'
+                        'bg-subtle text-text-secondary'
                       }`}>
                         {req.priority}
                       </span>
                     </div>
-                    <div className="space-y-2 text-sm text-slate-600">
+                    <div className="space-y-2 text-sm text-text-secondary">
                       <div className="flex items-center gap-2">
                         <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5m-4 0h4" />
@@ -266,9 +266,9 @@ export default function PhysicalIssuanceModal({
                         <span>{new Date(req.requestedAt).toLocaleDateString('en-MY')}</span>
                       </div>
                     </div>
-                    <div className="mt-4 pt-3 border-t border-slate-100">
+                    <div className="mt-4 pt-3 border-t border-border-subtle">
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-slate-500">Items to issue:</span>
+                        <span className="text-sm text-text-muted">Items to issue:</span>
                         <span className="font-bold text-blue-600">{req.items.filter(i => i.status === 'APPROVED').length}</span>
                       </div>
                     </div>
@@ -285,17 +285,17 @@ export default function PhysicalIssuanceModal({
             /* Issuance Interface */
             <div className="space-y-8">
               {/* Issuance Summary - Compact */}
-              <div className="bg-white rounded-xl p-4 shadow-sm border border-slate-200 mb-4">
+              <div className="bg-surface rounded-xl p-4 shadow-sm border border-border-default mb-4">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <h2 className="text-lg font-semibold text-slate-800">Issuance Summary</h2>
-                    <p className="text-sm text-slate-600">
+                    <h2 className="text-lg font-semibold text-text-primary">Issuance Summary</h2>
+                    <p className="text-sm text-text-secondary">
                       {selectedRequest.requestNumber} â€¢ {selectedRequest.department} â€¢ {selectedRequest.requestedBy}
                     </p>
                   </div>
                   <button
                     onClick={handleBackToSelector}
-                    className="p-2 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
+                    className="p-2 rounded-lg bg-subtle text-text-secondary hover:bg-subtle transition-colors"
                     title="Back to request selection"
                   >
                     <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -306,13 +306,13 @@ export default function PhysicalIssuanceModal({
 
                 {/* Progress Bar */}
                 <div className="mb-3">
-                  <div className="flex items-center justify-between text-xs text-slate-600 mb-1">
+                  <div className="flex items-center justify-between text-xs text-text-secondary mb-1">
                     <span>Progress</span>
                     <span>{Math.round((scannedCount / issuedItems.length) * 100)}%</span>
                   </div>
-                  <div className="w-full bg-slate-200 rounded-full h-1.5">
+                  <div className="w-full bg-subtle rounded-full h-1.5">
                     <div 
-                      className="bg-gradient-to-r from-blue-500 to-cyan-500 h-1.5 rounded-full transition-all duration-300"
+                      className="bg-gradient-to-r from-blue-500 to-cyan-500 h-1.5 rounded-full transition-[transform,opacity,box-shadow,border-color] duration-300"
                       style={{ width: `${issuedItems.length > 0 ? (scannedCount / issuedItems.length) * 100 : 0}%` }}
                     ></div>
                   </div>
@@ -321,33 +321,33 @@ export default function PhysicalIssuanceModal({
                 {/* Summary Stats - Compact */}
                 <div className="grid grid-cols-4 gap-4 mb-3">
                   <div className="text-center">
-                    <div className="text-lg font-bold text-slate-800">{issuedItems.length}</div>
-                    <div className="text-xs text-slate-600">Items</div>
+                    <div className="text-lg font-bold text-text-primary">{issuedItems.length}</div>
+                    <div className="text-xs text-text-secondary">Items</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-lg font-bold text-slate-800">{scannedCount}</div>
-                    <div className="text-xs text-slate-600">Completed</div>
+                    <div className="text-lg font-bold text-text-primary">{scannedCount}</div>
+                    <div className="text-xs text-text-secondary">Completed</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-lg font-bold text-slate-800">
+                    <div className="text-lg font-bold text-text-primary">
                       {issuedItems.reduce((sum, item) => {
                         const requestItem = selectedRequest.items.find(i => i.itemId === item.itemId);
                         return sum + (requestItem?.approvedQuantity || requestItem?.requestedQuantity || 0);
                       }, 0).toLocaleString()}
                     </div>
-                    <div className="text-xs text-slate-600">Qty expected</div>
+                    <div className="text-xs text-text-secondary">Qty expected</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-lg font-bold text-slate-800">
+                    <div className="text-lg font-bold text-text-primary">
                       {issuedItems.reduce((sum, item) => sum + item.quantity, 0).toLocaleString()}
                     </div>
-                    <div className="text-xs text-slate-600">Qty scanned</div>
+                    <div className="text-xs text-text-secondary">Qty scanned</div>
                   </div>
                 </div>
 
                 {/* Action Buttons - Compact */}
                 <div className="flex gap-2">
-                  <button className="px-3 py-1.5 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors text-xs font-medium">
+                  <button className="px-3 py-1.5 bg-subtle text-text-secondary rounded-lg hover:bg-subtle transition-colors text-xs font-medium">
                     Save draft
                   </button>
                   <button
@@ -361,8 +361,8 @@ export default function PhysicalIssuanceModal({
               </div>
 
               {/* Barcode Scanner */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                <h3 className="text-lg font-semibold text-slate-800 mb-4">Barcode Scanner</h3>
+              <div className="bg-surface border border-border-default rounded-2xl p-6 shadow-sm">
+                <h3 className="text-lg font-semibold text-text-primary mb-4">Barcode Scanner</h3>
                 
                 <div className="flex gap-3 mb-3">
                   <input
@@ -371,7 +371,7 @@ export default function PhysicalIssuanceModal({
                     onChange={(e) => setScannedBarcode(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleManualScan()}
                     placeholder="Scan barcode or enter SKU manually (e.g. LOR-1)"
-                    className="flex-1 px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    className="flex-1 px-4 py-3 border border-border-default rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                     disabled={isScanning}
                   />
                   <button
@@ -386,7 +386,7 @@ export default function PhysicalIssuanceModal({
                   </button>
                 </div>
                 
-                <div className="text-xs text-slate-500 bg-slate-50 rounded-lg p-3">
+                <div className="text-xs text-text-muted bg-subtle/50 rounded-lg p-3">
                   <strong>Tip:</strong> Each scan adds 1 unit. Use +/- on each row to adjust, or click 'Mark as issued' to match expected quantity.
                 </div>
                 
@@ -394,7 +394,7 @@ export default function PhysicalIssuanceModal({
                   <div className={`mt-3 p-3 rounded-lg text-sm ${
                     scanMessage.includes('âœ…') ? 'bg-green-50 text-green-800 border border-green-200' : 
                     scanMessage.includes('âŒ') ? 'bg-red-50 text-red-800 border border-red-200' : 
-                    'bg-blue-50 text-blue-800 border border-blue-200'
+                    'bg-blue-500/10 text-blue-400 border border-blue-500/20'
                   }`}>
                     {scanMessage}
                   </div>
@@ -402,7 +402,7 @@ export default function PhysicalIssuanceModal({
               </div>
 
               {/* Search and Filters */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
+              <div className="bg-surface border border-border-default rounded-2xl p-4 shadow-sm">
                 <div className="flex items-center gap-4">
                   <div className="flex-1 relative">
                     <svg className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -413,11 +413,11 @@ export default function PhysicalIssuanceModal({
                       placeholder="Search items..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+                      className="w-full pl-10 pr-4 py-2 border border-border-default rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
                     />
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-slate-600">Filter:</span>
+                    <span className="text-sm text-text-secondary">Filter:</span>
                     <div className="flex gap-1">
                       {['All', 'Pending', 'Issued', 'Mismatch'].map(status => (
                         <button
@@ -426,7 +426,7 @@ export default function PhysicalIssuanceModal({
                           className={`px-3 py-1 text-xs font-medium rounded-full transition-colors ${
                             statusFilter === status
                               ? 'bg-slate-800 text-white'
-                              : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                              : 'bg-subtle text-text-secondary hover:bg-subtle'
                           }`}
                         >
                           {status}
@@ -474,18 +474,18 @@ export default function PhysicalIssuanceModal({
                     };
 
                     return (
-                      <div key={item.itemId} className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
+                      <div key={item.itemId} className="bg-surface border border-border-default rounded-2xl p-4 shadow-sm hover:shadow-md transition-shadow">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-4 flex-1">
-                            <div className="w-8 h-8 bg-slate-100 rounded-full flex items-center justify-center text-sm font-semibold text-slate-600">
+                            <div className="w-8 h-8 bg-subtle rounded-full flex items-center justify-center text-sm font-semibold text-text-secondary">
                               {startIndex + index + 1}
                             </div>
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-1">
-                                <h4 className="font-semibold text-slate-800">{requestItem.itemName}</h4>
-                                <span className="text-xs text-slate-500">({getItemType()})</span>
+                                <h4 className="font-semibold text-text-primary">{requestItem.itemName}</h4>
+                                <span className="text-xs text-text-muted">({getItemType()})</span>
                               </div>
-                              <div className="flex items-center gap-4 text-xs text-slate-500">
+                              <div className="flex items-center gap-4 text-xs text-text-muted">
                                 <span>SKU: {requestItem.drugCode}</span>
                                 <span>Batch: {item.batchNumber}</span>
                                 <span>Expected: {requestItem.approvedQuantity || requestItem.requestedQuantity} {requestItem.unit}</span>
@@ -512,18 +512,18 @@ export default function PhysicalIssuanceModal({
                             <div className="flex items-center gap-2">
                               <button
                                 onClick={() => handleQuantityAdjust(item.itemId, -1)}
-                                className="w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 hover:text-slate-800 transition-colors"
+                                className="w-6 h-6 rounded-full bg-subtle hover:bg-subtle flex items-center justify-center text-text-secondary hover:text-text-primary transition-colors"
                               >
                                 <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M20 12H4" />
                                 </svg>
                               </button>
-                              <span className="px-3 py-1 bg-slate-50 rounded-lg text-sm font-medium min-w-[80px] text-center">
+                              <span className="px-3 py-1 bg-subtle/50 rounded-lg text-sm font-medium min-w-[80px] text-center">
                                 {item.quantity} {requestItem.unit}
                               </span>
                               <button
                                 onClick={() => handleQuantityAdjust(item.itemId, 1)}
-                                className="w-6 h-6 rounded-full bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 hover:text-slate-800 transition-colors"
+                                className="w-6 h-6 rounded-full bg-subtle hover:bg-subtle flex items-center justify-center text-text-secondary hover:text-text-primary transition-colors"
                               >
                                 <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -552,14 +552,14 @@ export default function PhysicalIssuanceModal({
                 {/* Pagination */}
                 {totalPages > 1 && (
                   <div className="mt-6 flex items-center justify-between">
-                  <div className="text-sm text-slate-500">
+                  <div className="text-sm text-text-muted">
                     Showing {startIndex + 1} to {Math.min(endIndex, filteredItems.length)} of {filteredItems.length} items
                   </div>
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage === 1}
-                        className="px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-3 py-2 text-sm font-medium text-text-muted bg-surface border border-border-default rounded-lg hover:bg-subtle/50 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Previous
                       </button>
@@ -572,7 +572,7 @@ export default function PhysicalIssuanceModal({
                             className={`px-3 py-2 text-sm font-medium rounded-lg ${
                               currentPage === page
                                 ? 'bg-blue-600 text-white'
-                                : 'text-slate-700 bg-white border border-slate-300 hover:bg-slate-50'
+                                : 'text-text-secondary bg-surface border border-border-default hover:bg-subtle/50'
                             }`}
                           >
                             {page}
@@ -583,7 +583,7 @@ export default function PhysicalIssuanceModal({
                       <button
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
-                        className="px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-3 py-2 text-sm font-medium text-text-muted bg-surface border border-border-default rounded-lg hover:bg-subtle/50 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         Next
                       </button>
@@ -595,7 +595,7 @@ export default function PhysicalIssuanceModal({
             </div>
           ) : (
             /* No requests available */
-            <div className="flex items-center justify-center h-full text-slate-500">
+            <div className="flex items-center justify-center h-full text-text-muted">
               <div className="text-center">
                 <svg className="h-16 w-16 mx-auto mb-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />

@@ -139,35 +139,35 @@ export default function PenaltyPage() {
     switch (normStatus) {
       case 'pending': // DB status 'pending' maps to 'Draft' in UI
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-700 border border-slate-300 rounded-full text-xs font-bold uppercase tracking-wider shadow-xs">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-subtle text-text-secondary border border-border-default rounded-full text-xs font-bold uppercase tracking-wider shadow-xs">
             <span className="w-2 h-2 rounded-full bg-slate-500 shrink-0" />
             Draft
           </span>
         )
       case 'enforced': // DB status 'enforced' maps to 'Pending' in UI
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-800 border border-amber-300 rounded-full text-xs font-bold uppercase tracking-wider shadow-xs animate-pulse">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-400 border border-amber-300 rounded-full text-xs font-bold uppercase tracking-wider shadow-xs animate-pulse">
             <span className="w-2 h-2 rounded-full bg-amber-500 shrink-0" />
             Pending
           </span>
         )
       case 'approved': // DB status 'approved' maps to 'Approved' in UI
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-800 border border-emerald-300 rounded-full text-xs font-bold uppercase tracking-wider shadow-xs">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-300 rounded-full text-xs font-bold uppercase tracking-wider shadow-xs">
             <span className="w-2 h-2 rounded-full bg-emerald-600 shrink-0" />
             Approved
           </span>
         )
       case 'waived': // DB status 'waived' maps to 'Rejected' in UI
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-rose-50 text-rose-800 border border-rose-300 rounded-full text-xs font-bold uppercase tracking-wider shadow-xs">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-rose-500/10 text-rose-400 border border-rose-300 rounded-full text-xs font-bold uppercase tracking-wider shadow-xs">
             <span className="w-2 h-2 rounded-full bg-rose-600 shrink-0" />
             Rejected
           </span>
         )
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-700 border border-slate-300 rounded-full text-xs font-bold uppercase tracking-wider shadow-xs">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-subtle text-text-secondary border border-border-default rounded-full text-xs font-bold uppercase tracking-wider shadow-xs">
             {status?.toUpperCase()}
           </span>
         )
@@ -178,7 +178,7 @@ export default function PenaltyPage() {
     const normType = type?.toLowerCase() || ''
     if (normType === 'appl') {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-indigo-50 text-indigo-700 border border-indigo-200 rounded-lg text-xs font-bold uppercase tracking-wider shadow-xs">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-indigo-500/10 text-indigo-700 border border-indigo-500/20 rounded-lg text-xs font-bold uppercase tracking-wider shadow-xs">
           <span className="w-2 h-2 rounded-full bg-indigo-600 shrink-0" />
           APPL (990102)
         </span>
@@ -186,14 +186,14 @@ export default function PenaltyPage() {
     }
     if (normType === 'cc') {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-purple-50 text-purple-700 border border-purple-200 rounded-lg text-xs font-bold uppercase tracking-wider shadow-xs">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-indigo-500/10 text-purple-700 border border-indigo-500/20 rounded-lg text-xs font-bold uppercase tracking-wider shadow-xs">
           <span className="w-2 h-2 rounded-full bg-purple-600 shrink-0" />
           CC (080702)
         </span>
       )
     }
     return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-xs font-bold uppercase tracking-wider shadow-xs">
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-subtle text-text-secondary border border-border-default rounded-lg text-xs font-bold uppercase tracking-wider shadow-xs">
         <span className="w-2 h-2 rounded-full bg-slate-500 shrink-0" />
         {type?.toUpperCase() || 'DIRECT PURCHASE'}
       </span>
@@ -212,12 +212,12 @@ export default function PenaltyPage() {
 
       <div className="w-full p-6 lg:p-8 space-y-6">
         {/* Enhanced Breadcrumb navigation */}
-        <nav className="flex items-center gap-2 text-xs font-bold text-slate-500 uppercase tracking-wider">
-          <span className="text-slate-500">Financial</span>
+        <nav className="flex items-center gap-2 text-xs font-bold text-text-muted uppercase tracking-wider">
+          <span className="text-text-muted">Financial</span>
           <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-          <span className="text-slate-500">Procurement</span>
+          <span className="text-text-muted">Procurement</span>
           <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-          <span className="text-slate-900 font-extrabold tracking-wide">Penalty Management</span>
+          <span className="text-text-primary font-extrabold tracking-wide">Penalty Management</span>
         </nav>
 
         {/* Header Section */}
@@ -230,7 +230,7 @@ export default function PenaltyPage() {
               <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-indigo-900 to-slate-900">
                 Penalty Management
               </h1>
-              <p className="text-slate-600 font-semibold text-xs flex items-center gap-1.5">
+              <p className="text-text-muted font-semibold text-xs flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-indigo-600" />
                 Dual-Type Penalty Enforcement System (APPL 990102 & CC 080702)
               </p>
@@ -240,7 +240,7 @@ export default function PenaltyPage() {
           <div className="flex items-center gap-2.5">
             <button 
               onClick={loadData}
-              className="p-2 h-10 w-10 flex items-center justify-center bg-white rounded-xl border border-slate-300 text-slate-700 hover:bg-slate-50 transition-colors shadow-xs hover:border-slate-400"
+              className="p-2 h-10 w-10 flex items-center justify-center bg-surface rounded-xl border border-border-default text-text-secondary hover:bg-subtle/50 transition-colors shadow-xs hover:border-slate-400"
               title="Refresh"
             >
               <IconRefreshCw className={cn("w-5 h-5", isLoading && "animate-spin")} />
@@ -250,26 +250,26 @@ export default function PenaltyPage() {
 
         {/* KPI Section with Premium Style */}
         {stats && (
-          <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] border border-slate-200 shadow-xl mb-10 relative z-10">
+          <div className="bg-surface p-6 sm:p-8 rounded-2xl border border-border-default shadow-xl mb-10 relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
               {/* Total Violations */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.05 }}
-                className="bg-slate-50/50 border border-slate-200 p-6 rounded-[2.5rem] relative overflow-hidden group hover:border-slate-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-default"
+                className="bg-subtle/50 border border-border-default p-6 rounded-2xl relative overflow-hidden group hover:border-border-default hover:shadow-xl hover:-translate-y-1 transition-colors duration-150 cursor-default"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-slate-500/[0.02] rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
                 <div className="flex items-start gap-4 relative z-10">
-                  <div className="w-12 h-12 bg-white border border-slate-200 rounded-2xl flex items-center justify-center text-slate-700 shadow-xs">
-                    <IconAlertTriangle className="w-6 h-6 text-slate-700" />
+                  <div className="w-11 h-11 bg-slate-500/10 border border-slate-500/20 rounded-xl flex items-center justify-center text-slate-300 shadow-xs">
+                    <IconAlertTriangle className="w-6 h-6 text-text-secondary" />
                   </div>
                   <div className="space-y-1 flex-1 min-w-0">
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Total Breaches</p>
-                    <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight tabular-nums">
+                    <p className="text-xs font-bold text-text-muted uppercase tracking-wider">Total Breaches</p>
+                    <h3 className="text-2xl sm:text-3xl font-black text-text-primary tracking-tight tabular-nums">
                       {stats.total || 0}
                     </h3>
-                    <p className="text-xs font-medium text-slate-500">Identified deliveries</p>
+                    <p className="text-xs font-medium text-text-muted">Identified deliveries</p>
                   </div>
                 </div>
               </motion.div>
@@ -279,19 +279,19 @@ export default function PenaltyPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.1 }}
-                className="bg-slate-50/50 border border-slate-200 p-6 rounded-[2.5rem] relative overflow-hidden group hover:border-slate-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-default"
+                className="bg-subtle/50 border border-border-default p-6 rounded-2xl relative overflow-hidden group hover:border-border-default hover:shadow-xl hover:-translate-y-1 transition-colors duration-150 cursor-default"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-slate-500/[0.03] rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
                 <div className="flex items-start gap-4 relative z-10">
-                  <div className="w-12 h-12 bg-white border border-slate-200 rounded-2xl flex items-center justify-center text-slate-700 shadow-xs">
-                    <IconFileText className="w-6 h-6 text-slate-700" />
+                  <div className="w-11 h-11 bg-slate-500/10 border border-slate-500/20 rounded-xl flex items-center justify-center text-slate-300 shadow-xs">
+                    <IconFileText className="w-6 h-6 text-text-secondary" />
                   </div>
                   <div className="space-y-1 flex-1 min-w-0">
-                    <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Drafts</p>
-                    <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight tabular-nums">
+                    <p className="text-xs font-bold text-text-muted uppercase tracking-wider">Drafts</p>
+                    <h3 className="text-2xl sm:text-3xl font-black text-text-primary tracking-tight tabular-nums">
                       {stats.pending || 0}
                     </h3>
-                    <p className="text-xs font-medium text-slate-500">Under preparation</p>
+                    <p className="text-xs font-medium text-text-muted">Under preparation</p>
                   </div>
                 </div>
               </motion.div>
@@ -301,16 +301,16 @@ export default function PenaltyPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.15 }}
-                className="bg-amber-50/30 border border-amber-200 p-6 rounded-[2.5rem] relative overflow-hidden group hover:border-amber-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-default"
+                className="bg-surface border border-border-default hover:border-amber-500/30 p-6 rounded-2xl relative overflow-hidden group hover:border-amber-300 hover:shadow-xl hover:-translate-y-1 transition-colors duration-150 cursor-default"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/[0.03] rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
                 <div className="flex items-start gap-4 relative z-10">
-                  <div className="w-12 h-12 bg-white border border-amber-200 rounded-2xl flex items-center justify-center text-amber-700 shadow-xs">
+                  <div className="w-12 h-12 bg-surface border border-amber-500/20 rounded-2xl flex items-center justify-center text-amber-700 shadow-xs">
                     <IconClock className="w-6 h-6 text-amber-600" />
                   </div>
                   <div className="space-y-1 flex-1 min-w-0">
                     <p className="text-xs font-bold text-amber-700 uppercase tracking-wider">Pending Approval</p>
-                    <h3 className="text-2xl sm:text-3xl font-black text-amber-900 tracking-tight tabular-nums animate-pulse">
+                    <h3 className="text-2xl sm:text-3xl font-black text-text-primary tracking-tight tabular-nums animate-pulse">
                       {stats.enforced || 0}
                     </h3>
                     <p className="text-xs font-semibold text-amber-700">Awaiting HoD review</p>
@@ -323,16 +323,16 @@ export default function PenaltyPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: 0.2 }}
-                className="bg-indigo-50/30 border border-indigo-200 p-6 rounded-[2.5rem] relative overflow-hidden group hover:border-indigo-300 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-default"
+                className="bg-surface border border-border-default hover:border-cyan-500/30 p-6 rounded-2xl relative overflow-hidden group hover:border-indigo-300 hover:shadow-xl hover:-translate-y-1 transition-colors duration-150 cursor-default"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/[0.03] rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
                 <div className="flex items-start gap-4 relative z-10">
-                  <div className="w-12 h-12 bg-white border border-indigo-200 rounded-2xl flex items-center justify-center text-indigo-700 shadow-xs">
+                  <div className="w-12 h-12 bg-surface border border-indigo-500/20 rounded-2xl flex items-center justify-center text-indigo-700 shadow-xs">
                     <DollarSign className="w-6 h-6 text-indigo-600" />
                   </div>
                   <div className="space-y-1 flex-1 min-w-0">
                     <p className="text-xs font-bold text-indigo-700 uppercase tracking-wider">Approved Fines Value</p>
-                    <h3 className="text-xl sm:text-2xl font-black text-indigo-900 tracking-tight tabular-nums truncate">
+                    <h3 className="text-xl sm:text-2xl font-black text-text-primary tracking-tight tabular-nums truncate">
                       {formatCurrency(Number((stats.appl_amount || 0) + (stats.cc_amount || 0)))}
                     </h3>
                     <p className="text-xs font-semibold text-indigo-700">{stats.approved || 0} Approved penalties</p>
@@ -344,7 +344,7 @@ export default function PenaltyPage() {
         )}
 
         {/* Premium Type Tabs Selector */}
-        <div className="flex items-center gap-2 p-1.5 bg-slate-100 border border-slate-300 rounded-2xl w-fit relative z-20">
+        <div className="flex items-center gap-2 p-1.5 bg-subtle border border-border-default rounded-2xl w-fit relative z-20">
           {[
             { id: 'all', label: 'All Penalty Records' },
             { id: 'appl', label: 'APPL Penalty (990102)' },
@@ -357,10 +357,10 @@ export default function PenaltyPage() {
                 setPage(1)
               }}
               className={cn(
-                "px-5 py-2.5 text-xs font-bold rounded-xl transition-all duration-200 relative",
+                "px-5 py-2.5 text-xs font-bold rounded-xl transition-colors duration-150 relative",
                 activeTab === tab.id 
-                  ? "bg-white text-indigo-900 shadow-sm border border-slate-200" 
-                  : "text-slate-600 hover:text-slate-900"
+                  ? "bg-surface text-text-primary shadow-sm border border-border-default" 
+                  : "text-text-muted hover:text-text-primary"
               )}
             >
               {tab.label}
@@ -369,30 +369,30 @@ export default function PenaltyPage() {
         </div>
 
         {/* Main Content Area */}
-        <div className="bg-white border border-slate-200 rounded-[2.5rem] p-6 sm:p-8 shadow-xl overflow-hidden relative">
+        <div className="bg-surface border border-border-default rounded-2xl p-6 sm:p-8 shadow-xl overflow-hidden relative">
           <div>
             {/* Filters Row */}
-            <div className="bg-slate-50 p-4 rounded-3xl border border-slate-200 shadow-xs mb-6">
+            <div className="bg-subtle/50 p-4 rounded-3xl border border-border-default shadow-xs mb-6">
               <form onSubmit={handleSearch} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-end">
                 <div className="lg:col-span-3 space-y-2">
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider ml-1">Search</label>
+                  <label className="text-xs font-bold text-text-secondary uppercase tracking-wider ml-1">Search</label>
                   <div className="relative">
                     <IconSearch className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                     <Input 
                       type="text"
                       placeholder="Search by Supplier, PO, LPO or Item Name..."
-                      className="pl-11 pr-4 py-3 bg-white border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-rose-100 transition-all outline-none"
+                      className="pl-11 pr-4 py-3 bg-surface border border-border-default rounded-xl text-sm font-semibold text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-rose-100 transition-colors outline-none"
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                     />
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider ml-1">Status</label>
+                  <label className="text-xs font-bold text-text-secondary uppercase tracking-wider ml-1">Status</label>
                   <div className="relative">
                     <IconFilter className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 z-10" />
                     <Select 
-                      className="pl-11 bg-white border border-slate-300 rounded-xl px-4 py-3 text-sm font-bold text-slate-800 focus:ring-2 focus:ring-rose-100 transition-all outline-none"
+                      className="pl-11 bg-surface border border-border-default rounded-xl px-4 py-3 text-sm font-bold text-text-primary focus:ring-2 focus:ring-rose-100 transition-colors outline-none"
                       value={statusFilter}
                       onChange={(e) => {
                         setStatusFilter(e.target.value)
@@ -411,39 +411,39 @@ export default function PenaltyPage() {
             </div>
 
             {/* Table Area - Desktop Table */}
-            <div className="hidden lg:block overflow-x-auto rounded-2xl border border-slate-200 shadow-sm">
+            <div className="hidden lg:block overflow-x-auto rounded-2xl border border-border-default shadow-sm">
               <table className="w-full border-collapse text-left">
                 <thead>
-                  <tr className="bg-slate-100/80 border-b border-slate-200">
-                    <th className="px-4 py-3.5 whitespace-nowrap text-left text-xs font-extrabold uppercase tracking-wider text-slate-700">Date</th>
-                    <th className="px-4 py-3.5 whitespace-nowrap text-left text-xs font-extrabold uppercase tracking-wider text-slate-700">LPO/PO</th>
-                    <th className="px-4 py-3.5 whitespace-nowrap text-left text-xs font-extrabold uppercase tracking-wider text-slate-700">DO Number</th>
-                    <th className="px-4 py-3.5 whitespace-nowrap text-left text-xs font-extrabold uppercase tracking-wider text-slate-700">Type</th>
-                    <th className="px-4 py-3.5 text-left text-xs font-extrabold uppercase tracking-wider text-slate-700">Supplier & Item</th>
-                    <th className="px-4 py-3.5 whitespace-nowrap text-left text-xs font-extrabold uppercase tracking-wider text-slate-700">Delays</th>
-                    <th className="px-4 py-3.5 whitespace-nowrap text-left text-xs font-extrabold uppercase tracking-wider text-slate-700">Amount</th>
-                    <th className="px-4 py-3.5 whitespace-nowrap text-left text-xs font-extrabold uppercase tracking-wider text-slate-700">Status</th>
-                    <th className="px-4 py-3.5 whitespace-nowrap text-left text-xs font-extrabold uppercase tracking-wider text-slate-700">Payment</th>
-                    <th className="px-4 py-3.5 whitespace-nowrap text-right text-xs font-extrabold uppercase tracking-wider text-slate-700">Actions</th>
+                  <tr className="bg-subtle border-b border-border-default">
+                    <th className="px-4 py-3.5 whitespace-nowrap text-left text-xs font-extrabold uppercase tracking-wider text-text-secondary">Date</th>
+                    <th className="px-4 py-3.5 whitespace-nowrap text-left text-xs font-extrabold uppercase tracking-wider text-text-secondary">LPO/PO</th>
+                    <th className="px-4 py-3.5 whitespace-nowrap text-left text-xs font-extrabold uppercase tracking-wider text-text-secondary">DO Number</th>
+                    <th className="px-4 py-3.5 whitespace-nowrap text-left text-xs font-extrabold uppercase tracking-wider text-text-secondary">Type</th>
+                    <th className="px-4 py-3.5 text-left text-xs font-extrabold uppercase tracking-wider text-text-secondary">Supplier & Item</th>
+                    <th className="px-4 py-3.5 whitespace-nowrap text-left text-xs font-extrabold uppercase tracking-wider text-text-secondary">Delays</th>
+                    <th className="px-4 py-3.5 whitespace-nowrap text-left text-xs font-extrabold uppercase tracking-wider text-text-secondary">Amount</th>
+                    <th className="px-4 py-3.5 whitespace-nowrap text-left text-xs font-extrabold uppercase tracking-wider text-text-secondary">Status</th>
+                    <th className="px-4 py-3.5 whitespace-nowrap text-left text-xs font-extrabold uppercase tracking-wider text-text-secondary">Payment</th>
+                    <th className="px-4 py-3.5 whitespace-nowrap text-right text-xs font-extrabold uppercase tracking-wider text-text-secondary">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-border-subtle">
                   {isLoading ? (
                     <tr>
                       <td colSpan={10} className="px-6 py-16 text-center">
                         <div className="flex flex-col items-center justify-center">
                           <Spinner size="lg" className="mb-4" />
-                          <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Loading records...</p>
+                          <p className="text-text-muted font-bold uppercase tracking-widest text-xs">Loading records...</p>
                         </div>
                       </td>
                     </tr>
                   ) : penalties.length === 0 ? (
                     <tr>
                       <td colSpan={10} className="px-6 py-16 text-center">
-                        <div className="w-14 h-14 bg-slate-50 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-slate-200">
+                        <div className="w-14 h-14 bg-subtle/50 rounded-2xl flex items-center justify-center mx-auto mb-3 border border-border-default">
                           <IconAlertTriangle className="w-7 h-7 text-slate-400" />
                         </div>
-                        <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">No penalties found</p>
+                        <p className="text-text-muted font-bold uppercase tracking-widest text-xs">No penalties found</p>
                       </td>
                     </tr>
                   ) : (
@@ -451,10 +451,10 @@ export default function PenaltyPage() {
                       <tr 
                         key={penalty.id} 
                         onClick={() => handleRowClick(penalty.id)}
-                        className="hover:bg-slate-50/90 transition-colors group cursor-pointer"
+                        className="hover:bg-subtle/50 transition-colors group cursor-pointer"
                       >
                         <td className="px-4 py-3.5 whitespace-nowrap">
-                          <div className="text-xs font-bold text-slate-900">
+                          <div className="text-xs font-bold text-text-primary">
                             {new Date(penalty.created_at || penalty.issue_date).toLocaleDateString('en-MY', {
                               day: '2-digit', month: 'short', year: 'numeric'
                             })}
@@ -468,19 +468,19 @@ export default function PenaltyPage() {
                                   e.stopPropagation()
                                   setSelectedOrderId(penalty.po_id!)
                                 }}
-                                className="group/link inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 hover:bg-rose-50 text-slate-800 hover:text-rose-600 border border-slate-300 hover:border-rose-300 rounded-lg text-xs font-bold transition-all w-fit text-left shadow-xs"
+                                className="group/link inline-flex items-center gap-1.5 px-2.5 py-1 bg-subtle hover:bg-rose-500/10 text-text-primary hover:text-rose-600 border border-border-default hover:border-rose-300 rounded-lg text-xs font-bold transition-colors w-fit text-left shadow-xs"
                               >
-                                <span className="text-slate-500 group-hover/link:text-rose-500 font-mono text-[10px] uppercase font-bold">PO:</span>
+                                <span className="text-text-muted group-hover/link:text-rose-500 font-mono text-[10px] uppercase font-bold">PO:</span>
                                 <span className="font-mono">{penalty.purchase_order?.po_number || '—'}</span>
                               </button>
                             ) : (
-                              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-xs font-bold w-fit shadow-xs">
-                                <span className="text-slate-500 font-mono text-[10px] uppercase font-bold">PO:</span>
+                              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-subtle text-text-secondary border border-border-default rounded-lg text-xs font-bold w-fit shadow-xs">
+                                <span className="text-text-muted font-mono text-[10px] uppercase font-bold">PO:</span>
                                 <span className="font-mono">{penalty.purchase_order?.po_number || '—'}</span>
                               </div>
                             )}
                             {penalty.lpo?.lpo_number && (
-                              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-indigo-50 text-indigo-800 border border-indigo-200 rounded-lg text-xs font-bold w-fit shadow-xs">
+                              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 rounded-lg text-xs font-bold w-fit shadow-xs">
                                 <span className="text-indigo-500 font-mono text-[10px] uppercase font-bold">LPO:</span>
                                 <span className="font-mono">{penalty.lpo.lpo_number}</span>
                               </div>
@@ -489,8 +489,8 @@ export default function PenaltyPage() {
                         </td>
                         <td className="px-4 py-3.5 whitespace-nowrap">
                           {(penalty.goods_receipt?.delivery_note_number || (penalty as any).receiving?.do_number) ? (
-                            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-100 border border-slate-300 rounded-lg text-xs font-bold text-slate-800 shadow-xs">
-                              <IconFileText className="w-3.5 h-3.5 text-slate-500" />
+                            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-subtle border border-border-default rounded-lg text-xs font-bold text-text-primary shadow-xs">
+                              <IconFileText className="w-3.5 h-3.5 text-text-muted" />
                               <span className="font-mono uppercase">
                                 {penalty.goods_receipt?.delivery_note_number || (penalty as any).receiving?.do_number}
                               </span>
@@ -504,19 +504,19 @@ export default function PenaltyPage() {
                         </td>
                         <td className="px-4 py-3.5">
                           <div className="flex flex-col gap-1 max-w-[220px] xl:max-w-[280px]">
-                            <div className="text-xs font-bold text-slate-900 group-hover:text-indigo-600 transition-colors truncate" title={penalty.supplier?.company_name}>
+                            <div className="text-xs font-bold text-text-primary group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors truncate" title={penalty.supplier?.company_name}>
                               {penalty.supplier?.company_name || '—'}
                             </div>
                             {penalty.item_name && (
-                              <div className="text-xs font-medium text-slate-600 truncate flex items-center gap-1.5" title={penalty.item_name}>
+                              <div className="text-xs font-medium text-text-muted truncate flex items-center gap-1.5" title={penalty.item_name}>
                                 <span className="truncate">{penalty.item_name}</span>
-                                {penalty.item_code && <span className="text-[11px] font-mono font-bold text-slate-500 shrink-0">({penalty.item_code})</span>}
+                                {penalty.item_code && <span className="text-[11px] font-mono font-bold text-text-muted shrink-0">({penalty.item_code})</span>}
                               </div>
                             )}
                           </div>
                         </td>
                         <td className="px-4 py-3.5 whitespace-nowrap">
-                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-rose-50 border border-rose-200 rounded-full text-rose-700 shadow-xs">
+                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-rose-500/10 border border-rose-500/20 rounded-full text-rose-700 shadow-xs">
                             <IconClock className="w-3.5 h-3.5 text-rose-500" />
                             <span className="text-xs font-extrabold tracking-tight">{penalty.days_delayed || 0}d</span>
                           </div>
@@ -538,12 +538,12 @@ export default function PenaltyPage() {
                         </td>
                         <td className="px-4 py-3.5 whitespace-nowrap">
                           {penalty.penalty_paid ? (
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-800 border border-emerald-300 rounded-full text-xs font-bold uppercase tracking-wider shadow-xs">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-300 rounded-full text-xs font-bold uppercase tracking-wider shadow-xs">
                               <span className="w-2 h-2 rounded-full bg-emerald-600 shrink-0" />
                               Paid
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-rose-50 text-rose-800 border border-rose-300 rounded-full text-xs font-bold uppercase tracking-wider shadow-xs">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-rose-500/10 text-rose-400 border border-rose-300 rounded-full text-xs font-bold uppercase tracking-wider shadow-xs">
                               <span className="w-2 h-2 rounded-full bg-rose-600 shrink-0" />
                               Unpaid
                             </span>
@@ -555,13 +555,13 @@ export default function PenaltyPage() {
                               <>
                                 <button
                                   onClick={(e) => handleStatusUpdate(penalty.id, 'enforced', e)}
-                                  className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-200 shadow-xs"
+                                  className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-colors duration-150 shadow-xs"
                                 >
                                   Submit
                                 </button>
                                 <button
                                   onClick={(e) => handleStatusUpdate(penalty.id, 'waived', e)}
-                                  className="px-3 py-1.5 bg-white hover:bg-rose-50 text-rose-700 border border-rose-300 rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-200 shadow-xs"
+                                  className="px-3 py-1.5 bg-surface hover:bg-rose-500/10 text-rose-700 border border-rose-300 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors duration-150 shadow-xs"
                                 >
                                   Reject
                                 </button>
@@ -569,13 +569,13 @@ export default function PenaltyPage() {
                             )}
                             <button
                               onClick={() => handleRowClick(penalty.id)}
-                              className="px-3 py-1.5 bg-slate-900 hover:bg-slate-950 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-all duration-200 shadow-xs"
+                              className="px-3 py-1.5 bg-slate-900 hover:bg-slate-950 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-colors duration-150 shadow-xs"
                             >
                               Process
                             </button>
                             <button
                               onClick={(e) => handleDelete(penalty.id, e)}
-                              className="p-1.5 bg-white hover:bg-rose-50 text-rose-600 hover:text-rose-700 border border-slate-300 hover:border-rose-300 rounded-lg transition-all duration-200 shadow-xs"
+                              className="p-1.5 bg-surface hover:bg-rose-500/10 text-rose-600 hover:text-rose-700 border border-border-default hover:border-rose-300 rounded-lg transition-colors duration-150 shadow-xs"
                               title="Delete Duplicate/Incorrect Penalty"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -594,39 +594,39 @@ export default function PenaltyPage() {
               {isLoading ? (
                 <div className="flex flex-col items-center justify-center py-20">
                   <Spinner size="lg" className="mb-4" />
-                  <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Syncing penalties...</p>
+                  <p className="text-text-muted font-bold uppercase tracking-widest text-xs">Syncing penalties...</p>
                 </div>
               ) : penalties.length === 0 ? (
-                <div className="bg-slate-50 rounded-[2rem] p-12 text-center border border-dashed border-slate-300">
+                <div className="bg-subtle/50 rounded-xl p-12 text-center border border-dashed border-border-default">
                   <IconAlertTriangle className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-                  <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">No penalties identified</p>
+                  <p className="text-text-muted font-bold uppercase tracking-widest text-xs">No penalties identified</p>
                 </div>
               ) : (
                 penalties.map((penalty) => (
                   <div 
                     key={penalty.id} 
                     onClick={() => handleRowClick(penalty.id)}
-                    className="bg-white border border-slate-200 rounded-[2rem] p-5 shadow-sm hover:shadow-md transition-all space-y-5 cursor-pointer"
+                    className="bg-surface border border-border-default rounded-xl p-5 shadow-sm hover:shadow-md transition-colors space-y-5 cursor-pointer"
                   >
                     <div className="flex justify-between items-start">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700">
-                          <IconAlertTriangle className="w-4 h-4 text-slate-600" />
+                        <div className="w-9 h-9 rounded-xl bg-subtle border border-border-default flex items-center justify-center text-text-secondary">
+                          <IconAlertTriangle className="w-4 h-4 text-text-muted" />
                         </div>
                         <div>
-                          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block leading-none mb-1">Procurement Type</span>
+                          <span className="text-xs font-bold text-text-muted uppercase tracking-wider block leading-none mb-1">Procurement Type</span>
                           {renderContractCategory(penalty.penalty_type)}
                         </div>
                       </div>
                       <div className="flex flex-col items-end gap-1.5">
                         {renderStatusBadge(penalty.status)}
                         {penalty.penalty_paid ? (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-800 border border-emerald-300 rounded-full text-xs font-bold uppercase tracking-wider shadow-xs">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-300 rounded-full text-xs font-bold uppercase tracking-wider shadow-xs">
                             <span className="w-2 h-2 rounded-full bg-emerald-600 shrink-0" />
                             Paid
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-rose-50 text-rose-800 border border-rose-300 rounded-full text-xs font-bold uppercase tracking-wider shadow-xs">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-rose-500/10 text-rose-400 border border-rose-300 rounded-full text-xs font-bold uppercase tracking-wider shadow-xs">
                             <span className="w-2 h-2 rounded-full bg-rose-600 shrink-0" />
                             Unpaid
                           </span>
@@ -634,32 +634,32 @@ export default function PenaltyPage() {
                       </div>
                     </div>
 
-                    <div className="space-y-3 pt-4 border-t border-slate-200">
+                    <div className="space-y-3 pt-4 border-t border-border-default">
                       <div>
-                        <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block leading-none mb-1">Supplier & Item</span>
-                        <h4 className="text-xs font-bold text-slate-900 leading-tight mb-0.5">{penalty.supplier?.company_name}</h4>
+                        <span className="text-xs font-bold text-text-muted uppercase tracking-wider block leading-none mb-1">Supplier & Item</span>
+                        <h4 className="text-xs font-bold text-text-primary leading-tight mb-0.5">{penalty.supplier?.company_name}</h4>
                         {penalty.item_name && (
-                          <p className="text-xs font-semibold text-slate-600 leading-normal">{penalty.item_name}</p>
+                          <p className="text-xs font-semibold text-text-muted leading-normal">{penalty.item_name}</p>
                         )}
                       </div>
 
                       <div className="grid grid-cols-2 gap-y-3 gap-x-4 pt-2">
                         <div>
-                          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block leading-none mb-1">Issue Date</span>
-                          <p className="text-xs font-bold text-slate-800">
+                          <span className="text-xs font-bold text-text-muted uppercase tracking-wider block leading-none mb-1">Issue Date</span>
+                          <p className="text-xs font-bold text-text-primary">
                             {new Date(penalty.created_at || penalty.issue_date).toLocaleDateString('en-MY', {
                               day: '2-digit', month: 'short', year: 'numeric'
                             })}
                           </p>
                         </div>
                         <div>
-                          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block leading-none mb-1">DO Number</span>
-                          <p className="text-xs font-mono font-bold text-slate-800 uppercase">
+                          <span className="text-xs font-bold text-text-muted uppercase tracking-wider block leading-none mb-1">DO Number</span>
+                          <p className="text-xs font-mono font-bold text-text-primary uppercase">
                             {penalty.goods_receipt?.delivery_note_number || (penalty as any).receiving?.do_number || '—'}
                           </p>
                         </div>
                         <div>
-                          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block leading-none mb-1">LPO/PO Reference</span>
+                          <span className="text-xs font-bold text-text-muted uppercase tracking-wider block leading-none mb-1">LPO/PO Reference</span>
                           <div className="flex flex-col gap-1 items-start mt-0.5" onClick={e => e.stopPropagation()}>
                             {penalty.po_id ? (
                               <button 
@@ -667,24 +667,24 @@ export default function PenaltyPage() {
                                   e.stopPropagation()
                                   setSelectedOrderId(penalty.po_id!)
                                 }}
-                                className="px-2.5 py-1 bg-slate-100 border border-slate-300 rounded text-xs font-mono font-bold text-slate-800 hover:text-rose-600 text-left"
+                                className="px-2.5 py-1 bg-subtle border border-border-default rounded text-xs font-mono font-bold text-text-primary hover:text-rose-600 text-left"
                               >
                                 PO: {penalty.purchase_order?.po_number}
                               </button>
                             ) : (
-                              <span className="text-xs font-mono font-bold text-slate-700">
+                              <span className="text-xs font-mono font-bold text-text-secondary">
                                 PO: {penalty.purchase_order?.po_number || '—'}
                               </span>
                             )}
                             {penalty.lpo?.lpo_number && (
-                              <span className="px-2.5 py-1 bg-indigo-50 border border-indigo-200 rounded text-xs font-mono font-bold text-indigo-800">
+                              <span className="px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded text-xs font-mono font-bold text-indigo-400">
                                 LPO: {penalty.lpo.lpo_number}
                               </span>
                             )}
                           </div>
                         </div>
                         <div>
-                          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider block leading-none mb-1">Penalty Amount</span>
+                          <span className="text-xs font-bold text-text-muted uppercase tracking-wider block leading-none mb-1">Penalty Amount</span>
                           <p className="text-sm font-extrabold text-rose-600 font-mono tracking-tight leading-none mt-1">
                             {penalty.penalty_amount ? formatCurrency(Number(penalty.penalty_amount)) : 'RM 0.00'}
                           </p>
@@ -692,7 +692,7 @@ export default function PenaltyPage() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between pt-4 border-t border-slate-200" onClick={e => e.stopPropagation()}>
+                    <div className="flex items-center justify-between pt-4 border-t border-border-default" onClick={e => e.stopPropagation()}>
                       <div className="flex items-center gap-2">
                         <IconClock className="w-4 h-4 text-rose-500" />
                         <span className="text-xs font-black text-rose-600">{penalty.days_delayed || 0} Days Late</span>
@@ -703,13 +703,13 @@ export default function PenaltyPage() {
                           <>
                             <button
                               onClick={(e) => handleStatusUpdate(penalty.id, 'waived', e)}
-                              className="px-3 py-1.5 bg-white text-rose-700 border border-rose-300 rounded-lg text-xs font-bold uppercase tracking-wider transition-all hover:bg-rose-50 shadow-xs"
+                              className="px-3 py-1.5 bg-surface text-rose-700 border border-rose-300 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors hover:bg-rose-500/10 shadow-xs"
                             >
                               Reject
                             </button>
                             <button
                               onClick={(e) => handleStatusUpdate(penalty.id, 'enforced', e)}
-                              className="px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-bold uppercase tracking-wider shadow-xs transition-all hover:bg-indigo-700"
+                              className="px-3 py-1.5 bg-indigo-600 text-white rounded-lg text-xs font-bold uppercase tracking-wider shadow-xs transition-colors hover:bg-indigo-700"
                             >
                               Submit
                             </button>
@@ -717,13 +717,13 @@ export default function PenaltyPage() {
                         )}
                         <button
                           onClick={() => handleRowClick(penalty.id)}
-                          className="px-3.5 py-1.5 bg-slate-900 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-all hover:bg-slate-950 shadow-xs"
+                          className="px-3.5 py-1.5 bg-slate-900 text-white rounded-lg text-xs font-bold uppercase tracking-wider transition-colors hover:bg-slate-950 shadow-xs"
                         >
                           Process
                         </button>
                         <button
                           onClick={(e) => handleDelete(penalty.id, e)}
-                          className="p-1.5 bg-white text-rose-600 border border-rose-300 rounded-lg transition-all hover:bg-rose-50 shadow-xs"
+                          className="p-1.5 bg-surface text-rose-600 border border-rose-300 rounded-lg transition-colors hover:bg-rose-500/10 shadow-xs"
                           title="Delete Duplicate/Incorrect Penalty"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -737,12 +737,12 @@ export default function PenaltyPage() {
 
             {/* Pagination / Page Controls */}
             {totalRecords > 0 && (
-              <div className="mt-10 pt-6 border-t border-slate-200/80 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="mt-10 pt-6 border-t border-border-default flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <div className="w-1.5 h-6 bg-indigo-600 rounded-full" />
-                  <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                    Showing <span className="text-slate-900 font-black">{(page - 1) * pageSize + 1}</span> to{' '}
-                    <span className="text-slate-900 font-black">
+                  <span className="text-xs font-bold text-text-muted uppercase tracking-wider">
+                    Showing <span className="text-text-primary font-black">{(page - 1) * pageSize + 1}</span> to{' '}
+                    <span className="text-text-primary font-black">
                       {Math.min(page * pageSize, totalRecords)}
                     </span>{' '}
                     of <span className="text-indigo-600 font-black">{totalRecords}</span> records
@@ -759,7 +759,7 @@ export default function PenaltyPage() {
                         setPageSize(Number(e.target.value))
                         setPage(1)
                       }}
-                      className="px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 shadow-sm focus:outline-none focus:border-indigo-500 cursor-pointer"
+                      className="px-2.5 py-1.5 bg-surface border border-border-default rounded-xl text-xs font-bold text-text-secondary shadow-sm focus:outline-none focus:border-indigo-500 cursor-pointer"
                     >
                       <option value={25}>25</option>
                       <option value={50}>50</option>
@@ -773,18 +773,18 @@ export default function PenaltyPage() {
                     <button
                       onClick={() => setPage((p) => Math.max(1, p - 1))}
                       disabled={page === 1}
-                      className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 hover:border-slate-900 hover:text-slate-900 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-sm"
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-xl border border-border-default bg-surface text-xs font-bold text-text-secondary hover:border-slate-900 hover:text-text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-colors shadow-sm"
                     >
                       <ChevronLeft className="w-4 h-4" />
                       Previous
                     </button>
-                    <span className="text-xs font-extrabold text-slate-600 px-2 font-mono">
+                    <span className="text-xs font-extrabold text-text-muted px-2 font-mono">
                       {page} / {totalPages || 1}
                     </span>
                     <button
                       onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                       disabled={page >= totalPages}
-                      className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 text-xs font-bold text-white hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-all shadow-md shadow-slate-900/10"
+                      className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 text-xs font-bold text-white hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors shadow-md shadow-slate-900/10"
                     >
                       Next
                       <ChevronRight className="w-4 h-4" />

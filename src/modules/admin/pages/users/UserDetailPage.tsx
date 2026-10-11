@@ -109,13 +109,13 @@ export const UserDetailPage: React.FC = () => {
             >
               Back
             </Button>
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-bold text-text-primary">
               {userId === 'new' ? 'Create New User' : 'Edit User'}
             </h1>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+        <div className="bg-surface rounded-xl border border-border-default shadow-sm p-6">
           <UserForm
             user={user || undefined}
             onSuccess={() => {
@@ -143,7 +143,7 @@ export const UserDetailPage: React.FC = () => {
   if (!user) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-slate-600">User not found</p>
+        <p className="text-text-muted">User not found</p>
       </div>
     )
   }
@@ -167,7 +167,7 @@ export const UserDetailPage: React.FC = () => {
           >
             Back to Users
           </Button>
-          <h1 className="text-2xl font-bold text-slate-900">User Details</h1>
+          <h1 className="text-2xl font-bold text-text-primary">User Details</h1>
         </div>
         <div className="flex items-center gap-3">
           <Button
@@ -193,7 +193,7 @@ export const UserDetailPage: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-xl border border-slate-200 shadow-sm p-6"
+            className="bg-surface rounded-xl border border-border-default shadow-sm p-6"
           >
             <div className="flex items-start gap-6">
               <Avatar
@@ -204,33 +204,33 @@ export const UserDetailPage: React.FC = () => {
               />
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <h2 className="text-2xl font-bold text-slate-900">{user.full_name}</h2>
+                  <h2 className="text-2xl font-bold text-text-primary">{user.full_name}</h2>
                   <Badge variant={statusColors[user.status]}>
                     {user.status.charAt(0).toUpperCase() + user.status.slice(1)}
                   </Badge>
                 </div>
-                <p className="text-slate-600 mb-4">{user.email}</p>
+                <p className="text-text-muted mb-4">{user.email}</p>
 
                 <div className="grid grid-cols-2 gap-4 mt-4">
                   <div className="flex items-center gap-2 text-sm">
                     <Hash className="w-4 h-4 text-slate-400" />
-                    <span className="text-slate-600">Employee ID:</span>
-                    <span className="font-mono font-semibold text-slate-900">{user.employee_id}</span>
+                    <span className="text-text-muted">Employee ID:</span>
+                    <span className="font-mono font-semibold text-text-primary">{user.employee_id}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Shield className="w-4 h-4 text-slate-400" />
-                    <span className="text-slate-600">Role:</span>
-                    <span className="font-semibold text-slate-900">{user.role?.role_name || 'N/A'}</span>
+                    <span className="text-text-muted">Role:</span>
+                    <span className="font-semibold text-text-primary">{user.role?.role_name || 'N/A'}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Building2 className="w-4 h-4 text-slate-400" />
-                    <span className="text-slate-600">Hospital:</span>
-                    <span className="font-semibold text-slate-900">{user.hospital?.hospital_name || 'N/A'}</span>
+                    <span className="text-text-muted">Hospital:</span>
+                    <span className="font-semibold text-text-primary">{user.hospital?.hospital_name || 'N/A'}</span>
                   </div>
                   <div className="flex items-center gap-2 text-sm">
                     <Briefcase className="w-4 h-4 text-slate-400" />
-                    <span className="text-slate-600">Department:</span>
-                    <span className="font-semibold text-slate-900">{user.department?.department_name || 'N/A'}</span>
+                    <span className="text-text-muted">Department:</span>
+                    <span className="font-semibold text-text-primary">{user.department?.department_name || 'N/A'}</span>
                   </div>
                 </div>
               </div>
@@ -242,9 +242,9 @@ export const UserDetailPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white rounded-xl border border-slate-200 shadow-sm p-6"
+            className="bg-surface rounded-xl border border-border-default shadow-sm p-6"
           >
-            <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
               <User className="w-5 h-5" />
               Personal Information
             </h3>
@@ -279,9 +279,9 @@ export const UserDetailPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white rounded-xl border border-slate-200 shadow-sm p-6"
+            className="bg-surface rounded-xl border border-border-default shadow-sm p-6"
           >
-            <h3 className="text-lg font-semibold text-slate-900 mb-4">Status Management</h3>
+            <h3 className="text-lg font-semibold text-text-primary mb-4">Status Management</h3>
             <div className="space-y-2">
               {Object.entries(USER_STATUS).map(([key, value]) => (
                 <button
@@ -290,8 +290,8 @@ export const UserDetailPage: React.FC = () => {
                   className={cn(
                     'w-full text-left px-4 py-2 rounded-lg border transition-colors',
                     user.status === value
-                      ? 'bg-teal-50 border-teal-300 text-teal-900 font-semibold'
-                      : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+                      ? 'bg-accent-base/10 border-teal-300 text-teal-900 font-semibold'
+                      : 'bg-subtle/50 border-border-default text-text-secondary hover:bg-subtle'
                   )}
                 >
                   {value.charAt(0).toUpperCase() + value.slice(1)}
@@ -305,9 +305,9 @@ export const UserDetailPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white rounded-xl border border-slate-200 shadow-sm p-6"
+            className="bg-surface rounded-xl border border-border-default shadow-sm p-6"
           >
-            <h3 className="text-lg font-semibold text-slate-900 mb-4">Account Information</h3>
+            <h3 className="text-lg font-semibold text-text-primary mb-4">Account Information</h3>
             <div className="space-y-3">
               <InfoItem
                 icon={Clock}
@@ -328,8 +328,8 @@ export const UserDetailPage: React.FC = () => {
                 small
               />
               {user.failed_login_attempts > 0 && (
-                <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
-                  <div className="flex items-center gap-2 text-amber-800">
+                <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                  <div className="flex items-center gap-2 text-amber-400">
                     <AlertTriangle className="w-4 h-4" />
                     <span className="text-sm font-medium">
                       {user.failed_login_attempts} failed login attempt(s)
@@ -359,7 +359,7 @@ export const UserDetailPage: React.FC = () => {
         title="Delete User"
       >
         <div className="space-y-4">
-          <p className="text-slate-700">
+          <p className="text-text-secondary">
             Are you sure you want to delete <strong>{user.full_name}</strong>? This action cannot be undone.
           </p>
           <div className="flex items-center justify-end gap-3">
@@ -388,8 +388,8 @@ const InfoItem: React.FC<InfoItemProps> = ({ icon: Icon, label, value, fullWidth
   <div className={cn('flex items-start gap-3', fullWidth && 'md:col-span-2')}>
     <Icon className={cn('text-slate-400 flex-shrink-0 mt-0.5', small ? 'w-4 h-4' : 'w-5 h-5')} />
     <div className="flex-1 min-w-0">
-      <p className={cn('text-slate-500', small ? 'text-xs' : 'text-sm')}>{label}</p>
-      <p className={cn('font-semibold text-slate-900 mt-0.5', small ? 'text-sm' : 'text-base')}>
+      <p className={cn('text-text-muted', small ? 'text-xs' : 'text-sm')}>{label}</p>
+      <p className={cn('font-semibold text-text-primary mt-0.5', small ? 'text-sm' : 'text-base')}>
         {value}
       </p>
     </div>

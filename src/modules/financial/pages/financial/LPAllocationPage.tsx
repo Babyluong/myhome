@@ -122,14 +122,14 @@ export const LPAllocationPage: React.FC = () => {
         value: summary.total_items,
         subtext: 'Ubat & Bukan Ubat',
         icon: Package,
-        color: 'text-indigo-600 bg-indigo-50 border-indigo-100'
+        color: 'text-indigo-600 bg-indigo-500/10 border-indigo-100'
       },
       {
         label: 'Jumlah Kuota Diagihkan',
         value: summary.total_quota.toLocaleString(),
         subtext: 'Unit yang diperuntukkan',
         icon: TrendingUp,
-        color: 'text-emerald-600 bg-emerald-50 border-emerald-100'
+        color: 'text-emerald-600 bg-emerald-500/10 border-emerald-100'
       },
       {
         label: 'Baki Kuota LP',
@@ -143,7 +143,7 @@ export const LPAllocationPage: React.FC = () => {
         value: formatCurrency(summary.total_value),
         subtext: 'Berdasarkan harga sebut harga',
         icon: DollarSign,
-        color: 'text-amber-600 bg-amber-50 border-amber-100'
+        color: 'text-amber-600 bg-amber-500/10 border-amber-100'
       }
     ]
   }, [summary])
@@ -153,8 +153,8 @@ export const LPAllocationPage: React.FC = () => {
       {/* Title Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-black text-slate-800 tracking-tight">LP Allocation (Pembelian Tempatan)</h1>
-          <p className="text-sm text-slate-500 font-medium mt-1">
+          <h1 className="text-2xl font-black text-text-primary tracking-tight">LP Allocation (Pembelian Tempatan)</h1>
+          <p className="text-sm text-text-muted font-medium mt-1">
             Urusan peruntukan kuota dan baki barangan LP yang dikemaskini dari Google Sheets.
           </p>
         </div>
@@ -163,8 +163,8 @@ export const LPAllocationPage: React.FC = () => {
         <div className="flex items-center gap-2.5">
           {lastSyncLog && (
             <div className="text-right hidden md:block">
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Terakhir Diselaras</p>
-              <p className="text-xs text-slate-600 font-bold">
+              <p className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider">Terakhir Diselaras</p>
+              <p className="text-xs text-text-muted font-bold">
                 {formatDate(lastSyncLog.synced_at)} ({lastSyncLog.rows_fetched} baris)
               </p>
             </div>
@@ -172,7 +172,7 @@ export const LPAllocationPage: React.FC = () => {
           <Button
             onClick={handleSync}
             disabled={isSyncing}
-            className="rounded-2xl gap-2 font-bold px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-all"
+            className="rounded-2xl gap-2 font-bold px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-colors"
           >
             <RefreshCw className={cn("w-4 h-4", isSyncing && "animate-spin")} />
             {isSyncing ? 'Menyelaras...' : 'Penyelarasan LP'}
@@ -184,11 +184,11 @@ export const LPAllocationPage: React.FC = () => {
       {summary && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat, idx) => (
-            <div key={idx} className="bg-white border border-slate-100 rounded-3xl p-5 shadow-soft flex items-center justify-between">
+            <div key={idx} className="bg-surface border border-border-subtle rounded-3xl p-5 shadow-elevation-1 flex items-center justify-between">
               <div className="space-y-1">
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">{stat.label}</span>
-                <span className="text-2xl font-black text-slate-800 block">{stat.value}</span>
-                <span className="text-xs text-slate-500 font-medium block">{stat.subtext}</span>
+                <span className="text-2xl font-black text-text-primary block">{stat.value}</span>
+                <span className="text-xs text-text-muted font-medium block">{stat.subtext}</span>
               </div>
               <div className={cn("p-3 rounded-2xl border", stat.color)}>
                 <stat.icon className="w-6 h-6" />
@@ -199,7 +199,7 @@ export const LPAllocationPage: React.FC = () => {
       )}
 
       {/* Tab Selectors */}
-      <div className="flex border-b border-slate-100 gap-1 bg-slate-50/50 p-1.5 rounded-2xl w-fit">
+      <div className="flex border-b border-border-subtle gap-1 bg-subtle/50 p-1.5 rounded-2xl w-fit">
         {[
           { id: 'sebut_harga_lq', label: 'Ubat Sebut Harga (LQ)' },
           { id: 'cfln', label: 'Ubat CFLN' },
@@ -212,10 +212,10 @@ export const LPAllocationPage: React.FC = () => {
               setCurrentPage(1)
             }}
             className={cn(
-              "px-4 py-2 text-xs font-bold rounded-xl transition-all",
+              "px-4 py-2 text-xs font-bold rounded-xl transition-colors",
               activeTab === tab.id
-                ? "bg-white text-indigo-600 shadow-soft"
-                : "text-slate-500 hover:text-slate-800"
+                ? "bg-surface text-indigo-600 shadow-elevation-1"
+                : "text-text-muted hover:text-text-primary"
             )}
           >
             {tab.label}
@@ -231,20 +231,20 @@ export const LPAllocationPage: React.FC = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by item code or name..."
-            className="pl-11 pr-4 py-2.5 rounded-2xl border-slate-100 bg-white"
+            className="pl-11 pr-4 py-2.5 rounded-2xl border-border-subtle bg-surface"
           />
         </div>
       </div>
 
       {/* Main Table Section */}
-      <div className="bg-white border border-slate-100 rounded-3xl shadow-soft overflow-hidden">
+      <div className="bg-surface border border-border-subtle rounded-3xl shadow-elevation-1 overflow-hidden">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
             <Spinner size="lg" />
             <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Loading LP data...</span>
           </div>
         ) : error ? (
-          <div className="flex items-start gap-3 rounded-2xl border border-rose-100 bg-rose-50/50 p-5 m-6 text-rose-700">
+          <div className="flex items-start gap-3 rounded-2xl border border-rose-100 bg-rose-500/10 p-5 m-6 text-rose-700">
             <AlertTriangle className="w-5 h-5 flex-shrink-0 text-rose-500" />
             <div>
               <p className="font-bold">Failed to load LP data</p>
@@ -254,7 +254,7 @@ export const LPAllocationPage: React.FC = () => {
         ) : items.length === 0 ? (
           <div className="text-center py-16">
             <Package className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-            <p className="text-sm font-bold text-slate-700">No records found</p>
+            <p className="text-sm font-bold text-text-secondary">No records found</p>
             <p className="text-xs text-slate-400 mt-1">
               No LP items matching your search or filters. Please adjust catalog or re-filter.
             </p>
@@ -262,42 +262,42 @@ export const LPAllocationPage: React.FC = () => {
         ) : (
           <Table>
             <Table.Header>
-              <Table.Row className="bg-slate-50 border-b border-slate-100">
-                <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">Kod PHIS</Table.Cell>
-                <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">Nama Barangan</Table.Cell>
-                <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">Pembungkusan</Table.Cell>
-                <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">UOM</Table.Cell>
+              <Table.Row className="bg-subtle/50 border-b border-border-subtle">
+                <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted">Kod PHIS</Table.Cell>
+                <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted">Nama Barangan</Table.Cell>
+                <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted">Pembungkusan</Table.Cell>
+                <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted">UOM</Table.Cell>
                 {activeTab !== 'cfln' && (
-                  <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-right">Harga (RM)</Table.Cell>
+                  <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted text-right">Harga (RM)</Table.Cell>
                 )}
                 {activeTab !== 'cfln' && (
-                  <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">Kuota</Table.Cell>
+                  <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted text-center">Kuota</Table.Cell>
                 )}
-                <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">Baki</Table.Cell>
+                <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted text-center">Baki</Table.Cell>
                 {activeTab === 'cfln' && (
-                  <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">Sub-Kelas</Table.Cell>
+                  <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted">Sub-Kelas</Table.Cell>
                 )}
                 {activeTab !== 'cfln' && (
-                  <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500 text-center">Tempoh Kontrak</Table.Cell>
+                  <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted text-center">Tempoh Kontrak</Table.Cell>
                 )}
-                <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-slate-500">Catatan</Table.Cell>
+                <Table.Cell as="th" className="py-4 font-bold text-xs uppercase text-text-muted">Catatan</Table.Cell>
               </Table.Row>
             </Table.Header>
-            <Table.Body className="divide-y divide-slate-100">
+            <Table.Body className="divide-y divide-border-subtle">
               {items.map((item) => (
-                <Table.Row key={item.id} className="hover:bg-slate-50/50 transition-colors">
+                <Table.Row key={item.id} className="hover:bg-subtle/50 transition-colors">
                   {/* PHIS Code */}
-                  <Table.Cell className="font-mono text-xs font-bold text-slate-700">
+                  <Table.Cell className="font-mono text-xs font-bold text-text-secondary">
                     {activeTab === 'non_drug' ? item.item_code : item.drug_code}
                   </Table.Cell>
 
                   {/* Name */}
-                  <Table.Cell className="text-sm font-black text-slate-800">
+                  <Table.Cell className="text-sm font-black text-text-primary">
                     {activeTab === 'non_drug' ? item.item_name : item.drug_name}
                   </Table.Cell>
 
                   {/* Packaging */}
-                  <Table.Cell className="text-xs font-semibold text-slate-500">
+                  <Table.Cell className="text-xs font-semibold text-text-muted">
                     {item.packaging_description || '—'}
                   </Table.Cell>
 
@@ -308,14 +308,14 @@ export const LPAllocationPage: React.FC = () => {
 
                   {/* Price */}
                   {activeTab !== 'cfln' && (
-                    <Table.Cell className="text-sm text-slate-700 font-mono font-bold text-right">
+                    <Table.Cell className="text-sm text-text-secondary font-mono font-bold text-right">
                       {item.price !== null && item.price !== undefined ? `RM ${Number(item.price).toFixed(2)}` : '—'}
                     </Table.Cell>
                   )}
 
                   {/* Quota */}
                   {activeTab !== 'cfln' && (
-                    <Table.Cell className="text-sm text-slate-600 font-mono font-bold text-center">
+                    <Table.Cell className="text-sm text-text-muted font-mono font-bold text-center">
                       {item.lp_quota !== null && item.lp_quota !== undefined ? item.lp_quota : '—'}
                     </Table.Cell>
                   )}
@@ -332,14 +332,14 @@ export const LPAllocationPage: React.FC = () => {
 
                   {/* Sub-class (CFLN Only) */}
                   {activeTab === 'cfln' && (
-                    <Table.Cell className="text-xs font-bold text-slate-500">
+                    <Table.Cell className="text-xs font-bold text-text-muted">
                       {item.item_sub_class || '—'}
                     </Table.Cell>
                   )}
 
                   {/* Contract Dates (LQ and Non-Drug) */}
                   {activeTab !== 'cfln' && (
-                    <Table.Cell className="text-center text-[10px] text-slate-500 font-bold font-mono">
+                    <Table.Cell className="text-center text-[10px] text-text-muted font-bold font-mono">
                       {item.lp_start_date && item.lp_end_date ? (
                         <span>{item.lp_start_date} hingga {item.lp_end_date}</span>
                       ) : '—'}
@@ -359,7 +359,7 @@ export const LPAllocationPage: React.FC = () => {
 
       {/* Pagination Footer */}
       {!isLoading && !error && totalPages > 1 && (
-        <div className="flex items-center justify-between text-xs text-slate-500 font-bold font-mono px-2">
+        <div className="flex items-center justify-between text-xs text-text-muted font-bold font-mono px-2">
           <span>
             HALAMAN {currentPage} DARI {totalPages} ({total} baris)
           </span>

@@ -40,11 +40,11 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
         'flex flex-col items-center justify-center gap-4',
         fullScreen
           ? 'fixed inset-0 bg-white/80 backdrop-blur-sm z-50'
-          : 'absolute inset-0 bg-white/60 backdrop-blur-sm rounded-2xl'
+          : 'absolute inset-0 bg-surface rounded-2xl'
       )}
     >
       <Spinner size="lg" />
-      {message && <p className="text-sm text-gray-600 font-medium">{message}</p>}
+      {message && <p className="text-sm text-text-muted font-medium">{message}</p>}
     </div>
   )
 }

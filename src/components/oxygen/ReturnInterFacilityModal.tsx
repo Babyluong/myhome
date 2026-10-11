@@ -547,57 +547,57 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
       onClick={onClose}
     >
       <div 
-        className="bg-white w-full max-w-4xl rounded-3xl shadow-2xl border border-slate-200/80 flex flex-col overflow-hidden my-auto max-h-[92vh]"
+        className="bg-surface w-full max-w-4xl rounded-3xl shadow-2xl border border-border-default flex flex-col overflow-hidden my-auto max-h-[92vh]"
         onClick={e => e.stopPropagation()}
       >
         {/* Modal Header */}
-        <div className="px-6 py-5 border-b border-slate-200/80 bg-gradient-to-r from-purple-50 via-white to-indigo-50 flex items-center justify-between shrink-0">
+        <div className="px-6 py-5 border-b border-border-default bg-gradient-to-r from-purple-50 via-white to-indigo-50 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3.5">
             <div className="p-3 bg-purple-600 text-white rounded-2xl shadow-lg shadow-purple-600/20">
               <ArrowUpFromLine className="w-6 h-6" />
             </div>
             <div>
               <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="text-lg font-extrabold text-slate-900 tracking-tight">
+                <h3 className="text-lg font-extrabold text-text-primary tracking-tight">
                   Pemulangan Silinder Antara Fasiliti (Inter-Facility Return)
                 </h3>
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-100 text-purple-800 border border-purple-200">
+                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-100 text-indigo-400 border border-indigo-500/20">
                   Fasiliti Luar (Outbound)
                 </span>
               </div>
-              <p className="text-xs text-slate-500 font-medium mt-0.5">
+              <p className="text-xs text-text-muted font-medium mt-0.5">
                 Merekod penghantaran pulang silinder gas perubatan (pinjaman / kosong / gantian) ke hospital atau fasiliti luar KKM.
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all"
+            className="p-2 text-slate-400 hover:text-text-secondary hover:bg-subtle rounded-xl transition-[transform,opacity,box-shadow,border-color]"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Modal Form Content */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6 bg-subtle/50">
           {error && (
-            <div className="p-4 bg-rose-50 border border-rose-200 rounded-2xl flex items-start gap-3 text-rose-800 text-sm animate-shake">
+            <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex items-start gap-3 text-rose-400 text-sm animate-shake">
               <AlertCircle className="w-5 h-5 text-rose-500 shrink-0 mt-0.5" />
               <span className="font-semibold">{error}</span>
             </div>
           )}
 
           {/* SECTION 1: TARGET EXTERNAL FACILITY */}
-          <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
-            <div className="flex items-center gap-2 pb-2 border-b border-slate-100">
+          <div className="bg-surface p-5 rounded-2xl border border-border-default shadow-xs space-y-4">
+            <div className="flex items-center gap-2 pb-2 border-b border-border-subtle">
               <Building2 className="w-4 h-4 text-purple-600" />
-              <h4 className="text-xs font-black text-slate-800 uppercase tracking-wider">
+              <h4 className="text-xs font-black text-text-primary uppercase tracking-wider">
                 1. Maklumat Fasiliti Luar Sasaran (Destination Facility)
               </h4>
             </div>
 
             <div className="space-y-2">
-              <label className="block text-xs font-bold text-slate-700">
+              <label className="block text-xs font-bold text-text-secondary">
                 Pilih atau Nyatakan Fasiliti Luar Penerima *
               </label>
 
@@ -611,10 +611,10 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
                       setSelectedFacility(name);
                       setIsManualFacility(false);
                     }}
-                    className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${
+                    className={`px-3 py-1 rounded-xl text-xs font-bold transition-[transform,opacity,box-shadow,border-color] ${
                       !isManualFacility && selectedFacility === name
                         ? 'bg-purple-600 text-white shadow-xs'
-                        : 'bg-slate-100 hover:bg-purple-50 text-slate-700 hover:text-purple-700 border border-slate-200/60'
+                        : 'bg-subtle hover:bg-indigo-500/10 text-text-secondary hover:text-purple-700 border border-border-default'
                     }`}
                   >
                     {!isManualFacility && selectedFacility === name ? '✓ ' : '+ '}
@@ -624,10 +624,10 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
                 <button
                   type="button"
                   onClick={() => setIsManualFacility(true)}
-                  className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${
+                  className={`px-3 py-1 rounded-xl text-xs font-bold transition-[transform,opacity,box-shadow,border-color] ${
                     isManualFacility
                       ? 'bg-purple-600 text-white shadow-xs'
-                      : 'bg-slate-100 hover:bg-purple-50 text-slate-700 border border-slate-200/60'
+                      : 'bg-subtle hover:bg-indigo-500/10 text-text-secondary border border-border-default'
                   }`}
                 >
                   {isManualFacility ? '✓ Lain-lain (Taip Manual)' : '+ Lain-lain (Taip Manual)'}
@@ -642,7 +642,7 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
                     value={manualFacilityName}
                     onChange={e => setManualFacilityName(e.target.value)}
                     placeholder="Taip nama fasiliti luar (cth: Hospital Kudat, Stor Integrasi)..."
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-purple-300 rounded-xl text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                    className="w-full pl-10 pr-4 py-2.5 bg-subtle/50 border border-purple-300 rounded-xl text-sm font-bold text-text-primary focus:outline-none focus:ring-2 focus:ring-purple-500/20"
                     required
                   />
                 </div>
@@ -651,7 +651,7 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
                   <select
                     value={selectedFacility}
                     onChange={e => setSelectedFacility(e.target.value)}
-                    className="w-full pl-3 pr-8 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500/20 appearance-none cursor-pointer"
+                    className="w-full pl-3 pr-8 py-2.5 bg-surface border border-border-default rounded-xl text-sm font-bold text-text-primary focus:outline-none focus:ring-2 focus:ring-purple-500/20 appearance-none cursor-pointer"
                   >
                     {COMMON_EXTERNAL_FACILITIES.map((fac, idx) => (
                       <option key={idx} value={fac.name}>
@@ -665,17 +665,17 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
           </div>
 
           {/* SECTION 2: LOGISTICS & DOCUMENT REFERENCES */}
-          <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
-            <div className="flex items-center gap-2 pb-2 border-b border-slate-100">
+          <div className="bg-surface p-5 rounded-2xl border border-border-default shadow-xs space-y-4">
+            <div className="flex items-center gap-2 pb-2 border-b border-border-subtle">
               <Truck className="w-4 h-4 text-purple-600" />
-              <h4 className="text-xs font-black text-slate-800 uppercase tracking-wider">
+              <h4 className="text-xs font-black text-text-primary uppercase tracking-wider">
                 2. Rujukan Dokumen & Logistik Penghantaran
               </h4>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label className="block text-xs font-bold text-text-secondary mb-1">
                   No. Surat Rujukan / Nota Pulang (DO/Ref)
                 </label>
                 <div className="relative">
@@ -685,13 +685,13 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
                     value={externalDocRef}
                     onChange={e => setExternalDocRef(e.target.value)}
                     placeholder="cth: RET-HBL-2026-001"
-                    className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                    className="w-full pl-9 pr-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-xs font-bold text-text-primary focus:outline-none focus:ring-2 focus:ring-purple-500/20"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label className="block text-xs font-bold text-text-secondary mb-1">
                   Nama Pemandu / Pembawa (Transporter)
                 </label>
                 <div className="relative">
@@ -701,13 +701,13 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
                     value={transporterName}
                     onChange={e => setTransporterName(e.target.value)}
                     placeholder="cth: SAIDIN BIN BAKAR"
-                    className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                    className="w-full pl-9 pr-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-xs font-bold text-text-primary focus:outline-none focus:ring-2 focus:ring-purple-500/20"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label className="block text-xs font-bold text-text-secondary mb-1">
                   No. Pendaftaran Kenderaan (Vehicle No.)
                 </label>
                 <div className="relative">
@@ -717,7 +717,7 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
                     value={vehicleNumber}
                     onChange={e => setVehicleNumber(e.target.value)}
                     placeholder="cth: QSG 4752"
-                    className="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                    className="w-full pl-9 pr-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-xs font-bold text-text-primary focus:outline-none focus:ring-2 focus:ring-purple-500/20"
                   />
                 </div>
               </div>
@@ -725,11 +725,11 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
           </div>
 
           {/* SECTION 3: CYLINDERS BEING RETURNED */}
-          <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100 flex-wrap gap-2">
+          <div className="bg-surface p-5 rounded-2xl border border-border-default shadow-xs space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-border-subtle flex-wrap gap-2">
               <div className="flex items-center gap-2">
                 <Hash className="w-4 h-4 text-purple-600" />
-                <h4 className="text-xs font-black text-slate-800 uppercase tracking-wider">
+                <h4 className="text-xs font-black text-text-primary uppercase tracking-wider">
                   3. Senarai Silinder Yang Dipulangkan (Returned Cylinders)
                 </h4>
               </div>
@@ -738,7 +738,7 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
                 <button
                   type="button"
                   onClick={handleAddItemRow}
-                  className="px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 rounded-xl text-xs font-bold transition-all flex items-center gap-1 border border-purple-200 cursor-pointer"
+                  className="px-3 py-1.5 bg-indigo-500/10 hover:bg-purple-100 text-purple-700 rounded-xl text-xs font-bold transition-[transform,opacity,box-shadow,border-color] flex items-center gap-1 border border-indigo-500/20 cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" /> Tambah Saiz
                 </button>
@@ -750,15 +750,15 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
               {items.map((item, itemIdx) => (
                 <div 
                   key={item.id}
-                  className="p-4 bg-slate-50/70 border border-slate-200/80 rounded-2xl space-y-3 relative group hover:border-purple-300 transition-all"
+                  className="p-4 bg-subtle/50 border border-border-default rounded-2xl space-y-3 relative group hover:border-purple-300 transition-[transform,opacity,box-shadow,border-color]"
                 >
                   <div className="flex items-center justify-between gap-2 flex-wrap">
                     <div className="flex items-center gap-2">
-                      <span className="px-2 py-0.5 bg-purple-100 text-purple-800 text-[10px] font-black uppercase rounded-lg">
+                      <span className="px-2 py-0.5 bg-purple-100 text-indigo-400 text-[10px] font-black uppercase rounded-lg">
                         Item #{itemIdx + 1}
                       </span>
                       {item.size_code === 'OTHERS' && item.custom_size_name && (
-                        <span className="text-[10px] font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-md border border-purple-200">
+                        <span className="text-[10px] font-bold text-purple-700 bg-indigo-500/10 px-2 py-0.5 rounded-md border border-indigo-500/20">
                           Saiz Manual: {item.custom_size_name}
                         </span>
                       )}
@@ -767,7 +767,7 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
                       <button
                         type="button"
                         onClick={() => handleRemoveItemRow(itemIdx)}
-                        className="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all"
+                        className="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-500/10 rounded-lg transition-[transform,opacity,box-shadow,border-color]"
                         title="Padam baris ini"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -778,7 +778,7 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
                     {/* Size Selector */}
                     <div className="col-span-1 sm:col-span-2">
-                      <label className="block text-[10px] font-bold text-slate-600 uppercase mb-1">
+                      <label className="block text-[10px] font-bold text-text-secondary uppercase mb-1">
                         Saiz Silinder *
                       </label>
                       <select
@@ -795,7 +795,7 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
                             return copy;
                           });
                         }}
-                        className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                        className="w-full px-3 py-2 bg-surface border border-border-default rounded-xl text-xs font-bold text-text-primary focus:outline-none focus:ring-2 focus:ring-purple-500/20"
                       >
                         {PRESET_CYLINDER_SIZES.map(sz => (
                           <option key={sz.code} value={sz.code}>
@@ -807,7 +807,7 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
 
                     {/* Quantity */}
                     <div>
-                      <label className="block text-[10px] font-bold text-slate-600 uppercase mb-1">
+                      <label className="block text-[10px] font-bold text-text-secondary uppercase mb-1">
                         Kuantiti *
                       </label>
                       <input
@@ -816,14 +816,14 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
                         max="200"
                         value={item.quantity}
                         onChange={e => handleQuantityChange(itemIdx, parseInt(e.target.value, 10))}
-                        className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-extrabold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                        className="w-full px-3 py-2 bg-surface border border-border-default rounded-xl text-xs font-extrabold text-text-primary focus:outline-none focus:ring-2 focus:ring-purple-500/20"
                         required
                       />
                     </div>
 
                     {/* Condition */}
                     <div>
-                      <label className="block text-[10px] font-bold text-slate-600 uppercase mb-1">
+                      <label className="block text-[10px] font-bold text-text-secondary uppercase mb-1">
                         Keadaan Silinder
                       </label>
                       <select
@@ -836,7 +836,7 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
                             return copy;
                           });
                         }}
-                        className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500/20"
+                        className="w-full px-3 py-2 bg-surface border border-border-default rounded-xl text-xs font-bold text-text-primary focus:outline-none focus:ring-2 focus:ring-purple-500/20"
                       >
                         <option value="empty">Kosong (Empty)</option>
                         <option value="full">Penuh / Batal Pinjam (Full)</option>
@@ -847,9 +847,9 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
 
                   {/* Manual / Custom Size Input Block when OTHERS is selected */}
                   {item.size_code === 'OTHERS' && (
-                    <div className="p-3.5 bg-purple-50/80 border border-purple-200 rounded-2xl space-y-2.5 animate-fadeIn">
+                    <div className="p-3.5 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl space-y-2.5 animate-fadeIn">
                       <div className="flex items-center justify-between">
-                        <label className="block text-[11px] font-bold text-purple-900 uppercase tracking-wide">
+                        <label className="block text-[11px] font-bold text-indigo-400 dark:text-indigo-300 font-bold uppercase tracking-wide">
                           Taip Spesifikasi Saiz Silinder Manual (Lain-lain) <span className="text-rose-500">*</span>
                         </label>
                         <span className="text-[10px] font-bold text-purple-700 bg-purple-100 px-2 py-0.5 rounded-md">
@@ -868,13 +868,13 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
                           });
                         }}
                         placeholder="cth: 7.3m³, 6.2m³, 5.0m³, 2.0m³, 101-C..."
-                        className="w-full px-3.5 py-2.5 bg-white border border-purple-300 rounded-xl text-xs sm:text-sm font-extrabold text-purple-950 focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-purple-600 shadow-xs"
+                        className="w-full px-3.5 py-2.5 bg-surface border border-purple-300 rounded-xl text-xs sm:text-sm font-extrabold text-indigo-400 dark:text-indigo-300 font-bold focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-purple-600 shadow-xs"
                         autoFocus
                         required
                       />
                       {/* Quick Chips */}
                       <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Pilihan Pantas:</span>
+                        <span className="text-[10px] font-bold text-text-muted uppercase tracking-wide">Pilihan Pantas:</span>
                         {['7.3m³', '6.2m³', '5.0m³', '2.0m³', '101-C (2.0m³)'].map(chip => (
                           <button
                             key={chip}
@@ -886,10 +886,10 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
                                 return copy;
                               });
                             }}
-                            className={`text-[10px] px-2.5 py-1 rounded-lg font-bold transition-all border cursor-pointer ${
+                            className={`text-[10px] px-2.5 py-1 rounded-lg font-bold transition-[transform,opacity,box-shadow,border-color] border cursor-pointer ${
                               item.custom_size_name === chip
                                 ? 'bg-purple-600 text-white border-purple-600 shadow-xs'
-                                : 'bg-white hover:bg-purple-100 text-slate-700 border-purple-200'
+                                : 'bg-surface hover:bg-purple-100 text-text-secondary border-indigo-500/20'
                             }`}
                           >
                             {item.custom_size_name === chip ? '✓ ' : ''}{chip}
@@ -900,10 +900,10 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
                   )}
 
                   {/* Serial Numbers Section - Search-first approach */}
-                  <div className="pt-2 border-t border-slate-200/60 space-y-3">
+                  <div className="pt-2 border-t border-border-default space-y-3">
                     {/* Header */}
                     <div className="flex items-center justify-between flex-wrap gap-2">
-                      <label className="block text-[10px] font-black text-slate-700 uppercase tracking-wider">
+                      <label className="block text-[10px] font-black text-text-secondary uppercase tracking-wider">
                         Nombor Siri Silinder ({item.serials.filter(s => s.trim()).length} / {item.quantity} Diisi)
                       </label>
                       <div className="flex items-center gap-1.5">
@@ -913,7 +913,7 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
                             setBulkPasteTargetItemIndex(itemIdx);
                             setBulkPasteText('');
                           }}
-                          className="px-2.5 py-1 bg-white hover:bg-slate-100 text-slate-700 text-[11px] font-bold rounded-lg border border-slate-200 shadow-2xs flex items-center gap-1 cursor-pointer"
+                          className="px-2.5 py-1 bg-surface hover:bg-subtle text-text-secondary text-[11px] font-bold rounded-lg border border-border-default shadow-elevation-1 flex items-center gap-1 cursor-pointer"
                         >
                           <Clipboard className="w-3 h-3 text-purple-600" /> Tampal Pukal
                         </button>
@@ -943,14 +943,14 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
                             }
                           }}
                           placeholder="Taip nombor siri / sebahagian (cth: 7072, SABOXY, O2-P101)..."
-                          className="w-full pl-8 pr-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-mono font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-400"
+                          className="w-full pl-8 pr-3 py-2 bg-surface border border-border-default rounded-xl text-xs font-mono font-bold text-text-primary focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-400"
                         />
                       </div>
                       <button
                         type="button"
                         disabled={isSearching[itemIdx]}
                         onClick={() => handleSearchCylinders(itemIdx)}
-                        className="px-3 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 text-white text-[11px] font-bold rounded-xl flex items-center gap-1.5 cursor-pointer transition-all"
+                        className="px-3 py-2 bg-purple-600 hover:bg-purple-700 disabled:bg-slate-300 text-white text-[11px] font-bold rounded-xl flex items-center gap-1.5 cursor-pointer transition-[transform,opacity,box-shadow,border-color]"
                       >
                         <Search className="w-3 h-3" />
                         {isSearching[itemIdx] ? 'Mencari...' : 'Cari'}
@@ -959,13 +959,13 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
 
                     {/* Search Results */}
                     {searchMessage[itemIdx] && !isSearching[itemIdx] && (
-                      <p className="text-[11px] text-slate-500 text-center py-1">{searchMessage[itemIdx]}</p>
+                      <p className="text-[11px] text-text-muted text-center py-1">{searchMessage[itemIdx]}</p>
                     )}
 
                     {(searchResults[itemIdx] || []).length > 0 && (
-                      <div className="bg-purple-50/60 border border-purple-200 rounded-2xl p-2.5 space-y-1.5">
+                      <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-2xl p-2.5 space-y-1.5">
                         <div className="flex items-center justify-between px-1 pb-1 border-b border-purple-100">
-                          <span className="text-[10px] font-bold text-purple-900 uppercase tracking-wide">
+                          <span className="text-[10px] font-bold text-indigo-400 dark:text-indigo-300 font-bold uppercase tracking-wide">
                             {(searchResults[itemIdx] || []).length} Silinder Dijumpai — Klik untuk Pilih
                           </span>
                           {(searchResults[itemIdx] || []).length > 1 && (
@@ -988,10 +988,10 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
                             return (
                               <div
                                 key={cyl.id}
-                                className={`flex items-center justify-between px-3 py-2 rounded-xl transition-all ${
+                                className={`flex items-center justify-between px-3 py-2 rounded-xl transition-[transform,opacity,box-shadow,border-color] ${
                                   alreadyIn
                                     ? 'bg-purple-100 border border-purple-300 opacity-70'
-                                    : 'bg-white border border-purple-100 hover:border-purple-300 hover:bg-purple-50/80 cursor-pointer'
+                                    : 'bg-surface border border-purple-100 hover:border-purple-300 hover:bg-indigo-500/10 cursor-pointer'
                                 }`}
                                 onClick={() => {
                                   if (!alreadyIn) {
@@ -1000,8 +1000,8 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
                                 }}
                               >
                                 <div>
-                                  <span className="font-mono font-extrabold text-xs text-slate-900">{cyl.serial_number}</span>
-                                  <div className="text-[10px] text-slate-500 font-medium flex items-center gap-1.5 mt-0.5">
+                                  <span className="font-mono font-extrabold text-xs text-text-primary">{cyl.serial_number}</span>
+                                  <div className="text-[10px] text-text-muted font-medium flex items-center gap-1.5 mt-0.5">
                                     <span>Saiz: {cyl.size_code || '—'}</span>
                                     <span>•</span>
                                     <span className={`font-bold ${
@@ -1038,14 +1038,14 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
                     {/* Selected serials chips display */}
                     {item.serials.filter(s => s.trim()).length > 0 && (
                       <div className="space-y-1.5">
-                        <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wide">
+                        <p className="text-[10px] font-bold text-text-secondary uppercase tracking-wide">
                           Senarai Dipilih ({item.serials.filter(s => s.trim()).length}):
                         </p>
                         <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto">
                           {item.serials.filter(s => s.trim()).map((ser, si) => (
                             <span
                               key={si}
-                              className="inline-flex items-center gap-1 px-2.5 py-1 bg-purple-100 text-purple-900 text-[11px] font-mono font-bold rounded-lg border border-purple-300"
+                              className="inline-flex items-center gap-1 px-2.5 py-1 bg-purple-100 text-indigo-400 dark:text-indigo-300 font-bold text-[11px] font-mono font-bold rounded-lg border border-purple-300"
                             >
                               {ser}
                               <button
@@ -1080,7 +1080,7 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
 
                     {/* Manual slot input toggle */}
                     <details className="group">
-                      <summary className="text-[10px] font-bold text-slate-500 cursor-pointer hover:text-slate-700 select-none list-none flex items-center gap-1">
+                      <summary className="text-[10px] font-bold text-text-muted cursor-pointer hover:text-text-secondary select-none list-none flex items-center gap-1">
                         <span className="group-open:hidden">▶</span>
                         <span className="hidden group-open:inline">▼</span>
                         Input Manual (Isi Satu-Persatu)
@@ -1097,16 +1097,16 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
                               onChange={e => handleSlotInputChange(itemIdx, serIdx, e.target.value)}
                               onBlur={() => setActiveSlotSuggestion(null)}
                               placeholder="No. Siri..."
-                              className={`w-full pl-7 pr-2 py-1.5 bg-white border rounded-xl text-xs font-mono font-bold focus:outline-none focus:ring-2 ${
+                              className={`w-full pl-7 pr-2 py-1.5 bg-surface border rounded-xl text-xs font-mono font-bold focus:outline-none focus:ring-2 ${
                                 ser.trim()
-                                  ? 'border-purple-300 text-purple-900 focus:ring-purple-500/20'
-                                  : 'border-slate-200 text-slate-700 focus:ring-slate-300'
+                                  ? 'border-purple-300 text-indigo-400 dark:text-indigo-300 font-bold focus:ring-purple-500/20'
+                                  : 'border-border-default text-text-secondary focus:ring-slate-300'
                               }`}
                             />
                             {activeSlotSuggestion?.itemIdx === itemIdx &&
                               activeSlotSuggestion?.serIdx === serIdx &&
                               activeSlotSuggestion.suggestions.length > 0 && (
-                              <div className="absolute z-20 top-full left-0 mt-1 w-56 bg-white border border-purple-200 rounded-xl shadow-lg overflow-hidden">
+                              <div className="absolute z-20 top-full left-0 mt-1 w-56 bg-surface border border-indigo-500/20 rounded-xl shadow-lg overflow-hidden">
                                 {activeSlotSuggestion.suggestions.slice(0, 6).map(sug => (
                                   <button
                                     key={sug.id}
@@ -1116,7 +1116,7 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
                                       handleSerialChange(itemIdx, serIdx, sug.serial_number);
                                       setActiveSlotSuggestion(null);
                                     }}
-                                    className="w-full text-left px-3 py-1.5 text-xs font-mono font-bold text-slate-800 hover:bg-purple-50 flex items-center justify-between"
+                                    className="w-full text-left px-3 py-1.5 text-xs font-mono font-bold text-text-primary hover:bg-indigo-500/10 flex items-center justify-between"
                                   >
                                     <span>{sug.serial_number}</span>
                                     <span className="text-[9px] text-slate-400 font-sans">{sug.size_code}</span>
@@ -1135,8 +1135,8 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
           </div>
 
           {/* SECTION 4: GENERAL REMARKS */}
-          <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs space-y-2">
-            <label className="block text-xs font-bold text-slate-700">
+          <div className="bg-surface p-5 rounded-2xl border border-border-default shadow-xs space-y-2">
+            <label className="block text-xs font-bold text-text-secondary">
               Catatan / Sebab Pemulangan (Remarks)
             </label>
             <textarea
@@ -1144,17 +1144,17 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
               value={generalRemarks}
               onChange={e => setGeneralRemarks(e.target.value)}
               placeholder="cth: Pemulangan 5 unit silinder pinjaman kosong ke Hospital Beaufort mengikut perjanjian inter-facility."
-              className="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500/20 font-medium"
+              className="w-full p-3 bg-subtle/50 border border-border-default rounded-xl text-xs text-text-primary focus:outline-none focus:ring-2 focus:ring-purple-500/20 font-medium"
             />
           </div>
         </form>
 
         {/* Modal Footer */}
-        <div className="px-6 py-4 border-t border-slate-200/80 bg-white flex items-center justify-between gap-3 shrink-0">
+        <div className="px-6 py-4 border-t border-border-default bg-surface flex items-center justify-between gap-3 shrink-0">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-xs sm:text-sm font-bold text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition-all cursor-pointer"
+            className="px-4 py-2 text-xs sm:text-sm font-bold text-text-secondary hover:text-text-primary hover:bg-subtle rounded-xl transition-[transform,opacity,box-shadow,border-color] cursor-pointer"
           >
             Batal
           </button>
@@ -1162,7 +1162,7 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
           <button
             onClick={handleSubmit}
             disabled={isSubmitting}
-            className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 disabled:bg-slate-400 text-white text-xs sm:text-sm font-bold rounded-xl transition-all shadow-md shadow-purple-600/20 flex items-center gap-2 cursor-pointer"
+            className="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 disabled:bg-slate-400 text-white text-xs sm:text-sm font-bold rounded-xl transition-[transform,opacity,box-shadow,border-color] shadow-md shadow-purple-600/20 flex items-center gap-2 cursor-pointer"
           >
             <ArrowUpFromLine className="w-4 h-4" />
             {isSubmitting ? 'Merekod Pemulangan...' : 'Hantar & Jana Slip Pemulangan'}
@@ -1177,21 +1177,21 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
           onClick={() => setBulkPasteTargetItemIndex(null)}
         >
           <div 
-            className="bg-white rounded-2xl p-5 max-w-md w-full shadow-2xl border border-slate-200 space-y-4"
+            className="bg-surface rounded-2xl p-5 max-w-md w-full shadow-2xl border border-border-default space-y-4"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between">
-              <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <h4 className="text-sm font-bold text-text-primary flex items-center gap-2">
                 <Clipboard className="w-4 h-4 text-purple-600" /> Tampal Pukal Nombor Siri
               </h4>
               <button 
                 onClick={() => setBulkPasteTargetItemIndex(null)}
-                className="text-slate-400 hover:text-slate-600 cursor-pointer"
+                className="text-slate-400 hover:text-text-secondary cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-text-muted">
               Salin nombor siri daripada fail Excel atau teks (satu baris setiap silinder atau dipisahkan koma), kemudian tampal di bawah:
             </p>
             <textarea
@@ -1199,13 +1199,13 @@ export const ReturnInterFacilityModal: React.FC<ReturnInterFacilityModalProps> =
               value={bulkPasteText}
               onChange={e => setBulkPasteText(e.target.value)}
               placeholder="MY-O2-001&#10;MY-O2-002&#10;MY-O2-003..."
-              className="w-full p-3 border border-slate-200 rounded-xl text-xs font-mono text-slate-800 focus:ring-2 focus:ring-purple-500/20"
+              className="w-full p-3 border border-border-default rounded-xl text-xs font-mono text-text-primary focus:ring-2 focus:ring-purple-500/20"
             />
             <div className="flex justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setBulkPasteTargetItemIndex(null)}
-                className="px-3 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-lg cursor-pointer"
+                className="px-3 py-1.5 text-xs font-bold text-text-secondary hover:bg-subtle rounded-lg cursor-pointer"
               >
                 Batal
               </button>

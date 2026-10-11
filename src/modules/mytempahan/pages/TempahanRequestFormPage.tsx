@@ -269,44 +269,44 @@ export const TempahanRequestFormPage: React.FC = () => {
   // Success Screen
   if (submittedBooking) {
     return (
-      <div className="p-6 max-w-3xl mx-auto py-12 text-center space-y-6 text-slate-900 dark:text-slate-100">
+      <div className="p-6 max-w-3xl mx-auto py-12 text-center space-y-6 text-text-primary dark:text-slate-100">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="w-20 h-20 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 rounded-3xl flex items-center justify-center mx-auto shadow-sm"
+          className="w-20 h-20 bg-emerald-500/10 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 dark:border-emerald-800 rounded-3xl flex items-center justify-center mx-auto shadow-sm"
         >
           <CheckCircle2 className="w-10 h-10" />
         </motion.div>
 
         <div className="space-y-2">
-          <span className="px-3 py-1 rounded-full bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider">
+          <span className="px-3 py-1 rounded-full bg-emerald-500/10 dark:bg-emerald-950/60 border border-emerald-500/20 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 text-xs font-bold uppercase tracking-wider">
             {submittedBooking.status === 'approved' ? 'Booking Automatically Approved' : 'Application Under Admin Review'}
           </span>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-text-primary dark:text-white">
             Your Booking Has Been Successfully Registered!
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+          <p className="text-xs sm:text-sm text-text-muted dark:text-slate-400 max-w-md mx-auto">
             Official confirmation slip has been generated. You can download the PDF file or view it in your applications list.
           </p>
         </div>
 
         {/* Summary Card */}
-        <div className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 text-left max-w-lg mx-auto space-y-3 text-xs shadow-xs">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
-            <span className="text-slate-500 dark:text-slate-400">Reference No.:</span>
+        <div className="p-6 rounded-2xl bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-800 text-left max-w-lg mx-auto space-y-3 text-xs shadow-xs">
+          <div className="flex items-center justify-between pb-3 border-b border-border-subtle dark:border-slate-800">
+            <span className="text-text-muted dark:text-slate-400">Reference No.:</span>
             <span className="font-mono font-bold text-sm text-teal-700 dark:text-teal-400">{submittedBooking.booking_number}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-slate-500 dark:text-slate-400">Facility:</span>
-            <span className="font-bold text-slate-900 dark:text-white">{submittedBooking.room?.name}</span>
+            <span className="text-text-muted dark:text-slate-400">Facility:</span>
+            <span className="font-bold text-text-primary dark:text-white">{submittedBooking.room?.name}</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-slate-500 dark:text-slate-400">Date & Time:</span>
-            <span className="font-semibold text-slate-800 dark:text-slate-200">{submittedBooking.date} ({submittedBooking.start_time} - {submittedBooking.end_time})</span>
+            <span className="text-text-muted dark:text-slate-400">Date & Time:</span>
+            <span className="font-semibold text-text-primary dark:text-slate-200">{submittedBooking.date} ({submittedBooking.start_time} - {submittedBooking.end_time})</span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-slate-500 dark:text-slate-400">Purpose:</span>
-            <span className="font-semibold text-slate-800 dark:text-slate-200 truncate max-w-[200px]">{submittedBooking.purpose}</span>
+            <span className="text-text-muted dark:text-slate-400">Purpose:</span>
+            <span className="font-semibold text-text-primary dark:text-slate-200 truncate max-w-[200px]">{submittedBooking.purpose}</span>
           </div>
         </div>
 
@@ -314,7 +314,7 @@ export const TempahanRequestFormPage: React.FC = () => {
         <div className="flex flex-wrap items-center justify-center gap-3 pt-4">
           <button
             onClick={() => downloadBookingConfirmationPdf(submittedBooking)}
-            className="px-5 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 active:bg-teal-900 text-white text-xs font-bold shadow-sm transition-all flex items-center gap-2"
+            className="px-5 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 active:bg-teal-900 text-white text-xs font-bold shadow-sm transition-colors flex items-center gap-2"
           >
             <Printer className="w-4 h-4" />
             Download PDF Slip
@@ -322,7 +322,7 @@ export const TempahanRequestFormPage: React.FC = () => {
 
           <button
             onClick={() => navigate(ROUTES.TEMPAHAN_MY_BOOKINGS)}
-            className="px-5 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all"
+            className="px-5 py-2.5 rounded-xl border border-border-default dark:border-slate-700 hover:bg-subtle dark:hover:bg-slate-800 text-text-secondary dark:text-slate-200 text-xs font-bold transition-colors"
           >
             View My Bookings
           </button>
@@ -332,24 +332,24 @@ export const TempahanRequestFormPage: React.FC = () => {
   }
 
   return (
-    <div className="w-full p-4 sm:p-6 lg:p-8 space-y-6 text-slate-900 dark:text-slate-100">
+    <div className="w-full p-4 sm:p-6 lg:p-8 space-y-6 text-text-primary dark:text-slate-100">
       {/* Header with Back Button */}
-      <div className="flex items-center justify-between bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-4 shadow-xs">
+      <div className="flex items-center justify-between bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-800 rounded-2xl p-4 shadow-xs">
         <button
           onClick={() => navigate(ROUTES.TEMPAHAN)}
-          className="flex items-center gap-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-xs font-bold transition-colors"
+          className="flex items-center gap-2 text-text-muted dark:text-slate-300 hover:text-text-primary dark:hover:text-white text-xs font-bold transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Dashboard
         </button>
 
-        <span className="text-xs font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-lg border border-slate-200 dark:border-slate-700">
+        <span className="text-xs font-bold text-text-muted dark:text-slate-400 bg-subtle dark:bg-slate-800 px-3 py-1 rounded-lg border border-border-default dark:border-slate-700">
           Step {step} of 4
         </span>
       </div>
 
       {/* 4-Step Stepper Progress Bar */}
-      <div className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs">
+      <div className="p-4 sm:p-5 rounded-2xl bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-800 shadow-xs">
         <div className="grid grid-cols-4 gap-2 text-center text-xs">
           {[
             { num: 1, label: 'Facility & Timing' },
@@ -364,12 +364,12 @@ export const TempahanRequestFormPage: React.FC = () => {
               <div key={s.num} className="space-y-1.5 flex flex-col items-center">
                 <div
                   className={cn(
-                    'w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs transition-all',
+                    'w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs transition-colors',
                     isCompleted
                       ? 'bg-emerald-600 text-white'
                       : isCurrent
                       ? 'bg-teal-700 text-white ring-4 ring-teal-100 dark:ring-teal-950'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500'
+                      : 'bg-subtle dark:bg-slate-800 text-slate-400 dark:text-text-muted'
                   )}
                 >
                   {isCompleted ? <Check className="w-4 h-4" /> : s.num}
@@ -377,7 +377,7 @@ export const TempahanRequestFormPage: React.FC = () => {
                 <span
                   className={cn(
                     'text-[10px] sm:text-xs font-bold tracking-tight',
-                    isCurrent ? 'text-teal-700 dark:text-teal-300' : isCompleted ? 'text-slate-700 dark:text-slate-300' : 'text-slate-400 dark:text-slate-500'
+                    isCurrent ? 'text-teal-700 dark:text-teal-300' : isCompleted ? 'text-text-secondary dark:text-slate-300' : 'text-slate-400 dark:text-text-muted'
                   )}
                 >
                   {s.label}
@@ -389,19 +389,19 @@ export const TempahanRequestFormPage: React.FC = () => {
       </div>
 
       {/* Main Wizard Form Card */}
-      <div className="p-6 sm:p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-6">
+      <div className="p-6 sm:p-8 rounded-2xl bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-800 shadow-xs space-y-6">
         {/* STEP 1: FASILITI & MASA */}
         {step === 1 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Select Facility & Time Slot</h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">The system automatically checks room availability and detects conflicts in real-time.</p>
+              <h2 className="text-lg font-bold text-text-primary dark:text-white">Select Facility & Time Slot</h2>
+              <p className="text-xs text-text-muted dark:text-slate-400">The system automatically checks room availability and detects conflicts in real-time.</p>
             </div>
 
             {/* Room Selection */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider block">
+                <label className="text-xs font-bold text-text-secondary dark:text-slate-300 uppercase tracking-wider block">
                   Select Hospital Room / Hall
                 </label>
                 <span className="text-[11px] text-slate-400">
@@ -415,14 +415,14 @@ export const TempahanRequestFormPage: React.FC = () => {
                     key={r.id}
                     onClick={() => setRoomId(r.id)}
                     className={cn(
-                      'p-3.5 rounded-2xl border transition-all cursor-pointer flex items-center gap-3.5 group',
+                      'p-3.5 rounded-2xl border transition-colors cursor-pointer flex items-center gap-3.5 group',
                       roomId === r.id
-                        ? 'bg-teal-50/80 dark:bg-teal-950/40 border-teal-600 dark:border-teal-500 ring-2 ring-teal-200 dark:ring-teal-900/60 shadow-xs'
-                        : 'bg-white dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+                        ? 'bg-accent-base/10 dark:bg-teal-950/40 border-teal-600 dark:border-teal-500 ring-2 ring-teal-200 dark:ring-teal-900/60 shadow-xs'
+                        : 'bg-surface dark:bg-slate-800/60 border-border-default dark:border-slate-700 hover:border-border-default dark:hover:border-slate-600'
                     )}
                   >
                     {/* Room Thumbnail Photo */}
-                    <div className="w-20 h-16 sm:w-24 sm:h-18 rounded-xl overflow-hidden shrink-0 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 relative">
+                    <div className="w-20 h-16 sm:w-24 sm:h-18 rounded-xl overflow-hidden shrink-0 bg-subtle dark:bg-slate-800 border border-border-default dark:border-slate-700 relative">
                       {r.image_url ? (
                         <img
                           src={r.image_url}
@@ -442,15 +442,15 @@ export const TempahanRequestFormPage: React.FC = () => {
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5">
-                        <span className="font-bold text-slate-900 dark:text-white text-xs truncate">
+                        <span className="font-bold text-text-primary dark:text-white text-xs truncate">
                           {r.name}
                         </span>
                       </div>
-                      <div className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                      <div className="text-[11px] text-text-muted dark:text-slate-400 truncate mt-0.5">
                         {r.location}
                       </div>
-                      <div className="flex items-center gap-2 mt-1.5 text-[10px] font-medium text-slate-500 dark:text-slate-400">
-                        <span className="inline-flex items-center gap-1 text-teal-700 dark:text-teal-300 font-semibold bg-teal-50 dark:bg-teal-950/50 px-2 py-0.5 rounded-md border border-teal-200/60 dark:border-teal-800/60">
+                      <div className="flex items-center gap-2 mt-1.5 text-[10px] font-medium text-text-muted dark:text-slate-400">
+                        <span className="inline-flex items-center gap-1 text-teal-700 dark:text-teal-300 font-semibold bg-accent-base/10 dark:bg-teal-950/50 px-2 py-0.5 rounded-md border border-accent-base/20 dark:border-teal-800/60">
                           <Users className="w-3 h-3" /> {r.capacity} Max
                         </span>
                         <span>{r.floor_level}</span>
@@ -462,13 +462,13 @@ export const TempahanRequestFormPage: React.FC = () => {
 
               {/* Selected Room Expanded Visual Banner */}
               {selectedRoom && (
-                <div className="mt-4 p-4 rounded-2xl bg-teal-50/50 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="mt-4 p-4 rounded-2xl bg-accent-base/10 dark:bg-teal-950/30 border border-accent-base/20 dark:border-teal-800/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div className="flex items-center gap-3.5">
                     {selectedRoom.image_url && (
                       <img
                         src={selectedRoom.image_url}
                         alt={selectedRoom.name}
-                        className="w-16 h-16 rounded-xl object-cover border border-teal-300 dark:border-teal-700 shadow-2xs shrink-0"
+                        className="w-16 h-16 rounded-xl object-cover border border-teal-300 dark:border-teal-700 shadow-elevation-1 shrink-0"
                       />
                     )}
                     <div>
@@ -476,14 +476,14 @@ export const TempahanRequestFormPage: React.FC = () => {
                         <span className="text-[10px] font-bold uppercase tracking-wider text-teal-800 dark:text-teal-300 bg-teal-100 dark:bg-teal-900/60 px-2 py-0.5 rounded">
                           Selected Venue
                         </span>
-                        <span className="font-mono text-xs font-bold text-slate-700 dark:text-slate-300">
+                        <span className="font-mono text-xs font-bold text-text-secondary dark:text-slate-300">
                           {selectedRoom.room_code}
                         </span>
                       </div>
-                      <h4 className="font-bold text-slate-900 dark:text-white text-sm mt-0.5">
+                      <h4 className="font-bold text-text-primary dark:text-white text-sm mt-0.5">
                         {selectedRoom.name}
                       </h4>
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                      <p className="text-[11px] text-text-muted dark:text-slate-400">
                         {selectedRoom.location} • Max {selectedRoom.capacity} Pax • Setup buffer: {selectedRoom.setup_buffer_minutes || 15}m
                       </p>
                     </div>
@@ -495,32 +495,32 @@ export const TempahanRequestFormPage: React.FC = () => {
             {/* Date & Time Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Event Date</label>
+                <label className="text-xs font-bold text-text-secondary dark:text-slate-300 block">Event Date</label>
                 <input
                   type="date"
                   value={date}
                   onChange={e => setDate(e.target.value)}
-                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-semibold focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
+                  className="w-full p-2.5 rounded-xl border border-border-default dark:border-slate-700 bg-surface dark:bg-slate-800 text-text-primary dark:text-white text-xs font-semibold focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Start Time</label>
+                <label className="text-xs font-bold text-text-secondary dark:text-slate-300 block">Start Time</label>
                 <input
                   type="time"
                   value={startTime}
                   onChange={e => setStartTime(e.target.value)}
-                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-semibold focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
+                  className="w-full p-2.5 rounded-xl border border-border-default dark:border-slate-700 bg-surface dark:bg-slate-800 text-text-primary dark:text-white text-xs font-semibold focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">End Time</label>
+                <label className="text-xs font-bold text-text-secondary dark:text-slate-300 block">End Time</label>
                 <input
                   type="time"
                   value={endTime}
                   onChange={e => setEndTime(e.target.value)}
-                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-semibold focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
+                  className="w-full p-2.5 rounded-xl border border-border-default dark:border-slate-700 bg-surface dark:bg-slate-800 text-text-primary dark:text-white text-xs font-semibold focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
                 />
               </div>
             </div>
@@ -529,10 +529,10 @@ export const TempahanRequestFormPage: React.FC = () => {
             {conflictResult.checked && (
               <div
                 className={cn(
-                  'p-4 rounded-xl border text-xs flex items-start gap-3 transition-all',
+                  'p-4 rounded-xl border text-xs flex items-start gap-3 transition-colors',
                   conflictResult.isAvailable
-                    ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300'
-                    : 'bg-rose-50 dark:bg-rose-950/40 border-rose-200 dark:border-rose-800 text-rose-800 dark:text-rose-300'
+                    ? 'bg-emerald-500/10 dark:bg-emerald-950/40 border-emerald-500/20 dark:border-emerald-800 text-emerald-400 dark:text-emerald-300'
+                    : 'bg-rose-500/10 dark:bg-rose-950/40 border-rose-500/20 dark:border-rose-800 text-rose-400 dark:text-rose-300'
                 )}
               >
                 {conflictResult.isAvailable ? (
@@ -557,7 +557,7 @@ export const TempahanRequestFormPage: React.FC = () => {
 
             {/* Layout Preset */}
             <div className="space-y-2 pt-2">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider block">
+              <label className="text-xs font-bold text-text-secondary dark:text-slate-300 uppercase tracking-wider block">
                 Room Layout Setup
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
@@ -572,10 +572,10 @@ export const TempahanRequestFormPage: React.FC = () => {
                     type="button"
                     onClick={() => setLayoutType(l.id as any)}
                     className={cn(
-                      'p-3 rounded-xl border text-left font-semibold transition-all',
+                      'p-3 rounded-xl border text-left font-semibold transition-colors',
                       layoutType === l.id
-                        ? 'bg-teal-50 dark:bg-teal-950/50 border-teal-600 dark:border-teal-500 text-teal-900 dark:text-teal-200'
-                        : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                        ? 'bg-accent-base/10 dark:bg-teal-950/50 border-teal-600 dark:border-teal-500 text-teal-900 dark:text-teal-200'
+                        : 'bg-subtle/50 dark:bg-slate-800/60 border-border-default dark:border-slate-700 text-text-muted dark:text-slate-400 hover:bg-subtle dark:hover:bg-slate-800'
                     )}
                   >
                     {l.label}
@@ -590,28 +590,28 @@ export const TempahanRequestFormPage: React.FC = () => {
         {step === 2 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Event & Organizer Details</h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Complete the official information for the meeting or hospital program.</p>
+              <h2 className="text-lg font-bold text-text-primary dark:text-white">Event & Organizer Details</h2>
+              <p className="text-xs text-text-muted dark:text-slate-400">Complete the official information for the meeting or hospital program.</p>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Meeting / Program Title *</label>
+              <label className="text-xs font-bold text-text-secondary dark:text-slate-300 block">Meeting / Program Title *</label>
               <input
                 type="text"
                 value={purpose}
                 onChange={e => setPurpose(e.target.value)}
                 placeholder="e.g. Quality Management Review Meeting No. 2/2026"
-                className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-semibold focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
+                className="w-full p-2.5 rounded-xl border border-border-default dark:border-slate-700 bg-surface dark:bg-slate-800 text-text-primary dark:text-white text-xs font-semibold focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Event Category</label>
+                <label className="text-xs font-bold text-text-secondary dark:text-slate-300 block">Event Category</label>
                 <select
                   value={eventType}
                   onChange={e => setEventType(e.target.value)}
-                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-semibold focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
+                  className="w-full p-2.5 rounded-xl border border-border-default dark:border-slate-700 bg-surface dark:bg-slate-800 text-text-primary dark:text-white text-xs font-semibold focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
                 >
                   <option value="Official Meeting">Official Meeting</option>
                   <option value="Course / Training">Course / Training</option>
@@ -622,11 +622,11 @@ export const TempahanRequestFormPage: React.FC = () => {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Booking Priority</label>
+                <label className="text-xs font-bold text-text-secondary dark:text-slate-300 block">Booking Priority</label>
                 <select
                   value={priority}
                   onChange={e => setPriority(e.target.value as any)}
-                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-semibold focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
+                  className="w-full p-2.5 rounded-xl border border-border-default dark:border-slate-700 bg-surface dark:bg-slate-800 text-text-primary dark:text-white text-xs font-semibold focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
                 >
                   <option value="normal">Normal</option>
                   <option value="urgent">Urgent</option>
@@ -635,69 +635,69 @@ export const TempahanRequestFormPage: React.FC = () => {
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Number of Attendees (Pax)</label>
+                <label className="text-xs font-bold text-text-secondary dark:text-slate-300 block">Number of Attendees (Pax)</label>
                 <input
                   type="number"
                   min="1"
                   max={selectedRoom?.capacity || 200}
                   value={attendeesCount}
                   onChange={e => setAttendeesCount(parseInt(e.target.value) || 1)}
-                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-semibold focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
+                  className="w-full p-2.5 rounded-xl border border-border-default dark:border-slate-700 bg-surface dark:bg-slate-800 text-text-primary dark:text-white text-xs font-semibold focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
                 />
               </div>
             </div>
 
             {/* Organizer Info */}
-            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-3">
-              <span className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider block">
+            <div className="p-4 rounded-xl bg-subtle/50 dark:bg-slate-800/60 border border-border-default dark:border-slate-700 space-y-3">
+              <span className="text-xs font-bold text-text-secondary dark:text-slate-300 uppercase tracking-wider block">
                 Person-In-Charge (PIC)
               </span>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
-                  <label className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1">Officer Name</label>
+                  <label className="text-[11px] text-text-muted dark:text-slate-400 block mb-1">Officer Name</label>
                   <input
                     type="text"
                     value={pemohonName}
                     onChange={e => setPemohonName(e.target.value)}
-                    className="w-full p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-semibold text-xs"
+                    className="w-full p-2 rounded-lg border border-border-default dark:border-slate-700 bg-surface dark:bg-slate-900 text-text-primary dark:text-white font-semibold text-xs"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1">Designation & Department</label>
+                  <label className="text-[11px] text-text-muted dark:text-slate-400 block mb-1">Designation & Department</label>
                   <input
                     type="text"
                     value={`${pemohonJawatan} (${departmentName})`}
                     disabled
-                    className="w-full p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-semibold text-xs"
+                    className="w-full p-2 rounded-lg border border-border-default dark:border-slate-700 bg-subtle dark:bg-slate-800 text-text-muted dark:text-slate-400 font-semibold text-xs"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1">Mobile / Extension Phone</label>
+                  <label className="text-[11px] text-text-muted dark:text-slate-400 block mb-1">Mobile / Extension Phone</label>
                   <input
                     type="text"
                     value={pemohonPhone}
                     onChange={e => setPemohonPhone(e.target.value)}
-                    className="w-full p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-semibold text-xs"
+                    className="w-full p-2 rounded-lg border border-border-default dark:border-slate-700 bg-surface dark:bg-slate-900 text-text-primary dark:text-white font-semibold text-xs"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[11px] text-slate-500 dark:text-slate-400 block mb-1">Email Address</label>
+                  <label className="text-[11px] text-text-muted dark:text-slate-400 block mb-1">Email Address</label>
                   <input
                     type="email"
                     value={pemohonEmail}
                     onChange={e => setPemohonEmail(e.target.value)}
-                    className="w-full p-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-semibold text-xs"
+                    className="w-full p-2 rounded-lg border border-border-default dark:border-slate-700 bg-surface dark:bg-slate-900 text-text-primary dark:text-white font-semibold text-xs"
                   />
                 </div>
               </div>
             </div>
 
             {/* VIP Checkbox */}
-            <div className="p-4 rounded-xl border border-amber-200 dark:border-amber-900/60 bg-amber-50/50 dark:bg-amber-950/30 space-y-3">
+            <div className="p-4 rounded-xl border border-amber-500/20 dark:border-amber-900/60 bg-amber-500/10 dark:bg-amber-950/30 space-y-3">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
@@ -705,7 +705,7 @@ export const TempahanRequestFormPage: React.FC = () => {
                   onChange={e => setHasVip(e.target.checked)}
                   className="rounded text-amber-600 focus:ring-amber-500"
                 />
-                <span className="text-xs font-bold text-amber-900 dark:text-amber-300 flex items-center gap-1.5">
+                <span className="text-xs font-bold text-amber-400 dark:text-amber-300 font-bold dark:text-amber-300 flex items-center gap-1.5">
                   <Crown className="w-4 h-4 text-amber-600" />
                   Involves Dignitaries / VVIP (MOH / JKN Director / External VIP)
                 </span>
@@ -717,7 +717,7 @@ export const TempahanRequestFormPage: React.FC = () => {
                   value={vipListStr}
                   onChange={e => setVipListStr(e.target.value)}
                   placeholder="List VIP guest names (separated by commas)"
-                  className="w-full p-2.5 rounded-xl border border-amber-300 dark:border-amber-700 bg-white dark:bg-slate-900 text-xs text-amber-950 dark:text-amber-200 font-medium focus:ring-2 focus:ring-amber-500 focus:outline-hidden"
+                  className="w-full p-2.5 rounded-xl border border-amber-300 dark:border-amber-700 bg-surface dark:bg-slate-900 text-xs text-amber-400 dark:text-amber-300 font-bold dark:text-amber-200 font-medium focus:ring-2 focus:ring-amber-500 focus:outline-hidden"
                 />
               )}
             </div>
@@ -728,13 +728,13 @@ export const TempahanRequestFormPage: React.FC = () => {
         {step === 3 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white">AV Equipment & Catering Setup</h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Select technical equipment and support facilities required for the session.</p>
+              <h2 className="text-lg font-bold text-text-primary dark:text-white">AV Equipment & Catering Setup</h2>
+              <p className="text-xs text-text-muted dark:text-slate-400">Select technical equipment and support facilities required for the session.</p>
             </div>
 
             {/* Amenities Toggle Grid */}
             <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider block">
+              <label className="text-xs font-bold text-text-secondary dark:text-slate-300 uppercase tracking-wider block">
                 Audio Visual Equipment & Amenities
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
@@ -756,10 +756,10 @@ export const TempahanRequestFormPage: React.FC = () => {
                       type="button"
                       onClick={() => toggleAmenity(item.id as any)}
                       className={cn(
-                        'p-3 rounded-xl border text-left font-semibold transition-all flex items-center justify-between',
+                        'p-3 rounded-xl border text-left font-semibold transition-colors flex items-center justify-between',
                         isSelected
-                          ? 'bg-teal-50 dark:bg-teal-950/50 border-teal-600 dark:border-teal-500 text-teal-900 dark:text-teal-200'
-                          : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
+                          ? 'bg-accent-base/10 dark:bg-teal-950/50 border-teal-600 dark:border-teal-500 text-teal-900 dark:text-teal-200'
+                          : 'bg-subtle/50 dark:bg-slate-800/60 border-border-default dark:border-slate-700 text-text-muted dark:text-slate-400 hover:bg-subtle dark:hover:bg-slate-800'
                       )}
                     >
                       <span>{item.label}</span>
@@ -771,7 +771,7 @@ export const TempahanRequestFormPage: React.FC = () => {
             </div>
 
             {/* Catering Settings */}
-            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-4 text-xs">
+            <div className="p-4 rounded-xl bg-subtle/50 dark:bg-slate-800/60 border border-border-default dark:border-slate-700 space-y-4 text-xs">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
@@ -779,7 +779,7 @@ export const TempahanRequestFormPage: React.FC = () => {
                   onChange={e => setHasCatering(e.target.checked)}
                   className="rounded text-teal-600 focus:ring-teal-500"
                 />
-                <span className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                <span className="font-bold text-text-primary dark:text-white flex items-center gap-1.5">
                   <Utensils className="w-4 h-4 text-amber-500" />
                   Catering / Food Service Required
                 </span>
@@ -788,11 +788,11 @@ export const TempahanRequestFormPage: React.FC = () => {
               {hasCatering && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                   <div className="space-y-1">
-                    <label className="text-slate-500 dark:text-slate-400 font-semibold block">Meal Type</label>
+                    <label className="text-text-muted dark:text-slate-400 font-semibold block">Meal Type</label>
                     <select
                       value={mealType}
                       onChange={e => setMealType(e.target.value as any)}
-                      className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-semibold text-xs"
+                      className="w-full p-2.5 rounded-xl border border-border-default dark:border-slate-700 bg-surface dark:bg-slate-900 text-text-primary dark:text-white font-semibold text-xs"
                     >
                       <option value="sarapan">Breakfast</option>
                       <option value="makan_tengahari">Lunch</option>
@@ -803,13 +803,13 @@ export const TempahanRequestFormPage: React.FC = () => {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-slate-500 dark:text-slate-400 font-semibold block">Serving Location</label>
+                    <label className="text-text-muted dark:text-slate-400 font-semibold block">Serving Location</label>
                     <input
                       type="text"
                       value={cateringLocation}
                       onChange={e => setCateringLocation(e.target.value)}
                       placeholder="e.g. Foyer Outside Meeting Room"
-                      className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-semibold text-xs"
+                      className="w-full p-2.5 rounded-xl border border-border-default dark:border-slate-700 bg-surface dark:bg-slate-900 text-text-primary dark:text-white font-semibold text-xs"
                     />
                   </div>
                 </div>
@@ -818,13 +818,13 @@ export const TempahanRequestFormPage: React.FC = () => {
 
             {/* Special Remarks */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Special Remarks / Additional Requirements</label>
+              <label className="text-xs font-bold text-text-secondary dark:text-slate-300 block">Special Remarks / Additional Requirements</label>
               <textarea
                 rows={3}
                 value={specialRequirements}
                 onChange={e => setSpecialRequirements(e.target.value)}
                 placeholder="Any special details for the Facility Officer..."
-                className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-medium focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
+                className="w-full p-2.5 rounded-xl border border-border-default dark:border-slate-700 bg-surface dark:bg-slate-800 text-text-primary dark:text-white text-xs font-medium focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
               />
             </div>
           </motion.div>
@@ -834,58 +834,58 @@ export const TempahanRequestFormPage: React.FC = () => {
         {step === 4 && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
             <div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white">Review Booking Summary</h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Please verify all details before submitting the official booking request.</p>
+              <h2 className="text-lg font-bold text-text-primary dark:text-white">Review Booking Summary</h2>
+              <p className="text-xs text-text-muted dark:text-slate-400">Please verify all details before submitting the official booking request.</p>
             </div>
 
             {/* Official Summary Card */}
-            <div className="p-5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-4 text-xs">
-              <div className="pb-4 border-b border-slate-200 dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="p-5 rounded-xl bg-subtle/50 dark:bg-slate-800/60 border border-border-default dark:border-slate-700 space-y-4 text-xs">
+              <div className="pb-4 border-b border-border-default dark:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-3.5">
                   {selectedRoom?.image_url && (
                     <img
                       src={selectedRoom.image_url}
                       alt={selectedRoom.name}
-                      className="w-20 h-16 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0 shadow-2xs"
+                      className="w-20 h-16 rounded-xl object-cover border border-border-default dark:border-slate-700 shrink-0 shadow-elevation-1"
                     />
                   )}
                   <div>
                     <span className="text-[10px] text-teal-700 dark:text-teal-400 font-bold uppercase tracking-wider">
                       Selected Facility • {selectedRoom?.room_code}
                     </span>
-                    <h3 className="text-base font-bold text-slate-900 dark:text-white mt-0.5">{selectedRoom?.name}</h3>
-                    <div className="text-slate-500 dark:text-slate-400 text-[11px]">{selectedRoom?.location}</div>
+                    <h3 className="text-base font-bold text-text-primary dark:text-white mt-0.5">{selectedRoom?.name}</h3>
+                    <div className="text-text-muted dark:text-slate-400 text-[11px]">{selectedRoom?.location}</div>
                   </div>
                 </div>
-                <span className="px-3 py-1 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 self-start sm:self-center">
+                <span className="px-3 py-1 rounded-lg bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-700 text-xs font-bold text-text-secondary dark:text-slate-300 self-start sm:self-center">
                   {attendeesCount} Pax
                 </span>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="text-slate-400 dark:text-slate-500 block mb-0.5">Event Title:</span>
-                  <span className="font-bold text-slate-800 dark:text-slate-200">{purpose}</span>
+                  <span className="text-slate-400 dark:text-text-muted block mb-0.5">Event Title:</span>
+                  <span className="font-bold text-text-primary dark:text-slate-200">{purpose}</span>
                 </div>
                 <div>
-                  <span className="text-slate-400 dark:text-slate-500 block mb-0.5">Date & Time:</span>
-                  <span className="font-bold text-slate-800 dark:text-slate-200">{date} ({startTime} - {endTime})</span>
+                  <span className="text-slate-400 dark:text-text-muted block mb-0.5">Date & Time:</span>
+                  <span className="font-bold text-text-primary dark:text-slate-200">{date} ({startTime} - {endTime})</span>
                 </div>
                 <div>
-                  <span className="text-slate-400 dark:text-slate-500 block mb-0.5">Room Layout:</span>
-                  <span className="font-semibold text-slate-800 dark:text-slate-200 uppercase">{layoutType}</span>
+                  <span className="text-slate-400 dark:text-text-muted block mb-0.5">Room Layout:</span>
+                  <span className="font-semibold text-text-primary dark:text-slate-200 uppercase">{layoutType}</span>
                 </div>
                 <div>
-                  <span className="text-slate-400 dark:text-slate-500 block mb-0.5">Applicant:</span>
-                  <span className="font-semibold text-slate-800 dark:text-slate-200">{pemohonName} ({departmentName})</span>
+                  <span className="text-slate-400 dark:text-text-muted block mb-0.5">Applicant:</span>
+                  <span className="font-semibold text-text-primary dark:text-slate-200">{pemohonName} ({departmentName})</span>
                 </div>
               </div>
 
-              <div className="pt-2 border-t border-slate-200 dark:border-slate-700">
-                <span className="text-slate-400 dark:text-slate-500 block mb-1">Requested Amenities:</span>
+              <div className="pt-2 border-t border-border-default dark:border-slate-700">
+                <span className="text-slate-400 dark:text-text-muted block mb-1">Requested Amenities:</span>
                 <div className="flex flex-wrap gap-1">
                   {requestedAmenities.map(a => (
-                    <span key={a} className="px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-[10px] font-semibold">
+                    <span key={a} className="px-2 py-0.5 rounded bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-700 text-text-secondary dark:text-slate-300 text-[10px] font-semibold">
                       {a.replace(/_/g, ' ')}
                     </span>
                   ))}
@@ -894,7 +894,7 @@ export const TempahanRequestFormPage: React.FC = () => {
             </div>
 
             {/* Terms Agreement Checkbox */}
-            <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-xs space-y-2">
+            <div className="p-4 rounded-xl bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-700 text-xs space-y-2">
               <label className="flex items-start gap-2.5 cursor-pointer">
                 <input
                   type="checkbox"
@@ -902,7 +902,7 @@ export const TempahanRequestFormPage: React.FC = () => {
                   onChange={e => setAgreedTerms(e.target.checked)}
                   className="rounded text-teal-600 focus:ring-teal-500 mt-0.5"
                 />
-                <span className="text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
+                <span className="text-text-secondary dark:text-slate-300 leading-relaxed font-medium">
                   I hereby confirm that all information provided is accurate and agree to abide by facility rules regarding cleanliness, AV equipment handling, and ensuring electrical appliances and air conditioners are switched off after the session.
                 </span>
               </label>
@@ -911,14 +911,14 @@ export const TempahanRequestFormPage: React.FC = () => {
         )}
 
         {/* Wizard Footer Controls */}
-        <div className="flex items-center justify-between pt-4 border-t border-slate-100 dark:border-slate-800">
+        <div className="flex items-center justify-between pt-4 border-t border-border-subtle dark:border-slate-800">
           <button
             type="button"
             onClick={handlePrev}
             disabled={step === 1 || submitting}
             className={cn(
-              'px-5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-xs font-semibold transition-all flex items-center gap-1.5',
-              step === 1 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
+              'px-5 py-2.5 rounded-xl border border-border-default dark:border-slate-700 text-xs font-semibold transition-colors flex items-center gap-1.5',
+              step === 1 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-subtle/50 dark:hover:bg-slate-800 text-text-secondary dark:text-slate-300'
             )}
           >
             <ArrowLeft className="w-4 h-4" />
@@ -929,7 +929,7 @@ export const TempahanRequestFormPage: React.FC = () => {
             <button
               type="button"
               onClick={handleNext}
-              className="px-6 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 active:bg-teal-900 text-white text-xs font-bold shadow-xs transition-all flex items-center gap-1.5 active:scale-95"
+              className="px-6 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 active:bg-teal-900 text-white text-xs font-bold shadow-xs transition-colors flex items-center gap-1.5 active:scale-95"
             >
               Next
               <ArrowRight className="w-4 h-4" />
@@ -939,7 +939,7 @@ export const TempahanRequestFormPage: React.FC = () => {
               type="button"
               onClick={handleSubmit}
               disabled={submitting}
-              className="px-7 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-bold shadow-xs transition-all flex items-center gap-2 active:scale-95"
+              className="px-7 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white text-xs font-bold shadow-xs transition-colors flex items-center gap-2 active:scale-95"
             >
               {submitting ? 'Submitting Booking...' : 'Submit Booking Request'}
               <Check className="w-4 h-4" />

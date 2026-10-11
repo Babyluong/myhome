@@ -1697,7 +1697,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 relative overflow-x-hidden font-sans text-slate-900 selection:bg-indigo-100 selection:text-indigo-900">
+    <div className="min-h-screen bg-subtle relative overflow-x-hidden font-sans text-text-primary selection:bg-indigo-100 selection:text-indigo-400 dark:text-indigo-300 font-bold">
       {/* Dynamic Professional Background Pattern */}
       <div className="fixed inset-0 pointer-events-none opacity-100 z-0">
         <div className="absolute inset-0 bg-[radial-gradient(#cbd5e1_1px,transparent_1px)] [background-size:24px_24px] [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)] opacity-40"></div>
@@ -1706,23 +1706,23 @@ export const PurchaseOrderCreatePage: React.FC = () => {
 
       <div className="relative z-10">
       {/* Premium Enterprise Header */}
-      <header className="sticky top-0 z-30 w-full bg-white border-b border-slate-200/60 shadow-[0_1px_2px_rgba(0,0,0,0.03)] px-6 py-4">
+      <header className="sticky top-0 z-30 w-full bg-surface border-b border-border-default shadow-[0_1px_2px_rgba(0,0,0,0.03)] px-6 py-4">
         <div className="flex items-center justify-between gap-8">
           <div className="flex items-center gap-5">
             <button
               type="button"
               onClick={() => navigate(ROUTES.PHARMACY_PO)}
-              className="w-10 h-10 rounded-lg border border-slate-200 flex items-center justify-center text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors"
+              className="w-10 h-10 rounded-lg border border-border-default flex items-center justify-center text-text-muted hover:bg-subtle/50 hover:text-text-primary transition-colors"
             >
               <IconChevronLeft className="w-5 h-5" />
             </button>
-            <div className="h-8 w-px bg-slate-200 hidden sm:block"></div>
+            <div className="h-8 w-px bg-subtle hidden sm:block"></div>
             <div>
               <div className="flex items-center gap-2 mb-0.5">
-                <h1 className="text-xl font-bold text-slate-900 tracking-tight leading-tight">
+                <h1 className="text-xl font-bold text-text-primary tracking-tight leading-tight">
                   {editMode ? 'Edit Purchase Order' : 'Create Purchase Order'}
                 </h1>
-                <span className="px-2 py-0.5 rounded-full bg-slate-100 text-[10px] font-bold text-slate-500 uppercase tracking-wider border border-slate-200">
+                <span className="px-2 py-0.5 rounded-full bg-subtle text-[10px] font-bold text-text-muted uppercase tracking-wider border border-border-default">
                   Draft
                 </span>
               </div>
@@ -1731,7 +1731,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                 <IconChevronRight className="w-2.5 h-2.5 opacity-40" />
                 <span className="hover:text-indigo-600 cursor-pointer transition-colors" onClick={() => navigate('/procurement')}>Procurement</span>
                 <IconChevronRight className="w-2.5 h-2.5 opacity-40" />
-                <span className="text-slate-900 font-bold">{editMode ? 'Edit' : 'New'}</span>
+                <span className="text-text-primary font-bold">{editMode ? 'Edit' : 'New'}</span>
               </nav>
             </div>
           </div>
@@ -1771,7 +1771,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                     showSuccess('Draft Discarded', 'The draft has been cleared successfully.')
                   }
                 }}
-                className="border-red-200 text-red-600 font-bold text-xs uppercase tracking-wider hover:bg-red-50 transition-all rounded-xl h-10 px-5"
+                className="border-red-200 text-red-600 font-bold text-xs uppercase tracking-wider hover:bg-red-50 transition-colors rounded-xl h-10 px-5"
               >
                 Discard Draft
               </Button>
@@ -1790,7 +1790,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                   navigate(ROUTES.PHARMACY_PO)
                 }
               }}
-              className="border-slate-200 text-slate-600 font-bold text-xs uppercase tracking-wider hover:bg-slate-50 transition-all rounded-xl h-10 px-5"
+              className="border-border-default text-text-muted font-bold text-xs uppercase tracking-wider hover:bg-subtle/50 transition-colors rounded-xl h-10 px-5"
             >
               Cancel
             </Button>
@@ -1800,7 +1800,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
             <Button 
               onClick={handleSubmit} 
               disabled={isSubmitting} 
-              className="bg-indigo-600 text-white font-bold text-xs uppercase tracking-[0.05em] hover:bg-indigo-700 active:scale-[0.98] transition-all rounded-xl h-10 px-6 flex items-center gap-2 shadow-[0_1px_3px_rgba(79,70,229,0.4)]"
+              className="bg-indigo-600 text-white font-bold text-xs uppercase tracking-[0.05em] hover:bg-indigo-700 active:scale-[0.98] transition-colors rounded-xl h-10 px-6 flex items-center gap-2 shadow-[0_1px_3px_rgba(79,70,229,0.4)]"
             >
               {isSubmitting ? <Spinner size="sm" /> : <IconSave className="w-4 h-4" />}
               {isSubmitting ? 'Processing...' : (editMode ? `Update ${formData.po_type === 'sq' ? 'SQ' : 'PO'}` : `Generate ${formData.po_type === 'sq' ? 'SQ' : 'PO'}`)}
@@ -1817,8 +1817,8 @@ export const PurchaseOrderCreatePage: React.FC = () => {
             <div className="w-full lg:w-[400px] space-y-6 lg:sticky lg:top-24">
               
               {/* Section 1: Order Configuration */}
-              <div className="bg-white rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-slate-200/60 overflow-hidden">
-                <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/30 flex items-center justify-between">
+              <div className="bg-surface rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-border-default overflow-hidden">
+                <div className="px-6 py-4 border-b border-border-subtle bg-subtle/50 flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <h2 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.15em]">1. Configuration</h2>
                     <span className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-tighter ${
@@ -1834,7 +1834,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                 <div className="p-3 space-y-3">
                   {/* Procurement Type Selection */}
                   <div>
-                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">Procurement Type <span className="text-red-500">*</span></label>
+                    <label className="block text-[10px] font-black text-text-secondary font-bold uppercase tracking-wider mb-2">Procurement Type <span className="text-red-500">*</span></label>
                     <Select
                       value={formData.po_type}
                       onChange={(e) => {
@@ -1844,7 +1844,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                           handleInputChange('supplier_ids', [formData.supplier_id]);
                         }
                       }}
-                      className="w-full bg-indigo-50/50 border border-indigo-100 rounded-xl px-4 py-2.5 text-sm font-bold text-indigo-900 focus:border-indigo-500 focus:ring-0 outline-none transition-all hover:bg-indigo-50"
+                      className="w-full bg-indigo-500/10 border border-indigo-100 rounded-xl px-4 py-2.5 text-sm font-bold text-indigo-400 dark:text-indigo-300 font-bold focus:border-indigo-500 focus:ring-0 outline-none transition-colors hover:bg-indigo-500/10"
                     >
                       <option value="regular">Purchase Order (PO)</option>
                       <option value="manual">Manual Purchase Order</option>
@@ -1861,12 +1861,12 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                         exit={{ opacity: 0, height: 0 }}
                         className="overflow-hidden"
                       >
-                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">Program Name</label>
+                        <label className="block text-[10px] font-black text-text-secondary font-bold uppercase tracking-wider mb-2">Program Name</label>
                         <Input
                           placeholder="e.g. Perkhidmatan Farmasi"
                           value={formData.program_name || ''}
                           onChange={(e) => handleInputChange('program_name', e.target.value)}
-                          className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-0 outline-none transition-all hover:border-slate-300"
+                          className="w-full bg-surface border border-border-default rounded-xl px-4 py-2.5 text-sm text-text-primary focus:border-indigo-500 focus:ring-0 outline-none transition-colors hover:border-border-default"
                         />
                       </motion.div>
                     )}
@@ -1874,12 +1874,12 @@ export const PurchaseOrderCreatePage: React.FC = () => {
 
                   {/* Supplier Selection */}
                   <div>
-                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">
+                    <label className="block text-[10px] font-black text-text-secondary font-bold uppercase tracking-wider mb-2">
                       Supplier {formData.po_type === 'sq' ? '(Multiple Selection Enabled)' : ''} <span className="text-red-500">*</span>
                     </label>
                     
                     {formData.po_type === 'sq' ? (
-                      <div className="bg-white border border-slate-200 rounded-xl p-4 max-h-[300px] overflow-y-auto space-y-3">
+                      <div className="bg-surface border border-border-default rounded-xl p-4 max-h-[300px] overflow-y-auto space-y-3">
                         {suppliers.length === 0 ? (
                           <div className="flex items-center gap-2 text-slate-400 italic text-sm py-2">
                             <Spinner size="sm" />
@@ -1887,7 +1887,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                           </div>
                         ) : (
                           suppliers.map((supplier) => (
-                            <label key={supplier.id} className="flex items-center gap-3 cursor-pointer group hover:bg-slate-50 p-2 rounded-lg transition-colors border border-transparent hover:border-slate-100">
+                            <label key={supplier.id} className="flex items-center gap-3 cursor-pointer group hover:bg-subtle/50 p-2 rounded-lg transition-colors border border-transparent hover:border-border-subtle">
                               <Checkbox 
                                 checked={formData.supplier_ids?.includes(supplier.id)}
                                 onCheckedChange={(checked) => {
@@ -1909,7 +1909,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                                 }}
                               />
                               <div className="flex flex-col">
-                                <span className="text-sm font-bold text-slate-700 group-hover:text-indigo-600 transition-colors">
+                                <span className="text-sm font-bold text-text-secondary group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                                   {supplier.company_name}
                                 </span>
                                 {supplier.supplier_code && (
@@ -1922,7 +1922,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                           ))
                         )}
                         {suppliers.length > 0 && (
-                          <div className="pt-2 border-t border-slate-100 mt-2">
+                          <div className="pt-2 border-t border-border-subtle mt-2">
                             <p className="text-[10px] font-black text-indigo-500 uppercase tracking-widest text-center">
                               {formData.supplier_ids?.length || 0} Supplier(s) selected
                             </p>
@@ -1951,7 +1951,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                           }
                         }}
                         required
-                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-0 outline-none transition-all hover:border-slate-300"
+                        className="w-full bg-surface border border-border-default rounded-xl px-4 py-2.5 text-sm text-text-primary focus:border-indigo-500 focus:ring-0 outline-none transition-colors hover:border-border-default"
                         disabled={isLoading}
                       >
                         <option value="">{suppliers.length === 0 ? 'Loading Suppliers...' : 'Select a Supplier'}</option>
@@ -1972,13 +1972,13 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                           placeholder="Manual Supplier Name..."
                           value={formData.manual_supplier_name || ''}
                           onChange={(e) => handleInputChange('manual_supplier_name', e.target.value)}
-                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900"
+                          className="w-full bg-subtle/50 border border-border-default rounded-xl px-4 py-2.5 text-sm text-text-primary"
                         />
                         <AutoExpandingTextarea
                           placeholder="Manual Supplier Address..."
                           value={formData.manual_supplier_address || ''}
                           onChange={(e) => handleInputChange('manual_supplier_address', e.target.value)}
-                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900"
+                          className="w-full bg-subtle/50 border border-border-default rounded-xl px-4 py-2.5 text-sm text-text-primary"
                         />
                       </motion.div>
                     )}
@@ -1987,12 +1987,12 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                   {/* Vote Code & Activity */}
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">Vote Code <span className="text-red-500">*</span></label>
+                      <label className="block text-[10px] font-black text-text-secondary font-bold uppercase tracking-wider mb-2">Vote Code <span className="text-red-500">*</span></label>
                       <Select
                         value={formData.vote_code || ''}
                         onChange={(e) => handleInputChange('vote_code', e.target.value)}
                         required
-                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-0 outline-none transition-all hover:border-slate-300"
+                        className="w-full bg-surface border border-border-default rounded-xl px-4 py-2.5 text-sm text-text-primary focus:border-indigo-500 focus:ring-0 outline-none transition-colors hover:border-border-default"
                       >
                         {formData.po_type !== 'sq' && <option value="">Select</option>}
                         {dynamicVoteCodes.filter(code => 
@@ -2011,18 +2011,18 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                             placeholder="Enter Manual Vote Code..."
                             value={formData.manual_vote_code || ''}
                             onChange={(e) => handleInputChange('manual_vote_code', e.target.value)}
-                            className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm"
+                            className="w-full bg-surface border border-border-default rounded-xl px-4 py-2 text-sm"
                           />
                         </motion.div>
                       )}
                     </div>
                     <div>
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">Activity <span className="text-red-500">*</span></label>
+                      <label className="block text-[10px] font-black text-text-secondary font-bold uppercase tracking-wider mb-2">Activity <span className="text-red-500">*</span></label>
                       <Select
                         value={formData.vote_activity || ''}
                         onChange={(e) => handleInputChange('vote_activity', e.target.value)}
                         required
-                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-0 outline-none transition-all hover:border-slate-300"
+                        className="w-full bg-surface border border-border-default rounded-xl px-4 py-2.5 text-sm text-text-primary focus:border-indigo-500 focus:ring-0 outline-none transition-colors hover:border-border-default"
                       >
                         <option value="">Select</option>
                         {VOTE_ACTIVITIES.map((activity) => (
@@ -2039,7 +2039,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                             placeholder="Enter Manual Activity..."
                             value={formData.manual_vote_activity || ''}
                             onChange={(e) => handleInputChange('manual_vote_activity', e.target.value)}
-                            className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm"
+                            className="w-full bg-surface border border-border-default rounded-xl px-4 py-2 text-sm"
                           />
                         </motion.div>
                       )}
@@ -2055,12 +2055,12 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                         exit={{ opacity: 0, height: 0 }}
                         className="overflow-hidden"
                       >
-                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">KKM Contract No.</label>
+                        <label className="block text-[10px] font-black text-text-secondary font-bold uppercase tracking-wider mb-2">KKM Contract No.</label>
                         <Input
                           placeholder="e.g. KKM-2024-..."
                           value={formData.kkm_contract_number || ''}
                           onChange={(e) => handleInputChange('kkm_contract_number', e.target.value)}
-                          className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-0 outline-none transition-all hover:border-slate-300"
+                          className="w-full bg-surface border border-border-default rounded-xl px-4 py-2.5 text-sm text-text-primary focus:border-indigo-500 focus:ring-0 outline-none transition-colors hover:border-border-default"
                         />
                       </motion.div>
                     )}
@@ -2069,12 +2069,12 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                   {/* Inv / SQ Number - Not for SQ */}
                   {formData.po_type !== 'sq' && (
                     <div>
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">Inv / SQ Number</label>
+                      <label className="block text-[10px] font-black text-text-secondary font-bold uppercase tracking-wider mb-2">Inv / SQ Number</label>
                       <Input
                         placeholder="e.g. INV-12345 or SQ-67890"
                         value={formData.inv_sq_number || ''}
                         onChange={(e) => handleInputChange('inv_sq_number', e.target.value)}
-                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-0 outline-none transition-all hover:border-slate-300"
+                        className="w-full bg-surface border border-border-default rounded-xl px-4 py-2.5 text-sm text-text-primary focus:border-indigo-500 focus:ring-0 outline-none transition-colors hover:border-border-default"
                       />
                     </div>
                   )}
@@ -2082,12 +2082,12 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                   {/* Category & Department */}
                   <div className="space-y-3">
                     <div>
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">Department</label>
+                      <label className="block text-[10px] font-black text-text-secondary font-bold uppercase tracking-wider mb-2">Department</label>
                       <Select
                         value={formData.department || ''}
                         onChange={(e) => handleInputChange('department', e.target.value)}
                         required
-                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-0 outline-none transition-all hover:border-slate-300"
+                        className="w-full bg-surface border border-border-default rounded-xl px-4 py-2.5 text-sm text-text-primary focus:border-indigo-500 focus:ring-0 outline-none transition-colors hover:border-border-default"
                       >
                         <option value="">Select Department</option>
                         {WARRANT_DEPARTMENTS.map((dept) => (
@@ -2104,18 +2104,18 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                             placeholder="Enter Manual Department..."
                             value={formData.manual_department || ''}
                             onChange={(e) => handleInputChange('manual_department', e.target.value)}
-                            className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm"
+                            className="w-full bg-surface border border-border-default rounded-xl px-4 py-2 text-sm"
                           />
                         </motion.div>
                       )}
                     </div>
                     <div>
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">Category</label>
+                      <label className="block text-[10px] font-black text-text-secondary font-bold uppercase tracking-wider mb-2">Category</label>
                       <Select
                         value={formData.category || ''}
                         onChange={(e) => handleInputChange('category', e.target.value)}
                         required
-                        className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-900 focus:border-indigo-500 focus:ring-0 outline-none transition-all hover:border-slate-300"
+                        className="w-full bg-surface border border-border-default rounded-xl px-4 py-2.5 text-sm text-text-primary focus:border-indigo-500 focus:ring-0 outline-none transition-colors hover:border-border-default"
                       >
                         <option value="">Select Category</option>
                         {CATEGORIES.map((cat) => (
@@ -2132,7 +2132,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                             placeholder="Enter Manual Category..."
                             value={formData.manual_category || ''}
                             onChange={(e) => handleInputChange('manual_category', e.target.value)}
-                            className="w-full bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm"
+                            className="w-full bg-surface border border-border-default rounded-xl px-4 py-2 text-sm"
                           />
                         </motion.div>
                       )}
@@ -2145,14 +2145,14 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                 <motion.div 
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-white rounded-2xl p-6 border border-amber-200 shadow-sm mb-6"
+                  className="bg-surface rounded-2xl p-6 border border-amber-500/20 shadow-sm mb-6"
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center shrink-0 shadow-lg shadow-amber-500/20">
                       <IconHistory className="w-5 h-5 text-white" />
                     </div>
                     <div>
-                      <h3 className="text-sm font-bold text-slate-800">Modification Reason</h3>
+                      <h3 className="text-sm font-bold text-text-primary">Modification Reason</h3>
                       <p className="text-[10px] text-amber-600 font-bold uppercase tracking-wider">Required for active orders</p>
                     </div>
                   </div>
@@ -2160,7 +2160,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                     placeholder="Briefly explain why this PO is being modified..."
                     value={(formData as any).modification_reason || ''}
                     onChange={(e) => handleInputChange('modification_reason' as any, e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-900 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-all min-h-[100px]"
+                    className="w-full bg-subtle/50 border border-border-default rounded-xl px-4 py-3 text-sm text-text-primary focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-colors min-h-[100px]"
                     required
                   />
                 </motion.div>
@@ -2184,18 +2184,18 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                       <div className="space-y-4 pb-5 border-b border-white/5">
                         <div className="grid grid-cols-2 gap-4">
                           <div className="flex flex-col gap-0.5">
-                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Total Allocation</span>
+                            <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Total Allocation</span>
                             <span className="text-sm font-bold text-white font-mono tracking-tight">{formatCurrency(totalAllocation)}</span>
                           </div>
                           <div className="text-right flex flex-col gap-0.5">
-                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Current Balance</span>
+                            <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Current Balance</span>
                             <span className="text-sm font-bold text-indigo-400 font-mono tracking-tight">{formatCurrency(availableBudget)}</span>
                           </div>
                         </div>
 
                         <div className="pt-4 border-t border-white/5 flex items-center justify-between">
                           <div className="flex flex-col gap-0.5">
-                            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Final Balance</span>
+                            <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Final Balance</span>
                             <span className={`text-sm font-bold font-mono tracking-tight ${balanceAfterPurchase >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                               {formatCurrency(balanceAfterPurchase)}
                             </span>
@@ -2269,8 +2269,8 @@ export const PurchaseOrderCreatePage: React.FC = () => {
             {/* Right Column: Order Items (Workspace) */}
             <div className="flex-1 space-y-6">
               {/* Section 2: Order Items */}
-              <div className="bg-white rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-slate-200/60 overflow-hidden min-h-[400px] flex flex-col">
-                <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/20 flex items-center justify-between">
+              <div className="bg-surface rounded-2xl shadow-[0_1px_3px_rgba(0,0,0,0.05)] border border-border-default overflow-hidden min-h-[400px] flex flex-col">
+                <div className="px-6 py-4 border-b border-border-subtle bg-subtle/50 flex items-center justify-between">
                   <div>
                     <h2 className="text-[11px] font-black text-slate-400 uppercase tracking-[0.15em]">2. Order Items</h2>
                     <p className="text-[10px] text-slate-400 font-medium mt-1">Manage drugs and medical supplies for this procurement</p>
@@ -2279,12 +2279,12 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                     <div className="flex items-center gap-3">
                       <div className="text-right hidden sm:block">
                         <p className="text-[9px] font-black text-slate-300 uppercase tracking-wider">Current Capacity</p>
-                        <p className="text-[11px] font-bold text-slate-600">{formData.items.length} / 5 Items</p>
+                        <p className="text-[11px] font-bold text-text-muted">{formData.items.length} / 5 Items</p>
                       </div>
-                      <div className="w-12 h-12 rounded-xl border-2 border-slate-100 flex items-center justify-center relative">
+                      <div className="w-12 h-12 rounded-xl border-2 border-border-subtle flex items-center justify-center relative">
                         <svg className="w-8 h-8 -rotate-90">
                           <circle cx="16" cy="16" r="14" fill="none" stroke="#F1F5F9" strokeWidth="3" />
-                          <circle cx="16" cy="16" r="14" fill="none" stroke="#4F46E5" strokeWidth="3" strokeDasharray={88} strokeDashoffset={88 - (formData.items.length / 5) * 88} strokeLinecap="round" className="transition-all duration-500" />
+                          <circle cx="16" cy="16" r="14" fill="none" stroke="#4F46E5" strokeWidth="3" strokeDasharray={88} strokeDashoffset={88 - (formData.items.length / 5) * 88} strokeLinecap="round" className="transition-colors duration-500" />
                         </svg>
                         <span className="absolute inset-0 flex items-center justify-center text-[10px] font-black text-indigo-600">{formData.items.length}</span>
                       </div>
@@ -2298,7 +2298,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                 (formData.po_type === 'sq' || !formData.items || formData.items.length < 5) && (
                   <div className="relative item-search-container max-w-3xl mx-auto w-full">
                     <div className="relative group">
-                      <div className="absolute left-6 top-1/2 -translate-y-1/2 pointer-events-none transition-all group-focus-within:scale-110 group-focus-within:text-indigo-600">
+                      <div className="absolute left-6 top-1/2 -translate-y-1/2 pointer-events-none transition-colors group-focus-within:scale-110 group-focus-within:text-indigo-600">
                         <IconSearch className="w-6 h-6 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
                       </div>
                       <input
@@ -2309,10 +2309,10 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                           setItemSearch(e.target.value)
                           setShowSuggestions(!!e.target.value.trim())
                         }}
-                        className="w-full pl-16 pr-6 py-4 bg-white border-2 border-slate-200 rounded-[1.5rem] text-sm text-slate-900 placeholder:text-slate-400 font-bold shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] focus:border-indigo-500 focus:shadow-[0_12px_40px_-8px_rgba(79,70,229,0.15)] focus:ring-4 focus:ring-indigo-50 outline-none transition-all hover:border-slate-300"
+                        className="w-full pl-16 pr-6 py-4 bg-surface border-2 border-border-default rounded-[1.5rem] text-sm text-text-primary placeholder:text-text-muted font-bold shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] focus:border-indigo-500 focus:shadow-[0_12px_40px_-8px_rgba(79,70,229,0.15)] focus:ring-4 focus:ring-indigo-50 outline-none transition-colors hover:border-border-default"
                       />
                       <div className="absolute right-5 top-1/2 -translate-y-1/2 flex items-center gap-2 pointer-events-none">
-                        <kbd className="hidden sm:inline-flex items-center h-6 px-2 rounded-md border border-slate-200 bg-white text-[10px] font-bold text-slate-400 shadow-sm">⌘ K</kbd>
+                        <kbd className="hidden sm:inline-flex items-center h-6 px-2 rounded-md border border-border-default bg-surface text-[10px] font-bold text-slate-400 shadow-sm">⌘ K</kbd>
                       </div>
                     </div>
 
@@ -2322,9 +2322,9 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                           initial={{ opacity: 0, y: 8, scale: 0.98 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 8, scale: 0.98 }}
-                          className="absolute z-50 w-full mt-3 bg-white border border-slate-200 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden max-h-[400px] overflow-y-auto"
+                          className="absolute z-50 w-full mt-3 bg-surface border border-border-default rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden max-h-[400px] overflow-y-auto"
                         >
-                          <div className="px-4 py-2 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+                          <div className="px-4 py-2 bg-subtle/50 border-b border-border-subtle flex items-center justify-between">
                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">
                               Search Results {isApplVote(formData.vote_code) ? '(APPL Catalog)' : isCcVote(formData.vote_code) ? '(CC Catalog)' : ''}
                             </span>
@@ -2339,23 +2339,23 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                                 setItemSearch('')
                                 setShowSuggestions(false)
                               }}
-                              className="w-full text-left px-5 py-4 hover:bg-indigo-50/30 border-b border-slate-100 last:border-b-0 flex items-center justify-between group transition-all"
+                              className="w-full text-left px-5 py-4 hover:bg-indigo-500/10 border-b border-border-subtle last:border-b-0 flex items-center justify-between group transition-colors"
                             >
                               <div className="flex items-start gap-4">
-                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${item.item_type === 'drug' ? 'bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100' : 'bg-indigo-50 text-indigo-600 group-hover:bg-indigo-100'}`}>
+                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${item.item_type === 'drug' ? 'bg-emerald-500/10 text-emerald-600 group-hover:bg-emerald-100' : 'bg-indigo-500/10 text-indigo-600 group-hover:bg-indigo-100'}`}>
                                   {item.item_type === 'drug' ? <IconActivity className="w-5 h-5" /> : <IconPackage className="w-5 h-5" />}
                                 </div>
                                 <div className="flex flex-col">
                                   <div className="flex items-center gap-2 flex-wrap">
-                                    <span className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                                    <span className="text-sm font-bold text-text-primary group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                                       {'drug_name' in item ? item.drug_name : item.item_name}
                                     </span>
                                     {((item as any).procurement_vote === 'cc' || (item as any).category === 'Contract Catalog' || (item as any).kkm_contract_number || (item as any).contract_number) ? (
-                                      <span className="px-2 py-0.5 text-[9px] font-black rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200/60 uppercase tracking-wider">
+                                      <span className="px-2 py-0.5 text-[9px] font-black rounded-md bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 uppercase tracking-wider">
                                         CC Contract
                                       </span>
                                     ) : (
-                                      <span className="px-2 py-0.5 text-[9px] font-semibold rounded-md bg-slate-100 text-slate-600 border border-slate-200/60 uppercase tracking-wider">
+                                      <span className="px-2 py-0.5 text-[9px] font-semibold rounded-md bg-subtle text-text-muted border border-border-default uppercase tracking-wider">
                                         Non-Contract
                                       </span>
                                     )}
@@ -2370,7 +2370,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                                       })()}
                                     </span>
                                     <span className="text-slate-300">•</span>
-                                    <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                                    <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">
                                       {typeof (item as any).category === 'object' && (item as any).category !== null 
                                         ? ((item as any).category as any).category_name 
                                         : ((item as any).category || 'General')}
@@ -2379,10 +2379,10 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                                 </div>
                               </div>
                               <div className="text-right flex flex-col items-end">
-                                <span className="text-sm font-black text-slate-900 tabular-nums">
+                                <span className="text-sm font-black text-text-primary tabular-nums">
                                   {item.price ? formatCurrency(Number(item.price)) : '—'}
                                 </span>
-                                <div className="opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0 mt-1 flex items-center gap-1">
+                                <div className="opacity-0 group-hover:opacity-100 transition-colors transform translate-x-2 group-hover:translate-x-0 mt-1 flex items-center gap-1">
                                   <span className="text-[9px] font-black text-indigo-600 uppercase tracking-widest">Quick Add</span>
                                   <IconPlus className="w-3 h-3 text-indigo-600" />
                                 </div>
@@ -2397,16 +2397,16 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                           initial={{ opacity: 0, y: 8, scale: 0.98 }}
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 8, scale: 0.98 }}
-                          className="absolute z-50 w-full mt-3 bg-white border border-amber-200 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden p-6 text-center"
+                          className="absolute z-50 w-full mt-3 bg-surface border border-amber-500/20 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.1)] overflow-hidden p-6 text-center"
                         >
-                          <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center mx-auto mb-3 text-amber-600">
+                          <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-100 flex items-center justify-center mx-auto mb-3 text-amber-600">
                             <IconAlertCircle className="w-6 h-6 text-amber-600" />
                           </div>
-                          <h4 className="text-sm font-bold text-slate-900 mb-1">
+                          <h4 className="text-sm font-bold text-text-primary mb-1">
                             Item Tidak Wujud Dalam Katalog MyInventory {isApplVote(formData.vote_code) ? '(APPL)' : isCcVote(formData.vote_code) ? '(CC)' : ''}
                           </h4>
-                          <p className="text-xs text-slate-600 max-w-md mx-auto mb-4 leading-relaxed">
-                            Ubat/Item <span className="font-semibold text-slate-900">"{itemSearch}"</span> tidak ditemui dalam senarai {isApplVote(formData.vote_code) ? 'APPL' : isCcVote(formData.vote_code) ? 'CC' : 'Katalog'} MyInventory. Sila tambah ubat/item ini secara manual ke dalam katalog di modul <span className="font-bold text-teal-700">MyInventory</span> terlebih dahulu.
+                          <p className="text-xs text-text-muted max-w-md mx-auto mb-4 leading-relaxed">
+                            Ubat/Item <span className="font-semibold text-text-primary">"{itemSearch}"</span> tidak ditemui dalam senarai {isApplVote(formData.vote_code) ? 'APPL' : isCcVote(formData.vote_code) ? 'CC' : 'Katalog'} MyInventory. Sila tambah ubat/item ini secara manual ke dalam katalog di modul <span className="font-bold text-teal-700">MyInventory</span> terlebih dahulu.
                           </p>
                           <div className="flex items-center justify-center gap-3">
                             <Button
@@ -2414,7 +2414,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                               variant="outline"
                               size="sm"
                               onClick={() => setShowSuggestions(false)}
-                              className="rounded-xl border-slate-200 text-slate-600 hover:bg-slate-50"
+                              className="rounded-xl border-border-default text-text-muted hover:bg-subtle/50"
                             >
                               Tutup
                             </Button>
@@ -2427,7 +2427,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                                   state: { filter: isApplVote(formData.vote_code) ? 'appl' : isCcVote(formData.vote_code) ? 'cc' : 'all' } 
                                 })
                               }}
-                              className="rounded-xl bg-gradient-to-r from-teal-600 to-emerald-600 text-white font-bold shadow-md hover:from-teal-700 hover:to-emerald-700"
+                              className="rounded-xl bg-surface border border-border-default text-white font-bold shadow-md hover:from-teal-700 hover:to-emerald-700"
                             >
                               Buka MyInventory →
                             </Button>
@@ -2441,21 +2441,21 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                 <motion.div 
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm mx-auto w-full mb-6"
+                  className="bg-surface rounded-2xl p-5 border border-border-default shadow-sm mx-auto w-full mb-6"
                 >
-                    <div className="mb-4 pb-3 border-b border-slate-100 flex items-center justify-between">
+                    <div className="mb-4 pb-3 border-b border-border-subtle flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-md bg-indigo-50 flex items-center justify-center shrink-0">
+                        <div className="w-6 h-6 rounded-md bg-indigo-500/10 flex items-center justify-center shrink-0">
                           <IconPlus className="w-3.5 h-3.5 text-indigo-600" />
                         </div>
-                        <h3 className="text-xs font-bold text-slate-800 uppercase tracking-widest">Add Manual Item</h3>
+                        <h3 className="text-xs font-bold text-text-primary uppercase tracking-widest">Add Manual Item</h3>
                       </div>
                       
                       <button
                         type="button"
                         onClick={addManualItem}
                         disabled={!manualItem.item_name || !manualItem.quantity || (formData.po_type !== 'sq' && !manualItem.unit_price)}
-                        className="h-8 px-5 bg-indigo-600 text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-indigo-700 active:scale-[0.95] disabled:opacity-50 disabled:active:scale-100 transition-all flex items-center justify-center gap-2 shadow-sm"
+                        className="h-8 px-5 bg-indigo-600 text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-indigo-700 active:scale-[0.95] disabled:opacity-50 disabled:active:scale-100 transition-colors flex items-center justify-center gap-2 shadow-sm"
                         title="Add Item"
                       >
                         <IconPlus className="w-3.5 h-3.5" />
@@ -2472,7 +2472,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                           placeholder="Enter drug or supply name..."
                           value={manualItem.item_name}
                           onChange={(e) => setManualItem(prev => ({ ...prev, item_name: e.target.value }))}
-                          className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 outline-none transition-all min-h-[38px] shadow-sm"
+                          className="w-full bg-surface border border-border-default rounded-lg px-3 py-2 text-sm text-text-primary focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 outline-none transition-colors min-h-[38px] shadow-sm"
                         />
                       </div>
 
@@ -2484,7 +2484,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                             placeholder="e.g. 080702"
                             value={manualItem.item_code}
                             onChange={(e) => setManualItem(prev => ({ ...prev, item_code: e.target.value }))}
-                            className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 outline-none transition-all font-mono shadow-sm"
+                            className="w-full bg-surface border border-border-default rounded-lg px-3 py-2 text-sm text-text-primary focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 outline-none transition-colors font-mono shadow-sm"
                           />
                         </div>
 
@@ -2494,7 +2494,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                             placeholder="e.g. Box of 10"
                             value={manualItem.packaging_description}
                             onChange={(e) => setManualItem(prev => ({ ...prev, packaging_description: e.target.value }))}
-                            className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 outline-none transition-all min-h-[38px] shadow-sm"
+                            className="w-full bg-surface border border-border-default rounded-lg px-3 py-2 text-sm text-text-primary focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 outline-none transition-colors min-h-[38px] shadow-sm"
                           />
                         </div>
 
@@ -2505,7 +2505,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                             min="1"
                             value={manualItem.quantity}
                             onChange={(e) => setManualItem(prev => ({ ...prev, quantity: Number(e.target.value) }))}
-                            className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 font-bold focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 outline-none transition-all text-left sm:text-right shadow-sm"
+                            className="w-full bg-surface border border-border-default rounded-lg px-3 py-2 text-sm text-text-primary font-bold focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 outline-none transition-colors text-left sm:text-right shadow-sm"
                           />
                         </div>
 
@@ -2517,7 +2517,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                             step="0.01"
                             value={manualItem.unit_price}
                             onChange={(e) => setManualItem(prev => ({ ...prev, unit_price: Number(e.target.value) }))}
-                            className="w-full bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 font-black focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 outline-none transition-all text-left sm:text-right shadow-sm"
+                            className="w-full bg-surface border border-border-default rounded-lg px-3 py-2 text-sm text-text-primary font-black focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 outline-none transition-colors text-left sm:text-right shadow-sm"
                           />
                         </div>
                       </div>
@@ -2529,7 +2529,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
               <div className="space-y-2">
                 {formData.items && formData.items.length > 0 ? (
                   formData.items.map((item: any, index: number) => (
-                    <div key={`${item.item_id}-${index}`} className="group relative bg-white border border-slate-200 rounded-2xl overflow-hidden hover:border-indigo-200 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all">
+                    <div key={`${item.item_id}-${index}`} className="group relative bg-surface border border-border-default rounded-2xl overflow-hidden hover:border-indigo-500/20 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-colors">
                       <div className="flex flex-col lg:flex-row">
                         {/* Status Accent */}
                         <div className={`w-1 lg:w-1.5 shrink-0 ${item.item_type === 'drug' ? 'bg-emerald-500' : 'bg-indigo-500'}`}></div>
@@ -2539,7 +2539,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                           <div className="flex-1 min-w-0 w-full lg:w-auto">
                             <div className="flex items-start justify-between gap-4">
                               <div>
-                                <h3 className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors leading-snug break-words">
+                                <h3 className="text-sm font-bold text-text-primary group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-snug break-words">
                                   {item.item_name}
                                 </h3>
                                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1">
@@ -2553,40 +2553,40 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                                     </span>
                                   </div>
                                   <span className="text-slate-200 hidden sm:block">|</span>
-                                  <span className={`text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-[0.1em] ${item.item_type === 'drug' ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' : 'bg-indigo-50 text-indigo-600 border border-indigo-100'}`}>
+                                  <span className={`text-[9px] font-black px-2 py-0.5 rounded-full uppercase tracking-[0.1em] ${item.item_type === 'drug' ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-100' : 'bg-indigo-500/10 text-indigo-600 border border-indigo-100'}`}>
                                     {item.item_type}
                                   </span>
                                 </div>
 
                                 {/* CC Item Contract Details Card - Only show if real contract details exist and not in SQ mode */}
                                 {formData.po_type !== 'sq' && (item.contract_number || (item as any).cc_contract_number || item.supplier_name || (item as any).cc_supplier_name) && (
-                                  <div className="mt-3 p-3 bg-slate-50/90 border border-slate-200/80 rounded-xl grid grid-cols-2 sm:grid-cols-5 gap-3 text-[10px] w-full">
+                                  <div className="mt-3 p-3 bg-subtle/50 border border-border-default rounded-xl grid grid-cols-2 sm:grid-cols-5 gap-3 text-[10px] w-full">
                                     <div>
-                                      <span className="block text-[8px] font-black text-slate-400 uppercase tracking-wider mb-0.5">Nama Pembekal</span>
-                                      <span className="font-bold text-slate-800 truncate block" title={item.supplier_name || (item as any).cc_supplier_name || suppliers.find(s => s.id === formData.supplier_id)?.company_name || '-'}>
+                                      <span className="block text-[8px] font-black text-text-secondary font-bold uppercase tracking-wider mb-0.5">Nama Pembekal</span>
+                                      <span className="font-bold text-text-primary truncate block" title={item.supplier_name || (item as any).cc_supplier_name || suppliers.find(s => s.id === formData.supplier_id)?.company_name || '-'}>
                                         {item.supplier_name || (item as any).cc_supplier_name || suppliers.find(s => s.id === formData.supplier_id)?.company_name || '-'}
                                       </span>
                                     </div>
                                     <div>
-                                      <span className="block text-[8px] font-black text-slate-400 uppercase tracking-wider mb-0.5">No. Kontrak</span>
-                                      <span className="inline-block font-mono font-bold text-indigo-700 bg-indigo-50 border border-indigo-100/80 px-2 py-0.5 rounded text-[10px] truncate max-w-full" title={item.contract_number || (item as any).cc_contract_number || formData.kkm_contract_number || '-'}>
+                                      <span className="block text-[8px] font-black text-text-secondary font-bold uppercase tracking-wider mb-0.5">No. Kontrak</span>
+                                      <span className="inline-block font-mono font-bold text-indigo-700 bg-indigo-500/10 border border-indigo-100/80 px-2 py-0.5 rounded text-[10px] truncate max-w-full" title={item.contract_number || (item as any).cc_contract_number || formData.kkm_contract_number || '-'}>
                                         {item.contract_number || (item as any).cc_contract_number || formData.kkm_contract_number || '-'}
                                       </span>
                                     </div>
                                     <div>
-                                      <span className="block text-[8px] font-black text-slate-400 uppercase tracking-wider mb-0.5">Tarikh Mula</span>
-                                      <span className="font-bold text-slate-800 block">
+                                      <span className="block text-[8px] font-black text-text-secondary font-bold uppercase tracking-wider mb-0.5">Tarikh Mula</span>
+                                      <span className="font-bold text-text-primary block">
                                         {(item as any).cc_contract_start_date || (item as any).contract_start_date || '-'}
                                       </span>
                                     </div>
                                     <div>
-                                      <span className="block text-[8px] font-black text-slate-400 uppercase tracking-wider mb-0.5">Tarikh Tamat</span>
-                                      <span className="font-bold text-slate-800 block">
+                                      <span className="block text-[8px] font-black text-text-secondary font-bold uppercase tracking-wider mb-0.5">Tarikh Tamat</span>
+                                      <span className="font-bold text-text-primary block">
                                         {item.contract_end_date || (item as any).cc_contract_end_date || '-'}
                                       </span>
                                     </div>
                                     <div>
-                                      <span className="block text-[8px] font-black text-slate-400 uppercase tracking-wider mb-0.5">Status Kontrak</span>
+                                      <span className="block text-[8px] font-black text-text-secondary font-bold uppercase tracking-wider mb-0.5">Status Kontrak</span>
                                       <span className="inline-block font-bold text-sky-700 bg-sky-50 border border-sky-100 px-2 py-0.5 rounded-full text-[9px] uppercase tracking-wider">
                                         {(item as any).cc_contract_status || '-'}
                                       </span>
@@ -2597,7 +2597,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() => removeItem(index)}
-                                className="w-8 h-8 rounded-lg bg-rose-50 border border-rose-100 text-rose-500 hover:bg-rose-100 hover:border-rose-200 hover:text-rose-600 flex items-center justify-center transition-all active:scale-95 shadow-sm"
+                                className="w-8 h-8 rounded-lg bg-rose-500/10 border border-rose-100 text-rose-500 hover:bg-rose-100 hover:border-rose-500/20 hover:text-rose-600 flex items-center justify-center transition-colors active:scale-95 shadow-sm"
                                 title="Remove item"
                               >
                                 <IconX className="w-4 h-4" />
@@ -2613,7 +2613,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                                   value={item.quantity}
                                   onChange={(e) => updateItem(index, 'quantity', parseInt(e.target.value) || 1)}
                                   required
-                                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 font-bold focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 outline-none transition-all shadow-sm"
+                                  className="w-full bg-surface border border-border-default rounded-lg px-3 py-1.5 text-xs text-text-primary font-bold focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 outline-none transition-colors shadow-sm"
                                 />
                               </div>
                               <div className="space-y-1">
@@ -2625,7 +2625,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                                   value={item.unit_price}
                                   onChange={(e) => updateItem(index, 'unit_price', parseFloat(e.target.value) || 0)}
                                   required
-                                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 font-bold focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 outline-none transition-all shadow-sm"
+                                  className="w-full bg-surface border border-border-default rounded-lg px-3 py-1.5 text-xs text-text-primary font-bold focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 outline-none transition-colors shadow-sm"
                                 />
                               </div>
                               <div className="space-y-1 sm:col-span-1">
@@ -2635,19 +2635,19 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                                   onChange={(e) => updateItem(index, 'packaging_description', e.target.value)}
                                   placeholder="e.g. Box of 10"
                                   rows={1}
-                                  className="w-full bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs text-slate-900 font-bold focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 outline-none transition-all resize-none min-h-[32px] shadow-sm"
+                                  className="w-full bg-surface border border-border-default rounded-lg px-3 py-1.5 text-xs text-text-primary font-bold focus:border-indigo-500 focus:ring-4 focus:ring-indigo-50 outline-none transition-colors resize-none min-h-[32px] shadow-sm"
                                 />
                               </div>
                             </div>
                           </div>
 
                           {/* Line Total Section */}
-                          <div className="w-full lg:w-32 lg:h-auto lg:border-l border-slate-100 flex flex-col justify-center items-end lg:pl-4 mt-2 lg:mt-0 pt-2 lg:pt-0 border-t lg:border-t-0">
+                          <div className="w-full lg:w-32 lg:h-auto lg:border-l border-border-subtle flex flex-col justify-center items-end lg:pl-4 mt-2 lg:mt-0 pt-2 lg:pt-0 border-t lg:border-t-0">
                             <div className="flex flex-col items-end">
                               <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-0.5">Line Total</span>
                               <div className="flex items-baseline gap-1">
                                 <span className="text-[10px] font-bold text-slate-400">RM</span>
-                                <span className="text-xl font-black text-slate-900 font-mono tracking-tighter">
+                                <span className="text-xl font-black text-text-primary font-mono tracking-tighter">
                                   {item.quantity && item.unit_price ? (item.quantity * item.unit_price).toFixed(2).split('.')[0] : '0'}
                                   <span className="text-xs opacity-30">.{item.quantity && item.unit_price ? (item.quantity * item.unit_price).toFixed(2).split('.')[1] : '00'}</span>
                                 </span>
@@ -2655,8 +2655,8 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                               <div className={cn(
                                 "mt-1 px-1.5 py-0.5 rounded text-[8px] font-bold uppercase tracking-wider border",
                                 item.unit_price > 0 
-                                  ? "bg-emerald-50 text-emerald-600 border-emerald-100" 
-                                  : "bg-amber-50 text-amber-600 border-amber-100"
+                                  ? "bg-emerald-500/10 text-emerald-600 border-emerald-100" 
+                                  : "bg-amber-500/10 text-amber-600 border-amber-100"
                               )}>
                                 {item.unit_price > 0 ? 'Valid Price' : 'Quotation Pending'}
                               </div>
@@ -2667,11 +2667,11 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                     </div>
                   ))
                 ) : (
-                  <div className="py-20 flex flex-col items-center justify-center border-2 border-dashed border-slate-100 rounded-[2rem] bg-slate-50/30">
-                    <div className="w-20 h-20 rounded-3xl bg-white shadow-sm flex items-center justify-center mb-6">
+                  <div className="py-20 flex flex-col items-center justify-center border-2 border-dashed border-border-subtle rounded-[2rem] bg-subtle/50">
+                    <div className="w-20 h-20 rounded-3xl bg-surface shadow-sm flex items-center justify-center mb-6">
                       <IconPackage className="w-10 h-10 text-slate-200" />
                     </div>
-                    <h3 className="text-lg font-bold text-slate-900 tracking-tight">Your order is empty</h3>
+                    <h3 className="text-lg font-bold text-text-primary tracking-tight">Your order is empty</h3>
                     <p className="text-sm text-slate-400 font-medium mt-1">Start by searching for items in the catalog above</p>
                     <div className="mt-8 flex items-center gap-2 text-[10px] font-black text-indigo-400 uppercase tracking-widest">
                       <IconInfoCircle className="w-4 h-4" />
@@ -2682,60 +2682,60 @@ export const PurchaseOrderCreatePage: React.FC = () => {
               </div>
 
               {/* Compact Professional Signatory Section */}
-              <div className="mt-12 pt-8 border-t border-slate-100">
+              <div className="mt-12 pt-8 border-t border-border-subtle">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 px-12 pb-8">
                   {/* Compact Requester Signature */}
-                  <div className="group relative transition-all">
+                  <div className="group relative transition-colors">
                     <div className="flex flex-col items-center">
                       <div className="text-center space-y-4 w-full">
                         <div className="space-y-1">
                           <p className="text-[9px] font-black text-indigo-600 uppercase tracking-widest leading-none">Authorized Requester</p>
-                          <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-tight">
+                          <h4 className="text-[11px] font-black text-text-primary uppercase tracking-tight">
                             Tandatangan Pegawai Yang Memohon
                           </h4>
                         </div>
                         
                         {/* Signature Line */}
-                        <div className="h-px w-full bg-slate-200 group-hover:bg-indigo-400 transition-all"></div>
+                        <div className="h-px w-full bg-subtle group-hover:bg-indigo-400 transition-colors"></div>
                         
                         {signatures ? (
                           <div className="leading-tight">
-                            <p className="text-[12px] font-black text-slate-800 uppercase">{signatures.applicantName}</p>
+                            <p className="text-[12px] font-black text-text-primary uppercase">{signatures.applicantName}</p>
                             <p className="text-[10px] font-bold text-slate-400 uppercase">{signatures.applicantPosition}</p>
                           </div>
                         ) : (
-                          <div className="h-8 w-48 bg-slate-50 animate-pulse rounded mx-auto"></div>
+                          <div className="h-8 w-48 bg-subtle/50 animate-pulse rounded mx-auto"></div>
                         )}
                       </div>
                     </div>
                   </div>
 
                   {/* Compact Approver Signature */}
-                  <div className="group relative transition-all">
+                  <div className="group relative transition-colors">
                     <div className="flex flex-col items-center">
                       <div className="text-center space-y-4 w-full">
                         <div className="space-y-1">
                           <p className="text-[9px] font-black text-emerald-600 uppercase tracking-widest leading-none">Authorized Approver</p>
-                          <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-tight">
+                          <h4 className="text-[11px] font-black text-text-primary uppercase tracking-tight">
                             Tandatangan Pegawai Yang Meluluskan
                           </h4>
                         </div>
 
                         {/* Approval Line */}
-                        <div className="h-px w-full bg-slate-200 group-hover:bg-emerald-400 transition-all"></div>
+                        <div className="h-px w-full bg-subtle group-hover:bg-emerald-400 transition-colors"></div>
 
                         {existingPO?.approved_by_user ? (
                           <div className="leading-tight text-center">
-                            <p className="text-[12px] font-black text-slate-800 uppercase">{existingPO.approved_by_user.full_name}</p>
+                            <p className="text-[12px] font-black text-text-primary uppercase">{existingPO.approved_by_user.full_name}</p>
                             <p className="text-[10px] font-bold text-slate-400 uppercase">{existingPO.approved_by_user.jawatan}</p>
                           </div>
                         ) : signatures ? (
                           <div className="leading-tight">
-                            <p className="text-[12px] font-black text-slate-800 uppercase">{signatures.headName}</p>
+                            <p className="text-[12px] font-black text-text-primary uppercase">{signatures.headName}</p>
                             <p className="text-[10px] font-bold text-slate-400 uppercase">{signatures.headPosition}</p>
                           </div>
                         ) : (
-                          <div className="h-8 w-48 bg-slate-50 animate-pulse rounded mx-auto"></div>
+                          <div className="h-8 w-48 bg-subtle/50 animate-pulse rounded mx-auto"></div>
                         )}
                       </div>
                     </div>
@@ -2764,7 +2764,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                       {formData.supplier_ids?.map((id: string, idx: number) => {
                         const supplier = suppliers.find(s => s.id === id);
                         return (
-                          <div key={id} className="flex items-center gap-3 bg-white/5 rounded-xl p-3 border border-white/10 group hover:bg-white/10 transition-all relative">
+                          <div key={id} className="flex items-center gap-3 bg-white/5 rounded-xl p-3 border border-white/10 group hover:bg-surface/10 transition-colors relative">
                             <div className="w-7 h-7 rounded-lg bg-indigo-500/30 flex items-center justify-center text-[10px] font-black shrink-0">
                               {idx + 1}
                             </div>
@@ -2780,7 +2780,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                                 if (newIds.length > 0) handleInputChange('supplier_id', newIds[0]);
                                 else handleInputChange('supplier_id', '');
                               }}
-                              className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-lg flex items-center justify-center text-white/20 hover:text-red-400 hover:bg-white/10 transition-all opacity-0 group-hover:opacity-100"
+                              className="absolute right-2 top-1/2 -translate-y-1/2 w-6 h-6 rounded-lg flex items-center justify-center text-white/20 hover:text-red-400 hover:bg-surface/10 transition-colors opacity-0 group-hover:opacity-100"
                             >
                               <IconX className="w-3 h-3" />
                             </button>
@@ -2815,17 +2815,17 @@ export const PurchaseOrderCreatePage: React.FC = () => {
         cancelText="Stay on page"
       >
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">
+          <label className="block text-sm font-medium text-text-secondary">
             Reason for cancellation <span className="text-red-500">*</span>
           </label>
           <textarea
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            className="w-full rounded-lg border border-border-default px-3 py-2 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             rows={4}
             value={cancelReason}
             onChange={(e) => setCancelReason(e.target.value)}
             placeholder="Please provide a reason for cancelling..."
           />
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-text-muted">
             The reason will be recorded for this action.
           </p>
         </div>

@@ -119,23 +119,23 @@ export const TimeOffRedeemPage: React.FC = () => {
   }
 
   return (
-    <div className="p-6 md:p-8 w-full space-y-6 text-slate-800">
+    <div className="p-6 md:p-8 w-full space-y-6 text-text-primary">
       {/* Header Panel */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-white border border-slate-100 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-surface border border-border-subtle rounded-3xl p-6 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500" />
 
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate(ROUTES.TIMEOFF_DASHBOARD)}
-            className="p-3 hover:bg-slate-50 border border-slate-100 rounded-2xl text-slate-400 hover:text-slate-700 transition-all shadow-sm"
+            className="p-3 hover:bg-subtle/50 border border-border-subtle rounded-2xl text-slate-400 hover:text-text-secondary transition-colors shadow-sm"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-800 flex items-center gap-2">
+            <h1 className="text-2xl font-black tracking-tight text-text-primary flex items-center gap-2">
               {isMs ? 'Penebusan Cuti Gantian' : 'Redeem Time Off as Leave'}
             </h1>
-            <p className="text-sm text-slate-500 mt-0.5 font-medium">
+            <p className="text-sm text-text-muted mt-0.5 font-medium">
               {isMs
                 ? 'Gunakan baki jam cuti gantian terkumpul untuk cuti rehat atau kecemasan'
                 : 'Apply for time off using accumulated compensatory leave balance'}
@@ -144,10 +144,10 @@ export const TimeOffRedeemPage: React.FC = () => {
         </div>
 
         {/* Live Balance Pill */}
-        <div className="flex items-center gap-3 bg-blue-50 border border-blue-100 rounded-2xl px-5 py-3">
+        <div className="flex items-center gap-3 bg-blue-500/10 border border-blue-100 rounded-2xl px-5 py-3">
           <Clock className="w-6 h-6 text-blue-600" />
           <div>
-            <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <div className="text-[11px] font-bold text-text-secondary font-bold uppercase tracking-wider">
               {isMs ? 'Baki Boleh Ditebus' : 'Available Balance'}
             </div>
             <div className="text-lg font-black font-mono text-blue-700">
@@ -158,11 +158,11 @@ export const TimeOffRedeemPage: React.FC = () => {
       </div>
 
       {/* Main Form */}
-      <div className="bg-white border border-slate-100 rounded-3xl p-8 shadow-xl">
+      <div className="bg-surface border border-border-subtle rounded-3xl p-8 shadow-xl">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Quick Preset Selector */}
           <div className="space-y-3">
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide">
+            <label className="block text-xs font-bold text-text-secondary uppercase tracking-wide">
               {isMs ? '1. Tempoh Masa Penebusan Cuti' : '1. Leave Duration Preset'}
             </label>
 
@@ -180,12 +180,12 @@ export const TimeOffRedeemPage: React.FC = () => {
                     key={p.hours}
                     disabled={isDisabled}
                     onClick={() => handlePresetSelect(p.hours)}
-                    className={`p-4 rounded-2xl border text-left transition-all font-medium ${
+                    className={`p-4 rounded-2xl border text-left transition-colors font-medium ${
                       isSelected
-                        ? 'border-blue-500 bg-blue-50/60 ring-2 ring-blue-400/30 font-bold text-blue-900'
+                        ? 'border-blue-500 bg-blue-500/10 ring-2 ring-blue-400/30 font-bold text-blue-400 dark:text-blue-300 font-bold'
                         : isDisabled
-                        ? 'border-slate-100 bg-slate-50 text-slate-300 cursor-not-allowed'
-                        : 'border-slate-200 hover:border-slate-300 bg-white text-slate-700'
+                        ? 'border-border-subtle bg-subtle/50 text-slate-300 cursor-not-allowed'
+                        : 'border-border-default hover:border-border-default bg-surface text-text-secondary'
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -204,15 +204,15 @@ export const TimeOffRedeemPage: React.FC = () => {
           </div>
 
           {/* Date and Custom Hours */}
-          <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-4">
-            <div className="font-bold text-slate-800 text-sm flex items-center gap-2">
+          <div className="p-5 rounded-2xl bg-subtle/50 border border-border-default space-y-4">
+            <div className="font-bold text-text-primary text-sm flex items-center gap-2">
               <Calendar className="w-4 h-4 text-blue-600" />
               <span>{isMs ? '2. Tarikh & Bilangan Jam' : '2. Date & Custom Hours'}</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">
+                <label className="block text-xs font-bold text-text-muted mb-1">
                   {isMs ? 'Tarikh Hendak Bercuti' : 'Redemption Leave Date'}{' '}
                   <span className="text-rose-500">*</span>
                 </label>
@@ -221,12 +221,12 @@ export const TimeOffRedeemPage: React.FC = () => {
                   value={redeemDate}
                   onChange={(e) => setRedeemDate(e.target.value)}
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-border-default text-sm font-mono focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-surface"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">
+                <label className="block text-xs font-bold text-text-muted mb-1">
                   {isMs ? 'Bilangan Jam Dituntut (Jam)' : 'Hours to Redeem'}{' '}
                   <span className="text-rose-500">*</span>
                 </label>
@@ -238,18 +238,18 @@ export const TimeOffRedeemPage: React.FC = () => {
                   value={redeemHours}
                   onChange={(e) => setRedeemHours(Number(e.target.value))}
                   required
-                  className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-mono focus:ring-2 focus:border-blue-500 bg-white ${
+                  className={`w-full px-3.5 py-2.5 rounded-xl border text-sm font-mono focus:ring-2 focus:border-blue-500 bg-surface ${
                     isInsufficient
                       ? 'border-rose-300 text-rose-600 focus:ring-rose-500/20'
-                      : 'border-slate-200 focus:ring-blue-500/20'
+                      : 'border-border-default focus:ring-blue-500/20'
                   }`}
                 />
               </div>
             </div>
 
             {/* Live deduction calculation */}
-            <div className="pt-3 border-t border-slate-200 flex items-center justify-between text-xs">
-              <span className="text-slate-500">
+            <div className="pt-3 border-t border-border-default flex items-center justify-between text-xs">
+              <span className="text-text-muted">
                 {isMs ? 'Baki selepas penebusan diluluskan:' : 'Balance after approval:'}
               </span>
               <span
@@ -268,7 +268,7 @@ export const TimeOffRedeemPage: React.FC = () => {
 
           {/* Reason / Remarks */}
           <div className="space-y-2">
-            <label className="block text-xs font-bold text-slate-700">
+            <label className="block text-xs font-bold text-text-secondary">
               {isMs ? '3. Sebab / Catatan Penebusan' : '3. Reason / Justification'}{' '}
               <span className="text-rose-500">*</span>
             </label>
@@ -282,12 +282,12 @@ export const TimeOffRedeemPage: React.FC = () => {
               value={reason}
               onChange={(e) => setReason(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white"
+              className="w-full px-4 py-3 rounded-xl border border-border-default text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-surface"
             />
           </div>
 
           {/* Policy Information Box */}
-          <div className="p-4 rounded-2xl bg-blue-50/50 border border-blue-100 flex items-start gap-3 text-xs text-blue-900 leading-relaxed">
+          <div className="p-4 rounded-2xl bg-blue-500/10 border border-blue-100 flex items-start gap-3 text-xs text-blue-400 dark:text-blue-300 font-bold leading-relaxed">
             <Info className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
             <div>
               <strong>{isMs ? 'Peraturan Penebusan:' : 'Redemption Rule:'}</strong>{' '}
@@ -298,12 +298,12 @@ export const TimeOffRedeemPage: React.FC = () => {
           </div>
 
           {/* Buttons */}
-          <div className="flex items-center justify-between pt-6 border-t border-slate-100">
+          <div className="flex items-center justify-between pt-6 border-t border-border-subtle">
             <Button
               type="button"
               variant="outline"
               onClick={() => navigate(ROUTES.TIMEOFF_DASHBOARD)}
-              className="border-slate-200 hover:bg-slate-50 text-slate-700 font-bold px-6"
+              className="border-border-default hover:bg-subtle/50 text-text-secondary font-bold px-6"
             >
               {isMs ? 'Batal' : 'Cancel'}
             </Button>

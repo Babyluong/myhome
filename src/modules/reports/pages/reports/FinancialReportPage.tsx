@@ -113,7 +113,7 @@ function ProgressRing({ percentage, size = 160, strokeWidth = 11, color = '#6366
   return (
     <div className="relative flex items-center justify-center shrink-0" style={{ width: size, height: size }}>
       {/* Ambient outer glowing halo */}
-      <div className="absolute inset-2 rounded-full blur-[20px] opacity-20 animate-pulse transition-all duration-1000" style={{ backgroundColor: color }} />
+      <div className="absolute inset-2 rounded-full blur-[20px] opacity-20 animate-pulse transition-colors duration-1000" style={{ backgroundColor: color }} />
       
       <svg width={size} height={size} className="-rotate-90 drop-shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
         <defs>
@@ -168,7 +168,7 @@ function KpiCard({ label, value, prefix, suffix, icon: Icon, color, delay = 0, d
     blue: { text: 'text-blue-600', iconBg: 'bg-blue-500 shadow-blue-500/20', glow: 'from-blue-500/10', border: 'hover:border-blue-400/50' },
     violet: { text: 'text-violet-600', iconBg: 'bg-violet-500 shadow-violet-500/20', glow: 'from-violet-500/10', border: 'hover:border-violet-400/50' },
     teal: { text: 'text-teal-600', iconBg: 'bg-teal-500 shadow-teal-500/20', glow: 'from-teal-500/10', border: 'hover:border-teal-400/50' },
-    slate: { text: 'text-slate-600', iconBg: 'bg-slate-500 shadow-slate-500/20', glow: 'from-slate-500/10', border: 'hover:border-slate-400/50' },
+    slate: { text: 'text-text-muted', iconBg: 'bg-slate-500 shadow-slate-500/20', glow: 'from-slate-500/10', border: 'hover:border-slate-400/50' },
   }
   const c = colorMap[color] || colorMap.indigo
   const spark = SPARKLINE_PATHS[color] || SPARKLINE_PATHS.indigo
@@ -179,12 +179,12 @@ function KpiCard({ label, value, prefix, suffix, icon: Icon, color, delay = 0, d
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.5, delay, ease: 'easeOut' }}
       className={cn(
-        "relative group rounded-3xl p-5 border border-slate-200/60 bg-white/75 backdrop-blur-md overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1",
+        "relative group rounded-3xl p-5 border border-border-default bg-white/75 backdrop-blur-md overflow-hidden transition-colors duration-150 hover:shadow-xl hover:shadow-indigo-500/5 hover:-translate-y-1",
         c.border
       )}
     >
       {/* Decorative ambient color glow */}
-      <div className={cn("absolute bottom-0 right-0 w-32 h-32 rounded-full bg-gradient-to-br to-transparent opacity-30 -mr-10 -mb-10 blur-2xl transition-all duration-300 group-hover:scale-110", c.glow)} />
+      <div className={cn("absolute bottom-0 right-0 w-32 h-32 rounded-full bg-gradient-to-br to-transparent opacity-30 -mr-10 -mb-10 blur-2xl transition-colors duration-150 group-hover:scale-110", c.glow)} />
       
       {/* Sparkline background */}
       <div className="absolute bottom-0 left-0 right-0 h-10 opacity-30 pointer-events-none transition-opacity duration-300 group-hover:opacity-50">
@@ -225,13 +225,13 @@ function SectionHeader({ title, subtitle, icon: Icon }: { title: string, subtitl
   return (
     <div className="flex items-center gap-3 mb-6">
       {Icon && (
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 animate-pulse">
+        <div className="w-10 h-10 rounded-xl bg-surface border border-border-default flex items-center justify-center shadow-lg shadow-indigo-500/20 animate-pulse">
           <Icon className="w-5 h-5 text-white" />
         </div>
       )}
       <div>
-        <h4 className="text-base font-black text-slate-800 tracking-tight">{title}</h4>
-        {subtitle && <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest mt-0.5">{subtitle}</p>}
+        <h4 className="text-base font-black text-text-primary tracking-tight">{title}</h4>
+        {subtitle && <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mt-0.5">{subtitle}</p>}
       </div>
     </div>
   )
@@ -241,15 +241,15 @@ function SectionHeader({ title, subtitle, icon: Icon }: { title: string, subtitl
 function HorizontalBar({ label, value, max, color, delay = 0 }: { label: string, value: number, max: number, color: string, delay?: number }) {
   const pct = max > 0 ? (value / max) * 100 : 0
   return (
-    <div className="space-y-2 bg-white/70 backdrop-blur-md p-3.5 rounded-2xl border border-slate-100/90 shadow-sm hover:shadow-md hover:border-indigo-200/50 hover:bg-white transition-all duration-300">
+    <div className="space-y-2 bg-surface p-3.5 rounded-2xl border border-border-subtle shadow-sm hover:shadow-md hover:border-indigo-500/20 hover:bg-surface transition-colors duration-150">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-bold text-slate-700 capitalize tracking-tight">{label.replace(/_/g, ' ')}</span>
+        <span className="text-xs font-bold text-text-secondary capitalize tracking-tight">{label.replace(/_/g, ' ')}</span>
         <div className="flex items-center gap-1.5">
-          <span className="text-xs font-black text-slate-800">{formatCurrency(value).replace('MYR', 'RM')}</span>
+          <span className="text-xs font-black text-text-primary">{formatCurrency(value).replace('MYR', 'RM')}</span>
           <span className="text-[10px] text-slate-400 font-bold">({pct.toFixed(1)}%)</span>
         </div>
       </div>
-      <div className="h-2.5 bg-slate-100 rounded-full overflow-hidden relative">
+      <div className="h-2.5 bg-subtle rounded-full overflow-hidden relative">
         <motion.div
           className="h-full rounded-full"
           style={{ 
@@ -777,7 +777,7 @@ export default function FinancialReportPage() {
   }, [reportData, itemSearch, itemDeptFilter])
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] relative overflow-hidden font-sans selection:bg-indigo-500 selection:text-white text-slate-800 pb-20">
+    <div className="min-h-screen bg-[#f8fafc] relative overflow-hidden font-sans selection:bg-indigo-500 selection:text-white text-text-primary pb-20">
       {/* Premium ambient decorative blurred nodes */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[550px] bg-gradient-to-b from-indigo-500/[0.04] via-slate-100/10 to-transparent rounded-full blur-[110px] pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-[450px] h-[450px] bg-gradient-to-tr from-emerald-500/[0.03] to-transparent rounded-full blur-[90px] pointer-events-none" />
@@ -785,9 +785,9 @@ export default function FinancialReportPage() {
 
       <div className="w-full p-6 lg:p-8 space-y-6 relative z-10">
         {/* Breadcrumb Navigation */}
-        <nav className="flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+        <nav className="flex items-center gap-2 text-[10px] font-bold text-text-muted uppercase tracking-widest">
           <Link to={ROUTES.PHARMACY_REPORTS} className="hover:text-indigo-500 transition-colors">Reports</Link>
-          <ChevronRight className="w-3 h-3 text-slate-500" />
+          <ChevronRight className="w-3 h-3 text-text-muted" />
           <span className="text-indigo-400 font-black">Financial Intelligence</span>
         </nav>
 
@@ -803,44 +803,44 @@ export default function FinancialReportPage() {
               <Landmark className="h-6 w-6 text-white" />
             </motion.div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-slate-800 flex items-center gap-2">
-                Financial Report <span className="text-xs px-2.5 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-600 font-extrabold animate-pulse">Live intelligence</span>
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-text-primary flex items-center gap-2">
+                Financial Report <span className="text-xs px-2.5 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 font-extrabold animate-pulse">Live intelligence</span>
               </h1>
-              <p className="text-slate-500 font-semibold text-[11px] flex items-center gap-1.5 mt-0.5">
+              <p className="text-text-muted font-semibold text-[11px] flex items-center gap-1.5 mt-0.5">
                 <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
                 Strategic Budget Analytics, Warrants Allocation & Usage Intelligence
               </p>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 bg-white p-2.5 rounded-2xl border border-slate-200/80 shadow-md shadow-slate-100/50 w-full xl:w-auto">
-            <div className="flex items-center gap-2 px-3 border-r border-slate-100">
+          <div className="flex flex-wrap items-center gap-3 bg-surface p-2.5 rounded-2xl border border-border-default shadow-md shadow-slate-100/50 w-full xl:w-auto">
+            <div className="flex items-center gap-2 px-3 border-r border-border-subtle">
               <Calendar className="w-4 h-4 text-indigo-400" />
               <input
                 type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)}
-                className="text-xs font-bold text-slate-700 bg-slate-50 border border-slate-200/60 rounded-lg p-1 outline-none focus:ring-1 focus:ring-indigo-500 w-[120px] [color-scheme:light]"
+                className="text-xs font-bold text-text-secondary bg-subtle/50 border border-border-default rounded-lg p-1 outline-none focus:ring-1 focus:ring-indigo-500 w-[120px] [color-scheme:light]"
               />
               <span className="text-slate-400 font-black text-[10px]">TO</span>
               <input
                 type="date" value={dateTo} onChange={e => setDateTo(e.target.value)}
-                className="text-xs font-bold text-slate-700 bg-slate-50 border border-slate-200/60 rounded-lg p-1 outline-none focus:ring-1 focus:ring-indigo-500 w-[120px] [color-scheme:light]"
+                className="text-xs font-bold text-text-secondary bg-subtle/50 border border-border-default rounded-lg p-1 outline-none focus:ring-1 focus:ring-indigo-500 w-[120px] [color-scheme:light]"
               />
             </div>
             <button onClick={handleGenerate} disabled={isGenerating}
-              className="flex items-center gap-2 px-4 py-2.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl font-bold text-xs transition-all duration-200 border border-indigo-200/50"
+              className="flex items-center gap-2 px-4 py-2.5 bg-indigo-500/10 hover:bg-indigo-100 text-indigo-600 rounded-xl font-bold text-xs transition-colors duration-150 border border-indigo-500/20"
             >
               <RefreshCw className={cn("w-3.5 h-3.5", isGenerating && "animate-spin")} />
               {isGenerating ? 'Recalculating...' : 'Refresh'}
             </button>
             <div className="flex gap-2">
               <button onClick={handleDownloadPdf} disabled={isDownloading || !reportData}
-                className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-600 hover:to-purple-700 disabled:opacity-40 disabled:from-slate-600 disabled:to-slate-600 rounded-xl font-bold text-xs transition-all duration-200 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30"
+                className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:from-indigo-600 hover:to-purple-700 disabled:opacity-40 disabled:from-slate-600 disabled:to-slate-600 rounded-xl font-bold text-xs transition-colors duration-150 shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/30"
               >
                 {isDownloading ? <Spinner size="sm" className="text-white" /> : <Download className="w-3.5 h-3.5" />}
                 Export PDF
               </button>
               <button onClick={handleDownloadExcel} disabled={!reportData}
-                className="flex items-center gap-2 px-4 py-2.5 bg-emerald-50 text-emerald-600 hover:bg-emerald-100 disabled:opacity-40 rounded-xl font-bold text-xs transition-all duration-200 border border-emerald-200/50"
+                className="flex items-center gap-2 px-4 py-2.5 bg-emerald-500/10 text-emerald-600 hover:bg-emerald-100 disabled:opacity-40 rounded-xl font-bold text-xs transition-colors duration-150 border border-emerald-500/20"
               >
                 <FileSpreadsheet className="w-3.5 h-3.5" />
                 Excel Worksheets
@@ -856,18 +856,18 @@ export default function FinancialReportPage() {
               <div className="w-20 h-20 rounded-full border-4 border-indigo-500/20 border-t-indigo-500 animate-spin" />
               <Activity className="w-8 h-8 text-indigo-400 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
             </div>
-            <p className="text-slate-500 font-bold uppercase tracking-widest text-xs animate-pulse">Summing warrants ledger & purchases records...</p>
+            <p className="text-text-muted font-bold uppercase tracking-widest text-xs animate-pulse">Summing warrants ledger & purchases records...</p>
           </div>
         )}
 
         {/* Empty Report fallback */}
         {!isGenerating && !reportData && (
-          <div className="bg-white backdrop-blur-xl rounded-3xl p-16 text-center border border-slate-200/80 shadow-sm">
-            <div className="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 border border-slate-100">
+          <div className="bg-surface backdrop-blur-xl rounded-3xl p-16 text-center border border-border-default shadow-sm">
+            <div className="w-20 h-20 bg-subtle/50 rounded-full flex items-center justify-center mx-auto mb-6 border border-border-subtle">
               <Landmark className="w-8 h-8 text-slate-400" />
             </div>
-            <h3 className="text-xl font-black text-slate-600 mb-2">No Ledger Data Compiled</h3>
-            <p className="text-slate-500 font-semibold text-sm max-w-md mx-auto">
+            <h3 className="text-xl font-black text-text-muted mb-2">No Ledger Data Compiled</h3>
+            <p className="text-text-muted font-semibold text-sm max-w-md mx-auto">
               Select your fiscal year range and click Refresh to parse all hospital pharmacy warranted balances.
             </p>
           </div>
@@ -892,14 +892,14 @@ export default function FinancialReportPage() {
               {/* Monthly Expense Trend */}
               <motion.div
                 initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
-                className="bg-white/70 backdrop-blur-md rounded-3xl border border-slate-200/60 shadow-sm p-6 hover:shadow-xl hover:border-indigo-200/40 hover:-translate-y-0.5 transition-all duration-300 relative overflow-hidden"
+                className="bg-surface rounded-3xl border border-border-default shadow-sm p-6 hover:shadow-xl hover:border-indigo-500/20 hover:-translate-y-0.5 transition-colors duration-150 relative overflow-hidden"
               >
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h4 className="text-xs font-black text-slate-800 uppercase tracking-wider">Allocation vs Expense Trend</h4>
+                    <h4 className="text-xs font-black text-text-primary uppercase tracking-wider">Allocation vs Expense Trend</h4>
                     <p className="text-[10px] text-slate-400 font-bold">Allocated vs spent flow over time</p>
                   </div>
-                  <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center border border-indigo-100">
+                  <div className="w-8 h-8 rounded-xl bg-indigo-500/10 flex items-center justify-center border border-indigo-100">
                     <TrendingUp className="w-4 h-4 text-indigo-500" />
                   </div>
                 </div>
@@ -930,14 +930,14 @@ export default function FinancialReportPage() {
               {/* Utilization distribution donut */}
               <motion.div
                 initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-                className="bg-white/70 backdrop-blur-md rounded-3xl border border-slate-200/60 shadow-sm p-6 hover:shadow-xl hover:border-indigo-200/40 hover:-translate-y-0.5 transition-all duration-300 relative overflow-hidden"
+                className="bg-surface rounded-3xl border border-border-default shadow-sm p-6 hover:shadow-xl hover:border-indigo-500/20 hover:-translate-y-0.5 transition-colors duration-150 relative overflow-hidden"
               >
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h4 className="text-xs font-black text-slate-800 uppercase tracking-wider">Execution By Category</h4>
+                    <h4 className="text-xs font-black text-text-primary uppercase tracking-wider">Execution By Category</h4>
                     <p className="text-[10px] text-slate-400 font-bold">Utilization shares by item class</p>
                   </div>
-                  <div className="w-8 h-8 rounded-xl bg-purple-50 flex items-center justify-center border border-purple-100">
+                  <div className="w-8 h-8 rounded-xl bg-indigo-500/10 flex items-center justify-center border border-purple-100">
                     <PieChartIcon className="w-4 h-4 text-purple-500" />
                   </div>
                 </div>
@@ -964,15 +964,15 @@ export default function FinancialReportPage() {
                     </ResponsiveContainer>
                     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
                       <span className="text-[8px] font-extrabold text-slate-400 uppercase tracking-widest">Spent</span>
-                      <span className="text-xs font-black text-slate-800">RM{(reportData.executive.totalExpenses / 1000).toFixed(0)}k</span>
+                      <span className="text-xs font-black text-text-primary">RM{(reportData.executive.totalExpenses / 1000).toFixed(0)}k</span>
                     </div>
                   </div>
                   <div className="space-y-1.5 flex-1 min-w-0 max-h-[150px] overflow-y-auto pr-1">
                     {reportData.byCategory.map((d, i) => (
                       <div key={d.category} className="flex items-center gap-1.5 text-[9px] font-bold">
                         <span className="w-2 h-2 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
-                        <span className="text-slate-600 truncate font-semibold">{d.category}</span>
-                        <span className="text-slate-800 ml-auto font-mono font-extrabold">{((d.expenses / reportData.executive.totalExpenses) * 100).toFixed(0)}%</span>
+                        <span className="text-text-muted truncate font-semibold">{d.category}</span>
+                        <span className="text-text-primary ml-auto font-mono font-extrabold">{((d.expenses / reportData.executive.totalExpenses) * 100).toFixed(0)}%</span>
                       </div>
                     ))}
                   </div>
@@ -982,14 +982,14 @@ export default function FinancialReportPage() {
               {/* Vote Code Allocation vs Expenses Bar */}
               <motion.div
                 initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
-                className="bg-white/70 backdrop-blur-md rounded-3xl border border-slate-200/60 shadow-sm p-6 hover:shadow-xl hover:border-indigo-200/40 hover:-translate-y-0.5 transition-all duration-300 relative overflow-hidden"
+                className="bg-surface rounded-3xl border border-border-default shadow-sm p-6 hover:shadow-xl hover:border-indigo-500/20 hover:-translate-y-0.5 transition-colors duration-150 relative overflow-hidden"
               >
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h4 className="text-xs font-black text-slate-800 uppercase tracking-wider">Vote Code Comparison</h4>
+                    <h4 className="text-xs font-black text-text-primary uppercase tracking-wider">Vote Code Comparison</h4>
                     <p className="text-[10px] text-slate-400 font-bold">Allocated vs expenses per Vot</p>
                   </div>
-                  <div className="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center border border-emerald-100">
+                  <div className="w-8 h-8 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-100">
                     <BarChart3 className="w-4 h-4 text-emerald-500" />
                   </div>
                 </div>
@@ -1000,7 +1000,7 @@ export default function FinancialReportPage() {
                       <XAxis dataKey="voteCode" tick={{ fontSize: 9, fill: '#94a3b8', fontWeight: 600 }} axisLine={false} tickLine={false} />
                       <YAxis tick={{ fontSize: 9, fill: '#94a3b8', fontWeight: 600 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} />
                       <Tooltip content={<CustomTooltip />} />
-                      <Legend verticalAlign="top" height={24} iconSize={6} iconType="circle" formatter={(val) => <span className="text-[9px] font-extrabold uppercase text-slate-400 tracking-wider">{val}</span>} />
+                      <Legend verticalAlign="top" height={24} iconSize={6} iconType="circle" formatter={(val) => <span className="text-[9px] font-extrabold uppercase text-text-secondary font-bold tracking-wider">{val}</span>} />
                       <Bar dataKey="allocation" name="Allocated" fill="#818cf8" radius={[4, 4, 0, 0]} barSize={12} />
                       <Bar dataKey="expenses" name="Spent" fill="#34d399" radius={[4, 4, 0, 0]} barSize={12} />
                     </BarChart>
@@ -1010,7 +1010,7 @@ export default function FinancialReportPage() {
             </div>
 
             {/* Interactive Tab Navigation */}
-            <div className="flex items-center gap-1.5 flex-wrap pb-1.5 bg-slate-100/60 backdrop-blur-md rounded-2xl border border-slate-200/60 p-1.5 shadow-inner">
+            <div className="flex items-center gap-1.5 flex-wrap pb-1.5 bg-subtle backdrop-blur-md rounded-2xl border border-border-default p-1.5 shadow-inner">
               {TABS.map(tab => {
                 const Icon = tab.icon
                 const isActive = activeTab === tab.id
@@ -1019,14 +1019,14 @@ export default function FinancialReportPage() {
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={cn(
-                      "relative flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs transition-all duration-300 whitespace-nowrap shrink-0 outline-none",
-                      isActive ? "text-indigo-600 shadow-sm" : "text-slate-500 hover:text-slate-800"
+                      "relative flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs transition-colors duration-150 whitespace-nowrap shrink-0 outline-none",
+                      isActive ? "text-indigo-600 shadow-sm" : "text-text-muted hover:text-text-primary"
                     )}
                   >
                     {isActive && (
                       <motion.span
                         layoutId="activeTabPill"
-                        className="absolute inset-0 rounded-xl bg-white border border-indigo-200/40 shadow-sm shadow-indigo-500/5"
+                        className="absolute inset-0 rounded-xl bg-surface border border-indigo-500/20 shadow-sm shadow-indigo-500/5"
                         transition={{ type: "spring", stiffness: 380, damping: 30 }}
                       />
                     )}
@@ -1038,7 +1038,7 @@ export default function FinancialReportPage() {
             </div>
 
             {/* Tab Contents Container */}
-            <div className="bg-white backdrop-blur-xl rounded-3xl border border-slate-200/80 shadow-sm overflow-hidden">
+            <div className="bg-surface backdrop-blur-xl rounded-3xl border border-border-default shadow-sm overflow-hidden">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={activeTab}
@@ -1053,12 +1053,12 @@ export default function FinancialReportPage() {
                     <SectionHeader title="Executive Summary & Health Index" subtitle="Hospital budget health matrix and priority allocations" icon={Landmark} />
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
                       {/* Left: Health Indicator Ring */}
-                      <div className="lg:col-span-4 bg-slate-50/60 rounded-3xl border border-slate-200/60 p-6 flex flex-col items-center text-center justify-center relative overflow-hidden group shadow-sm hover:shadow-md transition-all duration-300">
+                      <div className="lg:col-span-4 bg-subtle/50 rounded-3xl border border-border-default p-6 flex flex-col items-center text-center justify-center relative overflow-hidden group shadow-sm hover:shadow-md transition-colors duration-150">
                         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-emerald-500" />
                         <h5 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-6">Total Utilization Gauge</h5>
                         <ProgressRing percentage={reportData.executive.usageRate} size={160} strokeWidth={11} color={reportData.executive.usageRate > 90 ? '#ef4444' : '#10b981'} />
                         <div className="mt-6 space-y-1">
-                          <p className="text-sm font-extrabold text-slate-800 flex items-center justify-center gap-1.5">
+                          <p className="text-sm font-extrabold text-text-primary flex items-center justify-center gap-1.5">
                             <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm animate-pulse" />
                             RM {reportData.executive.totalExpenses.toLocaleString(undefined, { maximumFractionDigits: 0 })} Spent
                           </p>
@@ -1069,7 +1069,7 @@ export default function FinancialReportPage() {
                       </div>
 
                       {/* Right: High Spending Categories */}
-                      <div className="lg:col-span-8 bg-slate-50/60 rounded-3xl border border-slate-200/60 p-6 flex flex-col justify-between relative overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+                      <div className="lg:col-span-8 bg-subtle/50 rounded-3xl border border-border-default p-6 flex flex-col justify-between relative overflow-hidden shadow-sm hover:shadow-md transition-colors duration-150">
                         <div className="absolute top-0 left-0 w-full h-1 bg-indigo-500" />
                         <h5 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
                           <Activity className="w-4 h-4 text-indigo-500 animate-pulse" /> Budget Category Expenditure Share
@@ -1097,7 +1097,7 @@ export default function FinancialReportPage() {
                     <SectionHeader title="Vote Code Allocations" subtitle="Breakdown of government warrants between standard vote codes" icon={BarChart3} />
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
                       {/* Chart - Filtered out 0-value vote codes and top 5 */}
-                      <div className="lg:col-span-5 bg-slate-50/60 rounded-3xl border border-slate-200/60 p-6 flex flex-col justify-between relative overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+                      <div className="lg:col-span-5 bg-subtle/50 rounded-3xl border border-border-default p-6 flex flex-col justify-between relative overflow-hidden shadow-sm hover:shadow-md transition-colors duration-150">
                         <div className="absolute top-0 left-0 w-full h-1 bg-purple-500" />
                         <div>
                           <h5 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Vot Utilization Distribution</h5>
@@ -1110,7 +1110,7 @@ export default function FinancialReportPage() {
                               <XAxis type="number" tick={{ fontSize: 9, fill: '#94a3b8' }} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} axisLine={false} tickLine={false} />
                               <YAxis dataKey="voteCode" type="category" tick={{ fontSize: 10, fontWeight: 800, fill: '#475569' }} axisLine={false} tickLine={false} />
                               <Tooltip content={<CustomTooltip />} />
-                              <Legend iconSize={6} iconType="circle" formatter={(val) => <span className="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider">{val}</span>} />
+                              <Legend iconSize={6} iconType="circle" formatter={(val) => <span className="text-[9px] font-extrabold text-text-secondary font-bold uppercase tracking-wider">{val}</span>} />
                               <Bar dataKey="allocation" name="Allocated" fill="#818cf8" radius={[0, 4, 4, 0]} barSize={12} />
                               <Bar dataKey="expenses" name="Spent" fill="#34d399" radius={[0, 4, 4, 0]} barSize={12} />
                             </BarChart>
@@ -1119,7 +1119,7 @@ export default function FinancialReportPage() {
                       </div>
 
                       {/* Details Table */}
-                      <div className="lg:col-span-7 overflow-hidden rounded-3xl border border-slate-200/60 shadow-sm max-h-[330px] flex flex-col bg-white">
+                      <div className="lg:col-span-7 overflow-hidden rounded-3xl border border-border-default shadow-sm max-h-[330px] flex flex-col bg-surface">
                         <div className="overflow-x-auto overflow-y-auto flex-1 scrollbar-thin">
                           <table className="w-full text-left text-xs border-collapse">
                             <thead>
@@ -1131,14 +1131,14 @@ export default function FinancialReportPage() {
                                 <th className="p-4 text-center bg-slate-900 w-[140px]">Usage Rate</th>
                               </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100 font-semibold text-slate-700 bg-white">
+                            <tbody className="divide-y divide-border-subtle font-semibold text-text-secondary bg-surface">
                               {reportData.byVoteCode.map(vc => (
-                                <tr key={vc.voteCode} className="hover:bg-slate-50/70 transition-colors">
-                                  <td className="p-4 text-slate-900 font-extrabold flex items-center gap-2">
+                                <tr key={vc.voteCode} className="hover:bg-subtle/50 transition-colors">
+                                  <td className="p-4 text-text-primary font-extrabold flex items-center gap-2">
                                     <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm animate-pulse" style={{ backgroundColor: VOTE_COLORS[vc.voteCode] || '#64748b' }} />
                                     {vc.voteCode}
                                   </td>
-                                  <td className="p-4 text-right text-slate-600 font-mono font-bold">{formatCurrency(vc.allocation).replace('MYR', 'RM')}</td>
+                                  <td className="p-4 text-right text-text-muted font-mono font-bold">{formatCurrency(vc.allocation).replace('MYR', 'RM')}</td>
                                   <td className="p-4 text-right text-emerald-600 font-mono font-extrabold">{formatCurrency(vc.expenses).replace('MYR', 'RM')}</td>
                                   <td className="p-4 text-right text-indigo-600 font-mono font-extrabold">{formatCurrency(vc.balance).replace('MYR', 'RM')}</td>
                                   <td className="p-4">
@@ -1148,10 +1148,10 @@ export default function FinancialReportPage() {
                                           vc.usageRate > 90 ? 'text-rose-600' : vc.usageRate > 75 ? 'text-amber-600' : 'text-emerald-600'
                                         )}>{vc.usageRate.toFixed(1)}%</span>
                                       </div>
-                                      <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden relative">
+                                      <div className="w-full h-1.5 bg-subtle rounded-full overflow-hidden relative">
                                         <div 
                                           className={cn(
-                                            "h-full rounded-full transition-all duration-1000",
+                                            "h-full rounded-full transition-colors duration-1000",
                                             vc.usageRate > 90 ? 'bg-gradient-to-r from-rose-500 to-red-600 shadow-[0_0_8px_rgba(239,68,68,0.3)]' :
                                             vc.usageRate > 75 ? 'bg-gradient-to-r from-amber-400 to-amber-500' : 'bg-gradient-to-r from-emerald-400 to-emerald-500'
                                           )}
@@ -1175,7 +1175,7 @@ export default function FinancialReportPage() {
                   <div className="p-6 sm:p-8 space-y-8 animate-fadeIn">
                     <SectionHeader title="Category Breakdown" subtitle="Detailed spending across drugs, standard supplies, and diagnostics" icon={PieChartIcon} />
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
-                      <div className="lg:col-span-5 bg-slate-50/60 rounded-3xl border border-slate-200/60 p-6 flex flex-col justify-between relative overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+                      <div className="lg:col-span-5 bg-subtle/50 rounded-3xl border border-border-default p-6 flex flex-col justify-between relative overflow-hidden shadow-sm hover:shadow-md transition-colors duration-150">
                         <div className="absolute top-0 left-0 w-full h-1 bg-emerald-500" />
                         <div>
                           <h5 className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">Allocation vs Spent Shares</h5>
@@ -1188,7 +1188,7 @@ export default function FinancialReportPage() {
                               <XAxis dataKey="category" tick={{ fontSize: 9, fill: '#94a3b8', fontWeight: 700 }} axisLine={false} tickLine={false} />
                               <YAxis tick={{ fontSize: 9, fill: '#94a3b8' }} tickFormatter={(v) => `${(v/1000).toFixed(0)}k`} axisLine={false} tickLine={false} />
                               <Tooltip content={<CustomTooltip />} />
-                              <Legend iconSize={6} iconType="circle" formatter={(val) => <span className="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider">{val}</span>} />
+                              <Legend iconSize={6} iconType="circle" formatter={(val) => <span className="text-[9px] font-extrabold text-text-secondary font-bold uppercase tracking-wider">{val}</span>} />
                               <Bar dataKey="allocation" name="Allocated" fill="#8b5cf6" radius={[4, 4, 0, 0]} barSize={16} />
                               <Line type="monotone" dataKey="expenses" name="Executed" stroke="#f59e0b" strokeWidth={3} dot={{ fill: '#f59e0b', r: 4 }} />
                             </ComposedChart>
@@ -1196,7 +1196,7 @@ export default function FinancialReportPage() {
                         </div>
                       </div>
 
-                      <div className="lg:col-span-7 overflow-hidden rounded-3xl border border-slate-200/60 shadow-sm max-h-[330px] flex flex-col bg-white">
+                      <div className="lg:col-span-7 overflow-hidden rounded-3xl border border-border-default shadow-sm max-h-[330px] flex flex-col bg-surface">
                         <div className="overflow-x-auto overflow-y-auto flex-1 scrollbar-thin">
                           <table className="w-full text-left text-xs border-collapse">
                             <thead>
@@ -1208,14 +1208,14 @@ export default function FinancialReportPage() {
                                 <th className="p-4 text-center bg-slate-900 w-[140px]">Usage %</th>
                               </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100 font-semibold text-slate-700 bg-white">
+                            <tbody className="divide-y divide-border-subtle font-semibold text-text-secondary bg-surface">
                               {reportData.byCategory.map((cat, idx) => (
-                                <tr key={cat.category} className="hover:bg-slate-50/70 transition-colors">
-                                  <td className="p-4 text-slate-900 font-extrabold flex items-center gap-2">
+                                <tr key={cat.category} className="hover:bg-subtle/50 transition-colors">
+                                  <td className="p-4 text-text-primary font-extrabold flex items-center gap-2">
                                     <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-sm animate-pulse" style={{ backgroundColor: PIE_COLORS[idx % PIE_COLORS.length] }} />
                                     {cat.category}
                                   </td>
-                                  <td className="p-4 text-right text-slate-600 font-mono font-bold">{formatCurrency(cat.allocation).replace('MYR', 'RM')}</td>
+                                  <td className="p-4 text-right text-text-muted font-mono font-bold">{formatCurrency(cat.allocation).replace('MYR', 'RM')}</td>
                                   <td className="p-4 text-right text-emerald-600 font-mono font-extrabold">{formatCurrency(cat.expenses).replace('MYR', 'RM')}</td>
                                   <td className="p-4 text-right text-indigo-600 font-mono font-extrabold">{formatCurrency(cat.balance).replace('MYR', 'RM')}</td>
                                   <td className="p-4">
@@ -1225,10 +1225,10 @@ export default function FinancialReportPage() {
                                           cat.usageRate > 90 ? 'text-rose-600' : cat.usageRate > 75 ? 'text-amber-600' : 'text-emerald-600'
                                         )}>{cat.usageRate.toFixed(1)}%</span>
                                       </div>
-                                      <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden relative">
+                                      <div className="w-full h-1.5 bg-subtle rounded-full overflow-hidden relative">
                                         <div 
                                           className={cn(
-                                            "h-full rounded-full transition-all duration-1000",
+                                            "h-full rounded-full transition-colors duration-1000",
                                             cat.usageRate > 90 ? 'bg-gradient-to-r from-rose-500 to-red-600 shadow-[0_0_8px_rgba(239,68,68,0.3)]' :
                                             cat.usageRate > 75 ? 'bg-gradient-to-r from-amber-400 to-amber-500' : 'bg-gradient-to-r from-emerald-400 to-emerald-500'
                                           )}
@@ -1253,7 +1253,7 @@ export default function FinancialReportPage() {
                     <SectionHeader title="Department Allocation & Cost Center Analysis" subtitle="Real-time cost tracking per hospital department" icon={Activity} />
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
                       {/* Left: Department Top comparative chart with switcher */}
-                      <div className="lg:col-span-5 bg-slate-50/60 rounded-3xl border border-slate-200/60 p-6 flex flex-col justify-between relative overflow-hidden shadow-sm hover:shadow-md transition-all duration-300">
+                      <div className="lg:col-span-5 bg-subtle/50 rounded-3xl border border-border-default p-6 flex flex-col justify-between relative overflow-hidden shadow-sm hover:shadow-md transition-colors duration-150">
                         <div className="absolute top-0 left-0 w-full h-1 bg-blue-500" />
                         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
                           <div>
@@ -1262,12 +1262,12 @@ export default function FinancialReportPage() {
                           </div>
                           
                           {/* Segmented Toggle Control */}
-                          <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200/40 w-fit shrink-0 relative">
+                          <div className="flex bg-subtle p-1 rounded-xl border border-border-default w-fit shrink-0 relative">
                             <button
                               onClick={() => setDeptViewMode('radar')}
                               className={cn(
-                                "px-2.5 py-1 rounded-lg text-[9px] font-extrabold transition-all duration-200",
-                                deptViewMode === 'radar' ? "bg-white text-indigo-600 shadow-sm" : "text-slate-500 hover:text-slate-800"
+                                "px-2.5 py-1 rounded-lg text-[9px] font-extrabold transition-colors duration-150",
+                                deptViewMode === 'radar' ? "bg-surface text-indigo-600 shadow-sm" : "text-text-muted hover:text-text-primary"
                               )}
                             >
                               Radar Chart
@@ -1275,8 +1275,8 @@ export default function FinancialReportPage() {
                             <button
                               onClick={() => setDeptViewMode('bar')}
                               className={cn(
-                                "px-2.5 py-1 rounded-lg text-[9px] font-extrabold transition-all duration-200",
-                                deptViewMode === 'bar' ? "bg-white text-indigo-600 shadow-sm" : "text-slate-500 hover:text-slate-800"
+                                "px-2.5 py-1 rounded-lg text-[9px] font-extrabold transition-colors duration-150",
+                                deptViewMode === 'bar' ? "bg-surface text-indigo-600 shadow-sm" : "text-text-muted hover:text-text-primary"
                               )}
                             >
                               Bar Chart
@@ -1312,7 +1312,7 @@ export default function FinancialReportPage() {
                       </div>
 
                       {/* Right: Department execution Table with sticky header */}
-                      <div className="lg:col-span-7 overflow-hidden rounded-3xl border border-slate-200/60 shadow-sm max-h-[330px] flex flex-col bg-white">
+                      <div className="lg:col-span-7 overflow-hidden rounded-3xl border border-border-default shadow-sm max-h-[330px] flex flex-col bg-surface">
                         <div className="overflow-x-auto overflow-y-auto flex-1 scrollbar-thin">
                           <table className="w-full text-left text-xs border-collapse">
                             <thead>
@@ -1324,11 +1324,11 @@ export default function FinancialReportPage() {
                                 <th className="p-4 text-center bg-slate-900 w-[140px]">Usage %</th>
                               </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100 font-semibold text-slate-700 bg-white">
+                            <tbody className="divide-y divide-border-subtle font-semibold text-text-secondary bg-surface">
                               {reportData.byDepartment.map(dept => (
-                                <tr key={dept.department} className="hover:bg-slate-50/70 transition-colors">
-                                  <td className="p-4 text-slate-900 font-extrabold truncate max-w-[150px]">{dept.department}</td>
-                                  <td className="p-4 text-right text-slate-600 font-mono font-bold">{formatCurrency(dept.allocation).replace('MYR', 'RM')}</td>
+                                <tr key={dept.department} className="hover:bg-subtle/50 transition-colors">
+                                  <td className="p-4 text-text-primary font-extrabold truncate max-w-[150px]">{dept.department}</td>
+                                  <td className="p-4 text-right text-text-muted font-mono font-bold">{formatCurrency(dept.allocation).replace('MYR', 'RM')}</td>
                                   <td className="p-4 text-right text-emerald-600 font-mono font-extrabold">{formatCurrency(dept.expenses).replace('MYR', 'RM')}</td>
                                   <td className="p-4 text-right text-indigo-600 font-mono font-extrabold">{formatCurrency(dept.balance).replace('MYR', 'RM')}</td>
                                   <td className="p-4">
@@ -1338,10 +1338,10 @@ export default function FinancialReportPage() {
                                           dept.usageRate > 90 ? 'text-rose-600' : dept.usageRate > 75 ? 'text-amber-600' : 'text-emerald-600'
                                         )}>{dept.usageRate.toFixed(1)}%</span>
                                       </div>
-                                      <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden relative">
+                                      <div className="w-full h-1.5 bg-subtle rounded-full overflow-hidden relative">
                                         <div 
                                           className={cn(
-                                            "h-full rounded-full transition-all duration-1000",
+                                            "h-full rounded-full transition-colors duration-1000",
                                             dept.usageRate > 90 ? 'bg-gradient-to-r from-rose-500 to-red-600 shadow-[0_0_8px_rgba(239,68,68,0.3)]' :
                                             dept.usageRate > 75 ? 'bg-gradient-to-r from-amber-400 to-amber-500' : 'bg-gradient-to-r from-emerald-400 to-emerald-500'
                                           )}
@@ -1366,21 +1366,21 @@ export default function FinancialReportPage() {
                     <SectionHeader title="Vote Activity & Items Execution Logs" subtitle="Precise tracking of products used by hospital vote codes" icon={ListTodo} />
                     
                     {/* Inner filter bar */}
-                    <div className="flex flex-wrap items-center gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200/60">
+                    <div className="flex flex-wrap items-center gap-3 bg-subtle/50 p-4 rounded-2xl border border-border-default">
                       <div className="flex-1 min-w-[200px]">
                         <input
                           type="text"
                           placeholder="Search items by name or code..."
                           value={itemSearch}
                           onChange={e => setItemSearch(e.target.value)}
-                          className="w-full text-xs font-bold text-slate-700 bg-white border border-slate-200/60 rounded-xl p-2.5 outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="w-full text-xs font-bold text-text-secondary bg-surface border border-border-default rounded-xl p-2.5 outline-none focus:ring-1 focus:ring-indigo-500"
                         />
                       </div>
                       <div className="min-w-[150px]">
                         <select
                           value={itemDeptFilter}
                           onChange={e => setItemDeptFilter(e.target.value)}
-                          className="w-full text-xs font-bold text-slate-700 bg-white border border-slate-200/60 rounded-xl p-2.5 outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="w-full text-xs font-bold text-text-secondary bg-surface border border-border-default rounded-xl p-2.5 outline-none focus:ring-1 focus:ring-indigo-500"
                         >
                           <option value="all">All Departments</option>
                           {Array.from(new Set(reportData.topItems.map(x => x.department))).map((d: any) => (
@@ -1390,10 +1390,10 @@ export default function FinancialReportPage() {
                       </div>
                     </div>
 
-                    <div className="overflow-x-auto rounded-2xl border border-slate-200/80">
+                    <div className="overflow-x-auto rounded-2xl border border-border-default">
                       <table className="w-full text-left text-xs border-collapse">
                         <thead>
-                          <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold uppercase tracking-wider">
+                          <tr className="bg-subtle/50 border-b border-border-default text-text-muted font-bold uppercase tracking-wider">
                             <th className="p-4">Item Name</th>
                             <th className="p-4">Item Code</th>
                             <th className="p-4">Category</th>
@@ -1403,22 +1403,22 @@ export default function FinancialReportPage() {
                             <th className="p-4 text-right">Total Spent</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100">
+                        <tbody className="divide-y divide-border-subtle">
                           {filteredItems.length === 0 ? (
                             <tr>
-                              <td colSpan={7} className="p-8 text-center text-slate-400 font-semibold italic">
+                              <td colSpan={7} className="p-8 text-center text-text-muted font-medium font-semibold italic">
                                 No items match your search.
                               </td>
                             </tr>
                           ) : (
                             filteredItems.map((item, idx) => (
-                              <tr key={idx} className="hover:bg-slate-50/50 font-semibold">
-                                <td className="p-4 text-slate-900 font-black truncate max-w-[200px]" title={item.itemName}>{item.itemName}</td>
-                                <td className="p-4 text-slate-500 font-bold">{item.itemCode}</td>
-                                <td className="p-4 text-slate-600">{item.category}</td>
-                                <td className="p-4 text-slate-600">{item.department}</td>
-                                <td className="p-4"><span className="px-2 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-black">{item.voteCode}</span></td>
-                                <td className="p-4 text-right text-slate-800 font-black">{item.quantity.toLocaleString()}</td>
+                              <tr key={idx} className="hover:bg-subtle/50 font-semibold">
+                                <td className="p-4 text-text-primary font-black truncate max-w-[200px]" title={item.itemName}>{item.itemName}</td>
+                                <td className="p-4 text-text-muted font-bold">{item.itemCode}</td>
+                                <td className="p-4 text-text-muted">{item.category}</td>
+                                <td className="p-4 text-text-muted">{item.department}</td>
+                                <td className="p-4"><span className="px-2 py-0.5 rounded bg-subtle text-text-secondary text-[10px] font-black">{item.voteCode}</span></td>
+                                <td className="p-4 text-right text-text-primary font-black">{item.quantity.toLocaleString()}</td>
                                 <td className="p-4 text-right text-emerald-600 font-black">{formatCurrency(item.totalSpent).replace('MYR', 'RM')}</td>
                               </tr>
                             ))
@@ -1432,21 +1432,21 @@ export default function FinancialReportPage() {
                 {activeTab === 'forecast' && (
                   <div className="p-6 sm:p-8 space-y-8 animate-fadeIn">
                     {/* Sub-header */}
-                    <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-slate-200 pb-4 mb-6 gap-4">
+                    <div className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-border-default pb-4 mb-6 gap-4">
                       <SectionHeader title="Budget Forecasting & Run-Rate Projections" subtitle="Annual burn rate assessment and fiscal stability projections" icon={ForecastIcon} />
                       
                       {/* Month simulation slider widget */}
-                      <div className="bg-slate-50 border border-slate-200/80 p-3 rounded-2xl flex items-center gap-3">
-                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Simulative Month:</span>
+                      <div className="bg-subtle/50 border border-border-default p-3 rounded-2xl flex items-center gap-3">
+                        <span className="text-[10px] font-black text-text-muted uppercase tracking-wider">Simulative Month:</span>
                         <input
                           type="range"
                           min="0"
                           max="10"
                           value={selectedMonthIndex}
                           onChange={(e) => setSelectedMonthIndex(parseInt(e.target.value))}
-                          className="w-[120px] h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                          className="w-[120px] h-1.5 bg-subtle rounded-lg appearance-none cursor-pointer accent-indigo-600"
                         />
-                        <span className="text-xs font-black text-indigo-600 bg-white border border-indigo-200 px-2 py-0.5 rounded shadow-sm">
+                        <span className="text-xs font-black text-indigo-600 bg-surface border border-indigo-500/20 px-2 py-0.5 rounded shadow-sm">
                           {months[selectedMonthIndex]} ({(selectedMonthIndex + 1)}m elapsed)
                         </span>
                       </div>
@@ -1604,49 +1604,49 @@ export default function FinancialReportPage() {
                           {/* Forecast KPI row */}
                           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3.5">
                             
-                            <div className="bg-slate-50/60 rounded-2xl p-4 border border-slate-200/50 shadow-sm flex flex-col justify-between">
-                              <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Annual Allocation</span>
-                              <div className="text-base font-black text-slate-800 mt-1">
+                            <div className="bg-subtle/50 rounded-2xl p-4 border border-border-default shadow-sm flex flex-col justify-between">
+                              <span className="text-[10px] font-black uppercase text-text-secondary font-bold tracking-wider">Annual Allocation</span>
+                              <div className="text-base font-black text-text-primary mt-1">
                                 {formatCurrency(totalAllocation).replace('MYR', 'RM')}
                               </div>
                               <p className="text-[8px] font-bold text-slate-400 mt-1">FY2026 allocated budget</p>
                             </div>
 
-                            <div className="bg-slate-50/60 rounded-2xl p-4 border border-slate-200/50 shadow-sm flex flex-col justify-between">
-                              <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">YTD Actual Spent</span>
-                              <div className="text-base font-black text-slate-800 mt-1">
+                            <div className="bg-subtle/50 rounded-2xl p-4 border border-border-default shadow-sm flex flex-col justify-between">
+                              <span className="text-[10px] font-black uppercase text-text-secondary font-bold tracking-wider">YTD Actual Spent</span>
+                              <div className="text-base font-black text-text-primary mt-1">
                                 {formatCurrency(totalYtdSpent).replace('MYR', 'RM')}
                               </div>
                               <p className="text-[8px] font-bold text-slate-400 mt-1">{(totalYtdSpent / (totalAllocation || 1) * 100).toFixed(1)}% budget utilized</p>
                             </div>
 
-                            <div className="bg-slate-50/60 rounded-2xl p-4 border border-slate-200/50 shadow-sm flex flex-col justify-between">
-                              <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Avg Monthly Burn</span>
+                            <div className="bg-subtle/50 rounded-2xl p-4 border border-border-default shadow-sm flex flex-col justify-between">
+                              <span className="text-[10px] font-black uppercase text-text-secondary font-bold tracking-wider">Avg Monthly Burn</span>
                               <div className="text-base font-black text-indigo-650 mt-1">
                                 {formatCurrency(totalAvgBurn).replace('MYR', 'RM')}
                               </div>
                               <p className="text-[8px] font-bold text-slate-400 mt-1">Cumulative monthly rate</p>
                             </div>
 
-                            <div className="bg-slate-50/60 rounded-2xl p-4 border border-slate-200/50 shadow-sm flex flex-col justify-between">
-                              <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Projected EOY Spend</span>
-                              <div className="text-base font-black text-slate-800 mt-1">
+                            <div className="bg-subtle/50 rounded-2xl p-4 border border-border-default shadow-sm flex flex-col justify-between">
+                              <span className="text-[10px] font-black uppercase text-text-secondary font-bold tracking-wider">Projected EOY Spend</span>
+                              <div className="text-base font-black text-text-primary mt-1">
                                 {formatCurrency(totalProjectedSpend).replace('MYR', 'RM')}
                               </div>
                               <p className="text-[8px] font-bold text-slate-400 mt-1">{burnRatePercentage.toFixed(0)}% run-rate relative to allocation</p>
                             </div>
 
                             <div className={cn(
-                              "rounded-2xl p-4 border shadow-sm transition-all duration-300 flex flex-col justify-between",
+                              "rounded-2xl p-4 border shadow-sm transition-colors duration-150 flex flex-col justify-between",
                               totalShortfall > 0 
-                                ? 'bg-rose-50 border-rose-200 text-rose-950 animate-pulse-slow' 
-                                : 'bg-emerald-50 border-emerald-200 text-emerald-950'
+                                ? 'bg-rose-500/10 border-rose-500/20 text-rose-400 dark:text-rose-300 font-bold animate-pulse-slow' 
+                                : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 dark:text-emerald-300 font-bold'
                             )}>
                               <span className="text-[10px] font-black uppercase tracking-wider block">Budget Needed To Add</span>
                               <div className="text-base font-black mt-1">
                                 {formatCurrency(totalShortfall).replace('MYR', 'RM')}
                               </div>
-                              <p className="text-[8px] font-bold mt-1 text-slate-500">
+                              <p className="text-[8px] font-bold mt-1 text-text-muted">
                                 {totalShortfall > 0 ? 'Top-up shortfall predicted' : 'Surplus or Balanced EOY'}
                               </p>
                             </div>
@@ -1654,11 +1654,11 @@ export default function FinancialReportPage() {
                           </div>
 
                           {/* Projection Composed Chart */}
-                          <div className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm">
+                          <div className="bg-surface border border-border-default rounded-3xl p-6 shadow-sm">
                             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
                               <div>
-                                <span className="bg-indigo-100 text-indigo-700 text-[9px] font-black px-2 py-0.5 rounded border border-indigo-200 uppercase tracking-widest">Visual Run-Rate Projections</span>
-                                <h6 className="text-xs font-black text-slate-800 uppercase tracking-wider mt-1">Allocation vs Projected EOY Spend</h6>
+                                <span className="bg-indigo-100 text-indigo-700 text-[9px] font-black px-2 py-0.5 rounded border border-indigo-500/20 uppercase tracking-widest">Visual Run-Rate Projections</span>
+                                <h6 className="text-xs font-black text-text-primary uppercase tracking-wider mt-1">Allocation vs Projected EOY Spend</h6>
                               </div>
                               <div className="flex flex-wrap items-center gap-4 text-[9px] font-extrabold uppercase tracking-wider text-slate-400">
                                 <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded bg-indigo-500" /> Current Allocation</span>
@@ -1697,12 +1697,12 @@ export default function FinancialReportPage() {
                           </div>
 
                           {/* Modeler Playground widget */}
-                          <div className="bg-slate-50 border border-slate-200 p-5 rounded-3xl shadow-sm">
-                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/60 pb-3.5 mb-4 gap-4">
+                          <div className="bg-subtle/50 border border-border-default p-5 rounded-3xl shadow-sm">
+                            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-border-default pb-3.5 mb-4 gap-4">
                               <div>
                                 <div className="flex items-center space-x-2">
-                                  <span className="bg-indigo-100 text-indigo-700 text-[9px] font-black px-2 py-0.5 rounded border border-indigo-200">SIMULATOR WIDGET</span>
-                                  <span className="text-slate-800 text-xs font-black">Scenario Budget Modeler</span>
+                                  <span className="bg-indigo-100 text-indigo-700 text-[9px] font-black px-2 py-0.5 rounded border border-indigo-500/20">SIMULATOR WIDGET</span>
+                                  <span className="text-text-primary text-xs font-black">Scenario Budget Modeler</span>
                                 </div>
                                 <p className="text-[10px] text-slate-400 mt-0.5">Test simulated revisions to balance predicted year-end shortfalls</p>
                               </div>
@@ -1711,7 +1711,7 @@ export default function FinancialReportPage() {
                                 <button
                                   onClick={() => setSandboxActive(!sandboxActive)}
                                   className={cn(
-                                    "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all duration-200 shadow-sm",
+                                    "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-colors duration-150 shadow-sm",
                                     sandboxActive 
                                       ? 'bg-emerald-600 border-emerald-500 text-white hover:bg-emerald-700' 
                                       : 'bg-indigo-650 border-indigo-650 text-white hover:bg-indigo-700'
@@ -1725,7 +1725,7 @@ export default function FinancialReportPage() {
                                     setSandboxAmount(1000000);
                                   }}
                                   disabled={!sandboxActive}
-                                  className="text-[10px] font-bold text-slate-400 hover:text-slate-600 disabled:opacity-40 disabled:cursor-not-allowed"
+                                  className="text-[10px] font-bold text-slate-400 hover:text-text-muted disabled:opacity-40 disabled:cursor-not-allowed"
                                 >
                                   Reset
                                   </button>
@@ -1739,7 +1739,7 @@ export default function FinancialReportPage() {
                                   <select
                                     value={sandboxTarget}
                                     onChange={(e) => setSandboxTarget(e.target.value)}
-                                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-700 outline-none focus:ring-1 focus:ring-indigo-500"
+                                    className="w-full bg-surface border border-border-default rounded-xl px-3 py-2.5 text-xs font-bold text-text-secondary outline-none focus:ring-1 focus:ring-indigo-500"
                                   >
                                     {processedData.filter(c => c.id !== 'cat-other').map(c => (
                                       <option key={c.id} value={c.id}>
@@ -1759,7 +1759,7 @@ export default function FinancialReportPage() {
                                       min="0"
                                       value={sandboxAmount}
                                       onChange={(e) => setSandboxAmount(Math.max(0, parseInt(e.target.value) || 0))}
-                                      className="w-full bg-white border border-slate-200 rounded-xl pl-8 pr-3 py-2 text-xs font-black text-slate-700 outline-none focus:ring-1 focus:ring-indigo-500"
+                                      className="w-full bg-surface border border-border-default rounded-xl pl-8 pr-3 py-2 text-xs font-black text-text-secondary outline-none focus:ring-1 focus:ring-indigo-500"
                                     />
                                   </div>
                                 </div>
@@ -1774,7 +1774,7 @@ export default function FinancialReportPage() {
                                       step="100000"
                                       value={sandboxAmount}
                                       onChange={(e) => setSandboxAmount(parseInt(e.target.value))}
-                                      className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-650"
+                                      className="w-full h-1 bg-subtle rounded-lg appearance-none cursor-pointer accent-indigo-650"
                                     />
                                   </div>
                                 </div>
@@ -1783,9 +1783,9 @@ export default function FinancialReportPage() {
                           </div>
 
                           {/* Detailed Vote Code and Category Table */}
-                          <div className="overflow-hidden rounded-3xl border border-slate-200/80 shadow-sm bg-white">
-                            <div className="px-5 py-3.5 bg-slate-50 border-b border-slate-200">
-                              <h6 className="text-[10px] font-black text-slate-700 uppercase tracking-widest">Detail Run-Rate Projections by Category & Vote Code</h6>
+                          <div className="overflow-hidden rounded-3xl border border-border-default shadow-sm bg-surface">
+                            <div className="px-5 py-3.5 bg-subtle/50 border-b border-border-default">
+                              <h6 className="text-[10px] font-black text-text-secondary uppercase tracking-widest">Detail Run-Rate Projections by Category & Vote Code</h6>
                             </div>
                             <div className="overflow-x-auto">
                               <table className="w-full text-left text-xs border-collapse">
@@ -1801,22 +1801,22 @@ export default function FinancialReportPage() {
                                     <th className="p-4 text-center bg-slate-900">Actions</th>
                                   </tr>
                                 </thead>
-                                <tbody className="divide-y divide-slate-100 font-semibold text-slate-700">
+                                <tbody className="divide-y divide-border-subtle font-semibold text-text-secondary">
                                   {processedData.map((cat: any) => (
-                                    <tr key={cat.id} className="hover:bg-slate-50/50 transition-colors">
+                                    <tr key={cat.id} className="hover:bg-subtle/50 transition-colors">
                                       <td className="p-4">
                                         <div>
-                                          <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-800 text-[9px] font-mono border border-slate-200">
+                                          <span className="px-2 py-0.5 rounded bg-subtle text-text-primary text-[9px] font-mono border border-border-default">
                                             {cat.voteCode}-{cat.voteActivity}
                                           </span>
-                                          <div className="text-xs font-black text-slate-800 mt-1">{cat.categoryName}</div>
+                                          <div className="text-xs font-black text-text-primary mt-1">{cat.categoryName}</div>
                                         </div>
                                       </td>
                                       
-                                      <td className="p-4 text-right font-mono font-bold text-slate-600">{formatCurrency(cat.allocation).replace('MYR', 'RM')}</td>
-                                      <td className="p-4 text-right font-mono text-slate-600">{formatCurrency(cat.ytdSpent).replace('MYR', 'RM')}</td>
+                                      <td className="p-4 text-right font-mono font-bold text-text-muted">{formatCurrency(cat.allocation).replace('MYR', 'RM')}</td>
+                                      <td className="p-4 text-right font-mono text-text-muted">{formatCurrency(cat.ytdSpent).replace('MYR', 'RM')}</td>
                                       <td className="p-4 text-right font-mono text-indigo-650">{formatCurrency(cat.avgMonthlyUse).replace('MYR', 'RM')}</td>
-                                      <td className="p-4 text-right font-mono font-extrabold text-slate-800">{formatCurrency(cat.eoyProjectedSpend).replace('MYR', 'RM')}</td>
+                                      <td className="p-4 text-right font-mono font-extrabold text-text-primary">{formatCurrency(cat.eoyProjectedSpend).replace('MYR', 'RM')}</td>
                                       
                                       <td className="p-4 text-right">
                                         <div className="flex flex-col items-end">
@@ -1825,7 +1825,7 @@ export default function FinancialReportPage() {
                                           </span>
                                           <span className={cn(
                                             "text-[8px] font-black uppercase px-1.5 py-0.2 rounded mt-0.5 block",
-                                            cat.isDeficit ? "bg-rose-50 text-rose-600 border border-rose-200" : "bg-emerald-50 text-emerald-600 border border-emerald-200"
+                                            cat.isDeficit ? "bg-rose-500/10 text-rose-600 border border-rose-500/20" : "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20"
                                           )}>
                                             {cat.isDeficit ? "Budget Needed" : "Safe Surplus"}
                                           </span>
@@ -1834,7 +1834,7 @@ export default function FinancialReportPage() {
 
                                       <td className="p-4">
                                         <div className="flex flex-col items-center">
-                                          <div className="text-[10px] font-bold text-slate-600 flex items-center gap-1">
+                                          <div className="text-[10px] font-bold text-text-muted flex items-center gap-1">
                                             <span className="capitalize">{cat.trend}</span>
                                              <span>{cat.trend === 'increasing' ? '📈' : cat.trend === 'decreasing' ? '📉' : '➡'}</span>
                                           </div>
@@ -1850,7 +1850,7 @@ export default function FinancialReportPage() {
                                             setDrawerTopPosition(Math.min(rect.top - 80, window.innerHeight - 500));
                                             setActiveDrawerId(cat.id);
                                           }}
-                                          className="px-3.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl text-[10px] font-black border border-indigo-200/50 transition-all flex items-center gap-1 mx-auto"
+                                          className="px-3.5 py-1.5 bg-indigo-500/10 hover:bg-indigo-100 text-indigo-600 rounded-xl text-[10px] font-black border border-indigo-500/20 transition-colors flex items-center gap-1 mx-auto"
                                         >
                                           <span>Backup Reasons</span>
                                            <span>➡</span>
@@ -1866,24 +1866,24 @@ export default function FinancialReportPage() {
                           {/* Quarterly analysis Grid */}
                           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             
-                            <div className="lg:col-span-2 bg-slate-50/50 rounded-2xl border border-slate-200/80 p-5 shadow-sm">
-                              <h6 className="text-[10px] font-black text-slate-700 uppercase tracking-widest mb-3">Quarter Analysis Portion Run-Rates</h6>
+                            <div className="lg:col-span-2 bg-subtle/50 rounded-2xl border border-border-default p-5 shadow-sm">
+                              <h6 className="text-[10px] font-black text-text-secondary uppercase tracking-widest mb-3">Quarter Analysis Portion Run-Rates</h6>
                               <div className="space-y-3.5">
                                 {quarterlyAnalysis.map((q) => {
                                   const percentUsed = (q.spent / q.allocation) * 100;
                                   return (
-                                    <div key={q.quarter} className="bg-white p-3 border border-slate-200/50 rounded-2xl shadow-sm">
+                                    <div key={q.quarter} className="bg-surface p-3 border border-border-default rounded-2xl shadow-sm">
                                       <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2">
-                                          <span className="text-xs font-black text-slate-800">{q.quarter}</span>
-                                          <span className="text-[8px] bg-slate-100 border border-slate-200 text-slate-500 font-bold px-1.5 py-0.2 rounded uppercase">
+                                          <span className="text-xs font-black text-text-primary">{q.quarter}</span>
+                                          <span className="text-[8px] bg-subtle border border-border-default text-text-muted font-bold px-1.5 py-0.2 rounded uppercase">
                                             {q.isProjected ? 'Projected Portion' : 'Completed Actual'}
                                           </span>
                                         </div>
                                         
                                         <div className="flex items-center gap-3">
-                                          <span className="text-[10px] font-bold text-slate-500">
-                                            Spent: <span className="font-extrabold text-slate-800">{formatCurrency(q.spent).replace('MYR', 'RM')}</span> / {formatCurrency(q.allocation).replace('MYR', 'RM')}
+                                          <span className="text-[10px] font-bold text-text-muted">
+                                            Spent: <span className="font-extrabold text-text-primary">{formatCurrency(q.spent).replace('MYR', 'RM')}</span> / {formatCurrency(q.allocation).replace('MYR', 'RM')}
                                           </span>
                                           <span className={cn(
                                             "text-[10px] font-black",
@@ -1894,10 +1894,10 @@ export default function FinancialReportPage() {
                                         </div>
                                       </div>
 
-                                      <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden relative">
+                                      <div className="w-full h-2 bg-subtle rounded-full overflow-hidden relative">
                                         <div 
                                           className={cn(
-                                            "h-full rounded-full transition-all duration-500",
+                                            "h-full rounded-full transition-colors duration-500",
                                             q.status === 'safe' ? 'bg-emerald-500' : q.status === 'warning' ? 'bg-amber-400' : 'bg-rose-500 animate-pulse'
                                           )}
                                           style={{ width: `${Math.min(percentUsed, 100)}%` }}
@@ -1910,38 +1910,38 @@ export default function FinancialReportPage() {
                             </div>
 
                             {/* Forecast stability */}
-                            <div className="bg-slate-50/50 border border-slate-200/80 rounded-2xl p-5 shadow-sm flex flex-col justify-between">
+                            <div className="bg-subtle/50 border border-border-default rounded-2xl p-5 shadow-sm flex flex-col justify-between">
                               <div>
-                                <h6 className="text-[10px] font-black text-slate-700 uppercase tracking-widest mb-3">Stability Indicators</h6>
+                                <h6 className="text-[10px] font-black text-text-secondary uppercase tracking-widest mb-3">Stability Indicators</h6>
                                 <div className="space-y-3">
                                   
-                                  <div className="bg-white border border-slate-200/50 rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
+                                  <div className="bg-surface border border-border-default rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
                                     <div>
-                                      <span className="text-[10px] text-slate-500 block font-bold">Model Precision Baseline</span>
+                                      <span className="text-[10px] text-text-muted block font-bold">Model Precision Baseline</span>
                                       <span className="text-[8px] text-slate-400 block font-bold">Strategic run-rate variance</span>
                                     </div>
                                     <div className="text-right">
                                       <span className="text-sm font-black text-indigo-650 block">93.2%</span>
-                                      <span className="text-[8px] bg-indigo-50 border border-indigo-200 text-indigo-600 font-extrabold px-1.5 py-0.2 rounded tracking-widest uppercase">High</span>
+                                      <span className="text-[8px] bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 font-extrabold px-1.5 py-0.2 rounded tracking-widest uppercase">High</span>
                                     </div>
                                   </div>
 
-                                  <div className="bg-white border border-slate-200/50 rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
+                                  <div className="bg-surface border border-border-default rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
                                     <div>
-                                      <span className="text-[10px] text-slate-500 block font-bold">Action Needed Shortfalls</span>
+                                      <span className="text-[10px] text-text-muted block font-bold">Action Needed Shortfalls</span>
                                       <span className="text-[8px] text-slate-400 block font-bold">Shortfall projections matching Q4</span>
                                     </div>
                                     <div className="text-right">
                                       <span className="text-sm font-black text-rose-600 block">
                                         {forecastCategories.filter(c => c.baseMonthlyBurn * 12 > c.baseAllocation).length}
                                       </span>
-                                      <span className="text-[8px] bg-rose-50 border border-rose-200 text-rose-600 font-extrabold px-1.5 py-0.2 rounded tracking-widest uppercase">High-Risk</span>
+                                      <span className="text-[8px] bg-rose-500/10 border border-rose-500/20 text-rose-600 font-extrabold px-1.5 py-0.2 rounded tracking-widest uppercase">High-Risk</span>
                                     </div>
                                   </div>
 
-                                  <div className="bg-white border border-slate-200/50 rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
+                                  <div className="bg-surface border border-border-default rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
                                     <div>
-                                      <span className="text-[10px] text-slate-500 block font-bold">Annual Caseload Curve</span>
+                                      <span className="text-[10px] text-text-muted block font-bold">Annual Caseload Curve</span>
                                       <span className="text-[8px] text-slate-400 block font-bold">Surge projections indicator</span>
                                     </div>
                                     <div className="text-right">
@@ -1953,7 +1953,7 @@ export default function FinancialReportPage() {
                                 </div>
                               </div>
                               
-                              <div className="border-t border-slate-200/60 pt-3 mt-4 flex items-start space-x-2 text-[9.5px] font-bold text-slate-400">
+                              <div className="border-t border-border-default pt-3 mt-4 flex items-start space-x-2 text-[9.5px] font-bold text-slate-400">
                                  <span>ℹ️</span>
                                 <p className="leading-relaxed">This predictive financial modeling forecast recalculates instantly inside your active workspace session when using simulative sandbox or elapsed month selectors.</p>
                               </div>
@@ -1972,7 +1972,7 @@ export default function FinancialReportPage() {
                     <SectionHeader title="Detailed Transaction Logs" subtitle="Chronological ledger of all purchase orders and financial commitments" icon={History} />
 
                     {/* Filter controls */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 bg-slate-50/60 p-5 rounded-3xl border border-slate-200/60">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5 bg-subtle/50 p-5 rounded-3xl border border-border-default">
                       <div className="lg:col-span-2">
                         <label className="block text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1.5">Search Transactions</label>
                         <input
@@ -1983,7 +1983,7 @@ export default function FinancialReportPage() {
                             setTxnSearch(e.target.value)
                             setTxnPage(1)
                           }}
-                          className="w-full text-xs font-bold text-slate-700 bg-white border border-slate-200/80 rounded-xl p-2.5 outline-none focus:ring-1 focus:ring-indigo-500 shadow-sm"
+                          className="w-full text-xs font-bold text-text-secondary bg-surface border border-border-default rounded-xl p-2.5 outline-none focus:ring-1 focus:ring-indigo-500 shadow-sm"
                         />
                       </div>
                       <div>
@@ -1994,7 +1994,7 @@ export default function FinancialReportPage() {
                             setTxnCategoryFilter(e.target.value)
                             setTxnPage(1)
                           }}
-                          className="w-full text-xs font-bold text-slate-700 bg-white border border-slate-200/80 rounded-xl p-2.5 outline-none focus:ring-1 focus:ring-indigo-500 shadow-sm"
+                          className="w-full text-xs font-bold text-text-secondary bg-surface border border-border-default rounded-xl p-2.5 outline-none focus:ring-1 focus:ring-indigo-500 shadow-sm"
                         >
                           <option value="all">All Categories</option>
                           {Array.from(new Set(reportData.transactions.map(t => t.category))).map(cat => (
@@ -2010,7 +2010,7 @@ export default function FinancialReportPage() {
                             setTxnDeptFilter(e.target.value)
                             setTxnPage(1)
                           }}
-                          className="w-full text-xs font-bold text-slate-700 bg-white border border-slate-200/80 rounded-xl p-2.5 outline-none focus:ring-1 focus:ring-indigo-500 shadow-sm"
+                          className="w-full text-xs font-bold text-text-secondary bg-surface border border-border-default rounded-xl p-2.5 outline-none focus:ring-1 focus:ring-indigo-500 shadow-sm"
                         >
                           <option value="all">All Departments</option>
                           {Array.from(new Set(reportData.transactions.map(t => t.department))).map(dept => (
@@ -2026,7 +2026,7 @@ export default function FinancialReportPage() {
                             setTxnVoteFilter(e.target.value)
                             setTxnPage(1)
                           }}
-                          className="w-full text-xs font-bold text-slate-700 bg-white border border-slate-200/80 rounded-xl p-2.5 outline-none focus:ring-1 focus:ring-indigo-500 shadow-sm"
+                          className="w-full text-xs font-bold text-text-secondary bg-surface border border-border-default rounded-xl p-2.5 outline-none focus:ring-1 focus:ring-indigo-500 shadow-sm"
                         >
                           <option value="all">All Votes</option>
                           {Array.from(new Set(reportData.transactions.map(t => t.voteCode))).map(vote => (
@@ -2037,7 +2037,7 @@ export default function FinancialReportPage() {
                     </div>
 
                     {/* Table View */}
-                    <div className="overflow-hidden rounded-3xl border border-slate-200/80 shadow-sm bg-white">
+                    <div className="overflow-hidden rounded-3xl border border-border-default shadow-sm bg-surface">
                       <div className="overflow-x-auto">
                         <table className="w-full text-left text-xs border-collapse">
                           <thead>
@@ -2052,39 +2052,39 @@ export default function FinancialReportPage() {
                               <th className="p-4 text-center bg-slate-900">Status</th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-slate-150 font-semibold text-slate-700">
+                          <tbody className="divide-y divide-slate-150 font-semibold text-text-secondary">
                             {paginatedTxns.length === 0 ? (
                               <tr>
-                                <td colSpan={8} className="p-12 text-center text-slate-400 font-semibold italic">
+                                <td colSpan={8} className="p-12 text-center text-text-muted font-medium font-semibold italic">
                                   No transaction records match the specified filters.
                                 </td>
                               </tr>
                             ) : (
                               paginatedTxns.map((txn) => (
-                                <tr key={txn.id} className="hover:bg-slate-50/50 transition-colors">
-                                  <td className="p-4 font-mono font-black text-slate-900">{txn.poNumber}</td>
-                                  <td className="p-4 text-slate-500 font-medium">{new Date(txn.date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</td>
-                                  <td className="p-4 text-slate-800 font-extrabold max-w-[200px] truncate" title={txn.supplierName}>{txn.supplierName}</td>
+                                <tr key={txn.id} className="hover:bg-subtle/50 transition-colors">
+                                  <td className="p-4 font-mono font-black text-text-primary">{txn.poNumber}</td>
+                                  <td className="p-4 text-text-muted font-medium">{new Date(txn.date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}</td>
+                                  <td className="p-4 text-text-primary font-extrabold max-w-[200px] truncate" title={txn.supplierName}>{txn.supplierName}</td>
                                   <td className="p-4">
-                                    <span className="px-2 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-600 text-[10px] font-bold">
+                                    <span className="px-2 py-0.5 rounded bg-subtle border border-border-default text-text-muted text-[10px] font-bold">
                                       {txn.category}
                                     </span>
                                   </td>
-                                  <td className="p-4 text-slate-600">{txn.department}</td>
-                                  <td className="p-4 font-mono text-[10px] text-slate-500">{txn.voteCode}</td>
-                                  <td className="p-4 text-right font-mono font-extrabold text-slate-900">
+                                  <td className="p-4 text-text-muted">{txn.department}</td>
+                                  <td className="p-4 font-mono text-[10px] text-text-muted">{txn.voteCode}</td>
+                                  <td className="p-4 text-right font-mono font-extrabold text-text-primary">
                                     {formatCurrency(txn.amount).replace('MYR', 'RM')}
                                   </td>
                                   <td className="p-4 text-center">
                                     <span className={cn(
                                       "inline-block text-[9px] font-black uppercase px-2 py-0.5 rounded-full border tracking-wider",
                                       txn.status === 'completed'
-                                        ? 'bg-emerald-50 border-emerald-200 text-emerald-600'
+                                        ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600'
                                         : ['approved', 'sent'].includes(txn.status)
-                                          ? 'bg-indigo-50 border-indigo-200 text-indigo-600'
+                                          ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-600'
                                           : ['partial_received', 'pending', 'draft'].includes(txn.status)
-                                            ? 'bg-amber-50 border-amber-200 text-amber-600'
-                                            : 'bg-rose-50 border-rose-200 text-rose-600'
+                                            ? 'bg-amber-500/10 border-amber-500/20 text-amber-600'
+                                            : 'bg-rose-500/10 border-rose-500/20 text-rose-600'
                                     )}>
                                       {txn.status.replace(/_/g, ' ')}
                                     </span>
@@ -2098,15 +2098,15 @@ export default function FinancialReportPage() {
 
                       {/* Pagination Controls */}
                       {totalTxnPages > 1 && (
-                        <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
-                          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                        <div className="px-6 py-4 bg-subtle/50 border-t border-border-default flex items-center justify-between">
+                          <span className="text-[10px] text-text-secondary font-bold font-bold uppercase tracking-wider">
                             Showing {((txnPage - 1) * 15) + 1} - {Math.min(txnPage * 15, filteredTxns.length)} of {filteredTxns.length} Transactions
                           </span>
                           <div className="flex gap-2">
                             <button
                               onClick={() => setTxnPage(p => Math.max(1, p - 1))}
                               disabled={txnPage === 1}
-                              className="px-3.5 py-1.5 bg-white border border-slate-200 rounded-xl text-[10px] font-black text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white transition-all shadow-sm flex items-center gap-1.5"
+                              className="px-3.5 py-1.5 bg-surface border border-border-default rounded-xl text-[10px] font-black text-text-muted hover:bg-subtle/50 disabled:opacity-40 disabled:hover:bg-surface transition-colors shadow-sm flex items-center gap-1.5"
                             >
                               ◀ Prev
                             </button>
@@ -2119,10 +2119,10 @@ export default function FinancialReportPage() {
                                     key={pageNum}
                                     onClick={() => setTxnPage(pageNum)}
                                     className={cn(
-                                      "w-7 h-7 rounded-lg text-[10px] font-black transition-all flex items-center justify-center",
+                                      "w-7 h-7 rounded-lg text-[10px] font-black transition-colors flex items-center justify-center",
                                       isCurrent 
                                         ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/10" 
-                                        : "text-slate-500 hover:bg-slate-100"
+                                        : "text-text-muted hover:bg-subtle"
                                     )}
                                   >
                                     {pageNum}
@@ -2133,7 +2133,7 @@ export default function FinancialReportPage() {
                             <button
                               onClick={() => setTxnPage(p => Math.min(totalTxnPages, p + 1))}
                               disabled={txnPage === totalTxnPages}
-                              className="px-3.5 py-1.5 bg-white border border-slate-200 rounded-xl text-[10px] font-black text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-white transition-all shadow-sm flex items-center gap-1.5"
+                              className="px-3.5 py-1.5 bg-surface border border-border-default rounded-xl text-[10px] font-black text-text-muted hover:bg-subtle/50 disabled:opacity-40 disabled:hover:bg-surface transition-colors shadow-sm flex items-center gap-1.5"
                             >
                               Next ▶
                             </button>
@@ -2183,25 +2183,25 @@ export default function FinancialReportPage() {
                             marginTop: `${Math.max(20, drawerTopPosition)}px`,
                             maxHeight: `calc(100vh - ${Math.max(20, drawerTopPosition)}px - 40px)`
                           }}
-                          className="relative w-full max-w-3xl bg-white border border-slate-200 shadow-2xl flex flex-col rounded-3xl mr-6 mb-6 overflow-hidden"
+                          className="relative w-full max-w-3xl bg-surface border border-border-default shadow-2xl flex flex-col rounded-3xl mr-6 mb-6 overflow-hidden"
                           initial={{ x: '100%' }}
                           animate={{ x: 0 }}
                           exit={{ x: '100%' }}
                           transition={{ type: 'spring', damping: 30, stiffness: 300 }}
                         >
                           {/* Drawer Header */}
-                          <div className="px-6 py-5 border-b border-slate-200 bg-slate-50">
+                          <div className="px-6 py-5 border-b border-border-default bg-subtle/50">
                             <div className="flex items-center justify-between">
                               <div>
-                                <span className="text-[9px] bg-indigo-50 text-indigo-700 font-black px-2 py-0.5 rounded border border-indigo-200 uppercase tracking-widest">
+                                <span className="text-[9px] bg-indigo-500/10 text-indigo-700 font-black px-2 py-0.5 rounded border border-indigo-500/20 uppercase tracking-widest">
                                   {cat.voteCode}-{cat.voteActivity}
                                 </span>
-                                <h2 className="text-lg font-black text-slate-800 mt-2">{cat.categoryName}</h2>
+                                <h2 className="text-lg font-black text-text-primary mt-2">{cat.categoryName}</h2>
                                 <p className="text-[10px] text-slate-550 font-bold mt-0.5">Backup justification and procurement drivers</p>
                               </div>
                               <button
                                 onClick={() => setActiveDrawerId(null)}
-                                className="text-slate-400 hover:text-slate-600 text-xl font-bold transition-colors p-1"
+                                className="text-slate-400 hover:text-text-muted text-xl font-bold transition-colors p-1"
                               >
                                 ✖
                               </button>
@@ -2212,24 +2212,24 @@ export default function FinancialReportPage() {
                           <div className="flex-1 overflow-y-auto px-6 py-5 space-y-6">
 
                     {/* KPI Breakdown */}
-                    <div className="grid grid-cols-3 gap-4 bg-slate-50 p-4 border border-slate-200 rounded-2xl">
-                      <div className="text-center border-r border-slate-200">
-                        <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider block">Allocation</span>
-                        <span className="text-sm font-extrabold text-slate-800 mt-1 block">{formatCurrency(currentAllocation).replace('MYR', 'RM')}</span>
+                    <div className="grid grid-cols-3 gap-4 bg-subtle/50 p-4 border border-border-default rounded-2xl">
+                      <div className="text-center border-r border-border-default">
+                        <span className="text-[10px] text-text-muted uppercase font-bold tracking-wider block">Allocation</span>
+                        <span className="text-sm font-extrabold text-text-primary mt-1 block">{formatCurrency(currentAllocation).replace('MYR', 'RM')}</span>
                       </div>
-                      <div className="text-center border-r border-slate-200">
-                        <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider block">Avg Burn</span>
+                      <div className="text-center border-r border-border-default">
+                        <span className="text-[10px] text-text-muted uppercase font-bold tracking-wider block">Avg Burn</span>
                         <span className="text-sm font-extrabold text-indigo-650 mt-1 block">{formatCurrency(avgMonthlyUse).replace('MYR', 'RM')}/mo</span>
                       </div>
                       <div className="text-center">
-                        <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider block">EOY Proj Spend</span>
-                        <span className="text-sm font-extrabold text-slate-800 mt-1 block">{formatCurrency(eoyProjectedSpend).replace('MYR', 'RM')}</span>
+                        <span className="text-[10px] text-text-muted uppercase font-bold tracking-wider block">EOY Proj Spend</span>
+                        <span className="text-sm font-extrabold text-text-primary mt-1 block">{formatCurrency(eoyProjectedSpend).replace('MYR', 'RM')}</span>
                       </div>
                     </div>
 
                      {/* Itemized Justifications (The "Why" Backup) */}
                     <div className="space-y-5">
-                      <h3 className="text-xs uppercase font-black tracking-widest text-slate-500">Procurement & Itemized Driver Breakdown</h3>
+                      <h3 className="text-xs uppercase font-black tracking-widest text-text-muted">Procurement & Itemized Driver Breakdown</h3>
                       
                       {(() => {
                         // Dynamically look up real items in reportData that belong to this code or department
@@ -2280,15 +2280,15 @@ export default function FinancialReportPage() {
                           : cat.justifications;
 
                         return itemsToShow.map((item: any) => (
-                          <div key={item.id} className="bg-slate-50 border border-slate-200 rounded-2xl overflow-hidden hover:border-slate-300/80 transition-colors">
+                          <div key={item.id} className="bg-subtle/50 border border-border-default rounded-2xl overflow-hidden hover:border-border-default transition-colors">
                             
                             {/* Item Header */}
-                            <div className="bg-slate-100/80 px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+                            <div className="bg-subtle px-4 py-3 border-b border-border-default flex items-center justify-between">
                               <div>
-                                <span className="text-[10px] bg-white text-slate-700 px-2 py-0.5 rounded font-black border border-slate-200">
+                                <span className="text-[10px] bg-surface text-text-secondary px-2 py-0.5 rounded font-black border border-border-default">
                                   {item.code}
                                 </span>
-                                <span className="text-sm font-extrabold text-slate-800 ml-2">{item.name}</span>
+                                <span className="text-sm font-extrabold text-text-primary ml-2">{item.name}</span>
                               </div>
                               
                               <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded border tracking-wider ${
@@ -2305,22 +2305,22 @@ export default function FinancialReportPage() {
                             </div>
 
                             {/* Item Body */}
-                            <div className="p-4 space-y-3 bg-white">
+                            <div className="p-4 space-y-3 bg-surface">
                               <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                  <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider block">Real Monthly Rate</span>
-                                  <span className="text-xs font-bold text-slate-700 mt-0.5 block">{item.monthlyConsumption}</span>
+                                  <span className="text-[10px] text-text-muted uppercase font-bold tracking-wider block">Real Monthly Rate</span>
+                                  <span className="text-xs font-bold text-text-secondary mt-0.5 block">{item.monthlyConsumption}</span>
                                 </div>
                                 <div>
-                                  <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider block">Estimated Added Cost</span>
+                                  <span className="text-[10px] text-text-muted uppercase font-bold tracking-wider block">Estimated Added Cost</span>
                                   <span className="text-xs font-extrabold text-rose-650 mt-0.5 block font-mono">
                                     {item.addedCost > 0 ? formatCurrency(item.addedCost).replace('MYR', 'RM') : 'RM 0 (Covered)'}
                                   </span>
                                 </div>
                               </div>
 
-                              <div className="border-t border-slate-100 pt-3">
-                                <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider block">Primary Purchasing Backing Justification</span>
+                              <div className="border-t border-border-subtle pt-3">
+                                <span className="text-[10px] text-text-muted uppercase font-bold tracking-wider block">Primary Purchasing Backing Justification</span>
                                 <p className="text-xs font-semibold text-slate-650 mt-1 leading-relaxed">
                                   {item.reason}
                                 </p>
@@ -2335,10 +2335,10 @@ export default function FinancialReportPage() {
                   </div>
 
                   {/* Drawer Footer */}
-                  <div className="px-6 py-4 border-t border-slate-200 bg-slate-50 flex justify-end space-x-3">
+                  <div className="px-6 py-4 border-t border-border-default bg-subtle/50 flex justify-end space-x-3">
                     <button
                       onClick={() => setActiveDrawerId(null)}
-                      className="bg-white text-slate-600 border border-slate-200 px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-slate-50 transition-colors"
+                      className="bg-surface text-text-muted border border-border-default px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider hover:bg-subtle/50 transition-colors"
                     >
                       Dismiss Panel
                     </button>

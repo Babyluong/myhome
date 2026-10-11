@@ -221,7 +221,7 @@ export const UserListPage: React.FC = () => {
             handleSelectUser(row.id, e.target.checked)
           }}
           onClick={(e) => e.stopPropagation()}
-          className="w-4 h-4 text-teal-600 border-slate-300 rounded focus:ring-teal-500"
+          className="w-4 h-4 text-teal-600 border-border-default rounded focus:ring-teal-500"
         />
       ),
       className: 'w-12',
@@ -235,7 +235,7 @@ export const UserListPage: React.FC = () => {
           alt={row.full_name}
           fallback={row.full_name.charAt(0)}
           size="md"
-          className="ring-2 ring-slate-200"
+          className="ring-2 ring-border-default"
         />
       ),
       className: 'w-20',
@@ -246,8 +246,8 @@ export const UserListPage: React.FC = () => {
       sortable: true,
       render: (_: unknown, row: UserWithRelations) => (
         <div className="space-y-1">
-          <div className="font-semibold text-slate-900">{row.full_name}</div>
-          <div className="text-sm text-slate-500 flex items-center gap-1">
+          <div className="font-semibold text-text-primary">{row.full_name}</div>
+          <div className="text-sm text-text-muted flex items-center gap-1">
             <Mail className="w-3 h-3" />
             {row.email}
           </div>
@@ -275,7 +275,7 @@ export const UserListPage: React.FC = () => {
       render: (_: unknown, row: UserWithRelations) => (
         <div className="flex items-center gap-2">
           <Briefcase className="w-4 h-4 text-slate-400" />
-          <span className="text-sm font-medium text-slate-700">{row.department?.department_name || 'N/A'}</span>
+          <span className="text-sm font-medium text-text-secondary">{row.department?.department_name || 'N/A'}</span>
         </div>
       ),
     },
@@ -285,7 +285,7 @@ export const UserListPage: React.FC = () => {
       render: (_: unknown, row: UserWithRelations) => (
         <div className="flex items-center gap-2">
           <Building2 className="w-4 h-4 text-slate-400" />
-          <span className="text-sm font-medium text-slate-700">{row.hospital?.hospital_name || 'N/A'}</span>
+          <span className="text-sm font-medium text-text-secondary">{row.hospital?.hospital_name || 'N/A'}</span>
         </div>
       ),
     },
@@ -313,7 +313,7 @@ export const UserListPage: React.FC = () => {
       label: 'Last Login',
       sortable: true,
       render: (_: unknown, row: UserWithRelations) => (
-        <span className="text-sm text-slate-500">
+        <span className="text-sm text-text-muted">
           {row.last_login ? formatDate(row.last_login) : 'Never'}
         </span>
       ),
@@ -328,7 +328,7 @@ export const UserListPage: React.FC = () => {
               e.stopPropagation()
               navigate(`${ROUTES.ADMIN_USERS}/${row.id}`)
             }}
-            className="p-1.5 text-slate-600 hover:text-teal-600 hover:bg-teal-50 rounded transition-colors"
+            className="p-1.5 text-text-muted hover:text-teal-600 hover:bg-accent-base/10 rounded transition-colors"
             title="Edit"
           >
             <Edit className="w-4 h-4" />
@@ -343,7 +343,7 @@ export const UserListPage: React.FC = () => {
                 })
               }
             }}
-            className="p-1.5 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+            className="p-1.5 text-text-muted hover:text-red-600 hover:bg-red-50 rounded transition-colors"
             title="Delete"
           >
             <Trash2 className="w-4 h-4" />
@@ -394,7 +394,7 @@ export const UserListPage: React.FC = () => {
         transition={{ delay: 0.1 }}
         className="grid grid-cols-2 md:grid-cols-5 gap-3"
       >
-        <div className="bg-surface rounded-xl border border-border-default shadow-xs p-4 transition-all">
+        <div className="bg-surface rounded-xl border border-border-default shadow-xs p-4 transition-colors">
           <div className="flex items-center justify-between mb-2">
             <div className="w-10 h-10 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-lg flex items-center justify-center">
               <UserCheck className="w-5 h-5 text-success-600" />
@@ -403,32 +403,32 @@ export const UserListPage: React.FC = () => {
           </div>
           <div className="space-y-0.5">
             {isLoading ? (
-              <Skeleton className="h-8 w-14 my-0.5 rounded-lg !bg-slate-200" />
+              <Skeleton className="h-8 w-14 my-0.5 rounded-lg !bg-subtle" />
             ) : (
-              <p className="text-2xl font-bold text-slate-900">{stats.active}</p>
+              <p className="text-2xl font-bold text-text-primary">{stats.active}</p>
             )}
-            <p className="text-xs font-medium text-slate-600">Active Users</p>
+            <p className="text-xs font-medium text-text-muted">Active Users</p>
           </div>
         </div>
 
-        <div className="bg-surface rounded-xl border border-border-default shadow-xs p-4 transition-all">
+        <div className="bg-surface rounded-xl border border-border-default shadow-xs p-4 transition-colors">
           <div className="flex items-center justify-between mb-2">
             <div className="w-10 h-10 bg-subtle text-text-muted rounded-lg flex items-center justify-center">
-              <UserX className="w-5 h-5 text-slate-600" />
+              <UserX className="w-5 h-5 text-text-muted" />
             </div>
             <TrendingUp className="w-4 h-4 text-slate-400" />
           </div>
           <div className="space-y-0.5">
             {isLoading ? (
-              <Skeleton className="h-8 w-14 my-0.5 rounded-lg !bg-slate-200" />
+              <Skeleton className="h-8 w-14 my-0.5 rounded-lg !bg-subtle" />
             ) : (
-              <p className="text-2xl font-bold text-slate-900">{stats.inactive}</p>
+              <p className="text-2xl font-bold text-text-primary">{stats.inactive}</p>
             )}
-            <p className="text-xs font-medium text-slate-600">Inactive</p>
+            <p className="text-xs font-medium text-text-muted">Inactive</p>
           </div>
         </div>
 
-        <div className="bg-surface rounded-xl border border-border-default shadow-xs p-4 transition-all">
+        <div className="bg-surface rounded-xl border border-border-default shadow-xs p-4 transition-colors">
           <div className="flex items-center justify-between mb-2">
             <div className="w-10 h-10 bg-rose-500/10 text-rose-600 dark:text-rose-400 rounded-lg flex items-center justify-center">
               <AlertCircle className="w-5 h-5 text-error-600" />
@@ -437,15 +437,15 @@ export const UserListPage: React.FC = () => {
           </div>
           <div className="space-y-0.5">
             {isLoading ? (
-              <Skeleton className="h-8 w-14 my-0.5 rounded-lg !bg-slate-200" />
+              <Skeleton className="h-8 w-14 my-0.5 rounded-lg !bg-subtle" />
             ) : (
-              <p className="text-2xl font-bold text-slate-900">{stats.suspended}</p>
+              <p className="text-2xl font-bold text-text-primary">{stats.suspended}</p>
             )}
-            <p className="text-xs font-medium text-slate-600">Suspended</p>
+            <p className="text-xs font-medium text-text-muted">Suspended</p>
           </div>
         </div>
 
-        <div className="bg-surface rounded-xl border border-border-default shadow-xs p-4 transition-all">
+        <div className="bg-surface rounded-xl border border-border-default shadow-xs p-4 transition-colors">
           <div className="flex items-center justify-between mb-2">
             <div className="w-10 h-10 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg flex items-center justify-center">
               <Clock className="w-5 h-5 text-amber-600" />
@@ -454,15 +454,15 @@ export const UserListPage: React.FC = () => {
           </div>
           <div className="space-y-0.5">
             {isLoading ? (
-              <Skeleton className="h-8 w-14 my-0.5 rounded-lg !bg-slate-200" />
+              <Skeleton className="h-8 w-14 my-0.5 rounded-lg !bg-subtle" />
             ) : (
-              <p className="text-2xl font-bold text-slate-900">{stats.pending}</p>
+              <p className="text-2xl font-bold text-text-primary">{stats.pending}</p>
             )}
-            <p className="text-xs font-medium text-slate-600">Pending</p>
+            <p className="text-xs font-medium text-text-muted">Pending</p>
           </div>
         </div>
 
-        <div className="bg-surface rounded-xl border border-border-default shadow-xs p-4 transition-all">
+        <div className="bg-surface rounded-xl border border-border-default shadow-xs p-4 transition-colors">
           <div className="flex items-center justify-between mb-2">
             <div className="w-10 h-10 bg-accent-base/10 text-accent-base rounded-lg flex items-center justify-center">
               <Users className="w-5 h-5 text-primary-600" />
@@ -471,11 +471,11 @@ export const UserListPage: React.FC = () => {
           </div>
           <div className="space-y-0.5">
             {isLoading ? (
-              <Skeleton className="h-8 w-16 my-0.5 rounded-lg !bg-slate-200" />
+              <Skeleton className="h-8 w-16 my-0.5 rounded-lg !bg-subtle" />
             ) : (
-              <p className="text-2xl font-bold text-slate-900">{total}</p>
+              <p className="text-2xl font-bold text-text-primary">{total}</p>
             )}
-            <p className="text-xs font-medium text-slate-600">Total Users</p>
+            <p className="text-xs font-medium text-text-muted">Total Users</p>
           </div>
         </div>
       </motion.div>
@@ -498,7 +498,7 @@ export const UserListPage: React.FC = () => {
                 setSearch(e.target.value)
                 setCurrentPage(1)
               }}
-              className="pl-12 h-11 border-slate-300 focus:border-primary-500 focus:ring-primary-500"
+              className="pl-12 h-11 border-border-default focus:border-primary-500 focus:ring-primary-500"
             />
           </div>
           
@@ -510,7 +510,7 @@ export const UserListPage: React.FC = () => {
                 setStatusFilter(e.target.value)
                 setCurrentPage(1)
               }}
-              className="w-full sm:w-40 h-11 border-slate-300 focus:border-primary-500"
+              className="w-full sm:w-40 h-11 border-border-default focus:border-primary-500"
               options={[
                 { value: 'all', label: 'All Status' },
                 { value: USER_STATUS.ACTIVE, label: 'Active' },
@@ -527,7 +527,7 @@ export const UserListPage: React.FC = () => {
                 setCurrentPage(1)
               }}
               disabled={departments.length === 0}
-              className="w-full sm:w-48 h-11 border-slate-300 focus:border-primary-500"
+              className="w-full sm:w-48 h-11 border-border-default focus:border-primary-500"
               placeholder={departments.length === 0 ? 'No departments' : 'Select Department'}
               options={[
                 { value: 'all', label: 'All Departments' },
@@ -567,7 +567,7 @@ export const UserListPage: React.FC = () => {
               size="sm"
               onClick={() => handleBulkAction('deactivate')}
               leftIcon={<UserX className="w-4 h-4" />}
-              className="border-slate-300"
+              className="border-border-default"
             >
               Deactivate
             </Button>
@@ -604,14 +604,14 @@ export const UserListPage: React.FC = () => {
                 type="checkbox"
                 checked={selectedUsers.length === users.length && users.length > 0}
                 onChange={(e) => handleSelectAll(e.target.checked)}
-                className="w-4 h-4 text-primary-600 border-slate-300 rounded focus:ring-primary-500"
+                className="w-4 h-4 text-primary-600 border-border-default rounded focus:ring-primary-500"
               />
-              <span className="text-sm font-medium text-slate-700">Select All</span>
+              <span className="text-sm font-medium text-text-secondary">Select All</span>
             </div>
             <div className="flex items-center gap-2">
               <FileText className="w-4 h-4 text-slate-400" />
-              <span className="text-sm text-slate-600">
-                Total: <span className="font-semibold text-slate-900">{total}</span> users
+              <span className="text-sm text-text-muted">
+                Total: <span className="font-semibold text-text-primary">{total}</span> users
               </span>
             </div>
           </div>
@@ -636,8 +636,8 @@ export const UserListPage: React.FC = () => {
             emptyMessage={
               <div className="flex flex-col items-center justify-center py-12">
                 <AlertCircle className="w-12 h-12 text-slate-400 mb-4" />
-                <p className="text-slate-600 font-medium">No users found</p>
-                <p className="text-sm text-slate-500 mt-1">Try adjusting your filters</p>
+                <p className="text-text-muted font-medium">No users found</p>
+                <p className="text-sm text-text-muted mt-1">Try adjusting your filters</p>
               </div>
             }
             onRowClick={(row) => navigate(`${ROUTES.ADMIN_USERS}/${row.id}`)}

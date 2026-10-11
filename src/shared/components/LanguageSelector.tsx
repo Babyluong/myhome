@@ -34,7 +34,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'h
           <button
             key={opt.code}
             onClick={() => setLanguage(opt.code)}
-            className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all flex items-center gap-1.5 ${
+            className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-colors flex items-center gap-1.5 ${
               language === opt.code
                 ? 'bg-teal-600 text-white shadow-sm'
                 : 'text-slate-300 hover:text-white hover:bg-white/10'
@@ -62,7 +62,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ variant = 'h
 
       {isOpen && (
         <div className="absolute right-0 mt-2 w-44 rounded-xl bg-slate-900 border border-slate-700 shadow-2xl z-50 py-1 overflow-hidden backdrop-blur-xl">
-          <div className="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-800 flex items-center gap-1.5">
+          <div className="px-3 py-1.5 text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider border-b border-slate-800 flex items-center gap-1.5">
             <Globe className="w-3 h-3 text-teal-400" />
             <span>Select Language</span>
           </div>

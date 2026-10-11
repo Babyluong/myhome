@@ -597,32 +597,32 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
 
   return (
     <div className="fixed inset-0 z-[999] flex items-center justify-center p-3 md:p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-white border border-slate-200 rounded-3xl shadow-2xl max-w-5xl xl:max-w-6xl w-full flex flex-col max-h-[92vh] overflow-hidden">
+      <div className="bg-surface border border-border-default rounded-3xl shadow-2xl max-w-5xl xl:max-w-6xl w-full flex flex-col max-h-[92vh] overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between p-5 md:p-6 border-b border-slate-100 bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-white">
+        <div className="flex items-center justify-between p-5 md:p-6 border-b border-border-subtle bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-white">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20">
               <Truck className="w-5 h-5" />
             </div>
             <div>
-              <h2 className="text-base font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+              <h2 className="text-base font-extrabold text-text-primary tracking-tight flex items-center gap-2">
                 <span>{language === 'ms' ? 'Penerimaan Silinder Pembekal' : 'Receive Cylinders from Supplier'}</span>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-emerald-400 border border-emerald-500/20">
                   {language === 'ms' ? 'Kredit Terus ke Stok Tersedia' : 'Direct to Available Stock'}
                 </span>
                 {!isOnline ? (
-                  <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-900 border border-amber-300 animate-pulse">
+                  <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-400 dark:text-amber-300 font-bold border border-amber-300 animate-pulse">
                     <WifiOff className="w-3 h-3 text-amber-700" />
                     <span>{language === 'ms' ? 'Mod Luar Talian (Offline)' : 'Offline Mode'}</span>
                   </span>
                 ) : (
-                  <span className="hidden sm:flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                  <span className="hidden sm:flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-subtle text-text-secondary border border-border-default">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                     <span>{language === 'ms' ? 'Atas Talian' : 'Online'}</span>
                   </span>
                 )}
               </h2>
-              <p className="text-xs font-semibold text-slate-500">
+              <p className="text-xs font-semibold text-text-muted">
                 {language === 'ms'
                   ? 'Imbas QR atau cari no. siri untuk kemas kini silinder terus ke Stor Gas Utama (Tersedia)'
                   : 'Scan QR or search serial numbers to receive cylinders directly into Central Store (Available)'}
@@ -634,7 +634,7 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
               stopCamera();
               onClose();
             }}
-            className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all"
+            className="p-2 text-slate-400 hover:text-text-secondary hover:bg-subtle rounded-xl transition-[transform,opacity,box-shadow,border-color]"
           >
             <X className="w-5 h-5" />
           </button>
@@ -644,30 +644,30 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
         <div className="flex-1 overflow-y-auto p-5 md:p-6 space-y-6">
           {/* Status Messages */}
           {errorMessage && (
-            <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-2.5 text-xs font-bold text-rose-700 animate-in fade-in">
+            <div className="p-3.5 bg-rose-500/10 border border-rose-500/20 rounded-xl flex items-center gap-2.5 text-xs font-bold text-rose-700 animate-in fade-in">
               <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
               <span>{errorMessage}</span>
             </div>
           )}
 
           {successMessage && (
-            <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center gap-2.5 text-xs font-bold text-emerald-700 animate-in fade-in">
+            <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center gap-2.5 text-xs font-bold text-emerald-700 animate-in fade-in">
               <CheckCircle2 className="w-4 h-4 shrink-0 text-emerald-600" />
               <span>{successMessage}</span>
             </div>
           )}
 
           {/* Top Form: Supplier, Date, DO Number */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50/70 p-4 rounded-2xl border border-slate-200/80">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-subtle/50 p-4 rounded-2xl border border-border-default">
             {/* Supplier Selector */}
             <div>
-              <label className="text-[11px] font-extrabold uppercase text-slate-600 tracking-wider block mb-1.5">
+              <label className="text-[11px] font-extrabold uppercase text-text-secondary tracking-wider block mb-1.5">
                 {language === 'ms' ? 'Pembekal Oksigen' : 'Oxygen Supplier'} *
               </label>
               <select
                 value={selectedSupplier}
                 onChange={e => setSelectedSupplier(e.target.value)}
-                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+                className="w-full bg-surface border border-border-default rounded-xl px-3 py-2 text-xs font-bold text-text-primary focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
               >
                 {suppliers.map(s => (
                   <option key={s.id} value={s.id}>
@@ -679,20 +679,20 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
 
             {/* Received Date */}
             <div>
-              <label className="text-[11px] font-extrabold uppercase text-slate-600 tracking-wider block mb-1.5">
+              <label className="text-[11px] font-extrabold uppercase text-text-secondary tracking-wider block mb-1.5">
                 {language === 'ms' ? 'Tarikh Terima' : 'Received Date'} *
               </label>
               <input
                 type="date"
                 value={receiveDate}
                 onChange={e => setReceiveDate(e.target.value)}
-                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+                className="w-full bg-surface border border-border-default rounded-xl px-3 py-2 text-xs font-bold text-text-primary focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
               />
             </div>
 
             {/* Delivery Order No */}
             <div>
-              <label className="text-[11px] font-extrabold uppercase text-slate-600 tracking-wider block mb-1.5">
+              <label className="text-[11px] font-extrabold uppercase text-text-secondary tracking-wider block mb-1.5">
                 {language === 'ms' ? 'No. Surat Hantaran (DO #)' : 'Delivery Order No. (DO #)'}
               </label>
               <input
@@ -700,7 +700,7 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
                 placeholder="cth: DO-2026-98102"
                 value={deliveryOrderNo}
                 onChange={e => setDeliveryOrderNo(e.target.value)}
-                className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-mono font-bold text-slate-800 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+                className="w-full bg-surface border border-border-default rounded-xl px-3 py-2 text-xs font-mono font-bold text-text-primary focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
               />
             </div>
           </div>
@@ -708,16 +708,16 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
           {/* 2-Column Workspace: Left = Search/Scan, Right = Already Selected Cylinders */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
             {/* COLUMN 1 (LEFT): List of Cylinders Being Searched / Scanner */}
-            <div className="flex flex-col border border-slate-200/90 rounded-2xl bg-slate-50/50 p-4 h-[420px] lg:h-[490px]">
+            <div className="flex flex-col border border-border-default rounded-2xl bg-subtle/50 p-4 h-[420px] lg:h-[490px]">
               {/* Ingestion Mode Switcher */}
               <div className="flex items-center gap-1.5 bg-slate-200/70 p-1 rounded-xl mb-3 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIngestMode('search')}
-                  className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                  className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-[transform,opacity,box-shadow,border-color] flex items-center justify-center gap-2 ${
                     ingestMode === 'search'
-                      ? 'bg-white text-emerald-800 shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900'
+                      ? 'bg-surface text-emerald-400 shadow-sm'
+                      : 'text-text-secondary hover:text-text-primary'
                   }`}
                 >
                   <Search className="w-3.5 h-3.5" />
@@ -726,10 +726,10 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
                 <button
                   type="button"
                   onClick={() => setIngestMode('qr')}
-                  className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                  className={`flex-1 py-1.5 px-3 rounded-lg text-xs font-bold transition-[transform,opacity,box-shadow,border-color] flex items-center justify-center gap-2 ${
                     ingestMode === 'qr'
-                      ? 'bg-white text-emerald-800 shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900'
+                      ? 'bg-surface text-emerald-400 shadow-sm'
+                      : 'text-text-secondary hover:text-text-primary'
                   }`}
                 >
                   <QrCode className="w-3.5 h-3.5" />
@@ -752,7 +752,7 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
                       }
                       value={searchTerm}
                       onChange={e => setSearchTerm(e.target.value)}
-                      className="w-full pl-9 pr-9 py-2 bg-white border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-800 placeholder:font-sans placeholder:text-slate-400 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                      className="w-full pl-9 pr-9 py-2 bg-surface border border-border-default rounded-xl text-xs font-mono font-bold text-text-primary placeholder:font-sans placeholder:text-text-muted focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                     />
                     {isSearching ? (
                       <RefreshCw className="w-3.5 h-3.5 text-emerald-600 animate-spin absolute right-3.5 top-1/2 -translate-y-1/2" />
@@ -760,7 +760,7 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
                       <button
                         type="button"
                         onClick={() => setSearchTerm('')}
-                        className="p-1 text-slate-400 hover:text-slate-600 absolute right-2.5 top-1/2 -translate-y-1/2"
+                        className="p-1 text-slate-400 hover:text-text-secondary absolute right-2.5 top-1/2 -translate-y-1/2"
                       >
                         <X className="w-3.5 h-3.5" />
                       </button>
@@ -773,10 +773,10 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
                       <button
                         type="button"
                         onClick={() => setFilterMode('at_supplier')}
-                        className={`px-2.5 py-1 rounded-md text-[10px] font-bold transition-all ${
+                        className={`px-2.5 py-1 rounded-md text-[10px] font-bold transition-[transform,opacity,box-shadow,border-color] ${
                           filterMode === 'at_supplier'
-                            ? 'bg-white text-emerald-800 shadow-sm'
-                            : 'text-slate-600 hover:text-slate-900'
+                            ? 'bg-surface text-emerald-400 shadow-sm'
+                            : 'text-text-secondary hover:text-text-primary'
                         }`}
                       >
                         {language === 'ms' ? 'Di Pembekal (Dipulangkan)' : 'At Supplier (Returned)'}
@@ -784,23 +784,23 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
                       <button
                         type="button"
                         onClick={() => setFilterMode('all')}
-                        className={`px-2.5 py-1 rounded-md text-[10px] font-bold transition-all ${
+                        className={`px-2.5 py-1 rounded-md text-[10px] font-bold transition-[transform,opacity,box-shadow,border-color] ${
                           filterMode === 'all'
-                            ? 'bg-white text-emerald-800 shadow-sm'
-                            : 'text-slate-600 hover:text-slate-900'
+                            ? 'bg-surface text-emerald-400 shadow-sm'
+                            : 'text-text-secondary hover:text-text-primary'
                         }`}
                       >
                         {language === 'ms' ? 'Semua Silinder' : 'All Cylinders'}
                       </button>
                     </div>
 
-                    <span className="text-[11px] font-bold text-slate-500 tabular-nums">
+                    <span className="text-[11px] font-bold text-text-muted tabular-nums">
                       {searchResults.length} {language === 'ms' ? 'silinder' : 'cylinders'}
                     </span>
                   </div>
 
                   {/* Search Results List */}
-                  <div className="flex-1 min-h-0 overflow-y-auto rounded-xl border border-slate-200 bg-white divide-y divide-slate-100 shadow-inner">
+                  <div className="flex-1 min-h-0 overflow-y-auto rounded-xl border border-border-default bg-surface divide-y divide-border-subtle shadow-inner">
                     {searchResults.length === 0 ? (
                       <div className="h-full flex flex-col items-center justify-center p-6 text-center text-slate-400 text-xs font-semibold space-y-1.5">
                         {isSearching ? (
@@ -838,28 +838,28 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
                           <div
                             key={cyl.id}
                             className={`p-2.5 flex items-center justify-between gap-2.5 transition-colors ${
-                              isAlreadyStaged ? 'bg-emerald-50/60' : 'hover:bg-slate-50/80'
+                              isAlreadyStaged ? 'bg-emerald-500/10' : 'hover:bg-subtle/50'
                             }`}
                           >
                             <div className="flex items-center gap-2.5 min-w-0">
-                              <div className="w-8 h-8 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center font-mono text-[10px] font-extrabold text-slate-700 shrink-0">
+                              <div className="w-8 h-8 rounded-lg bg-subtle border border-border-default flex items-center justify-center font-mono text-[10px] font-extrabold text-text-secondary shrink-0">
                                 O₂
                               </div>
                               <div className="min-w-0">
                                 <div className="flex items-center gap-1.5 flex-wrap">
-                                  <span className="font-mono text-xs font-extrabold text-slate-900 truncate">
+                                  <span className="font-mono text-xs font-extrabold text-text-primary truncate">
                                     {cyl.serial_number}
                                   </span>
                                   {isAtSupplier && (
-                                    <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-100 text-amber-800 border border-amber-200 shrink-0">
+                                    <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-100 text-amber-400 border border-amber-500/20 shrink-0">
                                       {language === 'ms' ? 'Di Pembekal' : 'At Supplier'}
                                     </span>
                                   )}
-                                  <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-slate-100 text-slate-600 border border-slate-200 shrink-0">
+                                  <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-subtle text-text-secondary border border-border-default shrink-0">
                                     {cyl.status}
                                   </span>
                                 </div>
-                                <span className="text-[10px] text-slate-500 font-medium block truncate">
+                                <span className="text-[10px] text-text-muted font-medium block truncate">
                                   {displayName} • {language === 'ms' ? 'Lokasi:' : 'Loc:'} {extractLocationName(cyl.current_location, '-')}
                                 </span>
                               </div>
@@ -874,9 +874,9 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
                                   addCylinderToStaging(cyl);
                                 }
                               }}
-                              className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition-all shrink-0 cursor-pointer ${
+                              className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition-[transform,opacity,box-shadow,border-color] shrink-0 cursor-pointer ${
                                 isAlreadyStaged
-                                  ? 'bg-emerald-100 text-emerald-800 border border-emerald-300 hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200'
+                                  ? 'bg-emerald-100 text-emerald-400 border border-emerald-300 hover:bg-rose-500/10 hover:text-rose-700 hover:border-rose-500/20'
                                   : 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'
                               }`}
                             >
@@ -904,7 +904,7 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
               {ingestMode === 'qr' && (
                 <div className="flex-1 min-h-0 overflow-y-auto space-y-3 pr-1">
                   {/* Camera View / Activator */}
-                  <div className="border border-slate-200 rounded-xl p-3 bg-white flex flex-col items-center justify-center min-h-[170px] relative overflow-hidden">
+                  <div className="border border-border-default rounded-xl p-3 bg-surface flex flex-col items-center justify-center min-h-[170px] relative overflow-hidden">
                     {cameraActive ? (
                       <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-black flex items-center justify-center">
                         <video
@@ -915,7 +915,7 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
                           className="w-full h-full object-cover"
                         />
                         <div
-                          className={`absolute inset-4 border-2 border-dashed rounded-lg transition-all duration-300 pointer-events-none ${
+                          className={`absolute inset-4 border-2 border-dashed rounded-lg transition-[transform,opacity,box-shadow,border-color] duration-300 pointer-events-none ${
                             scanSuccessFlash ? 'border-emerald-400 bg-emerald-500/20' : 'border-white/70'
                           }`}
                         >
@@ -931,7 +931,7 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
                         <button
                           type="button"
                           onClick={stopCamera}
-                          className="absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-black/80 text-white rounded-lg transition-all text-xs z-10"
+                          className="absolute top-2 right-2 p-1.5 bg-black/60 hover:bg-black/80 text-white rounded-lg transition-[transform,opacity,box-shadow,border-color] text-xs z-10"
                           title={language === 'ms' ? 'Tutup Kamera' : 'Close Camera'}
                         >
                           <X className="w-3.5 h-3.5" />
@@ -943,10 +943,10 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
                           <Camera className="w-5 h-5" />
                         </div>
                         <div>
-                          <h4 className="text-xs font-bold text-slate-800">
+                          <h4 className="text-xs font-bold text-text-primary">
                             {language === 'ms' ? 'Imbas Kod QR Kamera Langsung' : 'Live Camera QR Scanner'}
                           </h4>
-                          <p className="text-[10px] text-slate-500">
+                          <p className="text-[10px] text-text-muted">
                             {language === 'ms'
                               ? 'Aktifkan kamera untuk imbas silinder'
                               : 'Enable camera to scan cylinders'}
@@ -956,7 +956,7 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
                           type="button"
                           onClick={startCamera}
                           disabled={isStartingCamera}
-                          className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 mx-auto transition-all shadow-sm"
+                          className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 mx-auto transition-[transform,opacity,box-shadow,border-color] shadow-sm"
                         >
                           {isStartingCamera ? (
                             <>
@@ -975,15 +975,15 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
                   </div>
 
                   {/* Manual Barcode / Scanner Gun Entry */}
-                  <div className="border border-slate-200 rounded-xl p-3 bg-white space-y-2.5">
+                  <div className="border border-border-default rounded-xl p-3 bg-surface space-y-2.5">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-extrabold uppercase text-slate-600">
+                      <span className="text-[10px] font-extrabold uppercase text-text-secondary">
                         {language === 'ms' ? 'Kemasukan Manual / Barcode Gun' : 'Manual / Scanner Gun Entry'}
                       </span>
                       <button
                         type="button"
                         onClick={() => setSoundEnabled(!soundEnabled)}
-                        className="text-slate-500 hover:text-slate-800 p-1 text-xs flex items-center gap-1"
+                        className="text-text-muted hover:text-text-primary p-1 text-xs flex items-center gap-1"
                         title="Toggle sound"
                       >
                         {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-emerald-600" /> : <VolumeX className="w-3.5 h-3.5" />}
@@ -1004,12 +1004,12 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
                         placeholder="cth: saboxy-297058 / P101-F-0199"
                         value={manualQrInput}
                         onChange={e => setManualQrInput(e.target.value)}
-                        className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-mono font-bold text-slate-800 focus:outline-none focus:border-emerald-500 uppercase focus:bg-white"
+                        className="flex-1 bg-subtle/50 border border-border-default rounded-xl px-3 py-1.5 text-xs font-mono font-bold text-text-primary focus:outline-none focus:border-emerald-500 uppercase focus:bg-surface"
                       />
                       <button
                         type="submit"
                         disabled={!manualQrInput.trim()}
-                        className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold transition-all shadow-sm shrink-0"
+                        className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-xl text-xs font-bold transition-[transform,opacity,box-shadow,border-color] shadow-sm shrink-0"
                       >
                         <Plus className="w-3.5 h-3.5" />
                       </button>
@@ -1018,7 +1018,7 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
 
                   {/* Form to Register Brand-New Scanned Cylinder */}
                   {showNewCylForm && (
-                    <div className="p-3 bg-teal-50/80 border border-teal-200 rounded-xl space-y-2 animate-in fade-in">
+                    <div className="p-3 bg-accent-base/10 border border-accent-base/20 rounded-xl space-y-2 animate-in fade-in">
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-extrabold text-teal-900 flex items-center gap-1.5">
                           <Barcode className="w-4 h-4 text-teal-700" />
@@ -1027,7 +1027,7 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
                         <button
                           type="button"
                           onClick={() => setShowNewCylForm(false)}
-                          className="text-slate-400 hover:text-slate-600 p-1"
+                          className="text-slate-400 hover:text-text-secondary p-1"
                         >
                           <X className="w-3.5 h-3.5" />
                         </button>
@@ -1042,13 +1042,13 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
                           type="text"
                           value={newCylSerial}
                           onChange={e => setNewCylSerial(e.target.value)}
-                          className="w-full bg-white border border-teal-300 rounded-xl px-2.5 py-1.5 text-xs font-mono font-bold text-slate-800 uppercase focus:outline-none"
+                          className="w-full bg-surface border border-teal-300 rounded-xl px-2.5 py-1.5 text-xs font-mono font-bold text-text-primary uppercase focus:outline-none"
                         />
                         <div className="flex gap-2">
                           <select
                             value={newCylComboId}
                             onChange={e => setNewCylComboId(e.target.value)}
-                            className="flex-1 bg-white border border-teal-300 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-800 focus:outline-none"
+                            className="flex-1 bg-surface border border-teal-300 rounded-xl px-2.5 py-1.5 text-xs font-bold text-text-primary focus:outline-none"
                           >
                             {combos.map(c => (
                               <option key={c.id} value={c.id}>
@@ -1059,7 +1059,7 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
                           <button
                             type="button"
                             onClick={handleAddNewCylinder}
-                            className="px-3 py-1.5 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-xs font-extrabold transition-all shadow-sm shrink-0"
+                            className="px-3 py-1.5 bg-teal-700 hover:bg-teal-800 text-white rounded-xl text-xs font-extrabold transition-[transform,opacity,box-shadow,border-color] shadow-sm shrink-0"
                           >
                             {language === 'ms' ? 'Daftar' : 'Register'}
                           </button>
@@ -1072,17 +1072,17 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
             </div>
 
             {/* COLUMN 2 (RIGHT): Cylinders to be Received (Already Selected) */}
-            <div className="flex flex-col border border-slate-200/90 rounded-2xl bg-white p-4 h-[420px] lg:h-[490px] shadow-sm">
+            <div className="flex flex-col border border-border-default rounded-2xl bg-surface p-4 h-[420px] lg:h-[490px] shadow-sm">
               {/* Header */}
-              <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-200 shrink-0">
+              <div className="flex items-center justify-between pb-3 mb-3 border-b border-border-default shrink-0">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
                     <Layers className="w-4 h-4" />
                   </div>
                   <div>
-                    <h3 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                    <h3 className="text-xs font-extrabold text-text-primary uppercase tracking-wider flex items-center gap-2">
                       <span>{language === 'ms' ? 'Silinder Dipilih' : 'Cylinders to be Received'}</span>
-                      <span className="px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-100 text-emerald-800 border border-emerald-200 tabular-nums">
+                      <span className="px-2 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-100 text-emerald-400 border border-emerald-500/20 tabular-nums">
                         {stagedCylinders.length}
                       </span>
                     </h3>
@@ -1093,7 +1093,7 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
                   <button
                     type="button"
                     onClick={() => setStagedCylinders([])}
-                    className="text-[11px] font-bold text-rose-600 hover:text-rose-800 hover:bg-rose-50 px-2 py-1 rounded-lg transition-colors cursor-pointer"
+                    className="text-[11px] font-bold text-rose-600 hover:text-rose-400 hover:bg-rose-500/10 px-2 py-1 rounded-lg transition-colors cursor-pointer"
                   >
                     {language === 'ms' ? 'Kosongkan Semua' : 'Clear All'}
                   </button>
@@ -1101,14 +1101,14 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
               </div>
 
               {/* Staged Cylinders List */}
-              <div className="flex-1 min-h-0 overflow-y-auto rounded-xl border border-slate-200 bg-slate-50/40 divide-y divide-slate-100 shadow-inner">
+              <div className="flex-1 min-h-0 overflow-y-auto rounded-xl border border-border-default bg-subtle/50 divide-y divide-border-subtle shadow-inner">
                 {stagedCylinders.length === 0 ? (
                   <div className="h-full flex flex-col items-center justify-center p-6 text-center text-slate-400 text-xs font-semibold space-y-2">
-                    <div className="w-12 h-12 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-2xl bg-subtle text-slate-400 flex items-center justify-center">
                       <Layers className="w-6 h-6" />
                     </div>
                     <div>
-                      <p className="font-bold text-slate-600">
+                      <p className="font-bold text-text-secondary">
                         {language === 'ms' ? 'Belum ada silinder dipilih' : 'No cylinders selected yet'}
                       </p>
                       <p className="text-[11px] text-slate-400 font-normal mt-0.5 max-w-[240px]">
@@ -1120,36 +1120,36 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
                   </div>
                 ) : (
                   stagedCylinders.map((cyl, idx) => (
-                    <div key={cyl.id} className="p-2.5 flex items-center justify-between gap-2.5 hover:bg-white transition-colors">
+                    <div key={cyl.id} className="p-2.5 flex items-center justify-between gap-2.5 hover:bg-surface transition-colors">
                       <div className="flex items-center gap-2.5 min-w-0">
                         <span className="text-[10px] font-mono font-bold text-slate-400 w-5 text-center shrink-0">
                           #{idx + 1}
                         </span>
                         <div className="min-w-0">
                           <div className="flex items-center gap-1.5">
-                            <span className="font-mono text-xs font-extrabold text-slate-900 truncate">
+                            <span className="font-mono text-xs font-extrabold text-text-primary truncate">
                               {cyl.serial_number}
                             </span>
                             {cyl.isNew && (
-                              <span className="px-1.5 py-0.2 rounded text-[9px] font-extrabold bg-teal-100 text-teal-800 border border-teal-200 shrink-0">
+                              <span className="px-1.5 py-0.2 rounded text-[9px] font-extrabold bg-teal-100 text-teal-800 border border-accent-base/20 shrink-0">
                                 NEW
                               </span>
                             )}
                           </div>
-                          <span className="text-[10px] text-slate-500 font-medium block truncate">
+                          <span className="text-[10px] text-text-muted font-medium block truncate">
                             {cyl.type_name} • {language === 'ms' ? 'Dari:' : 'From:'} {extractLocationName(cyl.from_location, 'Supplier')}
                           </span>
                         </div>
                       </div>
 
                       <div className="flex items-center gap-2 shrink-0">
-                        <span className="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <span className="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-extrabold bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
                           {language === 'ms' ? 'Ke: Stor (Tersedia)' : 'To: Store (Available)'}
                         </span>
                         <button
                           type="button"
                           onClick={() => removeCylinderFromStaging(cyl.id)}
-                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all cursor-pointer"
+                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-500/10 rounded-lg transition-[transform,opacity,box-shadow,border-color] cursor-pointer"
                           title="Remove"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -1161,7 +1161,7 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
               </div>
 
               {/* Staged Summary Footer */}
-              <div className="pt-2.5 mt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] font-bold text-slate-500 shrink-0">
+              <div className="pt-2.5 mt-2.5 border-t border-border-subtle flex items-center justify-between text-[11px] font-bold text-text-muted shrink-0">
                 <span>{language === 'ms' ? 'Jumlah Silinder Dipilih:' : 'Total Selected Cylinders:'}</span>
                 <span className="text-emerald-700 font-extrabold tabular-nums">
                   {stagedCylinders.length} {language === 'ms' ? 'silinder' : 'cylinders'}
@@ -1172,7 +1172,7 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
 
           {/* Remarks Input */}
           <div>
-            <label className="text-[11px] font-extrabold uppercase text-slate-600 tracking-wider block mb-1.5">
+            <label className="text-[11px] font-extrabold uppercase text-text-secondary tracking-wider block mb-1.5">
               {language === 'ms' ? 'Catatan / Nota Penerimaan' : 'Remarks / Reception Notes'}
             </label>
             <input
@@ -1184,13 +1184,13 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
               }
               value={remarks}
               onChange={e => setRemarks(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-800 focus:outline-none focus:border-emerald-500"
+              className="w-full bg-subtle/50 border border-border-default rounded-xl px-3 py-2 text-xs text-text-primary focus:outline-none focus:border-emerald-500"
             />
           </div>
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between gap-3">
+        <div className="p-4 border-t border-border-subtle bg-subtle/50 flex items-center justify-between gap-3">
           <button
             type="button"
             onClick={() => {
@@ -1198,7 +1198,7 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
               onClose();
             }}
             disabled={isSubmitting}
-            className="px-4 py-2.5 text-xs font-bold text-slate-600 hover:text-slate-800 hover:bg-slate-200/60 rounded-xl transition-all"
+            className="px-4 py-2.5 text-xs font-bold text-text-secondary hover:text-text-primary hover:bg-subtle rounded-xl transition-[transform,opacity,box-shadow,border-color]"
           >
             {language === 'ms' ? 'Batal' : 'Cancel'}
           </button>
@@ -1207,7 +1207,7 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
             type="button"
             onClick={handleSubmit}
             disabled={stagedCylinders.length === 0 || isSubmitting}
-            className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 disabled:opacity-40 text-white rounded-xl text-xs font-extrabold shadow-md shadow-emerald-600/20 flex items-center gap-2 transition-all active:scale-95 cursor-pointer"
+            className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 disabled:opacity-40 text-white rounded-xl text-xs font-extrabold shadow-md shadow-emerald-600/20 flex items-center gap-2 transition-[transform,opacity,box-shadow,border-color] active:scale-95 cursor-pointer"
           >
             {isSubmitting ? (
               <>

@@ -123,49 +123,49 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
     switch (status) {
       case 'pending':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800 border border-amber-200">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-400 border border-amber-500/20">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
             Pending Approval
           </span>
         );
       case 'approved':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-100 text-purple-800 border border-purple-200">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-purple-100 text-indigo-400 border border-indigo-500/20">
             <span className="w-1.5 h-1.5 rounded-full bg-purple-500" />
             Approved
           </span>
         );
       case 'rejected':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-100 text-rose-800 border border-rose-200">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-100 text-rose-400 border border-rose-500/20">
             <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
             Rejected
           </span>
         );
       case 'issued':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 border border-blue-200">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-400 border border-blue-500/20">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
             Issued
           </span>
         );
       case 'completed':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-400 border border-emerald-500/20">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
             Completed
           </span>
         );
       case 'cancelled':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-800 border border-slate-200">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-subtle text-text-primary border border-border-default">
             <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
             Cancelled
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-800">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-subtle text-text-primary">
             {status}
           </span>
         );
@@ -175,11 +175,11 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
   const getPriorityBadge = (priority: string) => {
     switch (priority) {
       case 'urgent':
-        return <span className="text-xs font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-100">URGENT</span>;
+        return <span className="text-xs font-bold text-amber-600 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-100">URGENT</span>;
       case 'emergency':
-        return <span className="text-xs font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-100 animate-pulse">EMERGENCY</span>;
+        return <span className="text-xs font-bold text-rose-600 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-100 animate-pulse">EMERGENCY</span>;
       default:
-        return <span className="text-xs font-medium text-slate-500">Normal</span>;
+        return <span className="text-xs font-medium text-text-muted">Normal</span>;
     }
   };
 
@@ -189,9 +189,9 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
   };
 
   return (
-    <div className="bg-white/70 backdrop-blur-xl rounded-2xl border border-slate-200 shadow-xl overflow-hidden mt-6">
+    <div className="bg-surface rounded-2xl border border-border-default shadow-xs overflow-hidden mt-6">
       {/* Header Filters */}
-      <div className="p-6 border-b border-slate-200 bg-slate-50/50">
+      <div className="p-6 border-b border-border-default bg-subtle/40">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3">
           {/* Search Box */}
           <div className="relative col-span-1 md:col-span-2">
@@ -201,7 +201,7 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
               placeholder="Cari ID, fasiliti luar (cth: Beaufort), pemohon..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-xl bg-white text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+              className="w-full pl-10 pr-4 py-2 border border-border-default rounded-xl bg-surface text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-accent-base/20 focus:border-accent-base transition-[transform,opacity,box-shadow,border-color]"
             />
           </div>
 
@@ -210,7 +210,7 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
             <select
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all appearance-none font-semibold cursor-pointer"
+              className="w-full px-3 py-2 border border-border-default rounded-xl bg-surface text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-base/20 focus:border-accent-base transition-[transform,opacity,box-shadow,border-color] appearance-none font-semibold cursor-pointer"
             >
               <option value="all">Semua Jenis Inden</option>
               <option value="internal">🏢 Intra-Facility (Dalaman)</option>
@@ -226,7 +226,7 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
             <select
               value={selectedDept}
               onChange={(e) => setSelectedDept(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none cursor-pointer"
+              className="w-full px-3 py-2 border border-border-default rounded-xl bg-surface text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-base/20 focus:border-accent-base transition-[transform,opacity,box-shadow,border-color] appearance-none cursor-pointer"
             >
               <option value="all">Semua Jabatan</option>
               {clinicalDepartments.map((dept) => (
@@ -242,7 +242,7 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
             <select
               value={selectedStatus}
               onChange={(e) => setSelectedStatus(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all appearance-none cursor-pointer"
+              className="w-full px-3 py-2 border border-border-default rounded-xl bg-surface text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-accent-base/20 focus:border-accent-base transition-[transform,opacity,box-shadow,border-color] appearance-none cursor-pointer"
             >
               <option value="all">Semua Status</option>
               <option value="pending">Pending Approval</option>
@@ -260,15 +260,15 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="w-full px-2 py-1.5 border border-slate-200 rounded-xl bg-white text-xs text-slate-600 focus:outline-none"
+              className="w-full px-2 py-1.5 border border-border-default rounded-xl bg-surface text-xs text-text-primary focus:outline-none"
               title="Start Date"
             />
-            <span className="text-slate-400 text-xs">to</span>
+            <span className="text-text-muted font-bold text-xs">to</span>
             <input
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="w-full px-2 py-1.5 border border-slate-200 rounded-xl bg-white text-xs text-slate-600 focus:outline-none"
+              className="w-full px-2 py-1.5 border border-border-default rounded-xl bg-surface text-xs text-text-primary focus:outline-none"
               title="End Date"
             />
           </div>
@@ -282,7 +282,7 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
             <div
               key={req.id}
               onClick={() => onViewDetails(req)}
-              className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer space-y-4"
+              className="bg-surface rounded-2xl border border-border-default p-5 shadow-xs hover:border-border-strong transition-[transform,opacity,box-shadow,border-color] duration-200 cursor-pointer space-y-4"
             >
               {/* Header: ID & Status */}
               <div className="flex justify-between items-start">
@@ -310,10 +310,10 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
               </div>
 
               {/* Department */}
-              <div className="bg-slate-50/80 rounded-xl p-3 border border-slate-100 flex items-center justify-between">
+              <div className="bg-subtle/50 rounded-xl p-3 border border-border-subtle flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
+                    <span className="text-[10px] text-text-secondary font-bold font-bold uppercase tracking-wider block">
                       {req.is_external_facility 
                         ? (req.external_operation === 'return' || req.manual_requester_name?.toLowerCase().includes('return') || req.manual_requester_name?.toLowerCase().includes('pulang')
                             ? 'Inter-Facility (Return)'
@@ -324,25 +324,25 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
                     </span>
                     {req.is_external_facility ? (
                       req.external_operation === 'return' || req.manual_requester_name?.toLowerCase().includes('return') || req.manual_requester_name?.toLowerCase().includes('pulang') ? (
-                        <span className="px-1.5 py-0.2 rounded text-[9px] bg-purple-100 text-purple-700 font-extrabold uppercase border border-purple-200">
+                        <span className="px-1.5 py-0.2 rounded text-[9px] bg-purple-100 text-purple-700 font-extrabold uppercase border border-indigo-500/20">
                           📤 Return
                         </span>
                       ) : req.external_operation === 'receive' || req.indent_direction === 'inbound' ? (
-                        <span className="px-1.5 py-0.2 rounded text-[9px] bg-indigo-100 text-indigo-700 font-extrabold uppercase border border-indigo-200">
+                        <span className="px-1.5 py-0.2 rounded text-[9px] bg-indigo-100 text-indigo-700 font-extrabold uppercase border border-indigo-500/20">
                           📥 Receive
                         </span>
                       ) : (
-                        <span className="px-1.5 py-0.2 rounded text-[9px] bg-blue-100 text-blue-700 font-extrabold uppercase border border-blue-200">
+                        <span className="px-1.5 py-0.2 rounded text-[9px] bg-blue-100 text-blue-700 font-extrabold uppercase border border-blue-500/20">
                           📋 Request
                         </span>
                       )
                     ) : (
-                      <span className="px-1.5 py-0.2 rounded text-[9px] bg-teal-100 text-teal-800 font-extrabold uppercase border border-teal-200">
+                      <span className="px-1.5 py-0.2 rounded text-[9px] bg-teal-100 text-teal-800 font-extrabold uppercase border border-accent-base/20">
                         🏢 Intra
                       </span>
                     )}
                   </div>
-                  <span className="font-semibold text-slate-800 text-xs flex items-center gap-1 mt-0.5 flex-wrap">
+                  <span className="font-bold text-text-primary text-xs flex items-center gap-1 mt-0.5 flex-wrap">
                     {req.is_external_facility ? (
                       req.indent_direction === 'inbound' ? (
                         <>
@@ -363,7 +363,7 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
                   </span>
                 </div>
                 {req.request_type === 'manual_issue' && !req.is_external_facility && (
-                  <span className="px-2 py-0.5 rounded text-[9px] bg-slate-100 text-slate-600 font-bold uppercase tracking-wide">
+                  <span className="px-2 py-0.5 rounded text-[9px] bg-subtle text-text-secondary font-bold uppercase tracking-wide">
                     Manual
                   </span>
                 )}
@@ -371,11 +371,11 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
 
               {/* Items Summary */}
               <div>
-                <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mb-1.5">Cylinders</span>
+                <span className="text-[10px] text-text-secondary font-bold font-bold uppercase tracking-wider block mb-1.5">Cylinders</span>
                 <div className="flex flex-wrap gap-1.5">
                   {req.items && req.items.length > 0 ? (
                     req.items.map((itm, idx) => (
-                      <span key={idx} className="bg-slate-50 border border-slate-200/60 text-slate-700 text-xs font-bold px-2.5 py-1 rounded-xl">
+                      <span key={idx} className="bg-subtle/50 border border-border-default text-text-secondary text-xs font-bold px-2.5 py-1 rounded-xl">
                         {itm.quantity_requested}x {itm.size_code}
                       </span>
                     ))
@@ -386,12 +386,12 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
               </div>
 
               {/* Footer: Requester & Issuer */}
-              <div className="grid grid-cols-2 gap-4 pt-3 border-t border-slate-100 text-xs">
+              <div className="grid grid-cols-2 gap-4 pt-3 border-t border-border-subtle text-xs">
                 <div>
-                  <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Requester</span>
+                  <span className="text-[9px] text-text-secondary font-bold font-bold uppercase tracking-wider block">Requester</span>
                   {req.requester ? (
                     <div className="mt-0.5">
-                      <div className="font-semibold text-slate-700">{req.requester.full_name}</div>
+                      <div className="font-bold text-text-primary">{req.requester.full_name}</div>
                       <div className="text-[10px] text-slate-400">{req.requester.jawatan}</div>
                     </div>
                   ) : (
@@ -399,10 +399,10 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
                   )}
                 </div>
                 <div>
-                  <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">Issuer</span>
+                  <span className="text-[9px] text-text-secondary font-bold font-bold uppercase tracking-wider block">Issuer</span>
                   {req.issuer ? (
                     <div className="mt-0.5">
-                      <div className="font-semibold text-slate-700">{req.issuer.full_name}</div>
+                      <div className="font-bold text-text-primary">{req.issuer.full_name}</div>
                       <div className="text-[10px] text-slate-400">{req.issuer.jawatan}</div>
                     </div>
                   ) : (
@@ -412,14 +412,14 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+              <div className="pt-3 border-t border-border-subtle flex items-center justify-between gap-2">
                 {req.status === 'pending' ? (
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       onViewDetails(req);
                     }}
-                    className="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm"
+                    className="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition-[transform,opacity,box-shadow,border-color] flex items-center gap-1.5 shadow-sm"
                   >
                     <CheckCircle className="w-4 h-4" /> Review & Approve
                   </button>
@@ -429,7 +429,7 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
                       e.stopPropagation();
                       onViewDetails(req);
                     }}
-                    className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5"
+                    className="px-3.5 py-2 bg-subtle hover:bg-subtle text-text-secondary rounded-xl text-xs font-semibold transition-[transform,opacity,box-shadow,border-color] flex items-center gap-1.5"
                   >
                     <Eye className="w-4 h-4" /> View Details
                   </button>
@@ -440,7 +440,7 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
                       e.stopPropagation();
                       onPrint(req);
                     }}
-                    className="px-3 py-2 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5"
+                    className="px-3 py-2 border border-border-default hover:bg-subtle/50 text-text-secondary rounded-xl text-xs font-semibold transition-[transform,opacity,box-shadow,border-color] flex items-center gap-1.5"
                   >
                     <Printer className="w-4 h-4" /> Print Slip
                   </button>
@@ -459,7 +459,7 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
       <div className="hidden lg:block overflow-x-auto">
         <table className="w-full border-collapse text-left">
           <thead>
-            <tr className="border-b border-slate-200 text-xs font-semibold text-slate-400 uppercase tracking-wider bg-slate-50/20">
+            <tr className="border-b border-border-default text-xs font-bold text-text-secondary uppercase tracking-wider bg-subtle/50">
               <th className="px-6 py-4">Request ID</th>
               <th className="px-6 py-4">Department</th>
               <th className="px-6 py-4">Requester</th>
@@ -470,17 +470,17 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
               <th className="px-6 py-4 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100 text-sm text-slate-600">
+          <tbody className="divide-y divide-border-default text-sm text-text-secondary">
             {paginatedRequests.length > 0 ? (
               paginatedRequests.map((req) => (
                 <tr 
                   key={req.id} 
                   onClick={() => onViewDetails(req)}
-                  className="hover:bg-slate-50/60 transition-colors cursor-pointer"
+                  className="hover:bg-subtle/60 transition-colors cursor-pointer"
                 >
                   {/* Request ID */}
                   <td className="px-6 py-4">
-                    <span className="font-mono font-bold text-blue-600 hover:text-blue-800 hover:underline">
+                    <span className="font-mono font-bold text-blue-600 hover:text-blue-400 hover:underline">
                       {req.request_number}
                     </span>
                     {req.priority && req.priority !== 'normal' && (
@@ -494,29 +494,29 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
                       <div className="flex flex-col gap-0.5">
                         <div className="flex items-center gap-1.5 flex-wrap">
                           {req.external_operation === 'return' || req.manual_requester_name?.toLowerCase().includes('return') || req.manual_requester_name?.toLowerCase().includes('pulang') ? (
-                            <span className="px-1.5 py-0.5 rounded text-[10px] bg-purple-100 text-purple-700 font-extrabold uppercase border border-purple-200">
+                            <span className="px-1.5 py-0.5 rounded text-[10px] bg-purple-100 text-purple-700 font-extrabold uppercase border border-indigo-500/20">
                               📤 Return
                             </span>
                           ) : req.external_operation === 'receive' || req.indent_direction === 'inbound' ? (
-                            <span className="px-1.5 py-0.5 rounded text-[10px] bg-indigo-100 text-indigo-700 font-extrabold uppercase border border-indigo-200">
+                            <span className="px-1.5 py-0.5 rounded text-[10px] bg-indigo-100 text-indigo-700 font-extrabold uppercase border border-indigo-500/20">
                               📥 Receive
                             </span>
                           ) : (
-                            <span className="px-1.5 py-0.5 rounded text-[10px] bg-blue-100 text-blue-700 font-extrabold uppercase border border-blue-200">
+                            <span className="px-1.5 py-0.5 rounded text-[10px] bg-blue-100 text-blue-700 font-extrabold uppercase border border-blue-500/20">
                               📋 Request
                             </span>
                           )}
-                          <span className="font-bold text-slate-800 text-xs">
+                          <span className="font-bold text-text-primary text-xs">
                             {req.department?.department_name || 'Farmasi Logistik'}
                           </span>
                           <span className="text-indigo-500 font-extrabold text-xs">
                             {req.indent_direction === 'inbound' ? '⬅' : '➔'}
                           </span>
-                          <span className="font-extrabold text-indigo-700 bg-indigo-50 px-1.5 py-0.5 rounded text-xs border border-indigo-100">
+                          <span className="font-extrabold text-indigo-700 bg-indigo-500/10 px-1.5 py-0.5 rounded text-xs border border-indigo-100">
                             {req.external_facility_name || 'Fasiliti Luar'}
                           </span>
                         </div>
-                        <span className="text-[10px] text-slate-500 font-semibold tracking-wide flex items-center gap-1">
+                        <span className="text-[10px] text-text-muted font-semibold tracking-wide flex items-center gap-1">
                           {req.external_operation === 'return' || req.manual_requester_name?.toLowerCase().includes('return') || req.manual_requester_name?.toLowerCase().includes('pulang')
                             ? `Pemulangan ke ${req.external_facility_name || 'Fasiliti Luar'}`
                             : req.external_operation === 'receive' || req.indent_direction === 'inbound'
@@ -526,16 +526,16 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
                       </div>
                     ) : (
                       <div className="flex items-center gap-1.5">
-                        <span className="px-1.5 py-0.5 rounded text-[10px] bg-teal-50 text-teal-800 font-bold border border-teal-200">
+                        <span className="px-1.5 py-0.5 rounded text-[10px] bg-accent-base/10 text-teal-800 font-bold border border-accent-base/20">
                           🏢 Intra
                         </span>
-                        <span className="font-semibold text-slate-700">
+                        <span className="font-bold text-text-primary">
                           {req.department?.department_name || 'Pharmacy Store'}
                         </span>
                       </div>
                     )}
                     {req.request_type === 'manual_issue' && !req.is_external_facility && (
-                      <span className="ml-1.5 px-1.5 py-0.5 rounded text-[10px] bg-slate-100 text-slate-500 uppercase tracking-wider font-semibold">
+                      <span className="ml-1.5 px-1.5 py-0.5 rounded text-[10px] bg-subtle text-text-muted uppercase tracking-wider font-semibold">
                         Manual
                       </span>
                     )}
@@ -545,11 +545,11 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
                   <td className="px-6 py-4">
                     {req.requester ? (
                       <div>
-                        <div className="font-medium text-slate-700">{req.requester.full_name}</div>
-                        <div className="text-xs text-slate-400">{req.requester.jawatan}</div>
+                        <div className="font-bold text-text-primary">{req.requester.full_name}</div>
+                        <div className="text-xs text-text-muted font-medium">{req.requester.jawatan}</div>
                       </div>
                     ) : (
-                      <span className="text-slate-400 font-italic">Manual Issue</span>
+                      <span className="text-text-muted italic font-medium">Manual Issue</span>
                     )}
                   </td>
 
@@ -557,11 +557,11 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
                   <td className="px-6 py-4">
                     {req.issuer ? (
                       <div>
-                        <div className="font-medium text-slate-700">{req.issuer.full_name}</div>
-                        <div className="text-xs text-slate-400">{req.issuer.jawatan}</div>
+                        <div className="font-bold text-text-primary">{req.issuer.full_name}</div>
+                        <div className="text-xs text-text-muted font-medium">{req.issuer.jawatan}</div>
                       </div>
                     ) : (
-                      <span className="text-slate-400 italic">Pending issue</span>
+                      <span className="text-text-muted italic font-medium">Pending issue</span>
                     )}
                   </td>
 
@@ -570,7 +570,7 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
                     <div className="flex flex-col gap-0.5">
                       {req.items && req.items.length > 0 ? (
                         req.items.map((itm, idx) => (
-                          <div key={idx} className="font-semibold text-slate-700 text-xs">
+                          <div key={idx} className="font-bold text-text-primary text-xs">
                             {itm.quantity_requested}x {itm.size_code}
                           </div>
                         ))
@@ -581,7 +581,7 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
                   </td>
 
                   {/* Date/Time */}
-                  <td className="px-6 py-4 text-xs font-medium">
+                  <td className="px-6 py-4 text-xs font-semibold text-text-secondary">
                     {new Date(req.request_date).toLocaleString('en-GB', {
                       day: '2-digit',
                       month: 'short',
@@ -601,7 +601,7 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
                       {req.status === 'pending' ? (
                         <button
                           onClick={() => onViewDetails(req)}
-                          className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5"
+                          className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition-[transform,opacity,box-shadow,border-color] shadow-sm flex items-center gap-1.5"
                           title="Review & Approve Request"
                         >
                           <CheckCircle className="w-3.5 h-3.5" /> Review & Approve
@@ -609,7 +609,7 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
                       ) : (
                         <button
                           onClick={() => onViewDetails(req)}
-                          className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5"
+                          className="px-2.5 py-1.5 bg-subtle hover:bg-subtle text-text-secondary rounded-xl text-xs font-semibold transition-[transform,opacity,box-shadow,border-color] flex items-center gap-1.5"
                           title="View Request Details"
                         >
                           <Eye className="w-3.5 h-3.5" /> Details
@@ -618,7 +618,7 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
                       {((req.status || '').toLowerCase() === 'completed' || (req.status || '').toLowerCase() === 'complete') && (
                         <button
                           onClick={() => onPrint(req)}
-                          className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-xl transition-all border border-slate-200/60 bg-white"
+                          className="p-2 text-slate-400 hover:text-text-secondary hover:bg-subtle rounded-xl transition-[transform,opacity,box-shadow,border-color] border border-border-default bg-surface"
                           title="Print Issue Slip"
                         >
                           <Printer className="w-3.5 h-3.5" />
@@ -627,7 +627,7 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
                       {onDelete && (
                         <button
                           onClick={() => onDelete(req)}
-                          className="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition-all border border-rose-200/70 bg-white shadow-2xs hover:shadow-xs active:scale-95"
+                          className="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-500/10 rounded-xl transition-[transform,opacity,box-shadow,border-color] border border-rose-500/20 bg-surface shadow-elevation-1 hover:shadow-xs active:scale-95"
                           title="Delete Requisition Record (Password Protected)"
                         >
                           <Trash2 className="w-3.5 h-3.5 text-rose-500" />
@@ -639,7 +639,7 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
               ))
             ) : (
               <tr>
-                <td colSpan={8} className="px-6 py-12 text-center text-slate-400">
+                <td colSpan={8} className="px-6 py-12 text-center text-text-muted font-medium">
                   No requests found matching filters.
                 </td>
               </tr>
@@ -649,23 +649,23 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
       </div>
 
       {/* Pagination Footer */}
-      <div className="p-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500 bg-white">
+      <div className="p-4 border-t border-border-subtle flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-text-muted bg-surface">
         {/* Record count info */}
         <div className="font-medium">
           {filteredRequests.length === 0 ? (
             <span>Showing 0 of 0 requests</span>
           ) : isAll ? (
             <span>
-              Showing all <span className="font-bold text-slate-800">{filteredRequests.length}</span> requests
+              Showing all <span className="font-bold text-text-primary">{filteredRequests.length}</span> requests
             </span>
           ) : (
             <span>
               Showing{' '}
-              <span className="font-bold text-slate-800">
+              <span className="font-bold text-text-primary">
                 {(currentPage - 1) * effectivePageSize + 1}
               </span>{' '}
               to{' '}
-              <span className="font-bold text-slate-800">
+              <span className="font-bold text-text-primary">
                 {Math.min(currentPage * effectivePageSize, filteredRequests.length)}
               </span>{' '}
               of{' '}
@@ -678,7 +678,7 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
         <div className="flex items-center gap-2">
           <span className="text-slate-400 font-medium">Papar / Show:</span>
           {/* Desktop & Tablet Pill Buttons */}
-          <div className="hidden sm:inline-flex items-center p-0.5 bg-slate-100 rounded-xl border border-slate-200/80 shadow-2xs">
+          <div className="hidden sm:inline-flex items-center p-0.5 bg-subtle rounded-xl border border-border-default shadow-elevation-1">
             {([5, 10, 20, 50, 'all'] as const).map((opt) => (
               <button
                 key={opt}
@@ -687,10 +687,10 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
                   setPageSize(opt);
                   setCurrentPage(1);
                 }}
-                className={`px-3 py-1 text-xs font-bold rounded-lg transition-all ${
+                className={`px-3 py-1 text-xs font-bold rounded-lg transition-[transform,opacity,box-shadow,border-color] ${
                   pageSize === opt
-                    ? 'bg-white text-blue-600 shadow-xs border border-slate-200/60'
-                    : 'text-slate-500 hover:text-slate-900 hover:bg-slate-200/60'
+                    ? 'bg-surface text-blue-600 shadow-xs border border-border-default'
+                    : 'text-text-muted hover:text-text-primary hover:bg-subtle'
                 }`}
               >
                 {opt === 'all' ? 'All' : opt}
@@ -705,7 +705,7 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
               setPageSize(val === 'all' ? 'all' : Number(val));
               setCurrentPage(1);
             }}
-            className="sm:hidden px-2.5 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 shadow-2xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 cursor-pointer"
+            className="sm:hidden px-2.5 py-1.5 bg-surface border border-border-default rounded-xl text-xs font-bold text-text-secondary shadow-elevation-1 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 cursor-pointer"
           >
             <option value={5}>5 per page</option>
             <option value={10}>10 per page</option>
@@ -720,18 +720,18 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
           <button
             onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
             disabled={currentPage === 1 || isAll}
-            className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all text-slate-600 hover:text-slate-900 shadow-2xs"
+            className="p-1.5 rounded-lg border border-border-default bg-surface hover:bg-subtle/50 disabled:opacity-40 disabled:cursor-not-allowed transition-[transform,opacity,box-shadow,border-color] text-text-secondary hover:text-text-primary shadow-elevation-1"
             title="Halaman Sebelumnya / Previous Page"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
-          <span className="px-3 py-1 bg-slate-100 border border-slate-200 rounded-lg font-bold text-slate-700">
+          <span className="px-3 py-1 bg-subtle border border-border-default rounded-lg font-bold text-text-secondary">
             {isAll ? '1 of 1' : `${currentPage} of ${totalPages}`}
           </span>
           <button
             onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
             disabled={currentPage === totalPages || isAll}
-            className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all text-slate-600 hover:text-slate-900 shadow-2xs"
+            className="p-1.5 rounded-lg border border-border-default bg-surface hover:bg-subtle/50 disabled:opacity-40 disabled:cursor-not-allowed transition-[transform,opacity,box-shadow,border-color] text-text-secondary hover:text-text-primary shadow-elevation-1"
             title="Halaman Seterusnya / Next Page"
           >
             <ChevronRight className="w-4 h-4" />

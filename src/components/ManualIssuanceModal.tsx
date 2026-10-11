@@ -333,7 +333,7 @@ export default function ManualIssuanceModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
-      <div className="relative w-full max-w-6xl h-[95vh] bg-white rounded-3xl shadow-2xl overflow-hidden border border-slate-200">
+      <div className="relative w-full max-w-6xl h-[95vh] bg-surface rounded-3xl shadow-2xl overflow-hidden border border-border-default">
         {/* Header */}
         <div className="flex items-center justify-between p-8 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white">
           <div className="flex items-center gap-4">
@@ -354,7 +354,7 @@ export default function ManualIssuanceModal({
           </div>
           <button
             onClick={onClose}
-            className="p-3 rounded-2xl hover:bg-white/10 transition-all duration-200 group"
+            className="p-3 rounded-2xl hover:bg-surface/10 transition-[transform,opacity,box-shadow,border-color] duration-200 group"
           >
             <svg className="h-6 w-6 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -363,7 +363,7 @@ export default function ManualIssuanceModal({
         </div>
 
         {/* Step Indicator */}
-        <div className="px-8 py-4 bg-slate-50 border-b border-slate-200">
+        <div className="px-8 py-4 bg-subtle/50 border-b border-border-default">
           <div className="flex items-center justify-center space-x-8">
             {[
               { key: 'create', label: 'Create', icon: 'ðŸ“' },
@@ -377,12 +377,12 @@ export default function ManualIssuanceModal({
                     ? 'bg-slate-900 text-white' 
                     : ['create', 'review', 'approve', 'issue'].indexOf(currentStep) > index
                     ? 'bg-green-500 text-white'
-                    : 'bg-slate-200 text-slate-500'
+                    : 'bg-subtle text-text-muted'
                 }`}>
                   {step.icon}
                 </div>
                 <span className={`ml-2 text-sm font-medium ${
-                  currentStep === step.key ? 'text-slate-900' : 'text-slate-500'
+                  currentStep === step.key ? 'text-text-primary' : 'text-text-muted'
                 }`}>
                   {step.label}
                 </span>
@@ -390,7 +390,7 @@ export default function ManualIssuanceModal({
                   <div className={`w-8 h-0.5 mx-4 ${
                     ['create', 'review', 'approve', 'issue'].indexOf(currentStep) > index
                       ? 'bg-green-500' 
-                      : 'bg-slate-200'
+                      : 'bg-subtle'
                   }`} />
                 )}
               </div>
@@ -402,41 +402,41 @@ export default function ManualIssuanceModal({
           {currentStep === 'create' && (
             <>
               {/* Left Panel - Item Selection */}
-              <div className="w-1/2 p-8 border-r border-slate-200 overflow-y-auto bg-slate-50/30">
+              <div className="w-1/2 p-8 border-r border-border-default overflow-y-auto bg-subtle/50">
             <div className="mb-6">
-              <h3 className="text-xl font-bold text-slate-800">Add Items</h3>
+              <h3 className="text-xl font-bold text-text-primary">Add Items</h3>
             </div>
             
             {/* Category Filter */}
             <div className="mb-4">
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Item Category</label>
+              <label className="block text-sm font-semibold text-text-secondary mb-2">Item Category</label>
               <div className="flex gap-2">
                 <button
                   onClick={() => setCategoryFilter('all')}
-                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-[transform,opacity,box-shadow,border-color] duration-200 ${
                     categoryFilter === 'all'
                       ? 'bg-slate-900 text-white shadow-md'
-                      : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50'
+                      : 'bg-surface text-text-secondary border border-border-default hover:bg-subtle/50'
                   }`}
                 >
                   All Items
                 </button>
                 <button
                   onClick={() => setCategoryFilter('drug')}
-                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-[transform,opacity,box-shadow,border-color] duration-200 ${
                     categoryFilter === 'drug'
                       ? 'bg-blue-600 text-white shadow-md'
-                      : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50'
+                      : 'bg-surface text-text-secondary border border-border-default hover:bg-subtle/50'
                   }`}
                 >
                   Drugs
                 </button>
                 <button
                   onClick={() => setCategoryFilter('non-drug')}
-                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                  className={`px-4 py-2 rounded-xl text-sm font-medium transition-[transform,opacity,box-shadow,border-color] duration-200 ${
                     categoryFilter === 'non-drug'
                       ? 'bg-green-600 text-white shadow-md'
-                      : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-50'
+                      : 'bg-surface text-text-secondary border border-border-default hover:bg-subtle/50'
                   }`}
                 >
                   Non-Drugs
@@ -455,32 +455,32 @@ export default function ManualIssuanceModal({
                   placeholder="Search items by name or code..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 transition-all duration-200 bg-white shadow-sm"
+                  className="w-full pl-10 pr-4 py-3 border border-border-default rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 transition-[transform,opacity,box-shadow,border-color] duration-200 bg-surface shadow-sm"
                 />
               </div>
             </div>
 
             {/* Quantity and Add Button - Moved to top for convenience */}
             {selectedItem && (
-              <div className="space-y-4 p-4 bg-white rounded-2xl border border-slate-200 shadow-sm mb-6">
+              <div className="space-y-4 p-4 bg-surface rounded-2xl border border-border-default shadow-sm mb-6">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Quantity</label>
+                  <label className="block text-sm font-semibold text-text-secondary mb-2">Quantity</label>
                   <input
                     type="number"
                     min="1"
                     max={selectedItem.balance}
                     value={quantity}
                     onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-                    className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 transition-all duration-200 font-medium"
+                    className="w-full px-4 py-3 border border-border-default rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 transition-[transform,opacity,box-shadow,border-color] duration-200 font-medium"
                   />
-                  <div className="mt-1 text-xs text-slate-500">
+                  <div className="mt-1 text-xs text-text-muted">
                     Available: <span className="font-medium">{selectedItem.balance.toLocaleString()} {selectedItem.unit}</span>
                   </div>
                 </div>
                 <button
                   onClick={handleAddItem}
                   disabled={quantity > selectedItem.balance}
-                  className="w-full px-6 py-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-semibold text-sm shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                  className="w-full px-6 py-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-[transform,opacity,box-shadow,border-color] duration-200 font-semibold text-sm shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
                 >
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -496,28 +496,28 @@ export default function ManualIssuanceModal({
                 <button
                   key={item.id}
                   onClick={() => setSelectedItem(item)}
-                  className={`w-full p-4 text-left rounded-2xl border transition-all duration-200 group ${
+                  className={`w-full p-4 text-left rounded-2xl border transition-[transform,opacity,box-shadow,border-color] duration-200 group ${
                     selectedItem?.id === item.id
                       ? 'border-slate-900 bg-slate-900 text-white shadow-lg scale-[1.02]'
-                      : 'border-slate-200 hover:border-slate-300 hover:bg-white hover:shadow-md hover:scale-[1.01] bg-white'
+                      : 'border-border-default hover:border-border-default hover:bg-surface hover:shadow-md hover:scale-[1.01] bg-surface'
                   }`}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className={`font-semibold text-lg mb-2 ${
-                        selectedItem?.id === item.id ? 'text-white' : 'text-slate-800'
+                        selectedItem?.id === item.id ? 'text-white' : 'text-text-primary'
                       }`}>
                         {item.name}
                       </div>
                       <div className={`text-sm mb-2 ${
-                        selectedItem?.id === item.id ? 'text-slate-200' : 'text-slate-500'
+                        selectedItem?.id === item.id ? 'text-slate-200' : 'text-text-muted'
                       }`}>
                         {item.code} â€¢ {item.form}
                       </div>
                       
                       {/* Packaging Information */}
                       <div className={`text-xs mb-2 ${
-                        selectedItem?.id === item.id ? 'text-slate-300' : 'text-slate-600'
+                        selectedItem?.id === item.id ? 'text-slate-300' : 'text-text-secondary'
                       }`}>
                         <span className="font-medium">Packaging:</span> {item.packaging}
                       </div>
@@ -525,12 +525,12 @@ export default function ManualIssuanceModal({
                       {/* Batch and Expiry */}
                       <div className="grid grid-cols-2 gap-3 mb-2">
                         <div className={`text-xs ${
-                          selectedItem?.id === item.id ? 'text-slate-300' : 'text-slate-500'
+                          selectedItem?.id === item.id ? 'text-slate-300' : 'text-text-muted'
                         }`}>
                           <span className="font-medium">Batch:</span> {item.batchNumber}
                         </div>
                         <div className={`text-xs ${
-                          selectedItem?.id === item.id ? 'text-slate-300' : 'text-slate-500'
+                          selectedItem?.id === item.id ? 'text-slate-300' : 'text-text-muted'
                         }`}>
                           <span className="font-medium">Expiry:</span> {new Date(item.expiry).toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric' })}
                         </div>
@@ -538,7 +538,7 @@ export default function ManualIssuanceModal({
                       
                       {/* Balance */}
                       <div className={`text-xs mb-2 ${
-                        selectedItem?.id === item.id ? 'text-slate-300' : 'text-slate-600'
+                        selectedItem?.id === item.id ? 'text-slate-300' : 'text-text-secondary'
                       }`}>
                         <span className="font-medium">Balance:</span> 
                         <span className={`ml-1 font-bold ${
@@ -575,27 +575,27 @@ export default function ManualIssuanceModal({
           </div>
 
           {/* Right Panel - Issuance Details */}
-          <div className="w-1/2 p-8 overflow-y-auto bg-white">
-            <h3 className="text-xl font-bold text-slate-800 mb-6">Issuance Details</h3>
+          <div className="w-1/2 p-8 overflow-y-auto bg-surface">
+            <h3 className="text-xl font-bold text-text-primary mb-6">Issuance Details</h3>
             
             {/* Recipient and Department */}
             <div className="space-y-6 mb-8">
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Recipient Name</label>
+                <label className="block text-sm font-semibold text-text-secondary mb-2">Recipient Name</label>
                 <input
                   type="text"
                   value={recipient}
                   onChange={(e) => setRecipient(e.target.value)}
                   placeholder="Enter recipient name"
-                  className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 transition-all duration-200 font-medium"
+                  className="w-full px-4 py-3 border border-border-default rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 transition-[transform,opacity,box-shadow,border-color] duration-200 font-medium"
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Department</label>
+                <label className="block text-sm font-semibold text-text-secondary mb-2">Department</label>
                 <select
                   value={department}
                   onChange={(e) => setDepartment(e.target.value)}
-                  className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 transition-all duration-200 font-medium"
+                  className="w-full px-4 py-3 border border-border-default rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 transition-[transform,opacity,box-shadow,border-color] duration-200 font-medium"
                 >
                   <option value="">Select department</option>
                   <option value="ICU">ICU</option>
@@ -611,10 +611,10 @@ export default function ManualIssuanceModal({
 
             {/* Items List */}
             <div className="mb-8">
-              <h4 className="text-lg font-bold text-slate-800 mb-4">Items to Issue ({items.length})</h4>
+              <h4 className="text-lg font-bold text-text-primary mb-4">Items to Issue ({items.length})</h4>
               {items.length === 0 ? (
-                <div className="text-center text-slate-500 py-12 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200">
-                  <div className="p-4 rounded-full bg-slate-100 w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                <div className="text-center text-text-muted py-12 bg-subtle/50 rounded-2xl border-2 border-dashed border-border-default">
+                  <div className="p-4 rounded-full bg-subtle w-16 h-16 mx-auto mb-4 flex items-center justify-center">
                     <svg className="h-8 w-8 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                     </svg>
@@ -625,42 +625,42 @@ export default function ManualIssuanceModal({
               ) : (
                 <div className="space-y-3">
                   {items.map((item, index) => (
-                    <div key={item.id} className="p-4 bg-gradient-to-r from-slate-50 to-slate-100 rounded-2xl border border-slate-200 hover:shadow-md transition-all duration-200">
+                    <div key={item.id} className="p-4 bg-subtle/50 rounded-2xl border border-border-default hover:shadow-md transition-[transform,opacity,box-shadow,border-color] duration-200">
                       <div className="flex items-center justify-between">
                         <div className="flex-1">
-                          <div className="font-semibold text-slate-800 text-lg">{item.itemName}</div>
-                          <div className="text-sm text-slate-600 mb-2">{item.drugCode} â€¢ {item.dosageForm}</div>
+                          <div className="font-semibold text-text-primary text-lg">{item.itemName}</div>
+                          <div className="text-sm text-text-secondary mb-2">{item.drugCode} â€¢ {item.dosageForm}</div>
                           
                           {/* Packaging Information */}
-                          <div className="text-xs text-slate-600 mb-2">
+                          <div className="text-xs text-text-secondary mb-2">
                             <span className="font-medium">Packaging:</span> {item.packaging}
                           </div>
                           
                           {/* Batch and Expiry */}
                           <div className="grid grid-cols-2 gap-3 mb-2">
-                            <div className="text-xs text-slate-500">
+                            <div className="text-xs text-text-muted">
                               <span className="font-medium">Batch:</span> {item.batchNumber}
                             </div>
-                            <div className="text-xs text-slate-500">
+                            <div className="text-xs text-text-muted">
                               <span className="font-medium">Expiry:</span> {new Date(item.expiryDate).toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric' })}
                             </div>
                           </div>
                           
                           {/* Balance Information - Reorganized Layout */}
                           <div className="space-y-1 mb-2">
-                            <div className="text-xs text-slate-600">
+                            <div className="text-xs text-text-secondary">
                               <span className="font-medium">Available Balance:</span> 
                               <span className="ml-1 font-bold text-blue-600">
                                 {item.balance.toLocaleString()} {item.unit}
                               </span>
                             </div>
-                            <div className="text-xs text-slate-600">
+                            <div className="text-xs text-text-secondary">
                               <span className="font-medium">Issue Quantity:</span> 
                               <span className="ml-1 font-bold text-purple-600">
                                 {item.quantity.toLocaleString()} {item.unit}
                               </span>
                             </div>
-                            <div className="text-xs text-slate-600">
+                            <div className="text-xs text-text-secondary">
                               <span className="font-medium">After Issue Quantity:</span> 
                               <span className={`ml-1 font-bold ${
                                 (item.balance - item.quantity) < 100 ? 'text-red-600' : 
@@ -673,7 +673,7 @@ export default function ManualIssuanceModal({
                           </div>
                           
                           {/* Location */}
-                          <div className="text-xs text-slate-500 flex items-center gap-1">
+                          <div className="text-xs text-text-muted flex items-center gap-1">
                             <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                               <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -684,7 +684,7 @@ export default function ManualIssuanceModal({
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => handleEditItem(item)}
-                            className="p-2 text-blue-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200 group"
+                            className="p-2 text-blue-400 hover:text-blue-600 hover:bg-blue-500/10 rounded-xl transition-[transform,opacity,box-shadow,border-color] duration-200 group"
                             title="Edit item quantity"
                           >
                             <svg className="h-4 w-4 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -693,7 +693,7 @@ export default function ManualIssuanceModal({
                           </button>
                           <button
                             onClick={() => handleRemoveItem(item.id)}
-                            className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all duration-200 group"
+                            className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-[transform,opacity,box-shadow,border-color] duration-200 group"
                             title="Remove item"
                           >
                             <svg className="h-4 w-4 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
@@ -710,13 +710,13 @@ export default function ManualIssuanceModal({
 
             {/* Notes */}
             <div className="mb-8">
-              <label className="block text-sm font-semibold text-slate-700 mb-2">Notes (Optional)</label>
+              <label className="block text-sm font-semibold text-text-secondary mb-2">Notes (Optional)</label>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
                 placeholder="Add any additional notes..."
                 rows={3}
-                className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 resize-none transition-all duration-200 font-medium"
+                className="w-full px-4 py-3 border border-border-default rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 resize-none transition-[transform,opacity,box-shadow,border-color] duration-200 font-medium"
               />
             </div>
 
@@ -724,14 +724,14 @@ export default function ManualIssuanceModal({
             <div className="flex gap-4">
               <button
                 onClick={onClose}
-                className="px-6 py-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-all duration-200 font-semibold text-sm border border-slate-300 hover:border-slate-400"
+                className="px-6 py-3 text-text-secondary hover:bg-subtle rounded-xl transition-[transform,opacity,box-shadow,border-color] duration-200 font-semibold text-sm border border-border-default hover:border-slate-400"
               >
                 Cancel
               </button>
               <button
                 onClick={handleSubmitForReview}
                 disabled={items.length === 0 || !recipient || !department}
-                className="px-8 py-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 font-semibold text-sm shadow-lg hover:shadow-xl flex items-center gap-2"
+                className="px-8 py-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-[transform,opacity,box-shadow,border-color] duration-200 font-semibold text-sm shadow-lg hover:shadow-xl flex items-center gap-2"
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -745,44 +745,44 @@ export default function ManualIssuanceModal({
           
           {/* Review Step */}
           {currentStep === 'review' && (
-            <div className="w-full p-8 overflow-y-auto bg-white">
+            <div className="w-full p-8 overflow-y-auto bg-surface">
               <div className="max-w-4xl mx-auto">
-                <h3 className="text-2xl font-bold text-slate-800 mb-6">Review Issuance Request</h3>
+                <h3 className="text-2xl font-bold text-text-primary mb-6">Review Issuance Request</h3>
                 <div className="space-y-6">
-                  <div className="bg-slate-50 rounded-xl p-6">
-                    <h4 className="text-lg font-semibold text-slate-800 mb-4">Request Details</h4>
+                  <div className="bg-subtle/50 rounded-xl p-6">
+                    <h4 className="text-lg font-semibold text-text-primary mb-4">Request Details</h4>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <span className="text-sm font-medium text-slate-600">Recipient:</span>
-                        <p className="text-slate-800">{recipient}</p>
+                        <span className="text-sm font-medium text-text-secondary">Recipient:</span>
+                        <p className="text-text-primary">{recipient}</p>
                       </div>
                       <div>
-                        <span className="text-sm font-medium text-slate-600">Department:</span>
-                        <p className="text-slate-800">{department}</p>
+                        <span className="text-sm font-medium text-text-secondary">Department:</span>
+                        <p className="text-text-primary">{department}</p>
                       </div>
                     </div>
                     {notes && (
                       <div className="mt-4">
-                        <span className="text-sm font-medium text-slate-600">Notes:</span>
-                        <p className="text-slate-800 mt-1">{notes}</p>
+                        <span className="text-sm font-medium text-text-secondary">Notes:</span>
+                        <p className="text-text-primary mt-1">{notes}</p>
                       </div>
                     )}
                   </div>
                   
-                  <div className="bg-slate-50 rounded-xl p-6">
-                    <h4 className="text-lg font-semibold text-slate-800 mb-4">Items to Issue ({items.length})</h4>
+                  <div className="bg-subtle/50 rounded-xl p-6">
+                    <h4 className="text-lg font-semibold text-text-primary mb-4">Items to Issue ({items.length})</h4>
                     <div className="space-y-3">
                       {items.map(item => (
-                        <div key={item.id} className="bg-white rounded-lg p-4 border border-slate-200">
+                        <div key={item.id} className="bg-surface rounded-lg p-4 border border-border-default">
                           <div className="flex justify-between items-start">
                             <div>
-                              <h5 className="font-semibold text-slate-800">{item.itemName}</h5>
-                              <p className="text-sm text-slate-600">{item.drugCode} â€¢ {item.dosageForm}</p>
-                              <p className="text-xs text-slate-500">Packaging: {item.packaging}</p>
+                              <h5 className="font-semibold text-text-primary">{item.itemName}</h5>
+                              <p className="text-sm text-text-secondary">{item.drugCode} â€¢ {item.dosageForm}</p>
+                              <p className="text-xs text-text-muted">Packaging: {item.packaging}</p>
                             </div>
                             <div className="text-right">
-                              <p className="font-semibold text-slate-800">Qty: {item.quantity} {item.unit}</p>
-                              <p className="text-xs text-slate-500">Batch: {item.batchNumber}</p>
+                              <p className="font-semibold text-text-primary">Qty: {item.quantity} {item.unit}</p>
+                              <p className="text-xs text-text-muted">Batch: {item.batchNumber}</p>
                             </div>
                           </div>
                         </div>
@@ -791,26 +791,26 @@ export default function ManualIssuanceModal({
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Review Comments</label>
+                    <label className="block text-sm font-semibold text-text-secondary mb-2">Review Comments</label>
                     <textarea
                       value={reviewComments}
                       onChange={(e) => setReviewComments(e.target.value)}
                       placeholder="Add your review comments..."
                       rows={4}
-                      className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 transition-all duration-200 font-medium"
+                      className="w-full px-4 py-3 border border-border-default rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 transition-[transform,opacity,box-shadow,border-color] duration-200 font-medium"
                     />
                   </div>
                   
                   <div className="flex gap-4">
                     <button
                       onClick={handleReviewReject}
-                      className="px-6 py-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-all duration-200 font-semibold text-sm border border-slate-300 hover:border-slate-400"
+                      className="px-6 py-3 text-text-secondary hover:bg-subtle rounded-xl transition-[transform,opacity,box-shadow,border-color] duration-200 font-semibold text-sm border border-border-default hover:border-slate-400"
                     >
                       Reject
                     </button>
                     <button
                       onClick={handleReviewApprove}
-                      className="px-6 py-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-all duration-200 font-semibold text-sm shadow-lg hover:shadow-xl"
+                      className="px-6 py-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-[transform,opacity,box-shadow,border-color] duration-200 font-semibold text-sm shadow-lg hover:shadow-xl"
                     >
                       Approve for Final Approval
                     </button>
@@ -822,9 +822,9 @@ export default function ManualIssuanceModal({
           
           {/* Approval Step */}
           {currentStep === 'approve' && (
-            <div className="w-full p-8 overflow-y-auto bg-white">
+            <div className="w-full p-8 overflow-y-auto bg-surface">
               <div className="max-w-4xl mx-auto">
-                <h3 className="text-2xl font-bold text-slate-800 mb-6">Approve Issuance Request</h3>
+                <h3 className="text-2xl font-bold text-text-primary mb-6">Approve Issuance Request</h3>
                 <div className="space-y-6">
                   <div className="bg-green-50 rounded-xl p-6 border border-green-200">
                     <div className="flex items-center gap-3 mb-4">
@@ -839,26 +839,26 @@ export default function ManualIssuanceModal({
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Approval Comments</label>
+                    <label className="block text-sm font-semibold text-text-secondary mb-2">Approval Comments</label>
                     <textarea
                       value={approvalComments}
                       onChange={(e) => setApprovalComments(e.target.value)}
                       placeholder="Add your approval comments..."
                       rows={4}
-                      className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 transition-all duration-200 font-medium"
+                      className="w-full px-4 py-3 border border-border-default rounded-xl focus:ring-2 focus:ring-slate-900 focus:border-slate-900 transition-[transform,opacity,box-shadow,border-color] duration-200 font-medium"
                     />
                   </div>
                   
                   <div className="flex gap-4">
                     <button
                       onClick={handleApprovalReject}
-                      className="px-6 py-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-all duration-200 font-semibold text-sm border border-slate-300 hover:border-slate-400"
+                      className="px-6 py-3 text-text-secondary hover:bg-subtle rounded-xl transition-[transform,opacity,box-shadow,border-color] duration-200 font-semibold text-sm border border-border-default hover:border-slate-400"
                     >
                       Reject
                     </button>
                     <button
                       onClick={handleApprovalApprove}
-                      className="px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-all duration-200 font-semibold text-sm shadow-lg hover:shadow-xl"
+                      className="px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-[transform,opacity,box-shadow,border-color] duration-200 font-semibold text-sm shadow-lg hover:shadow-xl"
                     >
                       Approve for Issuance
                     </button>
@@ -870,36 +870,36 @@ export default function ManualIssuanceModal({
           
           {/* Issue Step */}
           {currentStep === 'issue' && (
-            <div className="w-full p-8 overflow-y-auto bg-white">
+            <div className="w-full p-8 overflow-y-auto bg-surface">
               <div className="max-w-4xl mx-auto">
-                <h3 className="text-2xl font-bold text-slate-800 mb-6">Issue Items</h3>
+                <h3 className="text-2xl font-bold text-text-primary mb-6">Issue Items</h3>
                 <div className="space-y-6">
-                  <div className="bg-blue-50 rounded-xl p-6 border border-blue-200">
+                  <div className="bg-blue-500/10 rounded-xl p-6 border border-blue-500/20">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="p-2 rounded-full bg-blue-500 text-white">
                         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                         </svg>
                       </div>
-                      <h4 className="text-lg font-semibold text-blue-800">Ready to Issue</h4>
+                      <h4 className="text-lg font-semibold text-blue-400">Ready to Issue</h4>
                     </div>
                     <p className="text-blue-700">All approvals completed. Items are ready for physical issuance.</p>
                   </div>
                   
-                  <div className="bg-slate-50 rounded-xl p-6">
-                    <h4 className="text-lg font-semibold text-slate-800 mb-4">Final Issuance Summary</h4>
+                  <div className="bg-subtle/50 rounded-xl p-6">
+                    <h4 className="text-lg font-semibold text-text-primary mb-4">Final Issuance Summary</h4>
                     <div className="space-y-3">
                       {items.map(item => (
-                        <div key={item.id} className="bg-white rounded-lg p-4 border border-slate-200">
+                        <div key={item.id} className="bg-surface rounded-lg p-4 border border-border-default">
                           <div className="flex justify-between items-start">
                             <div>
-                              <h5 className="font-semibold text-slate-800">{item.itemName}</h5>
-                              <p className="text-sm text-slate-600">{item.drugCode} â€¢ {item.dosageForm}</p>
-                              <p className="text-xs text-slate-500">Batch: {item.batchNumber} â€¢ Expiry: {new Date(item.expiryDate).toLocaleDateString('en-MY')}</p>
+                              <h5 className="font-semibold text-text-primary">{item.itemName}</h5>
+                              <p className="text-sm text-text-secondary">{item.drugCode} â€¢ {item.dosageForm}</p>
+                              <p className="text-xs text-text-muted">Batch: {item.batchNumber} â€¢ Expiry: {new Date(item.expiryDate).toLocaleDateString('en-MY')}</p>
                             </div>
                             <div className="text-right">
-                              <p className="font-semibold text-slate-800">Qty: {item.quantity} {item.unit}</p>
-                              <p className="text-xs text-slate-500">{item.location}</p>
+                              <p className="font-semibold text-text-primary">Qty: {item.quantity} {item.unit}</p>
+                              <p className="text-xs text-text-muted">{item.location}</p>
                             </div>
                           </div>
                         </div>
@@ -910,13 +910,13 @@ export default function ManualIssuanceModal({
                   <div className="flex gap-4">
                     <button
                       onClick={() => setCurrentStep('create')}
-                      className="px-6 py-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-all duration-200 font-semibold text-sm border border-slate-300 hover:border-slate-400"
+                      className="px-6 py-3 text-text-secondary hover:bg-subtle rounded-xl transition-[transform,opacity,box-shadow,border-color] duration-200 font-semibold text-sm border border-border-default hover:border-slate-400"
                     >
                       Back to Create
                     </button>
                     <button
                       onClick={handleFinalIssue}
-                      className="px-8 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-200 font-semibold text-sm shadow-lg hover:shadow-xl flex items-center gap-2"
+                      className="px-8 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-[transform,opacity,box-shadow,border-color] duration-200 font-semibold text-sm shadow-lg hover:shadow-xl flex items-center gap-2"
                     >
                       <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -933,16 +933,16 @@ export default function ManualIssuanceModal({
         {/* Edit Item Modal */}
         {editingItem && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-2xl p-6 w-full max-w-md mx-4">
-              <h3 className="text-lg font-semibold text-slate-800 mb-4">Edit Item Quantity</h3>
+            <div className="bg-surface rounded-2xl p-6 w-full max-w-md mx-4">
+              <h3 className="text-lg font-semibold text-text-primary mb-4">Edit Item Quantity</h3>
               
               <div className="mb-4">
-                <div className="font-medium text-slate-800">{editingItem.itemName}</div>
-                <div className="text-sm text-slate-600">{editingItem.drugCode} â€¢ {editingItem.dosageForm}</div>
+                <div className="font-medium text-text-primary">{editingItem.itemName}</div>
+                <div className="text-sm text-text-secondary">{editingItem.drugCode} â€¢ {editingItem.dosageForm}</div>
               </div>
 
               <div className="mb-6">
-                <label className="block text-sm font-medium text-slate-700 mb-2">
+                <label className="block text-sm font-medium text-text-secondary mb-2">
                   Issue Quantity ({editingItem.unit})
                 </label>
                 <input
@@ -951,9 +951,9 @@ export default function ManualIssuanceModal({
                   max={editingItem.balance}
                   value={editQuantity}
                   onChange={(e) => setEditQuantity(parseInt(e.target.value) || 1)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border-default rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
-                <div className="text-xs text-slate-500 mt-1">
+                <div className="text-xs text-text-muted mt-1">
                   Available: {editingItem.balance.toLocaleString()} {editingItem.unit}
                 </div>
                 {editQuantity > editingItem.balance && (
@@ -966,7 +966,7 @@ export default function ManualIssuanceModal({
               <div className="flex gap-3">
                 <button
                   onClick={handleCancelEdit}
-                  className="flex-1 px-4 py-2 text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                  className="flex-1 px-4 py-2 text-text-secondary bg-subtle rounded-lg hover:bg-subtle transition-colors"
                 >
                   Cancel
                 </button>

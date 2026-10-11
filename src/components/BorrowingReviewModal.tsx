@@ -190,24 +190,24 @@ export default function BorrowingReviewModal({
 
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-7xl max-h-[95vh] overflow-hidden border border-slate-200">
+      <div className="bg-surface rounded-2xl shadow-2xl w-full max-w-7xl max-h-[95vh] overflow-hidden border border-border-default">
         {/* Header */}
-        <div className="px-8 py-6 border-b border-slate-200 bg-gradient-to-r from-slate-50 via-white to-slate-50">
+        <div className="px-8 py-6 border-b border-border-default bg-subtle/50">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className={`h-14 w-14 rounded-2xl bg-gradient-to-br ${statusInfo.color} flex items-center justify-center text-white shadow-lg`}>
                 {statusInfo.icon}
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-slate-900">{statusInfo.title}</h2>
-                <p className="text-slate-600 mt-1">{filteredRequests.length} requests requiring attention</p>
+                <h2 className="text-2xl font-bold text-text-primary">{statusInfo.title}</h2>
+                <p className="text-text-secondary mt-1">{filteredRequests.length} requests requiring attention</p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="p-3 rounded-xl hover:bg-slate-100 transition-colors group"
+              className="p-3 rounded-xl hover:bg-subtle transition-colors group"
             >
-              <svg className="h-6 w-6 text-slate-500 group-hover:text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <svg className="h-6 w-6 text-text-muted group-hover:text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -216,35 +216,35 @@ export default function BorrowingReviewModal({
 
         <div className="flex h-[calc(95vh-120px)]">
           {/* Request List Sidebar */}
-          <div className="w-96 border-r border-slate-200 bg-slate-50/30 overflow-y-auto">
+          <div className="w-96 border-r border-border-default bg-subtle/50 overflow-y-auto">
             <div className="p-6">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">Transfer Queue</h3>
+              <h3 className="text-lg font-semibold text-text-primary mb-4">Transfer Queue</h3>
               <div className="space-y-3">
                 {filteredRequests.map((req) => (
                   <button
                     key={req.id}
                     onClick={() => setSelectedRequest(req)}
-                    className={`w-full text-left p-4 rounded-xl border-2 transition-all duration-200 ${
+                    className={`w-full text-left p-4 rounded-xl border-2 transition-[transform,opacity,box-shadow,border-color] duration-200 ${
                       selectedRequest?.id === req.id
-                        ? 'border-blue-500 bg-blue-50 shadow-md'
-                        : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-sm'
+                        ? 'border-blue-500 bg-blue-500/10 shadow-md'
+                        : 'border-border-default bg-surface hover:border-border-default hover:shadow-sm'
                     }`}
                   >
                     <div className="flex items-start justify-between mb-2">
-                      <div className="font-semibold text-slate-900">{req.transferNumber}</div>
+                      <div className="font-semibold text-text-primary">{req.transferNumber}</div>
                       <div className={`px-2 py-1 rounded-full text-xs font-medium ${
                         req.priority === 'URGENT' ? 'bg-red-100 text-red-700' :
                         req.priority === 'HIGH' ? 'bg-orange-100 text-orange-700' :
                         req.priority === 'MEDIUM' ? 'bg-blue-100 text-blue-700' :
-                        'bg-slate-100 text-slate-700'
+                        'bg-subtle text-text-secondary'
                       }`}>
                         {req.priority || 'NORMAL'}
                       </div>
                     </div>
-                    <div className="text-sm text-slate-600 mb-1">{req.fromFacility} â†’ {req.toFacility}</div>
-                    <div className="text-sm text-slate-600 mb-1">{req.transferCategory} â€¢ {req.type}</div>
-                    <div className="text-sm text-slate-600">Requested by: <span className="font-medium text-slate-800">{req.requestedBy}</span></div>
-                    <div className="text-xs text-slate-500">{req.items.length} items â€¢ <span suppressHydrationWarning>{new Date(req.requestedAt).toLocaleDateString()}</span></div>
+                    <div className="text-sm text-text-secondary mb-1">{req.fromFacility} â†’ {req.toFacility}</div>
+                    <div className="text-sm text-text-secondary mb-1">{req.transferCategory} â€¢ {req.type}</div>
+                    <div className="text-sm text-text-secondary">Requested by: <span className="font-medium text-text-primary">{req.requestedBy}</span></div>
+                    <div className="text-xs text-text-muted">{req.items.length} items â€¢ <span suppressHydrationWarning>{new Date(req.requestedAt).toLocaleDateString()}</span></div>
                   </button>
                 ))}
               </div>
@@ -252,17 +252,17 @@ export default function BorrowingReviewModal({
           </div>
 
           {/* Request Details */}
-          <div className="flex-1 overflow-y-auto bg-white">
+          <div className="flex-1 overflow-y-auto bg-surface">
             {selectedRequest ? (
               <div className="p-8">
                 {/* Request Header */}
                 <div className="mb-8">
                   <div className="flex items-start justify-between mb-6">
                     <div>
-                      <h3 className="text-3xl font-bold text-slate-900 mb-2">{selectedRequest.transferNumber}</h3>
-                      <div className="flex items-center gap-6 text-slate-600">
+                      <h3 className="text-3xl font-bold text-text-primary mb-2">{selectedRequest.transferNumber}</h3>
+                      <div className="flex items-center gap-6 text-text-secondary">
                         <div className="flex items-center gap-2">
-                          <div className="h-8 w-8 rounded-lg bg-slate-100 flex items-center justify-center">
+                          <div className="h-8 w-8 rounded-lg bg-subtle flex items-center justify-center">
                             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v5m-4 0h4" />
                             </svg>
@@ -270,7 +270,7 @@ export default function BorrowingReviewModal({
                           <span className="font-medium">{selectedRequest.fromFacility} â†’ {selectedRequest.toFacility}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <div className="h-8 w-8 rounded-lg bg-slate-100 flex items-center justify-center">
+                          <div className="h-8 w-8 rounded-lg bg-subtle flex items-center justify-center">
                             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                             </svg>
@@ -278,7 +278,7 @@ export default function BorrowingReviewModal({
                           <span className="font-medium">{selectedRequest.requestedBy}</span>
                         </div>
                         <div className="flex items-center gap-2">
-                          <div className="h-8 w-8 rounded-lg bg-slate-100 flex items-center justify-center">
+                          <div className="h-8 w-8 rounded-lg bg-subtle flex items-center justify-center">
                             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
@@ -291,8 +291,8 @@ export default function BorrowingReviewModal({
                       <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-semibold ${
                         selectedRequest.priority === 'URGENT' ? 'bg-red-100 text-red-800' :
                         selectedRequest.priority === 'HIGH' ? 'bg-orange-100 text-orange-800' :
-                        selectedRequest.priority === 'MEDIUM' ? 'bg-blue-100 text-blue-800' :
-                        'bg-slate-100 text-slate-800'
+                        selectedRequest.priority === 'MEDIUM' ? 'bg-blue-100 text-blue-400' :
+                        'bg-subtle text-text-primary'
                       }`}>
                         {selectedRequest.priority || 'NORMAL'} PRIORITY
                       </div>
@@ -303,13 +303,13 @@ export default function BorrowingReviewModal({
                 {/* Items List */}
                 <div className="mb-6">
                   <div className="flex items-center justify-between mb-4">
-                    <h4 className="text-lg font-bold text-slate-900">Requested Items</h4>
+                    <h4 className="text-lg font-bold text-text-primary">Requested Items</h4>
                     <div className="flex items-center gap-3">
-                      <div className="px-2 py-1 bg-slate-100 text-slate-700 rounded text-sm font-medium">
+                      <div className="px-2 py-1 bg-subtle text-text-secondary rounded text-sm font-medium">
                         {editedItems.length} items
                       </div>
                       {totalPages > 1 && (
-                        <div className="text-sm text-slate-500">
+                        <div className="text-sm text-text-muted">
                           Page {currentPage} of {totalPages}
                         </div>
                       )}
@@ -346,15 +346,15 @@ export default function BorrowingReviewModal({
                       const isIssued = status === 'ISSUED';
                       
                       return (
-                        <div key={item.id} className="bg-white border border-slate-200 rounded-lg p-4 hover:shadow-sm transition-shadow">
+                        <div key={item.id} className="bg-surface border border-border-default rounded-lg p-4 hover:shadow-sm transition-shadow">
                           <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-3 flex-1">
                               <div className={`w-2 h-2 rounded-full ${
                                 item.category === 'Drug' ? 'bg-blue-500' : 'bg-green-500'
                               }`}></div>
                               <div className="flex-1">
-                                <div className="font-semibold text-slate-900 text-sm">{item.itemName}</div>
-                                <div className="text-xs text-slate-500">{item.itemCode} â€¢ {item.category}</div>
+                                <div className="font-semibold text-text-primary text-sm">{item.itemName}</div>
+                                <div className="text-xs text-text-muted">{item.itemCode} â€¢ {item.category}</div>
                               </div>
                             </div>
                             {!isApproved && !isIssued && (
@@ -373,34 +373,34 @@ export default function BorrowingReviewModal({
                           <div className="grid grid-cols-6 gap-4 text-xs">
                             <div>
                               <p className="text-slate-400 mb-1">Packaging</p>
-                              <p className="font-medium text-slate-700" suppressHydrationWarning>pack of {packSize} {getPackUnit(item.unit)}</p>
+                              <p className="font-medium text-text-secondary" suppressHydrationWarning>pack of {packSize} {getPackUnit(item.unit)}</p>
                             </div>
                             <div>
                               <p className="text-slate-400 mb-1">Batch/Exp</p>
-                              <p className="font-medium text-slate-700" suppressHydrationWarning>{mockBatch}</p>
-                              <p className="text-slate-500" suppressHydrationWarning>{mockExpiry.toLocaleDateString('en-MY', { month: 'short', year: '2-digit' })}</p>
+                              <p className="font-medium text-text-secondary" suppressHydrationWarning>{mockBatch}</p>
+                              <p className="text-text-muted" suppressHydrationWarning>{mockExpiry.toLocaleDateString('en-MY', { month: 'short', year: '2-digit' })}</p>
                             </div>
                             <div>
                               <p className="text-slate-400 mb-1">Balance</p>
                               <p className="font-bold text-green-600" suppressHydrationWarning>{mockBalance.toLocaleString()}</p>
-                              <p className="text-slate-500">{item.unit}</p>
+                              <p className="text-text-muted">{item.unit}</p>
                             </div>
                             <div>
                               <p className="text-slate-400 mb-1">Requested</p>
                               <p className="font-bold text-blue-600">{item.requestedQuantity}</p>
-                              <p className="text-slate-500">{item.unit}</p>
+                              <p className="text-text-muted">{item.unit}</p>
                             </div>
                             <div>
                               <p className="text-slate-400 mb-1">Avg Usage</p>
-                              <p className="font-medium text-slate-700" suppressHydrationWarning>{mockAvgUsage.toLocaleString()}</p>
-                              <p className="text-slate-500">/month</p>
+                              <p className="font-medium text-text-secondary" suppressHydrationWarning>{mockAvgUsage.toLocaleString()}</p>
+                              <p className="text-text-muted">/month</p>
                             </div>
                             <div>
                               <p className="text-slate-400 mb-1">{isApproved ? 'Approved' : isIssued ? 'Issued' : 'Approve'}</p>
                               {isApproved || isIssued ? (
                                 <div className="flex items-center gap-2">
                                   <p className="font-bold text-green-600">{item.approvedQuantity || item.requestedQuantity}</p>
-                                  <p className="text-slate-500">{item.unit}</p>
+                                  <p className="text-text-muted">{item.unit}</p>
                                 </div>
                               ) : (
                                 <div className="flex items-center gap-2">
@@ -408,7 +408,7 @@ export default function BorrowingReviewModal({
                                     type="number"
                                     value={item.approvedQuantity || 0}
                                     onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value) || 0)}
-                                    className="w-16 px-2 py-1 border border-slate-300 rounded text-center font-medium text-xs focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+                                    className="w-16 px-2 py-1 border border-border-default rounded text-center font-medium text-xs focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
                                     min="0"
                                     max={mockBalance}
                                     placeholder="0"
@@ -426,14 +426,14 @@ export default function BorrowingReviewModal({
                   {/* Pagination Controls */}
                   {totalPages > 1 && (
                     <div className="mt-4 flex items-center justify-between">
-                      <div className="text-xs text-slate-500">
+                      <div className="text-xs text-text-muted">
                         Showing {startIndex + 1} to {Math.min(endIndex, editedItems.length)} of {editedItems.length} items
                       </div>
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() => handlePageChange(currentPage - 1)}
                           disabled={currentPage === 1}
-                          className="px-2 py-1 text-xs font-medium text-slate-500 bg-white border border-slate-300 rounded hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-2 py-1 text-xs font-medium text-text-muted bg-surface border border-border-default rounded hover:bg-subtle/50 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           Prev
                         </button>
@@ -446,7 +446,7 @@ export default function BorrowingReviewModal({
                               className={`px-2 py-1 text-xs font-medium rounded ${
                                 currentPage === page
                                   ? 'bg-blue-600 text-white'
-                                  : 'text-slate-700 bg-white border border-slate-300 hover:bg-slate-50'
+                                  : 'text-text-secondary bg-surface border border-border-default hover:bg-subtle/50'
                               }`}
                             >
                               {page}
@@ -457,7 +457,7 @@ export default function BorrowingReviewModal({
                         <button
                           onClick={() => handlePageChange(currentPage + 1)}
                           disabled={currentPage === totalPages}
-                          className="px-2 py-1 text-xs font-medium text-slate-500 bg-white border border-slate-300 rounded hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-2 py-1 text-xs font-medium text-text-muted bg-surface border border-border-default rounded hover:bg-subtle/50 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                           Next
                         </button>
@@ -468,9 +468,9 @@ export default function BorrowingReviewModal({
 
                 {/* Comments */}
                 <div className="mb-6">
-                  <label className="block text-sm font-semibold text-slate-900 mb-2">Review Comments</label>
+                  <label className="block text-sm font-semibold text-text-primary mb-2">Review Comments</label>
                   {status === 'APPROVED' || status === 'ISSUED' ? (
-                    <div className="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-700 text-sm min-h-[80px]">
+                    <div className="w-full px-3 py-2 border border-border-default rounded-lg bg-subtle/50 text-text-secondary text-sm min-h-[80px]">
                       {comments || 'No comments added'}
                     </div>
                   ) : (
@@ -478,19 +478,19 @@ export default function BorrowingReviewModal({
                       value={comments}
                       onChange={(e) => setComments(e.target.value)}
                       placeholder="Add your review comments and notes here..."
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 resize-none text-slate-700 text-sm"
+                      className="w-full px-3 py-2 border border-border-default rounded-lg focus:ring-1 focus:ring-blue-500 focus:border-blue-500 resize-none text-text-secondary text-sm"
                       rows={3}
                     />
                   )}
                 </div>
 
                 {/* Actions */}
-                <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
+                <div className="flex items-center justify-end gap-3 pt-4 border-t border-border-default">
                   {status === 'APPROVED' || status === 'ISSUED' ? (
                     <>
                       <button
                         onClick={onClose}
-                        className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors font-medium text-sm"
+                        className="px-4 py-2 text-text-secondary hover:bg-subtle rounded-lg transition-colors font-medium text-sm"
                       >
                         Close
                       </button>
@@ -508,7 +508,7 @@ export default function BorrowingReviewModal({
                     <>
                       <button
                         onClick={onClose}
-                        className="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg transition-colors font-medium text-sm"
+                        className="px-4 py-2 text-text-secondary hover:bg-subtle rounded-lg transition-colors font-medium text-sm"
                         disabled={isSubmitting}
                       >
                         Cancel
@@ -535,7 +535,7 @@ export default function BorrowingReviewModal({
                 </div>
               </div>
             ) : (
-              <div className="flex items-center justify-center h-full text-slate-500">
+              <div className="flex items-center justify-center h-full text-text-muted">
                 <div className="text-center">
                   <svg className="h-16 w-16 mx-auto mb-4 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />

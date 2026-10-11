@@ -142,7 +142,7 @@ export const PrepackDashboardPage: React.FC = () => {
               setPreselectedItemIdForBatch(undefined)
               setBatchModalOpen(true)
             }}
-            className="flex-1 sm:flex-initial min-h-[38px] px-4 py-2 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 shadow-xs transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-teal-500/40"
+            className="flex-1 sm:flex-initial min-h-[38px] px-4 py-2 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 shadow-xs transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-teal-500/40"
           >
             <Plus className="w-4 h-4" />
             <span>New Prepack</span>
@@ -151,7 +151,7 @@ export const PrepackDashboardPage: React.FC = () => {
           {/* Secondary Action: Store Transfer */}
           <button
             onClick={() => setTransferModalOpen(true)}
-            className="flex-1 sm:flex-initial min-h-[38px] px-3.5 py-2 bg-surface hover:bg-subtle active:scale-[0.98] text-text-primary border border-border-default hover:border-border-strong rounded-lg text-xs font-medium flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs"
+            className="flex-1 sm:flex-initial min-h-[38px] px-3.5 py-2 bg-surface hover:bg-subtle active:scale-[0.98] text-text-primary border border-border-default hover:border-border-strong rounded-lg text-xs font-medium flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs"
           >
             <ArrowRightLeft className="w-3.5 h-3.5 text-text-muted" />
             <span>Store Transfer</span>
@@ -161,7 +161,7 @@ export const PrepackDashboardPage: React.FC = () => {
           <div className="relative" ref={exportRef}>
             <button
               onClick={() => setExportOpen(!exportOpen)}
-              className="min-h-[38px] px-3 py-2 bg-surface hover:bg-subtle active:scale-[0.98] text-text-secondary hover:text-text-primary border border-border-default hover:border-border-strong rounded-lg text-xs font-medium transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
+              className="min-h-[38px] px-3 py-2 bg-surface hover:bg-subtle active:scale-[0.98] text-text-secondary hover:text-text-primary border border-border-default hover:border-border-strong rounded-lg text-xs font-medium transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs"
             >
               <FileDown className="w-3.5 h-3.5 text-text-muted" />
               <span className="hidden sm:inline">Export</span>
@@ -198,7 +198,7 @@ export const PrepackDashboardPage: React.FC = () => {
           <button
             onClick={loadData}
             title="Refresh Prepacking Data"
-            className="min-h-[38px] min-w-[38px] flex items-center justify-center p-2 bg-surface hover:bg-subtle active:scale-[0.98] text-text-muted hover:text-text-primary rounded-lg border border-border-default hover:border-border-strong transition-all cursor-pointer shrink-0 shadow-xs"
+            className="min-h-[38px] min-w-[38px] flex items-center justify-center p-2 bg-surface hover:bg-subtle active:scale-[0.98] text-text-muted hover:text-text-primary rounded-lg border border-border-default hover:border-border-strong transition-colors cursor-pointer shrink-0 shadow-xs"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
           </button>

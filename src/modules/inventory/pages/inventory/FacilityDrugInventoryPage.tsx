@@ -1037,7 +1037,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
 
     if (isExpired) {
       return (
-        <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200 inline-flex items-center gap-1">
+        <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-rose-500/10 text-rose-700 border border-rose-500/20 inline-flex items-center gap-1">
           <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
           Tempoh: {startFormatted || '?'} - {endFormatted || '?'} (Tamat)
         </span>
@@ -1046,7 +1046,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
 
     if (startDateStr || endDateStr) {
       return (
-        <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 inline-flex items-center gap-1">
+        <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 inline-flex items-center gap-1">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
           Tempoh: {startFormatted || '?'} - {endFormatted || '?'}
         </span>
@@ -1056,7 +1056,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
     const isCcOrContract = procurementVote?.toLowerCase() === 'cc' || !!contractNo
     if (isCcOrContract) {
       return (
-        <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200 inline-flex items-center gap-1">
+        <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-rose-500/10 text-rose-700 border border-rose-500/20 inline-flex items-center gap-1">
           <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
           Tiada Tempoh Kontrak
         </span>
@@ -1076,26 +1076,23 @@ export const FacilityDrugInventoryPage: React.FC = () => {
   return (
     <div className="p-6 space-y-6 w-full animate-fadeIn">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 p-6 rounded-2xl text-white shadow-xl border border-blue-800/40 relative overflow-hidden">
-        <div className="absolute right-0 top-0 translate-x-12 -translate-y-6 opacity-10 pointer-events-none">
-          <Building2 className="w-96 h-96 text-white" />
-        </div>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-border-default shadow-xs relative">
         <div className="relative z-10 space-y-1">
-          <div className="flex items-center gap-2 text-blue-300 text-xs font-semibold uppercase tracking-wider">
-            <Warehouse className="w-4 h-4 text-emerald-400" />
+          <div className="flex items-center gap-2 text-text-muted text-xs font-semibold uppercase tracking-wider">
+            <Warehouse className="w-4 h-4 text-accent-base" />
             <span>Facility Inventory Module</span>
-            <span className="text-slate-500">•</span>
-            <span className="text-emerald-400 font-medium">
+            <span className="text-text-muted">•</span>
+            <span className="text-accent-base font-medium">
               {activeStore ? `${activeStore.location_name} (${activeStore.location_code})` : 'Semua Stor'}
             </span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight flex items-center gap-3">
+          <h1 className="text-xl md:text-2xl font-bold tracking-tight text-text-primary flex items-center gap-3">
             Facility Drug Inventory
-            <span className="text-xs px-2.5 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full font-normal uppercase">
+            <span className="text-xs px-2.5 py-0.5 bg-accent-base/10 text-accent-base border border-accent-base/20 rounded-full font-semibold uppercase">
               {currentVoteParam === 'all' ? 'Semua Skim' : `Skim ${currentVoteParam.toUpperCase()}`}
             </span>
           </h1>
-          <p className="text-slate-300 text-sm max-w-2xl">
+          <p className="text-text-muted text-xs md:text-sm max-w-2xl">
             Pilih dan tambah item ubat daripada Katolog Utama ke inventori fasiliti anda secara manual.
           </p>
         </div>
@@ -1125,15 +1122,15 @@ export const FacilityDrugInventoryPage: React.FC = () => {
               }
             }}
             disabled={isExportingExcel || filteredItems.length === 0}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg
-              bg-white/10 hover:bg-white/20 border border-white/30 text-white
-              disabled:opacity-50 disabled:cursor-allowed"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-xs transition-colors
+              bg-surface hover:bg-subtle border border-border-default text-text-primary
+              disabled:opacity-50 disabled:cursor-allowed shadow-xs"
             title="Eksport Formulari Ubat ke format Excel (.xlsx)"
           >
             {isExportingExcel ? (
-              <Loader2 className="w-4 h-4 animate-spin text-emerald-300" />
+              <Loader2 className="w-4 h-4 animate-spin text-text-muted" />
             ) : (
-              <FileSpreadsheet className="w-4 h-4 text-emerald-300" />
+              <FileSpreadsheet className="w-4 h-4 text-emerald-500" />
             )}
             <span>Eksport Excel</span>
           </button>
@@ -1165,15 +1162,15 @@ export const FacilityDrugInventoryPage: React.FC = () => {
               }
             }}
             disabled={isExporting || filteredItems.length === 0}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg
-              bg-white/10 hover:bg-white/20 border border-white/30 text-white
-              disabled:opacity-50 disabled:cursor-allowed"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-xs transition-colors
+              bg-surface hover:bg-subtle border border-border-default text-text-primary
+              disabled:opacity-50 disabled:cursor-allowed shadow-xs"
             title="Eksport Formulari Ubat sebagai PDF Rasmi"
           >
             {isExporting ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <Loader2 className="w-4 h-4 animate-spin text-text-muted" />
             ) : (
-              <FileDown className="w-4 h-4" />
+              <FileDown className="w-4 h-4 text-text-muted" />
             )}
             {isExporting ? 'Menjana PDF...' : 'Eksport Formulari PDF'}
           </button>
@@ -1181,16 +1178,16 @@ export const FacilityDrugInventoryPage: React.FC = () => {
           <Button
             size="md"
             onClick={() => setIsAddModalOpen(true)}
-            className="bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold shadow-lg transition-all rounded-xl flex items-center gap-2 px-5 py-2.5"
+            className="bg-accent-base hover:bg-accent-base/90 text-white font-medium px-4 py-2 rounded-lg shadow-xs flex items-center gap-1.5 transition-colors border border-accent-base/30 text-xs"
           >
-            <Plus className="w-5 h-5" />
+            <Plus className="w-4 h-4" />
             Tambah Item Dari Katolog
           </Button>
         </div>
       </div>
 
       {/* Skim Sub-menu Navigation Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-200 pb-3">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1">
         {[
           { id: 'all', label: 'Semua Skim' },
           { id: 'appl', label: 'APPL' },
@@ -1201,10 +1198,10 @@ export const FacilityDrugInventoryPage: React.FC = () => {
           <button
             key={tab.id}
             onClick={() => setSearchParams(tab.id === 'all' ? {} : { vote: tab.id })}
-            className={`px-4 py-2 text-sm font-semibold rounded-xl transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
               currentVoteParam === tab.id
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+                ? 'bg-accent-base text-white shadow-xs'
+                : 'bg-surface text-text-muted hover:text-text-primary hover:bg-subtle border border-border-default'
             }`}
           >
             {tab.label}
@@ -1214,62 +1211,62 @@ export const FacilityDrugInventoryPage: React.FC = () => {
 
       {/* Metric Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all">
-          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">
+        <div className="bg-surface p-4 rounded-xl border border-border-default shadow-xs transition-colors">
+          <div className="flex items-center justify-between text-text-muted text-xs font-medium uppercase tracking-wider mb-2">
             <span>Jumlah Item Fasiliti</span>
-            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-subtle text-text-muted flex items-center justify-center">
               <Pill className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-bold text-slate-900">{filteredItems.length}</div>
-          <p className="text-xs text-slate-500 mt-1">Item dipilih di fasiliti ini</p>
+          <div className="text-2xl font-semibold text-text-primary tabular-nums">{filteredItems.length}</div>
+          <p className="text-xs text-text-muted mt-1">Item dipilih di fasiliti ini</p>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all">
-          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">
+        <div className="bg-surface p-4 rounded-xl border border-border-default shadow-xs transition-colors">
+          <div className="flex items-center justify-between text-text-muted text-xs font-medium uppercase tracking-wider mb-2">
             <span>Status Aktif</span>
-            <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-subtle text-text-muted flex items-center justify-center">
               <CheckCircle className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-bold text-emerald-600">{activeCount}</div>
-          <p className="text-xs text-slate-500 mt-1">Sedia dipreksripsikan</p>
+          <div className="text-2xl font-semibold text-text-primary tabular-nums">{activeCount}</div>
+          <p className="text-xs text-text-muted mt-1">Sedia dipreksripsikan</p>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all">
-          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">
+        <div className="bg-surface p-4 rounded-xl border border-border-default shadow-xs transition-colors">
+          <div className="flex items-center justify-between text-text-muted text-xs font-medium uppercase tracking-wider mb-2">
             <span>Skim Dipilih</span>
-            <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-subtle text-text-muted flex items-center justify-center">
               <ShieldCheck className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-bold text-slate-900 uppercase">{currentVoteParam}</div>
-          <p className="text-xs text-slate-500 mt-1">Mod paparan skim perolehan</p>
+          <div className="text-2xl font-semibold text-text-primary uppercase">{currentVoteParam}</div>
+          <p className="text-xs text-text-muted mt-1">Mod paparan skim perolehan</p>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all">
-          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">
+        <div className="bg-surface p-4 rounded-xl border border-border-default shadow-xs transition-colors">
+          <div className="flex items-center justify-between text-text-muted text-xs font-medium uppercase tracking-wider mb-2">
             <span>Nilai Stok Pegangan</span>
-            <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-subtle text-text-muted flex items-center justify-center">
               <PackageCheck className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-bold text-indigo-600">RM {totalValuation.toLocaleString('ms-MY', { minimumFractionDigits: 2 })}</div>
-          <p className="text-xs text-slate-500 mt-1">Nilai inventori semasa fasiliti</p>
+          <div className="text-2xl font-semibold text-text-primary font-mono tabular-nums">RM {totalValuation.toLocaleString('ms-MY', { minimumFractionDigits: 2 })}</div>
+          <p className="text-xs text-text-muted mt-1">Nilai inventori semasa fasiliti</p>
         </div>
       </div>
 
       {/* Controls & Search */}
-      <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm space-y-4">
+      <div className="bg-surface p-4 rounded-xl border border-border-default shadow-xs space-y-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="relative w-full md:w-96">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
             <input
               type="text"
               placeholder="Cari item dalam inventori fasiliti..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+              className="w-full pl-9 pr-4 py-2 text-xs rounded-lg border border-border-default bg-surface text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-1 focus:ring-accent-base focus:border-accent-base transition-colors"
             />
           </div>
 
@@ -1277,11 +1274,11 @@ export const FacilityDrugInventoryPage: React.FC = () => {
             <select
               value={categoryId}
               onChange={e => setCategoryId(e.target.value)}
-              className="px-3 py-2 text-sm rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 font-medium cursor-pointer"
+              className="px-3 py-2 text-xs rounded-lg border border-border-default bg-surface text-text-primary focus:outline-none focus:ring-1 focus:ring-accent-base font-medium cursor-pointer"
             >
-              <option value="" className="text-slate-800 bg-white font-medium">Semua Kategori Ubat</option>
+              <option value="" className="bg-surface text-text-primary">Semua Kategori Ubat</option>
               {categoryOptions.map(catName => (
-                <option key={catName} value={catName} className="text-slate-800 bg-white font-medium">
+                <option key={catName} value={catName} className="bg-surface text-text-primary">
                   {catName}
                 </option>
               ))}
@@ -1290,30 +1287,30 @@ export const FacilityDrugInventoryPage: React.FC = () => {
             <select
               value={prescriberFilter}
               onChange={e => setPrescriberFilter(e.target.value)}
-              className="px-3 py-2 text-sm rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 font-medium cursor-pointer"
+              className="px-3 py-2 text-xs rounded-lg border border-border-default bg-surface text-text-primary focus:outline-none focus:ring-1 focus:ring-accent-base font-medium cursor-pointer"
             >
-              <option value="all" className="text-slate-800 bg-white font-medium">Semua Preskriber (FUKKM)</option>
-              <option value="A*" className="text-slate-800 bg-white font-medium">Kategori A* (Pakar Khusus)</option>
-              <option value="A" className="text-slate-800 bg-white font-medium">Kategori A (Pakar)</option>
-              <option value="A/KK" className="text-slate-800 bg-white font-medium">Kategori A/KK (Pakar / FMS KK)</option>
-              <option value="B" className="text-slate-800 bg-white font-medium">Kategori B (Pegawai Perubatan)</option>
-              <option value="C" className="text-slate-800 bg-white font-medium">Kategori C (Paramedik / MA / Nurse)</option>
+              <option value="all" className="bg-surface text-text-primary">Semua Preskriber (FUKKM)</option>
+              <option value="A*" className="bg-surface text-text-primary">Kategori A* (Pakar Khusus)</option>
+              <option value="A" className="bg-surface text-text-primary">Kategori A (Pakar)</option>
+              <option value="A/KK" className="bg-surface text-text-primary">Kategori A/KK (Pakar / FMS KK)</option>
+              <option value="B" className="bg-surface text-text-primary">Kategori B (Pegawai Perubatan)</option>
+              <option value="C" className="bg-surface text-text-primary">Kategori C (Paramedik / MA / Nurse)</option>
             </select>
 
             <select
               value={status}
               onChange={e => setStatus(e.target.value as any)}
-              className="px-3 py-2 text-sm rounded-xl border border-slate-200 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 cursor-pointer"
+              className="px-3 py-2 text-xs rounded-lg border border-border-default bg-surface text-text-primary focus:outline-none focus:ring-1 focus:ring-accent-base cursor-pointer"
             >
-              <option value="all">Semua Status</option>
-              <option value="active">Aktif</option>
-              <option value="inactive">Tidak Aktif</option>
+              <option value="all" className="bg-surface text-text-primary">Semua Status</option>
+              <option value="active" className="bg-surface text-text-primary">Aktif</option>
+              <option value="inactive" className="bg-surface text-text-primary">Tidak Aktif</option>
             </select>
 
             {facilityItems.length > 0 && (
               <button
                 onClick={handleClearCurrentScheme}
-                className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-xl transition-all"
+                className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-rose-500 hover:text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 rounded-lg transition-colors"
                 title="Clear item list for this scheme"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -1324,38 +1321,38 @@ export const FacilityDrugInventoryPage: React.FC = () => {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto rounded-xl border border-slate-200">
-          <table className="w-full text-left text-sm text-slate-700">
-            <thead className="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
+        <div className="overflow-x-auto rounded-xl border border-border-default">
+          <table className="w-full text-left text-sm text-text-primary">
+            <thead className="bg-subtle/50 text-xs uppercase font-medium text-text-muted border-b border-border-default">
               <tr>
-                <th className="py-3.5 px-4">Nama & Kod Ubat</th>
-                <th className="py-3.5 px-4">Kategori</th>
-                <th className="py-3.5 px-4">Packaging</th>
-                <th className="py-3.5 px-4">Stok Fasiliti</th>
-                <th className="py-3.5 px-4">No. Batch</th>
-                <th className="py-3.5 px-4">Expiry Date</th>
-                <th className="py-3.5 px-4">Harga (RM)</th>
-                <th className="py-3.5 px-4">Skim</th>
-                <th className="py-3.5 px-4">Status</th>
-                <th className="py-3.5 px-4 text-center">Tindakan</th>
+                <th className="py-3 px-4">Nama & Kod Ubat</th>
+                <th className="py-3 px-4">Kategori</th>
+                <th className="py-3 px-4">Packaging</th>
+                <th className="py-3 px-4">Stok Fasiliti</th>
+                <th className="py-3 px-4">No. Batch</th>
+                <th className="py-3 px-4">Expiry Date</th>
+                <th className="py-3 px-4">Harga (RM)</th>
+                <th className="py-3 px-4">Skim</th>
+                <th className="py-3 px-4">Status</th>
+                <th className="py-3 px-4 text-center">Tindakan</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 bg-white">
+            <tbody className="divide-y divide-border-default bg-surface">
               {paginatedItems.length === 0 ? (
                 <tr>
                   <td colSpan={10} className="py-16 text-center">
                     <div className="max-w-md mx-auto space-y-3">
-                      <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto">
+                      <div className="w-12 h-12 rounded-xl bg-subtle text-text-muted flex items-center justify-center mx-auto border border-border-default">
                         <Package className="w-6 h-6" />
                       </div>
-                      <h3 className="font-bold text-slate-800 text-base">Tiada Item dalam Inventori Fasiliti</h3>
-                      <p className="text-xs text-slate-500">
+                      <h3 className="font-semibold text-text-primary text-base">Tiada Item dalam Inventori Fasiliti</h3>
+                      <p className="text-xs text-text-muted">
                         Inventori ubat fasiliti anda masih kosong {currentVoteParam !== 'all' ? `untuk skim ${currentVoteParam.toUpperCase()}` : ''}. Sila klik butang di bawah untuk memilih item ubat daripada Katolog Utama.
                       </p>
                       <Button
                         size="sm"
                         onClick={() => setIsAddModalOpen(true)}
-                        className="bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-xl"
+                        className="bg-accent-base hover:bg-accent-base/90 text-white font-medium rounded-lg text-xs"
                       >
                         <Plus className="w-4 h-4 mr-1.5" />
                         Tambah Item dari Katolog
@@ -1375,83 +1372,67 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                     <tr
                       key={drug.id}
                       onClick={() => handleOpenEditModal(drug)}
-                      className="hover:bg-slate-50/80 transition-colors cursor-pointer"
+                      className="hover:bg-subtle/50 transition-colors cursor-pointer"
                       title="Click to update stock & details"
                     >
                       <td className="py-3 px-4">
-                        <div className="font-mono text-[11px] font-bold text-blue-600 mb-0.5">{code}</div>
-                        <div className="font-semibold text-slate-900">{drug.drug_name}</div>
+                        <div className="font-mono text-[11px] font-semibold text-accent-base mb-0.5">{code}</div>
+                        <div className="font-medium text-text-primary">{drug.drug_name}</div>
                         {drug.generic_name && (
-                          <div className="text-xs text-slate-400 italic">{drug.generic_name}</div>
+                          <div className="text-xs text-text-muted italic">{drug.generic_name}</div>
                         )}
                       </td>
                       <td className="py-3 px-4">
                         <div className="space-y-1">
-                          <div className="font-semibold text-xs text-slate-900">
+                          <div className="font-medium text-xs text-text-primary">
                             {therapeuticCat}
                           </div>
                           <div>
-                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold ${
-                              prescriberCat === 'A*'
-                                ? 'bg-rose-50 text-rose-700 border border-rose-200'
-                                : prescriberCat === 'A'
-                                ? 'bg-purple-50 text-purple-700 border border-purple-200'
-                                : prescriberCat === 'A/KK'
-                                ? 'bg-indigo-50 text-indigo-700 border border-indigo-200'
-                                : prescriberCat === 'B'
-                                ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                                : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            }`}>
+                            <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-subtle text-text-primary border border-border-default">
                               {prescriberCat}
                             </span>
                           </div>
                         </div>
                       </td>
                       <td className="py-3 px-4">
-                        <div className="font-semibold text-slate-900 uppercase">
+                        <div className="font-medium text-text-primary uppercase">
                           {drug.dosage_form || drug.uom || 'PACK'}
                         </div>
                         {drug.packaging_description && (
-                          <div className="text-[11px] text-slate-500 font-normal mt-0.5">{drug.packaging_description}</div>
+                          <div className="text-[11px] text-text-muted font-normal mt-0.5">{drug.packaging_description}</div>
                         )}
                       </td>
-                      <td className="py-3 px-4 font-semibold text-slate-900">
+                      <td className="py-3 px-4 font-semibold text-text-primary font-mono tabular-nums">
                         {drug.facility_stock ?? 0}
                       </td>
-                      <td className="py-3 px-4 font-mono text-xs text-slate-700">
+                      <td className="py-3 px-4 font-mono text-xs text-text-primary">
                         {batchNo !== '-' ? (
-                          <span className="px-2 py-0.5 rounded bg-slate-100 border border-slate-200/80 font-bold">
+                          <span className="px-2 py-0.5 rounded bg-subtle border border-border-default font-medium">
                             {batchNo}
                           </span>
                         ) : (
-                          <span className="text-slate-400 font-normal">-</span>
+                          <span className="text-text-muted font-normal">-</span>
                         )}
                       </td>
-                      <td className="py-3 px-4 font-mono text-xs text-slate-700">
+                      <td className="py-3 px-4 font-mono text-xs text-text-primary">
                         {expDate !== '-' ? (
-                          <span className="px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200/80 font-bold">
+                          <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 border border-amber-500/20 font-medium">
                             {expDate}
                           </span>
                         ) : (
-                          <span className="text-slate-400 font-normal">-</span>
+                          <span className="text-text-muted font-normal">-</span>
                         )}
                       </td>
-                      <td className="py-3 px-4 font-mono font-medium text-slate-800">
+                      <td className="py-3 px-4 font-mono font-medium text-text-primary tabular-nums">
                         RM {priceVal.toFixed(2)}
                       </td>
                       <td className="py-3 px-4">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold ${
-                          drug.procurement_vote === 'appl'
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            : drug.procurement_vote === 'lp'
-                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                            : 'bg-purple-50 text-purple-700 border border-purple-200'
-                        }`}>
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-subtle text-text-primary border border-border-default">
                           {(drug.procurement_vote || 'APPL').toUpperCase()}
                         </span>
                       </td>
                       <td className="py-3 px-4">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                           Aktif
                         </span>
@@ -1459,7 +1440,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                       <td className="py-3 px-4 text-center">
                         <button
                           onClick={(e) => handleDeleteItem(drug.id, drug.drug_name, e)}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                          className="p-1.5 rounded-lg text-text-muted hover:text-rose-500 hover:bg-rose-500/10 transition-colors"
                           title="Delete this item from facility inventory"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -1476,8 +1457,8 @@ export const FacilityDrugInventoryPage: React.FC = () => {
         {/* Pagination */}
         {filteredItems.length > 0 && (
           <div className="flex items-center justify-between pt-2">
-            <div className="text-xs text-slate-500">
-              Menunjukkan halaman <span className="font-semibold text-slate-800">{page}</span> daripada <span className="font-semibold text-slate-800">{totalPages}</span> ({filteredItems.length} item)
+            <div className="text-xs text-text-muted">
+              Menunjukkan halaman <span className="font-semibold text-text-primary">{page}</span> daripada <span className="font-semibold text-text-primary">{totalPages}</span> ({filteredItems.length} item)
             </div>
             <div className="flex items-center gap-2">
               <Button
@@ -1515,7 +1496,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
           />
 
           {/* Slide-Over Drawer */}
-          <div className="fixed inset-y-0 right-0 w-full sm:w-[540px] md:w-[680px] lg:w-[760px] bg-white shadow-2xl z-[100] flex flex-col border-l border-slate-200 animate-in slide-in-from-right duration-300">
+          <div className="fixed inset-y-0 right-0 w-full sm:w-[540px] md:w-[680px] lg:w-[760px] bg-surface shadow-2xl z-[100] flex flex-col border-l border-border-default animate-in slide-in-from-right duration-300">
             {/* Drawer Header */}
             <div className="p-6 bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white flex items-center justify-between shadow-md">
               <div>
@@ -1534,7 +1515,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                   setSelectedCatalogDrug(null)
                   setSelectedCatalogDrugIds([])
                 }}
-                className="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all"
+                className="w-9 h-9 rounded-xl bg-white/10 hover:bg-surface/20 text-white flex items-center justify-center transition-colors"
               >
                 <XCircle className="w-5 h-5" />
               </button>
@@ -1545,7 +1526,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
               {!selectedCatalogDrug ? (
                 <>
                   {/* Search & Filter Controls */}
-                  <div className="flex flex-col sm:flex-row gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+                  <div className="flex flex-col sm:flex-row gap-3 bg-subtle/50 p-4 rounded-2xl border border-border-default shadow-sm">
                     <div className="relative flex-1">
                       <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                       <input
@@ -1553,14 +1534,14 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                         placeholder="Cari kod barang, nama ubat atau bahan aktif..."
                         value={modalSearch}
                         onChange={e => setModalSearch(e.target.value)}
-                        className="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                        className="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border border-border-default bg-surface focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
                       />
                     </div>
 
                     <select
                       value={modalVoteFilter}
                       onChange={e => setModalVoteFilter(e.target.value)}
-                      className="px-4 py-2.5 text-sm font-semibold rounded-xl border border-slate-200 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                      className="px-4 py-2.5 text-sm font-semibold rounded-xl border border-border-default bg-surface text-text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                     >
                       <option value="all">Semua Skim</option>
                       <option value="appl">APPL</option>
@@ -1572,17 +1553,17 @@ export const FacilityDrugInventoryPage: React.FC = () => {
 
                   {/* Multi-Select Header Toolbar */}
                   <div className="flex items-center justify-between px-1 py-1">
-                    <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    <div className="text-xs font-bold text-text-secondary font-bold uppercase tracking-wider">
                       Senarai Item Katolog ({filteredCatalogDrugs.length} dijumpai)
                     </div>
 
                     {filteredCatalogDrugs.length > 0 && (
-                      <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-blue-700 bg-blue-50 px-3 py-1 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors">
+                      <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-blue-700 dark:text-blue-300 bg-blue-500/10 dark:bg-blue-950/60 px-3 py-1 rounded-lg border border-blue-500/20 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors">
                         <input
                           type="checkbox"
                           checked={isAllSelected}
                           onChange={handleToggleSelectAll}
-                          className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                          className="w-4 h-4 rounded border-border-default text-blue-600 focus:ring-blue-500 cursor-pointer"
                         />
                         Pilih Semua ({allFilteredIds.length})
                       </label>
@@ -1594,15 +1575,15 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                     {isCatalogLoading ? (
                       <div className="py-16 text-center text-slate-400">
                         <Spinner className="w-8 h-8 mx-auto text-blue-600 mb-3" />
-                        <p className="text-sm font-medium text-slate-600">Memuatkan Katolog Ubat Utama...</p>
+                        <p className="text-sm font-medium text-text-muted">Memuatkan Katolog Ubat Utama...</p>
                       </div>
                     ) : filteredCatalogDrugs.length === 0 ? (
-                      <div className="py-16 text-center text-slate-400 border-2 border-dashed border-slate-200 rounded-2xl p-6">
-                        <p className="text-sm font-medium text-slate-600">Tiada item Katolog dijumpai.</p>
+                      <div className="py-16 text-center text-slate-400 border-2 border-dashed border-border-default rounded-2xl p-6">
+                        <p className="text-sm font-medium text-text-muted">Tiada item Katolog dijumpai.</p>
                         <p className="text-xs text-slate-400 mt-1">Cuba tukar kata kunci carian atau penapis skim.</p>
                       </div>
                     ) : (
-                      <div className="divide-y divide-slate-100 border border-slate-200/80 rounded-2xl bg-white overflow-hidden shadow-sm">
+                      <div className="divide-y divide-border-subtle border border-border-default rounded-2xl bg-surface overflow-hidden shadow-sm">
                         {filteredCatalogDrugs.map(drug => {
                           const code = drug.drug_code || drug.item_code || drug.sku || '-'
                           const contractNo = drug.cc_contract_number || drug.kkm_contract_number || drug.contract_number
@@ -1614,8 +1595,8 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                           return (
                             <div
                               key={drug.id}
-                              className={`p-4 transition-all flex items-center justify-between group ${
-                                isSelected ? 'bg-blue-50/80' : 'hover:bg-blue-50/40'
+                              className={`p-4 transition-colors flex items-center justify-between group ${
+                                isSelected ? 'bg-blue-500/10 dark:bg-blue-950/40' : 'hover:bg-blue-500/10 dark:hover:bg-blue-950/20'
                               }`}
                             >
                               <div className="flex items-start gap-3 flex-1 pr-4">
@@ -1623,7 +1604,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                                   type="checkbox"
                                   checked={isSelected}
                                   onChange={e => handleToggleSelectDrug(drug.id, e)}
-                                  className="w-4 h-4 mt-1 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                  className="w-4 h-4 mt-1 rounded border-border-default text-blue-600 focus:ring-blue-500 cursor-pointer"
                                 />
 
                                 <div
@@ -1631,27 +1612,27 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                                   className="space-y-1 flex-1 cursor-pointer"
                                 >
                                   <div className="flex items-center gap-2 flex-wrap">
-                                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-100">
+                                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-blue-500/10 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-800">
                                       {code}
                                     </span>
-                                    <span className="text-xs font-semibold uppercase px-2 py-0.5 rounded bg-slate-100 text-slate-700">
+                                    <span className="text-xs font-semibold uppercase px-2 py-0.5 rounded bg-subtle text-text-secondary">
                                       {(drug.procurement_vote || 'APPL').toUpperCase()}
                                     </span>
                                     {contractNo && (
-                                      <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200">
+                                      <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-amber-500/10 dark:bg-amber-950/60 text-amber-400 dark:text-amber-300 border border-amber-500/20 dark:border-amber-800">
                                         No. Kontrak: {contractNo}
                                       </span>
                                     )}
                                     {renderContractPeriodBadge(startDate, endDate, drug.cc_contract_status, drug.procurement_vote, contractNo)}
                                   </div>
-                                  <div className="font-bold text-slate-900 text-base group-hover:text-blue-600 transition-colors">
+                                  <div className="font-bold text-text-primary text-base group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                                     {drug.drug_name}
                                   </div>
                                   {drug.generic_name && (
-                                    <div className="text-xs text-slate-500 italic">{drug.generic_name}</div>
+                                    <div className="text-xs text-text-muted italic">{drug.generic_name}</div>
                                   )}
                                   <div className="text-xs text-slate-400">
-                                    Bentuk: <span className="font-medium text-slate-600 uppercase">{drug.dosage_form || drug.uom || 'PACK'}</span> • Harga: <span className="font-mono font-semibold text-slate-700">RM {priceVal.toFixed(2)}</span>
+                                    Bentuk: <span className="font-medium text-text-muted uppercase">{drug.dosage_form || drug.uom || 'PACK'}</span> • Harga: <span className="font-mono font-semibold text-text-secondary">RM {priceVal.toFixed(2)}</span>
                                   </div>
                                 </div>
                               </div>
@@ -1675,26 +1656,26 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                 <div className="space-y-6">
                   <button
                     onClick={() => setSelectedCatalogDrug(null)}
-                    className="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                    className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1"
                   >
                     <ChevronLeft className="w-4 h-4" /> Kembali ke Carian Katolog
                   </button>
 
-                  <div className="bg-blue-50/70 p-5 rounded-2xl border border-blue-100 space-y-2">
+                  <div className="bg-blue-500/10 p-5 rounded-2xl border border-blue-100 space-y-2">
                     <span className="text-xs text-blue-600 uppercase font-bold tracking-wider">Item Katolog Dipilih</span>
-                    <h3 className="font-bold text-slate-900 text-xl">{selectedCatalogDrug.drug_name}</h3>
+                    <h3 className="font-bold text-text-primary text-xl">{selectedCatalogDrug.drug_name}</h3>
                     {selectedCatalogDrug.generic_name && (
-                      <p className="text-xs text-slate-500 italic">{selectedCatalogDrug.generic_name}</p>
+                      <p className="text-xs text-text-muted italic">{selectedCatalogDrug.generic_name}</p>
                     )}
                     <div className="flex items-center gap-3 flex-wrap pt-2">
-                      <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-white text-blue-700 border border-blue-200">
+                      <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-surface text-blue-700 border border-blue-500/20">
                         {selectedCatalogDrug.drug_code || selectedCatalogDrug.item_code || selectedCatalogDrug.sku || '-'}
                       </span>
-                      <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 uppercase">
+                      <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-400 uppercase">
                         {(selectedCatalogDrug.procurement_vote || 'APPL').toUpperCase()}
                       </span>
                       {(selectedCatalogDrug.cc_contract_number || selectedCatalogDrug.kkm_contract_number || selectedCatalogDrug.contract_number) && (
-                        <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 border border-amber-200">
+                        <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
                           No. Kontrak: {selectedCatalogDrug.cc_contract_number || selectedCatalogDrug.kkm_contract_number || selectedCatalogDrug.contract_number}
                         </span>
                       )}
@@ -1705,34 +1686,34 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                         selectedCatalogDrug.procurement_vote,
                         selectedCatalogDrug.cc_contract_number || selectedCatalogDrug.kkm_contract_number || selectedCatalogDrug.contract_number
                       )}
-                      <span className="text-xs text-slate-600 font-mono">
+                      <span className="text-xs text-text-muted font-mono">
                         Harga: RM {((selectedCatalogDrug.price ?? selectedCatalogDrug.unit_price ?? 0)).toFixed(2)}
                       </span>
                     </div>
                   </div>
 
-                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
-                    <h4 className="font-bold text-slate-800 text-base border-b border-slate-100 pb-2">Konfigurasi Stok Fasiliti</h4>
+                  <div className="bg-surface p-6 rounded-2xl border border-border-default shadow-sm space-y-5">
+                    <h4 className="font-bold text-text-primary text-base border-b border-border-subtle pb-2">Konfigurasi Stok Fasiliti</h4>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div>
-                        <label className="text-xs font-bold text-slate-700 block mb-1.5">Stok Awal Fasiliti</label>
+                        <label className="text-xs font-bold text-text-secondary block mb-1.5">Stok Awal Fasiliti</label>
                         <input
                           type="number"
                           value={initialStockInput}
                           onChange={e => setInitialStockInput(Number(e.target.value))}
-                          className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 font-mono text-base focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                          className="w-full px-4 py-2.5 rounded-xl border border-border-default bg-subtle/50 font-mono text-base focus:bg-surface focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
                         />
                         <span className="text-[11px] text-slate-400 mt-1 block">Kuantiti fizikal di stor fasiliti</span>
                       </div>
 
                       <div>
-                        <label className="text-xs font-bold text-slate-700 block mb-1.5">Paras Penimbal (Min Buffer)</label>
+                        <label className="text-xs font-bold text-text-secondary block mb-1.5">Paras Penimbal (Min Buffer)</label>
                         <input
                           type="number"
                           value={minBufferInput}
                           onChange={e => setMinBufferInput(Number(e.target.value))}
-                          className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 font-mono text-base focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                          className="w-full px-4 py-2.5 rounded-xl border border-border-default bg-subtle/50 font-mono text-base focus:bg-surface focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
                         />
                         <span className="text-[11px] text-slate-400 mt-1 block">Amaran pesanan semula automatik</span>
                       </div>
@@ -1743,7 +1724,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
             </div>
 
             {/* Drawer Footer */}
-            <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+            <div className="p-4 bg-subtle/50 border-t border-border-default flex items-center justify-between">
               <Button
                 variant="outline"
                 onClick={() => {
@@ -1788,7 +1769,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
           />
 
           {/* Slide-Over Container */}
-          <div className="fixed inset-y-0 right-0 w-full sm:w-[680px] md:w-[860px] lg:w-[960px] xl:w-[1040px] bg-white shadow-2xl z-[100] flex flex-col border-l border-slate-200 animate-in slide-in-from-right duration-300">
+          <div className="fixed inset-y-0 right-0 w-full sm:w-[680px] md:w-[860px] lg:w-[960px] xl:w-[1040px] bg-surface shadow-2xl z-[100] flex flex-col border-l border-border-default animate-in slide-in-from-right duration-300">
             {/* Drawer Header */}
             <div className="p-6 bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-white flex items-center justify-between shadow-md">
               <div>
@@ -1805,60 +1786,60 @@ export const FacilityDrugInventoryPage: React.FC = () => {
               </div>
               <button
                 onClick={() => setEditingItem(null)}
-                className="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all"
+                className="w-9 h-9 rounded-xl bg-white/10 hover:bg-surface/20 text-white flex items-center justify-center transition-colors"
               >
                 <XCircle className="w-5 h-5" />
               </button>
             </div>
 
             {/* Navigation Tabs */}
-            <div className="flex items-center border-b border-slate-200 bg-slate-50 px-6 pt-3 gap-1.5 overflow-x-auto">
+            <div className="flex items-center border-b border-border-default bg-subtle/50 px-6 pt-3 gap-1.5 overflow-x-auto">
               <button
                 onClick={() => setActiveEditTab('settings')}
-                className={`px-3.5 py-2 text-xs font-bold rounded-t-xl transition-all border-t border-x whitespace-nowrap ${
+                className={`px-3.5 py-2 text-xs font-bold rounded-t-xl transition-colors border-t border-x whitespace-nowrap ${
                   activeEditTab === 'settings'
-                    ? 'bg-white text-blue-600 border-slate-200 border-b-transparent shadow-sm'
-                    : 'text-slate-500 hover:text-slate-800 border-transparent'
+                    ? 'bg-surface text-blue-600 border-border-default border-b-transparent shadow-sm'
+                    : 'text-text-muted hover:text-text-primary border-transparent'
                 }`}
               >
                 Tetapan Stok & Fasiliti
               </button>
               <button
                 onClick={() => setActiveEditTab('purchasing')}
-                className={`px-3.5 py-2 text-xs font-bold rounded-t-xl transition-all border-t border-x whitespace-nowrap ${
+                className={`px-3.5 py-2 text-xs font-bold rounded-t-xl transition-colors border-t border-x whitespace-nowrap ${
                   activeEditTab === 'purchasing'
-                    ? 'bg-white text-blue-600 border-slate-200 border-b-transparent shadow-sm'
-                    : 'text-slate-500 hover:text-slate-800 border-transparent'
+                    ? 'bg-surface text-blue-600 border-border-default border-b-transparent shadow-sm'
+                    : 'text-text-muted hover:text-text-primary border-transparent'
                 }`}
               >
                 Transaksi Pembelian
               </button>
               <button
                 onClick={() => setActiveEditTab('receiving')}
-                className={`px-3.5 py-2 text-xs font-bold rounded-t-xl transition-all border-t border-x whitespace-nowrap ${
+                className={`px-3.5 py-2 text-xs font-bold rounded-t-xl transition-colors border-t border-x whitespace-nowrap ${
                   activeEditTab === 'receiving'
-                    ? 'bg-white text-blue-600 border-slate-200 border-b-transparent shadow-sm'
-                    : 'text-slate-500 hover:text-slate-800 border-transparent'
+                    ? 'bg-surface text-blue-600 border-border-default border-b-transparent shadow-sm'
+                    : 'text-text-muted hover:text-text-primary border-transparent'
                 }`}
               >
                 Transaksi Penerimaan
               </button>
               <button
                 onClick={() => setActiveEditTab('issuing')}
-                className={`px-3.5 py-2 text-xs font-bold rounded-t-xl transition-all border-t border-x whitespace-nowrap ${
+                className={`px-3.5 py-2 text-xs font-bold rounded-t-xl transition-colors border-t border-x whitespace-nowrap ${
                   activeEditTab === 'issuing'
-                    ? 'bg-white text-blue-600 border-slate-200 border-b-transparent shadow-sm'
-                    : 'text-slate-500 hover:text-slate-800 border-transparent'
+                    ? 'bg-surface text-blue-600 border-border-default border-b-transparent shadow-sm'
+                    : 'text-text-muted hover:text-text-primary border-transparent'
                 }`}
               >
                 Transaksi Pengeluaran
               </button>
               <button
                 onClick={() => setActiveEditTab('qrcode')}
-                className={`px-3.5 py-2 text-xs font-bold rounded-t-xl transition-all border-t border-x whitespace-nowrap flex items-center gap-1.5 ${
+                className={`px-3.5 py-2 text-xs font-bold rounded-t-xl transition-colors border-t border-x whitespace-nowrap flex items-center gap-1.5 ${
                   activeEditTab === 'qrcode'
-                    ? 'bg-white text-blue-600 border-slate-200 border-b-transparent shadow-sm'
-                    : 'text-slate-500 hover:text-slate-800 border-transparent'
+                    ? 'bg-surface text-blue-600 border-border-default border-b-transparent shadow-sm'
+                    : 'text-text-muted hover:text-text-primary border-transparent'
                 }`}
               >
                 <QrCode className="w-3.5 h-3.5" />
@@ -1871,9 +1852,9 @@ export const FacilityDrugInventoryPage: React.FC = () => {
               {activeEditTab === 'settings' && (
                 <>
                   {/* Master Catalog Read-Only Information Card */}
-                  <div className="bg-amber-50/70 p-4 rounded-2xl border border-amber-200/80 space-y-3">
-                    <div className="flex items-center justify-between border-b border-amber-200/60 pb-2">
-                      <div className="flex items-center gap-2 text-xs font-bold text-amber-900">
+                  <div className="bg-amber-500/10 p-4 rounded-2xl border border-amber-500/20 space-y-3">
+                    <div className="flex items-center justify-between border-b border-amber-500/20 pb-2">
+                      <div className="flex items-center gap-2 text-xs font-bold text-amber-400 dark:text-amber-300 font-bold">
                         <ShieldCheck className="w-4 h-4 text-amber-600" />
                         Maklumat Katolog Utama (Read-Only)
                       </div>
@@ -1885,19 +1866,19 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
                       <div>
                         <span className="text-slate-400 block text-[11px]">Skim Perolehan</span>
-                        <span className="font-bold text-slate-800 uppercase">
+                        <span className="font-bold text-text-primary uppercase">
                           {editingItem.procurement_vote || 'APPL'}
                         </span>
                       </div>
                       <div>
                         <span className="text-slate-400 block text-[11px]">Packaging</span>
-                        <span className="font-bold text-slate-800 uppercase">
+                        <span className="font-bold text-text-primary uppercase">
                           {editingItem.dosage_form || editingItem.uom || 'PACK'}
                         </span>
                       </div>
                       <div>
                         <span className="text-slate-400 block text-[11px]">Harga Unit Kontrak</span>
-                        <span className="font-mono font-bold text-slate-800">
+                        <span className="font-mono font-bold text-text-primary">
                           RM {((editingItem.price ?? editingItem.unit_price ?? 0)).toFixed(2)}
                         </span>
                       </div>
@@ -1905,8 +1886,8 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                   </div>
 
                   {/* Form Section: Editable Stock & Facility Configurations */}
-                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                    <h3 className="font-bold text-slate-900 text-sm border-b border-slate-100 pb-2 flex items-center gap-2">
+                  <div className="bg-surface p-5 rounded-2xl border border-border-default shadow-sm space-y-4">
+                    <h3 className="font-bold text-text-primary text-sm border-b border-border-subtle pb-2 flex items-center gap-2">
                       <Warehouse className="w-4 h-4 text-blue-600" />
                       Konfigurasi Stok & Penimbal Fasiliti
                     </h3>
@@ -1914,11 +1895,11 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <div className="flex items-center justify-between mb-1">
-                          <label className="text-xs font-bold text-slate-700">
+                          <label className="text-xs font-bold text-text-secondary">
                             Stok Fasiliti (Kuantiti Fizikal)
                           </label>
-                          <span className="text-[10px] font-bold text-slate-500 flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-                            <Lock className="w-3 h-3 text-slate-500" />
+                          <span className="text-[10px] font-bold text-text-muted flex items-center gap-1 bg-subtle px-2 py-0.5 rounded border border-border-default">
+                            <Lock className="w-3 h-3 text-text-muted" />
                             Kemas Kini Automatiks
                           </span>
                         </div>
@@ -1927,7 +1908,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                           disabled
                           readOnly
                           value={editingItem.facility_stock ?? 0}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-100 font-mono text-base font-bold text-slate-500 cursor-not-allowed select-none"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-border-default bg-subtle font-mono text-base font-bold text-text-muted cursor-not-allowed select-none"
                         />
                         <p className="text-[11px] text-slate-400 mt-1 italic">
                           Baki fizikal tidak boleh diubah secara manual di sini. Ia hanya dikemaskini melalui pergerakan Penerimaan (GRN) & Pengeluaran Stok.
@@ -1935,7 +1916,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                       </div>
 
                       <div>
-                        <label className="text-xs font-bold text-slate-700 block mb-1">
+                        <label className="text-xs font-bold text-text-secondary block mb-1">
                           Paras Penimbal (Min Buffer)
                         </label>
                         <input
@@ -1943,12 +1924,12 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                           min="0"
                           value={editBufferInput}
                           onChange={e => setEditBufferInput(e.target.value === '' ? '' : Number(e.target.value))}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white font-mono text-base text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-border-default bg-surface font-mono text-base text-text-primary focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
                         />
                       </div>
 
                       <div>
-                        <label className="text-xs font-bold text-slate-700 block mb-1">
+                        <label className="text-xs font-bold text-text-secondary block mb-1">
                           Paras Stok Minima (Min Level)
                         </label>
                         <input
@@ -1956,12 +1937,12 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                           min="0"
                           value={editMinLevelInput}
                           onChange={e => setEditMinLevelInput(e.target.value === '' ? '' : Number(e.target.value))}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white font-mono text-base text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-border-default bg-surface font-mono text-base text-text-primary focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
                         />
                       </div>
 
                       <div>
-                        <label className="text-xs font-bold text-slate-700 block mb-1">
+                        <label className="text-xs font-bold text-text-secondary block mb-1">
                           Paras Stok Maksima (Max Level)
                         </label>
                         <input
@@ -1969,28 +1950,28 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                           min="0"
                           value={editMaxLevelInput}
                           onChange={e => setEditMaxLevelInput(e.target.value === '' ? '' : Number(e.target.value))}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white font-mono text-base text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-border-default bg-surface font-mono text-base text-text-primary focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
                         />
                       </div>
                     </div>
                   </div>
 
                   {/* Form Section: Classifications & Location */}
-                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                    <h3 className="font-bold text-slate-900 text-sm border-b border-slate-100 pb-2 flex items-center gap-2">
+                  <div className="bg-surface p-5 rounded-2xl border border-border-default shadow-sm space-y-4">
+                    <h3 className="font-bold text-text-primary text-sm border-b border-border-subtle pb-2 flex items-center gap-2">
                       <Layers className="w-4 h-4 text-indigo-600" />
                       Klasifikasi & Lokasi Penimpanan
                     </h3>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-xs font-bold text-slate-700 block mb-1">
+                        <label className="text-xs font-bold text-text-secondary block mb-1">
                           Kategori Ubat (Therapeutic Class)
                         </label>
                         <select
                           value={editTherapeuticCat}
                           onChange={e => setEditTherapeuticCat(e.target.value)}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-xs font-semibold text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-border-default bg-subtle/50 text-xs font-semibold text-text-primary focus:bg-surface focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
                         >
                           {categoryOptions.map(cat => (
                             <option key={cat} value={cat}>{cat}</option>
@@ -1999,13 +1980,13 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                       </div>
 
                       <div>
-                        <label className="text-xs font-bold text-slate-700 block mb-1">
+                        <label className="text-xs font-bold text-text-secondary block mb-1">
                           Kategori Preskriber (FUKKM)
                         </label>
                         <select
                           value={editPrescriberCat}
                           onChange={e => setEditPrescriberCat(e.target.value)}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-xs font-semibold text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-border-default bg-subtle/50 text-xs font-semibold text-text-primary focus:bg-surface focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
                         >
                           <option value="A*">A* (Pakar Khusus)</option>
                           <option value="A">A (Pakar)</option>
@@ -2015,8 +1996,8 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                         </select>
                       </div>
 
-                      <div className="sm:col-span-2 space-y-3 pt-2 border-t border-slate-100">
-                        <label className="text-xs font-bold text-slate-800 flex items-center justify-between">
+                      <div className="sm:col-span-2 space-y-3 pt-2 border-t border-border-subtle">
+                        <label className="text-xs font-bold text-text-primary flex items-center justify-between">
                           <span className="flex items-center gap-1.5">
                             <Warehouse className="w-3.5 h-3.5 text-indigo-600" />
                             Lokasi Stor, Rak & Level (Physical Location Hierarchy)
@@ -2032,13 +2013,13 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                           {/* Dropdown 1: Store */}
                           <div>
-                            <label className="text-[10px] font-semibold text-slate-500 block mb-1">
+                            <label className="text-[10px] font-semibold text-text-muted block mb-1">
                               1. Pilih Stor / Premis
                             </label>
                             <select
                               value={selectedStoreCode}
                               onChange={e => handleLocationChange(e.target.value, '', '')}
-                              className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50/70 text-xs font-medium text-slate-900 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                              className="w-full px-3 py-2 rounded-xl border border-border-default bg-subtle/50 text-xs font-medium text-text-primary focus:bg-surface focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
                             >
                               <option value="">-- Select Store --</option>
                               {availableStoreLocations.map(loc => (
@@ -2051,14 +2032,14 @@ export const FacilityDrugInventoryPage: React.FC = () => {
 
                           {/* Dropdown 2: Rack / Cabinet / Pallet */}
                           <div>
-                            <label className="text-[10px] font-semibold text-slate-500 block mb-1">
+                            <label className="text-[10px] font-semibold text-text-muted block mb-1">
                               2. Pilih Rak / Kabinet
                             </label>
                             <select
                               value={selectedRackName}
                               onChange={e => handleLocationChange(selectedStoreCode, e.target.value, '')}
                               disabled={!selectedStoreCode || availableRacks.length === 0}
-                              className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50/70 text-xs font-medium text-slate-900 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="w-full px-3 py-2 rounded-xl border border-border-default bg-subtle/50 text-xs font-medium text-text-primary focus:bg-surface focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               <option value="">
                                 {!selectedStoreCode 
@@ -2077,14 +2058,14 @@ export const FacilityDrugInventoryPage: React.FC = () => {
 
                           {/* Dropdown 3: Level / Tingkat */}
                           <div>
-                            <label className="text-[10px] font-semibold text-slate-500 block mb-1">
+                            <label className="text-[10px] font-semibold text-text-muted block mb-1">
                               3. Pilih Level / Tingkat
                             </label>
                             <select
                               value={selectedLevelName}
                               onChange={e => handleLocationChange(selectedStoreCode, selectedRackName, e.target.value)}
                               disabled={!selectedRackName || availableLevels.length === 0}
-                              className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50/70 text-xs font-medium text-slate-900 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="w-full px-3 py-2 rounded-xl border border-border-default bg-subtle/50 text-xs font-medium text-text-primary focus:bg-surface focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               <option value="">
                                 {!selectedRackName 
@@ -2104,7 +2085,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
 
                         {/* Combined Location Result - Read Only */}
                         <div>
-                          <label className="text-[10px] font-semibold text-slate-500 block mb-1">
+                          <label className="text-[10px] font-semibold text-text-muted block mb-1">
                             Teks Format Lokasi Penuh:
                           </label>
                           <input
@@ -2112,7 +2093,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                             readOnly
                             placeholder="Belum dipilih"
                             value={editLocationInput}
-                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-100/70 font-mono text-xs text-slate-700 select-none cursor-not-allowed focus:outline-none transition-all placeholder-slate-400"
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-border-default bg-subtle font-mono text-xs text-text-secondary select-none cursor-not-allowed focus:outline-none transition-colors placeholder-slate-400"
                           />
                         </div>
                       </div>
@@ -2165,7 +2146,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                               </span>
                               <div
                                 style={{ height: `${pct}%` }}
-                                className={`w-full rounded-t-lg transition-all duration-300 ${
+                                className={`w-full rounded-t-lg transition-colors duration-150 ${
                                   isForecast
                                     ? 'bg-gradient-to-t from-indigo-600 to-purple-400 border border-purple-300/40 opacity-85'
                                     : 'bg-gradient-to-t from-blue-600 to-cyan-400'
@@ -2218,13 +2199,13 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                   </div>
 
                   {/* 1. Real Purchasing / Perolehan Section */}
-                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                      <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider flex items-center gap-2">
+                  <div className="bg-surface p-5 rounded-2xl border border-border-default shadow-sm space-y-3">
+                    <div className="flex items-center justify-between border-b border-border-subtle pb-2">
+                      <h4 className="font-bold text-text-primary text-xs uppercase tracking-wider flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-blue-500" />
                         Rekod Pembelian & Perolehan (Purchasing)
                       </h4>
-                      <span className="text-[11px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">
+                      <span className="text-[11px] font-semibold text-blue-600 bg-blue-500/10 px-2 py-0.5 rounded">
                         {realPOs.length} Pesanan Ditemui
                       </span>
                     </div>
@@ -2233,20 +2214,20 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                       {isTxLoading ? (
                         <div className="py-6 text-center text-slate-400 text-xs">Memuatkan rekod pembelian dari pangkalan data...</div>
                       ) : realPOs.length === 0 ? (
-                        <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center text-slate-400 text-xs font-medium">
+                        <div className="p-4 rounded-xl bg-subtle/50 border border-border-subtle text-center text-slate-400 text-xs font-medium">
                           Tiada rekod pesanan pembelian (PO) ditemui dalam pangkalan data untuk ubat ini.
                         </div>
                       ) : (
                         realPOs.map(po => (
-                          <div key={po.id} className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                          <div key={po.id} className="p-3 rounded-xl bg-subtle/50 border border-border-subtle flex items-center justify-between">
                             <div>
                               <div className="font-mono font-bold text-blue-700">{po.purchase_order?.po_number || po.po_number || po.id}</div>
-                              <div className="text-slate-500 text-[11px]">
+                              <div className="text-text-muted text-[11px]">
                                 Tarikh Pesan: {po.created_at ? new Date(po.created_at).toLocaleDateString('ms-MY') : '-'}
                               </div>
                             </div>
                             <div className="text-right font-mono">
-                              <div className="font-bold text-slate-900">{po.quantity} unit</div>
+                              <div className="font-bold text-text-primary">{po.quantity} unit</div>
                               <div className="text-[10px] text-emerald-600 font-bold">LULUS</div>
                             </div>
                           </div>
@@ -2260,13 +2241,13 @@ export const FacilityDrugInventoryPage: React.FC = () => {
               {activeEditTab === 'receiving' && (
                 <div className="space-y-6">
                   {/* 2. Real Receiving / Penerimaan Section */}
-                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                      <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider flex items-center gap-2">
+                  <div className="bg-surface p-5 rounded-2xl border border-border-default shadow-sm space-y-3">
+                    <div className="flex items-center justify-between border-b border-border-subtle pb-2">
+                      <h4 className="font-bold text-text-primary text-xs uppercase tracking-wider flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-emerald-500" />
                         Rekod Penerimaan Stok (Receiving / GRN)
                       </h4>
-                      <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+                      <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-500/10 px-2 py-0.5 rounded">
                         Pengesahan Stor
                       </span>
                     </div>
@@ -2275,22 +2256,22 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                       {isTxLoading ? (
                         <div className="py-6 text-center text-slate-400 text-xs">Memuatkan rekod penerimaan dari pangkalan data...</div>
                       ) : realTransactions.filter(t => t.transaction_type === 'receive' || t.quantity > 0).length === 0 ? (
-                        <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center text-slate-400 text-xs font-medium">
+                        <div className="p-4 rounded-xl bg-subtle/50 border border-border-subtle text-center text-slate-400 text-xs font-medium">
                           Tiada rekod penerimaan stok (GRN) ditemui dalam pangkalan data untuk ubat ini.
                         </div>
                       ) : (
                         realTransactions
                           .filter(t => t.transaction_type === 'receive' || t.quantity > 0)
                           .map(t => (
-                            <div key={t.id} className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                            <div key={t.id} className="p-3 rounded-xl bg-subtle/50 border border-border-subtle flex items-center justify-between">
                               <div>
                                 <div className="font-mono font-bold text-emerald-700">{t.reference_number || t.transaction_number || `GRN-${t.id.slice(-4)}`}</div>
-                                <div className="text-slate-500 text-[11px]">
+                                <div className="text-text-muted text-[11px]">
                                   Tarikh Terima: {t.transaction_date ? new Date(t.transaction_date).toLocaleDateString('ms-MY') : '-'}
                                 </div>
                               </div>
                               <div className="text-right font-mono">
-                                <div className="font-bold text-slate-900">+{t.quantity} unit</div>
+                                <div className="font-bold text-text-primary">+{t.quantity} unit</div>
                                 <div className="text-[10px] text-emerald-600 font-semibold">Diterima</div>
                               </div>
                             </div>
@@ -2304,18 +2285,18 @@ export const FacilityDrugInventoryPage: React.FC = () => {
               {activeEditTab === 'qrcode' && (
                 <div className="space-y-6">
                   {/* Card Container */}
-                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <div className="bg-surface p-6 rounded-2xl border border-border-default shadow-sm space-y-6">
+                    <div className="flex items-center justify-between border-b border-border-subtle pb-3">
                       <div>
-                        <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+                        <h3 className="font-bold text-text-primary text-sm flex items-center gap-2">
                           <QrCode className="w-4 h-4 text-blue-600" />
                           Label & Kod QR Item Stok (Digital Inventory Tag)
                         </h3>
-                        <p className="text-xs text-slate-500 mt-0.5">
+                        <p className="text-xs text-text-muted mt-0.5">
                           Imbas kod QR ini menggunakan Pengimbas Pergerakan Stok untuk mendaftar transaksi penerimaan atau pengeluaran secara automatik.
                         </p>
                       </div>
-                      <span className="text-xs font-mono font-bold bg-blue-50 text-blue-700 px-3 py-1 rounded-lg border border-blue-100">
+                      <span className="text-xs font-mono font-bold bg-blue-500/10 text-blue-700 px-3 py-1 rounded-lg border border-blue-100">
                         {editingItem.drug_code || editingItem.item_code || editingItem.sku || '-'}
                       </span>
                     </div>
@@ -2323,31 +2304,31 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                     {/* Professional QR Sticker Label Mockup Preview */}
                     <div className="flex flex-col md:flex-row items-center justify-center gap-8 p-6 bg-slate-900 rounded-2xl text-white shadow-xl border border-slate-800">
                       {/* Printable Label Badge */}
-                      <div className="w-72 bg-white text-slate-900 rounded-xl p-4 shadow-2xl border-2 border-slate-900 flex flex-col justify-between space-y-3">
-                        <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
+                      <div className="w-72 bg-surface text-text-primary rounded-xl p-4 shadow-2xl border-2 border-slate-900 flex flex-col justify-between space-y-3">
+                        <div className="flex items-center gap-2 border-b border-border-default pb-2">
                           <img
                             src="/512px-Jata_MalaysiaV2.svg.png"
                             alt="Jata Negara"
                             className="w-8 h-8 object-contain"
                           />
                           <div className="flex-1 min-w-0">
-                            <div className="text-[7px] font-bold text-slate-500 uppercase tracking-tight leading-none">
+                            <div className="text-[7px] font-bold text-text-muted uppercase tracking-tight leading-none">
                               Kementerian Kesihatan Malaysia
                             </div>
-                            <div className="text-[10px] font-black text-slate-900 uppercase tracking-wide leading-tight">
+                            <div className="text-[10px] font-black text-text-primary uppercase tracking-wide leading-tight">
                               Hospital Lawas
                             </div>
                           </div>
-                          <span className="text-[9px] font-bold bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono uppercase flex-shrink-0">
+                          <span className="text-[9px] font-bold bg-blue-100 text-blue-400 px-1.5 py-0.5 rounded font-mono uppercase flex-shrink-0">
                             {(editingItem.procurement_vote || 'APPL').toUpperCase()}
                           </span>
                         </div>
 
                         <div className="flex items-center gap-3">
                           {qrCodeUrl ? (
-                            <img src={qrCodeUrl} alt="QR Code Label" className="w-24 h-24 object-contain border border-slate-100 rounded-lg p-1 bg-white flex-shrink-0" />
+                            <img src={qrCodeUrl} alt="QR Code Label" className="w-24 h-24 object-contain border border-border-subtle rounded-lg p-1 bg-surface flex-shrink-0" />
                           ) : (
-                            <div className="w-24 h-24 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400">
+                            <div className="w-24 h-24 bg-subtle rounded-lg flex items-center justify-center text-slate-400">
                               <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
                             </div>
                           )}
@@ -2356,19 +2337,19 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                             <div className="font-mono text-xs font-bold text-blue-600 truncate">
                               [ {editingItem.drug_code || editingItem.item_code || editingItem.sku || '-'} ]
                             </div>
-                            <div className="font-bold text-xs text-slate-900 line-clamp-2 leading-tight">
+                            <div className="font-bold text-xs text-text-primary line-clamp-2 leading-tight">
                               {editingItem.drug_name}
                             </div>
-                            <div className="text-[10px] text-slate-500">
-                              Packaging: <span className="font-semibold text-slate-700 uppercase">{editingItem.dosage_form || editingItem.uom || 'PACK'}</span>
+                            <div className="text-[10px] text-text-muted">
+                              Packaging: <span className="font-semibold text-text-secondary uppercase">{editingItem.dosage_form || editingItem.uom || 'PACK'}</span>
                             </div>
-                            <div className="text-[10px] text-slate-500 truncate">
-                              Lokasi: <span className="font-semibold text-slate-700">{editLocationInput || editingItem.location || 'Belum Diset'}</span>
+                            <div className="text-[10px] text-text-muted truncate">
+                              Lokasi: <span className="font-semibold text-text-secondary">{editLocationInput || editingItem.location || 'Belum Diset'}</span>
                             </div>
                           </div>
                         </div>
 
-                        <div className="border-t border-dashed border-slate-300 pt-1.5 text-center text-[8px] font-semibold text-slate-400 tracking-wider">
+                        <div className="border-t border-dashed border-border-default pt-1.5 text-center text-[8px] font-semibold text-text-secondary font-bold tracking-wider">
                           STOK INVENTORI FASILITI • H.O.M.E. ECOSYSTEM
                         </div>
                       </div>
@@ -2396,7 +2377,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                             <a
                               href={qrCodeUrl}
                               download={`QR-${editingItem.drug_code || editingItem.id}.png`}
-                              className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-semibold text-xs rounded-xl transition-all border border-white/10"
+                              className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-white/10 hover:bg-surface/20 text-white font-semibold text-xs rounded-xl transition-colors border border-white/10"
                             >
                               <Download className="w-4 h-4 text-emerald-400" />
                               Muat Turun Gambar PNG
@@ -2428,7 +2409,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
             </div>
 
             {/* Drawer Footer */}
-            <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+            <div className="p-4 bg-subtle/50 border-t border-border-default flex items-center justify-between">
               <Button
                 variant="outline"
                 onClick={() => setEditingItem(null)}

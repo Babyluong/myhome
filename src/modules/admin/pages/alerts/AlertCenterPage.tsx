@@ -183,8 +183,8 @@ export const AlertCenterPage: React.FC = () => {
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <AlertTriangle className="w-12 h-12 text-error-500 mx-auto mb-4" />
-          <p className="text-lg font-semibold text-slate-900">Access Denied</p>
-          <p className="text-slate-600">Only System Admin can access this page.</p>
+          <p className="text-lg font-semibold text-text-primary">Access Denied</p>
+          <p className="text-text-muted">Only System Admin can access this page.</p>
         </div>
       </div>
     )
@@ -208,8 +208,8 @@ export const AlertCenterPage: React.FC = () => {
             )}
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Alert Center</h1>
-            <p className="text-sm text-slate-600 mt-1">
+            <h1 className="text-2xl font-bold text-text-primary">Alert Center</h1>
+            <p className="text-sm text-text-muted mt-1">
               Monitor and manage system alerts
             </p>
           </div>
@@ -284,10 +284,10 @@ export const AlertCenterPage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15 }}
-        className="bg-white rounded-xl border border-slate-200 shadow-sm p-4"
+        className="bg-surface rounded-xl border border-border-default shadow-sm p-4"
       >
         <div className="flex items-center gap-4 flex-wrap">
-          <div className="flex items-center gap-2 text-sm font-medium text-slate-700">
+          <div className="flex items-center gap-2 text-sm font-medium text-text-secondary">
             <Filter className="w-4 h-4" />
             Filters:
           </div>
@@ -373,7 +373,7 @@ export const AlertCenterPage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden"
+        className="bg-surface rounded-xl border border-border-default shadow-sm overflow-hidden"
       >
         {isLoading ? (
           <LoadingOverlay message="Loading alerts..." />
@@ -389,8 +389,8 @@ export const AlertCenterPage: React.FC = () => {
                   <div
                     key={alert.id}
                     className={cn(
-                      'p-4 hover:bg-slate-50 transition-colors cursor-pointer',
-                      !alert.is_read && 'bg-blue-50/50 border-l-4 border-l-primary-500'
+                      'p-4 hover:bg-subtle/50 transition-colors cursor-pointer',
+                      !alert.is_read && 'bg-blue-500/10 border-l-4 border-l-primary-500'
                     )}
                     onClick={() => handleViewDetail(alert)}
                   >
@@ -402,12 +402,12 @@ export const AlertCenterPage: React.FC = () => {
                         <div className="flex items-start justify-between gap-3 mb-2">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <h3 className="font-semibold text-slate-900">{alert.title}</h3>
+                              <h3 className="font-semibold text-text-primary">{alert.title}</h3>
                               {!alert.is_read && (
                                 <span className="w-2 h-2 bg-primary-500 rounded-full" />
                               )}
                             </div>
-                            <p className="text-sm text-slate-600 line-clamp-2">{alert.message}</p>
+                            <p className="text-sm text-text-muted line-clamp-2">{alert.message}</p>
                           </div>
                           <div className="flex items-center gap-2 flex-shrink-0">
                             <Badge variant={config.color.replace('text-', '').replace('-600', '') as any} size="sm">
@@ -420,7 +420,7 @@ export const AlertCenterPage: React.FC = () => {
                             )}
                           </div>
                         </div>
-                        <div className="flex items-center gap-4 text-xs text-slate-500 mt-2">
+                        <div className="flex items-center gap-4 text-xs text-text-muted mt-2">
                           <div className="flex items-center gap-1">
                             <CategoryIcon className="w-3 h-3" />
                             <span className="capitalize">{alert.category}</span>
@@ -482,8 +482,8 @@ export const AlertCenterPage: React.FC = () => {
         ) : (
           <div className="p-12 text-center">
             <Bell className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">No Alerts Found</h3>
-            <p className="text-slate-600">No alerts match your current filters</p>
+            <h3 className="text-lg font-semibold text-text-primary mb-2">No Alerts Found</h3>
+            <p className="text-text-muted">No alerts match your current filters</p>
           </div>
         )}
       </motion.div>
@@ -527,21 +527,21 @@ export const AlertCenterPage: React.FC = () => {
                     </Badge>
                   )}
                 </div>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-text-muted">
                   Created {formatDateTime(selectedAlert.created_at)}
                 </p>
               </div>
             </div>
 
-            <div className="bg-slate-50 rounded-lg p-4">
-              <p className="text-sm font-medium text-slate-900 mb-2">Message</p>
-              <p className="text-slate-700">{selectedAlert.message}</p>
+            <div className="bg-subtle/50 rounded-lg p-4">
+              <p className="text-sm font-medium text-text-primary mb-2">Message</p>
+              <p className="text-text-secondary">{selectedAlert.message}</p>
             </div>
 
             {selectedAlert.metadata && Object.keys(selectedAlert.metadata).length > 0 && (
-              <div className="bg-slate-50 rounded-lg p-4">
-                <p className="text-sm font-medium text-slate-900 mb-2">Additional Information</p>
-                <pre className="text-xs text-slate-600 overflow-auto">
+              <div className="bg-subtle/50 rounded-lg p-4">
+                <p className="text-sm font-medium text-text-primary mb-2">Additional Information</p>
+                <pre className="text-xs text-text-muted overflow-auto">
                   {JSON.stringify(selectedAlert.metadata, null, 2)}
                 </pre>
               </div>
@@ -559,7 +559,7 @@ export const AlertCenterPage: React.FC = () => {
               </div>
             )}
 
-            <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
+            <div className="flex items-center justify-end gap-3 pt-4 border-t border-border-default">
               {!selectedAlert.is_read && (
                 <Button
                   variant="outline"
@@ -599,13 +599,13 @@ export const AlertCenterPage: React.FC = () => {
         title="Resolve Alert"
       >
         <div className="space-y-4">
-          <p className="text-slate-700">
+          <p className="text-text-secondary">
             Are you sure you want to mark this alert as resolved?
           </p>
           {selectedAlert && (
-            <div className="bg-slate-50 rounded-lg p-4">
-              <p className="text-sm font-medium text-slate-900">{selectedAlert.title}</p>
-              <p className="text-xs text-slate-600 mt-1">{selectedAlert.message}</p>
+            <div className="bg-subtle/50 rounded-lg p-4">
+              <p className="text-sm font-medium text-text-primary">{selectedAlert.title}</p>
+              <p className="text-xs text-text-muted mt-1">{selectedAlert.message}</p>
             </div>
           )}
           <div className="flex items-center justify-end gap-3">
@@ -675,9 +675,9 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon, color, su
           <Icon className="w-6 h-6" />
         </div>
       </div>
-      <h3 className="text-2xl font-bold text-slate-900 mb-1">{value}</h3>
-      <p className="text-sm text-slate-600">{title}</p>
-      {subtitle && <p className="text-xs text-slate-500 mt-1">{subtitle}</p>}
+      <h3 className="text-2xl font-bold text-text-primary mb-1">{value}</h3>
+      <p className="text-sm text-text-muted">{title}</p>
+      {subtitle && <p className="text-xs text-text-muted mt-1">{subtitle}</p>}
     </div>
   )
 }

@@ -110,23 +110,23 @@ export const TimeOffMyClaimsPage: React.FC = () => {
   }, [claims, statusFilter, typeFilter, searchTerm])
 
   return (
-    <div className="p-6 md:p-8 w-full space-y-8 text-slate-800">
+    <div className="p-6 md:p-8 w-full space-y-8 text-text-primary">
       {/* Header Panel */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-white border border-slate-100 rounded-3xl p-6 shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-cyan-400" />
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-surface border border-border-subtle rounded-3xl p-6 shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-1.5 bg-surface border border-border-default" />
 
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate(ROUTES.TIMEOFF_DASHBOARD)}
-            className="p-3 hover:bg-slate-50 border border-slate-100 rounded-2xl text-slate-400 hover:text-slate-700 transition-all shadow-sm"
+            className="p-3 hover:bg-subtle/50 border border-border-subtle rounded-2xl text-slate-400 hover:text-text-secondary transition-colors shadow-sm"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-800 flex items-center gap-2">
+            <h1 className="text-2xl font-black tracking-tight text-text-primary flex items-center gap-2">
               {isMs ? 'Senarai Tuntutan Cuti Gantian Saya' : 'My Time Off Claims'}
             </h1>
-            <p className="text-sm text-slate-500 mt-0.5 font-medium">
+            <p className="text-sm text-text-muted mt-0.5 font-medium">
               {isMs
                 ? 'Semakan status permohonan waktu kerja tambahan dan kelulusan penyelia'
                 : 'Review overtime submission records and supervisor approval progress'}
@@ -137,7 +137,7 @@ export const TimeOffMyClaimsPage: React.FC = () => {
         <div className="flex items-center gap-3">
           <Button
             onClick={() => navigate(ROUTES.TIMEOFF_CLAIM_NEW)}
-            className="bg-blue-600 hover:bg-blue-700 text-white rounded-2xl shadow-md font-bold flex items-center gap-2 px-5 py-2.5 transition-all text-sm"
+            className="bg-blue-600 hover:bg-blue-700 text-white rounded-2xl shadow-md font-bold flex items-center gap-2 px-5 py-2.5 transition-colors text-sm"
           >
             <Plus className="w-4 h-4" />
             <span>{isMs ? 'Tuntut Cuti Gantian' : 'New Claim'}</span>
@@ -146,7 +146,7 @@ export const TimeOffMyClaimsPage: React.FC = () => {
       </div>
 
       {/* Filter Bar */}
-      <div className="p-5 rounded-3xl bg-white border border-slate-100 shadow-md flex flex-wrap items-center justify-between gap-4">
+      <div className="p-5 rounded-3xl bg-surface border border-border-subtle shadow-md flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-3 flex-1 min-w-[280px]">
           {/* Search box */}
           <div className="relative flex-1 min-w-[200px]">
@@ -156,7 +156,7 @@ export const TimeOffMyClaimsPage: React.FC = () => {
               placeholder={isMs ? 'Cari no. rujukan, lokasi, tugasan...' : 'Search ref no, location, task...'}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white"
+              className="w-full pl-10 pr-4 py-2 rounded-xl border border-border-default text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-surface"
             />
           </div>
 
@@ -164,7 +164,7 @@ export const TimeOffMyClaimsPage: React.FC = () => {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3.5 py-2 rounded-xl border border-slate-200 text-sm bg-white text-slate-700 font-medium"
+            className="px-3.5 py-2 rounded-xl border border-border-default text-sm bg-surface text-text-secondary font-medium"
           >
             <option value="all">{isMs ? 'Semua Status' : 'All Status'}</option>
             <option value="pending">{isMs ? 'Menunggu Kelulusan' : 'Pending'}</option>
@@ -177,7 +177,7 @@ export const TimeOffMyClaimsPage: React.FC = () => {
           <select
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
-            className="px-3.5 py-2 rounded-xl border border-slate-200 text-sm bg-white text-slate-700 font-medium"
+            className="px-3.5 py-2 rounded-xl border border-border-default text-sm bg-surface text-text-secondary font-medium"
           >
             <option value="all">{isMs ? 'Semua Jenis Kerja' : 'All Work Types'}</option>
             <option value="rest_day">{isMs ? 'Hari Rehat' : 'Rest Day'}</option>
@@ -192,7 +192,7 @@ export const TimeOffMyClaimsPage: React.FC = () => {
           <select
             value={selectedYear}
             onChange={(e) => setSelectedYear(Number(e.target.value))}
-            className="px-3 py-1.5 rounded-xl border border-slate-200 text-sm font-mono font-bold bg-white text-slate-700"
+            className="px-3 py-1.5 rounded-xl border border-border-default text-sm font-mono font-bold bg-surface text-text-secondary"
           >
             {[2026, 2025, 2024].map((yr) => (
               <option key={yr} value={yr}>
@@ -204,10 +204,10 @@ export const TimeOffMyClaimsPage: React.FC = () => {
       </div>
 
       {/* Claims Table */}
-      <div className="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-xl">
+      <div className="bg-surface border border-border-subtle rounded-3xl overflow-hidden shadow-xl">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-700">
-            <thead className="bg-slate-50/80 border-b border-slate-100 text-xs uppercase font-black text-slate-500">
+          <table className="w-full text-left text-sm text-text-secondary">
+            <thead className="bg-subtle/50 border-b border-border-subtle text-xs uppercase font-black text-text-muted">
               <tr>
                 <th className="px-6 py-4">{isMs ? 'No. Rujukan' : 'Reference'}</th>
                 <th className="px-6 py-4">{isMs ? 'Tarikh & Masa Bertugas' : 'Date & Time'}</th>
@@ -219,10 +219,10 @@ export const TimeOffMyClaimsPage: React.FC = () => {
                 <th className="px-6 py-4 text-center">{isMs ? 'Tindakan' : 'Action'}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 font-medium">
+            <tbody className="divide-y divide-border-subtle font-medium">
               {isLoading ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-12 text-slate-400">
+                  <td colSpan={8} className="text-center py-12 text-text-muted font-medium">
                     <div className="inline-flex items-center gap-2">
                       <Clock className="w-4 h-4 animate-spin text-blue-600" />
                       <span>{isMs ? 'Memuatkan data...' : 'Loading data...'}</span>
@@ -231,9 +231,9 @@ export const TimeOffMyClaimsPage: React.FC = () => {
                 </tr>
               ) : filteredClaims.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-12 text-slate-400">
+                  <td colSpan={8} className="text-center py-12 text-text-muted font-medium">
                     <div className="space-y-2">
-                      <p className="font-semibold text-slate-600">
+                      <p className="font-semibold text-text-muted">
                         {isMs ? 'Tiada Rekod Tuntutan Dijumpai' : 'No Claims Found'}
                       </p>
                       <p className="text-xs text-slate-400">
@@ -259,9 +259,9 @@ export const TimeOffMyClaimsPage: React.FC = () => {
                       : isMs ? 'Kerja Lebih Masa' : 'Overtime'
 
                   return (
-                    <tr key={claim.id} className="hover:bg-slate-50/60 transition-colors">
+                    <tr key={claim.id} className="hover:bg-subtle/50 transition-colors">
                       <td className="px-6 py-4">
-                        <div className="font-mono font-bold text-slate-900 text-xs">
+                        <div className="font-mono font-bold text-text-primary text-xs">
                           {claim.claim_no || 'REF-TIMEOFF'}
                         </div>
                         <div className="text-[11px] text-slate-400 font-mono">
@@ -272,14 +272,14 @@ export const TimeOffMyClaimsPage: React.FC = () => {
                       </td>
 
                       <td className="px-6 py-4 text-xs font-mono">
-                        <div className="font-bold text-slate-800">{claim.work_date}</div>
+                        <div className="font-bold text-text-primary">{claim.work_date}</div>
                         <div className="text-slate-400">
                           {claim.time_start} — {claim.time_end}
                         </div>
                       </td>
 
                       <td className="px-6 py-4">
-                        <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">
+                        <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-subtle text-text-secondary">
                           {workTypeLabel}
                         </span>
                       </td>
@@ -292,7 +292,7 @@ export const TimeOffMyClaimsPage: React.FC = () => {
                       </td>
 
                       <td className="px-6 py-4 text-xs">
-                        <div className="font-bold text-slate-800">{claim.location}</div>
+                        <div className="font-bold text-text-primary">{claim.location}</div>
                         <div className="text-slate-400 max-w-xs truncate">
                           {claim.work_description}
                         </div>
@@ -304,7 +304,7 @@ export const TimeOffMyClaimsPage: React.FC = () => {
                             href={claim.attachment_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 text-blue-600 hover:text-blue-800 font-bold hover:underline"
+                            className="inline-flex items-center gap-1.5 text-blue-600 hover:text-blue-400 font-bold hover:underline"
                           >
                             <FileCheck className="w-4 h-4" />
                             <span className="truncate max-w-[120px]">
@@ -321,13 +321,13 @@ export const TimeOffMyClaimsPage: React.FC = () => {
 
                       <td className="px-6 py-4">
                         {isApproved && (
-                          <span className="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          <span className="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-bold bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
                             <CheckCircle2 className="w-3.5 h-3.5" />
                             {isMs ? 'Diluluskan' : 'Approved'}
                           </span>
                         )}
                         {isPending && (
-                          <span className="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                          <span className="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-bold bg-amber-500/10 text-amber-700 border border-amber-500/20">
                             <Clock className="w-3.5 h-3.5" />
                             {isMs ? 'Menunggu' : 'Pending'}
                           </span>
@@ -335,14 +335,14 @@ export const TimeOffMyClaimsPage: React.FC = () => {
                         {isRejected && (
                           <span
                             title={claim.rejection_reason || ''}
-                            className="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-bold bg-rose-50 text-rose-700 border border-rose-200 cursor-help"
+                            className="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-bold bg-rose-500/10 text-rose-700 border border-rose-500/20 cursor-help"
                           >
                             <AlertCircle className="w-3.5 h-3.5" />
                             {isMs ? 'Ditolak' : 'Rejected'}
                           </span>
                         )}
                         {isCancelled && (
-                          <span className="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-bold bg-slate-100 text-slate-600 border border-slate-200">
+                          <span className="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-bold bg-subtle text-text-muted border border-border-default">
                             {isMs ? 'Dibatalkan' : 'Cancelled'}
                           </span>
                         )}
@@ -353,7 +353,7 @@ export const TimeOffMyClaimsPage: React.FC = () => {
                           <button
                             onClick={() => setActiveModalClaim(claim)}
                             title={isMs ? 'Perincian' : 'Details'}
-                            className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-blue-600 transition-colors"
+                            className="p-1.5 hover:bg-subtle rounded-lg text-text-muted hover:text-blue-600 transition-colors"
                           >
                             <Eye className="w-4 h-4" />
                           </button>
@@ -362,7 +362,7 @@ export const TimeOffMyClaimsPage: React.FC = () => {
                             <button
                               onClick={() => handleCancelClaim(claim.id)}
                               title={isMs ? 'Batalkan' : 'Cancel'}
-                              className="p-1.5 hover:bg-rose-50 rounded-lg text-slate-400 hover:text-rose-600 transition-colors"
+                              className="p-1.5 hover:bg-rose-500/10 rounded-lg text-slate-400 hover:text-rose-600 transition-colors"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -381,14 +381,14 @@ export const TimeOffMyClaimsPage: React.FC = () => {
       {/* Details Modal */}
       {activeModalClaim && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-6 relative">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+          <div className="bg-surface rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl space-y-6 relative">
+            <div className="flex items-center justify-between border-b border-border-subtle pb-4">
               <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-xl bg-blue-50 text-blue-600">
+                <div className="p-2.5 rounded-xl bg-blue-500/10 text-blue-600">
                   <FileText className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-black text-slate-800">
+                  <h3 className="text-base font-black text-text-primary">
                     {activeModalClaim.claim_no || 'Time Off Claim'}
                   </h3>
                   <p className="text-xs text-slate-400 font-mono">
@@ -400,7 +400,7 @@ export const TimeOffMyClaimsPage: React.FC = () => {
 
               <button
                 onClick={() => setActiveModalClaim(null)}
-                className="p-2 hover:bg-slate-100 rounded-xl text-slate-400 hover:text-slate-700"
+                className="p-2 hover:bg-subtle rounded-xl text-slate-400 hover:text-text-secondary"
               >
                 ✕
               </button>
@@ -408,25 +408,25 @@ export const TimeOffMyClaimsPage: React.FC = () => {
 
             <div className="space-y-4 text-xs">
               <div>
-                <span className="font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                <span className="font-bold text-text-secondary font-bold uppercase tracking-wider block mb-1">
                   {isMs ? 'Lokasi Bertugas' : 'Location'}
                 </span>
-                <p className="font-semibold text-slate-800 text-sm">
+                <p className="font-semibold text-text-primary text-sm">
                   {activeModalClaim.location}
                 </p>
               </div>
 
               <div>
-                <span className="font-bold text-slate-400 uppercase tracking-wider block mb-1">
+                <span className="font-bold text-text-secondary font-bold uppercase tracking-wider block mb-1">
                   {isMs ? 'Keterangan Tugas' : 'Work Description'}
                 </span>
-                <p className="text-slate-700 bg-slate-50 p-3 rounded-xl leading-relaxed whitespace-pre-wrap">
+                <p className="text-text-secondary bg-subtle/50 p-3 rounded-xl leading-relaxed whitespace-pre-wrap">
                   {activeModalClaim.work_description}
                 </p>
               </div>
 
               {activeModalClaim.status === 'rejected' && activeModalClaim.rejection_reason && (
-                <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 space-y-1">
+                <div className="p-3.5 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 space-y-1">
                   <div className="font-bold flex items-center gap-1.5">
                     <ShieldAlert className="w-4 h-4 text-rose-600" />
                     <span>{isMs ? 'Sebab Penolakan:' : 'Rejection Reason:'}</span>
@@ -436,9 +436,9 @@ export const TimeOffMyClaimsPage: React.FC = () => {
               )}
 
               {activeModalClaim.approved_by && (
-                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-slate-500 font-mono">
+                <div className="pt-2 border-t border-border-subtle flex items-center justify-between text-text-muted font-mono">
                   <span>{isMs ? 'Tindakan Pegawai:' : 'Officer Action:'}</span>
-                  <span className="font-bold text-slate-800">
+                  <span className="font-bold text-text-primary">
                     {activeModalClaim.approver?.full_name || (isMs ? 'Penyelia Jabatan' : 'Supervisor')}
                   </span>
                 </div>
@@ -450,7 +450,7 @@ export const TimeOffMyClaimsPage: React.FC = () => {
                     href={activeModalClaim.attachment_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold transition-all text-xs"
+                    className="w-full flex items-center justify-center gap-2 p-3 rounded-xl bg-blue-500/10 text-blue-700 hover:bg-blue-100 font-bold transition-colors text-xs"
                   >
                     <ExternalLink className="w-4 h-4" />
                     <span>{isMs ? 'Papar Dokumen Bukti Kehadiran' : 'Open Attendance Proof Document'}</span>
@@ -459,7 +459,7 @@ export const TimeOffMyClaimsPage: React.FC = () => {
               )}
             </div>
 
-            <div className="pt-4 border-t border-slate-100 flex justify-end">
+            <div className="pt-4 border-t border-border-subtle flex justify-end">
               <Button
                 variant="outline"
                 onClick={() => setActiveModalClaim(null)}

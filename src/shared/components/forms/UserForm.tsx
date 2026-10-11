@@ -133,7 +133,7 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSuccess, onCancel })
       className="space-y-6"
     >
       {/* Profile Photo Section */}
-      <div className="flex items-center gap-6 p-6 bg-slate-50 rounded-xl border border-slate-200">
+      <div className="flex items-center gap-6 p-6 bg-subtle/50 rounded-xl border border-border-default">
         <div className="flex-shrink-0">
           <Avatar
             src={profilePhotoPreview || undefined}
@@ -154,7 +154,7 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSuccess, onCancel })
 
       {/* Personal Information */}
       <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-text-primary flex items-center gap-2">
           <UserIcon className="w-5 h-5" />
           Personal Information
         </h3>
@@ -226,7 +226,7 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSuccess, onCancel })
         </div>
 
         <div className="space-y-1.5">
-          <label className="block text-sm font-medium text-slate-700">
+          <label className="block text-sm font-medium text-text-secondary">
             Address
           </label>
           <Textarea
@@ -240,7 +240,7 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSuccess, onCancel })
 
       {/* Department & Role Information */}
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+        <h3 className="text-lg font-semibold text-text-primary flex items-center gap-2">
           <Building2 className="w-5 h-5" />
           Department & Role
         </h3>
@@ -308,7 +308,7 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSuccess, onCancel })
       </div>
 
       {/* Form Actions */}
-      <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200">
+      <div className="flex items-center justify-end gap-3 pt-4 border-t border-border-default">
         <Button
           type="button"
           variant="outline"

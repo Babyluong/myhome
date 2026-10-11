@@ -204,13 +204,13 @@ export const CrossborderDetailPage: React.FC = () => {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'draft':
-        return <Badge className="border-slate-200 text-slate-700 bg-slate-50">{language === 'ms' ? 'Draf' : 'Draft'}</Badge>;
+        return <Badge className="border-border-default text-text-secondary bg-subtle/50">{language === 'ms' ? 'Draf' : 'Draft'}</Badge>;
       case 'submitted':
-        return <Badge className="border-amber-200 text-amber-800 bg-amber-50">{language === 'ms' ? 'Menunggu Kelulusan' : 'Pending Approval'}</Badge>;
+        return <Badge className="border-amber-500/20 text-amber-400 bg-amber-500/10">{language === 'ms' ? 'Menunggu Kelulusan' : 'Pending Approval'}</Badge>;
       case 'approved':
-        return <Badge className="border-emerald-200 text-emerald-800 bg-emerald-50">{language === 'ms' ? 'Diluluskan' : 'Approved'}</Badge>;
+        return <Badge className="border-emerald-500/20 text-emerald-400 bg-emerald-500/10">{language === 'ms' ? 'Diluluskan' : 'Approved'}</Badge>;
       case 'completed':
-        return <Badge className="border-blue-200 text-blue-800 bg-blue-50">{language === 'ms' ? 'Selesai' : 'Completed'}</Badge>;
+        return <Badge className="border-blue-500/20 text-blue-400 bg-blue-500/10">{language === 'ms' ? 'Selesai' : 'Completed'}</Badge>;
       case 'cancelled':
         return <Badge className="border-red-200 text-red-800 bg-red-50">{language === 'ms' ? 'Dibatalkan' : 'Cancelled'}</Badge>;
       default:
@@ -219,20 +219,20 @@ export const CrossborderDetailPage: React.FC = () => {
   };
 
   if (loading) {
-    return <div className="p-8 text-center text-slate-500">{language === 'ms' ? 'Memuatkan butiran permohonan...' : 'Loading application details...'}</div>;
+    return <div className="p-8 text-center text-text-muted">{language === 'ms' ? 'Memuatkan butiran permohonan...' : 'Loading application details...'}</div>;
   }
 
   if (!transfer) {
-    return <div className="p-8 text-center text-slate-500">{language === 'ms' ? 'Permohonan tidak ditemui.' : 'Application not found.'}</div>;
+    return <div className="p-8 text-center text-text-muted">{language === 'ms' ? 'Permohonan tidak ditemui.' : 'Application not found.'}</div>;
   }
 
   return (
-    <div className="space-y-6 text-slate-800">
+    <div className="space-y-6 text-text-primary">
       {/* Back navigation */}
       <div>
         <button 
           onClick={() => navigate('/crossborder/dashboard')}
-          className="flex items-center gap-2 text-slate-500 hover:text-slate-700 transition-colors group text-sm font-medium cursor-pointer"
+          className="flex items-center gap-2 text-text-muted hover:text-text-secondary transition-colors group text-sm font-medium cursor-pointer"
         >
           <ArrowLeft className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" />
           <span>{language === 'ms' ? 'Kembali ke Papan Pemuka' : 'Back to Dashboard'}</span>
@@ -240,13 +240,13 @@ export const CrossborderDetailPage: React.FC = () => {
       </div>
 
       {/* Title & Status */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 border border-slate-200 shadow-sm rounded-xl">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface p-6 border border-border-default shadow-sm rounded-xl">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
             <span className="text-xl font-mono font-bold text-blue-600">{transfer.no_rujukan}</span>
             {getStatusBadge(transfer.status)}
           </div>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-text-muted">
             {language === 'ms' ? 'Perjalanan:' : 'Transit Schedule:'}{' '}
             {formatDate(new Date(transfer.tarikh_perjalanan))} ({transfer.masa_berlepas})
           </p>
@@ -306,7 +306,7 @@ export const CrossborderDetailPage: React.FC = () => {
               <Button
                 onClick={() => handleDownloadPDF('form')}
                 variant="outline"
-                className="border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold flex items-center gap-1.5 rounded-xl cursor-pointer"
+                className="border-border-default text-text-secondary hover:bg-subtle/50 text-xs font-semibold flex items-center gap-1.5 rounded-xl cursor-pointer"
               >
                 <FileText className="w-3.5 h-3.5 text-blue-600" />
                 {language === 'ms' ? 'Borang Transfer PDF' : 'Transfer Form PDF'}
@@ -314,7 +314,7 @@ export const CrossborderDetailPage: React.FC = () => {
               <Button
                 onClick={() => handleDownloadPDF('letter')}
                 variant="outline"
-                className="border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold flex items-center gap-1.5 rounded-xl cursor-pointer"
+                className="border-border-default text-text-secondary hover:bg-subtle/50 text-xs font-semibold flex items-center gap-1.5 rounded-xl cursor-pointer"
               >
                 <FileText className="w-3.5 h-3.5 text-indigo-600" />
                 {language === 'ms' ? 'Surat Pelepasan PDF' : 'Clearance Letter PDF'}
@@ -327,7 +327,7 @@ export const CrossborderDetailPage: React.FC = () => {
               <Button
                 onClick={() => handleDownloadPDF('form')}
                 variant="outline"
-                className="border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold flex items-center gap-1.5 rounded-xl cursor-pointer"
+                className="border-border-default text-text-secondary hover:bg-subtle/50 text-xs font-semibold flex items-center gap-1.5 rounded-xl cursor-pointer"
               >
                 <FileText className="w-3.5 h-3.5 text-blue-600" />
                 {language === 'ms' ? 'Borang Transfer PDF' : 'Transfer Form PDF'}
@@ -335,7 +335,7 @@ export const CrossborderDetailPage: React.FC = () => {
               <Button
                 onClick={() => handleDownloadPDF('letter')}
                 variant="outline"
-                className="border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold flex items-center gap-1.5 rounded-xl cursor-pointer"
+                className="border-border-default text-text-secondary hover:bg-subtle/50 text-xs font-semibold flex items-center gap-1.5 rounded-xl cursor-pointer"
               >
                 <FileText className="w-3.5 h-3.5 text-indigo-600" />
                 {language === 'ms' ? 'Surat Pelepasan PDF' : 'Clearance Letter PDF'}
@@ -349,36 +349,36 @@ export const CrossborderDetailPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           {/* Section 1: Trip Info */}
-          <Card className="bg-white border border-slate-200 shadow-sm rounded-xl p-6">
-            <h2 className="text-base font-bold text-slate-900 mb-4">
+          <Card className="bg-surface border border-border-default shadow-sm rounded-xl p-6">
+            <h2 className="text-base font-bold text-text-primary mb-4">
               {language === 'ms' ? 'Butiran Perjalanan' : 'Trip Information'}
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-text-muted">
               <div>
                 <span className="text-xs text-slate-400 uppercase block">{language === 'ms' ? 'Hospital Perujuk' : 'Referring Hospital'}</span>
-                <span className="font-semibold text-slate-900">{transfer.referring_hospital}</span>
+                <span className="font-semibold text-text-primary">{transfer.referring_hospital}</span>
               </div>
               <div>
                 <span className="text-xs text-slate-400 uppercase block">{language === 'ms' ? 'Hospital Destinasi' : 'Destination Hospital'}</span>
-                <span className="font-semibold text-slate-900">{transfer.destination_hospital}</span>
+                <span className="font-semibold text-text-primary">{transfer.destination_hospital}</span>
               </div>
               <div>
                 <span className="text-xs text-slate-400 uppercase block">{language === 'ms' ? 'Tempat Berlepas' : 'Departure Point'}</span>
-                <span className="text-slate-800">{transfer.tempat_berlepas}</span>
+                <span className="text-text-primary">{transfer.tempat_berlepas}</span>
               </div>
               <div>
                 <span className="text-xs text-slate-400 uppercase block">{language === 'ms' ? 'Border Control Post' : 'Border Checkpoint Post'}</span>
-                <span className="text-slate-800">{transfer.border_control_post}</span>
+                <span className="text-text-primary">{transfer.border_control_post}</span>
               </div>
               {transfer.linked_transport_request_id && (
-                <div className="md:col-span-2 mt-2 p-3 bg-blue-50 border border-blue-100 rounded-xl flex items-center justify-between">
+                <div className="md:col-span-2 mt-2 p-3 bg-blue-500/10 border border-blue-100 rounded-xl flex items-center justify-between">
                   <div className="flex items-center gap-2 text-xs text-blue-700 font-semibold">
                     <span className="bg-blue-600 text-white rounded px-1.5 py-0.5 font-bold uppercase tracking-wide text-[9px]">Linked Transporter</span>
                     <span>{language === 'ms' ? 'No. Rujukan:' : 'Ref:'} {transfer.linked_transport_request_id}</span>
                   </div>
                   <button 
                     onClick={() => navigate('/transporter/requests')}
-                    className="text-xs text-blue-600 hover:text-blue-800 font-bold underline cursor-pointer"
+                    className="text-xs text-blue-600 hover:text-blue-400 font-bold underline cursor-pointer"
                   >
                     {language === 'ms' ? 'Lihat Permohonan Pengangkutan' : 'View Linked Transport Request'}
                   </button>
@@ -389,35 +389,35 @@ export const CrossborderDetailPage: React.FC = () => {
 
 
           {/* Section 2: Patients */}
-          <Card className="bg-white border border-slate-200 shadow-sm rounded-xl p-6">
-            <h2 className="text-base font-bold text-slate-900 mb-4">
+          <Card className="bg-surface border border-border-default shadow-sm rounded-xl p-6">
+            <h2 className="text-base font-bold text-text-primary mb-4">
               {language === 'ms' ? 'Senarai Pesakit' : 'Patient Roster'}
             </h2>
             <div className="space-y-4">
               {transfer.patients && transfer.patients.length > 0 ? (
                 transfer.patients.map((p) => (
-                  <div key={p.id} className="bg-slate-50 p-4 rounded-xl border border-slate-200 grid grid-cols-1 md:grid-cols-3 gap-3 text-sm text-slate-600">
+                  <div key={p.id} className="bg-subtle/50 p-4 rounded-xl border border-border-default grid grid-cols-1 md:grid-cols-3 gap-3 text-sm text-text-muted">
                     <div className="md:col-span-3 font-semibold text-blue-600 flex items-center gap-2">
-                      <span className="bg-blue-50 text-blue-600 border border-blue-100 px-2 py-0.5 rounded text-xs">
+                      <span className="bg-blue-500/10 text-blue-600 border border-blue-100 px-2 py-0.5 rounded text-xs">
                         {language === 'ms' ? `Pesakit #${p.urutan}` : `Patient #${p.urutan}`}
                       </span>
                       {p.nama}
                     </div>
                     <div>
                       <span className="text-xs text-slate-400 block">{language === 'ms' ? 'Jantina' : 'Gender'}</span>
-                      <span className="text-slate-800">{p.jantina === 'Lelaki' ? (language === 'ms' ? 'Lelaki' : 'Male') : (language === 'ms' ? 'Perempuan' : 'Female')}</span>
+                      <span className="text-text-primary">{p.jantina === 'Lelaki' ? (language === 'ms' ? 'Lelaki' : 'Male') : (language === 'ms' ? 'Perempuan' : 'Female')}</span>
                     </div>
                     <div>
                       <span className="text-xs text-slate-400 block">{language === 'ms' ? 'Tarikh Lahir' : 'Date of Birth'}</span>
-                      <span className="text-slate-800">{formatDate(new Date(p.tarikh_lahir))}</span>
+                      <span className="text-text-primary">{formatDate(new Date(p.tarikh_lahir))}</span>
                     </div>
                     <div>
                       <span className="text-xs text-slate-400 block">{language === 'ms' ? 'Warganegara' : 'Nationality'}</span>
-                      <span className="text-slate-800">{p.warganegara}</span>
+                      <span className="text-text-primary">{p.warganegara}</span>
                     </div>
                     <div>
                       <span className="text-xs text-slate-400 block">{language === 'ms' ? 'Dokumen Perjalanan' : 'Travel Document'}</span>
-                      <span className="text-slate-800">
+                      <span className="text-text-primary">
                         {p.jenis_dokumen} : {p.no_dokumen}
                         {p.jenis_dokumen === 'PASSPORT' && p.passport_expiry && ` (${language === 'ms' ? 'Tamat:' : 'Exp:'} ${formatDate(new Date(p.passport_expiry))})`}
                       </span>
@@ -425,7 +425,7 @@ export const CrossborderDetailPage: React.FC = () => {
                     {p.no_pengenalan && (
                       <div className="md:col-span-2">
                         <span className="text-xs text-slate-400 block">{language === 'ms' ? 'No Kad Pengenalan Sekunder' : 'Secondary Identification / MyKad'}</span>
-                        <span className="text-slate-800">{p.no_pengenalan}</span>
+                        <span className="text-text-primary">{p.no_pengenalan}</span>
                       </div>
                     )}
                   </div>
@@ -437,14 +437,14 @@ export const CrossborderDetailPage: React.FC = () => {
           </Card>
 
           {/* Section 3: Vehicle */}
-          <Card className="bg-white border border-slate-200 shadow-sm rounded-xl p-6">
-            <h2 className="text-base font-bold text-slate-900 mb-4">
+          <Card className="bg-surface border border-border-default shadow-sm rounded-xl p-6">
+            <h2 className="text-base font-bold text-text-primary mb-4">
               {language === 'ms' ? 'Maklumat Kenderaan' : 'Vehicle & Driver Details'}
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-slate-600">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-text-muted">
               <div>
                 <span className="text-xs text-slate-400 block">{language === 'ms' ? 'Jenis Kenderaan' : 'Vehicle Type'}</span>
-                <span className="font-semibold uppercase text-slate-800">{transfer.jenis_kenderaan}</span>
+                <span className="font-semibold uppercase text-text-primary">{transfer.jenis_kenderaan}</span>
               </div>
               <div>
                 <span className="text-xs text-slate-400 block">{language === 'ms' ? 'No. Pendaftaran' : 'Registration Plate'}</span>
@@ -452,25 +452,25 @@ export const CrossborderDetailPage: React.FC = () => {
               </div>
               <div>
                 <span className="text-xs text-slate-400 block">{language === 'ms' ? 'Nama Pemandu' : 'Driver Name'}</span>
-                <span className="font-semibold text-slate-800">{(transfer as any).pemandu_nama || 'N/A'}</span>
+                <span className="font-semibold text-text-primary">{(transfer as any).pemandu_nama || 'N/A'}</span>
               </div>
               <div>
                 <span className="text-xs text-slate-400 block">{language === 'ms' ? 'No. Passport Pemandu' : 'Driver Passport Number'}</span>
-                <span className="font-semibold text-slate-800">
+                <span className="font-semibold text-text-primary">
                   {(transfer as any).pemandu_passport || 'N/A'}
                   {(transfer as any).pemandu_passport_expiry && ` (${language === 'ms' ? 'Tamat:' : 'Exp:'} ${formatDate(new Date((transfer as any).pemandu_passport_expiry))})`}
                 </span>
               </div>
               <div className="md:col-span-2">
                 <span className="text-xs text-slate-400 block">{language === 'ms' ? 'Peralatan Perubatan Lain' : 'Medical Equipment Carried'}</span>
-                <span className="text-slate-800">{transfer.peralatan_lain || (language === 'ms' ? 'Tiada peralatan tambahan' : 'None declared')}</span>
+                <span className="text-text-primary">{transfer.peralatan_lain || (language === 'ms' ? 'Tiada peralatan tambahan' : 'None declared')}</span>
               </div>
             </div>
           </Card>
 
           {/* Section 4: Pengiring KKM */}
-          <Card className="bg-white border border-slate-200 shadow-sm rounded-xl p-6">
-            <h2 className="text-base font-bold text-slate-900 mb-4">
+          <Card className="bg-surface border border-border-default shadow-sm rounded-xl p-6">
+            <h2 className="text-base font-bold text-text-primary mb-4">
               {language === 'ms' ? 'Pengiring Perubatan KKM' : 'MOH Medical Escorts'}
             </h2>
             <div className="space-y-3">
@@ -488,9 +488,9 @@ export const CrossborderDetailPage: React.FC = () => {
                       }
                     };
                     return (
-                      <div key={e.id} className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex justify-between items-center text-sm text-slate-600">
+                      <div key={e.id} className="bg-subtle/50 p-4 rounded-xl border border-border-default flex justify-between items-center text-sm text-text-muted">
                         <div>
-                          <div className="font-semibold text-slate-900">{e.nama}</div>
+                          <div className="font-semibold text-text-primary">{e.nama}</div>
                           {e.no_dokumen && (
                             <div className="text-xs text-slate-400">
                               {e.jenis_dokumen} : {e.no_dokumen}
@@ -498,7 +498,7 @@ export const CrossborderDetailPage: React.FC = () => {
                             </div>
                           )}
                         </div>
-                        <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold border border-emerald-200 text-emerald-800 bg-emerald-50">
+                        <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold border border-emerald-500/20 text-emerald-400 bg-emerald-500/10">
                           {getJobLabel(e.jawatan)}
                         </span>
                       </div>
@@ -511,8 +511,8 @@ export const CrossborderDetailPage: React.FC = () => {
           </Card>
 
           {/* Section 5: Waris / Pengiring Terdekat */}
-          <Card className="bg-white border border-slate-200 shadow-sm rounded-xl p-6">
-            <h2 className="text-base font-bold text-slate-900 mb-4">
+          <Card className="bg-surface border border-border-default shadow-sm rounded-xl p-6">
+            <h2 className="text-base font-bold text-text-primary mb-4">
               {language === 'ms' ? 'Waris / Pengiring Terdekat Pesakit' : 'Accompanying Next of Kin'}
             </h2>
             <div className="space-y-3">
@@ -522,9 +522,9 @@ export const CrossborderDetailPage: React.FC = () => {
                   .map((e) => {
                     const accPatient = transfer.patients?.find(p => p.urutan === e.patient_urutan);
                     return (
-                      <div key={e.id} className="bg-slate-50 p-4 rounded-xl border border-slate-200 flex justify-between items-center text-sm text-slate-600">
+                      <div key={e.id} className="bg-subtle/50 p-4 rounded-xl border border-border-default flex justify-between items-center text-sm text-text-muted">
                         <div>
-                          <div className="font-semibold text-slate-900">{e.nama}</div>
+                          <div className="font-semibold text-text-primary">{e.nama}</div>
                           <div className="text-xs text-slate-400">
                             {e.jenis_dokumen} : {e.no_dokumen}
                             {e.jenis_dokumen === 'PASSPORT' && e.passport_expiry && ` (${language === 'ms' ? 'Tamat:' : 'Exp:'} ${formatDate(new Date(e.passport_expiry))})`}
@@ -537,7 +537,7 @@ export const CrossborderDetailPage: React.FC = () => {
                           {accPatient && (
                             <div className="text-[10px] text-slate-400 mt-1 font-medium">
                               {language === 'ms' ? 'Pengiring kepada:' : 'Escorting:'}{' '}
-                              <span className="font-bold text-slate-600">{accPatient.nama}</span>
+                              <span className="font-bold text-text-muted">{accPatient.nama}</span>
                             </div>
                           )}
                         </div>
@@ -554,15 +554,15 @@ export const CrossborderDetailPage: React.FC = () => {
 
         {/* Sidebar Info & Logs */}
         <div className="space-y-6">
-          <Card className="bg-white border border-slate-200 shadow-sm rounded-xl p-6 space-y-4">
-            <h2 className="text-base font-bold text-slate-900">
+          <Card className="bg-surface border border-border-default shadow-sm rounded-xl p-6 space-y-4">
+            <h2 className="text-base font-bold text-text-primary">
               {language === 'ms' ? 'Kelulusan & Pengesahan' : 'Clearance & Approvals'}
             </h2>
             
-            <div className="text-sm text-slate-600 space-y-3">
+            <div className="text-sm text-text-muted space-y-3">
               <div>
                 <span className="text-xs text-slate-400 block">{language === 'ms' ? 'Doktor Perujuk' : 'Referring Doctor'}</span>
-                <span className="font-semibold text-slate-800">{transfer.doktor_perujuk_nama}</span>
+                <span className="font-semibold text-text-primary">{transfer.doktor_perujuk_nama}</span>
               </div>
 
               {transfer.pengarah_nama && (
@@ -589,7 +589,7 @@ export const CrossborderDetailPage: React.FC = () => {
               {transfer.catatan && (
                 <div>
                   <span className="text-xs text-slate-400 block">{language === 'ms' ? 'Catatan / Ulasan' : 'Clinical Remarks / Notes'}</span>
-                  <p className="text-xs text-slate-600 italic bg-slate-50 p-2.5 rounded border border-slate-200">
+                  <p className="text-xs text-text-muted italic bg-subtle/50 p-2.5 rounded border border-border-default">
                     {transfer.catatan}
                   </p>
                 </div>
@@ -602,19 +602,19 @@ export const CrossborderDetailPage: React.FC = () => {
       {/* Approve Modal */}
       {showApproveModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="bg-white border border-slate-200 p-6 rounded-2xl max-w-md w-full shadow-2xl space-y-4">
+          <div className="bg-surface border border-border-default p-6 rounded-2xl max-w-md w-full shadow-2xl space-y-4">
             <h3 className="text-lg font-bold text-slate-950 flex items-center gap-2">
               <Stamp className="w-5 h-5 text-blue-600" />
               {language === 'ms' ? 'Kelulusan Sempadan Pengarah' : 'Hospital Director Border Clearance Endorsement'}
             </h3>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-text-muted">
               {language === 'ms' 
                 ? 'Sila masukkan butiran kebenaran bertulis rasmi bagi menjana surat pelepasan Border Control Post.'
                 : 'Enter formal authorization details to issue the official Border Clearance Transit Letter.'}
             </p>
             <form onSubmit={handleApprove} className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-slate-500 block mb-1">
+                <label className="text-xs font-semibold text-text-muted block mb-1">
                   {language === 'ms' ? 'Nama Pengarah *' : 'Director Name *'}
                 </label>
                 <input 
@@ -622,11 +622,11 @@ export const CrossborderDetailPage: React.FC = () => {
                   value={directorName}
                   onChange={(e) => setDirectorName(e.target.value)}
                   required
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
+                  className="w-full bg-subtle/50 border border-border-default rounded-xl p-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-surface transition-colors"
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-500 block mb-1">
+                <label className="text-xs font-semibold text-text-muted block mb-1">
                   {language === 'ms' ? 'No. Rujukan Surat Kebenaran *' : 'Letter Reference Number *'}
                 </label>
                 <input 
@@ -634,7 +634,7 @@ export const CrossborderDetailPage: React.FC = () => {
                   value={letterRef}
                   onChange={(e) => setLetterRef(e.target.value)}
                   required
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
+                  className="w-full bg-subtle/50 border border-border-default rounded-xl p-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-surface transition-colors"
                 />
               </div>
               <div className="flex gap-3 justify-end pt-2">
@@ -642,7 +642,7 @@ export const CrossborderDetailPage: React.FC = () => {
                   type="button" 
                   onClick={() => setShowApproveModal(false)}
                   variant="outline"
-                  className="border-slate-200 text-slate-700 text-xs font-semibold rounded-xl cursor-pointer"
+                  className="border-border-default text-text-secondary text-xs font-semibold rounded-xl cursor-pointer"
                 >
                   {language === 'ms' ? 'Batal' : 'Cancel'}
                 </Button>
@@ -661,14 +661,14 @@ export const CrossborderDetailPage: React.FC = () => {
       {/* Cancel Modal */}
       {showCancelModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="bg-white border border-slate-200 p-6 rounded-2xl max-w-md w-full shadow-2xl space-y-4">
+          <div className="bg-surface border border-border-default p-6 rounded-2xl max-w-md w-full shadow-2xl space-y-4">
             <h3 className="text-lg font-bold text-slate-950 flex items-center gap-2">
               <XCircle className="w-5 h-5 text-red-600" />
               {language === 'ms' ? 'Batal / Tolak Permohonan' : 'Reject / Cancel Transfer Application'}
             </h3>
             <form onSubmit={handleCancel} className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-slate-500 block mb-1">
+                <label className="text-xs font-semibold text-text-muted block mb-1">
                   {language === 'ms' ? 'Sebab Pembatalan *' : 'Reason for Cancellation *'}
                 </label>
                 <textarea 
@@ -677,7 +677,7 @@ export const CrossborderDetailPage: React.FC = () => {
                   required
                   rows={3}
                   placeholder={language === 'ms' ? 'Nyatakan sebab pembatalan kes...' : 'State the reason for cancellation or rejection...'}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all resize-none"
+                  className="w-full bg-subtle/50 border border-border-default rounded-xl p-2.5 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-surface transition-colors resize-none"
                 />
               </div>
               <div className="flex gap-3 justify-end">
@@ -685,7 +685,7 @@ export const CrossborderDetailPage: React.FC = () => {
                   type="button" 
                   onClick={() => setShowCancelModal(false)}
                   variant="outline"
-                  className="border-slate-200 text-slate-700 text-xs font-semibold rounded-xl cursor-pointer"
+                  className="border-border-default text-text-secondary text-xs font-semibold rounded-xl cursor-pointer"
                 >
                   {language === 'ms' ? 'Kembali' : 'Back'}
                 </Button>

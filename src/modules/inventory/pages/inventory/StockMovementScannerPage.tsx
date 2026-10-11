@@ -528,10 +528,10 @@ export const StockMovementScannerPage: React.FC = () => {
     : []
 
   return (
-    <div className={`p-6 md:p-8 space-y-8 text-slate-800 transition-all duration-300 ${successFlash ? 'bg-emerald-500/10' : ''}`}>
+    <div className={`p-6 md:p-8 space-y-8 text-text-primary transition-colors duration-150 ${successFlash ? 'bg-emerald-500/10' : ''}`}>
       
       {/* LUXURY EXECUTIVE HEADER BANNER */}
-      <div className="bg-gradient-to-br from-slate-950 via-slate-900 to-teal-950 text-white rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden border border-slate-800">
+      <div className="bg-surface border border-border-default text-white rounded-3xl p-6 md:p-8 shadow-2xl relative overflow-hidden border border-slate-800">
         <div className="absolute -right-10 -bottom-10 w-72 h-72 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-teal-500 via-emerald-400 to-indigo-500" />
         
@@ -556,7 +556,7 @@ export const StockMovementScannerPage: React.FC = () => {
             <div className="flex items-center gap-3 shrink-0">
               <button
                 onClick={() => setSoundEnabled(!soundEnabled)}
-                className={`p-3 rounded-2xl border transition-all ${
+                className={`p-3 rounded-2xl border transition-colors ${
                   soundEnabled 
                     ? 'bg-teal-500/20 border-teal-500/30 text-teal-300' 
                     : 'bg-slate-800 border-slate-700 text-slate-400'
@@ -569,7 +569,7 @@ export const StockMovementScannerPage: React.FC = () => {
               <div className="flex bg-slate-800/80 p-1.5 rounded-2xl border border-slate-700">
                 <button
                   onClick={() => { setTransactionType('receipt'); resetForm(); }}
-                  className={`px-4 py-2 text-xs font-black rounded-xl transition-all flex items-center gap-1.5 ${
+                  className={`px-4 py-2 text-xs font-black rounded-xl transition-colors flex items-center gap-1.5 ${
                     transactionType === 'receipt' 
                       ? 'bg-emerald-600 text-white shadow-lg' 
                       : 'text-slate-400 hover:text-slate-200'
@@ -580,7 +580,7 @@ export const StockMovementScannerPage: React.FC = () => {
                 </button>
                 <button
                   onClick={() => { setTransactionType('issue'); resetForm(); }}
-                  className={`px-4 py-2 text-xs font-black rounded-xl transition-all flex items-center gap-1.5 ${
+                  className={`px-4 py-2 text-xs font-black rounded-xl transition-colors flex items-center gap-1.5 ${
                     transactionType === 'issue' 
                       ? 'bg-rose-600 text-white shadow-lg' 
                       : 'text-slate-400 hover:text-slate-200'
@@ -600,18 +600,18 @@ export const StockMovementScannerPage: React.FC = () => {
         
         {/* Left Column: Scanner Panel */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="bg-white border border-slate-100 rounded-3xl shadow-soft overflow-hidden">
+          <div className="bg-surface border border-border-subtle rounded-3xl shadow-elevation-1 overflow-hidden">
             <div className="p-5 border-b border-slate-50 flex items-center justify-between">
-              <h3 className="font-black text-slate-800 flex items-center gap-2">
+              <h3 className="font-black text-text-primary flex items-center gap-2">
                 <Camera className="w-4 h-4 text-slate-400" />
                 <span>Imbasan Item</span>
               </h3>
-              <div className="flex bg-slate-100 rounded-xl p-1">
+              <div className="flex bg-subtle rounded-xl p-1">
                 <button
                   onClick={() => { setActiveScanTab('camera'); setCameraActive(true); }}
-                  className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${
+                  className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-colors ${
                     activeScanTab === 'camera' 
-                      ? 'bg-white text-slate-800 shadow-sm' 
+                      ? 'bg-surface text-text-primary shadow-sm' 
                       : 'text-slate-400'
                   }`}
                 >
@@ -619,9 +619,9 @@ export const StockMovementScannerPage: React.FC = () => {
                 </button>
                 <button
                   onClick={() => { setActiveScanTab('manual'); stopCamera(); setCameraActive(false); }}
-                  className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-all ${
+                  className={`px-3 py-1.5 text-xs font-bold rounded-lg transition-colors ${
                     activeScanTab === 'manual' 
-                      ? 'bg-white text-slate-800 shadow-sm' 
+                      ? 'bg-surface text-text-primary shadow-sm' 
                       : 'text-slate-400'
                   }`}
                 >
@@ -633,7 +633,7 @@ export const StockMovementScannerPage: React.FC = () => {
             {activeScanTab === 'camera' ? (
               <div className="p-6 text-center space-y-4">
                 {cameraActive && useRealCamera ? (
-                  <div className="relative aspect-square w-full max-w-[320px] mx-auto rounded-2xl overflow-hidden bg-slate-900 border border-slate-200 shadow-inner">
+                  <div className="relative aspect-square w-full max-w-[320px] mx-auto rounded-2xl overflow-hidden bg-slate-900 border border-border-default shadow-inner">
                     <video 
                       ref={videoRef} 
                       autoPlay 
@@ -650,9 +650,9 @@ export const StockMovementScannerPage: React.FC = () => {
                     </div>
                   </div>
                 ) : (
-                  <div className="aspect-square w-full max-w-[320px] mx-auto rounded-2xl bg-slate-50 border border-slate-100 flex flex-col items-center justify-center text-slate-400 p-8">
+                  <div className="aspect-square w-full max-w-[320px] mx-auto rounded-2xl bg-subtle/50 border border-border-subtle flex flex-col items-center justify-center text-slate-400 p-8">
                     <QrCode className="w-16 h-16 text-slate-350 animate-pulse" />
-                    <p className="text-sm font-bold mt-4 text-slate-500">Kamera Tidak Aktif</p>
+                    <p className="text-sm font-bold mt-4 text-text-muted">Kamera Tidak Aktif</p>
                     <p className="text-xs text-slate-400 text-center mt-1">
                       Klik butang di bawah untuk memulakan pengimbas kamera
                     </p>
@@ -664,14 +664,14 @@ export const StockMovementScannerPage: React.FC = () => {
                     <Button 
                       variant="outline" 
                       onClick={() => setCameraActive(false)} 
-                      className="rounded-xl w-full border-slate-200 text-slate-600 hover:bg-slate-50 font-bold"
+                      className="rounded-xl w-full border-border-default text-text-muted hover:bg-subtle/50 font-bold"
                     >
                       Hentikan Kamera
                     </Button>
                   ) : (
                     <Button 
                       onClick={() => setCameraActive(true)}
-                      className="rounded-xl w-full bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white font-bold"
+                      className="rounded-xl w-full bg-accent-base hover:bg-accent-hover text-white font-bold"
                     >
                       Aktifkan Kamera
                     </Button>
@@ -696,16 +696,16 @@ export const StockMovementScannerPage: React.FC = () => {
                 </form>
 
                 {searchResults.length > 0 && (
-                  <div className="border border-slate-100 rounded-2xl overflow-hidden divide-y divide-slate-50">
+                  <div className="border border-border-subtle rounded-2xl overflow-hidden divide-y divide-slate-50">
                     {searchResults.map(item => (
                       <button
                         key={`${item.item_type}-${item.item_id}`}
                         onClick={() => { setSelectedItem(item); setSearchQuery(''); }}
-                        className="w-full text-left p-3 hover:bg-slate-50/50 flex items-center justify-between text-xs transition-colors"
+                        className="w-full text-left p-3 hover:bg-subtle/50 flex items-center justify-between text-xs transition-colors"
                       >
                         <div>
                           <span className="font-mono font-bold text-slate-400 block">{item.item_code}</span>
-                          <span className="font-bold text-slate-700 block mt-0.5">{item.item_name}</span>
+                          <span className="font-bold text-text-secondary block mt-0.5">{item.item_name}</span>
                         </div>
                         <Badge variant={item.item_type === 'drug' ? 'success' : 'secondary'} className="uppercase">
                           {item.item_type}
@@ -722,8 +722,8 @@ export const StockMovementScannerPage: React.FC = () => {
           {statusMessage && (
             <div className={`rounded-2xl border p-5 flex items-start gap-3 shadow-sm ${
               statusMessage.type === 'success' 
-                ? 'border-emerald-100 bg-emerald-50 text-emerald-800' 
-                : 'border-rose-100 bg-rose-50 text-rose-800'
+                ? 'border-emerald-100 bg-emerald-500/10 text-emerald-400' 
+                : 'border-rose-100 bg-rose-500/10 text-rose-400'
             }`}>
               {statusMessage.type === 'success' ? (
                 <div className="p-1 bg-emerald-500 text-white rounded-lg flex-shrink-0 mt-0.5">
@@ -744,8 +744,8 @@ export const StockMovementScannerPage: React.FC = () => {
 
         {/* Right Column: Transaction Form */}
         <div className="lg:col-span-7">
-          <div className="bg-white border border-slate-100 rounded-3xl shadow-soft p-6 space-y-6">
-            <h3 className="font-black text-slate-800 text-lg border-b border-slate-50 pb-4 flex items-center gap-2">
+          <div className="bg-surface border border-border-subtle rounded-3xl shadow-elevation-1 p-6 space-y-6">
+            <h3 className="font-black text-text-primary text-lg border-b border-slate-50 pb-4 flex items-center gap-2">
               {transactionType === 'receipt' ? (
                 <>
                   <ArrowDownCircle className="w-5 h-5 text-emerald-500" />
@@ -763,27 +763,27 @@ export const StockMovementScannerPage: React.FC = () => {
               <div className="space-y-6">
                 
                 {/* Active Selected Item Header Card */}
-                <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100/50 flex items-center justify-between">
+                <div className="bg-subtle/50 rounded-2xl p-4 border border-border-subtle flex items-center justify-between">
                   <div className="space-y-1">
-                    <span className="text-[10px] font-bold font-mono text-slate-400 tracking-wider block uppercase">
+                    <span className="text-[10px] font-bold font-mono text-text-secondary font-bold tracking-wider block uppercase">
                       Item Terpilih ({selectedItem.item_type})
                     </span>
-                    <h4 className="font-black text-slate-800 text-base leading-tight">
+                    <h4 className="font-black text-text-primary text-base leading-tight">
                       {selectedItem.item_name}
                     </h4>
-                    <div className="flex items-center gap-3 pt-1 text-xs text-slate-500 font-medium">
-                      <span className="font-mono font-bold text-slate-700 bg-slate-200/50 px-1.5 py-0.5 rounded">
+                    <div className="flex items-center gap-3 pt-1 text-xs text-text-muted font-medium">
+                      <span className="font-mono font-bold text-text-secondary bg-slate-200/50 px-1.5 py-0.5 rounded">
                         {selectedItem.item_code}
                       </span>
                       <span>•</span>
-                      <span>Stok Semasa: <strong className="text-slate-800">{selectedItem.current_stock}</strong> {selectedItem.unit_of_measure}</span>
+                      <span>Stok Semasa: <strong className="text-text-primary">{selectedItem.current_stock}</strong> {selectedItem.unit_of_measure}</span>
                     </div>
                   </div>
                   <Button 
                     size="xs" 
                     variant="outline" 
                     onClick={resetForm}
-                    className="rounded-xl border-slate-200 text-slate-500 hover:text-slate-800"
+                    className="rounded-xl border-border-default text-text-muted hover:text-text-primary"
                   >
                     Tukar Item
                   </Button>
@@ -899,7 +899,7 @@ export const StockMovementScannerPage: React.FC = () => {
                       <Button
                         type="submit"
                         disabled={isSubmitting}
-                        className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-xl font-bold px-6 py-2.5 flex items-center gap-1.5"
+                        className="bg-accent-base hover:bg-accent-hover text-white rounded-xl font-bold px-6 py-2.5 flex items-center gap-1.5"
                       >
                         {isSubmitting ? (
                           <Spinner size="xs" />
@@ -919,12 +919,12 @@ export const StockMovementScannerPage: React.FC = () => {
                     <div>
                       <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Pilih Batch (Susunan FEFO) *</label>
                       {isLoadingBatches ? (
-                        <div className="flex items-center justify-center p-6 border border-slate-100 rounded-2xl bg-slate-50">
+                        <div className="flex items-center justify-center p-6 border border-border-subtle rounded-2xl bg-subtle/50">
                           <Spinner size="sm" />
                           <span className="text-xs text-slate-400 font-bold ml-2">Menyusun batch FEFO...</span>
                         </div>
                       ) : itemBatches.length === 0 ? (
-                        <div className="p-4 border border-rose-100 rounded-2xl bg-rose-50 text-rose-700 text-xs font-bold text-center">
+                        <div className="p-4 border border-rose-100 rounded-2xl bg-rose-500/10 text-rose-700 text-xs font-bold text-center">
                           Tiada batch aktif ditemui dalam stor bagi item ini! Sila rekod Penerimaan terlebih dahulu.
                         </div>
                       ) : (
@@ -936,10 +936,10 @@ export const StockMovementScannerPage: React.FC = () => {
                             return (
                               <label
                                 key={batch.id}
-                                className={`border rounded-2xl p-3.5 flex items-center justify-between cursor-pointer transition-all ${
+                                className={`border rounded-2xl p-3.5 flex items-center justify-between cursor-pointer transition-colors ${
                                   selectedBatchId === batch.id
-                                    ? 'bg-teal-50/50 border-teal-300 text-teal-900 shadow-sm'
-                                    : 'bg-white border-slate-150 hover:bg-slate-50/50 text-slate-700'
+                                    ? 'bg-accent-base/10 border-teal-300 text-teal-900 shadow-sm'
+                                    : 'bg-surface border-slate-150 hover:bg-subtle/50 text-text-secondary'
                                 }`}
                               >
                                 <div className="flex items-center gap-3.5">
@@ -966,7 +966,7 @@ export const StockMovementScannerPage: React.FC = () => {
                                 </div>
                                 <div className="text-right">
                                   <span className="text-xs font-bold text-slate-400 block uppercase">Baki</span>
-                                  <span className="text-sm font-black font-mono text-slate-800">{available} unit</span>
+                                  <span className="text-sm font-black font-mono text-text-primary">{available} unit</span>
                                 </div>
                               </label>
                             )
@@ -1055,9 +1055,9 @@ export const StockMovementScannerPage: React.FC = () => {
 
               </div>
             ) : (
-              <div className="py-16 text-center space-y-3 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+              <div className="py-16 text-center space-y-3 bg-subtle/50 rounded-2xl border border-dashed border-border-default">
                 <QrCode className="w-12 h-12 text-slate-350 mx-auto animate-bounce" />
-                <h4 className="font-bold text-slate-700">Imbas QR atau Cari Item Dahulu</h4>
+                <h4 className="font-bold text-text-secondary">Imbas QR atau Cari Item Dahulu</h4>
                 <p className="text-xs text-slate-400 max-w-[280px] mx-auto leading-relaxed">
                   Sila mulakan pengimbasan kamera atau taip nama ubat/barang secara manual untuk membuka borang transaksi.
                 </p>

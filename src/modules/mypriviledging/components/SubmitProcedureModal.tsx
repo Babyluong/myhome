@@ -225,20 +225,20 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs overflow-y-auto">
-      <div className="relative w-full max-w-3xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-200">
+      <div className="relative w-full max-w-3xl bg-surface dark:bg-slate-900 rounded-2xl shadow-2xl border border-border-default dark:border-slate-800 overflow-hidden my-8 animate-in fade-in zoom-in-95 duration-200">
         {/* Modal Header */}
-        <div className="flex items-center justify-between p-5 md:p-6 border-b border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40">
+        <div className="flex items-center justify-between p-5 md:p-6 border-b border-border-default dark:border-slate-800 bg-subtle/50 dark:bg-slate-950/40">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 rounded-xl border border-emerald-200 dark:border-emerald-800">
+            <div className="p-2.5 bg-emerald-500/10 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 rounded-xl border border-emerald-500/20 dark:border-emerald-800">
               <FileCheck2 className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white">
+              <h3 className="text-lg md:text-xl font-bold text-text-primary dark:text-white">
                 {editingSubmission
                   ? (isMs ? 'Kemaskini Log Prosedur' : 'Edit Procedure Log')
                   : (isMs ? 'Log & Permohonan Prosedur Privileging' : 'Log & Request Clinical Privilege')}
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-text-muted dark:text-slate-400">
                 {isMs
                   ? 'Perekodan kompetensi klinikal bagi pengiktirafan Surat Penurunan Kuasa KKM'
                   : 'Clinical competency recording for MOH Letter of Credentialing & Clinical Privileging'}
@@ -247,7 +247,7 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors"
+            className="p-2 text-slate-400 hover:text-text-secondary dark:hover:text-slate-200 hover:bg-subtle dark:hover:bg-slate-800 rounded-xl transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -255,15 +255,15 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
 
         {/* Changes Requested Banner if applicable */}
         {editingSubmission?.status === 'changes_requested' && editingSubmission.review && (
-          <div className="m-5 md:m-6 p-4 bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700 rounded-xl flex items-start gap-3">
+          <div className="m-5 md:m-6 p-4 bg-amber-500/10 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700 rounded-xl flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
             <div>
-              <h4 className="text-xs font-bold text-amber-900 dark:text-amber-200 uppercase tracking-wider">
+              <h4 className="text-xs font-bold text-amber-400 dark:text-amber-300 font-bold dark:text-amber-200 uppercase tracking-wider">
                 {isMs
                   ? `Catatan Pindaan Dari Penilai JKCP (${editingSubmission.review.reviewerName})`
                   : `Revision Notes from JKCP Reviewer (${editingSubmission.review.reviewerName})`}
               </h4>
-              <p className="text-xs text-amber-800 dark:text-amber-300 mt-1">
+              <p className="text-xs text-amber-400 dark:text-amber-300 mt-1">
                 "{editingSubmission.review.adminNotes}"
               </p>
               <p className="text-[11px] text-amber-700 dark:text-amber-400 mt-1 font-medium">
@@ -278,7 +278,7 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
         {/* Modal Form Body */}
         <div className="p-5 md:p-6 space-y-5 max-h-[70vh] overflow-y-auto">
           {validationError && (
-            <div className="p-3 bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 rounded-xl text-xs font-semibold text-rose-600 dark:text-rose-300 flex items-center gap-2">
+            <div className="p-3 bg-rose-500/10 dark:bg-rose-950/50 border border-rose-500/20 dark:border-rose-800 rounded-xl text-xs font-semibold text-rose-600 dark:text-rose-300 flex items-center gap-2">
               <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{validationError}</span>
             </div>
@@ -287,7 +287,7 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
           {/* Section 1: Role & Category Selection */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-text-secondary dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 {isMs ? 'Peranan Klinikal' : 'Clinical Role'}
               </label>
               <select
@@ -299,7 +299,7 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
                   setCategoryId(firstCat?.id || '');
                   setProcedureKey(firstCat?.groups[0]?.items[0]?.id || '');
                 }}
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
+                className="w-full px-3.5 py-2.5 bg-subtle/50 dark:bg-slate-800 border border-border-default dark:border-slate-700 rounded-xl text-xs md:text-sm text-text-primary dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
               >
                 <option value="nurses">{isMs ? 'Jururawat (RN)' : 'Registered Nurses (RN)'}</option>
                 <option value="amos">{isMs ? 'Penolong Pegawai Perubatan (AMO)' : 'Assistant Medical Officers (AMO)'}</option>
@@ -308,7 +308,7 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-text-secondary dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 {isMs ? 'Kategori Klinikal KKM' : 'MOH Clinical Category'}
               </label>
               <select
@@ -318,7 +318,7 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
                   const cat = availableCategories.find((c) => c.id === e.target.value);
                   setProcedureKey(cat?.groups[0]?.items[0]?.id || '');
                 }}
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
+                className="w-full px-3.5 py-2.5 bg-subtle/50 dark:bg-slate-800 border border-border-default dark:border-slate-700 rounded-xl text-xs md:text-sm text-text-primary dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
               >
                 {availableCategories.map((cat) => (
                   <option key={cat.id} value={cat.id}>
@@ -332,7 +332,7 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
           {/* Procedure Selection or Custom */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+              <label className="block text-xs font-bold text-text-secondary dark:text-slate-300 uppercase tracking-wider">
                 {isMs ? 'Prosedur Klinikal' : 'Clinical Procedure'}
               </label>
               <button
@@ -352,13 +352,13 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
                 value={customProcedureName}
                 onChange={(e) => setCustomProcedureName(e.target.value)}
                 placeholder={isMs ? 'cth: Pemasangan Central Venous Line Lanjutan / Pembedahan Khas...' : 'e.g. Advanced Central Venous Catheterization / Specialized Surgery...'}
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
+                className="w-full px-3.5 py-2.5 bg-subtle/50 dark:bg-slate-800 border border-border-default dark:border-slate-700 rounded-xl text-xs md:text-sm text-text-primary dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
               />
             ) : (
               <select
                 value={procedureKey}
                 onChange={(e) => setProcedureKey(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
+                className="w-full px-3.5 py-2.5 bg-subtle/50 dark:bg-slate-800 border border-border-default dark:border-slate-700 rounded-xl text-xs md:text-sm text-text-primary dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
               >
                 {selectedCategoryObj?.groups.map((group, gIdx) => (
                   <optgroup key={gIdx} label={`--- ${group.label} ---`}>
@@ -376,19 +376,19 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
           {/* Section 2: Clinical Details & Supervision Level */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-text-secondary dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 {isMs ? 'Tarikh Prosedur' : 'Procedure Date'}
               </label>
               <input
                 type="date"
                 value={procedureDate}
                 onChange={(e) => setProcedureDate(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
+                className="w-full px-3.5 py-2.5 bg-subtle/50 dark:bg-slate-800 border border-border-default dark:border-slate-700 rounded-xl text-xs md:text-sm text-text-primary dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-text-secondary dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 {isMs ? 'Wad / Unit / Lokasi' : 'Ward / Unit / Location'}
               </label>
               <input
@@ -396,12 +396,12 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
                 value={department}
                 onChange={(e) => setDepartment(e.target.value)}
                 placeholder={isMs ? 'cth: Dewan Bedah / ETD / ICU' : 'e.g. Operating Theatre / ETD / ICU'}
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
+                className="w-full px-3.5 py-2.5 bg-subtle/50 dark:bg-slate-800 border border-border-default dark:border-slate-700 rounded-xl text-xs md:text-sm text-text-primary dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-text-secondary dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 {isMs ? 'No. Rujukan Kes / MRN' : 'Case Reference No. / MRN'}
               </label>
               <input
@@ -409,14 +409,14 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
                 value={patientIdentifier}
                 onChange={(e) => setPatientIdentifier(e.target.value)}
                 placeholder={isMs ? 'cth: OT-2026-099 (Tanpa Nama)' : 'e.g. OT-2026-099 (Anonymized)'}
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
+                className="w-full px-3.5 py-2.5 bg-subtle/50 dark:bg-slate-800 border border-border-default dark:border-slate-700 rounded-xl text-xs md:text-sm text-text-primary dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
               />
             </div>
           </div>
 
           {/* Supervision Level Picker */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+            <label className="block text-xs font-bold text-text-secondary dark:text-slate-300 uppercase tracking-wider mb-2">
               {isMs ? 'Tahap Pengawasan Dilakukan (Supervision Level)' : 'Supervision Level Performed'}
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -446,14 +446,14 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
                   key={lvl.id}
                   onClick={() => setSupervisionLevel(lvl.id as SupervisionLevel)}
                   className={cn(
-                    'p-3 rounded-xl border text-left cursor-pointer transition-all',
+                    'p-3 rounded-xl border text-left cursor-pointer transition-colors',
                     supervisionLevel === lvl.id
-                      ? 'border-emerald-600 bg-emerald-50/50 dark:bg-emerald-950/30 text-emerald-950 dark:text-emerald-200 shadow-2xs'
-                      : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                      ? 'border-emerald-600 bg-emerald-500/10 dark:bg-emerald-950/30 text-emerald-400 dark:text-emerald-300 font-bold dark:text-emerald-200 shadow-elevation-1'
+                      : 'border-border-default dark:border-slate-800 hover:border-border-default dark:hover:border-slate-700'
                   )}
                 >
                   <p className="text-xs font-bold">{lvl.label}</p>
-                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">{lvl.desc}</p>
+                  <p className="text-[11px] text-text-muted dark:text-slate-400 mt-0.5">{lvl.desc}</p>
                 </div>
               ))}
             </div>
@@ -462,7 +462,7 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
           {/* Section 3: Clinical Textfields */}
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-text-secondary dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 {isMs ? 'Pelan Klinikal, Indikasi & Rasionale' : 'Clinical Plan, Indications & Rationale'} <span className="text-rose-500">*</span>
               </label>
               <textarea
@@ -470,12 +470,12 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
                 value={clinicalPlan}
                 onChange={(e) => setClinicalPlan(e.target.value)}
                 placeholder={isMs ? 'Nyatakan indikasi klinikal pesakit, langkah persediaan aseptik dan protokol yang dipatuhi...' : 'Specify clinical indications, aseptic preparation steps, and guidelines adhered to...'}
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
+                className="w-full px-3.5 py-2.5 bg-subtle/50 dark:bg-slate-800 border border-border-default dark:border-slate-700 rounded-xl text-xs md:text-sm text-text-primary dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-text-secondary dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 {isMs ? 'Peralatan Digunakan & Langkah Keselamatan' : 'Equipment Used & Safety Measures'} <span className="text-rose-500">*</span>
               </label>
               <textarea
@@ -483,12 +483,12 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
                 value={equipmentUsed}
                 onChange={(e) => setEquipmentUsed(e.target.value)}
                 placeholder={isMs ? 'Senaraikan instrumen, set steril, PPE, ubatan atau peranti pemantauan yang digunakan...' : 'List instruments, sterile sets, PPE, medications, or monitoring devices used...'}
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
+                className="w-full px-3.5 py-2.5 bg-subtle/50 dark:bg-slate-800 border border-border-default dark:border-slate-700 rounded-xl text-xs md:text-sm text-text-primary dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
+              <label className="block text-xs font-bold text-text-secondary dark:text-slate-300 uppercase tracking-wider mb-1.5">
                 {isMs ? 'Refleksi Klinikal, Komplikasi atau Catatan Tambahan (Pilihan)' : 'Clinical Reflection, Complications or Additional Notes (Optional)'}
               </label>
               <input
@@ -496,15 +496,15 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
                 value={complicationsOrNotes}
                 onChange={(e) => setComplicationsOrNotes(e.target.value)}
                 placeholder={isMs ? 'cth: Prosedur lancar, hemostasis tercapai, tiada desaturasi...' : 'e.g. Procedure uneventful, hemostasis achieved, no desaturation...'}
-                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
+                className="w-full px-3.5 py-2.5 bg-subtle/50 dark:bg-slate-800 border border-border-default dark:border-slate-700 rounded-xl text-xs md:text-sm text-text-primary dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
               />
             </div>
           </div>
 
           {/* Section 4: Attachments */}
-          <div className="space-y-2 pt-2 border-t border-slate-200 dark:border-slate-800">
+          <div className="space-y-2 pt-2 border-t border-border-default dark:border-slate-800">
             <div className="flex items-center justify-between">
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+              <label className="block text-xs font-bold text-text-secondary dark:text-slate-300 uppercase tracking-wider">
                 {isMs ? 'Lampiran Bukti Log / Sijil Pengesahan' : 'Logbook Evidence / Verification Attachments'}
               </label>
               <button
@@ -518,9 +518,9 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
             </div>
 
             {attachments.length === 0 ? (
-              <div className="p-3 bg-slate-50 dark:bg-slate-800/50 border border-dashed border-slate-300 dark:border-slate-700 rounded-xl text-center">
+              <div className="p-3 bg-subtle/50 dark:bg-slate-800/50 border border-dashed border-border-default dark:border-slate-700 rounded-xl text-center">
                 <Paperclip className="w-5 h-5 text-slate-400 mx-auto mb-1" />
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-text-muted dark:text-slate-400">
                   {isMs
                     ? 'Tiada lampiran. Klik butang di atas untuk melampirkan salinan log bertandatangan atau borang pengesahan.'
                     : 'No attachments. Click above to attach signed log sheet or competency verification.'}
@@ -531,11 +531,11 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
                 {attachments.map((att) => (
                   <div
                     key={att.id}
-                    className="flex items-center justify-between p-2.5 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl"
+                    className="flex items-center justify-between p-2.5 bg-subtle/50 dark:bg-slate-800 border border-border-default dark:border-slate-700 rounded-xl"
                   >
                     <div className="flex items-center gap-2">
                       <Paperclip className="w-4 h-4 text-emerald-700 dark:text-emerald-400 shrink-0" />
-                      <span className="text-xs font-medium text-slate-800 dark:text-slate-200 truncate max-w-xs md:max-w-md">
+                      <span className="text-xs font-medium text-text-primary dark:text-slate-200 truncate max-w-xs md:max-w-md">
                         {att.name} ({(att.size / 1024).toFixed(0)} KB)
                       </span>
                     </div>
@@ -554,11 +554,11 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
         </div>
 
         {/* Modal Footer Actions */}
-        <div className="flex flex-wrap items-center justify-between gap-3 p-5 md:p-6 border-t border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-950/40">
+        <div className="flex flex-wrap items-center justify-between gap-3 p-5 md:p-6 border-t border-border-default dark:border-slate-800 bg-subtle/50 dark:bg-slate-950/40">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-xs md:text-sm font-semibold text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-xl transition-colors"
+            className="px-4 py-2 text-xs md:text-sm font-semibold text-text-muted dark:text-slate-400 hover:bg-subtle dark:hover:bg-slate-800 rounded-xl transition-colors"
           >
             {isMs ? 'Batal' : 'Cancel'}
           </button>
@@ -567,14 +567,14 @@ export const SubmitProcedureModal: React.FC<SubmitProcedureModalProps> = ({
             <button
               type="button"
               onClick={() => handleSave(true)}
-              className="px-4 py-2 bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs md:text-sm font-semibold rounded-xl transition-all"
+              className="px-4 py-2 bg-subtle dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-text-primary dark:text-slate-200 text-xs md:text-sm font-semibold rounded-xl transition-colors"
             >
               {isMs ? 'Simpan sebagai Draf' : 'Save as Draft'}
             </button>
             <button
               type="button"
               onClick={() => handleSave(false)}
-              className="px-5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs md:text-sm font-bold rounded-xl shadow-xs hover:shadow-sm transition-all active:scale-95"
+              className="px-5 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs md:text-sm font-bold rounded-xl shadow-xs hover:shadow-sm transition-colors active:scale-95"
             >
               {editingSubmission?.status === 'changes_requested'
                 ? (isMs ? 'Hantar Semakan Semula' : 'Resubmit for Review')

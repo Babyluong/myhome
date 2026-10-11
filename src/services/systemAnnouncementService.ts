@@ -160,7 +160,16 @@ export async function getSystemUpdateLogs(): Promise<SystemAnnouncement[]> {
       if (error) {
         console.warn('Error fetching system update logs:', error.message)
       } else if (data) {
-        dbLogs = data as SystemAnnouncement[]
+        // Exclude obsolete build-* tags and normalize content/author
+        dbLogs = (data as SystemAnnouncement[])
+          .filter(l => !l.version_tag?.toLowerCase().startsWith('build-'))
+          .map(l => ({
+            ...l,
+            content: l.content?.replace(/\(Lawas@2025\)/gi, '')?.replace(/Lawas@2025/gi, 'H.O.M.E. System Administrator'),
+            created_by_name: (!l.created_by_name || l.created_by_name.includes('CI/CD') || l.created_by_name.includes('Lawas'))
+              ? 'H.O.M.E. System Administrator'
+              : l.created_by_name
+          }))
       }
     }
 
@@ -168,10 +177,34 @@ export async function getSystemUpdateLogs(): Promise<SystemAnnouncement[]> {
     const existingVersions = new Set(dbLogs.map(l => l.version_tag).filter(Boolean))
     const existingTitles = new Set(dbLogs.map(l => l.title.trim().toLowerCase()))
 
-    const supplementalReleases = SYSTEM_RELEASES.filter(
-      rel => (!rel.version_tag || !existingVersions.has(rel.version_tag)) &&
-             !existingTitles.has(rel.title.trim().toLowerCase())
-    )
+    // 2. Read live deployment manifest from /version.json
+    let liveReleases: SystemAnnouncement[] = []
+    try {
+      const meta = await getLiveDeploymentMetadata()
+      if (meta?.releases && Array.isArray(meta.releases)) {
+        liveReleases = meta.releases as SystemAnnouncement[]
+      }
+    } catch (e) {
+      // ignore
+    }
+
+    // Merge both live deployment releases and bundled releases
+    const candidateReleases = [...liveReleases, ...SYSTEM_RELEASES]
+    const supplementalReleases: SystemAnnouncement[] = []
+    const seenTitles = new Set<string>()
+
+    for (const rel of candidateReleases) {
+      if (!rel.title) continue
+      const titleKey = rel.title.trim().toLowerCase()
+      const versionKey = rel.version_tag || ''
+      if (seenTitles.has(titleKey)) continue
+      seenTitles.add(titleKey)
+
+      const isKnownInDb = (versionKey && existingVersions.has(versionKey)) || existingTitles.has(titleKey)
+      if (!isKnownInDb) {
+        supplementalReleases.push(rel)
+      }
+    }
 
     if (supplementalReleases.length > 0 && isSupabaseConfigured()) {
       void autoSyncMissingReleasesToSupabase(supplementalReleases)
@@ -192,8 +225,8 @@ export async function getSystemUpdateLogs(): Promise<SystemAnnouncement[]> {
  */
 export async function getLiveDeploymentMetadata(): Promise<DeploymentMetadata> {
   try {
-    // 1. Try fetching public/version.json generated during deployment
-    const res = await fetch('/version.json', { cache: 'no-store' })
+    // 1. Fetch public/version.json with cache buster query
+    const res = await fetch(`/version.json?_t=${Date.now()}`, { cache: 'no-store' })
     if (res.ok) {
       const data = await res.json()
       return data as DeploymentMetadata
@@ -228,13 +261,19 @@ export async function getRecentProductionCommits(): Promise<GitCommitRecord[]> {
     )
     if (ghRes.ok) {
       const ghData = await ghRes.json()
-      return ghData.map((item: any) => ({
-        hash: item.sha,
-        shortHash: item.sha.slice(0, 7),
-        author: item.commit.author.name,
-        date: item.commit.author.date,
-        message: item.commit.message.split('\n')[0]
-      }))
+      return ghData.map((item: any) => {
+        const rawAuthor = item.commit?.author?.name || ''
+        const cleanAuthor = (!rawAuthor || rawAuthor.toLowerCase().includes('lawas') || rawAuthor.toLowerCase().includes('ci/cd'))
+          ? 'H.O.M.E. System Administrator'
+          : rawAuthor
+        return {
+          hash: item.sha,
+          shortHash: item.sha.slice(0, 7),
+          author: cleanAuthor,
+          date: item.commit.author.date,
+          message: item.commit.message.split('\n')[0]
+        }
+      })
     }
   } catch (err) {
     console.warn('Could not fetch live git commits:', err)
@@ -410,3 +449,21 @@ export function subscribeToAnnouncements(onUpdate: () => void): () => void {
     return () => {}
   }
 }
+
+/**
+ * Live Sync: Check deployment metadata, verify latest releases against Supabase,
+ * and auto-heal missing release announcements.
+ */
+export async function syncLiveProductionReleases(): Promise<{
+  logs: SystemAnnouncement[]
+  commits: GitCommitRecord[]
+  metadata: DeploymentMetadata
+}> {
+  const metadata = await getLiveDeploymentMetadata()
+  const [logs, commits] = await Promise.all([
+    getSystemUpdateLogs(),
+    getRecentProductionCommits()
+  ])
+  return { logs, commits, metadata }
+}
+

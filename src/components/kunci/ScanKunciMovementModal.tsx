@@ -405,14 +405,14 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
         
         {/* Toggle Mode Tab (Camera Scanner vs Manual Key-In) */}
         {!scannedKey && (
-          <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200/40">
+          <div className="flex bg-subtle p-1 rounded-xl border border-border-default">
             <button
               type="button"
               onClick={() => { setActiveTab('camera'); setQrInput(''); }}
-              className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+              className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold rounded-lg transition-[transform,opacity,box-shadow,border-color] cursor-pointer ${
                 activeTab === 'camera' 
-                  ? 'bg-white text-slate-800 shadow-sm border border-slate-200/40' 
-                  : 'text-slate-500 hover:text-slate-800'
+                  ? 'bg-surface text-text-primary shadow-sm border border-border-default' 
+                  : 'text-text-muted hover:text-text-primary'
               }`}
             >
               <Camera className="w-3.5 h-3.5" />
@@ -421,10 +421,10 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
             <button
               type="button"
               onClick={() => { setActiveTab('manual'); stopCamera(); setQrInput(''); }}
-              className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+              className={`flex-1 flex items-center justify-center gap-2 py-2 text-xs font-bold rounded-lg transition-[transform,opacity,box-shadow,border-color] cursor-pointer ${
                 activeTab === 'manual' 
-                  ? 'bg-white text-slate-800 shadow-sm border border-slate-200/40' 
-                  : 'text-slate-500 hover:text-slate-800'
+                  ? 'bg-surface text-text-primary shadow-sm border border-border-default' 
+                  : 'text-text-muted hover:text-text-primary'
               }`}
             >
               <Keyboard className="w-3.5 h-3.5" />
@@ -437,8 +437,8 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
         {statusMessage && !scannedKey && (
           <div className={`p-4 rounded-xl flex items-start gap-3 border text-xs font-semibold ${
             statusMessage.type === 'error' 
-              ? 'bg-rose-50 border-rose-100 text-rose-800' 
-              : 'bg-emerald-50 border-emerald-100 text-emerald-800'
+              ? 'bg-rose-500/10 border-rose-100 text-rose-400' 
+              : 'bg-emerald-500/10 border-emerald-100 text-emerald-400'
           }`}>
             <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
             <div>{statusMessage.text}</div>
@@ -451,7 +451,7 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
             <div className="flex items-center justify-between">
               <div className="flex flex-col gap-0.5">
                 <span className="text-[10px] font-bold text-amber-400 uppercase tracking-widest font-mono">Camera Viewport</span>
-                <span className="text-[9px] text-slate-500 font-mono">Status: {cameraActive ? 'Online' : 'Offline'}</span>
+                <span className="text-[9px] text-text-muted font-mono">Status: {cameraActive ? 'Online' : 'Offline'}</span>
               </div>
               <div className="flex items-center gap-3">
                 <button
@@ -460,7 +460,7 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
                   className={`p-1.5 rounded-lg border transition-colors cursor-pointer ${
                     soundEnabled 
                       ? 'bg-slate-800 border-slate-700 text-amber-400' 
-                      : 'bg-slate-900 border-slate-800 text-slate-500'
+                      : 'bg-slate-900 border-slate-800 text-text-muted'
                   }`}
                 >
                   {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
@@ -468,10 +468,10 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
                 <button
                   type="button"
                   onClick={() => setCameraActive(!cameraActive)}
-                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[10px] font-extrabold font-mono transition-all cursor-pointer ${
+                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[10px] font-extrabold font-mono transition-[transform,opacity,box-shadow,border-color] cursor-pointer ${
                     cameraActive 
                       ? 'bg-rose-500 text-white' 
-                      : 'bg-amber-500 text-slate-900 shadow-[0_0_10px_rgba(245,158,11,0.2)]'
+                      : 'bg-amber-500 text-text-primary shadow-[0_0_10px_rgba(245,158,11,0.2)]'
                   }`}
                 >
                   <Camera className="w-3.5 h-3.5" />
@@ -481,7 +481,7 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
             </div>
 
             {cameraActive ? (
-              <div className={`relative aspect-video rounded-2xl overflow-hidden border border-slate-700 bg-slate-955 flex flex-col items-center justify-center transition-all duration-300 bg-slate-950 ${successFlash ? 'ring-8 ring-emerald-500/30' : ''}`}>
+              <div className={`relative aspect-video rounded-2xl overflow-hidden border border-slate-700 bg-slate-955 flex flex-col items-center justify-center transition-[transform,opacity,box-shadow,border-color] duration-300 bg-slate-950 ${successFlash ? 'ring-8 ring-emerald-500/30' : ''}`}>
                 {successFlash && (
                   <div className="absolute inset-0 bg-emerald-500/10 backdrop-blur-xs flex items-center justify-center z-20">
                     <CheckCircle2 className="w-12 h-12 text-emerald-400 animate-bounce" />
@@ -499,7 +499,7 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
                 ) : (
                   <div className="absolute inset-0 bg-slate-950/70 flex flex-col items-center justify-center p-4">
                     <QrCode className="w-8 h-8 text-amber-400 animate-pulse mb-2" />
-                    <span className="text-[9px] font-bold text-slate-400 font-mono tracking-wider">HALAKAN LENSA KE LABEL QR KUNCI</span>
+                    <span className="text-[9px] font-bold text-text-secondary font-bold font-mono tracking-wider">HALAKAN LENSA KE LABEL QR KUNCI</span>
                   </div>
                 )}
 
@@ -512,8 +512,8 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
                 </div>
               </div>
             ) : (
-              <div className="h-44 border border-dashed border-slate-700/60 rounded-2xl flex flex-col items-center justify-center text-center p-4 bg-slate-950/20 text-slate-500">
-                <Camera className="w-8 h-8 mb-2 text-slate-500 opacity-40" />
+              <div className="h-44 border border-dashed border-slate-700/60 rounded-2xl flex flex-col items-center justify-center text-center p-4 bg-slate-950/20 text-text-muted">
+                <Camera className="w-8 h-8 mb-2 text-text-muted opacity-40" />
                 <span className="text-[10px] font-bold font-mono tracking-wide uppercase">Konsol Kamera Offline</span>
                 <span className="text-[9px] text-slate-400 mt-1">Aktifkan butang BUKA KAMERA di atas untuk memulakan pengimbas.</span>
               </div>
@@ -523,9 +523,9 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
 
         {/* MANUAL KEY-IN */}
         {!scannedKey && activeTab === 'manual' && (
-          <div className="bg-white border border-slate-200/80 rounded-3xl p-5 space-y-4 shadow-sm">
+          <div className="bg-surface border border-border-default rounded-3xl p-5 space-y-4 shadow-sm">
             <div className="flex flex-col gap-0.5">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Key Code Search</span>
+              <span className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider">Key Code Search</span>
               <span className="text-[9px] text-slate-400 font-semibold">Please type key code (e.g.: KUNCI-PH-LOG-01)</span>
             </div>
 
@@ -539,12 +539,12 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
                 onChange={(e) => setQrInput(e.target.value)}
                 placeholder="Type key code..."
                 disabled={isSubmitting}
-                className="flex-1 px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold text-slate-800 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
+                className="flex-1 px-4 py-2.5 rounded-xl border border-border-default text-xs font-semibold text-text-primary bg-subtle/50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-surface transition-[transform,opacity,box-shadow,border-color]"
               />
               <button
                 type="submit"
                 disabled={isSubmitting || !qrInput.trim()}
-                className="px-5 py-2.5 bg-slate-850 hover:bg-slate-900 text-white rounded-xl text-xs font-bold transition-all disabled:opacity-50 flex items-center justify-center cursor-pointer shadow-xs"
+                className="px-5 py-2.5 bg-slate-850 hover:bg-slate-900 text-white rounded-xl text-xs font-bold transition-[transform,opacity,box-shadow,border-color] disabled:opacity-50 flex items-center justify-center cursor-pointer shadow-xs"
               >
                 {isSubmitting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
               </button>
@@ -557,12 +557,12 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
           <div className="space-y-6">
             
             {/* Scanned Key Summary Card */}
-            <div className="bg-slate-50 border border-slate-200/60 rounded-2xl p-4 flex justify-between items-start gap-4">
+            <div className="bg-subtle/50 border border-border-default rounded-2xl p-4 flex justify-between items-start gap-4">
               <div className="space-y-1">
-                <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">KUNCI DIIMBAS</div>
+                <div className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider">KUNCI DIIMBAS</div>
                 <div className="text-base font-black text-slate-850">{scannedKey.nama_kunci}</div>
                 <div className="text-xs text-slate-400 font-semibold flex items-center gap-1.5 mt-0.5">
-                  <Badge className="font-mono text-[10px] bg-slate-200 text-slate-700 px-1.5 py-0.5">
+                  <Badge className="font-mono text-[10px] bg-subtle text-text-secondary px-1.5 py-0.5">
                     {scannedKey.kod_kunci}
                   </Badge>
                   <span>•</span>
@@ -572,17 +572,17 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
 
               <div className="flex flex-col items-end gap-1.5">
                 {scannedKey.status === 'borrowed' ? (
-                  <Badge className="border-amber-200 text-amber-700 bg-amber-50 font-bold uppercase text-[9px] animate-pulse">
+                  <Badge className="border-amber-500/20 text-amber-700 bg-amber-500/10 font-bold uppercase text-[9px] animate-pulse">
                     Dipinjam (OUT)
                   </Badge>
                 ) : (
-                  <Badge className="border-emerald-200 text-emerald-700 bg-emerald-50 font-bold uppercase text-[9px]">
+                  <Badge className="border-emerald-500/20 text-emerald-700 bg-emerald-500/10 font-bold uppercase text-[9px]">
                     Tersedia (IN)
                   </Badge>
                 )}
                 
                 {scannedKey.tahap_kawalan === 'high' && (
-                  <Badge className="border-rose-200 text-rose-700 bg-rose-50 font-bold text-[9px] flex items-center gap-1">
+                  <Badge className="border-rose-500/20 text-rose-700 bg-rose-500/10 font-bold text-[9px] flex items-center gap-1">
                     <Lock className="w-2.5 h-2.5" /> DDA Double-Custody
                   </Badge>
                 )}
@@ -594,14 +594,14 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
               <form onSubmit={handleCheckoutSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
+                    <label className="block text-xs font-semibold text-text-muted mb-1.5 uppercase">
                       Peminjam Kunci *
                     </label>
                     <select
                       value={borrowerId}
                       onChange={(e) => setBorrowerId(e.target.value)}
                       required
-                      className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all text-slate-800 font-medium"
+                      className="w-full rounded-xl border border-border-default p-2.5 text-sm bg-subtle/50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-surface transition-[transform,opacity,box-shadow,border-color] text-text-primary font-medium"
                     >
                       {MOCK_BORROWERS.map((b) => (
                         <option key={b.id} value={b.id}>
@@ -612,14 +612,14 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
+                    <label className="block text-xs font-semibold text-text-muted mb-1.5 uppercase">
                       Tempoh Pinjaman *
                     </label>
                     <select
                       value={durationHours}
                       onChange={(e) => setDurationHours(e.target.value)}
                       required
-                      className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all text-slate-800 font-medium"
+                      className="w-full rounded-xl border border-border-default p-2.5 text-sm bg-subtle/50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-surface transition-[transform,opacity,box-shadow,border-color] text-text-primary font-medium"
                     >
                       <option value="1">1 Jam (1 Hour)</option>
                       <option value="2">2 Jam (2 Hours)</option>
@@ -634,7 +634,7 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
                         placeholder="Bilangan jam..."
                         value={customHours}
                         onChange={(e) => setCustomHours(e.target.value)}
-                        className="w-full mt-2 rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
+                        className="w-full mt-2 rounded-xl border border-border-default p-2.5 text-sm bg-subtle/50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-surface transition-[transform,opacity,box-shadow,border-color]"
                       />
                     )}
                   </div>
@@ -642,8 +642,8 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
 
                 {/* Saksi required for high-security DDA keys */}
                 {scannedKey.tahap_kawalan === 'high' && (
-                  <div className="p-4 bg-rose-50 border border-rose-100 rounded-xl space-y-2">
-                    <label className="block text-xs font-bold text-rose-800 uppercase flex items-center gap-1.5">
+                  <div className="p-4 bg-rose-500/10 border border-rose-100 rounded-xl space-y-2">
+                    <label className="block text-xs font-bold text-rose-400 uppercase flex items-center gap-1.5">
                       <UserCheck className="w-4 h-4" />
                       Saksi / Pegawai Kedua (Co-Signer Mandatori) *
                     </label>
@@ -651,7 +651,7 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
                       value={witnessId}
                       onChange={(e) => setWitnessId(e.target.value)}
                       required
-                      className="w-full rounded-xl border border-rose-200 p-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-rose-500 transition-all text-slate-800 font-semibold"
+                      className="w-full rounded-xl border border-rose-500/20 p-2.5 text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-rose-500 transition-[transform,opacity,box-shadow,border-color] text-text-primary font-semibold"
                     >
                       <option value="">-- Pilih Saksi Saksi Kedua --</option>
                       {MOCK_BORROWERS.map((b) => (
@@ -669,7 +669,7 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
                 )}
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
+                  <label className="block text-xs font-semibold text-text-muted mb-1.5 uppercase">
                     Tujuan Peminjaman Kunci
                   </label>
                   <input
@@ -677,7 +677,7 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
                     placeholder="Masukkan tujuan (cth: Pengeluaran Morfin Wad Kanak-Kanak / Pendaftaran Stok)..."
                     value={purpose}
                     onChange={(e) => setPurpose(e.target.value)}
-                    className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all text-slate-800 font-medium"
+                    className="w-full rounded-xl border border-border-default p-2.5 text-sm bg-subtle/50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-surface transition-[transform,opacity,box-shadow,border-color] text-text-primary font-medium"
                   />
                 </div>
 
@@ -685,14 +685,14 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
                   <Button
                     type="button"
                     onClick={() => setScannedKey(null)}
-                    className="border-slate-200 text-slate-500 hover:bg-slate-50 px-4 py-2 border rounded-xl"
+                    className="border-border-default text-text-muted hover:bg-subtle/50 px-4 py-2 border rounded-xl"
                   >
                     Batal
                   </Button>
                   <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-5 py-2.5 rounded-xl shadow-soft"
+                    className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-5 py-2.5 rounded-xl shadow-elevation-1"
                   >
                     {isSubmitting ? 'Merekod...' : 'Sahkan Pinjaman (Check-Out)'}
                   </Button>
@@ -703,10 +703,10 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
             {/* FLOW B: RETURN FORM */}
             {scannedKey.status === 'borrowed' && activeLog && (
               <form onSubmit={handleReturnSubmit} className="space-y-4">
-                <div className="bg-slate-100/60 rounded-xl p-3 border border-slate-200/30 text-xs space-y-1 text-slate-600">
+                <div className="bg-subtle rounded-xl p-3 border border-border-default text-xs space-y-1 text-text-secondary">
                   <div className="flex items-center gap-1.5">
                     <Building className="w-3.5 h-3.5 text-slate-400" />
-                    <span>Peminjam: <strong className="text-slate-800">{activeLog.peminjam?.full_name || MOCK_BORROWERS.find(b => b.id === activeLog.peminjam_id)?.full_name}</strong></span>
+                    <span>Peminjam: <strong className="text-text-primary">{activeLog.peminjam?.full_name || MOCK_BORROWERS.find(b => b.id === activeLog.peminjam_id)?.full_name}</strong></span>
                   </div>
                   <div className="flex items-center gap-1.5">
                     <Clock className="w-3.5 h-3.5 text-slate-400" />
@@ -716,14 +716,14 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
+                    <label className="block text-xs font-semibold text-text-muted mb-1.5 uppercase">
                       Keadaan Fizikal Anak Kunci *
                     </label>
                     <select
                       value={keyCondition}
                       onChange={(e) => setKeyCondition(e.target.value as any)}
                       required
-                      className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all text-slate-800 font-medium"
+                      className="w-full rounded-xl border border-border-default p-2.5 text-sm bg-subtle/50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-surface transition-[transform,opacity,box-shadow,border-color] text-text-primary font-medium"
                     >
                       <option value="good">Baik / Tiada Keretakan (Good)</option>
                       <option value="damaged">Rosak / Bengkok (Damaged)</option>
@@ -731,14 +731,14 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
+                    <label className="block text-xs font-semibold text-text-muted mb-1.5 uppercase">
                       Keadaan Mangga / Padlock Pintu *
                     </label>
                     <select
                       value={lockCondition}
                       onChange={(e) => setLockCondition(e.target.value as any)}
                       required
-                      className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all text-slate-800 font-medium"
+                      className="w-full rounded-xl border border-border-default p-2.5 text-sm bg-subtle/50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-surface transition-[transform,opacity,box-shadow,border-color] text-text-primary font-medium"
                     >
                       <option value="good">Kukuh / Berfungsi Baik</option>
                       <option value="loose">Longgar / Longgatan Skru</option>
@@ -749,7 +749,7 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
 
                 <div className="grid grid-cols-1 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
+                    <label className="block text-xs font-semibold text-text-muted mb-1.5 uppercase">
                       Tarikh & Masa Pulang *
                     </label>
                     <input
@@ -757,12 +757,12 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
                       required
                       value={returnDateTime}
                       onChange={(e) => setReturnDateTime(e.target.value)}
-                      className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all text-slate-800"
+                      className="w-full rounded-xl border border-border-default p-2.5 text-sm bg-subtle/50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-surface transition-[transform,opacity,box-shadow,border-color] text-text-primary"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
+                    <label className="block text-xs font-semibold text-text-muted mb-1.5 uppercase">
                       Catatan Pemulangan & Kejadian
                     </label>
                     <textarea
@@ -770,7 +770,7 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
                       value={remarks}
                       onChange={(e) => setRemarks(e.target.value)}
                       placeholder="Masukkan catatan (jika ada)..."
-                      className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all resize-none text-slate-800 font-medium"
+                      className="w-full rounded-xl border border-border-default p-2.5 text-sm bg-subtle/50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-surface transition-[transform,opacity,box-shadow,border-color] resize-none text-text-primary font-medium"
                     />
                   </div>
                 </div>
@@ -794,14 +794,14 @@ export const ScanKunciMovementModal: React.FC<ScanKunciMovementModalProps> = ({
                       setActiveLog(null);
                       setReturnPhoto(null);
                     }}
-                    className="border-slate-200 text-slate-500 hover:bg-slate-50 px-4 py-2 border rounded-xl"
+                    className="border-border-default text-text-muted hover:bg-subtle/50 px-4 py-2 border rounded-xl"
                   >
                     Batal
                   </Button>
                   <Button
                     type="submit"
                     disabled={isSubmitting || !returnPhoto}
-                    className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-5 py-2.5 rounded-xl shadow-soft disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-5 py-2.5 rounded-xl shadow-elevation-1 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? 'Merekod...' : 'Sahkan Pulangan (Check-In)'}
                   </Button>

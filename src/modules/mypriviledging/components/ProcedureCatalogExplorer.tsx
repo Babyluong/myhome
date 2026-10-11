@@ -129,7 +129,7 @@ export const ProcedureCatalogExplorer: React.FC<ProcedureCatalogExplorerProps> =
       case 'endoscopy-services':
         return <Layers className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />;
       case 'orthopaedic-services':
-        return <Bone className="w-5 h-5 text-slate-600 dark:text-slate-400" />;
+        return <Bone className="w-5 h-5 text-text-muted dark:text-slate-400" />;
       case 'peri-anaesthesia-care':
       case 'amo-peri-anaesthesia':
         return <HeartPulse className="w-5 h-5 text-teal-600 dark:text-teal-400" />;
@@ -142,25 +142,25 @@ export const ProcedureCatalogExplorer: React.FC<ProcedureCatalogExplorerProps> =
       case 'amo-anaesthesia':
         return <Stethoscope className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />;
       default:
-        return <BookOpen className="w-5 h-5 text-slate-500" />;
+        return <BookOpen className="w-5 h-5 text-text-muted" />;
     }
   };
 
   return (
     <div className="space-y-5">
       {/* Search & Category Filter Section */}
-      <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-4 md:p-5 shadow-xs">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
+      <div className="bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-800 rounded-2xl p-4 md:p-5 shadow-xs">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 pb-4 border-b border-border-subtle dark:border-slate-800">
           <div>
-            <h2 className="text-base md:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <h2 className="text-base md:text-lg font-bold text-text-primary dark:text-white flex items-center gap-2">
               <BookOpen className="w-5 h-5 text-emerald-700 dark:text-emerald-400" />
               MOH Credentialed Clinical Procedure Catalog (AHP Logbook)
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-text-muted dark:text-slate-400 mt-0.5">
               Browse official MOH certified procedure catalog by clinical role and department categories.
             </p>
           </div>
-          <span className="text-xs text-slate-500 font-semibold px-3 py-1 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl self-start md:self-auto">
+          <span className="text-xs text-text-muted font-semibold px-3 py-1 bg-subtle/50 dark:bg-slate-800 border border-border-default dark:border-slate-700 rounded-xl self-start md:self-auto">
             Total Procedures: <strong className="text-emerald-700 dark:text-emerald-400">{CATALOG_METRICS.totalProcedures}</strong>
           </span>
         </div>
@@ -171,14 +171,14 @@ export const ProcedureCatalogExplorer: React.FC<ProcedureCatalogExplorerProps> =
             type="button"
             onClick={() => setActiveTab('shared')}
             className={cn(
-              'flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all',
+              'flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-colors',
               activeTab === 'shared'
-                ? 'bg-emerald-700 text-white shadow-2xs'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                ? 'bg-emerald-700 text-white shadow-elevation-1'
+                : 'bg-subtle dark:bg-slate-800 text-text-secondary dark:text-slate-300 hover:bg-subtle dark:hover:bg-slate-700'
             )}
           >
             <span>Shared Categories (Both Roles)</span>
-            <span className={cn('px-2 py-0.5 rounded-full text-[10px] font-bold', activeTab === 'shared' ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300')}>
+            <span className={cn('px-2 py-0.5 rounded-full text-[10px] font-bold', activeTab === 'shared' ? 'bg-white/20 text-white' : 'bg-subtle dark:bg-slate-700 text-text-secondary dark:text-slate-300')}>
               {COMMON_CATEGORIES.length}
             </span>
           </button>
@@ -187,14 +187,14 @@ export const ProcedureCatalogExplorer: React.FC<ProcedureCatalogExplorerProps> =
             type="button"
             onClick={() => setActiveTab('nurses')}
             className={cn(
-              'flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all',
+              'flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-colors',
               activeTab === 'nurses'
-                ? 'bg-emerald-700 text-white shadow-2xs'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                ? 'bg-emerald-700 text-white shadow-elevation-1'
+                : 'bg-subtle dark:bg-slate-800 text-text-secondary dark:text-slate-300 hover:bg-subtle dark:hover:bg-slate-700'
             )}
           >
             <span>Staff Nurses Only</span>
-            <span className={cn('px-2 py-0.5 rounded-full text-[10px] font-bold', activeTab === 'nurses' ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300')}>
+            <span className={cn('px-2 py-0.5 rounded-full text-[10px] font-bold', activeTab === 'nurses' ? 'bg-white/20 text-white' : 'bg-subtle dark:bg-slate-700 text-text-secondary dark:text-slate-300')}>
               {NURSES_ONLY_CATEGORIES.length}
             </span>
           </button>
@@ -203,34 +203,34 @@ export const ProcedureCatalogExplorer: React.FC<ProcedureCatalogExplorerProps> =
             type="button"
             onClick={() => setActiveTab('amos')}
             className={cn(
-              'flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all',
+              'flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition-colors',
               activeTab === 'amos'
-                ? 'bg-emerald-700 text-white shadow-2xs'
-                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                ? 'bg-emerald-700 text-white shadow-elevation-1'
+                : 'bg-subtle dark:bg-slate-800 text-text-secondary dark:text-slate-300 hover:bg-subtle dark:hover:bg-slate-700'
             )}
           >
             <span>Assistant Medical Officers (AMO) Only</span>
-            <span className={cn('px-2 py-0.5 rounded-full text-[10px] font-bold', activeTab === 'amos' ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300')}>
+            <span className={cn('px-2 py-0.5 rounded-full text-[10px] font-bold', activeTab === 'amos' ? 'bg-white/20 text-white' : 'bg-subtle dark:bg-slate-700 text-text-secondary dark:text-slate-300')}>
               {AMO_ONLY_CATEGORIES.length}
             </span>
           </button>
         </div>
 
         {/* Section Heading info */}
-        <div className="mt-4 p-3 bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80 rounded-xl flex items-center justify-between">
+        <div className="mt-4 p-3 bg-subtle/50 dark:bg-slate-800/60 border border-border-default dark:border-slate-700/80 rounded-xl flex items-center justify-between">
           <div>
-            <h3 className="text-xs md:text-sm font-bold text-slate-800 dark:text-slate-200">
+            <h3 className="text-xs md:text-sm font-bold text-text-primary dark:text-slate-200">
               {currentTabInfo.title}
             </h3>
-            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-[11px] text-text-muted dark:text-slate-400 mt-0.5">
               {currentTabInfo.subtitle}
             </p>
           </div>
-          <div className="hidden sm:flex items-center gap-2 text-xs font-medium text-slate-600 dark:text-slate-400">
+          <div className="hidden sm:flex items-center gap-2 text-xs font-medium text-text-muted dark:text-slate-400">
             <button onClick={expandAll} className="hover:text-emerald-700 dark:hover:text-emerald-400 hover:underline">
               Expand All
             </button>
-            <span className="text-slate-300 dark:text-slate-600">|</span>
+            <span className="text-slate-300 dark:text-text-muted">|</span>
             <button onClick={collapseAll} className="hover:text-emerald-700 dark:hover:text-emerald-400 hover:underline">
               Collapse All
             </button>
@@ -245,12 +245,12 @@ export const ProcedureCatalogExplorer: React.FC<ProcedureCatalogExplorerProps> =
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search procedure name, category code, or clinical keywords..."
-            className="w-full pl-10 pr-10 py-2.5 bg-slate-50/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-600 focus:outline-hidden transition-all"
+            className="w-full pl-10 pr-10 py-2.5 bg-subtle/50 dark:bg-slate-800/80 border border-border-default dark:border-slate-700 rounded-xl text-xs md:text-sm text-text-primary dark:text-white placeholder:text-text-muted focus:ring-2 focus:ring-emerald-600 focus:outline-hidden transition-colors"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5"
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-text-muted dark:hover:text-slate-200 p-0.5"
             >
               <X className="w-4 h-4" />
             </button>
@@ -260,17 +260,17 @@ export const ProcedureCatalogExplorer: React.FC<ProcedureCatalogExplorerProps> =
 
       {/* Categories Accordion Cards */}
       {filteredCategories.length === 0 ? (
-        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-10 text-center">
-          <BookOpen className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-2" />
-          <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">
+        <div className="bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-800 rounded-2xl p-10 text-center">
+          <BookOpen className="w-10 h-10 text-slate-300 dark:text-text-muted mx-auto mb-2" />
+          <h4 className="text-sm font-bold text-text-primary dark:text-slate-200">
             No Procedures Found
           </h4>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-sm mx-auto">
+          <p className="text-xs text-text-muted dark:text-slate-400 mt-1 max-w-sm mx-auto">
             No results matching "{searchQuery}". Please try other clinical keywords.
           </p>
           <button
             onClick={() => setSearchQuery('')}
-            className="mt-3 px-3.5 py-1.5 bg-slate-100 dark:bg-slate-800 text-xs font-semibold rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+            className="mt-3 px-3.5 py-1.5 bg-subtle dark:bg-slate-800 text-xs font-semibold rounded-lg hover:bg-subtle dark:hover:bg-slate-700 transition-colors"
           >
             Clear Search
           </button>
@@ -284,37 +284,37 @@ export const ProcedureCatalogExplorer: React.FC<ProcedureCatalogExplorerProps> =
             return (
               <div
                 key={cat.id}
-                className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xs"
+                className="bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-800 rounded-2xl overflow-hidden shadow-xs"
               >
                 {/* Category Header */}
                 <div
                   onClick={() => toggleCategory(cat.id)}
-                  className="flex items-center justify-between p-4 md:p-5 cursor-pointer hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors select-none"
+                  className="flex items-center justify-between p-4 md:p-5 cursor-pointer hover:bg-subtle/50 dark:hover:bg-slate-800/40 transition-colors select-none"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="p-2.5 bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700/80 shrink-0 mt-0.5">
+                    <div className="p-2.5 bg-subtle/50 dark:bg-slate-800 rounded-xl border border-border-default dark:border-slate-700/80 shrink-0 mt-0.5">
                       {getCategoryIcon(cat.id)}
                     </div>
                     <div>
                       <div className="flex flex-wrap items-center gap-2">
-                        <h4 className="text-sm md:text-base font-bold text-slate-900 dark:text-white">
+                        <h4 className="text-sm md:text-base font-bold text-text-primary dark:text-white">
                           {cat.name}
                         </h4>
-                        <span className="px-2.5 py-0.5 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-full text-[11px] font-bold">
+                        <span className="px-2.5 py-0.5 bg-emerald-500/10 dark:bg-emerald-950/50 text-emerald-400 dark:text-emerald-300 border border-emerald-500/20 dark:border-emerald-800 rounded-full text-[11px] font-bold">
                           {catTotalProcedures} Procedures
                         </span>
-                        <span className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 rounded-md text-[10px]">
+                        <span className="px-2 py-0.5 bg-subtle dark:bg-slate-800 text-text-muted dark:text-slate-400 border border-border-default dark:border-slate-700 rounded-md text-[10px]">
                           {cat.groups.length} Groups
                         </span>
                       </div>
-                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                      <p className="text-xs text-text-muted dark:text-slate-400 mt-0.5">
                         {cat.summary}
                       </p>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-2 shrink-0 ml-3">
-                    <div className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 hover:text-slate-800 dark:hover:text-slate-200">
+                    <div className="p-1.5 rounded-lg bg-subtle dark:bg-slate-800 text-text-muted hover:text-text-primary dark:hover:text-slate-200">
                       {isExpanded ? (
                         <ChevronUp className="w-4 h-4" />
                       ) : (
@@ -326,18 +326,18 @@ export const ProcedureCatalogExplorer: React.FC<ProcedureCatalogExplorerProps> =
 
                 {/* Expanded Groups & Procedures */}
                 {isExpanded && (
-                  <div className="px-4 pb-4 md:px-5 md:pb-5 pt-1 border-t border-slate-100 dark:border-slate-800 bg-slate-50/40 dark:bg-slate-950/20">
+                  <div className="px-4 pb-4 md:px-5 md:pb-5 pt-1 border-t border-border-subtle dark:border-slate-800 bg-subtle/50 dark:bg-slate-950/20">
                     <div className="space-y-3.5">
                       {cat.groups.map((group, gIdx) => (
                         <div
                           key={gIdx}
-                          className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-xl p-3.5 md:p-4 shadow-2xs"
+                          className="bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-800 rounded-xl p-3.5 md:p-4 shadow-elevation-1"
                         >
-                          <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-slate-100 dark:border-slate-800">
-                            <h5 className="text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                          <div className="flex items-center justify-between pb-2 mb-2.5 border-b border-border-subtle dark:border-slate-800">
+                            <h5 className="text-[11px] font-bold text-text-secondary dark:text-slate-300 uppercase tracking-wider">
                               {group.label}
                             </h5>
-                            <span className="text-[11px] font-semibold text-slate-500">
+                            <span className="text-[11px] font-semibold text-text-muted">
                               {group.items.length} items
                             </span>
                           </div>
@@ -346,11 +346,11 @@ export const ProcedureCatalogExplorer: React.FC<ProcedureCatalogExplorerProps> =
                             {group.items.map((item) => (
                               <div
                                 key={item.id}
-                                className="group flex items-center justify-between gap-3 p-2.5 rounded-xl border border-slate-200/70 dark:border-slate-800 hover:border-emerald-400/80 hover:bg-emerald-50/30 dark:hover:bg-emerald-950/20 transition-all"
+                                className="group flex items-center justify-between gap-3 p-2.5 rounded-xl border border-border-default dark:border-slate-800 hover:border-emerald-400/80 hover:bg-emerald-500/10 dark:hover:bg-emerald-950/20 transition-colors"
                               >
                                 <div className="flex items-center gap-2 min-w-0">
                                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-600 dark:bg-emerald-400 shrink-0" />
-                                  <span className="text-xs font-medium text-slate-800 dark:text-slate-200 line-clamp-2">
+                                  <span className="text-xs font-medium text-text-primary dark:text-slate-200 line-clamp-2">
                                     {item.label}
                                   </span>
                                 </div>
@@ -359,7 +359,7 @@ export const ProcedureCatalogExplorer: React.FC<ProcedureCatalogExplorerProps> =
                                   <button
                                     type="button"
                                     onClick={() => onLogProcedure(cat, item)}
-                                    className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-700 hover:bg-emerald-800 text-white text-[11px] font-semibold rounded-lg shadow-2xs transition-all active:scale-95"
+                                    className="shrink-0 inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-700 hover:bg-emerald-800 text-white text-[11px] font-semibold rounded-lg shadow-elevation-1 transition-colors active:scale-95"
                                     title="Log This Procedure"
                                   >
                                     <Plus className="w-3 h-3" />

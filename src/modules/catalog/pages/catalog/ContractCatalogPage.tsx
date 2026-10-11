@@ -152,8 +152,8 @@ const SyncConfigModal: React.FC<SyncConfigModalProps> = ({ isOpen, onClose, onSa
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Google Sheets Sync Configuration" size="lg">
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 mb-4">
-          <p className="text-sm text-blue-800">
+        <div className="bg-blue-500/10 border-2 border-blue-500/20 rounded-xl p-4 mb-4">
+          <p className="text-sm text-blue-400">
             <strong>How to get your Google Sheet ID:</strong>
             <br />
             1. Open your Google Sheet
@@ -165,7 +165,7 @@ const SyncConfigModal: React.FC<SyncConfigModalProps> = ({ isOpen, onClose, onSa
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-text-secondary mb-1">
             Google Sheet ID or URL <span className="text-rose-500">*</span>
           </label>
           <Input
@@ -181,27 +181,27 @@ const SyncConfigModal: React.FC<SyncConfigModalProps> = ({ isOpen, onClose, onSa
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Sheet Name</label>
+          <label className="block text-sm font-medium text-text-secondary mb-1">Sheet Name</label>
           <Input
             value={formData.sheet_name}
             onChange={e => setFormData({ ...formData, sheet_name: e.target.value })}
             placeholder="Sheet1"
           />
-          <p className="mt-1 text-xs text-gray-500">Name of the worksheet tab (default: Sheet1)</p>
+          <p className="mt-1 text-xs text-text-muted">Name of the worksheet tab (default: Sheet1)</p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Range (Optional)</label>
+          <label className="block text-sm font-medium text-text-secondary mb-1">Range (Optional)</label>
           <Input
             value={formData.range}
             onChange={e => setFormData({ ...formData, range: e.target.value })}
             placeholder="A1:Z1000"
           />
-          <p className="mt-1 text-xs text-gray-500">Specific range to sync (e.g., A1:Z1000). Leave empty for all data.</p>
+          <p className="mt-1 text-xs text-text-muted">Specific range to sync (e.g., A1:Z1000). Leave empty for all data.</p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <label className="block text-sm font-medium text-text-secondary mb-1">
             API Key <span className="text-amber-600">(Recommended)</span>
           </label>
           <Input
@@ -211,13 +211,13 @@ const SyncConfigModal: React.FC<SyncConfigModalProps> = ({ isOpen, onClose, onSa
             placeholder="Enter Google Sheets API key"
           />
           <div className="mt-2 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-lg">
-            <p className="text-sm text-blue-900 font-bold mb-3 flex items-center gap-2">
+            <p className="text-sm text-blue-400 dark:text-blue-300 font-bold font-bold mb-3 flex items-center gap-2">
               <span className="text-lg">📋</span>
               For View-Only Sheets (You Don't Own the Document)
             </p>
             <div className="space-y-3">
-              <div className="bg-white p-3 rounded border border-blue-200">
-                <p className="text-xs font-semibold text-blue-800 mb-2">✅ Recommended Solution:</p>
+              <div className="bg-surface p-3 rounded border border-blue-500/20">
+                <p className="text-xs font-semibold text-blue-400 mb-2">✅ Recommended Solution:</p>
                 <p className="text-xs text-blue-700">
                   <strong>Ask the sheet owner</strong> to make it publicly viewable:
                 </p>
@@ -234,8 +234,8 @@ const SyncConfigModal: React.FC<SyncConfigModalProps> = ({ isOpen, onClose, onSa
                 </p>
               </div>
               
-              <div className="bg-white p-3 rounded border border-amber-200">
-                <p className="text-xs font-semibold text-amber-800 mb-2">🔧 Alternative (If owner can't make it public):</p>
+              <div className="bg-surface p-3 rounded border border-amber-500/20">
+                <p className="text-xs font-semibold text-amber-400 mb-2">🔧 Alternative (If owner can't make it public):</p>
                 <p className="text-xs text-amber-700 mb-2">
                   Use a <strong>Service Account</strong> with API key:
                 </p>
@@ -270,16 +270,16 @@ const SyncConfigModal: React.FC<SyncConfigModalProps> = ({ isOpen, onClose, onSa
             id="auto_sync"
             checked={formData.auto_sync_enabled}
             onChange={e => setFormData({ ...formData, auto_sync_enabled: e.target.checked })}
-            className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
+            className="w-4 h-4 text-teal-600 border-border-default rounded focus:ring-teal-500"
           />
-          <label htmlFor="auto_sync" className="text-sm font-medium text-gray-700">
+          <label htmlFor="auto_sync" className="text-sm font-medium text-text-secondary">
             Enable automatic sync
           </label>
         </div>
 
         {formData.auto_sync_enabled && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Sync Interval (minutes)</label>
+            <label className="block text-sm font-medium text-text-secondary mb-1">Sync Interval (minutes)</label>
             <Input
               type="number"
               value={formData.sync_interval_minutes}
@@ -287,7 +287,7 @@ const SyncConfigModal: React.FC<SyncConfigModalProps> = ({ isOpen, onClose, onSa
               min={5}
               max={1440}
             />
-            <p className="mt-1 text-xs text-gray-500">How often to automatically sync (minimum: 5 minutes)</p>
+            <p className="mt-1 text-xs text-text-muted">How often to automatically sync (minimum: 5 minutes)</p>
           </div>
         )}
 
@@ -572,18 +572,18 @@ export const ContractCatalogPage: React.FC = () => {
 
   const getStatusColor = (status: string, endDate?: string) => {
     if (isExpired(endDate, status)) {
-      return 'bg-rose-50 text-rose-600 border-rose-100 shadow-sm shadow-rose-500/5'
+      return 'bg-rose-500/10 text-rose-600 border-rose-100 shadow-sm shadow-rose-500/5'
     }
     if (isAlmostExpired(endDate)) {
-      return 'bg-amber-50 text-amber-600 border-amber-100 shadow-sm shadow-amber-500/5'
+      return 'bg-amber-500/10 text-amber-600 border-amber-100 shadow-sm shadow-amber-500/5'
     }
     switch (status?.toLowerCase()) {
       case 'active':
-        return 'bg-emerald-50 text-emerald-600 border-emerald-100 shadow-sm shadow-emerald-500/5'
+        return 'bg-emerald-500/10 text-emerald-600 border-emerald-100 shadow-sm shadow-emerald-500/5'
       case 'terminated':
-        return 'bg-slate-50 text-slate-600 border-slate-100'
+        return 'bg-subtle/50 text-text-muted border-border-subtle'
       default:
-        return 'bg-amber-50 text-amber-600 border-amber-100'
+        return 'bg-amber-500/10 text-amber-600 border-amber-100'
     }
   }
 
@@ -626,20 +626,20 @@ export const ContractCatalogPage: React.FC = () => {
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
           <span className="text-slate-400">Catalog</span>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-          <span className="text-slate-800 font-extrabold tracking-wide">Contract Catalog</span>
+          <span className="text-text-primary font-extrabold tracking-wide">Contract Catalog</span>
         </nav>
 
         {/* Gradient Header Monument */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative z-20">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-gradient-to-tr from-slate-900 to-indigo-950 border border-slate-800/80 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/10 hover:rotate-2 transition-transform duration-300">
+            <div className="w-14 h-14 bg-surface border border-border-default rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/10 hover:rotate-2 transition-transform duration-300">
               <FileText className="h-6 w-6 text-white" />
             </div>
             <div className="space-y-0.5">
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900">
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-transparent bg-clip-text bg-surface border border-border-default">
                 Contract Catalog
               </h1>
-              <p className="text-slate-500 font-semibold text-[11px] flex items-center gap-1.5">
+              <p className="text-text-muted font-semibold text-[11px] flex items-center gap-1.5">
                 <Sparkles className="w-3 h-3 text-indigo-500" />
                 KKM Centralized Medical Procurement Contracts and Price Schedules
               </p>
@@ -649,7 +649,7 @@ export const ContractCatalogPage: React.FC = () => {
           <div className="flex flex-wrap items-center gap-2.5">
             <button
               onClick={() => setShowConfigModal(true)}
-              className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-bold uppercase tracking-wider text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm flex items-center gap-2"
+              className="px-4 py-2.5 rounded-xl border border-border-default bg-surface text-xs font-bold uppercase tracking-wider text-text-secondary hover:bg-subtle/50 hover:border-border-default transition-colors shadow-sm flex items-center gap-2"
             >
               <Settings className="w-4 h-4 text-slate-400" />
               Manage Sync
@@ -657,7 +657,7 @@ export const ContractCatalogPage: React.FC = () => {
             <button
               onClick={handleSync}
               disabled={isSyncing || !syncConfig}
-              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-slate-900 to-indigo-950 text-white text-xs font-bold uppercase tracking-wider hover:from-slate-800 hover:to-indigo-900 transition-all shadow-md shadow-slate-900/10 flex items-center gap-2 disabled:opacity-50"
+              className="px-4 py-2.5 rounded-xl bg-surface border border-border-default text-white text-xs font-bold uppercase tracking-wider hover:from-slate-800 hover:to-indigo-900 transition-colors shadow-md shadow-slate-900/10 flex items-center gap-2 disabled:opacity-50"
             >
               {isSyncing ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -668,7 +668,7 @@ export const ContractCatalogPage: React.FC = () => {
             </button>
             <button
               onClick={handleAddContract}
-              className="px-4 py-2.5 rounded-xl bg-teal-600 text-white text-xs font-bold uppercase tracking-wider hover:bg-teal-700 transition-all shadow-md shadow-teal-600/10 flex items-center gap-2"
+              className="px-4 py-2.5 rounded-xl bg-teal-600 text-white text-xs font-bold uppercase tracking-wider hover:bg-teal-700 transition-colors shadow-md shadow-teal-600/10 flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
               Add Contract
@@ -677,34 +677,34 @@ export const ContractCatalogPage: React.FC = () => {
         </div>
 
         {/* Elevated Dashboard KPI Stats Panel wrapped in a luxurious white background card */}
-        <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] border border-slate-200 shadow-xl mb-6 relative z-10 space-y-6">
+        <div className="bg-surface p-6 sm:p-8 rounded-[2.5rem] border border-border-default shadow-xl mb-6 relative z-10 space-y-6">
           {/* Elevated Dashboard KPI Metrics Section */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Total Contracts */}
-            <div className="bg-blue-50/50 border-2 border-blue-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-blue-50 hover:border-blue-200 hover:shadow-lg transition-all duration-300">
+            <div className="bg-blue-500/10 border-2 border-blue-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-blue-500/10 hover:border-blue-500/20 hover:shadow-lg transition-colors duration-150">
               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform duration-300" />
               <div className="flex flex-col gap-4 relative z-10">
-                <div className="w-12 h-12 bg-blue-100 border border-blue-200 rounded-2xl flex items-center justify-center text-blue-600 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <div className="w-12 h-12 bg-blue-100 border border-blue-500/20 rounded-2xl flex items-center justify-center text-blue-600 shadow-sm group-hover:scale-110 transition-transform duration-300">
                   <FileText className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-xs font-black text-blue-900/60 uppercase tracking-widest">Total Contracts</p>
-                  <h3 className="text-2xl sm:text-3xl font-black text-blue-900 mt-1">{contracts.length}</h3>
+                  <p className="text-xs font-black text-blue-400 dark:text-blue-300 font-bold/60 uppercase tracking-widest">Total Contracts</p>
+                  <h3 className="text-2xl sm:text-3xl font-black text-blue-400 dark:text-blue-300 font-bold mt-1">{contracts.length}</h3>
                   <p className="text-xs font-bold text-blue-600 mt-2">Active sheet-synced contracts</p>
                 </div>
               </div>
             </div>
 
             {/* Active Contracts */}
-            <div className="bg-emerald-50/50 border-2 border-emerald-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-emerald-50 hover:border-emerald-200 hover:shadow-lg transition-all duration-300">
+            <div className="bg-emerald-500/10 border-2 border-emerald-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-emerald-500/10 hover:border-emerald-500/20 hover:shadow-lg transition-colors duration-150">
               <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform duration-300" />
               <div className="flex flex-col gap-4 relative z-10">
-                <div className="w-12 h-12 bg-emerald-100 border border-emerald-200 rounded-2xl flex items-center justify-center text-emerald-600 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <div className="w-12 h-12 bg-emerald-100 border border-emerald-500/20 rounded-2xl flex items-center justify-center text-emerald-600 shadow-sm group-hover:scale-110 transition-transform duration-300">
                   <CheckCircle2 className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-xs font-black text-emerald-900/60 uppercase tracking-widest">Active Contracts</p>
-                  <h3 className="text-2xl sm:text-3xl font-black text-emerald-900 mt-1">
+                  <p className="text-xs font-black text-emerald-400 dark:text-emerald-300 font-bold/60 uppercase tracking-widest">Active Contracts</p>
+                  <h3 className="text-2xl sm:text-3xl font-black text-emerald-400 dark:text-emerald-300 font-bold mt-1">
                     {contracts.filter(c => c.status?.toLowerCase() === 'active').length}
                   </h3>
                   <p className="text-xs font-bold text-emerald-600 mt-2">Valid and operational rates</p>
@@ -713,15 +713,15 @@ export const ContractCatalogPage: React.FC = () => {
             </div>
 
             {/* Expired Contracts */}
-            <div className="bg-amber-50/50 border-2 border-amber-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-amber-50 hover:border-amber-200 hover:shadow-lg transition-all duration-300">
+            <div className="bg-amber-500/10 border-2 border-amber-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-amber-500/10 hover:border-amber-500/20 hover:shadow-lg transition-colors duration-150">
               <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform duration-300" />
               <div className="flex flex-col gap-4 relative z-10">
-                <div className="w-12 h-12 bg-amber-100 border border-amber-200 rounded-2xl flex items-center justify-center text-amber-600 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <div className="w-12 h-12 bg-amber-100 border border-amber-500/20 rounded-2xl flex items-center justify-center text-amber-600 shadow-sm group-hover:scale-110 transition-transform duration-300">
                   <AlertCircle className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-xs font-black text-amber-900/60 uppercase tracking-widest">Expired / Pending</p>
-                  <h3 className="text-2xl sm:text-3xl font-black text-amber-950 mt-1">
+                  <p className="text-xs font-black text-amber-400 dark:text-amber-300 font-bold/60 uppercase tracking-widest">Expired / Pending</p>
+                  <h3 className="text-2xl sm:text-3xl font-black text-amber-400 dark:text-amber-300 font-bold mt-1">
                     {contracts.filter(c => c.status?.toLowerCase() === 'expired' || c.status?.toLowerCase() === 'pending').length}
                   </h3>
                   <p className="text-xs font-bold text-amber-600 mt-2">Expired or pending renewal</p>
@@ -730,14 +730,14 @@ export const ContractCatalogPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="border-t border-slate-100 my-2"></div>
+          <div className="border-t border-border-subtle my-2"></div>
 
       {/* Sync Status Banner */}
       {syncConfig && (
         <motion.div 
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-slate-50/50 backdrop-blur-sm rounded-3xl border-2 border-slate-200/50 p-5 overflow-hidden relative"
+          className="bg-subtle/50 backdrop-blur-sm rounded-3xl border-2 border-border-default p-5 overflow-hidden relative"
         >
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
             <div className="flex items-center gap-4">
@@ -753,11 +753,11 @@ export const ContractCatalogPage: React.FC = () => {
                 )}
               </div>
               <div>
-                <p className="text-sm font-black text-slate-900 uppercase tracking-wider">
+                <p className="text-sm font-black text-text-primary uppercase tracking-wider">
                   Sync Status: {syncConfig.last_sync_status?.toUpperCase()}
                 </p>
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1">
-                  <p className="text-xs font-bold text-slate-500">
+                  <p className="text-xs font-bold text-text-muted">
                     Last active: {syncConfig.last_sync_at ? new Date(syncConfig.last_sync_at).toLocaleString() : 'Never'}
                   </p>
                   {syncConfig.auto_sync_enabled && (
@@ -775,7 +775,7 @@ export const ContractCatalogPage: React.FC = () => {
                 href={`https://docs.google.com/spreadsheets/d/${syncConfig.sheet_id}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-center gap-2 px-4 py-2 bg-white rounded-xl border border-slate-200 text-sm font-bold text-slate-600 hover:text-teal-600 hover:border-teal-200 transition-all shadow-sm"
+                className="group flex items-center gap-2 px-4 py-2 bg-surface rounded-xl border border-border-default text-sm font-bold text-text-muted hover:text-teal-600 hover:border-accent-base/20 transition-colors shadow-sm"
               >
                 <span>View Source Repository</span>
                 <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -784,7 +784,7 @@ export const ContractCatalogPage: React.FC = () => {
           </div>
           
           {syncConfig.last_sync_error && (
-            <div className="mt-4 p-3 rounded-xl bg-rose-50 border border-rose-100 text-xs font-bold text-rose-600 flex items-center gap-2">
+            <div className="mt-4 p-3 rounded-xl bg-rose-500/10 border border-rose-100 text-xs font-bold text-rose-600 flex items-center gap-2">
               <AlertCircle className="w-4 h-4 flex-shrink-0" />
               {syncConfig.last_sync_error}
             </div>
@@ -793,33 +793,33 @@ export const ContractCatalogPage: React.FC = () => {
       )}
 
       {/* Elegant Status & Expiry Filter Pills */}
-      <div className="flex flex-wrap items-center gap-2.5 bg-white p-4 rounded-3xl border-2 border-slate-200/60 shadow-sm">
+      <div className="flex flex-wrap items-center gap-2.5 bg-surface p-4 rounded-3xl border-2 border-border-default shadow-sm">
         <button
           onClick={() => setStatusFilter('all')}
-          className={`px-4 py-2 rounded-2xl text-xs font-black uppercase tracking-wider transition-all duration-200 ${
+          className={`px-4 py-2 rounded-2xl text-xs font-black uppercase tracking-wider transition-colors duration-150 ${
             statusFilter === 'all'
               ? 'bg-slate-900 text-white shadow-md shadow-slate-900/10'
-              : 'bg-slate-50 border border-slate-200/85 text-slate-600 hover:bg-slate-100/80'
+              : 'bg-subtle/50 border border-border-default text-text-muted hover:bg-subtle'
           }`}
         >
           All Contracts ({contracts.length})
         </button>
         <button
           onClick={() => setStatusFilter('active')}
-          className={`px-4 py-2 rounded-2xl text-xs font-black uppercase tracking-wider transition-all duration-200 ${
+          className={`px-4 py-2 rounded-2xl text-xs font-black uppercase tracking-wider transition-colors duration-150 ${
             statusFilter === 'active'
               ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/10'
-              : 'bg-slate-50 border border-slate-200/85 text-slate-600 hover:bg-slate-100/80'
+              : 'bg-subtle/50 border border-border-default text-text-muted hover:bg-subtle'
           }`}
         >
           Active ({contracts.filter(c => c.status?.toLowerCase() === 'active' && !isAlmostExpired(c.end_date)).length})
         </button>
         <button
           onClick={() => setStatusFilter('almost_expired')}
-          className={`px-4 py-2 rounded-2xl text-xs font-black uppercase tracking-wider transition-all duration-200 flex items-center gap-1.5 ${
+          className={`px-4 py-2 rounded-2xl text-xs font-black uppercase tracking-wider transition-colors duration-150 flex items-center gap-1.5 ${
             statusFilter === 'almost_expired'
               ? 'bg-amber-500 text-white shadow-md shadow-amber-500/10 animate-pulse'
-              : 'bg-slate-50 border border-slate-200/85 text-slate-600 hover:bg-slate-100/80'
+              : 'bg-subtle/50 border border-border-default text-text-muted hover:bg-subtle'
           }`}
         >
           <span className="w-1.5 h-1.5 rounded-full bg-current" />
@@ -827,10 +827,10 @@ export const ContractCatalogPage: React.FC = () => {
         </button>
         <button
           onClick={() => setStatusFilter('expired')}
-          className={`px-4 py-2 rounded-2xl text-xs font-black uppercase tracking-wider transition-all duration-200 ${
+          className={`px-4 py-2 rounded-2xl text-xs font-black uppercase tracking-wider transition-colors duration-150 ${
             statusFilter === 'expired'
               ? 'bg-rose-600 text-white shadow-md shadow-rose-600/10'
-              : 'bg-slate-50 border border-slate-200/85 text-slate-600 hover:bg-slate-100/80'
+              : 'bg-subtle/50 border border-border-default text-text-muted hover:bg-subtle'
           }`}
         >
           Already Expired ({contracts.filter(c => isExpired(c.end_date, c.status)).length})
@@ -838,24 +838,24 @@ export const ContractCatalogPage: React.FC = () => {
       </div>
 
       {/* Search and Toolbar */}
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white/50 backdrop-blur-sm rounded-3xl border-2 border-slate-200/60 p-4 shadow-sm">
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-surface rounded-3xl border-2 border-border-default p-4 shadow-sm">
         <div className="relative flex-1 w-full">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
           <Input
             placeholder="Search contracts by name, number, or supplier..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="pl-12 bg-white/80 border-slate-200 focus:ring-teal-500/20 transition-all rounded-2xl"
+            className="pl-12 bg-surface border-border-default focus:ring-teal-500/20 transition-colors rounded-2xl"
           />
         </div>
         
-        <div className="flex items-center gap-1 bg-slate-100/80 p-1 rounded-2xl border border-slate-200">
+        <div className="flex items-center gap-1 bg-subtle p-1 rounded-2xl border border-border-default">
           <button
             onClick={() => setViewMode('list')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-colors ${
               viewMode === 'list'
-                ? 'bg-white text-teal-600 shadow-sm ring-1 ring-slate-200'
-                : 'text-slate-500 hover:text-slate-700'
+                ? 'bg-surface text-teal-600 shadow-sm ring-1 ring-border-default'
+                : 'text-text-muted hover:text-text-secondary'
             }`}
           >
             <List className="w-4 h-4" />
@@ -863,10 +863,10 @@ export const ContractCatalogPage: React.FC = () => {
           </button>
           <button
             onClick={() => setViewMode('grid')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-colors ${
               viewMode === 'grid'
-                ? 'bg-white text-teal-600 shadow-sm ring-1 ring-slate-200'
-                : 'text-slate-500 hover:text-slate-700'
+                ? 'bg-surface text-teal-600 shadow-sm ring-1 ring-border-default'
+                : 'text-text-muted hover:text-text-secondary'
             }`}
           >
             <LayoutGrid className="w-4 h-4" />
@@ -879,12 +879,12 @@ export const ContractCatalogPage: React.FC = () => {
       {isLoading ? (
         <LoadingOverlay />
       ) : filteredContracts.length === 0 ? (
-        <div className="bg-white/50 backdrop-blur-sm rounded-3xl border-2 border-dashed border-slate-200 p-12 text-center">
+        <div className="bg-surface rounded-3xl border-2 border-dashed border-border-default p-12 text-center">
           <FileText className="w-16 h-16 mx-auto mb-4 text-slate-300" />
-          <h3 className="text-lg font-bold text-slate-900 mb-2">
+          <h3 className="text-lg font-bold text-text-primary mb-2">
             {syncConfig ? 'No matching contracts' : 'Configure Google Sheets Sync'}
           </h3>
-          <p className="text-slate-500 mb-6 max-w-md mx-auto">
+          <p className="text-text-muted mb-6 max-w-md mx-auto">
             {syncConfig
               ? searchQuery
                 ? 'We couldn\'t find any contracts matching your search. Try adjusting your query.'
@@ -899,7 +899,7 @@ export const ContractCatalogPage: React.FC = () => {
           )}
         </div>
       ) : viewMode === 'list' ? (
-        <div className="bg-white rounded-3xl border-2 border-slate-200 shadow-sm overflow-hidden">
+        <div className="bg-surface rounded-3xl border-2 border-border-default shadow-sm overflow-hidden">
           <DataTable
             data={filteredContracts}
             columns={[
@@ -908,7 +908,7 @@ export const ContractCatalogPage: React.FC = () => {
                 header: 'Item Name',
                 render: (item) => (
                   <div className="flex flex-col max-w-md">
-                    <span className="font-bold text-slate-900 leading-tight">{item.contract_name}</span>
+                    <span className="font-bold text-text-primary leading-tight">{item.contract_name}</span>
                     {item.item_code && (
                       <span className="text-[10px] font-mono text-slate-400 mt-0.5">{item.item_code}</span>
                     )}
@@ -919,7 +919,7 @@ export const ContractCatalogPage: React.FC = () => {
                 key: 'contract_number',
                 header: 'KKM Contract No',
                 render: (item) => (
-                  <span className="text-sm font-mono font-semibold text-slate-600">
+                  <span className="text-sm font-mono font-semibold text-text-muted">
                     {item.contract_number || '-'}
                   </span>
                 )
@@ -929,10 +929,10 @@ export const ContractCatalogPage: React.FC = () => {
                 header: 'Supplier',
                 render: (item) => (
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-slate-50 border border-slate-100 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-lg bg-subtle/50 border border-border-subtle flex items-center justify-center">
                       <Building2 className="w-4 h-4 text-slate-400" />
                     </div>
-                    <span className="text-sm font-semibold text-slate-700">{item.supplier_name || 'N/A'}</span>
+                    <span className="text-sm font-semibold text-text-secondary">{item.supplier_name || 'N/A'}</span>
                   </div>
                 )
               },
@@ -940,7 +940,7 @@ export const ContractCatalogPage: React.FC = () => {
                 key: 'start_date',
                 header: 'Date Start',
                 render: (item) => (
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-600">
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-text-muted">
                     <Calendar className="w-3.5 h-3.5 text-slate-400" />
                     <span>{item.start_date ? new Date(item.start_date).toLocaleDateString() : 'N/A'}</span>
                   </div>
@@ -950,7 +950,7 @@ export const ContractCatalogPage: React.FC = () => {
                 key: 'end_date',
                 header: 'Date End',
                 render: (item) => (
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-600">
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-text-muted">
                     <Calendar className="w-3.5 h-3.5 text-slate-400" />
                     <span>{item.end_date ? new Date(item.end_date).toLocaleDateString() : 'N/A'}</span>
                   </div>
@@ -970,7 +970,7 @@ export const ContractCatalogPage: React.FC = () => {
                   return (
                     <div className="flex items-center gap-2">
                       {hasSstRate && (
-                        <span className="text-sm font-bold text-slate-600">
+                        <span className="text-sm font-bold text-text-muted">
                           {rawSst}%
                         </span>
                       )}
@@ -979,7 +979,7 @@ export const ContractCatalogPage: React.FC = () => {
                           href={docUrl.startsWith('http') ? docUrl : `https://${docUrl}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="px-2.5 py-1.5 rounded-lg bg-teal-50 hover:bg-teal-100 text-teal-600 hover:text-teal-700 border border-teal-100 hover:border-teal-200 transition-all text-[11px] font-bold flex items-center gap-1 shadow-sm inline-flex shrink-0 whitespace-nowrap animate-pulse"
+                          className="px-2.5 py-1.5 rounded-lg bg-accent-base/10 hover:bg-teal-100 text-teal-600 hover:text-teal-700 border border-teal-100 hover:border-accent-base/20 transition-colors text-[11px] font-bold flex items-center gap-1 shadow-sm inline-flex shrink-0 whitespace-nowrap animate-pulse"
                           title="View Document"
                         >
                           <FileText className="w-3.5 h-3.5" />
@@ -998,7 +998,7 @@ export const ContractCatalogPage: React.FC = () => {
                 header: 'Price',
                 render: (item) => (
                   <div className="text-right">
-                    <span className="text-sm font-black text-slate-900">
+                    <span className="text-sm font-black text-text-primary">
                       {item.unit_price ? formatCurrency(item.unit_price) : '-'}
                     </span>
                   </div>
@@ -1023,7 +1023,7 @@ export const ContractCatalogPage: React.FC = () => {
                   <div className="flex items-center gap-1.5 justify-end w-16">
                     <button
                       onClick={() => handleEditContract(item)}
-                      className="p-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-600 hover:text-slate-900 transition-colors shadow-sm"
+                      className="p-1.5 rounded-lg bg-subtle/50 hover:bg-subtle border border-border-default text-text-muted hover:text-text-primary transition-colors shadow-sm"
                       title="Edit Contract"
                     >
                       <Edit className="w-3.5 h-3.5" />
@@ -1045,7 +1045,7 @@ export const ContractCatalogPage: React.FC = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ delay: idx * 0.03 }}
-                className="group relative bg-white rounded-3xl border-2 border-slate-200 p-6 hover:border-teal-400/50 hover:shadow-2xl hover:shadow-teal-900/5 transition-all duration-300"
+                className="group relative bg-surface rounded-3xl border-2 border-border-default p-6 hover:border-teal-400/50 hover:shadow-2xl hover:shadow-teal-900/5 transition-colors duration-150"
               >
                 <div className="flex items-start justify-between mb-6">
                   <div className="flex-1">
@@ -1055,41 +1055,41 @@ export const ContractCatalogPage: React.FC = () => {
                     >
                       {isExpired(contract.end_date, contract.status) ? 'Expired' : (isAlmostExpired(contract.end_date) ? 'Almost Expired' : (contract.status || 'Unknown'))}
                     </Badge>
-                    <h3 className="text-lg font-black text-slate-900 leading-snug group-hover:text-teal-600 transition-colors line-clamp-2">
+                    <h3 className="text-lg font-black text-text-primary leading-snug group-hover:text-teal-600 transition-colors line-clamp-2">
                       {contract.contract_name}
                     </h3>
                   </div>
                 </div>
 
                 <div className="space-y-4">
-                  <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-100 group-hover:bg-teal-50 group-hover:border-teal-100 transition-colors">
-                    <div className="w-10 h-10 rounded-xl bg-white border border-slate-200 flex items-center justify-center shadow-sm">
+                  <div className="flex items-center gap-3 p-3 rounded-2xl bg-subtle/50 border border-border-subtle group-hover:bg-accent-base/10 group-hover:border-teal-100 transition-colors">
+                    <div className="w-10 h-10 rounded-xl bg-surface border border-border-default flex items-center justify-center shadow-sm">
                       <Building2 className="w-5 h-5 text-slate-400 group-hover:text-teal-500 transition-colors" />
                     </div>
                     <div className="flex flex-col">
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Supplier</span>
-                      <span className="text-sm font-bold text-slate-700 truncate max-w-[180px]">
+                      <span className="text-sm font-bold text-text-secondary truncate max-w-[180px]">
                         {contract.supplier_name || 'Not Assigned'}
                       </span>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-3">
-                    <div className="flex flex-col p-3 rounded-2xl border border-slate-100 bg-slate-50/50">
+                    <div className="flex flex-col p-3 rounded-2xl border border-border-subtle bg-subtle/50">
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Number</span>
-                      <span className="text-xs font-mono font-bold text-slate-600 truncate">
+                      <span className="text-xs font-mono font-bold text-text-muted truncate">
                         {contract.contract_number || 'N/A'}
                       </span>
                     </div>
-                    <div className="flex flex-col p-3 rounded-2xl border border-slate-100 bg-slate-50/50">
+                    <div className="flex flex-col p-3 rounded-2xl border border-border-subtle bg-subtle/50">
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Price</span>
-                      <span className="text-xs font-black text-slate-900">
+                      <span className="text-xs font-black text-text-primary">
                         {contract.unit_price ? formatCurrency(contract.unit_price) : 'TBD'}
                       </span>
                     </div>
-                    <div className="flex flex-col p-3 rounded-2xl border border-slate-100 bg-slate-50/50">
+                    <div className="flex flex-col p-3 rounded-2xl border border-border-subtle bg-subtle/50">
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">SST & Doc</span>
-                      <span className="text-xs font-bold text-slate-600 truncate">
+                      <span className="text-xs font-bold text-text-muted truncate">
                         {(() => {
                           const isUrl = (val: any) => typeof val === 'string' && (val.startsWith('http') || val.includes('drive.google.com'));
                           const rawSst = contract.sst_rate;
@@ -1118,7 +1118,7 @@ export const ContractCatalogPage: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between text-xs font-bold text-slate-500 px-1 pt-2">
+                  <div className="flex items-center justify-between text-xs font-bold text-text-muted px-1 pt-2">
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4 text-slate-300" />
                       <span>{contract.end_date ? new Date(contract.end_date).toLocaleDateString() : 'N/A'}</span>
@@ -1133,7 +1133,7 @@ export const ContractCatalogPage: React.FC = () => {
                       e.stopPropagation()
                       handleEditContract(contract)
                     }}
-                    className="w-8 h-8 rounded-full bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 flex items-center justify-center shadow-md border border-slate-200 transition-all"
+                    className="w-8 h-8 rounded-full bg-surface hover:bg-subtle/50 text-text-muted hover:text-text-primary flex items-center justify-center shadow-md border border-border-default transition-colors"
                     title="Edit Contract"
                   >
                     <Edit className="w-3.5 h-3.5" />
@@ -1300,12 +1300,12 @@ const ContractFormModal: React.FC<ContractFormModalProps> = ({ isOpen, onClose, 
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 26, stiffness: 220 }}
-            className="fixed inset-y-0 right-0 w-full max-w-4xl bg-white shadow-2xl z-50 border-l border-slate-200/80 flex flex-col font-sans"
+            className="fixed inset-y-0 right-0 w-full max-w-4xl bg-surface shadow-2xl z-50 border-l border-border-default flex flex-col font-sans"
           >
             {/* Header */}
-            <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
+            <div className="p-6 border-b border-border-subtle flex items-center justify-between bg-subtle/50 shrink-0">
               <div>
-                <h3 className="text-lg font-black text-slate-900 tracking-tight">
+                <h3 className="text-lg font-black text-text-primary tracking-tight">
                   {contract ? 'Edit Contract Record' : 'Add Contract Record Manually'}
                 </h3>
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-0.5">
@@ -1315,7 +1315,7 @@ const ContractFormModal: React.FC<ContractFormModalProps> = ({ isOpen, onClose, 
               <button
                 onClick={onClose}
                 type="button"
-                className="w-9 h-9 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-400 hover:text-slate-700 flex items-center justify-center transition-colors shadow-sm"
+                className="w-9 h-9 rounded-xl border border-border-default bg-surface hover:bg-subtle/50 text-slate-400 hover:text-text-secondary flex items-center justify-center transition-colors shadow-sm"
               >
                 <X className="w-4.5 h-4.5" />
               </button>
@@ -1328,7 +1328,7 @@ const ContractFormModal: React.FC<ContractFormModalProps> = ({ isOpen, onClose, 
                 {/* Left Side: Form Controls */}
                 <form onSubmit={handleSubmit} id="manual-contract-form" className="flex-1 space-y-5 w-full">
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                    <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1.5">
                       Contract / Item Name <span className="text-rose-500">*</span>
                     </label>
                     <Input
@@ -1341,7 +1341,7 @@ const ContractFormModal: React.FC<ContractFormModalProps> = ({ isOpen, onClose, 
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                    <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1.5">
                       Item Code / Drug Code
                     </label>
                     <Input
@@ -1353,7 +1353,7 @@ const ContractFormModal: React.FC<ContractFormModalProps> = ({ isOpen, onClose, 
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                      <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1.5">
                         KKM Contract Number
                       </label>
                       <Input
@@ -1364,7 +1364,7 @@ const ContractFormModal: React.FC<ContractFormModalProps> = ({ isOpen, onClose, 
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                      <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1.5">
                         Supplier Name
                       </label>
                       <Input
@@ -1377,7 +1377,7 @@ const ContractFormModal: React.FC<ContractFormModalProps> = ({ isOpen, onClose, 
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                      <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1.5">
                         Start Date
                       </label>
                       <Input
@@ -1388,7 +1388,7 @@ const ContractFormModal: React.FC<ContractFormModalProps> = ({ isOpen, onClose, 
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                      <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1.5">
                         End Date (Expiry)
                       </label>
                       <Input
@@ -1401,7 +1401,7 @@ const ContractFormModal: React.FC<ContractFormModalProps> = ({ isOpen, onClose, 
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                      <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1.5">
                         Unit Price (RM)
                       </label>
                       <Input
@@ -1414,13 +1414,13 @@ const ContractFormModal: React.FC<ContractFormModalProps> = ({ isOpen, onClose, 
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                      <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1.5">
                         Status
                       </label>
                       <select
                         value={formData.status}
                         onChange={e => setFormData({ ...formData, status: e.target.value })}
-                        className="w-full h-10 px-3 border border-slate-200 hover:border-slate-300 rounded-xl bg-white focus:outline-none focus:ring-2 focus:ring-teal-500/20 text-sm font-semibold text-slate-700"
+                        className="w-full h-10 px-3 border border-border-default hover:border-border-default rounded-xl bg-surface focus:outline-none focus:ring-2 focus:ring-teal-500/20 text-sm font-semibold text-text-secondary"
                       >
                         <option value="active">Active</option>
                         <option value="pending">Pending</option>
@@ -1432,25 +1432,25 @@ const ContractFormModal: React.FC<ContractFormModalProps> = ({ isOpen, onClose, 
 
                   {/* Premium Document Upload Section */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                    <label className="block text-xs font-bold text-text-muted uppercase tracking-wider mb-1.5">
                       SST Document / Contract PDF
                     </label>
-                    <div className="border-2 border-dashed border-slate-200 rounded-2xl p-5 bg-slate-50 flex flex-col items-center justify-center hover:bg-slate-100/50 hover:border-teal-400/50 transition-all relative">
+                    <div className="border-2 border-dashed border-border-default rounded-2xl p-5 bg-subtle/50 flex flex-col items-center justify-center hover:bg-subtle hover:border-teal-400/50 transition-colors relative">
                       {isUploading ? (
                         <div className="w-full flex flex-col items-center gap-2 py-4">
                           <Loader2 className="w-8 h-8 text-teal-600 animate-spin" />
                           <span className="text-xs font-bold text-slate-505">Uploading Document ({uploadProgress}%)</span>
-                          <div className="w-40 bg-slate-200 h-1 rounded-full overflow-hidden">
-                            <div className="bg-teal-500 h-full transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+                          <div className="w-40 bg-subtle h-1 rounded-full overflow-hidden">
+                            <div className="bg-teal-500 h-full transition-colors duration-150" style={{ width: `${uploadProgress}%` }} />
                           </div>
                         </div>
                       ) : formData.document_url ? (
                         <div className="flex flex-col items-center gap-3 py-2 text-center w-full">
-                          <div className="w-12 h-12 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center border border-teal-100 shadow-sm">
+                          <div className="w-12 h-12 rounded-xl bg-accent-base/10 text-teal-600 flex items-center justify-center border border-teal-100 shadow-sm">
                             <FileText className="w-6 h-6" />
                           </div>
                           <div>
-                            <span className="text-xs font-bold text-slate-700 block truncate max-w-[280px] mb-1">Document uploaded successfully!</span>
+                            <span className="text-xs font-bold text-text-secondary block truncate max-w-[280px] mb-1">Document uploaded successfully!</span>
                             <a
                               href={formData.document_url}
                               target="_blank"
@@ -1463,7 +1463,7 @@ const ContractFormModal: React.FC<ContractFormModalProps> = ({ isOpen, onClose, 
                           <button
                             type="button"
                             onClick={() => setFormData(prev => ({ ...prev, document_url: '' }))}
-                            className="px-3 py-1.5 bg-rose-50 border border-rose-100 hover:bg-rose-100 rounded-xl text-xs font-bold text-rose-600 transition-colors"
+                            className="px-3 py-1.5 bg-rose-500/10 border border-rose-100 hover:bg-rose-100 rounded-xl text-xs font-bold text-rose-600 transition-colors"
                           >
                             Replace Document
                           </button>
@@ -1471,8 +1471,8 @@ const ContractFormModal: React.FC<ContractFormModalProps> = ({ isOpen, onClose, 
                       ) : (
                         <div className="flex flex-col items-center gap-2 text-center py-2">
                           <UploadCloud className="w-9 h-9 text-slate-400" />
-                          <div className="flex text-sm text-gray-600">
-                            <label className="relative cursor-pointer bg-white rounded-xl px-3 py-1.5 border border-slate-200 text-xs font-bold text-teal-600 hover:text-teal-700 hover:border-teal-200 transition-all shadow-sm">
+                          <div className="flex text-sm text-text-muted">
+                            <label className="relative cursor-pointer bg-surface rounded-xl px-3 py-1.5 border border-border-default text-xs font-bold text-teal-600 hover:text-teal-700 hover:border-accent-base/20 transition-colors shadow-sm">
                               <span>Upload File</span>
                               <input
                                 type="file"
@@ -1481,9 +1481,9 @@ const ContractFormModal: React.FC<ContractFormModalProps> = ({ isOpen, onClose, 
                                 className="sr-only"
                               />
                             </label>
-                            <p className="pl-2 pt-1 text-xs text-slate-500 font-bold">or drag and drop</p>
+                            <p className="pl-2 pt-1 text-xs text-text-muted font-bold">or drag and drop</p>
                           </div>
-                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">PDF, PNG, JPG up to 10MB</p>
+                          <p className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider">PDF, PNG, JPG up to 10MB</p>
                         </div>
                       )}
                     </div>
@@ -1492,9 +1492,9 @@ const ContractFormModal: React.FC<ContractFormModalProps> = ({ isOpen, onClose, 
 
                 {/* Right Side: Visual Chronological Timeline Logs */}
                 {contract && (
-                  <div className="w-full lg:w-[20rem] lg:border-l lg:border-slate-100 lg:pl-6 shrink-0 flex flex-col self-stretch mt-6 lg:mt-0 pt-6 lg:pt-0 border-t lg:border-t-0 border-slate-100">
+                  <div className="w-full lg:w-[20rem] lg:border-l lg:border-border-subtle lg:pl-6 shrink-0 flex flex-col self-stretch mt-6 lg:mt-0 pt-6 lg:pt-0 border-t lg:border-t-0 border-border-subtle">
                     <div className="mb-4">
-                      <h4 className="text-xs font-black text-slate-800 uppercase tracking-widest flex items-center gap-1.5">
+                      <h4 className="text-xs font-black text-text-primary uppercase tracking-widest flex items-center gap-1.5">
                         <span>📋</span>
                         <span>Audit Trail & Activity Logs</span>
                       </h4>
@@ -1529,8 +1529,8 @@ const ContractFormModal: React.FC<ContractFormModalProps> = ({ isOpen, onClose, 
                         }
 
                         return getLogs().map((log: any, idx: number) => (
-                          <div key={idx} className="relative pl-5 border-l border-slate-100 last:border-l-0 pb-3">
-                            <div className={`absolute -left-[4.5px] top-1 w-2 h-2 rounded-full border bg-white ${
+                          <div key={idx} className="relative pl-5 border-l border-border-subtle last:border-l-0 pb-3">
+                            <div className={`absolute -left-[4.5px] top-1 w-2 h-2 rounded-full border bg-surface ${
                               log.action === 'created' ? 'border-emerald-500' :
                               log.action === 'synced' ? 'border-blue-500' : 'border-amber-500'
                             }`} />
@@ -1538,8 +1538,8 @@ const ContractFormModal: React.FC<ContractFormModalProps> = ({ isOpen, onClose, 
                             <div className="space-y-1">
                               <div className="flex items-center justify-between gap-2">
                                 <span className={`text-[8px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded-md ${
-                                  log.action === 'created' ? 'bg-emerald-50 text-emerald-600' :
-                                  log.action === 'synced' ? 'bg-blue-50 text-blue-600' : 'bg-amber-50 text-amber-600'
+                                  log.action === 'created' ? 'bg-emerald-500/10 text-emerald-600' :
+                                  log.action === 'synced' ? 'bg-blue-500/10 text-blue-600' : 'bg-amber-500/10 text-amber-600'
                                 }`}>
                                   {log.action}
                                 </span>
@@ -1547,7 +1547,7 @@ const ContractFormModal: React.FC<ContractFormModalProps> = ({ isOpen, onClose, 
                                   {new Date(log.timestamp).toLocaleDateString()} {new Date(log.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                 </span>
                               </div>
-                              <p className="text-xs font-bold text-slate-700 leading-snug">
+                              <p className="text-xs font-bold text-text-secondary leading-snug">
                                 {log.details}
                               </p>
                               <p className="text-[9px] text-slate-400 font-semibold italic">
@@ -1565,7 +1565,7 @@ const ContractFormModal: React.FC<ContractFormModalProps> = ({ isOpen, onClose, 
             </div>
 
             {/* Sticky Actions Footer */}
-            <div className="p-6 border-t border-slate-100 flex items-center justify-end gap-3 bg-slate-50/50 shrink-0">
+            <div className="p-6 border-t border-border-subtle flex items-center justify-end gap-3 bg-subtle/50 shrink-0">
               <Button type="button" variant="outline" onClick={onClose} disabled={isSaving || isUploading}>
                 Cancel
               </Button>

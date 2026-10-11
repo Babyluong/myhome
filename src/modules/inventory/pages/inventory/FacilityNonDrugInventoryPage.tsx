@@ -1276,7 +1276,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
 
     if (isExpired) {
       return (
-        <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200 inline-flex items-center gap-1">
+        <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-rose-500/10 text-rose-700 border border-rose-500/20 inline-flex items-center gap-1">
           <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
           Tempoh: {startFormatted || '?'} - {endFormatted || '?'} (Tamat)
         </span>
@@ -1285,7 +1285,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
 
     if (startDateStr || endDateStr) {
       return (
-        <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 inline-flex items-center gap-1">
+        <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 inline-flex items-center gap-1">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
           Tempoh: {startFormatted || '?'} - {endFormatted || '?'}
         </span>
@@ -1295,7 +1295,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
     const isCcOrContract = procurementVote?.toLowerCase() === 'cc' || !!contractNo
     if (isCcOrContract) {
       return (
-        <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200 inline-flex items-center gap-1">
+        <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-rose-500/10 text-rose-700 border border-rose-500/20 inline-flex items-center gap-1">
           <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
           Tiada Tempoh Kontrak
         </span>
@@ -1315,26 +1315,23 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
   return (
     <div className="p-6 space-y-6 w-full animate-fadeIn">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-900 p-6 rounded-2xl text-white shadow-xl border border-emerald-800/40 relative overflow-hidden">
-        <div className="absolute right-0 top-0 translate-x-12 -translate-y-6 opacity-10 pointer-events-none">
-          <Building2 className="w-96 h-96 text-white" />
-        </div>
-        <div className="relative z-10 space-y-1">
-          <div className="flex items-center gap-2 text-blue-300 text-xs font-semibold uppercase tracking-wider">
-            <Warehouse className="w-4 h-4 text-emerald-400" />
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface p-6 rounded-xl text-text-primary shadow-xs border border-border-default">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 text-text-muted text-xs font-semibold uppercase tracking-wider">
+            <Warehouse className="w-4 h-4 text-accent-base" />
             <span>Facility Inventory Module</span>
-            <span className="text-slate-500">•</span>
-            <span className="text-emerald-400 font-medium">
+            <span>•</span>
+            <span className="text-accent-base font-medium">
               {activeStore ? `${activeStore.location_name} (${activeStore.location_code})` : 'Semua Stor'}
             </span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight flex items-center gap-3">
+          <h1 className="text-xl md:text-2xl font-bold tracking-tight flex items-center gap-3 text-text-primary">
             Facility Non-Drug Inventory
-            <span className="text-xs px-2.5 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 rounded-full font-normal uppercase">
+            <span className="text-xs px-2.5 py-0.5 bg-accent-base/10 text-accent-base border border-accent-base/20 rounded-full font-semibold uppercase">
               {currentVoteParam === 'all' ? 'Semua Skim' : `Skim ${currentVoteParam.toUpperCase()}`}
             </span>
           </h1>
-          <p className="text-slate-300 text-sm max-w-2xl">
+          <p className="text-text-muted text-xs md:text-sm max-w-2xl">
             Pilih dan tambah item bukan ubat daripada Katalog Utama ke inventori fasiliti anda secara manual.
           </p>
         </div>
@@ -1364,15 +1361,15 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
               }
             }}
             disabled={isExportingExcel || filteredItems.length === 0}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg
-              bg-white/10 hover:bg-white/20 border border-white/30 text-white
-              disabled:opacity-50 disabled:cursor-allowed"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-xs transition-colors
+              bg-surface hover:bg-subtle border border-border-default text-text-primary
+              disabled:opacity-50 disabled:cursor-allowed shadow-xs"
             title="Eksport Inventori Bukan Ubat ke format Excel (.xlsx)"
           >
             {isExportingExcel ? (
-              <Loader2 className="w-4 h-4 animate-spin text-emerald-300" />
+              <Loader2 className="w-4 h-4 animate-spin text-text-muted" />
             ) : (
-              <FileSpreadsheet className="w-4 h-4 text-emerald-300" />
+              <FileSpreadsheet className="w-4 h-4 text-emerald-500" />
             )}
             <span>Eksport Excel</span>
           </button>
@@ -1405,15 +1402,15 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
               }
             }}
             disabled={isExporting || filteredItems.length === 0}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm transition-all shadow-lg
-              bg-white/10 hover:bg-white/20 border border-white/30 text-white
-              disabled:opacity-50 disabled:cursor-allowed"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-xs transition-colors
+              bg-surface hover:bg-subtle border border-border-default text-text-primary
+              disabled:opacity-50 disabled:cursor-allowed shadow-xs"
             title="Eksport Katalog Bukan Ubat sebagai PDF Rasmi"
           >
             {isExporting ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
+              <Loader2 className="w-4 h-4 animate-spin text-text-muted" />
             ) : (
-              <FileDown className="w-4 h-4" />
+              <FileDown className="w-4 h-4 text-text-muted" />
             )}
             <span>Eksport Katalog PDF</span>
           </button>
@@ -1421,7 +1418,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
           <Button
             size="md"
             onClick={() => setIsAddModalOpen(true)}
-            className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-5 py-2.5 rounded-xl shadow-lg flex items-center gap-1.5 transition-all border border-emerald-500/20"
+            className="bg-accent-base hover:bg-accent-base/90 text-white font-medium px-4 py-2 rounded-lg shadow-xs flex items-center gap-1.5 transition-colors border border-accent-base/30 text-xs"
           >
             <Plus className="w-4 h-4" />
             Tambah Item Dari Katalog
@@ -1444,10 +1441,10 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
               setSearchParams({ vote: tab.id })
               setPage(1)
             }}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
               currentVoteParam === tab.id
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+                ? 'bg-accent-base text-white shadow-xs'
+                : 'bg-surface text-text-muted hover:text-text-primary hover:bg-subtle border border-border-default'
             }`}
           >
             {tab.label}
@@ -1457,62 +1454,62 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
 
       {/* Metric Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all">
-          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">
+        <div className="bg-surface p-4 rounded-xl border border-border-default shadow-xs transition-colors">
+          <div className="flex items-center justify-between text-text-muted text-xs font-medium uppercase tracking-wider mb-2">
             <span>Jumlah Item Fasiliti</span>
-            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-subtle text-text-muted flex items-center justify-center">
               <Pill className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-bold text-slate-900">{filteredItems.length}</div>
-          <p className="text-xs text-slate-500 mt-1">Item dipilih di fasiliti ini</p>
+          <div className="text-2xl font-semibold text-text-primary tabular-nums">{filteredItems.length}</div>
+          <p className="text-xs text-text-muted mt-1">Item dipilih di fasiliti ini</p>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all">
-          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">
+        <div className="bg-surface p-4 rounded-xl border border-border-default shadow-xs transition-colors">
+          <div className="flex items-center justify-between text-text-muted text-xs font-medium uppercase tracking-wider mb-2">
             <span>Status Aktif</span>
-            <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-subtle text-text-muted flex items-center justify-center">
               <CheckCircle className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-bold text-emerald-600">{activeCount}</div>
-          <p className="text-xs text-slate-500 mt-1">Sedia digunakan / diagihkan</p>
+          <div className="text-2xl font-semibold text-text-primary tabular-nums">{activeCount}</div>
+          <p className="text-xs text-text-muted mt-1">Sedia digunakan / diagihkan</p>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all">
-          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">
+        <div className="bg-surface p-4 rounded-xl border border-border-default shadow-xs transition-colors">
+          <div className="flex items-center justify-between text-text-muted text-xs font-medium uppercase tracking-wider mb-2">
             <span>Skim Dipilih</span>
-            <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-subtle text-text-muted flex items-center justify-center">
               <ShieldCheck className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-bold text-slate-900 uppercase">{currentVoteParam}</div>
-          <p className="text-xs text-slate-500 mt-1">Mod paparan skim perolehan</p>
+          <div className="text-2xl font-semibold text-text-primary uppercase">{currentVoteParam}</div>
+          <p className="text-xs text-text-muted mt-1">Mod paparan skim perolehan</p>
         </div>
 
-        <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all">
-          <div className="flex items-center justify-between text-slate-500 text-xs font-semibold uppercase tracking-wider mb-2">
+        <div className="bg-surface p-4 rounded-xl border border-border-default shadow-xs transition-colors">
+          <div className="flex items-center justify-between text-text-muted text-xs font-medium uppercase tracking-wider mb-2">
             <span>Nilai Stok Pegangan</span>
-            <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-subtle text-text-muted flex items-center justify-center">
               <PackageCheck className="w-4 h-4" />
             </div>
           </div>
-          <div className="text-2xl font-bold text-indigo-600">RM {totalValuation.toLocaleString('ms-MY', { minimumFractionDigits: 2 })}</div>
-          <p className="text-xs text-slate-500 mt-1">Nilai inventori semasa fasiliti</p>
+          <div className="text-2xl font-semibold text-text-primary font-mono tabular-nums">RM {totalValuation.toLocaleString('ms-MY', { minimumFractionDigits: 2 })}</div>
+          <p className="text-xs text-text-muted mt-1">Nilai inventori semasa fasiliti</p>
         </div>
       </div>
 
       {/* Controls & Search */}
-      <div className="bg-white p-5 rounded-xl border border-slate-200/80 shadow-sm space-y-4">
+      <div className="bg-surface p-4 rounded-xl border border-border-default shadow-xs space-y-4">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="relative w-full md:w-96">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
             <input
               type="text"
               placeholder="Cari item dalam inventori fasiliti..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+              className="w-full pl-9 pr-4 py-2 text-xs rounded-lg border border-border-default bg-surface text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-1 focus:ring-accent-base focus:border-accent-base transition-colors"
             />
           </div>
 
@@ -1520,11 +1517,11 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
             <select
               value={categoryId}
               onChange={e => setCategoryId(e.target.value)}
-              className="px-3 py-2 text-sm rounded-xl border border-slate-200 bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500/20 font-medium cursor-pointer"
+              className="px-3 py-2 text-xs rounded-lg border border-border-default bg-surface text-text-primary focus:outline-none focus:ring-1 focus:ring-accent-base font-medium cursor-pointer"
             >
-              <option value="" className="text-slate-800 bg-white font-medium">Semua Kategori Bukan Ubat</option>
+              <option value="" className="bg-surface text-text-primary">Semua Kategori Bukan Ubat</option>
               {categoryOptions.map(catName => (
-                <option key={catName} value={catName} className="text-slate-800 bg-white font-medium">
+                <option key={catName} value={catName} className="bg-surface text-text-primary">
                   {catName}
                 </option>
               ))}
@@ -1533,17 +1530,17 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
             <select
               value={status}
               onChange={e => setStatus(e.target.value as any)}
-              className="px-3 py-2 text-sm rounded-xl border border-slate-200 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20 cursor-pointer"
+              className="px-3 py-2 text-xs rounded-lg border border-border-default bg-surface text-text-primary focus:outline-none focus:ring-1 focus:ring-accent-base cursor-pointer"
             >
-              <option value="all">Semua Status</option>
-              <option value="active">Aktif</option>
-              <option value="inactive">Tidak Aktif</option>
+              <option value="all" className="bg-surface text-text-primary">Semua Status</option>
+              <option value="active" className="bg-surface text-text-primary">Aktif</option>
+              <option value="inactive" className="bg-surface text-text-primary">Tidak Aktif</option>
             </select>
 
             {facilityItems.length > 0 && (
               <button
                 onClick={handleClearCurrentScheme}
-                className="flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-xl transition-all"
+                className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-rose-500 hover:text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 rounded-lg transition-colors"
                 title="Clear item list for this scheme"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -1554,38 +1551,38 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto rounded-xl border border-slate-200">
-          <table className="w-full text-left text-sm text-slate-700">
-            <thead className="bg-slate-50 text-xs uppercase font-semibold text-slate-500 border-b border-slate-200">
+        <div className="overflow-x-auto rounded-xl border border-border-default">
+          <table className="w-full text-left text-sm text-text-primary">
+            <thead className="bg-subtle/50 text-xs uppercase font-medium text-text-muted border-b border-border-default">
               <tr>
-                <th className="py-3.5 px-4">Nama & Kod Bukan Ubat</th>
-                <th className="py-3.5 px-4">Packaging</th>
-                <th className="py-3.5 px-4">Stok Fasiliti</th>
-                <th className="py-3.5 px-4">No. Batch</th>
-                <th className="py-3.5 px-4">Expiry Date</th>
-                <th className="py-3.5 px-4">Harga (RM)</th>
-                <th className="py-3.5 px-4">Skim</th>
-                <th className="py-3.5 px-4">Status</th>
-                <th className="py-3.5 px-4 text-center">Tindakan</th>
+                <th className="py-3 px-4">Nama & Kod Bukan Ubat</th>
+                <th className="py-3 px-4">Packaging</th>
+                <th className="py-3 px-4">Stok Fasiliti</th>
+                <th className="py-3 px-4">No. Batch</th>
+                <th className="py-3 px-4">Expiry Date</th>
+                <th className="py-3 px-4">Harga (RM)</th>
+                <th className="py-3 px-4">Skim</th>
+                <th className="py-3 px-4">Status</th>
+                <th className="py-3 px-4 text-center">Tindakan</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 bg-white">
+            <tbody className="divide-y divide-border-default bg-surface">
               {paginatedItems.length === 0 ? (
                 <tr>
                   <td colSpan={9} className="py-16 text-center">
                     <div className="max-w-md mx-auto space-y-3">
-                      <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto">
+                      <div className="w-12 h-12 rounded-xl bg-subtle text-text-muted flex items-center justify-center mx-auto border border-border-default">
                         <Package className="w-6 h-6" />
                       </div>
-                      <h3 className="font-bold text-slate-800 text-base">Tiada Item dalam Inventori Fasiliti</h3>
-                      <p className="text-xs text-slate-500">
+                      <h3 className="font-semibold text-text-primary text-base">Tiada Item dalam Inventori Fasiliti</h3>
+                      <p className="text-xs text-text-muted">
                         Inventori bukan ubat fasiliti anda masih kosong {currentVoteParam !== 'all' ? `untuk skim ${currentVoteParam.toUpperCase()}` : ''}. Sila pilih item daripada Katalog Utama atau tambah manual jika tiada dalam katalog.
                       </p>
                       <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
                         <Button
                           size="sm"
                           onClick={() => setIsAddModalOpen(true)}
-                          className="bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-xl"
+                          className="bg-accent-base hover:bg-accent-base/90 text-white font-medium rounded-lg text-xs"
                         >
                           <Plus className="w-4 h-4 mr-1.5" />
                           Tambah Item dari Katalog
@@ -1594,9 +1591,9 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                           size="sm"
                           variant="outline"
                           onClick={() => handleOpenManualAddModal()}
-                          className="bg-white hover:bg-slate-50 text-emerald-700 border-emerald-300 font-medium rounded-xl"
+                          className="bg-surface hover:bg-subtle text-text-primary border-border-default font-medium rounded-lg text-xs"
                         >
-                          <PlusCircle className="w-4 h-4 mr-1.5 text-emerald-600" />
+                          <PlusCircle className="w-4 h-4 mr-1.5 text-accent-base" />
                           Tambah Manual (Jika Tiada dalam Katalog)
                         </Button>
                       </div>
@@ -1607,66 +1604,58 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                 paginatedItems.map(drug => {
                   const code = drug.item_code || drug.item_code || drug.sku || '-'
                   const priceVal = drug.price ?? drug.unit_price ?? 0
-                  const therapeuticCat = drug.category?.category_name || 'General'
-                  const prescriberCat = '-'
                   const batchNo = drug.batch_number || drug.batch_no || '-'
                   const expDate = drug.expiry_date || drug.exp_date || '-'
                   return (
                     <tr
                       key={drug.id}
                       onClick={() => handleOpenEditModal(drug)}
-                      className="hover:bg-slate-50/80 transition-colors cursor-pointer"
+                      className="hover:bg-subtle/50 transition-colors cursor-pointer"
                       title="Click to update stock & details"
                     >
                       <td className="py-3 px-4">
-                        <div className="font-mono text-[11px] font-bold text-blue-600 mb-0.5">{code}</div>
-                        <div className="font-semibold text-slate-900">{drug.item_name}</div>
+                        <div className="font-mono text-[11px] font-semibold text-accent-base mb-0.5">{code}</div>
+                        <div className="font-medium text-text-primary">{drug.item_name}</div>
                       </td>
                       <td className="py-3 px-4">
-                        <div className="font-semibold text-slate-900 uppercase">
+                        <div className="font-medium text-text-primary uppercase">
                           {drug.unit_of_measure || drug.uom || 'PACK'}
                         </div>
                         {drug.packaging_description && (
-                          <div className="text-[11px] text-slate-500 font-normal mt-0.5">{drug.packaging_description}</div>
+                          <div className="text-[11px] text-text-muted font-normal mt-0.5">{drug.packaging_description}</div>
                         )}
                       </td>
-                      <td className="py-3 px-4 font-semibold text-slate-900">
+                      <td className="py-3 px-4 font-semibold text-text-primary font-mono tabular-nums">
                         {drug.facility_stock ?? 0}
                       </td>
-                      <td className="py-3 px-4 font-mono text-xs text-slate-700">
+                      <td className="py-3 px-4 font-mono text-xs text-text-primary">
                         {batchNo !== '-' ? (
-                          <span className="px-2 py-0.5 rounded bg-slate-100 border border-slate-200/80 font-bold">
+                          <span className="px-2 py-0.5 rounded bg-subtle border border-border-default font-medium">
                             {batchNo}
                           </span>
                         ) : (
-                          <span className="text-slate-400 font-normal">-</span>
+                          <span className="text-text-muted font-normal">-</span>
                         )}
                       </td>
-                      <td className="py-3 px-4 font-mono text-xs text-slate-700">
+                      <td className="py-3 px-4 font-mono text-xs text-text-primary">
                         {expDate !== '-' ? (
-                          <span className="px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200/80 font-bold">
+                          <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-500 border border-amber-500/20 font-medium">
                             {expDate}
                           </span>
                         ) : (
-                          <span className="text-slate-400 font-normal">-</span>
+                          <span className="text-text-muted font-normal">-</span>
                         )}
                       </td>
-                      <td className="py-3 px-4 font-mono font-medium text-slate-800">
+                      <td className="py-3 px-4 font-mono font-medium text-text-primary tabular-nums">
                         RM {priceVal.toFixed(2)}
                       </td>
                       <td className="py-3 px-4">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold ${
-                          drug.procurement_vote === 'appl'
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                            : drug.procurement_vote === 'lp'
-                            ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                            : 'bg-purple-50 text-purple-700 border border-purple-200'
-                        }`}>
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-subtle text-text-primary border border-border-default">
                           {(drug.procurement_vote || 'APPL').toUpperCase()}
                         </span>
                       </td>
                       <td className="py-3 px-4">
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                           Aktif
                         </span>
@@ -1674,7 +1663,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                       <td className="py-3 px-4 text-center">
                         <button
                           onClick={(e) => handleDeleteItem(drug.id, drug.item_name, e)}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                          className="p-1.5 rounded-lg text-text-muted hover:text-rose-500 hover:bg-rose-500/10 transition-colors"
                           title="Delete this item from facility inventory"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -1691,8 +1680,8 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
         {/* Pagination */}
         {filteredItems.length > 0 && (
           <div className="flex items-center justify-between pt-2">
-            <div className="text-xs text-slate-500">
-              Menunjukkan halaman <span className="font-semibold text-slate-800">{page}</span> daripada <span className="font-semibold text-slate-800">{totalPages}</span> ({filteredItems.length} item)
+            <div className="text-xs text-text-muted">
+              Menunjukkan halaman <span className="font-semibold text-text-primary">{page}</span> daripada <span className="font-semibold text-text-primary">{totalPages}</span> ({filteredItems.length} item)
             </div>
             <div className="flex items-center gap-2">
               <Button
@@ -1730,7 +1719,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
           />
 
           {/* Slide-Over Drawer */}
-          <div className="fixed inset-y-0 right-0 w-full sm:w-[540px] md:w-[680px] lg:w-[760px] bg-white shadow-2xl z-[100] flex flex-col border-l border-slate-200 animate-in slide-in-from-right duration-300">
+          <div className="fixed inset-y-0 right-0 w-full sm:w-[540px] md:w-[680px] lg:w-[760px] bg-surface shadow-2xl z-[100] flex flex-col border-l border-border-default animate-in slide-in-from-right duration-300">
             {/* Drawer Header */}
             <div className="p-6 bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white flex items-center justify-between shadow-md">
               <div>
@@ -1749,7 +1738,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                   setSelectedCatalogDrug(null)
                   setSelectedCatalogDrugIds([])
                 }}
-                className="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all"
+                className="w-9 h-9 rounded-xl bg-white/10 hover:bg-surface/20 text-white flex items-center justify-center transition-colors"
               >
                 <XCircle className="w-5 h-5" />
               </button>
@@ -1760,7 +1749,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
               {!selectedCatalogItem ? (
                 <>
                   {/* Search & Filter Controls */}
-                  <div className="flex flex-col sm:flex-row gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+                  <div className="flex flex-col sm:flex-row gap-3 bg-subtle/50 p-4 rounded-2xl border border-border-default shadow-sm">
                     <div className="relative flex-1">
                       <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
                       <input
@@ -1768,14 +1757,14 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                         placeholder="Cari kod barang, nama bukan ubat..."
                         value={modalSearch}
                         onChange={e => setModalSearch(e.target.value)}
-                        className="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                        className="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border border-border-default bg-surface focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
                       />
                     </div>
 
                     <select
                       value={modalVoteFilter}
                       onChange={e => setModalVoteFilter(e.target.value)}
-                      className="px-4 py-2.5 text-sm font-semibold rounded-xl border border-slate-200 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                      className="px-4 py-2.5 text-sm font-semibold rounded-xl border border-border-default bg-surface text-text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                     >
                       <option value="all">Semua Skim</option>
                       <option value="appl">APPL</option>
@@ -1787,7 +1776,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
 
                   {/* Multi-Select Header Toolbar with Manual Add helper */}
                   <div className="flex items-center justify-between px-1 py-1 gap-2 flex-wrap">
-                    <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    <div className="text-xs font-bold text-text-secondary font-bold uppercase tracking-wider">
                       Senarai Item Katalog ({filteredCatalogItems.length} dijumpai)
                     </div>
 
@@ -1795,7 +1784,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => handleOpenManualAddModal(modalSearch)}
-                        className="text-xs font-bold text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-3 py-1 rounded-lg border border-emerald-200 flex items-center gap-1.5 transition-colors"
+                        className="text-xs font-bold text-emerald-700 hover:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-100 px-3 py-1 rounded-lg border border-emerald-500/20 flex items-center gap-1.5 transition-colors"
                         title="Daftar item bukan ubat secara manual jika tiada dalam katalog"
                       >
                         <PlusCircle className="w-3.5 h-3.5" />
@@ -1803,12 +1792,12 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                       </button>
 
                       {filteredCatalogItems.length > 0 && (
-                        <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-blue-700 bg-blue-50 px-3 py-1 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors">
+                        <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-blue-700 dark:text-blue-300 bg-blue-500/10 dark:bg-blue-950/60 px-3 py-1 rounded-lg border border-blue-500/20 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors">
                           <input
                             type="checkbox"
                             checked={isAllSelected}
                             onChange={handleToggleSelectAll}
-                            className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                            className="w-4 h-4 rounded border-border-default text-blue-600 focus:ring-blue-500 cursor-pointer"
                           />
                           Pilih Semua ({allFilteredIds.length})
                         </label>
@@ -1821,17 +1810,17 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                     {isCatalogLoading ? (
                       <div className="py-16 text-center text-slate-400">
                         <Spinner className="w-8 h-8 mx-auto text-blue-600 mb-3" />
-                        <p className="text-sm font-medium text-slate-600">Memuatkan Katalog Bukan Ubat Utama...</p>
+                        <p className="text-sm font-medium text-text-muted">Memuatkan Katalog Bukan Ubat Utama...</p>
                       </div>
                     ) : filteredCatalogItems.length === 0 ? (
-                      <div className="py-12 text-center border-2 border-dashed border-slate-200 rounded-2xl p-6 bg-slate-50/50 space-y-3">
-                        <div className="w-12 h-12 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mx-auto">
+                      <div className="py-12 text-center border-2 border-dashed border-border-default rounded-2xl p-6 bg-subtle/50 space-y-3">
+                        <div className="w-12 h-12 rounded-full bg-amber-500/10 text-amber-600 flex items-center justify-center mx-auto">
                           <Search className="w-6 h-6" />
                         </div>
-                        <h4 className="text-sm font-bold text-slate-800">
+                        <h4 className="text-sm font-bold text-text-primary">
                           {modalSearch ? `Tiada item ditemui untuk "${modalSearch}"` : 'Tiada item Katalog dijumpai'}
                         </h4>
-                        <p className="text-xs text-slate-500 max-w-md mx-auto">
+                        <p className="text-xs text-text-muted max-w-md mx-auto">
                           Item bukan ubat ini mungkin belum didaftarkan dalam Katalog Utama. Anda dibenarkan untuk mendaftar dan menambahkannya secara manual terus ke inventori fasiliti.
                         </p>
                         <Button
@@ -1844,7 +1833,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                         </Button>
                       </div>
                     ) : (
-                      <div className="divide-y divide-slate-100 border border-slate-200/80 rounded-2xl bg-white overflow-hidden shadow-sm">
+                      <div className="divide-y divide-border-subtle border border-border-default rounded-2xl bg-surface overflow-hidden shadow-sm">
                         {filteredCatalogItems.map(drug => {
                           const code = drug.item_code || drug.item_code || drug.sku || '-'
                           const contractNo = drug.cc_contract_number || drug.kkm_contract_number || drug.contract_number
@@ -1856,8 +1845,8 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                           return (
                             <div
                               key={drug.id}
-                              className={`p-4 transition-all flex items-center justify-between group ${
-                                isSelected ? 'bg-blue-50/80' : 'hover:bg-blue-50/40'
+                              className={`p-4 transition-colors flex items-center justify-between group ${
+                                isSelected ? 'bg-blue-500/10 dark:bg-blue-950/40' : 'hover:bg-blue-500/10 dark:hover:bg-blue-950/20'
                               }`}
                             >
                               <div className="flex items-start gap-3 flex-1 pr-4">
@@ -1865,7 +1854,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                                   type="checkbox"
                                   checked={isSelected}
                                   onChange={e => handleToggleSelectItem(drug.id, e)}
-                                  className="w-4 h-4 mt-1 rounded border-slate-300 text-blue-600 focus:ring-blue-500 cursor-pointer"
+                                  className="w-4 h-4 mt-1 rounded border-border-default text-blue-600 focus:ring-blue-500 cursor-pointer"
                                 />
 
                                 <div
@@ -1873,27 +1862,27 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                                   className="space-y-1 flex-1 cursor-pointer"
                                 >
                                   <div className="flex items-center gap-2 flex-wrap">
-                                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-100">
+                                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-blue-500/10 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-800">
                                       {code}
                                     </span>
-                                    <span className="text-xs font-semibold uppercase px-2 py-0.5 rounded bg-slate-100 text-slate-700">
+                                    <span className="text-xs font-semibold uppercase px-2 py-0.5 rounded bg-subtle text-text-secondary">
                                       {(drug.procurement_vote || 'APPL').toUpperCase()}
                                     </span>
                                     {contractNo && (
-                                      <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-amber-50 text-amber-800 border border-amber-200">
+                                      <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-amber-500/10 dark:bg-amber-950/60 text-amber-400 dark:text-amber-300 border border-amber-500/20 dark:border-amber-800">
                                         No. Kontrak: {contractNo}
                                       </span>
                                     )}
                                     {renderContractPeriodBadge(startDate, endDate, drug.cc_contract_status, drug.procurement_vote, contractNo)}
                                   </div>
-                                  <div className="font-bold text-slate-900 text-base group-hover:text-blue-600 transition-colors">
+                                  <div className="font-bold text-text-primary text-base group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                                     {drug.item_name}
                                   </div>
                                   {drug.generic_name && (
-                                    <div className="text-xs text-slate-500 italic">{drug.generic_name}</div>
+                                    <div className="text-xs text-text-muted italic">{drug.generic_name}</div>
                                   )}
                                   <div className="text-xs text-slate-400">
-                                    Bentuk: <span className="font-medium text-slate-600 uppercase">{drug.unit_of_measure || drug.uom || 'PACK'}</span> • Harga: <span className="font-mono font-semibold text-slate-700">RM {priceVal.toFixed(2)}</span>
+                                    Bentuk: <span className="font-medium text-text-muted uppercase">{drug.unit_of_measure || drug.uom || 'PACK'}</span> • Harga: <span className="font-mono font-semibold text-text-secondary">RM {priceVal.toFixed(2)}</span>
                                   </div>
                                 </div>
                               </div>
@@ -1917,26 +1906,26 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                 <div className="space-y-6">
                   <button
                     onClick={() => setSelectedCatalogDrug(null)}
-                    className="text-xs font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                    className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1"
                   >
                     <ChevronLeft className="w-4 h-4" /> Kembali ke Carian Katolog
                   </button>
 
-                  <div className="bg-blue-50/70 p-5 rounded-2xl border border-blue-100 space-y-2">
+                  <div className="bg-blue-500/10 p-5 rounded-2xl border border-blue-100 space-y-2">
                     <span className="text-xs text-blue-600 uppercase font-bold tracking-wider">Item Katolog Dipilih</span>
-                    <h3 className="font-bold text-slate-900 text-xl">{selectedCatalogItem.item_name}</h3>
+                    <h3 className="font-bold text-text-primary text-xl">{selectedCatalogItem.item_name}</h3>
                     {selectedCatalogItem.generic_name && (
-                      <p className="text-xs text-slate-500 italic">{selectedCatalogItem.generic_name}</p>
+                      <p className="text-xs text-text-muted italic">{selectedCatalogItem.generic_name}</p>
                     )}
                     <div className="flex items-center gap-3 flex-wrap pt-2">
-                      <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-white text-blue-700 border border-blue-200">
+                      <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-surface text-blue-700 border border-blue-500/20">
                         {selectedCatalogItem.item_code || selectedCatalogItem.item_code || selectedCatalogItem.sku || '-'}
                       </span>
-                      <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-800 uppercase">
+                      <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-400 uppercase">
                         {(selectedCatalogItem.procurement_vote || 'APPL').toUpperCase()}
                       </span>
                       {(selectedCatalogItem.cc_contract_number || selectedCatalogItem.kkm_contract_number || selectedCatalogItem.contract_number) && (
-                        <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 border border-amber-200">
+                        <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
                           No. Kontrak: {selectedCatalogItem.cc_contract_number || selectedCatalogItem.kkm_contract_number || selectedCatalogItem.contract_number}
                         </span>
                       )}
@@ -1947,34 +1936,34 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                         selectedCatalogItem.procurement_vote,
                         selectedCatalogItem.cc_contract_number || selectedCatalogItem.kkm_contract_number || selectedCatalogItem.contract_number
                       )}
-                      <span className="text-xs text-slate-600 font-mono">
+                      <span className="text-xs text-text-muted font-mono">
                         Harga: RM {((selectedCatalogItem.price ?? selectedCatalogItem.unit_price ?? 0)).toFixed(2)}
                       </span>
                     </div>
                   </div>
 
-                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
-                    <h4 className="font-bold text-slate-800 text-base border-b border-slate-100 pb-2">Konfigurasi Stok Fasiliti</h4>
+                  <div className="bg-surface p-6 rounded-2xl border border-border-default shadow-sm space-y-5">
+                    <h4 className="font-bold text-text-primary text-base border-b border-border-subtle pb-2">Konfigurasi Stok Fasiliti</h4>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div>
-                        <label className="text-xs font-bold text-slate-700 block mb-1.5">Stok Awal Fasiliti</label>
+                        <label className="text-xs font-bold text-text-secondary block mb-1.5">Stok Awal Fasiliti</label>
                         <input
                           type="number"
                           value={initialStockInput}
                           onChange={e => setInitialStockInput(Number(e.target.value))}
-                          className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 font-mono text-base focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                          className="w-full px-4 py-2.5 rounded-xl border border-border-default bg-subtle/50 font-mono text-base focus:bg-surface focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
                         />
                         <span className="text-[11px] text-slate-400 mt-1 block">Kuantiti fizikal di stor fasiliti</span>
                       </div>
 
                       <div>
-                        <label className="text-xs font-bold text-slate-700 block mb-1.5">Paras Penimbal (Min Buffer)</label>
+                        <label className="text-xs font-bold text-text-secondary block mb-1.5">Paras Penimbal (Min Buffer)</label>
                         <input
                           type="number"
                           value={minBufferInput}
                           onChange={e => setMinBufferInput(Number(e.target.value))}
-                          className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 font-mono text-base focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                          className="w-full px-4 py-2.5 rounded-xl border border-border-default bg-subtle/50 font-mono text-base focus:bg-surface focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
                         />
                         <span className="text-[11px] text-slate-400 mt-1 block">Amaran pesanan semula automatik</span>
                       </div>
@@ -1985,7 +1974,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
             </div>
 
             {/* Drawer Footer */}
-            <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+            <div className="p-4 bg-subtle/50 border-t border-border-default flex items-center justify-between">
               <Button
                 variant="outline"
                 onClick={() => {
@@ -2030,7 +2019,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
           />
 
           {/* Slide-Over Container */}
-          <div className="fixed inset-y-0 right-0 w-full sm:w-[680px] md:w-[860px] lg:w-[960px] xl:w-[1040px] bg-white shadow-2xl z-[100] flex flex-col border-l border-slate-200 animate-in slide-in-from-right duration-300">
+          <div className="fixed inset-y-0 right-0 w-full sm:w-[680px] md:w-[860px] lg:w-[960px] xl:w-[1040px] bg-surface shadow-2xl z-[100] flex flex-col border-l border-border-default animate-in slide-in-from-right duration-300">
             {/* Drawer Header */}
             <div className="p-6 bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-white flex items-center justify-between shadow-md">
               <div>
@@ -2047,60 +2036,60 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
               </div>
               <button
                 onClick={() => setEditingItem(null)}
-                className="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all"
+                className="w-9 h-9 rounded-xl bg-white/10 hover:bg-surface/20 text-white flex items-center justify-center transition-colors"
               >
                 <XCircle className="w-5 h-5" />
               </button>
             </div>
 
             {/* Navigation Tabs */}
-            <div className="flex items-center border-b border-slate-200 bg-slate-50 px-6 pt-3 gap-1.5 overflow-x-auto">
+            <div className="flex items-center border-b border-border-default bg-subtle/50 px-6 pt-3 gap-1.5 overflow-x-auto">
               <button
                 onClick={() => setActiveEditTab('settings')}
-                className={`px-3.5 py-2 text-xs font-bold rounded-t-xl transition-all border-t border-x whitespace-nowrap ${
+                className={`px-3.5 py-2 text-xs font-bold rounded-t-xl transition-colors border-t border-x whitespace-nowrap ${
                   activeEditTab === 'settings'
-                    ? 'bg-white text-blue-600 border-slate-200 border-b-transparent shadow-sm'
-                    : 'text-slate-500 hover:text-slate-800 border-transparent'
+                    ? 'bg-surface text-blue-600 border-border-default border-b-transparent shadow-sm'
+                    : 'text-text-muted hover:text-text-primary border-transparent'
                 }`}
               >
                 Tetapan Stok & Fasiliti
               </button>
               <button
                 onClick={() => setActiveEditTab('purchasing')}
-                className={`px-3.5 py-2 text-xs font-bold rounded-t-xl transition-all border-t border-x whitespace-nowrap ${
+                className={`px-3.5 py-2 text-xs font-bold rounded-t-xl transition-colors border-t border-x whitespace-nowrap ${
                   activeEditTab === 'purchasing'
-                    ? 'bg-white text-blue-600 border-slate-200 border-b-transparent shadow-sm'
-                    : 'text-slate-500 hover:text-slate-800 border-transparent'
+                    ? 'bg-surface text-blue-600 border-border-default border-b-transparent shadow-sm'
+                    : 'text-text-muted hover:text-text-primary border-transparent'
                 }`}
               >
                 Transaksi Pembelian
               </button>
               <button
                 onClick={() => setActiveEditTab('receiving')}
-                className={`px-3.5 py-2 text-xs font-bold rounded-t-xl transition-all border-t border-x whitespace-nowrap ${
+                className={`px-3.5 py-2 text-xs font-bold rounded-t-xl transition-colors border-t border-x whitespace-nowrap ${
                   activeEditTab === 'receiving'
-                    ? 'bg-white text-blue-600 border-slate-200 border-b-transparent shadow-sm'
-                    : 'text-slate-500 hover:text-slate-800 border-transparent'
+                    ? 'bg-surface text-blue-600 border-border-default border-b-transparent shadow-sm'
+                    : 'text-text-muted hover:text-text-primary border-transparent'
                 }`}
               >
                 Transaksi Penerimaan
               </button>
               <button
                 onClick={() => setActiveEditTab('issuing')}
-                className={`px-3.5 py-2 text-xs font-bold rounded-t-xl transition-all border-t border-x whitespace-nowrap ${
+                className={`px-3.5 py-2 text-xs font-bold rounded-t-xl transition-colors border-t border-x whitespace-nowrap ${
                   activeEditTab === 'issuing'
-                    ? 'bg-white text-blue-600 border-slate-200 border-b-transparent shadow-sm'
-                    : 'text-slate-500 hover:text-slate-800 border-transparent'
+                    ? 'bg-surface text-blue-600 border-border-default border-b-transparent shadow-sm'
+                    : 'text-text-muted hover:text-text-primary border-transparent'
                 }`}
               >
                 Transaksi Pengeluaran
               </button>
               <button
                 onClick={() => setActiveEditTab('qrcode')}
-                className={`px-3.5 py-2 text-xs font-bold rounded-t-xl transition-all border-t border-x whitespace-nowrap flex items-center gap-1.5 ${
+                className={`px-3.5 py-2 text-xs font-bold rounded-t-xl transition-colors border-t border-x whitespace-nowrap flex items-center gap-1.5 ${
                   activeEditTab === 'qrcode'
-                    ? 'bg-white text-blue-600 border-slate-200 border-b-transparent shadow-sm'
-                    : 'text-slate-500 hover:text-slate-800 border-transparent'
+                    ? 'bg-surface text-blue-600 border-border-default border-b-transparent shadow-sm'
+                    : 'text-text-muted hover:text-text-primary border-transparent'
                 }`}
               >
                 <QrCode className="w-3.5 h-3.5" />
@@ -2113,9 +2102,9 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
               {activeEditTab === 'settings' && (
                 <>
                   {/* Master Catalog Read-Only Information Card */}
-                  <div className="bg-amber-50/70 p-4 rounded-2xl border border-amber-200/80 space-y-3">
-                    <div className="flex items-center justify-between border-b border-amber-200/60 pb-2">
-                      <div className="flex items-center gap-2 text-xs font-bold text-amber-900">
+                  <div className="bg-amber-500/10 p-4 rounded-2xl border border-amber-500/20 space-y-3">
+                    <div className="flex items-center justify-between border-b border-amber-500/20 pb-2">
+                      <div className="flex items-center gap-2 text-xs font-bold text-amber-400 dark:text-amber-300 font-bold">
                         <ShieldCheck className="w-4 h-4 text-amber-600" />
                         Maklumat Katolog Utama (Read-Only)
                       </div>
@@ -2127,19 +2116,19 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
                       <div>
                         <span className="text-slate-400 block text-[11px]">Skim Perolehan</span>
-                        <span className="font-bold text-slate-800 uppercase">
+                        <span className="font-bold text-text-primary uppercase">
                           {editingItem.procurement_vote || 'APPL'}
                         </span>
                       </div>
                       <div>
                         <span className="text-slate-400 block text-[11px]">Packaging</span>
-                        <span className="font-bold text-slate-800 uppercase">
+                        <span className="font-bold text-text-primary uppercase">
                           {editingItem.unit_of_measure || editingItem.uom || 'PACK'}
                         </span>
                       </div>
                       <div>
                         <span className="text-slate-400 block text-[11px]">Harga Unit Kontrak</span>
-                        <span className="font-mono font-bold text-slate-800">
+                        <span className="font-mono font-bold text-text-primary">
                           RM {((editingItem.price ?? editingItem.unit_price ?? 0)).toFixed(2)}
                         </span>
                       </div>
@@ -2147,8 +2136,8 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                   </div>
 
                   {/* Form Section: Editable Stock & Facility Configurations */}
-                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                    <h3 className="font-bold text-slate-900 text-sm border-b border-slate-100 pb-2 flex items-center gap-2">
+                  <div className="bg-surface p-5 rounded-2xl border border-border-default shadow-sm space-y-4">
+                    <h3 className="font-bold text-text-primary text-sm border-b border-border-subtle pb-2 flex items-center gap-2">
                       <Warehouse className="w-4 h-4 text-blue-600" />
                       Konfigurasi Stok & Penimbal Fasiliti
                     </h3>
@@ -2156,11 +2145,11 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
                         <div className="flex items-center justify-between mb-1">
-                          <label className="text-xs font-bold text-slate-700">
+                          <label className="text-xs font-bold text-text-secondary">
                             Stok Fasiliti (Kuantiti Fizikal)
                           </label>
-                          <span className="text-[10px] font-bold text-slate-500 flex items-center gap-1 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
-                            <Lock className="w-3 h-3 text-slate-500" />
+                          <span className="text-[10px] font-bold text-text-muted flex items-center gap-1 bg-subtle px-2 py-0.5 rounded border border-border-default">
+                            <Lock className="w-3 h-3 text-text-muted" />
                             Kemas Kini Automatiks
                           </span>
                         </div>
@@ -2169,7 +2158,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                           disabled
                           readOnly
                           value={editingItem.facility_stock ?? 0}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-100 font-mono text-base font-bold text-slate-500 cursor-not-allowed select-none"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-border-default bg-subtle font-mono text-base font-bold text-text-muted cursor-not-allowed select-none"
                         />
                         <p className="text-[11px] text-slate-400 mt-1 italic">
                           Baki fizikal tidak boleh diubah secara manual di sini. Ia hanya dikemaskini melalui pergerakan Penerimaan (GRN) & Pengeluaran Stok.
@@ -2177,7 +2166,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                       </div>
 
                       <div>
-                        <label className="text-xs font-bold text-slate-700 block mb-1">
+                        <label className="text-xs font-bold text-text-secondary block mb-1">
                           Paras Penimbal (Min Buffer)
                         </label>
                         <input
@@ -2185,12 +2174,12 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                           min="0"
                           value={editBufferInput}
                           onChange={e => setEditBufferInput(e.target.value === '' ? '' : Number(e.target.value))}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white font-mono text-base text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-border-default bg-surface font-mono text-base text-text-primary focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
                         />
                       </div>
 
                       <div>
-                        <label className="text-xs font-bold text-slate-700 block mb-1">
+                        <label className="text-xs font-bold text-text-secondary block mb-1">
                           Paras Stok Minima (Min Level)
                         </label>
                         <input
@@ -2198,12 +2187,12 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                           min="0"
                           value={editMinLevelInput}
                           onChange={e => setEditMinLevelInput(e.target.value === '' ? '' : Number(e.target.value))}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white font-mono text-base text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-border-default bg-surface font-mono text-base text-text-primary focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
                         />
                       </div>
 
                       <div>
-                        <label className="text-xs font-bold text-slate-700 block mb-1">
+                        <label className="text-xs font-bold text-text-secondary block mb-1">
                           Paras Stok Maksima (Max Level)
                         </label>
                         <input
@@ -2211,28 +2200,28 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                           min="0"
                           value={editMaxLevelInput}
                           onChange={e => setEditMaxLevelInput(e.target.value === '' ? '' : Number(e.target.value))}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white font-mono text-base text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-border-default bg-surface font-mono text-base text-text-primary focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
                         />
                       </div>
                     </div>
                   </div>
 
                   {/* Form Section: Classifications & Location */}
-                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4">
-                    <h3 className="font-bold text-slate-900 text-sm border-b border-slate-100 pb-2 flex items-center gap-2">
+                  <div className="bg-surface p-5 rounded-2xl border border-border-default shadow-sm space-y-4">
+                    <h3 className="font-bold text-text-primary text-sm border-b border-border-subtle pb-2 flex items-center gap-2">
                       <Layers className="w-4 h-4 text-indigo-600" />
                       Klasifikasi & Lokasi Penimpanan
                     </h3>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
-                        <label className="text-xs font-bold text-slate-700 block mb-1">
+                        <label className="text-xs font-bold text-text-secondary block mb-1">
                           Kategori Bukan Ubat (Therapeutic Class)
                         </label>
                         <select
                           value={editTherapeuticCat}
                           onChange={e => setEditTherapeuticCat(e.target.value)}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-xs font-semibold text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-border-default bg-subtle/50 text-xs font-semibold text-text-primary focus:bg-surface focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
                         >
                           {categoryOptions.map(cat => (
                             <option key={cat} value={cat}>{cat}</option>
@@ -2241,13 +2230,13 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                       </div>
 
                       <div>
-                        <label className="text-xs font-bold text-slate-700 block mb-1">
+                        <label className="text-xs font-bold text-text-secondary block mb-1">
                           Kategori Preskriber (FUKKM)
                         </label>
                         <select
                           value={editPrescriberCat}
                           onChange={e => setEditPrescriberCat(e.target.value)}
-                          className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-50/50 text-xs font-semibold text-slate-800 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                          className="w-full px-3.5 py-2.5 rounded-xl border border-border-default bg-subtle/50 text-xs font-semibold text-text-primary focus:bg-surface focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
                         >
                           <option value="A*">A* (Pakar Khusus)</option>
                           <option value="A">A (Pakar)</option>
@@ -2257,8 +2246,8 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                         </select>
                       </div>
 
-                      <div className="sm:col-span-2 space-y-3 pt-2 border-t border-slate-100">
-                        <label className="text-xs font-bold text-slate-800 flex items-center justify-between">
+                      <div className="sm:col-span-2 space-y-3 pt-2 border-t border-border-subtle">
+                        <label className="text-xs font-bold text-text-primary flex items-center justify-between">
                           <span className="flex items-center gap-1.5">
                             <Warehouse className="w-3.5 h-3.5 text-indigo-600" />
                             Lokasi Stor, Rak & Level (Physical Location Hierarchy)
@@ -2274,13 +2263,13 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                           {/* Dropdown 1: Store */}
                           <div>
-                            <label className="text-[10px] font-semibold text-slate-500 block mb-1">
+                            <label className="text-[10px] font-semibold text-text-muted block mb-1">
                               1. Pilih Stor / Premis
                             </label>
                             <select
                               value={selectedStoreCode}
                               onChange={e => handleLocationChange(e.target.value, '', '')}
-                              className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50/70 text-xs font-medium text-slate-900 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+                              className="w-full px-3 py-2 rounded-xl border border-border-default bg-subtle/50 text-xs font-medium text-text-primary focus:bg-surface focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
                             >
                               <option value="">-- Select Store --</option>
                               {availableStoreLocations.map(loc => (
@@ -2293,14 +2282,14 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
 
                           {/* Dropdown 2: Rack / Cabinet / Pallet */}
                           <div>
-                            <label className="text-[10px] font-semibold text-slate-500 block mb-1">
+                            <label className="text-[10px] font-semibold text-text-muted block mb-1">
                               2. Pilih Rak / Kabinet
                             </label>
                             <select
                               value={selectedRackName}
                               onChange={e => handleLocationChange(selectedStoreCode, e.target.value, '')}
                               disabled={!selectedStoreCode || availableRacks.length === 0}
-                              className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50/70 text-xs font-medium text-slate-900 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="w-full px-3 py-2 rounded-xl border border-border-default bg-subtle/50 text-xs font-medium text-text-primary focus:bg-surface focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               <option value="">
                                 {!selectedStoreCode 
@@ -2319,14 +2308,14 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
 
                           {/* Dropdown 3: Level / Tingkat */}
                           <div>
-                            <label className="text-[10px] font-semibold text-slate-500 block mb-1">
+                            <label className="text-[10px] font-semibold text-text-muted block mb-1">
                               3. Pilih Level / Tingkat
                             </label>
                             <select
                               value={selectedLevelName}
                               onChange={e => handleLocationChange(selectedStoreCode, selectedRackName, e.target.value)}
                               disabled={!selectedRackName || availableLevels.length === 0}
-                              className="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50/70 text-xs font-medium text-slate-900 focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                              className="w-full px-3 py-2 rounded-xl border border-border-default bg-subtle/50 text-xs font-medium text-text-primary focus:bg-surface focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               <option value="">
                                 {!selectedRackName 
@@ -2346,7 +2335,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
 
                         {/* Combined Location Result - Read Only */}
                         <div>
-                          <label className="text-[10px] font-semibold text-slate-500 block mb-1">
+                          <label className="text-[10px] font-semibold text-text-muted block mb-1">
                             Teks Format Lokasi Penuh:
                           </label>
                           <input
@@ -2354,7 +2343,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                             readOnly
                             placeholder="Belum dipilih"
                             value={editLocationInput}
-                            className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-slate-100/70 font-mono text-xs text-slate-700 select-none cursor-not-allowed focus:outline-none transition-all placeholder-slate-400"
+                            className="w-full px-3.5 py-2.5 rounded-xl border border-border-default bg-subtle font-mono text-xs text-text-secondary select-none cursor-not-allowed focus:outline-none transition-colors placeholder-slate-400"
                           />
                         </div>
                       </div>
@@ -2407,7 +2396,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                               </span>
                               <div
                                 style={{ height: `${pct}%` }}
-                                className={`w-full rounded-t-lg transition-all duration-300 ${
+                                className={`w-full rounded-t-lg transition-colors duration-150 ${
                                   isForecast
                                     ? 'bg-gradient-to-t from-indigo-600 to-purple-400 border border-purple-300/40 opacity-85'
                                     : 'bg-gradient-to-t from-blue-600 to-cyan-400'
@@ -2460,13 +2449,13 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                   </div>
 
                   {/* 1. Real Purchasing / Perolehan Section */}
-                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                      <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider flex items-center gap-2">
+                  <div className="bg-surface p-5 rounded-2xl border border-border-default shadow-sm space-y-3">
+                    <div className="flex items-center justify-between border-b border-border-subtle pb-2">
+                      <h4 className="font-bold text-text-primary text-xs uppercase tracking-wider flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-blue-500" />
                         Rekod Pembelian & Perolehan (Purchasing)
                       </h4>
-                      <span className="text-[11px] font-semibold text-blue-600 bg-blue-50 px-2 py-0.5 rounded">
+                      <span className="text-[11px] font-semibold text-blue-600 bg-blue-500/10 px-2 py-0.5 rounded">
                         {realPOs.length} Pesanan Ditemui
                       </span>
                     </div>
@@ -2475,20 +2464,20 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                       {isTxLoading ? (
                         <div className="py-6 text-center text-slate-400 text-xs">Memuatkan rekod pembelian dari pangkalan data...</div>
                       ) : realPOs.length === 0 ? (
-                        <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center text-slate-400 text-xs font-medium">
+                        <div className="p-4 rounded-xl bg-subtle/50 border border-border-subtle text-center text-slate-400 text-xs font-medium">
                           Tiada rekod pesanan pembelian (PO) ditemui dalam pangkalan data untuk bukan ubat ini.
                         </div>
                       ) : (
                         realPOs.map(po => (
-                          <div key={po.id} className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                          <div key={po.id} className="p-3 rounded-xl bg-subtle/50 border border-border-subtle flex items-center justify-between">
                             <div>
                               <div className="font-mono font-bold text-blue-700">{po.purchase_order?.po_number || po.po_number || po.id}</div>
-                              <div className="text-slate-500 text-[11px]">
+                              <div className="text-text-muted text-[11px]">
                                 Tarikh Pesan: {po.created_at ? new Date(po.created_at).toLocaleDateString('ms-MY') : '-'}
                               </div>
                             </div>
                             <div className="text-right font-mono">
-                              <div className="font-bold text-slate-900">{po.quantity} unit</div>
+                              <div className="font-bold text-text-primary">{po.quantity} unit</div>
                               <div className="text-[10px] text-emerald-600 font-bold">LULUS</div>
                             </div>
                           </div>
@@ -2502,13 +2491,13 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
               {activeEditTab === 'receiving' && (
                 <div className="space-y-6">
                   {/* 2. Real Receiving / Penerimaan Section */}
-                  <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                      <h4 className="font-bold text-slate-900 text-xs uppercase tracking-wider flex items-center gap-2">
+                  <div className="bg-surface p-5 rounded-2xl border border-border-default shadow-sm space-y-3">
+                    <div className="flex items-center justify-between border-b border-border-subtle pb-2">
+                      <h4 className="font-bold text-text-primary text-xs uppercase tracking-wider flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-emerald-500" />
                         Rekod Penerimaan Stok (Receiving / GRN)
                       </h4>
-                      <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">
+                      <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-500/10 px-2 py-0.5 rounded">
                         Pengesahan Stor
                       </span>
                     </div>
@@ -2517,22 +2506,22 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                       {isTxLoading ? (
                         <div className="py-6 text-center text-slate-400 text-xs">Memuatkan rekod penerimaan dari pangkalan data...</div>
                       ) : realTransactions.filter(t => t.transaction_type === 'receive' || t.quantity > 0).length === 0 ? (
-                        <div className="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center text-slate-400 text-xs font-medium">
+                        <div className="p-4 rounded-xl bg-subtle/50 border border-border-subtle text-center text-slate-400 text-xs font-medium">
                           Tiada rekod penerimaan stok (GRN) ditemui dalam pangkalan data untuk bukan ubat ini.
                         </div>
                       ) : (
                         realTransactions
                           .filter(t => t.transaction_type === 'receive' || t.quantity > 0)
                           .map(t => (
-                            <div key={t.id} className="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-between">
+                            <div key={t.id} className="p-3 rounded-xl bg-subtle/50 border border-border-subtle flex items-center justify-between">
                               <div>
                                 <div className="font-mono font-bold text-emerald-700">{t.reference_number || t.transaction_number || `GRN-${t.id.slice(-4)}`}</div>
-                                <div className="text-slate-500 text-[11px]">
+                                <div className="text-text-muted text-[11px]">
                                   Tarikh Terima: {t.transaction_date ? new Date(t.transaction_date).toLocaleDateString('ms-MY') : '-'}
                                 </div>
                               </div>
                               <div className="text-right font-mono">
-                                <div className="font-bold text-slate-900">+{t.quantity} unit</div>
+                                <div className="font-bold text-text-primary">+{t.quantity} unit</div>
                                 <div className="text-[10px] text-emerald-600 font-semibold">Diterima</div>
                               </div>
                             </div>
@@ -2546,18 +2535,18 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
               {activeEditTab === 'qrcode' && (
                 <div className="space-y-6">
                   {/* Card Container */}
-                  <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-6">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <div className="bg-surface p-6 rounded-2xl border border-border-default shadow-sm space-y-6">
+                    <div className="flex items-center justify-between border-b border-border-subtle pb-3">
                       <div>
-                        <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
+                        <h3 className="font-bold text-text-primary text-sm flex items-center gap-2">
                           <QrCode className="w-4 h-4 text-blue-600" />
                           Label & Kod QR Item Stok (Digital Inventory Tag)
                         </h3>
-                        <p className="text-xs text-slate-500 mt-0.5">
+                        <p className="text-xs text-text-muted mt-0.5">
                           Imbas kod QR ini menggunakan Pengimbas Pergerakan Stok untuk mendaftar transaksi penerimaan atau pengeluaran secara automatik.
                         </p>
                       </div>
-                      <span className="text-xs font-mono font-bold bg-blue-50 text-blue-700 px-3 py-1 rounded-lg border border-blue-100">
+                      <span className="text-xs font-mono font-bold bg-blue-500/10 text-blue-700 px-3 py-1 rounded-lg border border-blue-100">
                         {editingItem.item_code || editingItem.item_code || editingItem.sku || '-'}
                       </span>
                     </div>
@@ -2565,31 +2554,31 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                     {/* Professional QR Sticker Label Mockup Preview */}
                     <div className="flex flex-col md:flex-row items-center justify-center gap-8 p-6 bg-slate-900 rounded-2xl text-white shadow-xl border border-slate-800">
                       {/* Printable Label Badge */}
-                      <div className="w-72 bg-white text-slate-900 rounded-xl p-4 shadow-2xl border-2 border-slate-900 flex flex-col justify-between space-y-3">
-                        <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
+                      <div className="w-72 bg-surface text-text-primary rounded-xl p-4 shadow-2xl border-2 border-slate-900 flex flex-col justify-between space-y-3">
+                        <div className="flex items-center gap-2 border-b border-border-default pb-2">
                           <img
                             src="/512px-Jata_MalaysiaV2.svg.png"
                             alt="Jata Negara"
                             className="w-8 h-8 object-contain"
                           />
                           <div className="flex-1 min-w-0">
-                            <div className="text-[7px] font-bold text-slate-500 uppercase tracking-tight leading-none">
+                            <div className="text-[7px] font-bold text-text-muted uppercase tracking-tight leading-none">
                               Kementerian Kesihatan Malaysia
                             </div>
-                            <div className="text-[10px] font-black text-slate-900 uppercase tracking-wide leading-tight">
+                            <div className="text-[10px] font-black text-text-primary uppercase tracking-wide leading-tight">
                               Hospital Lawas
                             </div>
                           </div>
-                          <span className="text-[9px] font-bold bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-mono uppercase flex-shrink-0">
+                          <span className="text-[9px] font-bold bg-blue-100 text-blue-400 px-1.5 py-0.5 rounded font-mono uppercase flex-shrink-0">
                             {(editingItem.procurement_vote || 'APPL').toUpperCase()}
                           </span>
                         </div>
 
                         <div className="flex items-center gap-3">
                           {qrCodeUrl ? (
-                            <img src={qrCodeUrl} alt="QR Code Label" className="w-24 h-24 object-contain border border-slate-100 rounded-lg p-1 bg-white flex-shrink-0" />
+                            <img src={qrCodeUrl} alt="QR Code Label" className="w-24 h-24 object-contain border border-border-subtle rounded-lg p-1 bg-surface flex-shrink-0" />
                           ) : (
-                            <div className="w-24 h-24 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400">
+                            <div className="w-24 h-24 bg-subtle rounded-lg flex items-center justify-center text-slate-400">
                               <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
                             </div>
                           )}
@@ -2598,19 +2587,19 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                             <div className="font-mono text-xs font-bold text-blue-600 truncate">
                               [ {editingItem.item_code || editingItem.item_code || editingItem.sku || '-'} ]
                             </div>
-                            <div className="font-bold text-xs text-slate-900 line-clamp-2 leading-tight">
+                            <div className="font-bold text-xs text-text-primary line-clamp-2 leading-tight">
                               {editingItem.item_name}
                             </div>
-                            <div className="text-[10px] text-slate-500">
-                              Packaging: <span className="font-semibold text-slate-700 uppercase">{editingItem.unit_of_measure || editingItem.uom || 'PACK'}</span>
+                            <div className="text-[10px] text-text-muted">
+                              Packaging: <span className="font-semibold text-text-secondary uppercase">{editingItem.unit_of_measure || editingItem.uom || 'PACK'}</span>
                             </div>
-                            <div className="text-[10px] text-slate-500 truncate">
-                              Lokasi: <span className="font-semibold text-slate-700">{editLocationInput || editingItem.location || 'Belum Diset'}</span>
+                            <div className="text-[10px] text-text-muted truncate">
+                              Lokasi: <span className="font-semibold text-text-secondary">{editLocationInput || editingItem.location || 'Belum Diset'}</span>
                             </div>
                           </div>
                         </div>
 
-                        <div className="border-t border-dashed border-slate-300 pt-1.5 text-center text-[8px] font-semibold text-slate-400 tracking-wider">
+                        <div className="border-t border-dashed border-border-default pt-1.5 text-center text-[8px] font-semibold text-text-secondary font-bold tracking-wider">
                           STOK INVENTORI FASILITI • H.O.M.E. ECOSYSTEM
                         </div>
                       </div>
@@ -2638,7 +2627,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                             <a
                               href={qrCodeUrl}
                               download={`QR-${editingItem.item_code || editingItem.id}.png`}
-                              className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 text-white font-semibold text-xs rounded-xl transition-all border border-white/10"
+                              className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-white/10 hover:bg-surface/20 text-white font-semibold text-xs rounded-xl transition-colors border border-white/10"
                             >
                               <Download className="w-4 h-4 text-emerald-400" />
                               Muat Turun Gambar PNG
@@ -2670,7 +2659,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
             </div>
 
             {/* Drawer Footer */}
-            <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+            <div className="p-4 bg-subtle/50 border-t border-border-default flex items-center justify-between">
               <Button
                 variant="outline"
                 onClick={() => setEditingItem(null)}
@@ -2701,7 +2690,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
           />
 
           {/* Slide-Over Drawer */}
-          <div className="fixed inset-y-0 right-0 w-full sm:w-[600px] md:w-[740px] lg:w-[840px] bg-white shadow-2xl z-[100] flex flex-col border-l border-slate-200 animate-in slide-in-from-right duration-300">
+          <div className="fixed inset-y-0 right-0 w-full sm:w-[600px] md:w-[740px] lg:w-[840px] bg-surface shadow-2xl z-[100] flex flex-col border-l border-border-default animate-in slide-in-from-right duration-300">
             {/* Drawer Header */}
             <div className="p-6 bg-gradient-to-r from-teal-950 via-slate-900 to-emerald-950 text-white flex items-center justify-between shadow-md border-b border-emerald-800/40">
               <div className="space-y-1">
@@ -2721,7 +2710,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                   if (!isSavingManual) setIsManualAddOpen(false)
                 }}
                 disabled={isSavingManual}
-                className="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all disabled:opacity-50"
+                className="w-9 h-9 rounded-xl bg-white/10 hover:bg-surface/20 text-white flex items-center justify-center transition-colors disabled:opacity-50"
               >
                 <XCircle className="w-5 h-5" />
               </button>
@@ -2731,21 +2720,21 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
             <form onSubmit={handleSaveManualNonDrug} className="flex-1 overflow-y-auto p-6 space-y-6">
               {/* Dynamic Catalog Existence Banner */}
               {matchingCatalogItem ? (
-                <div className="p-4 rounded-2xl bg-amber-50 border border-amber-300 space-y-3 animate-in fade-in duration-200">
+                <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-300 space-y-3 animate-in fade-in duration-200">
                   <div className="flex items-start gap-3">
                     <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center flex-shrink-0 mt-0.5">
                       <AlertTriangle className="w-5 h-5 text-amber-600" />
                     </div>
                     <div className="space-y-1 flex-1">
-                      <h4 className="text-sm font-bold text-amber-950">
+                      <h4 className="text-sm font-bold text-amber-400 dark:text-amber-300 font-bold">
                         Item ini sudah sedia wujud dalam Katalog Utama!
                       </h4>
-                      <p className="text-xs text-amber-800 leading-relaxed">
+                      <p className="text-xs text-amber-400 leading-relaxed">
                         Item <strong>"{matchingCatalogItem.item_name}"</strong> (Kod: <span className="font-mono font-bold">{matchingCatalogItem.item_code || matchingCatalogItem.sku}</span>) telah didaftarkan dalam Katalog Utama dengan skim <strong>{(matchingCatalogItem.procurement_vote || 'APPL').toUpperCase()}</strong>. Penambahan manual disekat bagi mengelakkan penduaan lejar stok.
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-center justify-end gap-2 pt-1 border-t border-amber-200/80">
+                  <div className="flex items-center justify-end gap-2 pt-1 border-t border-amber-500/20">
                     <Button
                       type="button"
                       size="sm"
@@ -2758,29 +2747,29 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                   </div>
                 </div>
               ) : manualForm.item_name.trim() ? (
-                <div className="p-3.5 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center gap-3 animate-in fade-in duration-200">
+                <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-3 animate-in fade-in duration-200">
                   <div className="w-7 h-7 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center flex-shrink-0">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                   </div>
-                  <div className="text-xs text-emerald-900 leading-relaxed">
+                  <div className="text-xs text-emerald-400 dark:text-emerald-300 font-bold leading-relaxed">
                     <span className="font-bold">Item disahkan tiada dalam Katalog Utama.</span> Anda dibenarkan mendaftar dan menambah item ini secara manual ke inventori fasiliti.
                   </div>
                 </div>
               ) : (
-                <div className="p-3.5 rounded-2xl bg-blue-50 border border-blue-200 flex items-center gap-3">
+                <div className="p-3.5 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center gap-3">
                   <div className="w-7 h-7 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center flex-shrink-0">
                     <Info className="w-4 h-4 text-blue-600" />
                   </div>
-                  <div className="text-xs text-blue-900 leading-relaxed">
+                  <div className="text-xs text-blue-400 dark:text-blue-300 font-bold leading-relaxed">
                     Sila masukkan nama item. Sistem akan menyemak secara langsung sama ada item telah wujud dalam katalog utama hospital.
                   </div>
                 </div>
               )}
 
               {/* Section 1: Maklumat Katalog Bukan Ubat */}
-              <div className="bg-slate-50/80 p-5 rounded-2xl border border-slate-200/80 space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-                  <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+              <div className="bg-subtle/50 p-5 rounded-2xl border border-border-default space-y-4">
+                <div className="flex items-center justify-between border-b border-border-default pb-2">
+                  <h3 className="text-xs font-bold text-text-secondary uppercase tracking-wider flex items-center gap-2">
                     <Tag className="w-4 h-4 text-emerald-600" />
                     1. Maklumat Katalog Bukan Ubat (Master Catalog)
                   </h3>
@@ -2789,7 +2778,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-text-secondary mb-1">
                       Nama Item Bukan Ubat <span className="text-rose-500">*</span>
                     </label>
                     <input
@@ -2798,13 +2787,13 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                       value={manualForm.item_name}
                       onChange={e => setManualForm({ ...manualForm, item_name: e.target.value })}
                       placeholder="Cth: SYRINGE 5ML WITH NEEDLE 21G, SURGICAL GLOVES SIZE 7.5, GAUZE ROLL 10CM"
-                      className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 bg-white font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all uppercase placeholder:normal-case"
+                      className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-border-default bg-surface font-medium focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors uppercase placeholder:normal-case"
                     />
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                      <label className="block text-xs font-bold text-text-secondary mb-1">
                         Kod Item Bukan Ubat / SKU <span className="text-[10px] text-slate-400 font-normal">(Pilihan)</span>
                       </label>
                       <input
@@ -2812,18 +2801,18 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                         value={manualForm.item_code}
                         onChange={e => setManualForm({ ...manualForm, item_code: e.target.value })}
                         placeholder="Auto-generated jika dibiarkan kosong"
-                        className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 bg-white font-mono uppercase focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+                        className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-border-default bg-surface font-mono uppercase focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                      <label className="block text-xs font-bold text-text-secondary mb-1">
                         Skim Perolehan <span className="text-rose-500">*</span>
                       </label>
                       <select
                         value={manualForm.procurement_vote}
                         onChange={e => setManualForm({ ...manualForm, procurement_vote: e.target.value as any })}
-                        className="w-full px-3.5 py-2.5 text-sm font-semibold rounded-xl border border-slate-200 bg-white text-slate-800 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+                        className="w-full px-3.5 py-2.5 text-sm font-semibold rounded-xl border border-border-default bg-surface text-text-primary focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
                       >
                         <option value="appl">APPL (Kontrak Pusat Pharmaniaga)</option>
                         <option value="cc">CC (Central Contract KKM)</option>
@@ -2835,13 +2824,13 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                      <label className="block text-xs font-bold text-text-secondary mb-1">
                         Kategori Bukan Ubat
                       </label>
                       <select
                         value={manualForm.category_id}
                         onChange={e => setManualForm({ ...manualForm, category_id: e.target.value })}
-                        className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 bg-white text-slate-800 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium"
+                        className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-border-default bg-surface text-text-primary focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors font-medium"
                       >
                         <option value="">-- Pilih Kategori --</option>
                         {categories.map(cat => (
@@ -2855,7 +2844,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
 
                     {manualForm.category_id === 'NEW' && (
                       <div>
-                        <label className="block text-xs font-bold text-slate-700 mb-1">
+                        <label className="block text-xs font-bold text-text-secondary mb-1">
                           Nama Kategori Baharu <span className="text-rose-500">*</span>
                         </label>
                         <input
@@ -2863,13 +2852,13 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                           value={manualForm.new_category_name}
                           onChange={e => setManualForm({ ...manualForm, new_category_name: e.target.value })}
                           placeholder="Cth: Dressing, Jarum, Tiub"
-                          className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+                          className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-border-default bg-surface focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
                         />
                       </div>
                     )}
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                      <label className="block text-xs font-bold text-text-secondary mb-1">
                         Unit Ukuran / Bentuk (UOM)
                       </label>
                       <input
@@ -2878,7 +2867,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                         value={manualForm.unit_of_measure}
                         onChange={e => setManualForm({ ...manualForm, unit_of_measure: e.target.value.toUpperCase() })}
                         placeholder="PACK, BOX, UNIT, ROLL, SET, PCS"
-                        className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 bg-white font-mono uppercase focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+                        className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-border-default bg-surface font-mono uppercase focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
                       />
                       <datalist id="manual-uom-list">
                         <option value="PACK" />
@@ -2898,7 +2887,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                      <label className="block text-xs font-bold text-text-secondary mb-1">
                         Keterangan Pembungkusan
                       </label>
                       <input
@@ -2906,12 +2895,12 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                         value={manualForm.packaging_description}
                         onChange={e => setManualForm({ ...manualForm, packaging_description: e.target.value })}
                         placeholder="Cth: 100 pcs/box, 50 rolls/carton"
-                        className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 bg-white focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+                        className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-border-default bg-surface focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
+                      <label className="block text-xs font-bold text-text-secondary mb-1">
                         Harga Seunit (RM)
                       </label>
                       <input
@@ -2921,20 +2910,20 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                         value={manualForm.price || ''}
                         onChange={e => setManualForm({ ...manualForm, price: parseFloat(e.target.value) || 0 })}
                         placeholder="0.00"
-                        className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 bg-white font-mono focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
+                        className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-border-default bg-surface font-mono focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors"
                       />
                     </div>
                   </div>
 
                   {/* Supplier dropdown */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-text-secondary mb-1">
                       Pembekal (Supplier)
                     </label>
                     <select
                       value={manualForm.supplier_id}
                       onChange={e => setManualForm({ ...manualForm, supplier_id: e.target.value })}
-                      className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 bg-white text-slate-800 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium"
+                      className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-border-default bg-surface text-text-primary focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-colors font-medium"
                     >
                       <option value="">-- Pilihan Pembekal (Jika Ada) --</option>
                       {suppliers.map(sup => (
@@ -2947,38 +2936,38 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
 
                   {/* Conditional Central Contract (CC) fields */}
                   {manualForm.procurement_vote === 'cc' && (
-                    <div className="p-4 rounded-xl bg-purple-50/70 border border-purple-200 space-y-3">
-                      <div className="text-xs font-bold text-purple-900 uppercase flex items-center gap-1.5">
+                    <div className="p-4 rounded-xl bg-indigo-500/10 border border-indigo-500/20 space-y-3">
+                      <div className="text-xs font-bold text-indigo-400 dark:text-indigo-300 font-bold uppercase flex items-center gap-1.5">
                         <ShieldCheck className="w-4 h-4 text-purple-600" />
                         Butiran Kontrak Pusat (Central Contract)
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         <div>
-                          <label className="block text-[11px] font-bold text-slate-700 mb-1">No. Kontrak CC</label>
+                          <label className="block text-[11px] font-bold text-text-secondary mb-1">No. Kontrak CC</label>
                           <input
                             type="text"
                             value={manualForm.cc_contract_number}
                             onChange={e => setManualForm({ ...manualForm, cc_contract_number: e.target.value })}
                             placeholder="Cth: KKM/CC/2026/089"
-                            className="w-full px-3 py-2 text-xs rounded-lg border border-purple-200 bg-white font-mono focus:ring-2 focus:ring-purple-500/20"
+                            className="w-full px-3 py-2 text-xs rounded-lg border border-indigo-500/20 bg-surface font-mono focus:ring-2 focus:ring-purple-500/20"
                           />
                         </div>
                         <div>
-                          <label className="block text-[11px] font-bold text-slate-700 mb-1">Tarikh Mula Kontrak</label>
+                          <label className="block text-[11px] font-bold text-text-secondary mb-1">Tarikh Mula Kontrak</label>
                           <input
                             type="date"
                             value={manualForm.cc_contract_start_date}
                             onChange={e => setManualForm({ ...manualForm, cc_contract_start_date: e.target.value })}
-                            className="w-full px-3 py-2 text-xs rounded-lg border border-purple-200 bg-white font-mono focus:ring-2 focus:ring-purple-500/20"
+                            className="w-full px-3 py-2 text-xs rounded-lg border border-indigo-500/20 bg-surface font-mono focus:ring-2 focus:ring-purple-500/20"
                           />
                         </div>
                         <div>
-                          <label className="block text-[11px] font-bold text-slate-700 mb-1">Tarikh Tamat Kontrak</label>
+                          <label className="block text-[11px] font-bold text-text-secondary mb-1">Tarikh Tamat Kontrak</label>
                           <input
                             type="date"
                             value={manualForm.cc_contract_end_date}
                             onChange={e => setManualForm({ ...manualForm, cc_contract_end_date: e.target.value })}
-                            className="w-full px-3 py-2 text-xs rounded-lg border border-purple-200 bg-white font-mono focus:ring-2 focus:ring-purple-500/20"
+                            className="w-full px-3 py-2 text-xs rounded-lg border border-indigo-500/20 bg-surface font-mono focus:ring-2 focus:ring-purple-500/20"
                           />
                         </div>
                       </div>
@@ -2988,9 +2977,9 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
               </div>
 
               {/* Section 2: Konfigurasi Stok & Penempatan Stor Fasiliti */}
-              <div className="bg-slate-50/80 p-5 rounded-2xl border border-slate-200/80 space-y-4">
-                <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-                  <h3 className="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-2">
+              <div className="bg-subtle/50 p-5 rounded-2xl border border-border-default space-y-4">
+                <div className="flex items-center justify-between border-b border-border-default pb-2">
+                  <h3 className="text-xs font-bold text-text-secondary uppercase tracking-wider flex items-center gap-2">
                     <Boxes className="w-4 h-4 text-blue-600" />
                     2. Konfigurasi Stok & Penempatan Stor Fasiliti
                   </h3>
@@ -2998,7 +2987,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-text-secondary mb-1">
                       Stok Fizikal Awal Fasiliti
                     </label>
                     <input
@@ -3006,13 +2995,13 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                       min="0"
                       value={manualForm.facility_stock}
                       onChange={e => setManualForm({ ...manualForm, facility_stock: parseInt(e.target.value) || 0 })}
-                      className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 bg-white font-mono font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                      className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-border-default bg-surface font-mono font-bold text-text-primary focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
                     />
                     <span className="text-[11px] text-slate-400 mt-0.5 block">Kuantiti fizikal semasa di stor fasiliti</span>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-text-secondary mb-1">
                       Paras Penimbal Minimum (Min Buffer)
                     </label>
                     <input
@@ -3020,7 +3009,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                       min="0"
                       value={manualForm.min_buffer_level}
                       onChange={e => setManualForm({ ...manualForm, min_buffer_level: parseInt(e.target.value) || 0 })}
-                      className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-slate-200 bg-white font-mono font-bold text-slate-900 focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+                      className="w-full px-3.5 py-2.5 text-sm rounded-xl border border-border-default bg-surface font-mono font-bold text-text-primary focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
                     />
                     <span className="text-[11px] text-slate-400 mt-0.5 block">Paras amaran pesanan semula fasiliti</span>
                   </div>
@@ -3028,7 +3017,7 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-text-secondary mb-1">
                       Paras Minimum Stok (Min Stock Level)
                     </label>
                     <input
@@ -3036,12 +3025,12 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                       min="0"
                       value={manualForm.min_stock_level}
                       onChange={e => setManualForm({ ...manualForm, min_stock_level: parseInt(e.target.value) || 0 })}
-                      className="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-200 bg-white font-mono focus:ring-2 focus:ring-blue-500/20"
+                      className="w-full px-3.5 py-2 text-sm rounded-xl border border-border-default bg-surface font-mono focus:ring-2 focus:ring-blue-500/20"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-text-secondary mb-1">
                       Paras Maksimum Stok (Max Stock Level)
                     </label>
                     <input
@@ -3049,23 +3038,23 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                       min="0"
                       value={manualForm.max_stock_level}
                       onChange={e => setManualForm({ ...manualForm, max_stock_level: parseInt(e.target.value) || 0 })}
-                      className="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-200 bg-white font-mono focus:ring-2 focus:ring-blue-500/20"
+                      className="w-full px-3.5 py-2 text-sm rounded-xl border border-border-default bg-surface font-mono focus:ring-2 focus:ring-blue-500/20"
                     />
                   </div>
                 </div>
 
                 {/* Storage Location Picker */}
-                <div className="space-y-2 pt-2 border-t border-slate-200">
-                  <label className="block text-xs font-bold text-slate-700">
+                <div className="space-y-2 pt-2 border-t border-border-default">
+                  <label className="block text-xs font-bold text-text-secondary">
                     Lokasi Simpanan di Stor Fasiliti
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div>
-                      <label className="block text-[11px] font-semibold text-slate-500 mb-1">Stor / Unit</label>
+                      <label className="block text-[11px] font-semibold text-text-muted mb-1">Stor / Unit</label>
                       <select
                         value={manualForm.store_code}
                         onChange={e => setManualForm({ ...manualForm, store_code: e.target.value, rack_name: '', level_name: '' })}
-                        className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white text-slate-800 font-medium"
+                        className="w-full px-3 py-2 text-xs rounded-xl border border-border-default bg-surface text-text-primary font-medium"
                       >
                         <option value="">-- Select Store --</option>
                         {availableStoreLocations.map(loc => (
@@ -3077,12 +3066,12 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-semibold text-slate-500 mb-1">Rak / Kabinet</label>
+                      <label className="block text-[11px] font-semibold text-text-muted mb-1">Rak / Kabinet</label>
                       <select
                         value={manualForm.rack_name}
                         onChange={e => setManualForm({ ...manualForm, rack_name: e.target.value, level_name: '' })}
                         disabled={!manualForm.store_code || manualAvailableRacks.length === 0}
-                        className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white text-slate-800 disabled:bg-slate-100 disabled:opacity-60"
+                        className="w-full px-3 py-2 text-xs rounded-xl border border-border-default bg-surface text-text-primary disabled:bg-subtle disabled:opacity-60"
                       >
                         <option value="">-- Pilihan Rak --</option>
                         {manualAvailableRacks.map(r => (
@@ -3094,12 +3083,12 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-semibold text-slate-500 mb-1">Tingkat / Slot</label>
+                      <label className="block text-[11px] font-semibold text-text-muted mb-1">Tingkat / Slot</label>
                       <select
                         value={manualForm.level_name}
                         onChange={e => setManualForm({ ...manualForm, level_name: e.target.value })}
                         disabled={!manualForm.rack_name || manualAvailableLevels.length === 0}
-                        className="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 bg-white text-slate-800 disabled:bg-slate-100 disabled:opacity-60"
+                        className="w-full px-3 py-2 text-xs rounded-xl border border-border-default bg-surface text-text-primary disabled:bg-subtle disabled:opacity-60"
                       >
                         <option value="">-- Pilihan Tingkat --</option>
                         {manualAvailableLevels.map(lvl => (
@@ -3113,9 +3102,9 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                 </div>
 
                 {/* Initial Batch & Expiry Date (Optional) */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-slate-200">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 border-t border-border-default">
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-text-secondary mb-1">
                       No. Batch Permulaan <span className="text-[10px] text-slate-400 font-normal">(Pilihan)</span>
                     </label>
                     <input
@@ -3123,26 +3112,26 @@ export const FacilityNonDrugInventoryPage: React.FC = () => {
                       value={manualForm.batch_number}
                       onChange={e => setManualForm({ ...manualForm, batch_number: e.target.value })}
                       placeholder="Cth: B260817-A"
-                      className="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-200 bg-white font-mono uppercase focus:ring-2 focus:ring-blue-500/20"
+                      className="w-full px-3.5 py-2 text-sm rounded-xl border border-border-default bg-surface font-mono uppercase focus:ring-2 focus:ring-blue-500/20"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1">
+                    <label className="block text-xs font-bold text-text-secondary mb-1">
                       Expiry Date Permulaan <span className="text-[10px] text-slate-400 font-normal">(Pilihan)</span>
                     </label>
                     <input
                       type="date"
                       value={manualForm.expiry_date}
                       onChange={e => setManualForm({ ...manualForm, expiry_date: e.target.value })}
-                      className="w-full px-3.5 py-2 text-sm rounded-xl border border-slate-200 bg-white font-mono focus:ring-2 focus:ring-blue-500/20"
+                      className="w-full px-3.5 py-2 text-sm rounded-xl border border-border-default bg-surface font-mono focus:ring-2 focus:ring-blue-500/20"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Drawer Footer Actions */}
-              <div className="p-4 -mx-6 -mb-6 bg-slate-50 border-t border-slate-200 flex items-center justify-between sticky bottom-0 z-10">
+              <div className="p-4 -mx-6 -mb-6 bg-subtle/50 border-t border-border-default flex items-center justify-between sticky bottom-0 z-10">
                 <Button
                   type="button"
                   variant="outline"

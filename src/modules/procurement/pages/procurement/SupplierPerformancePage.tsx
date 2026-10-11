@@ -146,13 +146,13 @@ export default function SupplierPerformancePage() {
   const getPerformanceBadgeColor = (level: string) => {
     switch (level) {
       case 'SANGAT MEMUASKAN':
-        return 'bg-emerald-50 text-emerald-700 border-emerald-200'
+        return 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20'
       case 'MEMUASKAN':
-        return 'bg-amber-50 text-amber-700 border-amber-200'
+        return 'bg-amber-500/10 text-amber-700 border-amber-500/20'
       case 'TIDAK MEMUASKAN':
-        return 'bg-rose-50 text-rose-700 border-rose-200'
+        return 'bg-rose-500/10 text-rose-700 border-rose-500/20'
       default:
-        return 'bg-slate-50 text-slate-700 border-slate-200'
+        return 'bg-subtle/50 text-text-secondary border-border-default'
     }
   }
 
@@ -182,7 +182,7 @@ export default function SupplierPerformancePage() {
     return (
       <div className="flex items-center gap-0.5" title={`${rating} / 5.0`}>
         {stars}
-        <span className="text-xs font-extrabold text-slate-500 ml-1.5 tabular-nums">{rating.toFixed(1)}</span>
+        <span className="text-xs font-extrabold text-text-muted ml-1.5 tabular-nums">{rating.toFixed(1)}</span>
       </div>
     )
   }
@@ -200,7 +200,7 @@ export default function SupplierPerformancePage() {
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
           <span className="text-slate-400">Procurement</span>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-          <span className="text-slate-800 font-extrabold tracking-wide">Prestasi Pembekal</span>
+          <span className="text-text-primary font-extrabold tracking-wide">Prestasi Pembekal</span>
         </nav>
 
         {/* Header */}
@@ -213,7 +213,7 @@ export default function SupplierPerformancePage() {
               <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-emerald-950 to-slate-900">
                 Supplier Performance
               </h1>
-              <p className="text-slate-500 font-semibold text-[11px] flex items-center gap-1.5">
+              <p className="text-text-muted font-semibold text-[11px] flex items-center gap-1.5">
                 <Sparkles className="w-3 h-3 text-[#00a68a]" />
                 Penilaian Prestasi Pembekal & Item Analytics
               </p>
@@ -223,7 +223,7 @@ export default function SupplierPerformancePage() {
           <div className="flex items-center gap-2.5">
             <button 
               onClick={loadData}
-              className="p-2 h-10 w-10 flex items-center justify-center bg-white rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors shadow-sm"
+              className="p-2 h-10 w-10 flex items-center justify-center bg-surface rounded-xl border border-border-default text-text-muted hover:bg-subtle/50 transition-colors shadow-sm"
               title="Refresh"
             >
               <IconRefreshCw className={cn("w-5 h-5", isLoading && "animate-spin")} />
@@ -233,23 +233,23 @@ export default function SupplierPerformancePage() {
 
         {/* KPI Panel */}
         {!isLoading && assessments.length > 0 && (
-          <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] border border-slate-200 shadow-xl relative z-10">
+          <div className="bg-surface p-6 sm:p-8 rounded-2xl border border-border-default shadow-xl relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
               {/* Total Evaluations */}
               <motion.div
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
-                className="bg-slate-50/50 border-2 border-slate-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:border-slate-200 hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-all duration-300"
+                className="bg-surface border border-border-default hover:border-slate-500/40 p-6 rounded-2xl relative overflow-hidden group hover:border-border-default hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-colors duration-150"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-slate-500/[0.03] rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
                 <div className="flex items-start gap-4 relative z-10">
-                  <div className="w-12 h-12 bg-slate-100 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-700 shadow-sm">
+                  <div className="w-11 h-11 bg-slate-500/10 border border-slate-500/20 rounded-xl flex items-center justify-center text-slate-300 shadow-xs shrink-0">
                     <CheckCircle2 className="w-6 h-6 text-[#00a68a]" />
                   </div>
                   <div className="space-y-1">
                     <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Total Evaluations</p>
-                    <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight tabular-nums">
+                    <h3 className="text-2xl sm:text-3xl font-black text-text-primary tracking-tight tabular-nums">
                       {globalTotalEvaluations}
                     </h3>
                     <p className="text-[11px] font-semibold text-slate-400">Assessed LPOs</p>
@@ -262,16 +262,16 @@ export default function SupplierPerformancePage() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.05 }}
-                className="bg-emerald-50/40 border-2 border-emerald-100/70 p-6 rounded-[2.5rem] relative overflow-hidden group hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-100/30 hover:-translate-y-1 transition-all duration-300"
+                className="bg-surface border border-border-default hover:border-emerald-500/30 p-6 rounded-2xl relative overflow-hidden group hover:border-emerald-500/20 hover:shadow-xl hover:shadow-emerald-100/30 hover:-translate-y-1 transition-colors duration-150"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/[0.05] rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
                 <div className="flex items-start gap-4 relative z-10">
-                  <div className="w-12 h-12 bg-emerald-100 border border-emerald-200 rounded-2xl flex items-center justify-center text-emerald-700 shadow-sm">
+                  <div className="w-12 h-12 bg-emerald-100 border border-emerald-500/20 rounded-2xl flex items-center justify-center text-emerald-700 shadow-sm">
                     <TrendingUp className="w-6 h-6 text-[#00a68a]" />
                   </div>
                   <div className="space-y-1">
                     <p className="text-xs font-bold text-emerald-700 uppercase tracking-widest">Avg Performance</p>
-                    <h3 className="text-2xl sm:text-3xl font-black text-emerald-950 tracking-tight tabular-nums">
+                    <h3 className="text-2xl sm:text-3xl font-black text-text-primary tracking-tight tabular-nums">
                       {globalAvgPercentage}%
                     </h3>
                     <p className="text-[11px] font-semibold text-slate-400">Hospital-wide average</p>
@@ -284,16 +284,16 @@ export default function SupplierPerformancePage() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.1 }}
-                className="bg-amber-50/40 border-2 border-amber-100/70 p-6 rounded-[2.5rem] relative overflow-hidden group hover:border-amber-200 hover:shadow-xl hover:shadow-amber-100/30 hover:-translate-y-1 transition-all duration-300"
+                className="bg-surface border border-border-default hover:border-amber-500/30 p-6 rounded-2xl relative overflow-hidden group hover:border-amber-500/20 hover:shadow-xl hover:shadow-amber-100/30 hover:-translate-y-1 transition-colors duration-150"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/[0.05] rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
                 <div className="flex items-start gap-4 relative z-10">
-                  <div className="w-12 h-12 bg-amber-100 border border-amber-200 rounded-2xl flex items-center justify-center text-amber-700 shadow-sm">
+                  <div className="w-11 h-11 bg-amber-500/10 border border-amber-500/20 rounded-xl flex items-center justify-center text-amber-400 shadow-xs shrink-0">
                     <Star className="w-6 h-6 text-amber-500 fill-amber-500" />
                   </div>
                   <div className="space-y-1">
                     <p className="text-xs font-bold text-amber-600 uppercase tracking-widest">Quality Index</p>
-                    <h3 className="text-2xl sm:text-3xl font-black text-amber-950 tracking-tight tabular-nums">
+                    <h3 className="text-2xl sm:text-3xl font-black text-text-primary tracking-tight tabular-nums">
                       {globalAvgQuality} <span className="text-sm font-normal text-slate-400">/ 5</span>
                     </h3>
                     <p className="text-[11px] font-semibold text-slate-400">Item supply quality score</p>
@@ -306,7 +306,7 @@ export default function SupplierPerformancePage() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: 0.15 }}
-                className="bg-sky-50/40 border-2 border-sky-100/70 p-6 rounded-[2.5rem] relative overflow-hidden group hover:border-sky-200 hover:shadow-xl hover:shadow-sky-100/30 hover:-translate-y-1 transition-all duration-300"
+                className="bg-surface border border-border-default hover:border-sky-500/30 p-6 rounded-2xl relative overflow-hidden group hover:border-sky-200 hover:shadow-xl hover:shadow-sky-100/30 hover:-translate-y-1 transition-colors duration-150"
               >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-sky-500/[0.05] rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
                 <div className="flex items-start gap-4 relative z-10">
@@ -331,22 +331,22 @@ export default function SupplierPerformancePage() {
           
           {/* LEFT PANEL: Supplier List Cards & Aggregates */}
           <div className="xl:col-span-2 space-y-6">
-            <div className="bg-white border border-slate-200 rounded-[2.5rem] p-6 sm:p-8 shadow-xl space-y-6">
+            <div className="bg-surface border border-border-default rounded-2xl p-6 sm:p-8 shadow-xl space-y-6">
               
               {/* Filter bar */}
-              <div className="bg-slate-50/50 p-4 rounded-3xl border border-slate-200/60 shadow-sm flex flex-col sm:flex-row gap-4 items-center justify-between">
+              <div className="bg-subtle/50 p-4 rounded-3xl border border-border-default shadow-sm flex flex-col sm:flex-row gap-4 items-center justify-between">
                 <div className="relative w-full sm:max-w-md">
                   <IconSearch className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                   <Input 
                     type="text"
                     placeholder="Search by supplier or drug item..."
-                    className="pl-11 pr-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-100 transition-all outline-none"
+                    className="pl-11 pr-4 py-3 bg-surface border border-border-default rounded-xl text-sm font-bold text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-emerald-100 transition-colors outline-none"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                   />
                 </div>
                 <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-                  Showing <span className="text-slate-900 font-extrabold">{filteredSuppliers.length}</span> active suppliers
+                  Showing <span className="text-text-primary font-extrabold">{filteredSuppliers.length}</span> active suppliers
                 </div>
               </div>
 
@@ -357,7 +357,7 @@ export default function SupplierPerformancePage() {
                   <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">Fetching assessments...</p>
                 </div>
               ) : filteredSuppliers.length === 0 ? (
-                <div className="bg-slate-50 rounded-[2rem] p-12 text-center border border-slate-100">
+                <div className="bg-subtle/50 rounded-xl p-12 text-center border border-border-subtle">
                   <IconAlertCircle className="w-12 h-12 text-slate-300 mx-auto mb-4" />
                   <p className="text-slate-400 font-bold uppercase tracking-widest text-xs">No rated suppliers found</p>
                 </div>
@@ -372,17 +372,17 @@ export default function SupplierPerformancePage() {
                         transition={{ type: 'spring', stiffness: 300, damping: 20 }}
                         onClick={() => setSelectedSupplier(isSelected ? null : sup.supplierName)}
                         className={cn(
-                          "cursor-pointer p-6 rounded-[2.5rem] border-2 transition-all space-y-5 text-left relative overflow-hidden group",
+                          "cursor-pointer p-6 rounded-2xl border-2 transition-colors space-y-5 text-left relative overflow-hidden group",
                           isSelected
                             ? "bg-[#e6f7f4] border-[#00a68a] shadow-lg shadow-emerald-100/50"
-                            : "bg-white border-slate-100 hover:border-slate-200 hover:shadow-md"
+                            : "bg-surface border-border-subtle hover:border-border-default hover:shadow-md"
                         )}
                       >
                         {/* Rating Banner */}
                         <div className="flex justify-between items-start gap-4">
                           <div>
                             <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Supplier Name</span>
-                            <h4 className="text-base font-black text-slate-800 leading-tight group-hover:text-[#00a68a] transition-colors line-clamp-1">
+                            <h4 className="text-base font-black text-text-primary leading-tight group-hover:text-[#00a68a] transition-colors line-clamp-1">
                               {sup.supplierName}
                             </h4>
                           </div>
@@ -395,18 +395,18 @@ export default function SupplierPerformancePage() {
                         </div>
 
                         {/* Summary of Averages */}
-                        <div className="grid grid-cols-3 gap-3 p-3 rounded-2xl bg-slate-50/50 border border-slate-100/50">
+                        <div className="grid grid-cols-3 gap-3 p-3 rounded-2xl bg-subtle/50 border border-border-subtle">
                           <div className="text-center space-y-0.5">
-                            <span className="text-[8px] font-bold text-slate-400 uppercase tracking-wider block">Kualiti</span>
-                            <span className="text-xs font-black text-slate-700 block">{sup.avgQuality.toFixed(1)} â­</span>
+                            <span className="text-[8px] font-bold text-text-secondary font-bold uppercase tracking-wider block">Kualiti</span>
+                            <span className="text-xs font-black text-text-secondary block">{sup.avgQuality.toFixed(1)} â­</span>
                           </div>
                           <div className="text-center space-y-0.5">
-                            <span className="text-[8px] font-bold text-slate-400 uppercase tracking-wider block">Sokongan</span>
-                            <span className="text-xs font-black text-slate-700 block">{sup.avgSupport.toFixed(1)} â­</span>
+                            <span className="text-[8px] font-bold text-text-secondary font-bold uppercase tracking-wider block">Sokongan</span>
+                            <span className="text-xs font-black text-text-secondary block">{sup.avgSupport.toFixed(1)} â­</span>
                           </div>
                           <div className="text-center space-y-0.5">
-                            <span className="text-[8px] font-bold text-slate-400 uppercase tracking-wider block">Delivery</span>
-                            <span className="text-xs font-black text-slate-700 block">{sup.avgDelivery.toFixed(1)} â­</span>
+                            <span className="text-[8px] font-bold text-text-secondary font-bold uppercase tracking-wider block">Delivery</span>
+                            <span className="text-xs font-black text-text-secondary block">{sup.avgDelivery.toFixed(1)} â­</span>
                           </div>
                         </div>
 
@@ -414,13 +414,13 @@ export default function SupplierPerformancePage() {
                         <div className="space-y-1.5">
                           <div className="flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                             <span>Supplied Items</span>
-                            <span className="text-slate-800 font-extrabold">{sup.itemsSupplied.size} items</span>
+                            <span className="text-text-primary font-extrabold">{sup.itemsSupplied.size} items</span>
                           </div>
                           <div className="flex flex-wrap gap-1.5">
                             {Array.from(sup.itemsSupplied).slice(0, 3).map((item, idx) => (
                               <span 
                                 key={idx}
-                                className="px-2 py-0.5 bg-slate-100 border border-slate-200/50 rounded-md text-[9px] font-bold text-slate-500 line-clamp-1 max-w-[150px] truncate"
+                                className="px-2 py-0.5 bg-subtle border border-border-default rounded-md text-[9px] font-bold text-text-muted line-clamp-1 max-w-[150px] truncate"
                               >
                                 {item}
                               </span>
@@ -434,9 +434,9 @@ export default function SupplierPerformancePage() {
                         </div>
 
                         {/* Footer aggregate info */}
-                        <div className="flex justify-between items-center pt-4 border-t border-slate-100/60 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                        <div className="flex justify-between items-center pt-4 border-t border-border-subtle text-[10px] font-bold uppercase tracking-widest text-slate-400">
                           <div>
-                            Assessed: <span className="text-slate-700 font-black">{sup.totalAssessments} LPOs</span>
+                            Assessed: <span className="text-text-secondary font-black">{sup.totalAssessments} LPOs</span>
                           </div>
                           <div className="flex items-center gap-1 text-[#00a68a] font-black">
                             <span>Score: {sup.avgPercentage}%</span>
@@ -452,7 +452,7 @@ export default function SupplierPerformancePage() {
 
           {/* RIGHT PANEL: SUPPLIER DETAIL & ITEMS LIST OR HISTORY LOG */}
           <div className="xl:col-span-1 space-y-6">
-            <div className="bg-slate-900 border border-slate-800 rounded-[2.5rem] p-6 sm:p-8 shadow-2xl text-white relative overflow-hidden">
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 sm:p-8 shadow-2xl text-white relative overflow-hidden">
               {/* Dynamic ambient lights inside dark panel */}
               <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-500/[0.05] rounded-full blur-[30px] pointer-events-none" />
 
@@ -470,7 +470,7 @@ export default function SupplierPerformancePage() {
                 {!selectedSupplier ? (
                   <div className="py-12 text-center text-slate-400 space-y-4">
                     <div className="w-16 h-16 rounded-full bg-slate-800/80 border border-slate-700/50 flex items-center justify-center mx-auto shadow-inner">
-                      <Sparkles className="w-6 h-6 text-slate-500 animate-pulse" />
+                      <Sparkles className="w-6 h-6 text-text-muted animate-pulse" />
                     </div>
                     <p className="text-xs font-bold uppercase tracking-widest">
                       Select a supplier card on the left to see detailed supplied items and score log.
@@ -521,7 +521,7 @@ export default function SupplierPerformancePage() {
 
                             {/* Supplied drugs preview */}
                             <div className="space-y-1">
-                              <span className="text-[8px] font-bold text-slate-500 uppercase tracking-wider block">Supplied Item(s)</span>
+                              <span className="text-[8px] font-bold text-text-muted uppercase tracking-wider block">Supplied Item(s)</span>
                               <div className="space-y-1">
                                 {items.map((it: any, iIdx: number) => (
                                   <div key={iIdx} className="flex justify-between items-center text-[10px] font-bold text-slate-300">
@@ -535,15 +535,15 @@ export default function SupplierPerformancePage() {
                             {/* Star details breakdown */}
                             <div className="grid grid-cols-3 gap-1 pt-2 border-t border-slate-800/60 text-[9px] font-bold text-slate-400 text-center">
                               <div>
-                                <span className="block text-[7px] text-slate-500 uppercase">Kualiti</span>
+                                <span className="block text-[7px] text-text-muted uppercase">Kualiti</span>
                                 <span className="text-slate-300">{ass.ratings?.quality} â­</span>
                               </div>
                               <div>
-                                <span className="block text-[7px] text-slate-500 uppercase">Sokongan</span>
+                                <span className="block text-[7px] text-text-muted uppercase">Sokongan</span>
                                 <span className="text-slate-300">{ass.ratings?.support} â­</span>
                               </div>
                               <div>
-                                <span className="block text-[7px] text-slate-500 uppercase">Tempo</span>
+                                <span className="block text-[7px] text-text-muted uppercase">Tempo</span>
                                 <span className="text-slate-300">{ass.ratings?.delivery} â­</span>
                               </div>
                             </div>
@@ -551,7 +551,7 @@ export default function SupplierPerformancePage() {
                             {/* Comments if any */}
                             {ass.comments && (
                               <div className="pt-2 border-t border-slate-800/60 text-left">
-                                <span className="block text-[8px] text-slate-500 uppercase tracking-widest font-bold mb-1">Ulasan / Komen</span>
+                                <span className="block text-[8px] text-text-muted uppercase tracking-widest font-bold mb-1">Ulasan / Komen</span>
                                 <p className="text-[10px] text-slate-300 italic bg-slate-800/30 p-2 rounded border border-slate-700/50">
                                   "{ass.comments}"
                                 </p>
@@ -571,29 +571,29 @@ export default function SupplierPerformancePage() {
 
         {/* BOTTOM SECTION: DETAILED HISTORY GRIDS */}
         {!isLoading && assessments.length > 0 && (
-          <div className="bg-white border border-slate-200 rounded-[2.5rem] p-6 sm:p-8 shadow-xl relative z-10">
+          <div className="bg-surface border border-border-default rounded-2xl p-6 sm:p-8 shadow-xl relative z-10">
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-black tracking-tight text-slate-800">Historical Evaluation Log</h3>
+                  <h3 className="text-lg font-black tracking-tight text-text-primary">Historical Evaluation Log</h3>
                   <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Chronological timeline of all assessments submitted</p>
                 </div>
               </div>
 
-              <div className="overflow-x-auto rounded-[2rem] border border-slate-100 shadow-inner">
+              <div className="overflow-x-auto rounded-xl border border-border-subtle shadow-inner">
                 <table className="w-full border-collapse">
                   <thead>
-                    <tr className="bg-slate-50/80">
-                      <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Assessed Date</th>
-                      <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Supplier</th>
-                      <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">LPO Reference</th>
-                      <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Kualiti Bekalan</th>
-                      <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Sokongan Pelanggan</th>
-                      <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Tempoh Penghantaran</th>
-                      <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Comments</th>
-                      <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Total Score</th>
-                      <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Grade (%)</th>
-                      <th className="px-6 py-5 text-center text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Level</th>
+                    <tr className="bg-subtle/50">
+                      <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Assessed Date</th>
+                      <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Supplier</th>
+                      <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">LPO Reference</th>
+                      <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Kualiti Bekalan</th>
+                      <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Sokongan Pelanggan</th>
+                      <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Tempoh Penghantaran</th>
+                      <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Comments</th>
+                      <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Total Score</th>
+                      <th className="px-6 py-5 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Grade (%)</th>
+                      <th className="px-6 py-5 text-center text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Level</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-50">
@@ -601,21 +601,21 @@ export default function SupplierPerformancePage() {
                       const po = ass.lpo?.po || {}
                       const sName = po.manual_supplier_name || po.supplier?.company_name || 'â€”'
                       return (
-                        <tr key={ass.id} className="hover:bg-slate-50/50 transition-colors">
+                        <tr key={ass.id} className="hover:bg-subtle/50 transition-colors">
                           <td className="px-6 py-5">
-                            <span className="text-sm font-bold text-slate-900">
+                            <span className="text-sm font-bold text-text-primary">
                               {new Date(ass.created_at).toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric' })}
                             </span>
                           </td>
                           <td className="px-6 py-5">
-                            <span className="text-sm font-black text-slate-800">{sName}</span>
+                            <span className="text-sm font-black text-text-primary">{sName}</span>
                           </td>
                           <td className="px-6 py-5">
                             <div className="flex flex-col gap-0.5">
-                              <span className="text-xs font-extrabold text-slate-700">{ass.lpo?.lpo_number || 'â€”'}</span>
+                              <span className="text-xs font-extrabold text-text-secondary">{ass.lpo?.lpo_number || 'â€”'}</span>
                               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{po.po_number || 'â€”'}</span>
                               {ass.goods_receipt && (
-                                <span className="text-[9px] font-black text-indigo-600 bg-indigo-50 border border-indigo-100 rounded px-1.5 py-0.5 mt-1.5 self-start uppercase tracking-tighter">
+                                <span className="text-[9px] font-black text-indigo-600 bg-indigo-500/10 border border-indigo-100 rounded px-1.5 py-0.5 mt-1.5 self-start uppercase tracking-tighter">
                                   DO: {ass.goods_receipt.delivery_note_number || ass.goods_receipt.gr_number}
                                 </span>
                               )}
@@ -631,12 +631,12 @@ export default function SupplierPerformancePage() {
                             {renderRatingStars(ass.ratings?.delivery || 0)}
                           </td>
                           <td className="px-6 py-5">
-                            <span className="text-[11px] text-slate-500 line-clamp-2 max-w-[200px]" title={ass.comments}>
+                            <span className="text-[11px] text-text-muted line-clamp-2 max-w-[200px]" title={ass.comments}>
                               {ass.comments || 'â€”'}
                             </span>
                           </td>
                           <td className="px-6 py-5 text-center">
-                            <span className="text-sm font-black text-slate-800">{ass.total_score} / 15</span>
+                            <span className="text-sm font-black text-text-primary">{ass.total_score} / 15</span>
                           </td>
                           <td className="px-6 py-5 text-left">
                             <span className="text-sm font-extrabold text-[#00a68a]">{ass.percentage}%</span>

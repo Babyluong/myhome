@@ -395,12 +395,12 @@ export const CrossborderCreatePage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 text-slate-800 w-full max-w-[100%]">
+    <div className="space-y-6 text-text-primary w-full max-w-[100%]">
       {/* Back button */}
       <div>
         <button 
           onClick={() => navigate('/crossborder/dashboard')}
-          className="flex items-center gap-2 text-slate-500 hover:text-slate-700 transition-colors group text-sm font-medium"
+          className="flex items-center gap-2 text-text-muted hover:text-text-secondary transition-colors group text-sm font-medium"
         >
           <ArrowLeft className="w-4 h-4 transform group-hover:-translate-x-1 transition-transform" />
           <span>{language === 'ms' ? 'Kembali ke Papan Pemuka' : 'Back to Dashboard'}</span>
@@ -409,10 +409,10 @@ export const CrossborderCreatePage: React.FC = () => {
 
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-2xl font-bold tracking-tight text-text-primary">
             {language === 'ms' ? 'Daftar Perjalanan Rentasi Sempadan Baru' : 'Register New Cross-Border Patient Transfer'}
           </h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-text-muted">
             {language === 'ms' 
               ? 'Isikan borang di bawah bagi menjana Borang Pemindahan Pesakit Rasmi dan Surat Kebenaran Rentasi Sempadan.'
               : 'Complete the form below to generate the Official Cross-Border Transfer Form and Immigration Clearance Letter.'}
@@ -425,12 +425,12 @@ export const CrossborderCreatePage: React.FC = () => {
         {/* Left Side: Form Columns */}
         <div className="lg:col-span-2 space-y-6 w-full">
           {/* Section 0: MyTransporter Link */}
-          <Card className="bg-white border border-slate-200 border-l-4 border-l-blue-600 shadow-sm rounded-xl p-6">
-            <h2 className="text-base font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <Card className="bg-surface border border-border-default border-l-4 border-l-blue-600 shadow-sm rounded-xl p-6">
+            <h2 className="text-base font-bold text-text-primary mb-2 flex items-center gap-2">
               <ShieldCheck className="w-5 h-5 text-blue-600" />
               {language === 'ms' ? 'Pautan Permohonan MyTransporter (Pilihan)' : 'Link MyTransporter Request (Optional)'}
             </h2>
-            <p className="text-xs text-slate-500 mb-4">
+            <p className="text-xs text-text-muted mb-4">
               {language === 'ms' 
                 ? 'Pilih permohonan pengangkutan aktif untuk mengisi butiran pesakit, tarikh, ambulans, dan pengiring secara automatik.'
                 : 'Select an active transporter request to automatically import patient details, schedule, vehicle, and medical escorts.'}
@@ -444,7 +444,7 @@ export const CrossborderCreatePage: React.FC = () => {
                 <select
                   value={linkedRequestId}
                   onChange={(e) => handleLinkRequestChange(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 focus:bg-white transition-all font-medium text-slate-800"
+                  className="w-full bg-subtle/50 border border-border-default hover:border-border-default rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 focus:bg-surface transition-colors font-medium text-text-primary"
                 >
                   <option value="">
                     {language === 'ms' ? 'Tiada permohonan berkaitan (Isi secara manual)' : 'No linked transport request (Fill manually)'}
@@ -460,32 +460,32 @@ export const CrossborderCreatePage: React.FC = () => {
           </Card>
 
           {/* Section 1: Trip Info */}
-          <Card className="bg-white border border-slate-200 border-l-4 border-l-blue-600 shadow-sm rounded-xl p-6">
-            <h2 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <Card className="bg-surface border border-border-default border-l-4 border-l-blue-600 shadow-sm rounded-xl p-6">
+            <h2 className="text-base font-bold text-text-primary mb-4 flex items-center gap-2">
               <Calendar className="w-5 h-5 text-blue-600" />
               {language === 'ms' ? '1. Maklumat Perjalanan' : '1. Trip Information'}
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">
+                <label className="text-xs font-semibold text-text-muted uppercase tracking-wider block mb-1">
                   {language === 'ms' ? 'Hospital Perujuk' : 'Referring Hospital'}
                 </label>
                 <input 
                   type="text" 
                   value="Hospital Lawas" 
                   disabled 
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-400 cursor-not-allowed font-medium"
+                  className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-slate-400 cursor-not-allowed font-medium"
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-500 block mb-1">
+                <label className="text-xs font-semibold text-text-muted block mb-1">
                   {language === 'ms' ? 'Hospital Destinasi *' : 'Destination Hospital *'}
                 </label>
                 <select 
                   value={destinationHospital}
                   onChange={(e) => setDestinationHospital(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
+                  className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-surface transition-colors font-medium"
                 >
                   <option value="Hospital Limbang">Hospital Limbang</option>
                   <option value="Hospital Miri">Hospital Miri</option>
@@ -496,34 +496,34 @@ export const CrossborderCreatePage: React.FC = () => {
                 </select>
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-500 block mb-1">
+                <label className="text-xs font-semibold text-text-muted block mb-1">
                   {language === 'ms' ? 'Tarikh Perjalanan *' : 'Travel Date *'}
                 </label>
                 <input 
                   type="date" 
                   value={tarikhPerjalanan}
                   onChange={(e) => setTarikhPerjalanan(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
+                  className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-surface transition-colors font-medium"
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-500 block mb-1">
+                <label className="text-xs font-semibold text-text-muted block mb-1">
                   {language === 'ms' ? 'Masa Berlepas (Anggaran) *' : 'Estimated Departure Time *'}
                 </label>
                 <input 
                   type="time" 
                   value={masaBerlepas}
                   onChange={(e) => setMasaBerlepas(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
+                  className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-surface transition-colors font-medium"
                 />
               </div>
             </div>
           </Card>
 
           {/* Section 2: Patient Info (1 to 3) */}
-          <Card className="bg-white border border-slate-200 border-l-4 border-l-cyan-600 shadow-sm rounded-xl p-6 space-y-6">
+          <Card className="bg-surface border border-border-default border-l-4 border-l-cyan-600 shadow-sm rounded-xl p-6 space-y-6">
             <div className="flex justify-between items-center">
-              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <h2 className="text-base font-bold text-text-primary flex items-center gap-2">
                 <User className="w-5 h-5 text-cyan-600" />
                 {language === 'ms' ? '2. Maklumat Pesakit (Maksima 3)' : '2. Patient Information (Max 3)'}
               </h2>
@@ -532,14 +532,14 @@ export const CrossborderCreatePage: React.FC = () => {
                 disabled={patients.length >= 3}
                 type="button"
                 variant="outline"
-                className="border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-1.5 rounded-xl px-3 py-1.5"
+                className="border-border-default hover:bg-subtle/50 text-text-secondary text-xs font-semibold flex items-center gap-1.5 rounded-xl px-3 py-1.5"
               >
                 <Plus className="w-3.5 h-3.5 text-cyan-600" />
                 {language === 'ms' ? 'Tambah Pesakit' : 'Add Patient'}
               </Button>
             </div>
 
-            <div className="space-y-6 divide-y divide-slate-100">
+            <div className="space-y-6 divide-y divide-border-subtle">
               {patients.map((patient, index) => (
                 <div key={index} className={`space-y-4 ${index > 0 ? 'pt-6' : ''}`}>
                   <div className="flex justify-between items-center">
@@ -562,7 +562,7 @@ export const CrossborderCreatePage: React.FC = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="md:col-span-2">
-                      <label className="text-xs font-semibold text-slate-500 block mb-1">
+                      <label className="text-xs font-semibold text-text-muted block mb-1">
                         {language === 'ms' ? 'Nama Penuh (Seperti Pasport / IC) *' : 'Full Name (As in Passport / IC) *'}
                       </label>
                       <input 
@@ -570,35 +570,35 @@ export const CrossborderCreatePage: React.FC = () => {
                         value={patient.nama}
                         onChange={(e) => handlePatientChange(index, 'nama', e.target.value.toUpperCase())}
                         placeholder="e.g. DAIMON BIN MOHD TAHIR"
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
+                        className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-surface transition-colors font-medium"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-slate-500 block mb-1">
+                      <label className="text-xs font-semibold text-text-muted block mb-1">
                         {language === 'ms' ? 'Jantina *' : 'Gender *'}
                       </label>
                       <select
                         value={patient.jantina}
                         onChange={(e) => handlePatientChange(index, 'jantina', e.target.value as Jantina)}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
+                        className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-surface transition-colors font-medium"
                       >
                         <option value="Lelaki">{language === 'ms' ? 'Lelaki' : 'Male'}</option>
                         <option value="Perempuan">{language === 'ms' ? 'Perempuan' : 'Female'}</option>
                       </select>
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-slate-500 block mb-1">
+                      <label className="text-xs font-semibold text-text-muted block mb-1">
                         {language === 'ms' ? 'Tarikh Lahir *' : 'Date of Birth *'}
                       </label>
                       <input 
                         type="date" 
                         value={patient.tarikh_lahir}
                         onChange={(e) => handlePatientChange(index, 'tarikh_lahir', e.target.value)}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
+                        className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-surface transition-colors font-medium"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-slate-500 block mb-1">
+                      <label className="text-xs font-semibold text-text-muted block mb-1">
                         {language === 'ms' ? 'Warganegara *' : 'Nationality *'}
                       </label>
                       <input 
@@ -606,17 +606,17 @@ export const CrossborderCreatePage: React.FC = () => {
                         value={patient.warganegara}
                         onChange={(e) => handlePatientChange(index, 'warganegara', e.target.value)}
                         placeholder="Malaysia"
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
+                        className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-surface transition-colors font-medium"
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-slate-500 block mb-1">
+                      <label className="text-xs font-semibold text-text-muted block mb-1">
                         {language === 'ms' ? 'Jenis Dokumen Perjalanan *' : 'Travel Document Type *'}
                       </label>
                       <select
                         value={patient.jenis_dokumen}
                         onChange={(e) => handlePatientChange(index, 'jenis_dokumen', e.target.value as JenisDokumen)}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
+                        className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-surface transition-colors font-medium"
                       >
                         <option value="PASSPORT">PASSPORT</option>
                         <option value="IC">{language === 'ms' ? 'IC / MYKAD' : 'National ID / MyKad'}</option>
@@ -624,7 +624,7 @@ export const CrossborderCreatePage: React.FC = () => {
                       </select>
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-slate-500 block mb-1">
+                      <label className="text-xs font-semibold text-text-muted block mb-1">
                         {language === 'ms' ? 'No Dokumen *' : 'Document Number *'}
                       </label>
                       <input 
@@ -632,24 +632,24 @@ export const CrossborderCreatePage: React.FC = () => {
                         value={patient.no_dokumen}
                         onChange={(e) => handlePatientChange(index, 'no_dokumen', e.target.value.toUpperCase())}
                         placeholder="e.g. A12345678"
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium font-mono"
+                        className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-surface transition-colors font-medium font-mono"
                       />
                     </div>
                     {patient.jenis_dokumen === 'PASSPORT' && (
                       <div className="animate-fadeIn">
-                        <label className="text-xs font-semibold text-slate-500 block mb-1">
+                        <label className="text-xs font-semibold text-text-muted block mb-1">
                           {language === 'ms' ? 'Tarikh Tamat Pasport *' : 'Passport Expiry Date *'}
                         </label>
                         <input 
                           type="date" 
                           value={patient.passport_expiry || ''}
                           onChange={(e) => handlePatientChange(index, 'passport_expiry', e.target.value)}
-                          className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
+                          className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-surface transition-colors font-medium"
                         />
                       </div>
                     )}
                     <div className={patient.jenis_dokumen === 'PASSPORT' ? 'md:col-span-1' : 'md:col-span-2'}>
-                      <label className="text-xs font-semibold text-slate-500 block mb-1">
+                      <label className="text-xs font-semibold text-text-muted block mb-1">
                         {language === 'ms' ? 'No Kad Pengenalan Sekunder (Pilihan)' : 'Secondary ID / MyKad (Optional)'}
                       </label>
                       <input 
@@ -657,7 +657,7 @@ export const CrossborderCreatePage: React.FC = () => {
                         value={patient.no_pengenalan}
                         onChange={(e) => handlePatientChange(index, 'no_pengenalan', e.target.value)}
                         placeholder="e.g. 780515-13-5591"
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
+                        className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-surface transition-colors font-medium"
                       />
                     </div>
                   </div>
@@ -667,18 +667,18 @@ export const CrossborderCreatePage: React.FC = () => {
           </Card>
 
           {/* Section 3: Vehicle Info */}
-          <Card className="bg-white border border-slate-200 border-l-4 border-l-emerald-600 shadow-sm rounded-xl p-6">
-            <h2 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <Card className="bg-surface border border-border-default border-l-4 border-l-emerald-600 shadow-sm rounded-xl p-6">
+            <h2 className="text-base font-bold text-text-primary mb-4 flex items-center gap-2">
               <Ambulance className="w-5 h-5 text-emerald-600" />
               {language === 'ms' ? '3. Ambulans / Kenderaan Kerajaan' : '3. Government Ambulance / Vehicle'}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-semibold text-slate-500 block mb-1">
+                <label className="text-xs font-semibold text-text-muted block mb-1">
                   {language === 'ms' ? 'No. Pendaftaran Kenderaan *' : 'Vehicle Plate Number *'}
                 </label>
                 {loadingVehicles ? (
-                  <div className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-400 font-medium">
+                  <div className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-slate-400 font-medium">
                     {language === 'ms' ? 'Memuatkan ambulans berdaftar...' : 'Loading registered vehicles...'}
                   </div>
                 ) : vehicles.length === 0 ? (
@@ -688,7 +688,7 @@ export const CrossborderCreatePage: React.FC = () => {
                       value={noPendaftaran}
                       onChange={(e) => setNoPendaftaran(e.target.value.toUpperCase())}
                       placeholder="e.g. BNN7608"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
+                      className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-surface transition-colors font-medium"
                     />
                     <p className="text-[10px] text-amber-600">
                       {language === 'ms' 
@@ -700,7 +700,7 @@ export const CrossborderCreatePage: React.FC = () => {
                   <select 
                     value={noPendaftaran}
                     onChange={(e) => setNoPendaftaran(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium font-mono"
+                    className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-surface transition-colors font-medium font-mono"
                   >
                     <option value="" disabled>{language === 'ms' ? 'Pilih Ambulans Berdaftar' : 'Select Registered Ambulance'}</option>
                     {vehicles.map((v) => (
@@ -713,7 +713,7 @@ export const CrossborderCreatePage: React.FC = () => {
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-500 block mb-1">
+                <label className="text-xs font-semibold text-text-muted block mb-1">
                   {language === 'ms' ? 'Nama Pemandu' : 'Driver Full Name'}
                 </label>
                 <input 
@@ -721,12 +721,12 @@ export const CrossborderCreatePage: React.FC = () => {
                   value={pemanduNama}
                   onChange={(e) => setPemanduNama(e.target.value)}
                   placeholder="e.g. AHMAD BIN ALI"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
+                  className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-surface transition-colors font-medium"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-500 block mb-1">
+                <label className="text-xs font-semibold text-text-muted block mb-1">
                   {language === 'ms' ? 'No. Passport Pemandu' : 'Driver Passport Number'}
                 </label>
                 <input 
@@ -734,12 +734,12 @@ export const CrossborderCreatePage: React.FC = () => {
                   value={pemanduPassport}
                   onChange={(e) => setPemanduPassport(e.target.value.toUpperCase())}
                   placeholder="e.g. K12345678"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium font-mono"
+                  className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-surface transition-colors font-medium font-mono"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-slate-500 block mb-1">
+                <label className="text-xs font-semibold text-text-muted block mb-1">
                   {language === 'ms' ? `Tarikh Tamat Pasport Pemandu ${pemanduPassport ? '*' : ''}` : `Driver Passport Expiry Date ${pemanduPassport ? '*' : ''}`}
                 </label>
                 <input 
@@ -747,15 +747,15 @@ export const CrossborderCreatePage: React.FC = () => {
                   value={pemanduPassportExpiry}
                   onChange={(e) => setPemanduPassportExpiry(e.target.value)}
                   disabled={!pemanduPassport}
-                  className={`w-full border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium ${!pemanduPassport ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-slate-50 focus:bg-white'}`}
+                  className={`w-full border border-border-default rounded-xl p-3 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors font-medium ${!pemanduPassport ? 'bg-subtle text-slate-400 cursor-not-allowed' : 'bg-subtle/50 focus:bg-surface'}`}
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="text-xs font-semibold text-slate-500 block mb-2">
+                <label className="text-xs font-semibold text-text-muted block mb-2">
                   {language === 'ms' ? 'Peralatan Perubatan Lain (Boleh pilih lebih dari satu)' : 'Additional Medical Equipment (Multiple choice)'}
                 </label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-subtle/50 p-4 rounded-xl border border-border-default">
                   {[
                     { id: 'vital_sign', label: 'Vital Sign Monitor' },
                     { id: 'portable_suction', label: 'Portable Suction' },
@@ -765,7 +765,7 @@ export const CrossborderCreatePage: React.FC = () => {
                   ].map((eq) => {
                     const isChecked = selectedEquipment.includes(eq.id);
                     return (
-                      <label key={eq.id} className="flex items-center gap-2 text-xs font-semibold text-slate-700 cursor-pointer select-none">
+                      <label key={eq.id} className="flex items-center gap-2 text-xs font-semibold text-text-secondary cursor-pointer select-none">
                         <input
                           type="checkbox"
                           checked={isChecked}
@@ -786,7 +786,7 @@ export const CrossborderCreatePage: React.FC = () => {
                 
                 {selectedEquipment.includes('others') && (
                   <div className="mt-3">
-                    <label className="text-xs font-semibold text-slate-500 block mb-1">
+                    <label className="text-xs font-semibold text-text-muted block mb-1">
                       {language === 'ms' ? 'Nyatakan Peralatan Lain *' : 'Specify Other Equipment *'}
                     </label>
                     <input 
@@ -794,7 +794,7 @@ export const CrossborderCreatePage: React.FC = () => {
                       value={customEquipment}
                       onChange={(e) => setCustomEquipment(e.target.value)}
                       placeholder="e.g. Oxygen concentrator, infusion pump"
-                      className="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full bg-surface border border-border-default rounded-xl p-3 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                 )}
@@ -804,10 +804,10 @@ export const CrossborderCreatePage: React.FC = () => {
           </Card>
 
           {/* Section 4: Pengiring Perubatan KKM */}
-          <Card className="bg-white border border-slate-200 border-l-4 border-l-emerald-600 shadow-sm rounded-xl p-6 space-y-6">
+          <Card className="bg-surface border border-border-default border-l-4 border-l-emerald-600 shadow-sm rounded-xl p-6 space-y-6">
             <div className="flex justify-between items-center flex-wrap gap-2">
               <div>
-                <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <h2 className="text-base font-bold text-text-primary flex items-center gap-2">
                   <Users className="w-5 h-5 text-emerald-600" />
                   {language === 'ms' ? '4. Pengiring Perubatan KKM' : '4. MOH Medical Escorts'}
                 </h2>
@@ -822,7 +822,7 @@ export const CrossborderCreatePage: React.FC = () => {
                   onClick={handleAddKkmEscort}
                   type="button"
                   variant="outline"
-                  className="border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold flex items-center gap-1 rounded-xl px-3 py-1.5 cursor-pointer"
+                  className="border-border-default hover:bg-subtle/50 text-text-secondary text-xs font-semibold flex items-center gap-1 rounded-xl px-3 py-1.5 cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5 text-emerald-600" />
                   {language === 'ms' ? 'Tambah Kakitangan KKM' : 'Add MOH Staff'}
@@ -831,15 +831,15 @@ export const CrossborderCreatePage: React.FC = () => {
             </div>
 
             {kkmEscorts.length === 0 ? (
-              <div className="text-center text-xs text-slate-400 py-6 border border-dashed border-slate-200 rounded-xl bg-slate-50/50">
+              <div className="text-center text-xs text-slate-400 py-6 border border-dashed border-border-default rounded-xl bg-subtle/50">
                 {language === 'ms' ? 'Tiada pengiring perubatan didaftarkan. Sila tambah Kakitangan KKM.' : 'No medical escorts registered. Please add MOH staff.'}
               </div>
             ) : (
               <div className="space-y-4">
                 {kkmEscorts.map((escort, index) => (
-                  <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200 relative">
+                  <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-3 bg-subtle/50 p-4 rounded-xl border border-border-default relative">
                     <div className="md:col-span-4 flex justify-between items-center mb-1">
-                      <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold border border-emerald-200 text-emerald-800 bg-emerald-50 capitalize">
+                      <span className="text-xs px-2.5 py-0.5 rounded-full font-semibold border border-emerald-500/20 text-emerald-400 bg-emerald-500/10 capitalize">
                         {escort.jawatan === 'nurse' ? 'Staff Nurse (SN)' : escort.jawatan === 'medical_officer' ? 'Medical Officer (MO)' : escort.jawatan === 'assistant_medical_officer' ? 'Assistant Medical Officer (AMO)' : escort.jawatan === 'ppk' ? 'Healthcare Assistant (PPK)' : escort.jawatan}
                       </span>
                       {!isKkmAutoFilled && (
@@ -853,7 +853,7 @@ export const CrossborderCreatePage: React.FC = () => {
                       )}
                     </div>
                     <div className="md:col-span-2">
-                      <label className="text-xs font-semibold text-slate-500 block mb-1">
+                      <label className="text-xs font-semibold text-text-muted block mb-1">
                         {language === 'ms' ? 'Nama Penuh *' : 'Full Name *'}
                       </label>
                       <input 
@@ -862,17 +862,17 @@ export const CrossborderCreatePage: React.FC = () => {
                         onChange={(e) => handleKkmEscortChange(index, 'nama', e.target.value.toUpperCase())}
                         placeholder="e.g. SN NORAINI BINTI SAAD"
                         disabled={isKkmAutoFilled}
-                        className={`w-full border border-slate-200 rounded-lg p-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 ${isKkmAutoFilled ? 'bg-slate-100 cursor-not-allowed text-slate-400 font-semibold' : 'bg-white'}`}
+                        className={`w-full border border-border-default rounded-lg p-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 ${isKkmAutoFilled ? 'bg-subtle cursor-not-allowed text-slate-400 font-semibold' : 'bg-surface'}`}
                       />
                     </div>
                     <div>
-                      <label className="text-xs font-semibold text-slate-500 block mb-1">
+                      <label className="text-xs font-semibold text-text-muted block mb-1">
                         {language === 'ms' ? 'Jenis Dokumen' : 'Document Type'}
                       </label>
                       <select
                         value={escort.jenis_dokumen}
                         onChange={(e) => handleKkmEscortChange(index, 'jenis_dokumen', e.target.value as JenisDokumen)}
-                        className="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full bg-surface border border-border-default rounded-lg p-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500"
                       >
                         <option value="IC">{language === 'ms' ? 'IC / MYKAD' : 'National ID / MyKad'}</option>
                         <option value="PASSPORT">PASSPORT</option>
@@ -880,7 +880,7 @@ export const CrossborderCreatePage: React.FC = () => {
                       </select>
                     </div>
                     <div className={escort.jenis_dokumen === 'PASSPORT' ? 'md:col-span-1' : 'md:col-span-2'}>
-                      <label className="text-xs font-semibold text-slate-500 block mb-1 font-mono">
+                      <label className="text-xs font-semibold text-text-muted block mb-1 font-mono">
                         {language === 'ms' ? 'No. Dokumen' : 'Document No'}
                       </label>
                       <input 
@@ -888,19 +888,19 @@ export const CrossborderCreatePage: React.FC = () => {
                         value={escort.no_dokumen}
                         onChange={(e) => handleKkmEscortChange(index, 'no_dokumen', e.target.value.toUpperCase())}
                         placeholder="e.g. 880412-13-5240"
-                        className="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                        className="w-full bg-surface border border-border-default rounded-lg p-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
                       />
                     </div>
                     {escort.jenis_dokumen === 'PASSPORT' && (
                       <div className="md:col-span-1 animate-fadeIn">
-                        <label className="text-xs font-semibold text-slate-500 block mb-1">
+                        <label className="text-xs font-semibold text-text-muted block mb-1">
                           {language === 'ms' ? 'Tarikh Tamat Pasport *' : 'Passport Expiry Date *'}
                         </label>
                         <input 
                           type="date" 
                           value={escort.passport_expiry || ''}
                           onChange={(e) => handleKkmEscortChange(index, 'passport_expiry', e.target.value)}
-                          className="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full bg-surface border border-border-default rounded-lg p-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                       </div>
                     )}
@@ -911,8 +911,8 @@ export const CrossborderCreatePage: React.FC = () => {
           </Card>
 
           {/* Section 5: Waris / Pengiring Terdekat */}
-          <Card className="bg-white border border-slate-200 border-l-4 border-l-cyan-600 shadow-sm rounded-xl p-6 space-y-6">
-            <h2 className="text-base font-bold text-slate-900 flex items-center gap-2">
+          <Card className="bg-surface border border-border-default border-l-4 border-l-cyan-600 shadow-sm rounded-xl p-6 space-y-6">
+            <h2 className="text-base font-bold text-text-primary flex items-center gap-2">
               <Users className="w-5 h-5 text-cyan-600" />
               {language === 'ms' ? '5. Waris / Pengiring Terdekat (Maksima 1 Waris Per Pesakit)' : '5. Accompanying Family / Next of Kin (Max 1 Per Patient)'}
             </h2>
@@ -920,9 +920,9 @@ export const CrossborderCreatePage: React.FC = () => {
               {patients.map((patient, patientIdx) => {
                 const waris = warisEscorts[patientIdx];
                 return (
-                  <div key={patientIdx} className="border border-slate-100 rounded-xl p-4 bg-slate-50/50 space-y-4">
-                    <div className="flex justify-between items-center pb-2 border-b border-slate-100">
-                      <div className="text-xs font-bold text-slate-600">
+                  <div key={patientIdx} className="border border-border-subtle rounded-xl p-4 bg-subtle/50 space-y-4">
+                    <div className="flex justify-between items-center pb-2 border-b border-border-subtle">
+                      <div className="text-xs font-bold text-text-muted">
                         {language === 'ms' ? `Waris untuk Pesakit #${patientIdx + 1}:` : `Next of Kin for Patient #${patientIdx + 1}:`}{' '}
                         <span className="text-blue-600 font-black">{patient.nama || (language === 'ms' ? '(Sila isi nama pesakit di Bahagian 2)' : '(Fill patient name in Section 2)')}</span>
                       </div>
@@ -932,7 +932,7 @@ export const CrossborderCreatePage: React.FC = () => {
                           type="button"
                           variant="outline"
                           disabled={!patient.nama}
-                          className="border-slate-200 hover:bg-slate-50 text-slate-700 text-[10px] font-bold flex items-center gap-1 rounded-lg px-2.5 py-1 cursor-pointer"
+                          className="border-border-default hover:bg-subtle/50 text-text-secondary text-[10px] font-bold flex items-center gap-1 rounded-lg px-2.5 py-1 cursor-pointer"
                         >
                           <Plus className="w-3 h-3 text-cyan-600" />
                           {language === 'ms' ? 'Tambah Waris' : 'Add Next of Kin'}
@@ -952,7 +952,7 @@ export const CrossborderCreatePage: React.FC = () => {
                     {waris && (
                       <div className="grid grid-cols-1 md:grid-cols-4 gap-3 animate-fadeIn">
                         <div className="md:col-span-2">
-                          <label className="text-xs font-semibold text-slate-500 block mb-1">
+                          <label className="text-xs font-semibold text-text-muted block mb-1">
                             {language === 'ms' ? 'Nama Penuh Waris *' : 'Next of Kin Full Name *'}
                           </label>
                           <input 
@@ -960,17 +960,17 @@ export const CrossborderCreatePage: React.FC = () => {
                             value={waris.nama}
                             onChange={(e) => handleWarisChange(patientIdx, 'nama', e.target.value.toUpperCase())}
                             placeholder="e.g. SITI FATIMAH BINTI AHMAD"
-                            className="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full bg-surface border border-border-default rounded-lg p-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500"
                           />
                         </div>
                         <div>
-                          <label className="text-xs font-semibold text-slate-500 block mb-1">
+                          <label className="text-xs font-semibold text-text-muted block mb-1">
                             {language === 'ms' ? 'Hubungan *' : 'Relationship *'}
                           </label>
                           <select
                             value={waris.hubungan}
                             onChange={(e) => handleWarisChange(patientIdx, 'hubungan', e.target.value)}
-                            className="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full bg-surface border border-border-default rounded-lg p-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500"
                           >
                             <option value="Suami/Isteri">{language === 'ms' ? 'Suami/Isteri' : 'Spouse'}</option>
                             <option value="Ibu/Bapa/Penjaga">{language === 'ms' ? 'Ibu/Bapa/Penjaga' : 'Parent / Guardian'}</option>
@@ -980,13 +980,13 @@ export const CrossborderCreatePage: React.FC = () => {
                           </select>
                         </div>
                         <div>
-                          <label className="text-xs font-semibold text-slate-500 block mb-1">
+                          <label className="text-xs font-semibold text-text-muted block mb-1">
                             {language === 'ms' ? 'Jenis Dokumen *' : 'Document Type *'}
                           </label>
                           <select
                             value={waris.jenis_dokumen}
                             onChange={(e) => handleWarisChange(patientIdx, 'jenis_dokumen', e.target.value as JenisDokumen)}
-                            className="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full bg-surface border border-border-default rounded-lg p-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500"
                           >
                             <option value="PASSPORT">PASSPORT</option>
                             <option value="IC">{language === 'ms' ? 'IC / MYKAD' : 'National ID / MyKad'}</option>
@@ -994,7 +994,7 @@ export const CrossborderCreatePage: React.FC = () => {
                           </select>
                         </div>
                         <div className={waris.jenis_dokumen === 'PASSPORT' ? 'md:col-span-1' : 'md:col-span-2'}>
-                          <label className="text-xs font-semibold text-slate-500 block mb-1">
+                          <label className="text-xs font-semibold text-text-muted block mb-1">
                             {language === 'ms' ? 'No. Dokumen *' : 'Document No *'}
                           </label>
                           <input 
@@ -1002,19 +1002,19 @@ export const CrossborderCreatePage: React.FC = () => {
                             value={waris.no_dokumen}
                             onChange={(e) => handleWarisChange(patientIdx, 'no_dokumen', e.target.value.toUpperCase())}
                             placeholder="e.g. A98765432"
-                            className="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
+                            className="w-full bg-surface border border-border-default rounded-lg p-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono"
                           />
                         </div>
                         {waris.jenis_dokumen === 'PASSPORT' && (
                           <div className="md:col-span-1 animate-fadeIn">
-                            <label className="text-xs font-semibold text-slate-500 block mb-1">
+                            <label className="text-xs font-semibold text-text-muted block mb-1">
                               {language === 'ms' ? 'Tarikh Tamat Pasport *' : 'Passport Expiry Date *'}
                             </label>
                             <input 
                               type="date" 
                               value={waris.passport_expiry || ''}
                               onChange={(e) => handleWarisChange(patientIdx, 'passport_expiry', e.target.value)}
-                              className="w-full bg-white border border-slate-200 rounded-lg p-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full bg-surface border border-border-default rounded-lg p-2 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                           </div>
                         )}
@@ -1027,25 +1027,25 @@ export const CrossborderCreatePage: React.FC = () => {
           </Card>
 
           {/* Section 6: Doctor Sign-off */}
-          <Card className="bg-white border border-slate-200 border-l-4 border-l-amber-600 shadow-sm rounded-xl p-6">
-            <h2 className="text-base font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <Card className="bg-surface border border-border-default border-l-4 border-l-amber-600 shadow-sm rounded-xl p-6">
+            <h2 className="text-base font-bold text-text-primary mb-4 flex items-center gap-2">
               <HeartHandshake className="w-5 h-5 text-amber-600" />
               {language === 'ms' ? '6. Pengesahan Doktor Perujuk' : '6. Referring Medical Officer Endorsement'}
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-semibold text-slate-500 block mb-1">
+                <label className="text-xs font-semibold text-text-muted block mb-1">
                   {language === 'ms' ? 'Nama Doktor Perujuk *' : 'Referring Medical Officer Name *'}
                 </label>
                 <input 
                   type="text" 
                   value={doktorPerujukNama}
                   onChange={(e) => setDoktorPerujukNama(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
+                  className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-surface transition-colors font-medium"
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold text-slate-500 block mb-1">
+                <label className="text-xs font-semibold text-text-muted block mb-1">
                   {language === 'ms' ? 'Catatan Tambahan (Pilihan)' : 'Clinical Indications / Diagnosis (Optional)'}
                 </label>
                 <input 
@@ -1053,7 +1053,7 @@ export const CrossborderCreatePage: React.FC = () => {
                   value={catatan}
                   onChange={(e) => setCatatan(e.target.value)}
                   placeholder={language === 'ms' ? 'Sebab rujukan atau diagnosis ringkas' : 'Brief diagnosis or reason for tertiary transfer'}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all font-medium"
+                  className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-surface transition-colors font-medium"
                 />
               </div>
             </div>
@@ -1066,7 +1066,7 @@ export const CrossborderCreatePage: React.FC = () => {
               onClick={() => handleSubmit('draft')}
               type="button"
               variant="outline"
-              className="flex-1 border-slate-200 text-slate-700 hover:bg-slate-50 font-semibold p-4 flex items-center justify-center gap-2 rounded-xl text-sm cursor-pointer"
+              className="flex-1 border-border-default text-text-secondary hover:bg-subtle/50 font-semibold p-4 flex items-center justify-center gap-2 rounded-xl text-sm cursor-pointer"
             >
               <Save className="w-4 h-4" />
               {language === 'ms' ? 'Simpan Sebagai Draf' : 'Save As Draft'}
@@ -1085,23 +1085,23 @@ export const CrossborderCreatePage: React.FC = () => {
         {/* Right Side: Informative Sidebar & Summary panel */}
         <div className="space-y-6 w-full">
           {/* Summary Panel */}
-          <Card className="bg-white border border-slate-200 shadow-sm rounded-xl p-6">
-            <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <Card className="bg-surface border border-border-default shadow-sm rounded-xl p-6">
+            <h3 className="text-sm font-bold text-text-primary mb-4 flex items-center gap-2">
               <ShieldCheck className="w-4 h-4 text-blue-600" />
               {language === 'ms' ? 'Ringkasan Permohonan' : 'Application Summary'}
             </h3>
-            <div className="space-y-3 text-xs text-slate-600">
-              <div className="flex justify-between py-1.5 border-b border-slate-100">
+            <div className="space-y-3 text-xs text-text-muted">
+              <div className="flex justify-between py-1.5 border-b border-border-subtle">
                 <span>{language === 'ms' ? 'Rujukan Pelepasan:' : 'Clearance Route:'}</span>
-                <span className="font-semibold text-slate-900">Hospital Lawas &rarr; Limbang</span>
+                <span className="font-semibold text-text-primary">Hospital Lawas &rarr; Limbang</span>
               </div>
-              <div className="flex justify-between py-1.5 border-b border-slate-100">
+              <div className="flex justify-between py-1.5 border-b border-border-subtle">
                 <span>{language === 'ms' ? 'Jumlah Pesakit:' : 'Total Patients:'}</span>
-                <span className="font-semibold text-slate-900">{patients.length} {language === 'ms' ? 'kes' : 'cases'}</span>
+                <span className="font-semibold text-text-primary">{patients.length} {language === 'ms' ? 'kes' : 'cases'}</span>
               </div>
-              <div className="flex justify-between py-1.5 border-b border-slate-100">
+              <div className="flex justify-between py-1.5 border-b border-border-subtle">
                 <span>{language === 'ms' ? 'Jumlah Pengiring:' : 'Total Escorts:'}</span>
-                <span className="font-semibold text-slate-900">{kkmEscorts.length + warisEscorts.filter(Boolean).length} {language === 'ms' ? 'orang' : 'pax'}</span>
+                <span className="font-semibold text-text-primary">{kkmEscorts.length + warisEscorts.filter(Boolean).length} {language === 'ms' ? 'orang' : 'pax'}</span>
               </div>
               <div className="flex justify-between py-1.5">
                 <span>{language === 'ms' ? 'No. Kenderaan:' : 'Vehicle Plate:'}</span>
@@ -1112,12 +1112,12 @@ export const CrossborderCreatePage: React.FC = () => {
           </Card>
 
           {/* Border Crossing Guidance */}
-          <Card className="bg-white border border-slate-200 shadow-sm rounded-xl p-6">
-            <h3 className="text-sm font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <Card className="bg-surface border border-border-default shadow-sm rounded-xl p-6">
+            <h3 className="text-sm font-bold text-text-primary mb-4 flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-amber-500" />
               {language === 'ms' ? 'Panduan Kawalan Sempadan' : 'Border Crossing Guidelines'}
             </h3>
-            <div className="space-y-3.5 text-xs text-slate-600 leading-relaxed">
+            <div className="space-y-3.5 text-xs text-text-muted leading-relaxed">
               <div className="flex items-start gap-2">
                 <CheckSquare className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
                 <span>{language === 'ms' ? 'Dokumen perjalanan fizikal (pasport/IC) mestilah sah bagi semua individu tersenarai.' : 'Valid physical passports and travel IDs are mandatory for all listed patients and escorts.'}</span>
@@ -1130,7 +1130,7 @@ export const CrossborderCreatePage: React.FC = () => {
                 <CheckSquare className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
                 <span>{language === 'ms' ? 'Semua peralatan perubatan sokongan (ventilator/oksigen) mestilah didokumenkan dengan jelas.' : 'All high-care life support equipment (ventilators, oxygen) must be declared on the transit permit.'}</span>
               </div>
-              <p className="text-[11px] text-amber-800 bg-amber-50/50 p-3 rounded-lg border border-amber-100 mt-2 font-medium">
+              <p className="text-[11px] text-amber-400 bg-amber-500/10 p-3 rounded-lg border border-amber-100 mt-2 font-medium">
                 {language === 'ms' 
                   ? 'Penting: Kelewatan di imigresen Brunei (Mengkalap/Ujung Jalan) boleh menjejaskan kestabilan pesakit kritikal. Pastikan e-permit/dokumen sempadan lengkap.'
                   : 'Notice: Border clearance delays at Brunei checkpoints (Mengkalap / Ujung Jalan) can jeopardize critical patients. Ensure all documents are verified.'}

@@ -67,17 +67,17 @@ export const CylinderOfflineBanner: React.FC<CylinderOfflineBannerProps> = ({ ho
   const showBanner = !isOnline || pendingCount > 0 || isSyncing || successToast
 
   return (
-    <div className="w-full mb-4 transition-all duration-300">
+    <div className="w-full mb-4 transition-[transform,opacity,box-shadow,border-color] duration-300">
       {/* Toast Alert for sync completion */}
       {successToast && (
-        <div className="mb-2 p-3 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between text-emerald-800 text-sm shadow-sm animate-in fade-in slide-in-from-top-2">
+        <div className="mb-2 p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl flex items-center justify-between text-emerald-400 text-sm shadow-sm animate-in fade-in slide-in-from-top-2">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
             <span className="font-medium">{successToast}</span>
           </div>
           <button
             onClick={() => setSuccessToast(null)}
-            className="text-emerald-600 hover:text-emerald-800 text-xs font-semibold px-2 py-1"
+            className="text-emerald-600 hover:text-emerald-400 text-xs font-semibold px-2 py-1"
           >
             ✕
           </button>
@@ -86,12 +86,12 @@ export const CylinderOfflineBanner: React.FC<CylinderOfflineBannerProps> = ({ ho
 
       {showBanner && (
         <div
-          className={`p-3.5 sm:p-4 rounded-2xl border shadow-sm transition-all duration-300 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 ${
+          className={`p-3.5 sm:p-4 rounded-2xl border shadow-sm transition-[transform,opacity,box-shadow,border-color] duration-300 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 ${
             !isOnline
-              ? 'bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-amber-500/15 border-amber-300 text-amber-950'
+              ? 'bg-gradient-to-r from-amber-500/10 via-orange-500/10 to-amber-500/15 border-amber-300 text-amber-400 dark:text-amber-300 font-bold'
               : pendingCount > 0
-              ? 'bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-blue-500/15 border-blue-300 text-blue-950'
-              : 'bg-slate-50 border-slate-200 text-slate-800'
+              ? 'bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-blue-500/15 border-blue-300 text-blue-400 dark:text-blue-300 font-bold'
+              : 'bg-subtle/50 border-border-default text-text-primary'
           }`}
         >
           {/* Status Details */}
@@ -132,10 +132,10 @@ export const CylinderOfflineBanner: React.FC<CylinderOfflineBannerProps> = ({ ho
                 <span
                   className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${
                     !isOnline
-                      ? 'bg-amber-200 text-amber-900 border border-amber-300'
+                      ? 'bg-amber-200 text-amber-400 dark:text-amber-300 font-bold border border-amber-300'
                       : pendingCount > 0
-                      ? 'bg-blue-200 text-blue-900 border border-blue-300'
-                      : 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                      ? 'bg-blue-200 text-blue-400 dark:text-blue-300 font-bold border border-blue-300'
+                      : 'bg-emerald-100 text-emerald-400 border border-emerald-300'
                   }`}
                 >
                   {pendingCount > 0
@@ -146,7 +146,7 @@ export const CylinderOfflineBanner: React.FC<CylinderOfflineBannerProps> = ({ ho
                 </span>
               </div>
 
-              <p className="text-xs mt-0.5 text-slate-600">
+              <p className="text-xs mt-0.5 text-text-secondary">
                 {!isOnline
                   ? language === 'ms'
                     ? 'Imbasan QR, carian silinder, dan penerimaan stok berfungsi lancar dari memori peranti anda. Transaksi akan disegerakkan secara automatik apabila talian kembali pulih.'
@@ -170,7 +170,7 @@ export const CylinderOfflineBanner: React.FC<CylinderOfflineBannerProps> = ({ ho
                 type="button"
                 onClick={handleManualSync}
                 disabled={isSyncing}
-                className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-60 rounded-xl shadow-sm transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-60 rounded-xl shadow-sm transition-[transform,opacity,box-shadow,border-color] cursor-pointer"
               >
                 <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? 'animate-spin' : ''}`} />
                 <span>{isSyncing ? (language === 'ms' ? 'Menyegerak...' : 'Syncing...') : (language === 'ms' ? 'Segerak Sekarang' : 'Sync Now')}</span>
@@ -188,9 +188,9 @@ export const CylinderOfflineBanner: React.FC<CylinderOfflineBannerProps> = ({ ho
                     ? 'Muat turun data silinder terkini ke peranti sebelum masuk ke kawasan stor tanpa liputan internet'
                     : 'Preload cylinder records onto device before entering areas without cellular signal'
                 }
-                className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl shadow-2xs transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-text-secondary bg-surface hover:bg-subtle/50 border border-border-default rounded-xl shadow-elevation-1 transition-[transform,opacity,box-shadow,border-color] cursor-pointer"
               >
-                <HardDriveDownload className={`w-3.5 h-3.5 text-slate-500 ${isWarming ? 'animate-bounce' : ''}`} />
+                <HardDriveDownload className={`w-3.5 h-3.5 text-text-muted ${isWarming ? 'animate-bounce' : ''}`} />
                 <span className="hidden sm:inline">
                   {isWarming
                     ? language === 'ms'
@@ -206,21 +206,21 @@ export const CylinderOfflineBanner: React.FC<CylinderOfflineBannerProps> = ({ ho
         </div>
       )}
 
-      {/* Floating Offline Mini Pill (Visible when online with 0 pending, but giving assurance) */}
+      {/* Floating Offline Mini Pill (Modern Depth Dark-First Standard) */}
       {!showBanner && (
-        <div className="flex items-center justify-between gap-2 text-xs text-slate-600 bg-white border border-slate-200/90 rounded-xl px-3 py-1.5 mb-1 shadow-2xs">
+        <div className="flex items-center justify-between gap-2 text-xs text-text-secondary bg-surface border border-border-default rounded-xl px-3.5 py-2 mb-2 shadow-elevation-1">
           <div className="flex items-center gap-2 min-w-0">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0 inline-block" />
-            <span className="font-semibold text-slate-900 shrink-0 text-[11px] sm:text-xs">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 shrink-0 inline-block shadow-xs shadow-emerald-500/50" />
+            <span className="font-bold text-text-primary shrink-0 text-[11px] sm:text-xs">
               {language === 'ms' ? 'Sistem Dalam Talian' : 'System Online'}
             </span>
-            <span className="text-slate-300 hidden sm:inline">•</span>
-            <span className="text-slate-500 truncate hidden sm:inline text-xs">
+            <span className="text-border-default hidden sm:inline">•</span>
+            <span className="text-text-muted truncate hidden sm:inline text-xs">
               {language === 'ms'
                 ? `Pangkalan data peranti: ${cachedCount} rekod silinder sedia`
                 : `Local memory: ${cachedCount} cylinder records synced`}
             </span>
-            <span className="text-[10px] font-mono font-medium text-slate-600 sm:hidden bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200 shrink-0">
+            <span className="text-[10px] font-mono font-semibold text-text-secondary sm:hidden bg-subtle px-2 py-0.5 rounded-md border border-border-default shrink-0">
               {cachedCount} {language === 'ms' ? 'rekod' : 'synced'}
             </span>
           </div>
@@ -228,7 +228,7 @@ export const CylinderOfflineBanner: React.FC<CylinderOfflineBannerProps> = ({ ho
             type="button"
             onClick={handleManualWarmup}
             disabled={isWarming}
-            className="text-teal-700 hover:text-teal-800 font-semibold flex items-center gap-1.5 shrink-0 cursor-pointer text-xs active:scale-95 transition-all"
+            className="text-accent-base hover:text-accent-hover font-semibold flex items-center gap-1.5 shrink-0 cursor-pointer text-xs active:scale-95 transition-colors"
             title={language === 'ms' ? 'Kemas kini cache tempatan' : 'Refresh local cache'}
           >
             <HardDriveDownload className={`w-3.5 h-3.5 ${isWarming ? 'animate-spin' : ''}`} />

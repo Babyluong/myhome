@@ -75,7 +75,7 @@ export const PrepackItemCard: React.FC<PrepackItemCardProps> = ({
             } ${isToggling ? 'opacity-50 cursor-wait' : ''}`}
           >
             <span
-              className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out ${
+              className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-surface shadow-xs ring-0 transition duration-200 ease-in-out ${
                 isActive ? 'translate-x-4' : 'translate-x-0'
               }`}
             />
@@ -169,7 +169,7 @@ export const PrepackItemCard: React.FC<PrepackItemCardProps> = ({
         <button
           type="button"
           onClick={() => onItemClick(item)}
-          className="w-full py-2 px-3 bg-teal-500/10 hover:bg-teal-500/20 active:scale-[0.98] text-teal-700 dark:text-teal-300 border border-teal-500/30 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs"
+          className="w-full py-2 px-3 bg-teal-500/10 hover:bg-teal-500/20 active:scale-[0.98] text-teal-700 dark:text-teal-300 border border-teal-500/30 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs"
         >
           <BookOpen className="w-3.5 h-3.5" />
           <span>View Preparation Monograph (SOP)</span>
@@ -180,7 +180,7 @@ export const PrepackItemCard: React.FC<PrepackItemCardProps> = ({
             <button
               type="button"
               onClick={() => onStartBatch(item)}
-              className="flex-1 py-1.5 px-3 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs"
+              className="flex-1 py-1.5 px-3 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>Start Batch</span>
@@ -190,7 +190,7 @@ export const PrepackItemCard: React.FC<PrepackItemCardProps> = ({
             <button
               type="button"
               onClick={() => onEditItem(item)}
-              className="py-1.5 px-3 bg-surface hover:bg-subtle active:scale-[0.98] text-text-secondary border border-border-default hover:border-border-strong rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs"
+              className="py-1.5 px-3 bg-surface hover:bg-subtle active:scale-[0.98] text-text-secondary border border-border-default hover:border-border-strong rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-xs"
             >
               <Edit2 className="w-3.5 h-3.5" />
               <span>Edit</span>

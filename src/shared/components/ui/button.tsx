@@ -31,7 +31,7 @@ const variantClasses: Record<ButtonVariant, string> = {
   primary:
     "bg-teal-700 text-white hover:bg-teal-800 active:bg-teal-900 dark:bg-teal-600 dark:hover:bg-teal-500 dark:text-slate-950 border border-teal-800/30 dark:border-teal-500/30 focus-visible:ring-teal-500 shadow-xs active:scale-[0.98]",
   secondary:
-    "bg-surface text-text-secondary hover:bg-subtle active:bg-muted-surface border border-border-default hover:border-border-strong text-slate-800 dark:text-slate-200 focus-visible:ring-slate-400 shadow-xs active:scale-[0.98]",
+    "bg-surface text-text-secondary hover:bg-subtle active:bg-muted-surface border border-border-default hover:border-border-strong text-text-primary dark:text-slate-200 focus-visible:ring-slate-400 shadow-xs active:scale-[0.98]",
   outline:
     "bg-transparent text-text-primary border border-border-default hover:bg-subtle active:bg-muted-surface hover:border-border-strong focus-visible:ring-teal-500 shadow-xs active:scale-[0.98]",
   ghost: 
@@ -102,7 +102,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const spinnerSize = size === "xs" ? "xs" : size === "sm" ? "sm" : size === "lg" || size === "xl" ? "lg" : "md";
     
     const buttonClasses = cn(
-      "inline-flex items-center justify-center rounded-lg font-medium transition-all duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:cursor-not-allowed disabled:opacity-50 disabled:transform-none select-none",
+      "inline-flex items-center justify-center rounded-lg font-medium transition-colors duration-150 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-canvas disabled:cursor-not-allowed disabled:opacity-50 disabled:transform-none select-none",
       variantClasses[variant],
       sizeClasses[size],
       className

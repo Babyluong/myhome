@@ -83,8 +83,10 @@ export const SlowMovingPage: React.FC = () => {
   return (
     <div className="w-full space-y-8 text-slate-100">
       {/* Header Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-slate-900/80 backdrop-blur-xl p-6 rounded-2xl border border-slate-800/80 shadow-2xl relative overflow-hidden">
-        <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-slate-900/80 backdrop-blur-xl p-6 rounded-2xl border border-slate-800/80 shadow-2xl relative">
+        <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+          <div className="absolute right-0 top-0 translate-x-12 -translate-y-12 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl" />
+        </div>
         
         <div className="flex items-start gap-4 relative z-10">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center text-white shadow-[0_0_20px_rgba(245,158,11,0.3)] flex-shrink-0">
@@ -126,7 +128,7 @@ export const SlowMovingPage: React.FC = () => {
 
           <button
             onClick={() => void loadData()}
-            className="p-2.5 rounded-xl border border-slate-800 bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white transition-all duration-200 shadow-md"
+            className="p-2.5 rounded-xl border border-slate-800 bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white transition-colors duration-150 shadow-md"
             title="Muat Semula Data"
           >
             <RefreshCw className={cn("w-4 h-4", isLoading && "animate-spin text-amber-400")} />
@@ -140,9 +142,9 @@ export const SlowMovingPage: React.FC = () => {
         <motion.div
           whileHover={{ y: -2 }}
           transition={{ duration: 0.2 }}
-          className="relative overflow-hidden bg-slate-900/60 backdrop-blur-xl border border-orange-500/20 hover:border-orange-500/40 rounded-2xl p-5 shadow-xl transition-all group"
+          className="relative overflow-hidden bg-slate-900/60 backdrop-blur-xl border border-orange-500/20 hover:border-orange-500/40 rounded-2xl p-5 shadow-xl transition-colors group"
         >
-          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-orange-500/10 rounded-full blur-2xl group-hover:bg-orange-500/20 transition-all pointer-events-none" />
+          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-orange-500/10 rounded-full blur-2xl group-hover:bg-orange-500/20 transition-colors pointer-events-none" />
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-orange-400">
               Jumlah Item Lambat Bergerak
@@ -159,16 +161,16 @@ export const SlowMovingPage: React.FC = () => {
               &ge; {daysSinceMovement} Hari
             </span>
           </div>
-          <p className="text-[11px] text-slate-500 mt-2">Item tanpa transaksi rekod terkini</p>
+          <p className="text-[11px] text-text-muted mt-2">Item tanpa transaksi rekod terkini</p>
         </motion.div>
 
         {/* Card 2: Total Value at Risk */}
         <motion.div
           whileHover={{ y: -2 }}
           transition={{ duration: 0.2 }}
-          className="relative overflow-hidden bg-slate-900/60 backdrop-blur-xl border border-amber-500/20 hover:border-amber-500/40 rounded-2xl p-5 shadow-xl transition-all group"
+          className="relative overflow-hidden bg-slate-900/60 backdrop-blur-xl border border-amber-500/20 hover:border-amber-500/40 rounded-2xl p-5 shadow-xl transition-colors group"
         >
-          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-all pointer-events-none" />
+          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-amber-500/10 rounded-full blur-2xl group-hover:bg-amber-500/20 transition-colors pointer-events-none" />
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
               Nilai Berisiko (Total Risk)
@@ -185,16 +187,16 @@ export const SlowMovingPage: React.FC = () => {
               MYR
             </span>
           </div>
-          <p className="text-[11px] text-slate-500 mt-2">Jumlah peruntukan terikat dalam item pasif</p>
+          <p className="text-[11px] text-text-muted mt-2">Jumlah peruntukan terikat dalam item pasif</p>
         </motion.div>
 
         {/* Card 3: Average Idle Age */}
         <motion.div
           whileHover={{ y: -2 }}
           transition={{ duration: 0.2 }}
-          className="relative overflow-hidden bg-slate-900/60 backdrop-blur-xl border border-sky-500/20 hover:border-sky-500/40 rounded-2xl p-5 shadow-xl transition-all group"
+          className="relative overflow-hidden bg-slate-900/60 backdrop-blur-xl border border-sky-500/20 hover:border-sky-500/40 rounded-2xl p-5 shadow-xl transition-colors group"
         >
-          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-sky-500/10 rounded-full blur-2xl group-hover:bg-sky-500/20 transition-all pointer-events-none" />
+          <div className="absolute -right-6 -bottom-6 w-24 h-24 bg-sky-500/10 rounded-full blur-2xl group-hover:bg-sky-500/20 transition-colors pointer-events-none" />
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase tracking-wider text-sky-400">
               Purata Umur Pasif
@@ -205,13 +207,13 @@ export const SlowMovingPage: React.FC = () => {
           </div>
           <div className="mt-4 flex items-baseline justify-between">
             <span className="text-3xl font-extrabold text-sky-300 tabular-nums">
-              {avgAge} <span className="text-lg font-bold text-slate-500">hari</span>
+              {avgAge} <span className="text-lg font-bold text-text-muted">hari</span>
             </span>
             <span className="text-xs font-semibold text-sky-400 bg-sky-500/10 border border-sky-500/20 px-2.5 py-0.5 rounded-full">
               Purata
             </span>
           </div>
-          <p className="text-[11px] text-slate-500 mt-2">Masa purata sejak pergerakan keluar/masuk terakhir</p>
+          <p className="text-[11px] text-text-muted mt-2">Masa purata sejak pergerakan keluar/masuk terakhir</p>
         </motion.div>
       </div>
 
@@ -282,7 +284,7 @@ export const SlowMovingPage: React.FC = () => {
                         <div className="pt-2 flex items-center gap-2">
                           <button
                             onClick={() => setDaysSinceMovement(30)}
-                            className="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 transition-all shadow-[0_0_12px_rgba(16,185,129,0.1)]"
+                            className="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 transition-colors shadow-[0_0_12px_rgba(16,185,129,0.1)]"
                           >
                             Semak Tempoh 30 Hari
                           </button>

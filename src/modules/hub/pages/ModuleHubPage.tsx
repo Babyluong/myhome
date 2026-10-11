@@ -61,6 +61,7 @@ import { SystemBroadcastBanner } from '../components/SystemBroadcastBanner'
 import { SystemUpdateLogModal } from '../components/SystemUpdateLogModal'
 import { AdminBroadcastModal } from '../components/AdminBroadcastModal'
 import { CURRENT_SYSTEM_VERSION } from '@/config/systemReleases'
+import { LazyHero3D } from '@/components/three/LazyHero3D'
 
 type ModuleCategory = 'clinical' | 'logistics' | 'governance'
 
@@ -177,7 +178,7 @@ const MODULES: ModuleItem[] = [
   },
   {
     id: 'priviledging',
-    name: 'MyPriviledging',
+    name: 'MyPrivileging',
     shortName: 'Privileging',
     description: 'Clinical Privileging Logbook & Credentialing Committee',
     category: 'clinical',
@@ -444,6 +445,14 @@ export const ModuleHubPage: React.FC = () => {
   }
 
   // Filter modules by category and search query
+  // High-frequency quick launch modules for instant muscle-memory access
+  const quickLaunchModules = useMemo(() => {
+    const quickIds = ['formulari', 'suhu', 'prepacking', 'kunci']
+    return quickIds
+      .map((id) => MODULES.find((m) => m.id === id))
+      .filter(Boolean) as ModuleItem[]
+  }, [])
+
   const filteredModules = useMemo(() => {
     return MODULES.filter((module) => {
       const matchesCategory = selectedCategory === 'all' || module.category === selectedCategory
@@ -492,6 +501,7 @@ export const ModuleHubPage: React.FC = () => {
 
   return (
     <div className="relative min-h-screen w-full flex flex-col items-center bg-canvas text-text-primary overflow-x-hidden antialiased selection:bg-accent-base/20 selection:text-accent-base transition-colors duration-150">
+      <LazyHero3D />
       <div className="relative z-10 w-full flex flex-col items-center">
         
         {/* 1. Global Navigation Bar */}
@@ -535,20 +545,20 @@ export const ModuleHubPage: React.FC = () => {
               {/* Theme Switcher Toggle */}
               <button
                 onClick={toggleTheme}
-                className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-surface hover:bg-subtle active:bg-muted-surface text-text-muted hover:text-text-primary rounded-lg transition-all duration-150 border border-border-default shrink-0 min-h-[36px] min-w-[36px] sm:min-h-[40px] sm:min-w-[40px]"
+                className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-surface hover:bg-subtle active:bg-muted-surface text-text-muted hover:text-text-primary rounded-lg transition-colors duration-150 border border-border-default shrink-0 min-h-[36px] min-w-[36px] sm:min-h-[40px] sm:min-w-[40px]"
                 title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
                 aria-label="Toggle theme"
               >
                 {theme === 'dark' ? (
                   <Sun className="w-4 h-4 text-amber-400" />
                 ) : (
-                  <Moon className="w-4 h-4 text-slate-700" />
+                  <Moon className="w-4 h-4 text-text-secondary" />
                 )}
               </button>
 
               <button
                 onClick={() => navigate(ROUTES.PROFILE, { state: { fromModule: { name: 'Module Hub', code: 'hub' } } })}
-                className="px-2 sm:px-3 py-1.5 sm:py-2 bg-surface hover:bg-subtle active:bg-muted-surface border border-border-default rounded-lg flex items-center gap-2 sm:gap-2.5 transition-all duration-150 group text-left min-h-[36px] sm:min-h-[40px]"
+                className="px-2 sm:px-3 py-1.5 sm:py-2 bg-surface hover:bg-subtle active:bg-muted-surface border border-border-default rounded-lg flex items-center gap-2 sm:gap-2.5 transition-colors duration-150 group text-left min-h-[36px] sm:min-h-[40px]"
                 title="Open User Profile"
                 aria-label="User Profile"
               >
@@ -581,7 +591,7 @@ export const ModuleHubPage: React.FC = () => {
 
               <button 
                 onClick={handleLogout}
-                className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center bg-surface hover:bg-rose-500/10 active:bg-rose-500/20 text-text-muted hover:text-rose-600 rounded-lg transition-all duration-150 border border-border-default shrink-0 min-h-[36px] min-w-[36px] sm:min-h-[40px] sm:min-w-[40px]"
+                className="hidden lg:flex w-9 h-9 sm:w-10 sm:h-10 items-center justify-center bg-surface hover:bg-rose-500/10 active:bg-rose-500/20 text-text-muted hover:text-rose-600 rounded-lg transition-colors duration-150 border border-border-default shrink-0 min-h-[36px] min-w-[36px] sm:min-h-[40px] sm:min-w-[40px]"
                 title="Sign out"
                 aria-label="Sign out"
               >
@@ -594,32 +604,29 @@ export const ModuleHubPage: React.FC = () => {
         {/* 2. Main Executive Operations Center */}
         <main className="w-full max-w-7xl mx-auto px-3.5 sm:px-6 pt-4 sm:pt-5 pb-20 sm:pb-16 flex flex-col gap-4 sm:gap-6 overflow-x-hidden">
           
-          {/* Executive Shift Greeting & System Quick-Action Bar */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface border border-border-default rounded-xl p-4 sm:p-5 shadow-2xs transition-colors duration-150">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-subtle text-text-secondary border border-border-default text-xs font-medium">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  {user?.hospital?.hospital_name || 'Hospital Lawas'}
-                </span>
-                <span className="text-xs text-text-muted font-medium">
-                  {new Date().toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' })}
-                </span>
-              </div>
-              <h2 className="font-serif text-3xl sm:text-4xl font-normal text-text-primary tracking-tight leading-tight">
+          {/* Unified Executive Operations Bar (High Clinical Density) */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface/90 backdrop-blur-md border border-border-default rounded-xl px-4 py-3 sm:px-5 sm:py-3.5 shadow-elevation-1">
+            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-subtle text-text-secondary border border-border-default text-xs font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                {user?.hospital?.hospital_name || 'Hospital Lawas'}
+              </span>
+              <span className="text-xs text-text-muted font-medium hidden xs:inline">
+                {new Date().toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' })}
+              </span>
+              <span className="text-border-default hidden xs:inline">|</span>
+              <h2 className="font-sans text-base sm:text-lg font-bold text-text-primary tracking-tight">
                 {greeting}, {user?.full_name || 'there'}
               </h2>
             </div>
 
-            {/* Quick Actions & Live System Status */}
-            <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 self-start sm:self-auto">
-              
-              {/* System Admin Broadcast Notice Trigger (Restricted to System Admin) */}
+            {/* Quick Actions & Staff Count */}
+            <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
               {isSystemAdmin && (
                 <button
                   type="button"
                   onClick={() => setShowAdminBroadcastModal(true)}
-                  className="px-2.5 sm:px-3 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 active:bg-amber-500/25 border border-amber-500/25 text-amber-800 dark:text-amber-300 text-xs font-medium transition-all duration-150 flex items-center gap-1.5 min-h-[36px]"
+                  className="px-2.5 py-1 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 active:bg-amber-500/25 border border-amber-500/25 text-amber-400 dark:text-amber-300 text-xs font-medium transition-colors duration-150 flex items-center gap-1.5"
                   title="Broadcast system update or maintenance notification"
                 >
                   <Megaphone className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
@@ -630,9 +637,7 @@ export const ModuleHubPage: React.FC = () => {
                 </button>
               )}
 
-
-              {/* Real Database Active Staff Count */}
-              <div className="flex items-center gap-2 bg-surface border border-border-default rounded-lg px-2.5 sm:px-3 py-1.5 text-xs text-text-secondary min-h-[36px]">
+              <div className="flex items-center gap-1.5 bg-subtle border border-border-default rounded-lg px-2.5 py-1 text-xs text-text-secondary">
                 <Users className="w-3.5 h-3.5 text-accent-base" />
                 <span className="font-bold font-mono text-text-primary">{totalStaffCount !== null ? totalStaffCount : '—'}</span>
                 <span className="text-[10px] text-text-muted font-medium uppercase">Staff</span>
@@ -650,7 +655,7 @@ export const ModuleHubPage: React.FC = () => {
           />
 
           {/* 4. Streamlined Operations Toolbar: Live Search, Category Tabs & View Switcher */}
-          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-surface border border-border-default rounded-xl p-2.5 sm:p-3 shadow-2xs transition-colors duration-150">
+          <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 bg-surface/90 backdrop-blur-md border border-border-default rounded-xl p-2.5 sm:p-3 shadow-elevation-1">
             {/* Live Module Search Filter */}
             <div className="relative flex-1 max-w-md">
               <Search className="w-4 h-4 text-text-muted absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
@@ -674,7 +679,7 @@ export const ModuleHubPage: React.FC = () => {
             </div>
 
             {/* Category Segmented Tabs */}
-            <div className="flex items-center gap-1 bg-subtle border border-border-default rounded-lg p-0.5 overflow-x-auto scrollbar-none">
+            <div className="flex items-center gap-1 bg-subtle border border-border-default rounded-full p-1 overflow-x-auto scrollbar-none bg-subtle/80 backdrop-blur-md">
               {categories.map((cat) => {
                 const isActive = selectedCategory === cat.id
                 return (
@@ -682,9 +687,9 @@ export const ModuleHubPage: React.FC = () => {
                     key={cat.id}
                     type="button"
                     onClick={() => setSelectedCategory(cat.id)}
-                    className={`px-3 py-1.5 rounded-md text-xs font-medium transition-colors duration-150 flex items-center gap-1.5 whitespace-nowrap select-none shrink-0 ${
+                    className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-[transform,opacity,box-shadow,border-color] duration-150 duration-150 flex items-center gap-1.5 whitespace-nowrap select-none shrink-0 ${
                       isActive
-                        ? 'bg-surface text-text-primary font-semibold shadow-2xs border border-border-default'
+                        ? 'bg-surface text-text-primary font-semibold shadow-elevation-1 border border-border-default'
                         : 'text-text-muted hover:text-text-primary'
                     }`}
                   >
@@ -706,7 +711,7 @@ export const ModuleHubPage: React.FC = () => {
                 onClick={() => setViewMode('grouped')}
                 className={`p-1.5 rounded-md text-xs transition-colors ${
                   viewMode === 'grouped'
-                    ? 'bg-surface text-text-primary font-semibold shadow-2xs border border-border-default'
+                    ? 'bg-surface text-text-primary font-semibold shadow-elevation-1 border border-border-default'
                     : 'text-text-muted hover:text-text-primary'
                 }`}
                 title="Grouped View"
@@ -719,7 +724,7 @@ export const ModuleHubPage: React.FC = () => {
                 onClick={() => setViewMode('grid')}
                 className={`p-1.5 rounded-md text-xs transition-colors ${
                   viewMode === 'grid'
-                    ? 'bg-surface text-text-primary font-semibold shadow-2xs border border-border-default'
+                    ? 'bg-surface text-text-primary font-semibold shadow-elevation-1 border border-border-default'
                     : 'text-text-muted hover:text-text-primary'
                 }`}
                 title="Grid View"
@@ -732,7 +737,7 @@ export const ModuleHubPage: React.FC = () => {
                 onClick={() => setViewMode('list')}
                 className={`p-1.5 rounded-md text-xs transition-colors ${
                   viewMode === 'list'
-                    ? 'bg-surface text-text-primary font-semibold shadow-2xs border border-border-default'
+                    ? 'bg-surface text-text-primary font-semibold shadow-elevation-1 border border-border-default'
                     : 'text-text-muted hover:text-text-primary'
                 }`}
                 title="List View"
@@ -764,6 +769,40 @@ export const ModuleHubPage: React.FC = () => {
             /* Domain Grouped Sections (Tailored with Native App Icons for Phone + Operations Cards for Desktop) */
             <div className="space-y-6 sm:space-y-8">
               
+              {/* Quick Launch Strip (High Clinical & Operational Frequency) */}
+              {!searchQuery.trim() && (
+                <section className="space-y-2.5">
+                  <div className="flex items-center justify-between pb-1.5 border-b border-border-default/60">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-3.5 h-3.5 text-accent-base" />
+                      <h3 className="text-xs font-bold uppercase tracking-wider text-text-secondary">
+                        Quick Launch
+                      </h3>
+                      <span className="px-1.5 py-0.2 rounded text-[10px] font-mono font-semibold bg-accent-subtle text-accent-base">
+                        {quickLaunchModules.length}
+                      </span>
+                    </div>
+                    <span className="text-[11px] text-text-muted font-medium hidden sm:inline">
+                      Frequently accessed clinical &amp; operational tools
+                    </span>
+                  </div>
+
+                  {/* Mobile: 4-Col App Grid */}
+                  <div className="grid grid-cols-4 gap-1 xs:gap-2 sm:hidden">
+                    {quickLaunchModules.map((module) => (
+                      <ModuleAppIcon key={`quick-${module.id}`} module={module} onClick={() => handleCardClick(module)} />
+                    ))}
+                  </div>
+
+                  {/* Desktop: Sleek 4-Col Quick Launch Cards */}
+                  <div className="hidden sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3">
+                    {quickLaunchModules.map((module) => (
+                      <QuickLaunchCard key={`quick-${module.id}`} module={module} onClick={() => handleCardClick(module)} />
+                    ))}
+                  </div>
+                </section>
+              )}
+
               {/* Group 1: Clinical & Pharmacy */}
               <section className="space-y-3">
                 <div className="flex items-center justify-between pb-2 border-b border-border-default">
@@ -862,7 +901,7 @@ export const ModuleHubPage: React.FC = () => {
             </div>
           ) : viewMode === 'list' ? (
             /* Detailed Table / List View (Native on both phone and desktop) */
-            <div className="bg-surface border border-border-default rounded-xl overflow-hidden divide-y divide-border-default shadow-2xs">
+            <div className="bg-surface border border-border-default rounded-2xl overflow-hidden divide-y divide-border-default shadow-elevation-1">
               {filteredModules.map((module) => {
                 const Icon = module.icon
                 const style = ACCENT_STYLES[module.accent] || ACCENT_STYLES.teal
@@ -872,7 +911,7 @@ export const ModuleHubPage: React.FC = () => {
                     key={module.id}
                     type="button"
                     onClick={() => handleCardClick(module)}
-                    className="w-full flex items-center justify-between p-3 sm:p-4 hover:bg-surface-hover active:bg-surface-subtle transition-all text-left group select-none min-h-[52px]"
+                    className="w-full flex items-center justify-between p-3 sm:p-4 hover:bg-surface-hover active:bg-surface-subtle transition-colors text-left group select-none min-h-[52px]"
                   >
                     <div className="flex items-center gap-3 min-w-0">
                       <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-surface border ${style.border} ${style.bg} flex items-center justify-center shrink-0`}>
@@ -895,10 +934,7 @@ export const ModuleHubPage: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-1.5 shrink-0 ml-2">
-                      <span className="text-[11px] font-medium text-text-muted group-hover:text-text-primary transition-colors hidden sm:inline">
-                        Open Module
-                      </span>
-                      <ChevronRight className="w-4 h-4 text-text-muted group-hover:text-text-primary group-hover:translate-x-0.5 transition-all" />
+                      <ChevronRight className="w-4 h-4 text-text-muted group-hover:text-accent-base group-hover:translate-x-0.5 transition-colors" />
                     </div>
                   </button>
                 )
@@ -980,7 +1016,7 @@ export const ModuleHubPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowSurpriseModal(false)}
-                className="w-full py-2.5 px-4 rounded-lg font-medium bg-ink text-ink-text hover:bg-ink-hover text-xs transition-colors shadow-2xs"
+                className="w-full py-2.5 px-4 rounded-lg font-medium bg-ink text-ink-text hover:bg-ink-hover text-xs transition-colors shadow-elevation-1"
               >
                 Got it
               </button>
@@ -1008,9 +1044,9 @@ const ModuleAppIcon: React.FC<ModuleAppIconProps> = ({ module, onClick }) => {
     <button
       type="button"
       onClick={onClick}
-      className="group flex flex-col items-center justify-start p-1 rounded-xl active:scale-95 transition-all select-none touch-manipulation focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-base min-h-[74px] w-full"
+      className="group flex flex-col items-center justify-start p-1 rounded-xl active:scale-95 transition-colors select-none touch-manipulation focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-base min-h-[74px] w-full"
     >
-      <div className={`relative w-12 h-12 rounded-xl bg-surface border ${style.border} ${style.bg} flex items-center justify-center shadow-2xs group-active:border-accent-base/50 transition-all`}>
+      <div className={`relative w-12 h-12 rounded-2xl bg-surface border ${style.border} ${style.bg} flex items-center justify-center shadow-elevation-1 group-active:scale-95 transition-[transform,opacity,box-shadow,border-color]`}>
         <Icon className={`w-5.5 h-5.5 ${style.text}`} />
         <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 border-2 border-surface rounded-full" />
       </div>
@@ -1048,7 +1084,7 @@ const ModuleCompactCard: React.FC<ModuleCompactCardProps> = ({ module, onClick }
           onClick()
         }
       }}
-      className="group flex items-center gap-2.5 p-2.5 rounded-xl bg-surface hover:bg-surface-hover active:bg-surface-subtle border border-border-default hover:border-border-strong transition-all cursor-pointer text-left select-none min-h-[54px] shadow-2xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-base"
+      className="group flex items-center gap-2.5 p-2.5 rounded-xl bg-surface/95 hover:-translate-y-0.5 active:scale-[0.98] border border-border-default hover:border-sky-500/35 transition-transform duration-200 cursor-pointer text-left select-none min-h-[54px] shadow-elevation-1 hover:shadow-elevation-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-base"
     >
       <div className={`w-8 h-8 rounded-lg bg-surface-subtle border ${style.border} ${style.bg} flex items-center justify-center shrink-0`}>
         <Icon className={`w-4 h-4 ${style.text}`} />
@@ -1074,6 +1110,45 @@ interface ModuleCardProps {
   language?: 'ms' | 'en'
 }
 
+/**
+ * Compact Quick Launch Card (Clinical Top Tier)
+ */
+const QuickLaunchCard: React.FC<ModuleCardProps> = ({ module, onClick }) => {
+  const Icon = module.icon
+  const style = ACCENT_STYLES[module.accent] || ACCENT_STYLES.teal
+
+  return (
+    <div
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onClick()
+        }
+      }}
+      className="group flex items-center gap-3 p-3 rounded-xl bg-surface/95 hover:bg-surface-elevated border border-border-default border-t-white/10 dark:border-t-white/15 hover:border-accent-base/40 shadow-elevation-1 hover:shadow-elevation-2 hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-150 cursor-pointer select-none text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-base"
+    >
+      <div className={`w-9 h-9 rounded-lg bg-surface-subtle border ${style.border} ${style.bg} ${style.hoverBorder} flex items-center justify-center shrink-0 transition-colors shadow-sm`}>
+        <Icon className={`w-4.5 h-4.5 ${style.text} group-hover:scale-105 transition-transform duration-150`} />
+      </div>
+      <div className="min-w-0 flex-1">
+        <h4 className="text-xs font-bold text-text-primary group-hover:text-accent-base transition-colors truncate leading-tight">
+          {module.name}
+        </h4>
+        <p className="text-[11px] text-text-muted truncate mt-0.5">
+          {module.shortName || module.description}
+        </p>
+      </div>
+      <ArrowUpRight className="w-3.5 h-3.5 text-text-muted/50 group-hover:text-accent-base group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+    </div>
+  )
+}
+
+/**
+ * Desktop Structured Operations Card (Modern Depth Standard)
+ */
 const ModuleCard: React.FC<ModuleCardProps> = ({ module, onClick }) => {
   const Icon = module.icon
   const style = ACCENT_STYLES[module.accent] || ACCENT_STYLES.teal
@@ -1089,40 +1164,29 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, onClick }) => {
           onClick()
         }
       }}
-      className="group flex flex-col justify-between p-4 rounded-xl bg-surface hover:bg-surface-hover active:bg-surface-subtle border border-border-default hover:border-border-strong hover:shadow-xs transition-all duration-150 cursor-pointer select-none text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-base shadow-2xs relative overflow-hidden"
+      className="group relative flex flex-col justify-between p-4 rounded-xl bg-surface/95 hover:bg-surface-elevated backdrop-blur-sm border border-border-default border-t-white/10 dark:border-t-white/15 hover:border-accent-base/40 hover:-translate-y-1 active:scale-[0.98] transition-all duration-200 cursor-pointer select-none text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-base shadow-elevation-1 hover:shadow-elevation-2 overflow-hidden"
     >
       <div>
-        {/* Card Header: Icon & Domain Badge */}
-        <div className="flex items-center justify-between gap-2 mb-3">
-          <div className={`w-10 h-10 rounded-lg bg-surface-subtle border ${style.border} ${style.bg} ${style.hoverBorder} flex items-center justify-center shrink-0 transition-colors`}>
-            <Icon className={`w-5 h-5 ${style.text} group-hover:scale-105 transition-transform duration-150`} />
+        {/* Card Header: Icon & Subtle Launch Cue */}
+        <div className="flex items-start justify-between gap-2 mb-3">
+          <div className={`w-11 h-11 rounded-xl bg-surface-subtle border ${style.border} ${style.bg} ${style.hoverBorder} flex items-center justify-center shrink-0 transition-all duration-200 shadow-sm`}>
+            <Icon className={`w-5.5 h-5.5 ${style.text} group-hover:scale-110 transition-transform duration-200`} />
           </div>
 
-          <div className="flex items-center gap-1.5">
-            <span className="px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider bg-surface-subtle text-text-muted border border-border-default">
-              {module.category === 'clinical' ? 'Clinical' : module.category === 'logistics' ? 'Logistics' : 'Admin'}
-            </span>
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" title="Active Module" />
+          <div className="w-7 h-7 rounded-lg bg-surface-subtle/80 border border-border-default/60 flex items-center justify-center text-text-muted group-hover:text-accent-base group-hover:border-accent-base/40 group-hover:bg-accent-subtle/30 transition-all duration-200">
+            <ArrowUpRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
           </div>
         </div>
 
         {/* Card Body: Module Name & Description */}
         <div>
-          <h4 className="text-sm font-semibold text-text-primary group-hover:text-accent-base transition-colors tracking-tight leading-snug">
+          <h4 className="text-sm font-bold text-text-primary group-hover:text-accent-base transition-colors tracking-tight leading-snug">
             {module.name}
           </h4>
-          <p className="text-xs text-text-secondary leading-relaxed line-clamp-2 mt-1 min-h-[32px]">
+          <p className="text-xs text-text-secondary leading-relaxed line-clamp-2 mt-1.5 min-h-[32px]">
             {module.description}
           </p>
         </div>
-      </div>
-
-      {/* Card Footer: Subtle launch action cue */}
-      <div className="mt-3.5 pt-2.5 border-t border-border-default flex items-center justify-between text-xs text-text-muted group-hover:text-text-primary transition-colors">
-        <span className="font-medium">
-          Open Module
-        </span>
-        <ArrowUpRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform text-text-muted group-hover:text-text-primary" />
       </div>
     </div>
   )

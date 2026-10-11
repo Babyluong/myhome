@@ -49,7 +49,7 @@ export const FormulationLabellingTab: React.FC<FormulationLabellingTabProps> = (
               value={labelInstructions}
               onChange={(e) => onChangeLabelInstructions(e.target.value)}
               placeholder="e.g. FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN."
-              className="w-full px-3 py-2 text-xs bg-surface border border-border-default rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition-colors font-medium shadow-2xs resize-none"
+              className="w-full px-3 py-2 text-xs bg-surface border border-border-default rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition-colors font-medium shadow-elevation-1 resize-none"
             />
           </div>
 
@@ -71,7 +71,7 @@ export const FormulationLabellingTab: React.FC<FormulationLabellingTabProps> = (
                 min="1"
                 value={beyondUseDateDays}
                 onChange={(e) => onChangeBudDays(parseInt(e.target.value) || 30)}
-                className="w-28 px-3 py-1.5 text-xs font-mono font-bold bg-surface border border-border-default rounded-lg text-text-primary focus:outline-none focus:ring-1 focus:ring-teal-500 shadow-2xs"
+                className="w-28 px-3 py-1.5 text-xs font-mono font-bold bg-surface border border-border-default rounded-lg text-text-primary focus:outline-none focus:ring-1 focus:ring-teal-500 shadow-elevation-1"
               />
               <span className="text-xs text-text-muted">Days from compounding date</span>
             </div>
@@ -83,9 +83,9 @@ export const FormulationLabellingTab: React.FC<FormulationLabellingTabProps> = (
                   key={days}
                   type="button"
                   onClick={() => onChangeBudDays(days)}
-                  className={`px-2 py-0.5 text-xs font-mono rounded transition-all cursor-pointer active:scale-[0.98] ${
+                  className={`px-2 py-0.5 text-xs font-mono rounded transition-colors cursor-pointer active:scale-[0.98] ${
                     beyondUseDateDays === days
-                      ? 'bg-teal-700 text-white font-bold shadow-2xs'
+                      ? 'bg-teal-700 text-white font-bold shadow-elevation-1'
                       : 'bg-surface text-text-secondary border border-border-default hover:bg-subtle'
                   }`}
                 >
@@ -105,7 +105,7 @@ export const FormulationLabellingTab: React.FC<FormulationLabellingTabProps> = (
               value={storageInstructions}
               onChange={(e) => onChangeStorageInstructions(e.target.value)}
               placeholder="e.g. Store below 25°C in a cool, dry place. Protect from light."
-              className="w-full px-3 py-2 text-xs bg-surface border border-border-default rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition-colors shadow-2xs"
+              className="w-full px-3 py-2 text-xs bg-surface border border-border-default rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition-colors shadow-elevation-1"
             />
           </div>
 
@@ -119,7 +119,7 @@ export const FormulationLabellingTab: React.FC<FormulationLabellingTabProps> = (
               value={containerSpecs}
               onChange={(e) => onChangeContainerSpecs(e.target.value)}
               placeholder="e.g. Fluted Amber Glass Bottle or HDPE Dispensing Bottle"
-              className="w-full px-3 py-2 text-xs bg-surface border border-border-default rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition-colors shadow-2xs"
+              className="w-full px-3 py-2 text-xs bg-surface border border-border-default rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition-colors shadow-elevation-1"
             />
           </div>
         </div>
@@ -138,7 +138,7 @@ export const FormulationLabellingTab: React.FC<FormulationLabellingTabProps> = (
             </div>
 
             {/* Official Label Card */}
-            <div className="p-3.5 rounded-lg border-2 border-dashed border-border-default bg-white text-neutral-900 shadow-sm font-sans space-y-2">
+            <div className="p-3.5 rounded-lg border-2 border-dashed border-border-default bg-surface text-neutral-900 shadow-sm font-sans space-y-2">
               <div className="text-center pb-2 border-b border-neutral-300">
                 <div className="text-[11px] font-bold uppercase tracking-wider text-neutral-800">
                   HOSPITAL LAWAS

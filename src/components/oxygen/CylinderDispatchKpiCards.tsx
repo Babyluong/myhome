@@ -15,15 +15,15 @@ export const CylinderDispatchKpiCards: React.FC<CylinderDispatchKpiCardsProps> =
         {[1, 2, 3, 4, 5].map((idx) => (
           <div
             key={idx}
-            className="relative overflow-hidden bg-white rounded-2xl p-5 border border-slate-200/80 shadow-sm flex flex-col justify-between"
+            className="relative overflow-hidden bg-surface rounded-2xl p-5 border border-border-default shadow-xs flex flex-col justify-between"
           >
             <div className="flex items-start justify-between">
               <div className="flex-1 space-y-2">
-                <Skeleton className="h-3 w-20 !bg-slate-200" />
-                <Skeleton className="h-8 w-16 !bg-slate-200" />
-                <Skeleton className="h-3 w-28 !bg-slate-200" />
+                <Skeleton className="h-3 w-20 !bg-subtle" />
+                <Skeleton className="h-8 w-16 !bg-subtle" />
+                <Skeleton className="h-3 w-28 !bg-subtle" />
               </div>
-              <Skeleton className="h-11 w-11 rounded-xl !bg-slate-200 shrink-0" />
+              <Skeleton className="h-11 w-11 rounded-xl !bg-subtle shrink-0" />
             </div>
           </div>
         ))}
@@ -96,25 +96,25 @@ export const CylinderDispatchKpiCards: React.FC<CylinderDispatchKpiCardsProps> =
         return (
           <div
             key={card.title}
-            className={`relative overflow-hidden bg-white rounded-2xl p-5 border ${card.border} shadow-sm hover:shadow-md hover:scale-[1.01] transition-all duration-300`}
+            className={`relative overflow-hidden bg-surface rounded-2xl p-5 border border-border-default hover:border-border-strong shadow-xs hover:scale-[1.01] transition-[transform,opacity,box-shadow,border-color] duration-300`}
           >
             {/* Soft decorative glow */}
             <div className={`absolute -right-4 -bottom-4 w-20 h-20 rounded-full blur-2xl ${card.bgGlow}`} />
 
             <div className="flex items-start justify-between relative z-10">
               <div className="flex flex-col">
-                <span className="text-slate-600 font-bold text-xs uppercase tracking-wider mb-1">
+                <span className="text-text-muted font-bold text-xs uppercase tracking-wider mb-1">
                   {card.title}
                 </span>
                 <div className="flex items-center gap-2">
-                  <span className="text-3xl font-extrabold text-slate-900 tracking-tight">
+                  <span className="text-3xl font-extrabold text-text-primary tracking-tight">
                     {card.value.toLocaleString()}
                   </span>
                   {card.isWarning && (
                     <span className="animate-pulse flex h-2 w-2 rounded-full bg-amber-500" />
                   )}
                 </div>
-                <span className="text-slate-600 font-semibold text-[11px] mt-1">
+                <span className="text-text-secondary font-semibold text-[11px] mt-1">
                   {card.description}
                 </span>
               </div>

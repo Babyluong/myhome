@@ -224,7 +224,7 @@ export const AdminApprovalsTab: React.FC = () => {
       {/* Header, Search & Filter */}
       <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between bg-slate-900/60 p-3.5 sm:p-4 rounded-xl border border-slate-800">
         <div className="relative flex-1 sm:max-w-xs md:max-w-sm">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-500" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-muted" />
           <input
             type="text"
             placeholder="Cari nama, no IC, jawatan..."
@@ -288,7 +288,7 @@ export const AdminApprovalsTab: React.FC = () => {
           </div>
         ) : requests.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-center space-y-3 px-4">
-            <AlertCircle className="w-10 h-10 text-slate-600" />
+            <AlertCircle className="w-10 h-10 text-text-muted" />
             <div>
               <p className="text-white font-bold text-sm sm:text-base">Tiada permohonan ditemui</p>
               <p className="text-slate-400 text-xs sm:text-sm mt-1">Tiada rekod pendaftaran sepadan dengan tapisan semasa.</p>
@@ -331,22 +331,22 @@ export const AdminApprovalsTab: React.FC = () => {
                       <td className="p-3.5">
                         <div className="space-y-1 text-xs">
                           <div className="flex items-center gap-1.5 text-slate-200">
-                            <Briefcase className="w-3.5 h-3.5 text-slate-500" />
+                            <Briefcase className="w-3.5 h-3.5 text-text-muted" />
                             <span>{req.jawatan}</span>
                           </div>
                           <div className="flex items-center gap-1.5 text-slate-400">
-                            <Building2 className="w-3.5 h-3.5 text-slate-500" />
+                            <Building2 className="w-3.5 h-3.5 text-text-muted" />
                             <span>{req.department?.department_name || 'Tiada Jabatan'}</span>
                           </div>
                         </div>
                       </td>
                       <td className="p-3.5 text-xs text-slate-400">
                         <div className="flex items-center gap-1.5">
-                          <Phone className="w-3.5 h-3.5 text-slate-500" />
+                          <Phone className="w-3.5 h-3.5 text-text-muted" />
                           <span>{req.phone_number}</span>
                         </div>
                         <div className="flex items-center gap-1.5 mt-1 font-mono">
-                          <Mail className="w-3.5 h-3.5 text-slate-500" />
+                          <Mail className="w-3.5 h-3.5 text-text-muted" />
                           <span className="truncate max-w-[180px]">{req.email}</span>
                         </div>
                       </td>
@@ -495,19 +495,19 @@ export const AdminApprovalsTab: React.FC = () => {
 
                     <div className="space-y-2 text-sm text-slate-300">
                       <div className="flex gap-2">
-                        <span className="text-slate-500 w-24">Jawatan:</span>
+                        <span className="text-text-muted w-24">Jawatan:</span>
                         <span className="font-semibold text-white">{selectedRequest.jawatan}</span>
                       </div>
                       <div className="flex gap-2">
-                        <span className="text-slate-500 w-24">Jabatan:</span>
+                        <span className="text-text-muted w-24">Jabatan:</span>
                         <span className="text-white">{selectedRequest.department?.department_name || 'N/A'}</span>
                       </div>
                       <div className="flex gap-2 font-mono">
-                        <span className="text-slate-500 w-24">Emel:</span>
+                        <span className="text-text-muted w-24">Emel:</span>
                         <span className="text-white">{selectedRequest.email}</span>
                       </div>
                       <div className="flex gap-2 font-mono">
-                        <span className="text-slate-500 w-24">Telefon:</span>
+                        <span className="text-text-muted w-24">Telefon:</span>
                         <span className="text-white">{selectedRequest.phone_number}</span>
                       </div>
                     </div>
@@ -518,19 +518,19 @@ export const AdminApprovalsTab: React.FC = () => {
                     <h4 className="text-xs font-bold text-teal-400 uppercase tracking-wider">Emergency Contact</h4>
                     <div className="p-4 rounded-xl bg-white/5 border border-white/5 space-y-2 text-xs text-slate-300">
                       <div className="flex justify-between">
-                        <span className="text-slate-500">Nama:</span>
+                        <span className="text-text-muted">Nama:</span>
                         <span className="font-bold text-white">{selectedRequest.emergency_contact_name || 'N/A'}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-slate-500">Hubungan:</span>
+                        <span className="text-text-muted">Hubungan:</span>
                         <span className="text-white">{selectedRequest.emergency_contact_relationship || 'N/A'}</span>
                       </div>
                       <div className="flex justify-between font-mono">
-                        <span className="text-slate-500">No Tel:</span>
+                        <span className="text-text-muted">No Tel:</span>
                         <span className="text-white">{selectedRequest.emergency_contact_phone || 'N/A'}</span>
                       </div>
                       <div className="flex flex-col gap-1 mt-2">
-                        <span className="text-slate-500">Alamat:</span>
+                        <span className="text-text-muted">Alamat:</span>
                         <span className="text-slate-300 block bg-slate-950/40 p-2 rounded border border-white/5">
                           {selectedRequest.emergency_contact_address || 'N/A'}
                         </span>

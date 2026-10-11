@@ -1,3 +1,4 @@
+import { offlineAdapter } from '@/services/offlineAdapter'
 ﻿// src/modules/myporter/services/porterService.ts
 // MyPorter integrated hospital logistics and dispatch management service
 
@@ -405,6 +406,16 @@ export const getPorterJobs = async (filter?: PorterFilter): Promise<ApiResponse<
   try {
     initMockData()
     let jobs = getMockData<PorterJobRequest[]>('jobs', [])
+
+    // Sync with offlineAdapter cache
+    const idbCached = await offlineAdapter.getCache<PorterJobRequest>('porter_tasks', 'myporter', 'porter_tasks')
+    if (idbCached && idbCached.length > 0) {
+      // Merge unique by id
+      const map = new Map<string, PorterJobRequest>()
+      idbCached.forEach(j => map.set(j.id, j))
+      jobs.forEach(j => { if (!map.has(j.id)) map.set(j.id, j) })
+      jobs = Array.from(map.values())
+    }
 
     if (filter) {
       if (filter.status && filter.status !== 'all') {

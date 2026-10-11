@@ -67,7 +67,7 @@ export const PorterRadarAlertModal: React.FC<Props> = ({
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.85, y: 20 }}
           transition={{ type: 'spring', duration: 0.5, bounce: 0.3 }}
-          className={`w-full max-w-lg bg-white rounded-3xl shadow-2xl overflow-hidden border-2 ${
+          className={`w-full max-w-lg bg-surface rounded-3xl shadow-2xl overflow-hidden border-2 ${
             isStat ? 'border-rose-500 shadow-rose-500/20' : 'border-sky-500 shadow-sky-500/20'
           }`}
         >
@@ -101,18 +101,18 @@ export const PorterRadarAlertModal: React.FC<Props> = ({
           {/* Body Content */}
           <div className="p-6 space-y-5">
             {/* Urgency & Task Type */}
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div className="flex items-center justify-between border-b border-border-subtle pb-3">
               <div>
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                <span className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider">
                   {language === 'ms' ? 'Kategori Tugas' : 'Task Category'}
                 </span>
-                <h4 className="text-base font-extrabold text-slate-800">{job.sub_category || job.category}</h4>
+                <h4 className="text-base font-extrabold text-text-primary">{job.sub_category || job.category}</h4>
               </div>
               <UrgencyBadge urgency={job.urgency} />
             </div>
 
             {/* Origin & Destination Card */}
-            <div className="p-4 bg-slate-50 border border-slate-200/80 rounded-2xl space-y-3">
+            <div className="p-4 bg-subtle/50 border border-border-default rounded-2xl space-y-3">
               <div className="flex items-start gap-3">
                 <div className="w-6 h-6 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
                   A
@@ -121,12 +121,12 @@ export const PorterRadarAlertModal: React.FC<Props> = ({
                   <p className="text-[10px] font-bold text-emerald-600 uppercase">
                     {language === 'ms' ? 'Lokasi Ambil (Asal)' : 'Pickup Location (Origin)'}
                   </p>
-                  <p className="text-sm font-extrabold text-slate-800">{job.origin_department_name}</p>
-                  <p className="text-xs text-slate-500">{job.origin_location_details}</p>
+                  <p className="text-sm font-extrabold text-text-primary">{job.origin_department_name}</p>
+                  <p className="text-xs text-text-muted">{job.origin_location_details}</p>
                 </div>
               </div>
 
-              <div className="pl-3 border-l-2 border-dashed border-slate-300 ml-3 h-4" />
+              <div className="pl-3 border-l-2 border-dashed border-border-default ml-3 h-4" />
 
               <div className="flex items-start gap-3">
                 <div className="w-6 h-6 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center font-bold text-xs shrink-0 mt-0.5">
@@ -136,28 +136,28 @@ export const PorterRadarAlertModal: React.FC<Props> = ({
                   <p className="text-[10px] font-bold text-rose-600 uppercase">
                     {language === 'ms' ? 'Lokasi Hantar (Destinasi)' : 'Delivery Location (Destination)'}
                   </p>
-                  <p className="text-sm font-extrabold text-slate-800">{job.destination_department_name}</p>
-                  <p className="text-xs text-slate-500">{job.destination_location_details}</p>
+                  <p className="text-sm font-extrabold text-text-primary">{job.destination_department_name}</p>
+                  <p className="text-xs text-text-muted">{job.destination_location_details}</p>
                 </div>
               </div>
             </div>
 
             {/* Special Precautions / Patient Info */}
             {job.patient_data && (
-              <div className="p-3 bg-blue-50/60 border border-blue-100 rounded-xl text-xs space-y-1 text-slate-700">
-                <p className="font-bold text-blue-900 flex items-center gap-1.5">
+              <div className="p-3 bg-blue-500/10 border border-blue-100 rounded-xl text-xs space-y-1 text-text-secondary">
+                <p className="font-bold text-blue-400 dark:text-blue-300 font-bold flex items-center gap-1.5">
                   <Shield className="w-3.5 h-3.5 text-blue-600" />
                   {language === 'ms' ? 'Pesakit:' : 'Patient:'} {job.patient_data.patient_name} ({job.patient_data.patient_rn})
                 </p>
-                <p className="text-slate-600">
+                <p className="text-text-muted">
                   {language === 'ms' ? 'Mod:' : 'Mobility:'} <span className="font-semibold uppercase">{job.patient_data.mobility_type}</span> | {language === 'ms' ? 'Oksigen:' : 'Oxygen:'} <span className="font-semibold">{job.patient_data.o2_dependent ? `${language === 'ms' ? 'Ya' : 'Yes'} (${job.patient_data.o2_flow_rate_lpm} L/min)` : (language === 'ms' ? 'Tiada' : 'None')}</span>
                 </p>
               </div>
             )}
 
             {job.notes && (
-              <p className="text-xs text-slate-500 bg-amber-50/60 border border-amber-200/60 rounded-xl p-3">
-                <span className="font-bold text-amber-900">
+              <p className="text-xs text-text-muted bg-amber-500/10 border border-amber-500/20 rounded-xl p-3">
+                <span className="font-bold text-amber-400 dark:text-amber-300 font-bold">
                   {language === 'ms' ? 'Nota Pemohon:' : 'Requester Notes:'}
                 </span> {job.notes}
               </p>
@@ -168,9 +168,9 @@ export const PorterRadarAlertModal: React.FC<Props> = ({
               <button
                 type="button"
                 onClick={() => onDecline(job.id)}
-                className="w-full py-3.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl transition-all flex items-center justify-center gap-2 active:scale-95 text-sm"
+                className="w-full py-3.5 px-4 bg-subtle hover:bg-subtle text-text-secondary font-bold rounded-2xl transition-colors flex items-center justify-center gap-2 active:scale-95 text-sm"
               >
-                <X className="w-4 h-4 text-slate-500" />
+                <X className="w-4 h-4 text-text-muted" />
                 <span>{language === 'ms' ? 'Tolak Tugas' : 'Decline Task'}</span>
               </button>
 
@@ -180,7 +180,7 @@ export const PorterRadarAlertModal: React.FC<Props> = ({
                   soundAlert.playSuccessTone()
                   onAccept(job.id)
                 }}
-                className={`w-full py-3.5 px-4 text-white font-black rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2 active:scale-95 text-sm ${
+                className={`w-full py-3.5 px-4 text-white font-black rounded-2xl shadow-lg transition-colors flex items-center justify-center gap-2 active:scale-95 text-sm ${
                   isStat 
                     ? 'bg-gradient-to-r from-rose-600 to-red-700 hover:from-rose-700 hover:to-red-800 shadow-rose-500/30' 
                     : 'bg-gradient-to-r from-sky-600 to-blue-700 hover:from-sky-700 hover:to-blue-800 shadow-blue-500/30'

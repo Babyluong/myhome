@@ -10,7 +10,7 @@ export const PriviledgingSubMenu: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center min-h-[50vh]">
-      <div className="animate-pulse text-sm text-slate-500">
+      <div className="animate-pulse text-sm text-text-muted">
         Loading MyPrivileging...
       </div>
     </div>

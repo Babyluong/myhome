@@ -405,12 +405,12 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
       />
 
       <div 
-        className={`fixed inset-y-0 right-0 z-[100] w-full max-w-5xl bg-white shadow-2xl flex flex-col transform transition-transform duration-300 ease-out ${
+        className={`fixed inset-y-0 right-0 z-[100] w-full max-w-5xl bg-surface shadow-2xl flex flex-col transform transition-transform duration-300 ease-out ${
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-200/60 bg-gradient-to-r from-rose-500/5 to-pink-500/5">
+        <div className="flex items-center justify-between p-6 border-b border-border-default bg-gradient-to-r from-rose-500/5 to-pink-500/5">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-rose-500/10 border border-rose-500/20 rounded-xl flex items-center justify-center">
               {step === 'scan' ? (
@@ -421,17 +421,17 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-xl font-bold text-slate-800">
+                <h3 className="text-xl font-bold text-text-primary">
                   {step === 'scan' ? 'Select Cylinders to Return' : 'Create Return Document'}
                 </h3>
                 {!isNetworkAvailable() && (
-                  <span className="px-2.5 py-0.5 bg-amber-100 text-amber-800 border border-amber-300 rounded-full text-[10px] font-bold flex items-center gap-1">
+                  <span className="px-2.5 py-0.5 bg-amber-100 text-amber-400 border border-amber-300 rounded-full text-[10px] font-bold flex items-center gap-1">
                     <WifiOff className="w-3 h-3" />
                     Offline Mode
                   </span>
                 )}
               </div>
-              <p className="text-slate-500 text-xs font-semibold">
+              <p className="text-text-muted text-xs font-semibold">
                 {step === 'scan' ? 'Select available empty cylinders in inventory to return' : 'Sent when returning empty cylinders to supplier'}
               </p>
             </div>
@@ -439,16 +439,16 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
           <button
             type="button"
             onClick={handleClose}
-            className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 border border-slate-200/50 flex items-center justify-center transition-colors duration-200"
+            className="w-8 h-8 rounded-full bg-subtle hover:bg-subtle border border-border-default flex items-center justify-center transition-colors duration-200"
           >
-            <X className="w-4 h-4 text-slate-500" />
+            <X className="w-4 h-4 text-text-muted" />
           </button>
         </div>
 
         {/* Scrollable Form */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {error && (
-            <div className="bg-rose-50 border border-rose-200 text-rose-800 p-4 rounded-2xl flex items-center gap-3 text-sm font-semibold">
+            <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 p-4 rounded-2xl flex items-center gap-3 text-sm font-semibold">
               <AlertCircle className="w-5 h-5 text-rose-600 flex-shrink-0" />
               <span>{error}</span>
             </div>
@@ -457,7 +457,7 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
           {isLoading ? (
             <div className="py-20 flex flex-col items-center justify-center gap-3">
               <RefreshCw className="w-10 h-10 text-rose-500 animate-spin" />
-              <span className="text-slate-500 font-bold text-sm">Loading empty cylinders registry...</span>
+              <span className="text-text-muted font-bold text-sm">Loading empty cylinders registry...</span>
             </div>
           ) : (
             <>
@@ -466,7 +466,7 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                   {/* Empty Cylinders Registry selection with separating tabs */}
                   <div className="space-y-4">
                     <div className="flex justify-between items-center bg-rose-500/5 border border-rose-500/10 rounded-2xl p-4">
-                      <div className="flex items-center space-x-2 text-rose-800 font-bold text-xs">
+                      <div className="flex items-center space-x-2 text-rose-400 font-bold text-xs">
                         <CheckSquare className="w-4.5 h-4.5 text-rose-600" />
                         <span>Select Available Empty Cylinders to Return</span>
                       </div>
@@ -474,7 +474,7 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                         <button
                           type="button"
                           onClick={handleSelectAllMatching}
-                          className="px-3 py-1 bg-white hover:bg-rose-50 border border-rose-200 text-rose-600 hover:text-rose-700 rounded-lg text-[10px] font-bold transition-all shadow-sm"
+                          className="px-3 py-1 bg-surface hover:bg-rose-500/10 border border-rose-500/20 text-rose-600 hover:text-rose-700 rounded-lg text-[10px] font-bold transition-[transform,opacity,box-shadow,border-color] shadow-sm"
                         >
                           {isAllMatchingSelected ? 'Deselect All' : 'Select All'}
                         </button>
@@ -495,7 +495,7 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                             onChange={(e) => setInnerSearchTerm(e.target.value)}
                             onKeyDown={handleScanInputKeyDown}
                             placeholder="Cari atau imbas kod bar / no. siri & tekan Enter..."
-                            className="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/30"
+                            className="w-full pl-9 pr-4 py-2.5 bg-subtle/50 border border-border-default rounded-xl text-xs font-semibold text-text-primary placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/30"
                           />
                         </div>
 
@@ -503,7 +503,7 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                           <button
                             type="button"
                             onClick={onOpenScanner}
-                            className="px-3.5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 shrink-0 border border-slate-200 cursor-pointer shadow-2xs hover:shadow-xs active:scale-95"
+                            className="px-3.5 py-2.5 bg-subtle hover:bg-subtle text-text-secondary rounded-xl text-xs font-bold transition-[transform,opacity,box-shadow,border-color] flex items-center gap-1.5 shrink-0 border border-border-default cursor-pointer shadow-elevation-1 hover:shadow-xs active:scale-95"
                             title="Buka pengimbas kamera langsung"
                           >
                             <QrCode className="w-4 h-4 text-rose-600" />
@@ -513,12 +513,12 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                       </div>
 
                       {scanFeedback && (
-                        <div className={`text-[11px] font-bold px-3 py-1.5 rounded-lg border flex items-center gap-1.5 transition-all ${
+                        <div className={`text-[11px] font-bold px-3 py-1.5 rounded-lg border flex items-center gap-1.5 transition-[transform,opacity,box-shadow,border-color] ${
                           scanFeedback.type === 'success'
-                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            ? 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20'
                             : scanFeedback.type === 'info'
-                            ? 'bg-blue-50 text-blue-700 border-blue-200'
-                            : 'bg-rose-50 text-rose-700 border-rose-200'
+                            ? 'bg-blue-500/10 text-blue-700 border-blue-500/20'
+                            : 'bg-rose-500/10 text-rose-700 border-rose-500/20'
                         }`}>
                           <span>{scanFeedback.text}</span>
                         </div>
@@ -533,10 +533,10 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                         <button
                           type="button"
                           onClick={() => setSelectedSizeFilter('')}
-                          className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 border ${
+                          className={`px-3 py-1.5 rounded-full text-xs font-bold transition-[transform,opacity,box-shadow,border-color] duration-200 border ${
                             selectedSizeFilter === ''
                               ? 'bg-rose-500 text-white border-rose-500 shadow-sm'
-                              : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                              : 'bg-subtle/50 text-text-secondary border-border-default hover:bg-subtle'
                           }`}
                         >
                           All ({emptyCylinders.filter(c => {
@@ -551,10 +551,10 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                               key={sizeName}
                               type="button"
                               onClick={() => setSelectedSizeFilter(sizeName)}
-                              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 border ${
+                              className={`px-3 py-1.5 rounded-full text-xs font-bold transition-[transform,opacity,box-shadow,border-color] duration-200 border ${
                                 selectedSizeFilter === sizeName
                                   ? 'bg-rose-500 text-white border-rose-500 shadow-sm'
-                                  : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+                                  : 'bg-subtle/50 text-text-secondary border-border-default hover:bg-subtle'
                               }`}
                             >
                               {sizeName} ({count})
@@ -565,20 +565,20 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                     )}
                     
                     {filteredCylinders.length === 0 ? (
-                      <div className="bg-slate-50/50 border border-slate-200 rounded-3xl p-12 text-center text-slate-400 font-bold text-sm">
+                      <div className="bg-subtle/50 border border-border-default rounded-3xl p-12 text-center text-slate-400 font-bold text-sm">
                         No empty {cylinderTab === 'loan' ? 'Loan' : 'Standard/Hospital Owned'} cylinders found matching the query.
                       </div>
                     ) : (
                       <div className="space-y-3">
-                        <div className="border border-slate-200 rounded-3xl overflow-hidden bg-white shadow-sm overflow-x-auto">
+                        <div className="border border-border-default rounded-3xl overflow-hidden bg-surface shadow-sm overflow-x-auto">
                           <table className="w-full text-left border-collapse">
                             <thead>
-                              <tr className="border-b border-slate-200/50 bg-slate-50/25 text-slate-500 font-bold text-xs uppercase tracking-wider">
+                              <tr className="border-b border-border-default bg-subtle/50 text-text-muted font-bold text-xs uppercase tracking-wider">
                                 <th className="py-3 px-4 w-10">
                                   <button
                                     type="button"
                                     onClick={handleSelectAllOnPage}
-                                    className="text-slate-500 hover:text-rose-600 transition-colors flex items-center"
+                                    className="text-text-muted hover:text-rose-600 transition-colors flex items-center"
                                   >
                                     {isAllOnPageSelected ? (
                                       <CheckSquare className="w-5 h-5 text-rose-500" />
@@ -598,7 +598,7 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                                 <th className="py-3 px-4">Location</th>
                               </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-200/40 text-slate-700 font-medium">
+                            <tbody className="divide-y divide-border-default text-text-secondary font-medium">
                               {paginatedCylinders.map((cyl) => {
                                 const isSelected = scannedCylinders.some(c => c.id === cyl.id);
                                 const parsed = parseTypeAndSize(cyl.type_info?.type_name || 'Standard');
@@ -606,13 +606,13 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                                   <tr
                                     key={cyl.id}
                                     onClick={() => toggleCylinderSelect(cyl.id)}
-                                    className="hover:bg-slate-50/30 transition-colors duration-150 cursor-pointer"
+                                    className="hover:bg-subtle/50 transition-colors duration-150 cursor-pointer"
                                   >
                                     <td className="py-3 px-4" onClick={(e) => e.stopPropagation()}>
                                       <button
                                         type="button"
                                         onClick={() => toggleCylinderSelect(cyl.id)}
-                                        className="text-slate-500 hover:text-rose-600 transition-colors flex items-center"
+                                        className="text-text-muted hover:text-rose-600 transition-colors flex items-center"
                                       >
                                         {isSelected ? (
                                           <CheckSquare className="w-5 h-5 text-rose-500" />
@@ -621,21 +621,21 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                                         )}
                                       </button>
                                     </td>
-                                    <td className="py-3 px-4 text-xs font-bold text-slate-800 font-mono">
+                                    <td className="py-3 px-4 text-xs font-bold text-text-primary font-mono">
                                       {cyl.serial_number}
                                     </td>
-                                    <td className="py-3 px-4 text-[10px] text-slate-500 font-mono">
+                                    <td className="py-3 px-4 text-[10px] text-text-muted font-mono">
                                       {cyl.qr_code || '-'}
                                     </td>
-                                    <td className="py-3 px-4 text-xs font-semibold text-slate-600">
+                                    <td className="py-3 px-4 text-xs font-semibold text-text-secondary">
                                       {parsed.type}
                                     </td>
-                                    <td className="py-3 px-4 text-xs font-bold text-slate-600">
-                                      <span className="px-2 py-0.5 rounded-md bg-slate-100 border border-slate-200 font-mono text-[10px]">
+                                    <td className="py-3 px-4 text-xs font-bold text-text-secondary">
+                                      <span className="px-2 py-0.5 rounded-md bg-subtle border border-border-default font-mono text-[10px]">
                                         {parsed.size}
                                       </span>
                                     </td>
-                                    <td className="py-3 px-4 text-xs text-slate-500">
+                                    <td className="py-3 px-4 text-xs text-text-muted">
                                       {cyl.assigned_ward?.department_name || 'Store'}
                                     </td>
                                   </tr>
@@ -647,7 +647,7 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
 
                         {/* Pagination controller */}
                         {totalPages > 1 && (
-                          <div className="flex items-center justify-between border border-slate-200 bg-slate-50/50 rounded-2xl p-3 text-xs font-semibold text-slate-600 shadow-sm">
+                          <div className="flex items-center justify-between border border-border-default bg-subtle/50 rounded-2xl p-3 text-xs font-semibold text-text-secondary shadow-sm">
                             <span>
                               Showing {startIndex + 1} - {Math.min(startIndex + pageSize, totalItems)} of {totalItems} cylinders
                             </span>
@@ -656,7 +656,7 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                                 type="button"
                                 disabled={currentPage === 1}
                                 onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                                className="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
+                                className="px-3 py-1.5 bg-surface border border-border-default hover:bg-subtle/50 text-text-secondary rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
                               >
                                 Previous
                               </button>
@@ -664,7 +664,7 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                                 type="button"
                                 disabled={currentPage === totalPages}
                                 onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-                                className="px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
+                                className="px-3 py-1.5 bg-surface border border-border-default hover:bg-subtle/50 text-text-secondary rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-sm"
                               >
                                 Next
                               </button>
@@ -680,11 +680,11 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                   {/* Supplier & Date */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-slate-700 font-bold text-xs mb-1.5">Supplier</label>
+                      <label className="block text-text-secondary font-bold text-xs mb-1.5">Supplier</label>
                       <select
                         value={selectedSupplier}
                         onChange={(e) => setSelectedSupplier(e.target.value)}
-                        className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500/30 text-sm"
+                        className="w-full px-4 py-2.5 bg-surface border border-border-default rounded-xl font-semibold text-text-primary focus:outline-none focus:ring-2 focus:ring-rose-500/30 text-sm"
                       >
                         {suppliers.map((s) => (
                           <option key={s.id} value={s.id}>
@@ -694,18 +694,18 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                       </select>
                     </div>
                     <div>
-                      <label className="block text-slate-700 font-bold text-xs mb-1.5">Return Date</label>
+                      <label className="block text-text-secondary font-bold text-xs mb-1.5">Return Date</label>
                       <input
                         type="date"
                         value={returnDate}
                         onChange={(e) => setReturnDate(e.target.value)}
-                        className="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-rose-500/30 text-sm"
+                        className="w-full px-4 py-2.5 bg-surface border border-border-default rounded-xl font-semibold text-text-primary focus:outline-none focus:ring-2 focus:ring-rose-500/30 text-sm"
                       />
                     </div>
                   </div>
 
                   {/* Return Summary / Scanned Count */}
-                  <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 flex justify-between items-center text-xs font-bold text-slate-700">
+                  <div className="bg-subtle/50 border border-border-default rounded-2xl p-4 flex justify-between items-center text-xs font-bold text-text-secondary">
                     <span>Scanned Cylinders to Return</span>
                     <span className="bg-rose-500 text-white px-2.5 py-1 rounded-full text-[10px]">
                       {scannedCylinders.length} cylinders
@@ -714,9 +714,9 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
 
                   {/* Manual Supplier Tag Selection (Loan Cylinders Only - Only shown if Borneo Indah is selected) */}
                   {isBorneoIndahSelected && (supplierCylinders.length > 0 || scannedCylinders.some(c => c.supplier_tagged)) ? (
-                    <div className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-4 shadow-sm">
+                    <div className="bg-subtle/50 border border-border-default rounded-2xl p-5 space-y-4 shadow-sm">
                       <div className="flex justify-between items-center flex-wrap gap-2">
-                        <label className="block text-slate-700 font-bold text-xs flex items-center gap-1.5">
+                        <label className="block text-text-secondary font-bold text-xs flex items-center gap-1.5">
                           <QrCode className="w-4 h-4 text-rose-600 animate-pulse" />
                           Select Supplier Cylinder ID (Loan 101-N / 101-F)
                         </label>
@@ -745,10 +745,10 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                                 key={filterVal}
                                 type="button"
                                 onClick={() => setSupplierSizeFilter(filterVal)}
-                                className={`px-2.5 py-1 rounded-md transition-all ${
+                                className={`px-2.5 py-1 rounded-md transition-[transform,opacity,box-shadow,border-color] ${
                                   supplierSizeFilter === filterVal
                                     ? 'bg-rose-500 text-white shadow-xs'
-                                    : 'text-slate-600 hover:text-slate-800'
+                                    : 'text-text-secondary hover:text-text-primary'
                                 }`}
                               >
                                 {filterVal === 'all' ? 'All' : filterVal} ({count})
@@ -766,13 +766,13 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                           value={supplierSearchTerm}
                           onChange={(e) => setSupplierSearchTerm(e.target.value)}
                           placeholder="Search cylinder serial number or QR code..."
-                          className="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/30 shadow-xs"
+                          className="w-full pl-8 pr-3 py-2 bg-surface border border-border-default rounded-xl text-xs font-semibold text-text-primary placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/30 shadow-xs"
                         />
                         {supplierSearchTerm && (
                           <button
                             type="button"
                             onClick={() => setSupplierSearchTerm('')}
-                            className="absolute right-2.5 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs font-bold"
+                            className="absolute right-2.5 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-text-secondary text-xs font-bold"
                           >
                             ×
                           </button>
@@ -805,7 +805,7 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                         });
                         if (displayedCyls.length === 0) {
                           return (
-                            <p className="text-[11px] text-slate-400 font-semibold italic text-center py-4 bg-white border border-dashed border-slate-200 rounded-xl">
+                            <p className="text-[11px] text-slate-400 font-semibold italic text-center py-4 bg-surface border border-dashed border-border-default rounded-xl">
                               {supplierSearchTerm.trim() 
                                 ? `No cylinders found matching "${supplierSearchTerm}"`
                                 : 'No active supplier-tagged cylinders found for this size.'}
@@ -819,10 +819,10 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                               return (
                                 <label
                                   key={cyl.id}
-                                  className={`flex items-center gap-2.5 p-3 border rounded-xl cursor-pointer transition-all select-none hover:bg-slate-100/50 ${
+                                  className={`flex items-center gap-2.5 p-3 border rounded-xl cursor-pointer transition-[transform,opacity,box-shadow,border-color] select-none hover:bg-subtle ${
                                     isSelected
-                                      ? 'border-rose-400 bg-rose-50/20 text-rose-800 ring-2 ring-rose-500/5 shadow-sm'
-                                      : 'border-slate-200 bg-white text-slate-700'
+                                      ? 'border-rose-400 bg-rose-500/10 text-rose-400 ring-2 ring-rose-500/5 shadow-sm'
+                                      : 'border-border-default bg-surface text-text-secondary'
                                   }`}
                                 >
                                   <input
@@ -835,11 +835,11 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                                         setScannedCylinders([...scannedCylinders, cyl]);
                                       }
                                     }}
-                                    className="rounded border-slate-300 text-rose-600 focus:ring-rose-500 w-4 h-4 cursor-pointer"
+                                    className="rounded border-border-default text-rose-600 focus:ring-rose-500 w-4 h-4 cursor-pointer"
                                   />
                                   <div className="flex flex-col min-w-0">
                                     <span className="text-[11px] font-mono font-bold truncate leading-none mb-1">{cyl.serial_number}</span>
-                                    <span className="text-[9px] text-slate-400 font-black uppercase tracking-wider">{cyl.size_info?.code || '101-N'}</span>
+                                    <span className="text-[9px] text-text-secondary font-bold font-black uppercase tracking-wider">{cyl.size_info?.code || '101-N'}</span>
                                   </div>
                                 </label>
                               );
@@ -852,7 +852,7 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
 
                   {/* Remarks */}
                   <div>
-                    <label className="block text-slate-700 font-bold text-xs mb-1.5">Remarks / Notes</label>
+                    <label className="block text-text-secondary font-bold text-xs mb-1.5">Remarks / Notes</label>
                     <div className="relative">
                       <Edit3 className="absolute left-3.5 top-3.5 w-4.5 h-4.5 text-slate-400" />
                       <textarea
@@ -860,7 +860,7 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                         placeholder="Enter supplier collection instructions or notes..."
                         value={remarks}
                         onChange={(e) => setRemarks(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-all resize-none"
+                        className="w-full pl-10 pr-4 py-2.5 bg-subtle/50 border border-border-default rounded-2xl text-xs font-semibold text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500 transition-[transform,opacity,box-shadow,border-color] resize-none"
                       />
                     </div>
                   </div>
@@ -871,11 +871,11 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
         </div>
 
         {/* Modal Footer */}
-        <div className="p-4 md:p-6 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between shrink-0">
+        <div className="p-4 md:p-6 border-t border-border-subtle bg-subtle/50 flex items-center justify-between shrink-0">
           {step === 'scan' ? (
             <>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-slate-600 font-mono">
+                <span className="text-xs font-bold text-text-secondary font-mono">
                   {scannedCylinders.length} Selected
                 </span>
               </div>
@@ -883,7 +883,7 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
                 type="button"
                 onClick={() => setStep('details')}
                 disabled={scannedCylinders.length === 0}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white font-bold text-xs shadow-lg hover:shadow-xl hover:scale-102 transition-all duration-300 disabled:opacity-50 disabled:scale-100 disabled:shadow-lg disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white font-bold text-xs shadow-lg hover:shadow-xl hover:scale-102 transition-[transform,opacity,box-shadow,border-color] duration-300 disabled:opacity-50 disabled:scale-100 disabled:shadow-lg disabled:cursor-not-allowed flex items-center gap-2"
               >
                 <span>Proceed to Details</span>
                 <ChevronRight className="w-4 h-4" />
@@ -894,7 +894,7 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
               <button
                 type="button"
                 onClick={() => setStep('scan')}
-                className="px-5 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 font-bold text-xs text-slate-600 transition-colors shadow-sm flex items-center gap-1"
+                className="px-5 py-2.5 rounded-xl border border-border-default bg-surface hover:bg-subtle/50 font-bold text-xs text-text-secondary transition-colors shadow-sm flex items-center gap-1"
               >
                 <ChevronLeft className="w-4 h-4" />
                 <span>Back to Scan</span>
@@ -902,7 +902,7 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
               <button
                 onClick={handleSubmit}
                 disabled={isSubmitting || scannedCylinders.length === 0}
-                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white font-bold text-xs shadow-lg hover:shadow-xl hover:scale-102 transition-all duration-300 disabled:opacity-50 disabled:scale-100 disabled:shadow-lg disabled:cursor-not-allowed"
+                className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white font-bold text-xs shadow-lg hover:shadow-xl hover:scale-102 transition-[transform,opacity,box-shadow,border-color] duration-300 disabled:opacity-50 disabled:scale-100 disabled:shadow-lg disabled:cursor-not-allowed"
               >
                 {isSubmitting ? 'Generating Document...' : 'Generate Return Document'}
               </button>

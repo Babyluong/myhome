@@ -25,7 +25,7 @@ export const MsdsChemicalCard: React.FC<MsdsChemicalCardProps> = ({ item, onView
   }
 
   return (
-    <div className="group relative flex flex-col justify-between p-5 rounded-xl bg-surface border border-border-default hover:border-border-strong hover:bg-subtle/30 transition-all shadow-2xs">
+    <div className="group relative flex flex-col justify-between p-5 rounded-xl bg-surface border border-border-default hover:border-border-strong hover:bg-subtle/30 transition-colors shadow-elevation-1">
       <div className="space-y-3">
         {/* Top Header: ID & Status */}
         <div className="flex items-center justify-between gap-2">
@@ -85,7 +85,7 @@ export const MsdsChemicalCard: React.FC<MsdsChemicalCardProps> = ({ item, onView
         <span className="text-[11px] text-text-muted font-mono truncate">{item.location}</span>
         <button
           onClick={() => onViewClick(item)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-subtle hover:bg-hover text-text-primary font-semibold text-xs transition-all border border-border-default shadow-2xs"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-subtle hover:bg-hover text-text-primary font-semibold text-xs transition-colors border border-border-default shadow-elevation-1"
         >
           <Eye className="w-3.5 h-3.5 text-text-muted" />
           Lihat MSDS

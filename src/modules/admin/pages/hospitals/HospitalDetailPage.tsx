@@ -208,13 +208,13 @@ export const HospitalDetailPage: React.FC = () => {
             >
               Back
             </Button>
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-bold text-text-primary">
               {facilityId === 'new' ? `Create New ${isClinic ? 'Clinic' : 'Hospital'}` : `Edit ${isClinic ? 'Clinic' : 'Hospital'}`}
             </h1>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+        <div className="bg-surface rounded-xl border border-border-default shadow-sm p-6">
           <HospitalForm
             hospital={hospital || undefined}
             onSuccess={async () => {
@@ -244,7 +244,7 @@ export const HospitalDetailPage: React.FC = () => {
   if (!hospital) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-slate-600">Hospital not found</p>
+        <p className="text-text-muted">Hospital not found</p>
       </div>
     )
   }
@@ -262,15 +262,15 @@ export const HospitalDetailPage: React.FC = () => {
             >
               Back to Hospitals
             </Button>
-            <h1 className="text-2xl font-bold text-slate-900">{isClinic ? 'Clinic' : 'Hospital'} Details</h1>
+            <h1 className="text-2xl font-bold text-text-primary">{isClinic ? 'Clinic' : 'Hospital'} Details</h1>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+        <div className="bg-surface rounded-xl border border-border-default shadow-sm p-6">
           <div className="text-center py-12">
             <Building2 className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h2 className="text-xl font-semibold text-slate-900 mb-2">{hospital.hospital_name}</h2>
-            <p className="text-slate-600 mb-6">No {isClinic ? 'Clinic' : 'Hospital'} Admin assigned. Create one to enable {isClinic ? 'clinic' : 'hospital'} management.</p>
+            <h2 className="text-xl font-semibold text-text-primary mb-2">{hospital.hospital_name}</h2>
+            <p className="text-text-muted mb-6">No {isClinic ? 'Clinic' : 'Hospital'} Admin assigned. Create one to enable {isClinic ? 'clinic' : 'hospital'} management.</p>
             <Button variant="primary" onClick={() => setShowAdminForm(true)} leftIcon={<UserPlus className="w-4 h-4" />}>
               Create {isClinic ? 'Clinic' : 'Hospital'} Admin
             </Button>
@@ -305,8 +305,8 @@ export const HospitalDetailPage: React.FC = () => {
             Back to {isClinic ? 'Clinics' : 'Hospitals'}
           </Button>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">{hospital.hospital_name}</h1>
-            <p className="text-sm text-slate-600 font-mono">{hospital.hospital_code}</p>
+            <h1 className="text-2xl font-bold text-text-primary">{hospital.hospital_name}</h1>
+            <p className="text-sm text-text-muted font-mono">{hospital.hospital_code}</p>
           </div>
           <div className="flex items-center gap-3">
             <Button variant="outline" onClick={() => setIsEditMode(true)} leftIcon={<Edit className="w-5 h-5" />}>
@@ -321,7 +321,7 @@ export const HospitalDetailPage: React.FC = () => {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-xl border border-slate-200 shadow-sm p-6"
+          className="bg-surface rounded-xl border border-border-default shadow-sm p-6"
         >
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
@@ -329,8 +329,8 @@ export const HospitalDetailPage: React.FC = () => {
                 <Shield className="w-6 h-6 text-success-600" />
               </div>
               <div>
-                <h3 className="font-semibold text-slate-900">Hospital Admin</h3>
-                <p className="text-sm text-slate-600">{hospital.admin.full_name} â€¢ {hospital.admin.email}</p>
+                <h3 className="font-semibold text-text-primary">Hospital Admin</h3>
+                <p className="text-sm text-text-muted">{hospital.admin.full_name} â€¢ {hospital.admin.email}</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -358,9 +358,9 @@ export const HospitalDetailPage: React.FC = () => {
 
       {/* Tabs for Comprehensive View */}
       {isSystemAdmin && hospital.admin && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
+        <div className="bg-surface rounded-xl border border-border-default shadow-sm">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="w-full justify-start border-b border-slate-200 rounded-t-xl rounded-b-none p-0">
+            <TabsList className="w-full justify-start border-b border-border-default rounded-t-xl rounded-b-none p-0">
               <TabsTrigger value="overview" className="rounded-t-xl rounded-b-none">
                 Overview
               </TabsTrigger>
@@ -376,7 +376,7 @@ export const HospitalDetailPage: React.FC = () => {
             <TabsContent value="overview" className="p-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h3 className="text-lg font-semibold text-slate-900 mb-4">Facility Information</h3>
+                  <h3 className="text-lg font-semibold text-text-primary mb-4">Facility Information</h3>
                   <div className="space-y-3">
                     <InfoItem icon={MapPin} label="Address" value={hospital.address || 'N/A'} />
                     <InfoItem icon={MapPin} label="State" value={hospital.state || 'N/A'} />
@@ -386,7 +386,7 @@ export const HospitalDetailPage: React.FC = () => {
                   </div>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-slate-900 mb-4">Quick Stats</h3>
+                  <h3 className="text-lg font-semibold text-text-primary mb-4">Quick Stats</h3>
                   <div className="grid grid-cols-2 gap-4">
                     <StatCard
                       title="Total Users"
@@ -454,7 +454,7 @@ export const HospitalDetailPage: React.FC = () => {
             {/* Modules Tab */}
             <TabsContent value="modules" className="p-6 space-y-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-slate-900">Module Access</h3>
+                <h3 className="text-lg font-semibold text-text-primary">Module Access</h3>
                 <Button
                   variant="outline"
                   size="sm"
@@ -469,16 +469,16 @@ export const HospitalDetailPage: React.FC = () => {
                   <div
                     key={module.code}
                     className={cn(
-                      'p-4 rounded-lg border-2 transition-all',
+                      'p-4 rounded-lg border-2 transition-colors',
                       module.enabled
                         ? 'border-primary-200 bg-primary-50'
-                        : 'border-slate-200 bg-slate-50'
+                        : 'border-border-default bg-subtle/50'
                     )}
                   >
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="font-semibold text-slate-900 capitalize">{module.name}</p>
-                        <p className="text-xs text-slate-500 font-mono">{module.code}</p>
+                        <p className="font-semibold text-text-primary capitalize">{module.name}</p>
+                        <p className="text-xs text-text-muted font-mono">{module.code}</p>
                       </div>
                       <Badge variant={module.enabled ? 'success' : 'gray'}>
                         {module.enabled ? 'Enabled' : 'Disabled'}
@@ -491,13 +491,13 @@ export const HospitalDetailPage: React.FC = () => {
 
             {/* Roles Tab */}
             <TabsContent value="roles" className="p-6 space-y-6">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">Role Distribution</h3>
+              <h3 className="text-lg font-semibold text-text-primary mb-4">Role Distribution</h3>
               <div className="space-y-3">
                 {statistics?.roleBreakdown.map((role) => (
-                  <div key={role.roleName} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg">
+                  <div key={role.roleName} className="flex items-center justify-between p-4 bg-subtle/50 rounded-lg">
                     <div className="flex items-center gap-3">
                       <Shield className="w-5 h-5 text-slate-400" />
-                      <span className="font-medium text-slate-900">{role.roleName}</span>
+                      <span className="font-medium text-text-primary">{role.roleName}</span>
                     </div>
                     <Badge variant="primary">{role.userCount} users</Badge>
                   </div>
@@ -531,7 +531,7 @@ export const HospitalDetailPage: React.FC = () => {
             {/* System Logs Tab */}
             <TabsContent value="logs" className="p-6 space-y-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-slate-900">Recent System Logs</h3>
+                <h3 className="text-lg font-semibold text-text-primary">Recent System Logs</h3>
                 <Button
                   variant="outline"
                   size="sm"
@@ -544,7 +544,7 @@ export const HospitalDetailPage: React.FC = () => {
               <div className="space-y-2">
                 {recentLogs.length > 0 ? (
                   recentLogs.map((log) => (
-                    <div key={log.id} className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                    <div key={log.id} className="p-3 bg-subtle/50 rounded-lg border border-border-default">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
@@ -560,23 +560,23 @@ export const HospitalDetailPage: React.FC = () => {
                             >
                               {log.severity}
                             </Badge>
-                            <span className="text-sm font-medium text-slate-900">{log.action}</span>
+                            <span className="text-sm font-medium text-text-primary">{log.action}</span>
                           </div>
-                          <p className="text-sm text-slate-600">{log.description}</p>
-                          <p className="text-xs text-slate-500 mt-1">{formatDateTime(log.created_at)}</p>
+                          <p className="text-sm text-text-muted">{log.description}</p>
+                          <p className="text-xs text-text-muted mt-1">{formatDateTime(log.created_at)}</p>
                         </div>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <p className="text-slate-500 text-center py-8">No recent logs</p>
+                  <p className="text-text-muted text-center py-8">No recent logs</p>
                 )}
               </div>
             </TabsContent>
 
             {/* Performance Tab */}
             <TabsContent value="performance" className="p-6 space-y-6">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">System Performance</h3>
+              <h3 className="text-lg font-semibold text-text-primary mb-4">System Performance</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <PerformanceCard
                   title="Database Health"
@@ -669,8 +669,8 @@ const InfoItem: React.FC<InfoItemProps> = ({ icon: Icon, label, value, fullWidth
   <div className={cn('flex items-start gap-3', fullWidth && 'md:col-span-2')}>
     <Icon className={cn('text-slate-400 flex-shrink-0 mt-0.5', small ? 'w-4 h-4' : 'w-5 h-5')} />
     <div className="flex-1 min-w-0">
-      <p className={cn('text-slate-500', small ? 'text-xs' : 'text-sm')}>{label}</p>
-      <p className={cn('font-semibold text-slate-900 mt-0.5', small ? 'text-sm' : 'text-base')}>{value}</p>
+      <p className={cn('text-text-muted', small ? 'text-xs' : 'text-sm')}>{label}</p>
+      <p className={cn('font-semibold text-text-primary mt-0.5', small ? 'text-sm' : 'text-base')}>{value}</p>
     </div>
   </div>
 )
@@ -689,18 +689,18 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon, color }) 
     warning: 'bg-warning-50 text-warning-600',
     error: 'bg-error-50 text-error-600',
     info: 'bg-info-50 text-info-600',
-    gray: 'bg-slate-50 text-slate-600',
+    gray: 'bg-subtle/50 text-text-muted',
   }
 
   return (
-    <div className="p-4 bg-white border border-slate-200 rounded-lg">
+    <div className="p-4 bg-surface border border-border-default rounded-lg">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-sm text-slate-600">{title}</span>
+        <span className="text-sm text-text-muted">{title}</span>
         <div className={cn('w-8 h-8 rounded-lg flex items-center justify-center', colorClasses[color])}>
           <Icon className="w-4 h-4" />
         </div>
       </div>
-      <p className="text-2xl font-bold text-slate-900">{value}</p>
+      <p className="text-2xl font-bold text-text-primary">{value}</p>
     </div>
   )
 }
@@ -715,13 +715,13 @@ interface KPICardProps {
 
 const KPICard: React.FC<KPICardProps> = ({ title, value, subtitle, icon: Icon, trend }) => {
   return (
-    <div className="p-4 bg-white border border-slate-200 rounded-lg">
+    <div className="p-4 bg-surface border border-border-default rounded-lg">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-sm text-slate-600">{title}</span>
+        <span className="text-sm text-text-muted">{title}</span>
         <Icon className="w-5 h-5 text-slate-400" />
       </div>
-      <p className="text-2xl font-bold text-slate-900 mb-1">{value}</p>
-      <p className="text-xs text-slate-500">{subtitle}</p>
+      <p className="text-2xl font-bold text-text-primary mb-1">{value}</p>
+      <p className="text-xs text-text-muted">{subtitle}</p>
     </div>
   )
 }
@@ -743,14 +743,14 @@ const PerformanceCard: React.FC<PerformanceCardProps> = ({ title, value, icon: I
   const config = statusConfig[status]
 
   return (
-    <div className="p-4 bg-white border border-slate-200 rounded-lg">
+    <div className="p-4 bg-surface border border-border-default rounded-lg">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-sm font-medium text-slate-700">{title}</span>
+        <span className="text-sm font-medium text-text-secondary">{title}</span>
         <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center', config.bg)}>
           <Icon className={cn('w-5 h-5', config.color)} />
         </div>
       </div>
-      <p className="text-2xl font-bold text-slate-900 mb-2">{value}</p>
+      <p className="text-2xl font-bold text-text-primary mb-2">{value}</p>
       <Badge variant={config.badge} size="sm">
         {status.charAt(0).toUpperCase() + status.slice(1)}
       </Badge>

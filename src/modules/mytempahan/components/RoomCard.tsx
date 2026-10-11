@@ -107,12 +107,12 @@ export const RoomCard: React.FC<RoomCardProps> = ({
         animate={{ opacity: 1, y: 0 }}
         whileHover={{ y: -3 }}
         transition={{ duration: 0.2 }}
-        className="group bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xs hover:shadow-xl hover:border-teal-500/40 dark:hover:border-teal-500/30 transition-all flex flex-col justify-between overflow-hidden text-slate-900 dark:text-slate-100"
+        className="group bg-surface dark:bg-slate-900 rounded-2xl border border-border-default dark:border-slate-800 shadow-xs hover:shadow-xl hover:border-teal-500/40 dark:hover:border-teal-500/30 transition-colors flex flex-col justify-between overflow-hidden text-text-primary dark:text-slate-100"
       >
         <div>
           {/* 1. Facility Photo Banner with Glassmorphic Badges */}
           <div
-            className="relative h-48 w-full overflow-hidden bg-slate-100 dark:bg-slate-800 cursor-pointer select-none"
+            className="relative h-48 w-full overflow-hidden bg-subtle dark:bg-slate-800 cursor-pointer select-none"
             onClick={() => setShowPhotoModal(true)}
           >
             {room.image_url && !imageError ? (
@@ -126,7 +126,7 @@ export const RoomCard: React.FC<RoomCardProps> = ({
             ) : (
               <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-slate-100 via-slate-200 to-slate-100 dark:from-slate-800 dark:via-slate-850 dark:to-slate-900 text-slate-400">
                 <Building2 className="w-12 h-12 mb-1.5 opacity-40 text-teal-600 dark:text-teal-400" />
-                <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">{categoryLabel}</span>
+                <span className="text-xs font-semibold text-text-muted dark:text-slate-300">{categoryLabel}</span>
                 <span className="text-[10px] text-slate-400">{room.building_block}</span>
               </div>
             )}
@@ -168,7 +168,7 @@ export const RoomCard: React.FC<RoomCardProps> = ({
                   e.stopPropagation()
                   setShowPhotoModal(true)
                 }}
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-teal-600/90 hover:bg-teal-600 text-white text-[11px] font-bold backdrop-blur-md border border-white/20 transition-all shadow-xs hover:scale-105 active:scale-95"
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-teal-600/90 hover:bg-teal-600 text-white text-[11px] font-bold backdrop-blur-md border border-white/20 transition-colors shadow-xs hover:scale-105 active:scale-95"
                 title={isBM ? 'Periksa Foto & Butiran Ruang' : 'Inspect Photo & Venue Details'}
               >
                 <Maximize2 className="w-3 h-3" />
@@ -181,10 +181,10 @@ export const RoomCard: React.FC<RoomCardProps> = ({
           <div className="p-5 space-y-3.5">
             {/* Room Title & Location */}
             <div>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors leading-snug">
+              <h3 className="text-base font-bold text-text-primary dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors leading-snug">
                 {room.name}
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5 mt-1">
+              <p className="text-xs text-text-muted dark:text-slate-400 flex items-center gap-1.5 mt-1">
                 <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                 <span className="truncate">{room.location}</span>
               </p>
@@ -192,7 +192,7 @@ export const RoomCard: React.FC<RoomCardProps> = ({
 
             {/* In-Session Notice (if occupied) */}
             {isCurrentlyOccupied && currentEventName && (
-              <div className="p-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 text-xs text-rose-800 dark:text-rose-300">
+              <div className="p-2.5 rounded-xl bg-rose-500/10 dark:bg-rose-950/40 border border-rose-500/20 dark:border-rose-900/60 text-xs text-rose-400 dark:text-rose-300">
                 <div className="font-semibold truncate">{currentEventName}</div>
                 {currentEventEnd && (
                   <div className="text-[11px] text-rose-600 dark:text-rose-400 flex items-center gap-1 mt-0.5">
@@ -203,14 +203,14 @@ export const RoomCard: React.FC<RoomCardProps> = ({
             )}
 
             {/* Capacity & Turnaround Buffer */}
-            <div className="grid grid-cols-2 gap-2 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800/80 text-xs">
+            <div className="grid grid-cols-2 gap-2 p-3 rounded-xl bg-subtle/50 dark:bg-slate-800/60 border border-border-subtle dark:border-slate-800/80 text-xs">
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0" />
                 <div>
-                  <div className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+                  <div className="text-[10px] text-slate-400 dark:text-text-muted font-medium">
                     {isBM ? 'Kapasiti' : 'Capacity'}
                   </div>
-                  <div className="font-bold text-slate-800 dark:text-slate-200 tabular-nums">
+                  <div className="font-bold text-text-primary dark:text-slate-200 tabular-nums">
                     {room.capacity} {isBM ? 'Pax Maks' : 'Max Pax'}
                   </div>
                 </div>
@@ -219,10 +219,10 @@ export const RoomCard: React.FC<RoomCardProps> = ({
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-sky-600 dark:text-sky-400 shrink-0" />
                 <div>
-                  <div className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">
+                  <div className="text-[10px] text-slate-400 dark:text-text-muted font-medium">
                     {isBM ? 'Buffer Setup' : 'Setup Buffer'}
                   </div>
-                  <div className="font-semibold text-slate-700 dark:text-slate-300">
+                  <div className="font-semibold text-text-secondary dark:text-slate-300">
                     {room.setup_buffer_minutes || 15}m / {room.cleanup_buffer_minutes || 15}m
                   </div>
                 </div>
@@ -231,7 +231,7 @@ export const RoomCard: React.FC<RoomCardProps> = ({
 
             {/* Equipment & Amenity Chips */}
             <div className="space-y-1">
-              <span className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500 tracking-wider block">
+              <span className="text-[10px] uppercase font-bold text-slate-400 dark:text-text-muted tracking-wider block">
                 {isBM ? 'Peralatan & Fasiliti' : 'Equipment & Amenities'}
               </span>
               <div className="flex items-center gap-1.5 flex-wrap">
@@ -243,15 +243,15 @@ export const RoomCard: React.FC<RoomCardProps> = ({
                   return (
                     <span
                       key={amenity}
-                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-medium border border-slate-200/60 dark:border-slate-700/60"
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-subtle dark:bg-slate-800 text-text-secondary dark:text-slate-300 text-[10px] font-medium border border-border-default dark:border-slate-700/60"
                     >
-                      <Icon className="w-3 h-3 text-slate-500 dark:text-slate-400" />
+                      <Icon className="w-3 h-3 text-text-muted dark:text-slate-400" />
                       {label}
                     </span>
                   )
                 })}
                 {(room.amenities || []).length > 4 && (
-                  <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60">
+                  <span className="text-[10px] font-semibold text-text-muted dark:text-slate-400 px-1.5 py-0.5 rounded bg-subtle dark:bg-slate-800 border border-border-default dark:border-slate-700/60">
                     +{room.amenities.length - 4} {isBM ? 'lagi' : 'more'}
                   </span>
                 )}
@@ -261,10 +261,10 @@ export const RoomCard: React.FC<RoomCardProps> = ({
         </div>
 
         {/* 3. Action Footer */}
-        <div className="p-3 bg-slate-50/70 dark:bg-slate-800/40 border-t border-slate-100 dark:border-slate-800 flex items-center gap-2">
+        <div className="p-3 bg-subtle/50 dark:bg-slate-800/40 border-t border-border-subtle dark:border-slate-800 flex items-center gap-2">
           <button
             onClick={() => onViewSchedule(room.id)}
-            className="flex-1 py-2 px-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-2xs"
+            className="flex-1 py-2 px-3 rounded-xl border border-border-default dark:border-slate-700 bg-surface dark:bg-slate-800 hover:bg-subtle dark:hover:bg-slate-700 text-text-secondary dark:text-slate-200 text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-elevation-1"
           >
             <Calendar className="w-3.5 h-3.5 text-slate-400" />
             {isBM ? 'Semak Jadual' : 'View Schedule'}
@@ -274,9 +274,9 @@ export const RoomCard: React.FC<RoomCardProps> = ({
             onClick={() => onBook(room.id)}
             disabled={isMaintenance || isInactive}
             className={cn(
-              'flex-1 py-2 px-3 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-1.5 shadow-xs',
+              'flex-1 py-2 px-3 rounded-xl text-xs font-semibold transition-colors flex items-center justify-center gap-1.5 shadow-xs',
               isMaintenance || isInactive
-                ? 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-600 cursor-not-allowed border border-transparent'
+                ? 'bg-subtle dark:bg-slate-800 text-slate-400 dark:text-text-muted cursor-not-allowed border border-transparent'
                 : 'bg-teal-700 hover:bg-teal-800 active:bg-teal-900 text-white font-bold active:scale-[0.98]'
             )}
           >
@@ -295,7 +295,7 @@ export const RoomCard: React.FC<RoomCardProps> = ({
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.95, opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="relative w-full max-w-3xl bg-white dark:bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 my-8 text-slate-900 dark:text-slate-100"
+              className="relative w-full max-w-3xl bg-surface dark:bg-slate-900 rounded-3xl overflow-hidden shadow-2xl border border-border-default dark:border-slate-800 my-8 text-text-primary dark:text-slate-100"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Photo Header */}
@@ -317,7 +317,7 @@ export const RoomCard: React.FC<RoomCardProps> = ({
                 <button
                   type="button"
                   onClick={() => setShowPhotoModal(false)}
-                  className="absolute top-4 right-4 p-2 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md border border-white/20 transition-all shadow-md hover:scale-105 active:scale-95"
+                  className="absolute top-4 right-4 p-2 rounded-full bg-black/60 hover:bg-black/80 text-white backdrop-blur-md border border-white/20 transition-colors shadow-md hover:scale-105 active:scale-95"
                   title="Close"
                 >
                   <X className="w-5 h-5" />
@@ -351,17 +351,17 @@ export const RoomCard: React.FC<RoomCardProps> = ({
               {/* Modal Body & Specs */}
               <div className="p-6 space-y-5">
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+                  <div className="p-3 rounded-xl bg-subtle/50 dark:bg-slate-800/60 border border-border-subtle dark:border-slate-800">
                     <div className="text-[10px] text-slate-400 font-semibold uppercase">{isBM ? 'Kapasiti' : 'Capacity'}</div>
-                    <div className="text-sm font-bold text-slate-800 dark:text-slate-100 mt-0.5">{room.capacity} Max Pax</div>
+                    <div className="text-sm font-bold text-text-primary dark:text-slate-100 mt-0.5">{room.capacity} Max Pax</div>
                   </div>
 
-                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+                  <div className="p-3 rounded-xl bg-subtle/50 dark:bg-slate-800/60 border border-border-subtle dark:border-slate-800">
                     <div className="text-[10px] text-slate-400 font-semibold uppercase">{isBM ? 'Buffer Setup' : 'Setup Buffer'}</div>
-                    <div className="text-sm font-bold text-slate-800 dark:text-slate-100 mt-0.5">{room.setup_buffer_minutes || 15}m / {room.cleanup_buffer_minutes || 15}m</div>
+                    <div className="text-sm font-bold text-text-primary dark:text-slate-100 mt-0.5">{room.setup_buffer_minutes || 15}m / {room.cleanup_buffer_minutes || 15}m</div>
                   </div>
 
-                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+                  <div className="p-3 rounded-xl bg-subtle/50 dark:bg-slate-800/60 border border-border-subtle dark:border-slate-800">
                     <div className="text-[10px] text-slate-400 font-semibold uppercase">{isBM ? 'Status Ruang' : 'Room Status'}</div>
                     <div className="text-sm font-bold text-emerald-600 dark:text-emerald-400 mt-0.5 flex items-center gap-1.5">
                       <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -369,9 +369,9 @@ export const RoomCard: React.FC<RoomCardProps> = ({
                     </div>
                   </div>
 
-                  <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-800">
+                  <div className="p-3 rounded-xl bg-subtle/50 dark:bg-slate-800/60 border border-border-subtle dark:border-slate-800">
                     <div className="text-[10px] text-slate-400 font-semibold uppercase">{isBM ? 'Kelulusan' : 'Approval'}</div>
-                    <div className="text-sm font-bold text-slate-800 dark:text-slate-100 mt-0.5">
+                    <div className="text-sm font-bold text-text-primary dark:text-slate-100 mt-0.5">
                       {room.requires_approval ? (isBM ? 'Perlu Kelulusan' : 'Required') : (isBM ? 'Automatik' : 'Instant')}
                     </div>
                   </div>
@@ -379,7 +379,7 @@ export const RoomCard: React.FC<RoomCardProps> = ({
 
                 {/* Amenities */}
                 <div>
-                  <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block mb-2">
+                  <span className="text-[11px] font-bold text-text-secondary font-bold uppercase tracking-wider block mb-2">
                     {isBM ? 'Fasiliti & Peralatan Lengkap' : 'Included Facilities & Equipment'}
                   </span>
                   <div className="flex flex-wrap gap-1.5">
@@ -391,7 +391,7 @@ export const RoomCard: React.FC<RoomCardProps> = ({
                       return (
                         <span
                           key={amenity}
-                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-700"
+                          className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-subtle dark:bg-slate-800 text-text-secondary dark:text-slate-200 text-xs font-semibold border border-border-default dark:border-slate-700"
                         >
                           <Icon className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                           {label}
@@ -403,11 +403,11 @@ export const RoomCard: React.FC<RoomCardProps> = ({
 
                 {/* House Rules if present */}
                 {room.house_rules && room.house_rules.length > 0 && (
-                  <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/70 text-xs space-y-1.5">
-                    <span className="font-bold text-slate-700 dark:text-slate-300 block">
+                  <div className="p-4 rounded-xl bg-subtle/50 dark:bg-slate-800/40 border border-border-default dark:border-slate-700/70 text-xs space-y-1.5">
+                    <span className="font-bold text-text-secondary dark:text-slate-300 block">
                       {isBM ? 'Peraturan Fasiliti' : 'Facility House Rules'}
                     </span>
-                    <ul className="list-disc list-inside space-y-1 text-slate-600 dark:text-slate-400 text-[11px]">
+                    <ul className="list-disc list-inside space-y-1 text-text-muted dark:text-slate-400 text-[11px]">
                       {room.house_rules.map((rule, idx) => (
                         <li key={idx}>{rule}</li>
                       ))}
@@ -417,11 +417,11 @@ export const RoomCard: React.FC<RoomCardProps> = ({
               </div>
 
               {/* Modal Footer */}
-              <div className="p-5 bg-slate-50 dark:bg-slate-800/60 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3">
+              <div className="p-5 bg-subtle/50 dark:bg-slate-800/60 border-t border-border-default dark:border-slate-800 flex items-center justify-between gap-3">
                 <button
                   type="button"
                   onClick={() => setShowPhotoModal(false)}
-                  className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-colors"
+                  className="px-4 py-2.5 rounded-xl border border-border-default dark:border-slate-700 hover:bg-subtle dark:hover:bg-slate-700 text-text-secondary dark:text-slate-200 text-xs font-bold transition-colors"
                 >
                   {isBM ? 'Tutup' : 'Close'}
                 </button>
@@ -433,7 +433,7 @@ export const RoomCard: React.FC<RoomCardProps> = ({
                       setShowPhotoModal(false)
                       onViewSchedule(room.id)
                     }}
-                    className="px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold transition-colors flex items-center gap-1.5"
+                    className="px-4 py-2.5 rounded-xl border border-border-default dark:border-slate-700 hover:bg-subtle dark:hover:bg-slate-700 text-text-secondary dark:text-slate-200 text-xs font-bold transition-colors flex items-center gap-1.5"
                   >
                     <Calendar className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                     {isBM ? 'Semak Jadual' : 'View Schedule'}
@@ -447,7 +447,7 @@ export const RoomCard: React.FC<RoomCardProps> = ({
                       onBook(room.id)
                     }}
                     className={cn(
-                      'px-5 py-2.5 rounded-xl text-white text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm',
+                      'px-5 py-2.5 rounded-xl text-white text-xs font-bold transition-colors flex items-center gap-1.5 shadow-sm',
                       isMaintenance || isInactive
                         ? 'bg-slate-400 dark:bg-slate-700 cursor-not-allowed'
                         : 'bg-teal-700 hover:bg-teal-800 active:scale-95'

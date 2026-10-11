@@ -453,20 +453,20 @@ const TransporterReportsPage: React.FC = () => {
       {/* Back button */}
       <button 
         onClick={() => navigate('/transporter/dashboard')}
-        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold mb-4 cursor-pointer"
+        className="flex items-center gap-2 text-text-muted hover:text-text-primary transition-colors text-sm font-semibold mb-4 cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>{isEn ? 'Back to Dashboard' : 'Kembali ke Papan Pemuka'}</span>
       </button>
 
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-200 pb-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-border-default pb-6">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+          <h1 className="text-2xl font-black text-text-primary tracking-tight flex items-center gap-2">
             <TrendingUp className="w-8 h-8 text-blue-600 animate-pulse" />
             {isEn ? 'Fleet Quality & Business Justification Reports' : 'Laporan Kualiti & Justifikasi Fleet (Management Reports)'}
           </h1>
-          <p className="text-slate-500 text-sm">
+          <p className="text-text-muted text-sm">
             {isEn 
               ? 'Analyze vehicle fleet utilization rates and driver workload distribution. Generate documented evidence for asset justification.' 
               : 'Kaji data utilization fleet kenderaan dan pengagihan tugasan pemandu. Gunakan laporan ini sebagai bukti sokongan bertulis (justifikasi) permohonan penambahan aset.'}
@@ -484,16 +484,16 @@ const TransporterReportsPage: React.FC = () => {
 
       {/* Loading indicator */}
       {loading ? (
-        <div className="p-12 text-center text-slate-500 font-medium animate-pulse">
+        <div className="p-12 text-center text-text-muted font-medium animate-pulse">
           {isEn ? 'Aggregating fleet analytics data...' : 'Menghimpunkan data analitik pengangkutan...'}
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           
           {/* Card 1: Vehicle usage utilization */}
-          <Card className="border border-slate-200 shadow-sm overflow-hidden">
-            <CardHeader className="bg-slate-50/50 border-b border-slate-100">
-              <CardTitle className="text-md font-bold text-slate-800 flex items-center gap-2">
+          <Card className="border border-border-default shadow-sm overflow-hidden">
+            <CardHeader className="bg-subtle/50 border-b border-border-subtle">
+              <CardTitle className="text-md font-bold text-text-primary flex items-center gap-2">
                 <Car className="w-5 h-5 text-blue-600" />
                 {isEn ? 'Vehicle Fleet Utilization' : 'Fleet Vehicle Utilization'}
               </CardTitle>
@@ -506,16 +506,16 @@ const TransporterReportsPage: React.FC = () => {
               ) : (
                 <div className="divide-y divide-slate-150">
                   {vehicleUsage.map((v, idx) => (
-                    <div key={idx} className="p-4 flex justify-between items-center hover:bg-slate-50/30 transition-colors">
+                    <div key={idx} className="p-4 flex justify-between items-center hover:bg-subtle/50 transition-colors">
                       <div>
-                        <div className="font-mono font-bold text-slate-800">{v.plate}</div>
+                        <div className="font-mono font-bold text-text-primary">{v.plate}</div>
                         <p className="text-xxs text-slate-400 font-semibold">{v.model}</p>
-                        <div className="flex gap-2.5 mt-1.5 text-xxs font-medium text-slate-500">
-                          <span className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-650">{v.distanceKm} KM</span>
-                          <span className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-650">{v.durationHours} {isEn ? 'Hours' : 'Jam'}</span>
+                        <div className="flex gap-2.5 mt-1.5 text-xxs font-medium text-text-muted">
+                          <span className="bg-subtle px-1.5 py-0.5 rounded text-slate-650">{v.distanceKm} KM</span>
+                          <span className="bg-subtle px-1.5 py-0.5 rounded text-slate-650">{v.durationHours} {isEn ? 'Hours' : 'Jam'}</span>
                         </div>
                       </div>
-                      <span className="font-bold text-blue-600 tabular-nums bg-blue-50 px-3 py-1 rounded-lg border border-blue-100 text-xs">
+                      <span className="font-bold text-blue-600 tabular-nums bg-blue-500/10 px-3 py-1 rounded-lg border border-blue-100 text-xs">
                         {v.count} {isEn ? 'trips' : 'kali jalan'}
                       </span>
                     </div>
@@ -526,9 +526,9 @@ const TransporterReportsPage: React.FC = () => {
           </Card>
 
           {/* Card 2: Driver workload list */}
-          <Card className="border border-slate-200 shadow-sm overflow-hidden">
-            <CardHeader className="bg-slate-50/50 border-b border-slate-100">
-              <CardTitle className="text-md font-bold text-slate-800 flex items-center gap-2">
+          <Card className="border border-border-default shadow-sm overflow-hidden">
+            <CardHeader className="bg-subtle/50 border-b border-border-subtle">
+              <CardTitle className="text-md font-bold text-text-primary flex items-center gap-2">
                 <ClipboardList className="w-5 h-5 text-indigo-600" />
                 {isEn ? 'Driver Workload Distribution' : 'Driver Workload Distribution'}
               </CardTitle>
@@ -541,15 +541,15 @@ const TransporterReportsPage: React.FC = () => {
               ) : (
                 <div className="divide-y divide-slate-150">
                   {driverUsage.map((d, idx) => (
-                    <div key={idx} className="p-4 flex justify-between items-center hover:bg-slate-50/30 transition-colors">
+                    <div key={idx} className="p-4 flex justify-between items-center hover:bg-subtle/50 transition-colors">
                       <div>
-                        <span className="font-bold text-slate-700 block">{d.name}</span>
-                        <div className="flex gap-2.5 mt-1.5 text-xxs font-medium text-slate-500">
-                          <span className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-650">{d.distanceKm} KM</span>
-                          <span className="bg-slate-100 px-1.5 py-0.5 rounded text-slate-650">{d.durationHours} {isEn ? 'Hours' : 'Jam'}</span>
+                        <span className="font-bold text-text-secondary block">{d.name}</span>
+                        <div className="flex gap-2.5 mt-1.5 text-xxs font-medium text-text-muted">
+                          <span className="bg-subtle px-1.5 py-0.5 rounded text-slate-650">{d.distanceKm} KM</span>
+                          <span className="bg-subtle px-1.5 py-0.5 rounded text-slate-650">{d.durationHours} {isEn ? 'Hours' : 'Jam'}</span>
                         </div>
                       </div>
-                      <span className="font-bold text-indigo-600 tabular-nums bg-indigo-50 px-3 py-1 rounded-lg border border-indigo-100 text-xs">
+                      <span className="font-bold text-indigo-600 tabular-nums bg-indigo-500/10 px-3 py-1 rounded-lg border border-indigo-100 text-xs">
                         {d.count} {isEn ? 'completed' : 'trip selesai'}
                       </span>
                     </div>
@@ -560,9 +560,9 @@ const TransporterReportsPage: React.FC = () => {
           </Card>
 
           {/* Card 3: Facility visits frequency */}
-          <Card className="border border-slate-200 shadow-sm overflow-hidden">
-            <CardHeader className="bg-slate-50/50 border-b border-slate-100">
-              <CardTitle className="text-md font-bold text-slate-800 flex items-center gap-2">
+          <Card className="border border-border-default shadow-sm overflow-hidden">
+            <CardHeader className="bg-subtle/50 border-b border-border-subtle">
+              <CardTitle className="text-md font-bold text-text-primary flex items-center gap-2">
                 <FileText className="w-5 h-5 text-emerald-600" />
                 {isEn ? 'Facility & Destination Frequency' : 'Destinasi & Kunjungan Fasiliti'}
               </CardTitle>
@@ -575,12 +575,12 @@ const TransporterReportsPage: React.FC = () => {
               ) : (
                 <div className="divide-y divide-slate-150">
                   {facilityUsage.map((f, idx) => (
-                    <div key={idx} className="p-4 flex justify-between items-center hover:bg-slate-50/30 transition-colors">
+                    <div key={idx} className="p-4 flex justify-between items-center hover:bg-subtle/50 transition-colors">
                       <div>
-                        <span className="font-bold text-slate-700 block text-xs">{f.name}</span>
+                        <span className="font-bold text-text-secondary block text-xs">{f.name}</span>
                         <span className="text-xxs text-slate-400 font-semibold">{f.category}</span>
                       </div>
-                      <span className="font-bold text-emerald-600 tabular-nums bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-100 text-xs flex-shrink-0 ml-2">
+                      <span className="font-bold text-emerald-600 tabular-nums bg-emerald-500/10 px-3 py-1 rounded-lg border border-emerald-100 text-xs flex-shrink-0 ml-2">
                         {f.count} {isEn ? 'trips' : 'trip'}
                       </span>
                     </div>
@@ -591,15 +591,15 @@ const TransporterReportsPage: React.FC = () => {
           </Card>
 
           {/* Card 4: Crossborder Transfer Logs */}
-          <Card className="border border-slate-200 shadow-sm overflow-hidden md:col-span-2 xl:col-span-3">
-            <CardHeader className="bg-slate-50/50 border-b border-slate-100 flex flex-row items-center justify-between py-4">
-              <CardTitle className="text-md font-bold text-slate-800 flex items-center gap-2">
+          <Card className="border border-border-default shadow-sm overflow-hidden md:col-span-2 xl:col-span-3">
+            <CardHeader className="bg-subtle/50 border-b border-border-subtle flex flex-row items-center justify-between py-4">
+              <CardTitle className="text-md font-bold text-text-primary flex items-center gap-2">
                 <Shield className="w-5 h-5 text-blue-600" />
                 {isEn 
                   ? 'Cross-Border Travel & Patient Transfer Journal (Sabah-Sarawak / Sarawak-Brunei)' 
                   : 'Log Perjalanan Merentas Sempadan (Sabah-Sarawak / Sarawak-Brunei)'}
               </CardTitle>
-              <Badge className="bg-blue-100 text-blue-800 font-bold border border-blue-200">
+              <Badge className="bg-blue-100 text-blue-400 font-bold border border-blue-500/20">
                 {crossborderTrips.length} {isEn ? 'Trips' : 'Perjalanan'}
               </Badge>
             </CardHeader>
@@ -612,7 +612,7 @@ const TransporterReportsPage: React.FC = () => {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left border-collapse text-xs">
                     <thead>
-                      <tr className="bg-slate-50 border-b border-slate-150 text-[10px] font-black text-slate-500 uppercase tracking-wider">
+                      <tr className="bg-subtle/50 border-b border-slate-150 text-[10px] font-black text-text-muted uppercase tracking-wider">
                         <th className="p-4">{isEn ? 'Ref No' : 'No. Rujukan'}</th>
                         <th className="p-4">{isEn ? 'Destination & Border Post' : 'Destinasi & Pintu Sempadan'}</th>
                         <th className="p-4">{isEn ? 'Patient & Clinical Diagnosis' : 'Pesakit & Diagnosis'}</th>
@@ -620,13 +620,13 @@ const TransporterReportsPage: React.FC = () => {
                         <th className="p-4">{isEn ? 'Status' : 'Status'}</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
+                    <tbody className="divide-y divide-border-subtle font-medium text-text-secondary">
                       {crossborderTrips.map((req, idx) => (
-                        <tr key={idx} className="hover:bg-slate-50/50 transition-colors">
+                        <tr key={idx} className="hover:bg-subtle/50 transition-colors">
                           <td className="p-4 font-mono font-bold text-blue-600 select-all">{req.no_rujukan}</td>
                           <td className="p-4">
-                            <div className="font-bold text-slate-800">{req.destinasi}</div>
-                            <span className="text-[10px] text-slate-400 font-semibold bg-slate-100 px-1.5 py-0.5 rounded">
+                            <div className="font-bold text-text-primary">{req.destinasi}</div>
+                            <span className="text-[10px] text-slate-400 font-semibold bg-subtle px-1.5 py-0.5 rounded">
                               {req.crossborder_data?.border_control_post || 'Sindumin Border Post'}
                             </span>
                           </td>
@@ -634,7 +634,7 @@ const TransporterReportsPage: React.FC = () => {
                             {req.crossborder_data?.patients && req.crossborder_data.patients.length > 0 ? (
                               <div className="space-y-0.5">
                                 {req.crossborder_data.patients.map((p, pIdx) => (
-                                  <div key={pIdx} className="font-bold text-slate-800 text-[11px]">
+                                  <div key={pIdx} className="font-bold text-text-primary text-[11px]">
                                     {p.nama} ({p.no_dokumen})
                                   </div>
                                 ))}
@@ -642,7 +642,7 @@ const TransporterReportsPage: React.FC = () => {
                               </div>
                             ) : (
                               <>
-                                <div className="font-bold text-slate-800">{req.nama_pesakit}</div>
+                                <div className="font-bold text-text-primary">{req.nama_pesakit}</div>
                                 <span className="text-[10px] text-slate-400">{req.diagnosis_pesakit}</span>
                               </>
                             )}
@@ -655,19 +655,19 @@ const TransporterReportsPage: React.FC = () => {
                           </td>
                           <td className="p-4">
                             {req.status_semasa === 'completed' ? (
-                              <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-250">
+                              <Badge className="bg-emerald-500/10 text-emerald-700 border border-emerald-250">
                                 {isEn ? 'Completed' : 'Selesai'}
                               </Badge>
                             ) : req.status_semasa === 'rejected' ? (
-                              <Badge className="bg-rose-50 text-rose-700 border border-rose-200">
+                              <Badge className="bg-rose-500/10 text-rose-700 border border-rose-500/20">
                                 {isEn ? 'Rejected' : 'Ditolak'}
                               </Badge>
                             ) : req.status_semasa === 'cancelled' ? (
-                              <Badge className="bg-slate-100 text-slate-500 border border-slate-200">
+                              <Badge className="bg-subtle text-text-muted border border-border-default">
                                 {isEn ? 'Cancelled' : 'Batal'}
                               </Badge>
                             ) : (
-                              <Badge className="bg-blue-50 text-blue-750 border border-blue-200">
+                              <Badge className="bg-blue-500/10 text-blue-750 border border-blue-500/20">
                                 {isEn ? 'In Progress' : 'Dalam Proses'}
                               </Badge>
                             )}

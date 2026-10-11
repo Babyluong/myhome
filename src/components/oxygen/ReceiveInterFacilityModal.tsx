@@ -434,7 +434,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
       onClick={onClose}
     >
       <div 
-        className="bg-white w-full max-w-4xl max-h-[92vh] rounded-2xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden my-auto"
+        className="bg-surface w-full max-w-4xl max-h-[92vh] rounded-2xl shadow-2xl border border-border-default flex flex-col overflow-hidden my-auto"
         onClick={e => e.stopPropagation()}
       >
         {/* Header */}
@@ -460,7 +460,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
             </div>
             <button
               onClick={onClose}
-              className="text-indigo-200 hover:text-white p-1.5 rounded-lg hover:bg-white/10 transition-colors focus:outline-none"
+              className="text-indigo-200 hover:text-white p-1.5 rounded-lg hover:bg-surface/10 transition-colors focus:outline-none"
             >
               <X className="w-5 h-5" />
             </button>
@@ -468,31 +468,31 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
         </div>
 
         {/* Scrollable Form Body */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-6 bg-subtle/50">
           {error && (
-            <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl text-rose-800 text-xs flex items-start gap-2.5 animate-shake">
+            <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 text-xs flex items-start gap-2.5 animate-shake">
               <AlertCircle className="w-4 h-4 text-rose-600 mt-0.5 shrink-0" />
               <div className="font-semibold">{error}</div>
             </div>
           )}
 
           {/* Section 1: Facility & Delivery Metadata Card */}
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div className="bg-surface p-5 rounded-xl border border-border-default shadow-xs space-y-4">
+            <div className="flex items-center justify-between border-b border-border-subtle pb-3">
               <div className="flex items-center gap-2">
                 <Building2 className="w-4 h-4 text-indigo-600" />
-                <h3 className="text-sm font-bold text-slate-800">
+                <h3 className="text-sm font-bold text-text-primary">
                   Maklumat Fasiliti Pembekal & Dokumen Penghantaran
                 </h3>
               </div>
-              <span className="text-[11px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">
+              <span className="text-[11px] font-bold text-indigo-600 bg-indigo-500/10 px-2 py-0.5 rounded-md border border-indigo-100">
                 Penerimaan Rasmi KKM
               </span>
             </div>
 
             {/* Supplying Facility Selector */}
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1.5">
+              <label className="block text-xs font-bold text-text-secondary mb-1.5">
                 Fasiliti Pembekal / Source Facility <span className="text-rose-500">*</span>
               </label>
               
@@ -509,7 +509,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                           setSelectedFacility(e.target.value);
                         }
                       }}
-                      className="flex-1 px-3 py-2 text-xs font-semibold bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-slate-800"
+                      className="flex-1 px-3 py-2 text-xs font-semibold bg-surface border border-border-default rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-text-primary"
                     >
                       <option value="Hospital Beaufort">Hospital Beaufort (Sabah)</option>
                       <option value="Hospital Sipitang">Hospital Sipitang (Sabah)</option>
@@ -529,7 +529,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                         setIsManualFacility(true);
                         setManualFacilityName('');
                       }}
-                      className="px-3 py-2 text-xs font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-xl transition-colors shrink-0"
+                      className="px-3 py-2 text-xs font-bold text-indigo-600 bg-indigo-500/10 hover:bg-indigo-100 border border-indigo-500/20 rounded-xl transition-colors shrink-0"
                     >
                       Taip Manual
                     </button>
@@ -537,16 +537,16 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
 
                   {/* Quick Pills */}
                   <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                    <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Kerap Digunakan:</span>
+                    <span className="text-[10px] text-text-muted font-bold uppercase tracking-wider">Kerap Digunakan:</span>
                     {['Hospital Beaufort', 'Hospital Sipitang', 'Hospital Limbang', 'Hospital Miri'].map(fac => (
                       <button
                         key={fac}
                         type="button"
                         onClick={() => setSelectedFacility(fac)}
-                        className={`text-[11px] px-2.5 py-1 rounded-lg font-bold transition-all border ${
+                        className={`text-[11px] px-2.5 py-1 rounded-lg font-bold transition-[transform,opacity,box-shadow,border-color] border ${
                           selectedFacility === fac 
                             ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs' 
-                            : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-200'
+                            : 'bg-subtle text-text-secondary hover:bg-subtle border-border-default'
                         }`}
                       >
                         {fac}
@@ -563,7 +563,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                       value={manualFacilityName}
                       onChange={(e) => setManualFacilityName(e.target.value)}
                       placeholder="Masukkan nama penuh fasiliti luar (cth: Hospital Beaufort / Stor Integrasi Sabah)..."
-                      className="w-full pl-9 pr-3 py-2 text-xs font-semibold bg-white border border-indigo-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-slate-900"
+                      className="w-full pl-9 pr-3 py-2 text-xs font-semibold bg-surface border border-indigo-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-text-primary"
                       autoFocus
                     />
                   </div>
@@ -573,7 +573,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                       setIsManualFacility(false);
                       setSelectedFacility('Hospital Beaufort');
                     }}
-                    className="px-3 py-2 text-xs font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl transition-colors shrink-0"
+                    className="px-3 py-2 text-xs font-bold text-text-secondary bg-subtle hover:bg-subtle border border-border-default rounded-xl transition-colors shrink-0"
                   >
                     Pilih Senarai
                   </button>
@@ -584,7 +584,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
             {/* Document Reference, Vehicle & Transporter */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
               <div>
-                <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                <label className="block text-[11px] font-bold text-text-secondary mb-1">
                   No. DO / Nota Hantaran / Inden Luar
                 </label>
                 <div className="relative">
@@ -594,13 +594,13 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                     value={externalDocRef}
                     onChange={(e) => setExternalDocRef(e.target.value)}
                     placeholder="cth: DO-HBF-2026-0812"
-                    className="w-full pl-8 pr-3 py-2 text-xs font-semibold bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none font-mono"
+                    className="w-full pl-8 pr-3 py-2 text-xs font-semibold bg-surface border border-border-default rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none font-mono"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                <label className="block text-[11px] font-bold text-text-secondary mb-1">
                   No. Kenderaan Penghantar
                 </label>
                 <div className="relative">
@@ -610,13 +610,13 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                     value={vehicleNumber}
                     onChange={(e) => setVehicleNumber(e.target.value.toUpperCase())}
                     placeholder="cth: QAA 4821 X / SAB 9281"
-                    className="w-full pl-8 pr-3 py-2 text-xs font-semibold bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none uppercase font-mono"
+                    className="w-full pl-8 pr-3 py-2 text-xs font-semibold bg-surface border border-border-default rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none uppercase font-mono"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                <label className="block text-[11px] font-bold text-text-secondary mb-1">
                   Nama Pemandu / Pembawa
                 </label>
                 <div className="relative">
@@ -626,7 +626,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                     value={transporterName}
                     onChange={(e) => setTransporterName(e.target.value)}
                     placeholder="cth: Mohd Razali Bin Kassim"
-                    className="w-full pl-8 pr-3 py-2 text-xs font-semibold bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+                    className="w-full pl-8 pr-3 py-2 text-xs font-semibold bg-surface border border-border-default rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
                   />
                 </div>
               </div>
@@ -638,14 +638,14 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Hash className="w-4 h-4 text-indigo-600" />
-                <h3 className="text-sm font-bold text-slate-800">
+                <h3 className="text-sm font-bold text-text-primary">
                   Silinder Diterima & Nombor Siri Individu
                 </h3>
               </div>
               <button
                 type="button"
                 onClick={handleAddItemBatch}
-                className="px-3 py-1.5 text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 rounded-xl transition-colors flex items-center gap-1.5"
+                className="px-3 py-1.5 text-xs font-bold text-indigo-700 bg-indigo-500/10 hover:bg-indigo-100 border border-indigo-500/20 rounded-xl transition-colors flex items-center gap-1.5"
               >
                 <Plus className="w-3.5 h-3.5" /> Tambah Kelompok Saiz Lain
               </button>
@@ -659,28 +659,28 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
               return (
                 <div 
                   key={item.id} 
-                  className="bg-white p-5 rounded-2xl border-2 border-indigo-100/80 shadow-xs space-y-4 transition-all"
+                  className="bg-surface p-5 rounded-2xl border-2 border-indigo-100/80 shadow-xs space-y-4 transition-[transform,opacity,box-shadow,border-color]"
                 >
                   {/* Item Header */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border-subtle pb-3">
                     <div className="flex items-center gap-2.5 flex-wrap">
                       <span className="w-6 h-6 rounded-lg bg-indigo-600 text-white font-extrabold text-xs flex items-center justify-center">
                         #{itemIndex + 1}
                       </span>
-                      <h4 className="text-xs font-extrabold text-slate-800">
+                      <h4 className="text-xs font-extrabold text-text-primary">
                         Kelompok Silinder #{itemIndex + 1}
                       </h4>
                       {isCustom && item.custom_size_name && (
-                        <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-200">
+                        <span className="text-[10px] font-bold text-indigo-700 bg-indigo-500/10 px-2 py-0.5 rounded-md border border-indigo-500/20">
                           Saiz Manual: {item.custom_size_name}
                         </span>
                       )}
                       {isAllFilled ? (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center gap-1">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 flex items-center gap-1">
                           <Check className="w-3 h-3 text-emerald-600" /> {item.quantity} Siri Lengkap
                         </span>
                       ) : (
-                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-700 border border-amber-500/20">
                           {filledCount} / {item.quantity} Siri Diisi
                         </span>
                       )}
@@ -693,7 +693,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                           setBulkPasteTargetItemIndex(itemIndex);
                           setBulkPasteText(item.serials.filter(Boolean).join('\n'));
                         }}
-                        className="px-2.5 py-1 text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors flex items-center gap-1"
+                        className="px-2.5 py-1 text-xs font-bold text-text-secondary bg-subtle hover:bg-subtle rounded-lg transition-colors flex items-center gap-1"
                         title="Tampal senarai nombor siri pukal dari teks/excel"
                       >
                         <Clipboard className="w-3.5 h-3.5 text-indigo-600" /> Tampal Pukal (Bulk Paste)
@@ -703,7 +703,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                         <button
                           type="button"
                           onClick={() => handleRemoveItemBatch(itemIndex)}
-                          className="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                          className="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-500/10 rounded-lg transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -715,7 +715,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                   <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
                     {/* Size Selector */}
                     <div className="sm:col-span-6">
-                      <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                      <label className="block text-[11px] font-bold text-text-secondary mb-1">
                         Saiz Silinder <span className="text-rose-500">*</span>
                       </label>
                       <select
@@ -732,7 +732,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                             return copy;
                           });
                         }}
-                        className="w-full px-3 py-2 text-xs font-semibold bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-slate-800"
+                        className="w-full px-3 py-2 text-xs font-semibold bg-surface border border-border-default rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-text-primary"
                       >
                         {PRESET_CYLINDER_SIZES.map(s => (
                           <option key={s.code} value={s.code}>{s.label}</option>
@@ -742,7 +742,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
 
                     {/* Quantity */}
                     <div className="sm:col-span-3">
-                      <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                      <label className="block text-[11px] font-bold text-text-secondary mb-1">
                         Kuantiti Silinder <span className="text-rose-500">*</span>
                       </label>
                       <input
@@ -751,13 +751,13 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                         max="200"
                         value={item.quantity}
                         onChange={(e) => handleQuantityChange(itemIndex, parseInt(e.target.value, 10))}
-                        className="w-full px-3 py-2 text-xs font-extrabold bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-slate-900"
+                        className="w-full px-3 py-2 text-xs font-extrabold bg-surface border border-border-default rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-text-primary"
                       />
                     </div>
 
                     {/* Condition */}
                     <div className="sm:col-span-3">
-                      <label className="block text-[11px] font-bold text-slate-700 mb-1">
+                      <label className="block text-[11px] font-bold text-text-secondary mb-1">
                         Keadaan Silinder
                       </label>
                       <select
@@ -770,7 +770,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                             return copy;
                           });
                         }}
-                        className="w-full px-3 py-2 text-xs font-semibold bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-slate-800"
+                        className="w-full px-3 py-2 text-xs font-semibold bg-surface border border-border-default rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-text-primary"
                       >
                         <option value="full">Berisi Penuh (Full Gas)</option>
                         <option value="empty">Kosong (Empty Cylinder)</option>
@@ -780,9 +780,9 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
 
                   {/* Dedicated Manual / Custom Size Input Block when OTHERS is selected */}
                   {isCustom && (
-                    <div className="p-3.5 bg-indigo-50/80 border border-indigo-200 rounded-2xl space-y-2.5 animate-fadeIn">
+                    <div className="p-3.5 bg-indigo-500/10 border border-indigo-500/20 rounded-2xl space-y-2.5 animate-fadeIn">
                       <div className="flex items-center justify-between">
-                        <label className="block text-[11px] font-bold text-indigo-950 uppercase tracking-wide">
+                        <label className="block text-[11px] font-bold text-indigo-400 dark:text-indigo-300 font-bold uppercase tracking-wide">
                           Taip Spesifikasi Saiz Silinder Manual (Lain-lain) <span className="text-rose-500">*</span>
                         </label>
                         <span className="text-[10px] font-bold text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded-md">
@@ -804,13 +804,13 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                           });
                         }}
                         placeholder="cth: 7.3m³, 6.2m³, 5.0m³, 2.0m³, 101-C..."
-                        className="w-full px-3.5 py-2.5 bg-white border border-indigo-300 rounded-xl text-xs sm:text-sm font-extrabold text-indigo-950 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-600 shadow-xs"
+                        className="w-full px-3.5 py-2.5 bg-surface border border-indigo-300 rounded-xl text-xs sm:text-sm font-extrabold text-indigo-400 dark:text-indigo-300 font-bold focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-600 shadow-xs"
                         autoFocus
                         required
                       />
                       {/* Quick Chips */}
                       <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
-                        <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">Pilihan Pantas:</span>
+                        <span className="text-[10px] font-bold text-text-muted uppercase tracking-wide">Pilihan Pantas:</span>
                         {['7.3m³', '6.2m³', '5.0m³', '2.0m³', '101-C (2.0m³)'].map(chip => (
                           <button
                             key={chip}
@@ -825,10 +825,10 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                                 return copy;
                               });
                             }}
-                            className={`text-[10px] px-2.5 py-1 rounded-lg font-bold transition-all border cursor-pointer ${
+                            className={`text-[10px] px-2.5 py-1 rounded-lg font-bold transition-[transform,opacity,box-shadow,border-color] border cursor-pointer ${
                               item.custom_size_name === chip
                                 ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs'
-                                : 'bg-white hover:bg-indigo-100 text-slate-700 border-indigo-200'
+                                : 'bg-surface hover:bg-indigo-100 text-text-secondary border-indigo-500/20'
                             }`}
                           >
                             {item.custom_size_name === chip ? '✓ ' : ''}{chip}
@@ -839,10 +839,10 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                   )}
 
                   {/* Serial Numbers Section - Search-first approach */}
-                  <div className="bg-slate-50 p-4 rounded-xl border border-slate-200/80 space-y-3">
+                  <div className="bg-subtle/50 p-4 rounded-xl border border-border-default space-y-3">
                     {/* Header */}
                     <div className="flex items-center justify-between flex-wrap gap-2">
-                      <span className="text-xs font-bold text-slate-800">
+                      <span className="text-xs font-bold text-text-primary">
                         Nombor Siri Silinder ({item.serials.filter(s => s.trim()).length} / {item.quantity} Diisi):
                       </span>
                     </div>
@@ -870,14 +870,14 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                             }
                           }}
                           placeholder="Taip nombor siri / sebahagian (cth: 7072, SABOXY, O2-P101)..."
-                          className="w-full pl-8 pr-3 py-2 bg-white border border-slate-300 rounded-xl text-xs font-mono font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400"
+                          className="w-full pl-8 pr-3 py-2 bg-surface border border-border-default rounded-xl text-xs font-mono font-bold text-text-primary focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-400"
                         />
                       </div>
                       <button
                         type="button"
                         disabled={isSearching[itemIndex]}
                         onClick={() => handleSearchCylinders(itemIndex)}
-                        className="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white text-[11px] font-bold rounded-xl flex items-center gap-1.5 cursor-pointer transition-all"
+                        className="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white text-[11px] font-bold rounded-xl flex items-center gap-1.5 cursor-pointer transition-[transform,opacity,box-shadow,border-color]"
                       >
                         <Search className="w-3 h-3" />
                         {isSearching[itemIndex] ? 'Mencari...' : 'Cari'}
@@ -886,14 +886,14 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
 
                     {/* Search message */}
                     {searchMessage[itemIndex] && !isSearching[itemIndex] && (
-                      <p className="text-[11px] text-slate-500 text-center py-1">{searchMessage[itemIndex]}</p>
+                      <p className="text-[11px] text-text-muted text-center py-1">{searchMessage[itemIndex]}</p>
                     )}
 
                     {/* Search Results */}
                     {(searchResults[itemIndex] || []).length > 0 && (
-                      <div className="bg-indigo-50/60 border border-indigo-200 rounded-2xl p-2.5 space-y-1.5">
+                      <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-2xl p-2.5 space-y-1.5">
                         <div className="flex items-center justify-between px-1 pb-1 border-b border-indigo-100">
-                          <span className="text-[10px] font-bold text-indigo-900 uppercase tracking-wide">
+                          <span className="text-[10px] font-bold text-indigo-400 dark:text-indigo-300 font-bold uppercase tracking-wide">
                             {(searchResults[itemIndex] || []).length} Silinder Dijumpai — Klik untuk Pilih
                           </span>
                           {(searchResults[itemIndex] || []).length > 1 && (
@@ -916,18 +916,18 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                             return (
                               <div
                                 key={cyl.id}
-                                className={`flex items-center justify-between px-3 py-2 rounded-xl transition-all ${
+                                className={`flex items-center justify-between px-3 py-2 rounded-xl transition-[transform,opacity,box-shadow,border-color] ${
                                   alreadyIn
                                     ? 'bg-indigo-100 border border-indigo-300 opacity-70'
-                                    : 'bg-white border border-indigo-100 hover:border-indigo-300 hover:bg-indigo-50/80 cursor-pointer'
+                                    : 'bg-surface border border-indigo-100 hover:border-indigo-300 hover:bg-indigo-500/10 cursor-pointer'
                                 }`}
                                 onClick={() => {
                                   if (!alreadyIn) handleSelectSearchedCylinder(itemIndex, cyl.serial_number);
                                 }}
                               >
                                 <div>
-                                  <span className="font-mono font-extrabold text-xs text-slate-900">{cyl.serial_number}</span>
-                                  <div className="text-[10px] text-slate-500 font-medium flex items-center gap-1.5 mt-0.5">
+                                  <span className="font-mono font-extrabold text-xs text-text-primary">{cyl.serial_number}</span>
+                                  <div className="text-[10px] text-text-muted font-medium flex items-center gap-1.5 mt-0.5">
                                     <span>Saiz: {cyl.size_code || '—'}</span>
                                     <span>•</span>
                                     <span className={`font-bold ${
@@ -964,7 +964,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                     {/* Selected serials chips */}
                     {item.serials.filter(s => s.trim()).length > 0 && (
                       <div className="space-y-1.5">
-                        <p className="text-[10px] font-bold text-slate-600 uppercase tracking-wide">
+                        <p className="text-[10px] font-bold text-text-secondary uppercase tracking-wide">
                           Senarai Dipilih ({item.serials.filter(s => s.trim()).length}):
                         </p>
                         <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto">
@@ -975,8 +975,8 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                                 key={si}
                                 className={`inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-mono font-bold rounded-lg border ${
                                   isDuplicate
-                                    ? 'bg-rose-100 text-rose-800 border-rose-300'
-                                    : 'bg-indigo-100 text-indigo-900 border-indigo-300'
+                                    ? 'bg-rose-100 text-rose-400 border-rose-300'
+                                    : 'bg-indigo-100 text-indigo-400 dark:text-indigo-300 font-bold border-indigo-300'
                                 }`}
                               >
                                 {ser}
@@ -1008,7 +1008,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
 
                     {/* Collapsed manual input grid */}
                     <details className="group">
-                      <summary className="text-[10px] font-bold text-slate-500 cursor-pointer hover:text-slate-700 select-none list-none flex items-center gap-1">
+                      <summary className="text-[10px] font-bold text-text-muted cursor-pointer hover:text-text-secondary select-none list-none flex items-center gap-1">
                         <span className="group-open:hidden">▶</span>
                         <span className="hidden group-open:inline">▼</span>
                         Input Manual / Jana Bersiri (Isi Satu-Persatu)
@@ -1033,7 +1033,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                                 }
                               }
                             }}
-                            className="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 bg-white hover:bg-indigo-50 px-2.5 py-1 rounded-lg border border-slate-200 transition-colors cursor-pointer"
+                            className="text-[11px] font-bold text-indigo-600 hover:text-indigo-400 bg-surface hover:bg-indigo-500/10 px-2.5 py-1 rounded-lg border border-border-default transition-colors cursor-pointer"
                           >
                             ⚡ Jana Bersiri Pantas
                           </button>
@@ -1047,15 +1047,15 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                             return (
                               <div
                                 key={serialIdx}
-                                className={`flex items-center gap-2 p-1.5 rounded-xl border bg-white transition-all ${
+                                className={`flex items-center gap-2 p-1.5 rounded-xl border bg-surface transition-[transform,opacity,box-shadow,border-color] ${
                                   isDuplicate
-                                    ? 'border-rose-400 bg-rose-50/40 ring-1 ring-rose-400'
+                                    ? 'border-rose-400 bg-rose-500/10 ring-1 ring-rose-400'
                                     : serialVal.trim()
-                                    ? 'border-emerald-300 bg-emerald-50/20'
-                                    : 'border-slate-200 hover:border-slate-300'
+                                    ? 'border-emerald-300 bg-emerald-500/10'
+                                    : 'border-border-default hover:border-border-default'
                                 }`}
                               >
-                                <span className="w-6 h-6 rounded-lg bg-slate-100 text-slate-600 text-[10px] font-extrabold flex items-center justify-center shrink-0">
+                                <span className="w-6 h-6 rounded-lg bg-subtle text-text-secondary text-[10px] font-extrabold flex items-center justify-center shrink-0">
                                   #{serialIdx + 1}
                                 </span>
                                 <input
@@ -1078,7 +1078,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                                     }
                                   }}
                                   placeholder={`No. siri #${serialIdx + 1}`}
-                                  className="w-full text-xs font-mono font-bold bg-transparent outline-none text-slate-900 placeholder:text-slate-400"
+                                  className="w-full text-xs font-mono font-bold bg-transparent outline-none text-text-primary placeholder:text-text-muted"
                                 />
                                 {isDuplicate && (
                                   <span className="text-[9px] font-extrabold text-rose-600 bg-rose-100 px-1.5 py-0.5 rounded shrink-0">
@@ -1098,8 +1098,8 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
           </div>
 
           {/* Section 3: General Remarks */}
-          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs space-y-2">
-            <label className="block text-xs font-bold text-slate-700">
+          <div className="bg-surface p-5 rounded-xl border border-border-default shadow-xs space-y-2">
+            <label className="block text-xs font-bold text-text-secondary">
               Catatan Penerimaan / Remarks
             </label>
             <textarea
@@ -1107,23 +1107,23 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
               value={generalRemarks}
               onChange={(e) => setGeneralRemarks(e.target.value)}
               placeholder="Catatan pemeriksaan fizikal, kondisi injap silinder, atau rujukan khas..."
-              className="w-full px-3 py-2 text-xs font-semibold bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-slate-800 resize-none"
+              className="w-full px-3 py-2 text-xs font-semibold bg-surface border border-border-default rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-text-primary resize-none"
             />
           </div>
         </form>
 
         {/* Footer Bar */}
-        <div className="px-6 py-4 bg-slate-100 border-t border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="px-6 py-4 bg-subtle border-t border-border-default flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="text-xs text-slate-600">
-              Fasiliti: <strong className="text-slate-900">{isManualFacility ? manualFacilityName || 'Manual' : selectedFacility}</strong>
+            <div className="text-xs text-text-secondary">
+              Fasiliti: <strong className="text-text-primary">{isManualFacility ? manualFacilityName || 'Manual' : selectedFacility}</strong>
             </div>
             <div className="h-4 w-px bg-slate-300" />
-            <div className="text-xs text-slate-600">
+            <div className="text-xs text-text-secondary">
               Jumlah: <strong className="text-indigo-600">{totalCylindersCount} Silinder</strong>
             </div>
             <div className="h-4 w-px bg-slate-300" />
-            <div className="text-xs text-slate-600">
+            <div className="text-xs text-text-secondary">
               Siri Diisi: <strong className={totalSerialsFilledCount === totalCylindersCount && totalCylindersCount > 0 ? "text-emerald-600" : "text-amber-600"}>
                 {totalSerialsFilledCount} / {totalCylindersCount}
               </strong>
@@ -1135,7 +1135,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-800 hover:bg-slate-200/80 rounded-xl transition-all focus:outline-none cursor-pointer"
+              className="px-4 py-2 text-xs font-bold text-text-secondary hover:text-text-primary hover:bg-subtle rounded-xl transition-[transform,opacity,box-shadow,border-color] focus:outline-none cursor-pointer"
             >
               Batal
             </button>
@@ -1143,7 +1143,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
               type="button"
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className="px-5 py-2 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl transition-all shadow-md shadow-indigo-600/20 flex items-center gap-2 focus:outline-none cursor-pointer disabled:bg-slate-400"
+              className="px-5 py-2 text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl transition-[transform,opacity,box-shadow,border-color] shadow-md shadow-indigo-600/20 flex items-center gap-2 focus:outline-none cursor-pointer disabled:bg-slate-400"
             >
               {isSubmitting ? (
                 <>
@@ -1167,26 +1167,26 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
             onClick={() => setBulkPasteTargetItemIndex(null)}
           >
             <div 
-              className="bg-white w-full max-w-lg rounded-2xl p-5 shadow-2xl border border-slate-200 space-y-4"
+              className="bg-surface w-full max-w-lg rounded-2xl p-5 shadow-2xl border border-border-default space-y-4"
               onClick={e => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="flex items-center justify-between border-b border-border-subtle pb-3">
                 <div className="flex items-center gap-2">
                   <Clipboard className="w-4 h-4 text-indigo-600" />
-                  <h4 className="text-sm font-bold text-slate-900">
+                  <h4 className="text-sm font-bold text-text-primary">
                     Tampal Nombor Siri Pukal (Kelompok #{bulkPasteTargetItemIndex + 1})
                   </h4>
                 </div>
                 <button
                   type="button"
                   onClick={() => setBulkPasteTargetItemIndex(null)}
-                  className="text-slate-400 hover:text-slate-600 p-1 rounded-lg"
+                  className="text-slate-400 hover:text-text-secondary p-1 rounded-lg"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <p className="text-xs text-slate-600">
+              <p className="text-xs text-text-secondary">
                 Salin dan tampal senarai nombor siri di bawah (dipisahkan baris baharu, koma, atau tab). Sistem akan mengira kuantiti dan mengisi kesemua petak secara automatik:
               </p>
 
@@ -1195,7 +1195,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                 value={bulkPasteText}
                 onChange={(e) => setBulkPasteText(e.target.value)}
                 placeholder="HBF-101N-001&#10;HBF-101N-002&#10;HBF-101N-003&#10;HBF-101N-004..."
-                className="w-full p-3 text-xs font-mono font-semibold bg-slate-50 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-slate-900"
+                className="w-full p-3 text-xs font-mono font-semibold bg-subtle/50 border border-border-default rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none text-text-primary"
                 autoFocus
               />
 
@@ -1207,7 +1207,7 @@ export const ReceiveInterFacilityModal: React.FC<ReceiveInterFacilityModalProps>
                   <button
                     type="button"
                     onClick={() => setBulkPasteTargetItemIndex(null)}
-                    className="px-3 py-1.5 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl cursor-pointer"
+                    className="px-3 py-1.5 text-xs font-bold text-text-secondary hover:bg-subtle rounded-xl cursor-pointer"
                   >
                     Batal
                   </button>

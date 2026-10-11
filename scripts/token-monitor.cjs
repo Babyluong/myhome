@@ -67,6 +67,7 @@ let totalOutput = 0;
 let totalTurns = 0;
 let expensiveScans = 0;
 let cacheMissSpikes = 0;
+let inChatReplacements = 0;
 const history = [];
 
 for (const line of lines) {
@@ -94,6 +95,9 @@ for (const line of lines) {
         if (cmd.includes('Recurse') || cmd.includes('grep -r')) {
           expensiveScans++;
           label += ' ⚠️[SCAN]';
+        }
+        if (t.name === 'replace_file_content' || t.name === 'multi_replace_file_content') {
+          inChatReplacements++;
         }
         return label;
       }).join(', ');
@@ -144,6 +148,13 @@ if (expensiveScans > 0) {
   console.log('    Ensure zero-scan-router skill and CODEBASE_ROUTER.json are utilized.');
 } else {
   console.log('✅  ZERO-SCAN AUDIT: CLEAN. No unbounded recursive scans detected.');
+}
+
+if (inChatReplacements > 2) {
+  console.log('='.repeat(78));
+  console.log(`⚠️  IN-CHAT EDIT SPAM ALERT: ${inChatReplacements} manual in-chat replacement calls detected!`);
+  console.log('    Root Cause: Calling replace_file_content repeatedly in chat bloats transcript.');
+  console.log('    RULE ENFORCEMENT: Fix 3 / Script-First Mandate. Write a Node.js script (scripts/*.cjs).');
 }
 
 if (totalTurns > 25 || currentContext > 60000) {

@@ -302,16 +302,16 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
       
       {/* Modal Drawer Sheet */}
       <div 
-        className="bg-slate-50/95 sm:bg-slate-50 w-full max-w-2xl h-full sm:rounded-l-3xl shadow-2xl border-l border-slate-200/80 flex flex-col overflow-hidden animate-modal-slide"
+        className="bg-subtle/50 sm:bg-subtle/50 w-full max-w-2xl h-full sm:rounded-l-3xl shadow-2xl border-l border-border-default flex flex-col overflow-hidden animate-modal-slide"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Drawer Header */}
-        <div className="px-4 py-3.5 sm:px-7 sm:py-5 border-b border-slate-200/80 flex items-center justify-between bg-white/90 backdrop-blur-md sticky top-0 z-20">
+        <div className="px-4 py-3.5 sm:px-7 sm:py-5 border-b border-border-default flex items-center justify-between bg-surface backdrop-blur-md sticky top-0 z-20">
           <div className="flex items-center gap-3 min-w-0">
-            <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center shrink-0 border transition-all ${
+            <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center shrink-0 border transition-[transform,opacity,box-shadow,border-color] ${
               indentMode === 'external' 
-                ? 'bg-indigo-50 border-indigo-200/60 text-indigo-600 shadow-xs' 
-                : 'bg-emerald-50 border-emerald-200/60 text-emerald-600 shadow-xs'
+                ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-600 shadow-xs' 
+                : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-600 shadow-xs'
             }`}>
               {indentMode === 'external' ? (
                 <Share2 className="w-5 h-5" />
@@ -322,18 +322,18 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
             
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight leading-tight">
+                <h3 className="text-sm sm:text-base font-extrabold text-text-primary tracking-tight leading-tight">
                   Borang Permohonan Silinder
                 </h3>
                 <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide uppercase border shrink-0 ${
                   indentMode === 'external'
-                    ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
-                    : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                    ? 'bg-indigo-500/10 text-indigo-700 border-indigo-500/20'
+                    : 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20'
                 }`}>
                   {indentMode === 'external' ? 'Inter-Facility' : 'Intra-Facility'}
                 </span>
               </div>
-              <p className="text-[11px] sm:text-xs text-slate-500 font-medium truncate mt-0.5">
+              <p className="text-[11px] sm:text-xs text-text-muted font-medium truncate mt-0.5">
                 {indentMode === 'external'
                   ? 'Inter-facility oxygen supply requisition between MOH healthcare facilities.'
                   : 'Inden bekalan silinder oksigen wad klinikal ke Unit Farmasi Logistik.'}
@@ -345,7 +345,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
             type="button"
             onClick={onClose}
             aria-label="Tutup"
-            className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors focus:outline-none shrink-0"
+            className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-xl text-slate-400 hover:text-text-secondary hover:bg-subtle transition-colors focus:outline-none shrink-0"
           >
             <X className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
@@ -354,7 +354,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
         {/* Scrollable Form Body */}
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4 sm:p-7 space-y-4 sm:space-y-5">
           {error && (
-            <div className="p-3 sm:p-3.5 bg-rose-50/90 border border-rose-200/80 rounded-2xl flex items-start gap-2.5 text-rose-800 text-xs sm:text-sm animate-modal-fade shadow-xs">
+            <div className="p-3 sm:p-3.5 bg-rose-500/10 border border-rose-500/20 rounded-2xl flex items-start gap-2.5 text-rose-400 text-xs sm:text-sm animate-modal-fade shadow-xs">
               <ShieldAlert className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
               <div className="font-semibold leading-snug">{error}</div>
             </div>
@@ -362,10 +362,10 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
 
           {/* External Facility Configuration (Inter-Facility only) */}
           {indentMode === 'external' && (
-            <div className="p-4 sm:p-5 bg-white border border-indigo-100 rounded-2xl shadow-xs space-y-3.5">
+            <div className="p-4 sm:p-5 bg-surface border border-indigo-100 rounded-2xl shadow-xs space-y-3.5">
               <div className="flex items-center gap-2 pb-1 border-b border-indigo-50">
                 <Sparkles className="w-4 h-4 text-indigo-600" />
-                <h4 className="text-xs font-extrabold text-indigo-950 uppercase tracking-wider">
+                <h4 className="text-xs font-extrabold text-indigo-400 dark:text-indigo-300 font-bold uppercase tracking-wider">
                   Konfigurasi Fasiliti Luar (Inter-Facility)
                 </h4>
               </div>
@@ -373,7 +373,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
               {/* Target Facility Input & Autocomplete */}
               <div className="space-y-1.5" ref={facilityRef}>
                 <div className="flex items-center justify-between">
-                  <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                  <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider">
                     Fasiliti Luar Sasaran (Target Facility) *
                   </label>
                   <span className="text-[10px] text-slate-400 font-semibold">Fasiliti KKM</span>
@@ -392,13 +392,13 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
                       }}
                       onFocus={() => setIsFacilityOpen(true)}
                       placeholder="Cth: Hospital Beaufort, KK Sundar..."
-                      className="w-full pl-10 pr-9 py-2.5 bg-slate-50/70 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all shadow-xs"
+                      className="w-full pl-10 pr-9 py-2.5 bg-subtle/50 border border-border-default rounded-xl text-xs sm:text-sm font-bold text-text-primary focus:bg-surface focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-[transform,opacity,box-shadow,border-color] shadow-xs"
                       required
                     />
                     <button
                       type="button"
                       onClick={() => setIsFacilityOpen(!isFacilityOpen)}
-                      className="absolute right-2.5 p-1 text-slate-400 hover:text-slate-600"
+                      className="absolute right-2.5 p-1 text-slate-400 hover:text-text-secondary"
                     >
                       <svg className={`w-4 h-4 transform transition-transform ${isFacilityOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
@@ -407,7 +407,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
                   </div>
 
                   {isFacilityOpen && (
-                    <div className="absolute left-0 right-0 top-full mt-1.5 bg-white border border-slate-200 rounded-2xl shadow-xl max-h-56 overflow-y-auto z-30 divide-y divide-slate-100 animate-modal-fade">
+                    <div className="absolute left-0 right-0 top-full mt-1.5 bg-surface border border-border-default rounded-2xl shadow-xl max-h-56 overflow-y-auto z-30 divide-y divide-border-subtle animate-modal-fade">
                       {filteredFacilities.length > 0 ? (
                         filteredFacilities.map((fac, idx) => (
                           <button
@@ -417,8 +417,8 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
                               setExternalFacility(fac.name);
                               setIsFacilityOpen(false);
                             }}
-                            className={`w-full px-3.5 py-2.5 text-left text-xs flex items-center justify-between hover:bg-indigo-50/80 transition-colors ${
-                              externalFacility === fac.name ? 'bg-indigo-50 font-extrabold text-indigo-700' : 'text-slate-700'
+                            className={`w-full px-3.5 py-2.5 text-left text-xs flex items-center justify-between hover:bg-indigo-500/10 transition-colors ${
+                              externalFacility === fac.name ? 'bg-indigo-500/10 font-extrabold text-indigo-700' : 'text-text-secondary'
                             }`}
                           >
                             <div className="flex items-center gap-2">
@@ -432,7 +432,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
                           </button>
                         ))
                       ) : (
-                        <div className="p-3 text-center text-xs text-slate-500">
+                        <div className="p-3 text-center text-xs text-text-muted">
                           Nama tersuai &quot;{externalFacility}&quot; akan digunakan.
                         </div>
                       )}
@@ -451,10 +451,10 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
                         setExternalFacility(facName);
                         setIsFacilityOpen(false);
                       }}
-                      className={`text-[10px] px-2.5 py-1 rounded-lg font-bold transition-all ${
+                      className={`text-[10px] px-2.5 py-1 rounded-lg font-bold transition-[transform,opacity,box-shadow,border-color] ${
                         externalFacility === facName
                           ? 'bg-indigo-600 text-white shadow-xs'
-                          : 'bg-slate-100 hover:bg-indigo-50 text-slate-700 border border-slate-200/80'
+                          : 'bg-subtle hover:bg-indigo-500/10 text-text-secondary border border-border-default'
                       }`}
                     >
                       {externalFacility === facName ? '✓ ' : ''}{facName}
@@ -465,24 +465,24 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
 
               {/* Indent Direction Selector */}
               <div className="space-y-1.5 pt-1">
-                <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider">
                   Arah Aliran Indent (Direction)
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <button
                     type="button"
                     onClick={() => setIndentDirection('outbound')}
-                    className={`p-2.5 rounded-xl border text-left flex items-center justify-between transition-all ${
+                    className={`p-2.5 rounded-xl border text-left flex items-center justify-between transition-[transform,opacity,box-shadow,border-color] ${
                       indentDirection === 'outbound'
-                        ? 'border-indigo-600 bg-indigo-50/40 ring-1 ring-indigo-500/20 shadow-xs'
-                        : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-600'
+                        ? 'border-indigo-600 bg-indigo-500/10 ring-1 ring-indigo-500/20 shadow-xs'
+                        : 'border-border-default bg-surface hover:bg-subtle/50 text-text-secondary'
                     }`}
                   >
                     <div>
                       <span className="text-[10px] font-bold uppercase tracking-wider block text-indigo-600">
                         Permohonan Keluar (Outbound)
                       </span>
-                      <span className="text-xs font-extrabold text-slate-800 flex items-center gap-1 mt-0.5">
+                      <span className="text-xs font-extrabold text-text-primary flex items-center gap-1 mt-0.5">
                         Hospital Lawas <ArrowRight className="w-3.5 h-3.5 text-indigo-500" /> {externalFacility || 'Fasiliti Luar'}
                       </span>
                     </div>
@@ -492,17 +492,17 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
                   <button
                     type="button"
                     onClick={() => setIndentDirection('inbound')}
-                    className={`p-2.5 rounded-xl border text-left flex items-center justify-between transition-all ${
+                    className={`p-2.5 rounded-xl border text-left flex items-center justify-between transition-[transform,opacity,box-shadow,border-color] ${
                       indentDirection === 'inbound'
-                        ? 'border-indigo-600 bg-indigo-50/40 ring-1 ring-indigo-500/20 shadow-xs'
-                        : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-600'
+                        ? 'border-indigo-600 bg-indigo-500/10 ring-1 ring-indigo-500/20 shadow-xs'
+                        : 'border-border-default bg-surface hover:bg-subtle/50 text-text-secondary'
                     }`}
                   >
                     <div>
                       <span className="text-[10px] font-bold uppercase tracking-wider block text-blue-600">
                         Permohonan Masuk (Inbound)
                       </span>
-                      <span className="text-xs font-extrabold text-slate-800 flex items-center gap-1 mt-0.5">
+                      <span className="text-xs font-extrabold text-text-primary flex items-center gap-1 mt-0.5">
                         {externalFacility || 'Fasiliti Luar'} <ArrowRight className="w-3.5 h-3.5 text-blue-500" /> Hospital Lawas
                       </span>
                     </div>
@@ -512,14 +512,14 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
               </div>
 
               {/* Store to Store Information Notice */}
-              <div className="flex items-center gap-2.5 p-3 bg-indigo-50/70 border border-indigo-200/80 rounded-xl text-xs text-indigo-950 font-semibold">
+              <div className="flex items-center gap-2.5 p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-xl text-xs text-indigo-400 dark:text-indigo-300 font-bold font-semibold">
                 <Building2 className="w-4 h-4 text-indigo-600 shrink-0" />
                 <div className="flex-1 leading-tight">
-                  <div className="text-[11px] font-extrabold text-indigo-900">
+                  <div className="text-[11px] font-extrabold text-indigo-400 dark:text-indigo-300 font-bold">
                     Operasi Stor ke Stor (Store-to-Store Logistics)
                   </div>
                   <div className="text-[10px] text-indigo-700/90 font-medium mt-0.5">
-                    Permohonan inter-facility dikendalikan terus oleh <strong className="font-extrabold text-indigo-950">Unit Farmasi Logistik</strong> tanpa melalui wad klinikal.
+                    Permohonan inter-facility dikendalikan terus oleh <strong className="font-extrabold text-indigo-400 dark:text-indigo-300 font-bold">Unit Farmasi Logistik</strong> tanpa melalui wad klinikal.
                   </div>
                 </div>
               </div>
@@ -530,10 +530,10 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
           {indentMode !== 'external' && (
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider">
                   Requesting Department (Wad / Unit) *
                 </label>
-                <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/80">
+                <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
                   {clinicalDepartments.length > 0 ? clinicalDepartments.length : 9} Wad & Unit Dibenarkan
                 </span>
               </div>
@@ -544,7 +544,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
                 <select
                   value={selectedDeptId}
                   onChange={(e) => setSelectedDeptId(e.target.value)}
-                  className="w-full pl-10 pr-10 py-2.5 sm:py-3 bg-white border border-slate-200 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all appearance-none cursor-pointer shadow-xs"
+                  className="w-full pl-10 pr-10 py-2.5 sm:py-3 bg-surface border border-border-default rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold text-text-primary focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-[transform,opacity,box-shadow,border-color] appearance-none cursor-pointer shadow-xs"
                   required
                 >
                   <option value="">Pilih Wad / Unit Pemohon...</option>
@@ -563,17 +563,17 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
 
           {/* Section 2: Priority Level Pill Control */}
           <div className="space-y-1.5">
-            <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+            <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider">
               Tahap Keutamaan (Priority Level) *
             </label>
-            <div className="grid grid-cols-3 gap-1.5 p-1 bg-slate-100 rounded-xl sm:rounded-2xl border border-slate-200/80">
+            <div className="grid grid-cols-3 gap-1.5 p-1 bg-subtle rounded-xl sm:rounded-2xl border border-border-default">
               <button
                 type="button"
                 onClick={() => setPriority('normal')}
-                className={`py-2 px-2 rounded-lg sm:rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                className={`py-2 px-2 rounded-lg sm:rounded-xl text-xs font-bold transition-[transform,opacity,box-shadow,border-color] flex items-center justify-center gap-1.5 ${
                   priority === 'normal'
-                    ? 'bg-white text-emerald-700 shadow-xs border border-emerald-200/70 font-extrabold'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
+                    ? 'bg-surface text-emerald-700 shadow-xs border border-emerald-500/20 font-extrabold'
+                    : 'text-text-secondary hover:text-text-primary hover:bg-surface/50'
                 }`}
               >
                 <span className={`w-2 h-2 rounded-full transition-colors ${priority === 'normal' ? 'bg-emerald-500' : 'bg-slate-300'}`} />
@@ -583,26 +583,26 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
               <button
                 type="button"
                 onClick={() => setPriority('urgent')}
-                className={`py-2 px-2 rounded-lg sm:rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                className={`py-2 px-2 rounded-lg sm:rounded-xl text-xs font-bold transition-[transform,opacity,box-shadow,border-color] flex items-center justify-center gap-1.5 ${
                   priority === 'urgent'
                     ? 'bg-amber-500 text-white shadow-xs font-extrabold'
-                    : 'text-slate-600 hover:text-amber-700 hover:bg-white/50'
+                    : 'text-text-secondary hover:text-amber-700 hover:bg-surface/50'
                 }`}
               >
-                <span className={`w-2 h-2 rounded-full transition-colors ${priority === 'urgent' ? 'bg-white' : 'bg-amber-400'}`} />
+                <span className={`w-2 h-2 rounded-full transition-colors ${priority === 'urgent' ? 'bg-surface' : 'bg-amber-400'}`} />
                 <span>Urgent</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setPriority('emergency')}
-                className={`py-2 px-2 rounded-lg sm:rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                className={`py-2 px-2 rounded-lg sm:rounded-xl text-xs font-bold transition-[transform,opacity,box-shadow,border-color] flex items-center justify-center gap-1.5 ${
                   priority === 'emergency'
                     ? 'bg-rose-600 text-white shadow-xs font-extrabold'
-                    : 'text-slate-600 hover:text-rose-700 hover:bg-white/50'
+                    : 'text-text-secondary hover:text-rose-700 hover:bg-surface/50'
                 }`}
               >
-                <span className={`w-2 h-2 rounded-full ${priority === 'emergency' ? 'bg-white animate-pulse' : 'bg-rose-400'}`} />
+                <span className={`w-2 h-2 rounded-full ${priority === 'emergency' ? 'bg-surface animate-pulse' : 'bg-rose-400'}`} />
                 <span>STAT / Cemas</span>
               </button>
             </div>
@@ -612,10 +612,10 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
           <div className="space-y-2.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider">
                   Senarai Silinder Dipohon *
                 </label>
-                <span className="text-[10px] font-bold font-mono text-slate-600 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200">
+                <span className="text-[10px] font-bold font-mono text-text-secondary bg-subtle px-2 py-0.5 rounded-full border border-border-default">
                   {totalQuantity} {totalQuantity === 1 ? 'Unit' : 'Unit'}
                 </span>
               </div>
@@ -623,7 +623,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
               <button
                 type="button"
                 onClick={handleAddItem}
-                className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100/80 px-2.5 py-1 rounded-lg transition-colors border border-emerald-200/60"
+                className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 hover:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-100/80 px-2.5 py-1 rounded-lg transition-colors border border-emerald-500/20"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Tambah Saiz</span>
@@ -642,24 +642,24 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
                 return (
                   <div
                     key={index}
-                    className="relative bg-white border border-slate-200/90 rounded-2xl p-3.5 sm:p-4 shadow-xs hover:border-slate-300 transition-all space-y-3"
+                    className="relative bg-surface border border-border-default rounded-2xl p-3.5 sm:p-4 shadow-xs hover:border-border-default transition-[transform,opacity,box-shadow,border-color] space-y-3"
                   >
                     {/* Item Card Header */}
-                    <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+                    <div className="flex items-center justify-between pb-1 border-b border-border-subtle">
                       <div className="flex items-center gap-2">
-                        <span className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-slate-100 text-slate-700 text-[11px] font-mono font-bold">
+                        <span className="inline-flex items-center justify-center w-5 h-5 rounded-md bg-subtle text-text-secondary text-[11px] font-mono font-bold">
                           #{index + 1}
                         </span>
-                        <span className="text-xs font-extrabold text-slate-800">
+                        <span className="text-xs font-extrabold text-text-primary">
                           {displayName}
                         </span>
                         {isManual ? (
-                          <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-200/70 inline-flex items-center gap-1">
+                          <span className="text-[10px] font-bold text-indigo-700 bg-indigo-500/10 px-2 py-0.5 rounded-md border border-indigo-500/20 inline-flex items-center gap-1">
                             <span>✍️ Saiz Manual</span>
                           </span>
                         ) : (
                           cylMeta && (
-                            <span className="text-[10px] font-semibold text-slate-500 bg-slate-50 px-2 py-0.5 rounded-md border border-slate-200/60 hidden sm:inline-block">
+                            <span className="text-[10px] font-semibold text-text-muted bg-subtle/50 px-2 py-0.5 rounded-md border border-border-default hidden sm:inline-block">
                               {cylMeta.valve} • {cylMeta.volume}
                             </span>
                           )
@@ -670,7 +670,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
                         <button
                           type="button"
                           onClick={() => handleRemoveItem(index)}
-                          className="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 px-2 py-1 rounded-lg transition-colors"
+                          className="inline-flex items-center gap-1 text-[11px] font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-500/10 px-2 py-1 rounded-lg transition-colors"
                           title="Padam saiz ini"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -684,7 +684,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
                       {/* Size Code Dropdown or Manual Input */}
                       <div className="sm:col-span-8 space-y-1.5">
                         <div className="h-6 flex items-center justify-between">
-                          <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                          <label className="block text-[10px] font-bold text-text-muted uppercase tracking-wider">
                             {isManual ? 'Spesifikasi Saiz Silinder Manual *' : 'Kod Saiz & Jenis Injap *'}
                           </label>
                           {isManual ? (
@@ -697,7 +697,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
                                   custom_size_name: ''
                                 });
                               }}
-                              className="text-[10px] font-bold text-slate-500 hover:text-indigo-600 underline transition-colors cursor-pointer"
+                              className="text-[10px] font-bold text-text-muted hover:text-indigo-600 underline transition-colors cursor-pointer"
                             >
                               📋 Senarai Standard
                             </button>
@@ -710,7 +710,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
                                   size_code: 'MANUAL',
                                 });
                               }}
-                              className="inline-flex items-center gap-1 text-[10px] font-bold text-indigo-700 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100/80 px-2 py-0.5 rounded-md border border-indigo-200 transition-colors cursor-pointer"
+                              className="inline-flex items-center gap-1 text-[10px] font-bold text-indigo-700 hover:text-indigo-400 dark:text-indigo-300 font-bold bg-indigo-500/10 hover:bg-indigo-100/80 px-2 py-0.5 rounded-md border border-indigo-500/20 transition-colors cursor-pointer"
                             >
                               ✍️ Input Saiz Manual
                             </button>
@@ -724,7 +724,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
                               value={item.custom_size_name || ''}
                               onChange={(e) => handleItemChange(index, 'custom_size_name', e.target.value)}
                               placeholder="Cth: 7.3m³, 6.2m³, 2.0m³, 5.0m³ Bullnose..."
-                              className="h-10 w-full px-3 bg-indigo-50/40 border border-indigo-200 rounded-xl text-xs sm:text-sm font-extrabold text-indigo-950 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all shadow-xs"
+                              className="h-10 w-full px-3 bg-indigo-500/10 border border-indigo-500/20 rounded-xl text-xs sm:text-sm font-extrabold text-indigo-400 dark:text-indigo-300 font-bold focus:bg-surface focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-[transform,opacity,box-shadow,border-color] shadow-xs"
                               autoFocus
                             />
                             {/* Quick chips for non-standard / external sizes */}
@@ -735,10 +735,10 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
                                   key={chip}
                                   type="button"
                                   onClick={() => handleItemChange(index, 'custom_size_name', chip)}
-                                  className={`text-[10px] px-2 py-0.5 rounded-lg font-bold transition-all border cursor-pointer ${
+                                  className={`text-[10px] px-2 py-0.5 rounded-lg font-bold transition-[transform,opacity,box-shadow,border-color] border cursor-pointer ${
                                     item.custom_size_name === chip
                                       ? 'bg-indigo-600 text-white border-indigo-600 shadow-xs'
-                                      : 'bg-white hover:bg-indigo-50 text-slate-700 border-slate-200'
+                                      : 'bg-surface hover:bg-indigo-500/10 text-text-secondary border-border-default'
                                   }`}
                                 >
                                   {item.custom_size_name === chip ? '✓ ' : ''}{chip}
@@ -764,7 +764,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
                                   });
                                 }
                               }}
-                              className="h-10 w-full pl-3 pr-8 bg-slate-50/70 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-800 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all appearance-none cursor-pointer"
+                              className="h-10 w-full pl-3 pr-8 bg-subtle/50 border border-border-default rounded-xl text-xs sm:text-sm font-bold text-text-primary focus:bg-surface focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-[transform,opacity,box-shadow,border-color] appearance-none cursor-pointer"
                             >
                               {CYLINDER_SIZES.map((sz) => (
                                 <option key={sz.code} value={sz.code}>
@@ -782,15 +782,15 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
                       {/* Quantity Stepper */}
                       <div className="sm:col-span-4 space-y-1.5">
                         <div className="h-6 flex items-center justify-between">
-                          <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                          <label className="block text-[10px] font-bold text-text-muted uppercase tracking-wider">
                             Kuantiti (Unit) *
                           </label>
                         </div>
-                        <div className="h-10 flex items-center border border-slate-200 rounded-xl bg-slate-50/70 overflow-hidden focus-within:bg-white focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20 transition-all">
+                        <div className="h-10 flex items-center border border-border-default rounded-xl bg-subtle/50 overflow-hidden focus-within:bg-surface focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20 transition-[transform,opacity,box-shadow,border-color]">
                           <button
                             type="button"
                             onClick={() => handleItemChange(index, 'quantity', Math.max(1, (Number(item.quantity) || 1) - 1))}
-                            className="h-full px-3 flex items-center justify-center text-slate-500 hover:text-slate-800 hover:bg-slate-100 active:bg-slate-200 transition-colors cursor-pointer"
+                            className="h-full px-3 flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-subtle active:bg-subtle transition-colors cursor-pointer"
                             disabled={(Number(item.quantity) || 1) <= 1}
                             title="Kurang 1 unit"
                           >
@@ -814,13 +814,13 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
                                 handleItemChange(index, 'quantity', 1);
                               }
                             }}
-                            className="h-full w-full text-center bg-transparent font-extrabold text-xs sm:text-sm text-slate-900 focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                            className="h-full w-full text-center bg-transparent font-extrabold text-xs sm:text-sm text-text-primary focus:outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                             required
                           />
                           <button
                             type="button"
                             onClick={() => handleItemChange(index, 'quantity', (Number(item.quantity) || 0) + 1)}
-                            className="h-full px-3 flex items-center justify-center text-slate-500 hover:text-slate-800 hover:bg-slate-100 active:bg-slate-200 transition-colors cursor-pointer"
+                            className="h-full px-3 flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-subtle active:bg-subtle transition-colors cursor-pointer"
                             title="Tambah 1 unit"
                           >
                             <Plus className="w-3.5 h-3.5" />
@@ -831,7 +831,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
 
                     {/* Remarks / Justification Input */}
                     <div className="space-y-1 pt-0.5">
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                      <label className="block text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider">
                         Justifikasi / Catatan Penggunaan (Pilihan)
                       </label>
                       <div className="relative">
@@ -843,7 +843,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
                           placeholder="Cth: Standby kecemasan, pesakit zon merah, penggantian silinder..."
                           value={item.usage_notes}
                           onChange={(e) => handleItemChange(index, 'usage_notes', e.target.value)}
-                          className="w-full pl-9 pr-3 py-2 bg-slate-50/50 border border-slate-200 rounded-xl text-xs text-slate-700 placeholder-slate-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all font-medium"
+                          className="w-full pl-9 pr-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-xs text-text-secondary placeholder-slate-400 focus:bg-surface focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-[transform,opacity,box-shadow,border-color] font-medium"
                         />
                       </div>
                     </div>
@@ -856,9 +856,9 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
             <button
               type="button"
               onClick={handleAddItem}
-              className="w-full py-2.5 px-3 border border-dashed border-slate-300 hover:border-emerald-500 hover:bg-emerald-50/40 rounded-2xl text-xs font-bold text-slate-600 hover:text-emerald-700 flex items-center justify-center gap-2 transition-all group"
+              className="w-full py-2.5 px-3 border border-dashed border-border-default hover:border-emerald-500 hover:bg-emerald-500/10 rounded-2xl text-xs font-bold text-text-secondary hover:text-emerald-700 flex items-center justify-center gap-2 transition-[transform,opacity,box-shadow,border-color] group"
             >
-              <div className="w-5 h-5 rounded-full bg-slate-100 group-hover:bg-emerald-100 text-slate-500 group-hover:text-emerald-700 flex items-center justify-center transition-colors">
+              <div className="w-5 h-5 rounded-full bg-subtle group-hover:bg-emerald-100 text-text-muted group-hover:text-emerald-700 flex items-center justify-center transition-colors">
                 <Plus className="w-3 h-3" />
               </div>
               <span>Tambah Saiz Silinder Lain</span>
@@ -867,7 +867,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
 
           {/* Section 4: General Remarks */}
           <div className="space-y-1.5">
-            <label className="block text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+            <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider">
               Catatan Tambahan (General Remarks)
             </label>
             <textarea
@@ -875,32 +875,32 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
               value={remarks}
               onChange={(e) => setRemarks(e.target.value)}
               rows={2}
-              className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl sm:rounded-2xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all resize-none shadow-xs font-medium"
+              className="w-full px-3.5 py-2.5 bg-surface border border-border-default rounded-xl sm:rounded-2xl text-xs sm:text-sm text-text-primary placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-[transform,opacity,box-shadow,border-color] resize-none shadow-xs font-medium"
             />
           </div>
 
           {/* Section 5: Requester Profile Card */}
-          <div className="p-3.5 sm:p-4 bg-white border border-slate-200/90 rounded-2xl flex items-center justify-between shadow-xs">
+          <div className="p-3.5 sm:p-4 bg-surface border border-border-default rounded-2xl flex items-center justify-between shadow-xs">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 text-slate-700 font-extrabold text-xs sm:text-sm flex items-center justify-center border border-slate-300/60 shrink-0">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 text-text-secondary font-extrabold text-xs sm:text-sm flex items-center justify-center border border-border-default shrink-0">
                 {currentUser?.full_name 
                   ? currentUser.full_name.split(' ').filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase() 
                   : 'AA'}
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                  <span className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                     Pemohon Log Masuk (Requester)
                   </span>
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                 </div>
-                <p className="font-extrabold text-slate-900 text-xs sm:text-sm truncate">
+                <p className="font-extrabold text-text-primary text-xs sm:text-sm truncate">
                   {currentUser?.full_name || 'Pegawai Bertugas'}
                 </p>
               </div>
             </div>
             <div className="text-right shrink-0">
-              <span className="inline-block px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-100 text-slate-700 border border-slate-200/80">
+              <span className="inline-block px-2.5 py-1 rounded-lg text-[10px] font-bold bg-subtle text-text-secondary border border-border-default">
                 {currentUser?.jawatan || (currentUser as any)?.role?.role_name || 'Kakitangan Hospital'}
               </span>
             </div>
@@ -908,11 +908,11 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
         </form>
 
         {/* Drawer Footer Actions */}
-        <div className="px-4 py-3 sm:px-7 sm:py-4 border-t border-slate-200/80 flex items-center justify-between bg-white/95 backdrop-blur-md sticky bottom-0 z-20">
+        <div className="px-4 py-3 sm:px-7 sm:py-4 border-t border-border-default flex items-center justify-between bg-white/95 backdrop-blur-md sticky bottom-0 z-20">
           {/* Summary info (desktop view) */}
-          <div className="hidden sm:flex items-center gap-2 text-xs font-semibold text-slate-500">
+          <div className="hidden sm:flex items-center gap-2 text-xs font-semibold text-text-muted">
             <span>Total Requisitions:</span>
-            <span className="font-extrabold text-slate-900 font-mono bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/80">
+            <span className="font-extrabold text-text-primary font-mono bg-subtle px-2 py-0.5 rounded-md border border-border-default">
               {totalQuantity} {totalQuantity === 1 ? 'Silinder' : 'Silinder'}
             </span>
             <span className="text-slate-400">({items.length} {items.length === 1 ? 'saiz' : 'saiz berbeza'})</span>
@@ -923,7 +923,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 sm:flex-none px-4 py-2.5 border border-slate-200 rounded-xl text-slate-600 hover:text-slate-800 hover:bg-slate-50 font-bold text-xs sm:text-sm transition-all focus:outline-none active:scale-[0.98]"
+              className="flex-1 sm:flex-none px-4 py-2.5 border border-border-default rounded-xl text-text-secondary hover:text-text-primary hover:bg-subtle/50 font-bold text-xs sm:text-sm transition-[transform,opacity,box-shadow,border-color] focus:outline-none active:scale-[0.98]"
             >
               Batal
             </button>
@@ -931,7 +931,7 @@ export const UnitRequestModal: React.FC<UnitRequestModalProps> = ({
               type="button"
               onClick={handleSubmit}
               disabled={isSubmitting}
-              className={`flex-1 sm:flex-none px-5 py-2.5 rounded-xl text-white font-bold text-xs sm:text-sm shadow-md transition-all active:scale-[0.98] focus:outline-none flex items-center justify-center gap-2 ${
+              className={`flex-1 sm:flex-none px-5 py-2.5 rounded-xl text-white font-bold text-xs sm:text-sm shadow-md transition-[transform,opacity,box-shadow,border-color] active:scale-[0.98] focus:outline-none flex items-center justify-center gap-2 ${
                 indentMode === 'external'
                   ? 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-600/20 disabled:bg-slate-300'
                   : 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/20 disabled:bg-slate-300'

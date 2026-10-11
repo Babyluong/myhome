@@ -53,10 +53,10 @@ interface KPICardProps {
 
 const KPICard: React.FC<KPICardProps> = ({ title, value, color, icon }) => {
   const colorClasses = {
-    primary: 'bg-gradient-to-br from-teal-50 to-teal-100 border-teal-200 text-teal-700',
-    success: 'bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200 text-emerald-700',
-    warning: 'bg-gradient-to-br from-amber-50 to-amber-100 border-amber-200 text-amber-700',
-    error: 'bg-gradient-to-br from-rose-50 to-rose-100 border-rose-200 text-rose-700',
+    primary: 'bg-gradient-to-br from-teal-50 to-teal-100 border-accent-base/20 text-teal-700',
+    success: 'bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-500/20 text-emerald-700',
+    warning: 'bg-gradient-to-br from-amber-50 to-amber-100 border-amber-500/20 text-amber-700',
+    error: 'bg-gradient-to-br from-rose-50 to-rose-100 border-rose-500/20 text-rose-700',
   }
 
   return (
@@ -88,22 +88,22 @@ const SupplierCard: React.FC<SupplierCardProps> = ({ supplier, onClick, onEdit }
   const getTypeColor = (type?: string) => {
     switch (type) {
       case 'drug':
-        return 'bg-blue-100 text-blue-700 border-blue-200'
+        return 'bg-blue-100 text-blue-700 border-blue-500/20'
       case 'non_drug':
-        return 'bg-purple-100 text-purple-700 border-purple-200'
+        return 'bg-purple-100 text-purple-700 border-indigo-500/20'
       default:
-        return 'bg-teal-100 text-teal-700 border-teal-200'
+        return 'bg-teal-100 text-teal-700 border-accent-base/20'
     }
   }
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
-        return 'bg-emerald-100 text-emerald-700 border-emerald-200'
+        return 'bg-emerald-100 text-emerald-700 border-emerald-500/20'
       case 'inactive':
-        return 'bg-amber-100 text-amber-700 border-amber-200'
+        return 'bg-amber-100 text-amber-700 border-amber-500/20'
       default:
-        return 'bg-rose-100 text-rose-700 border-rose-200'
+        return 'bg-rose-100 text-rose-700 border-rose-500/20'
     }
   }
 
@@ -120,13 +120,13 @@ const SupplierCard: React.FC<SupplierCardProps> = ({ supplier, onClick, onEdit }
       animate={{ opacity: 1, scale: 1 }}
       whileHover={{ scale: 1.02, y: -4 }}
       transition={{ duration: 0.2 }}
-      className="bg-white rounded-2xl border-2 border-gray-200 p-6 cursor-pointer hover:border-teal-300 hover:shadow-xl transition-all duration-200 group"
+      className="bg-surface rounded-2xl border-2 border-border-default p-6 cursor-pointer hover:border-teal-300 hover:shadow-xl transition-colors duration-150 group"
       onClick={onClick}
     >
       {/* Header */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">
-          <h3 className="text-lg font-bold text-gray-900 leading-tight group-hover:text-teal-600 transition-colors">
+          <h3 className="text-lg font-bold text-text-primary leading-tight group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
             {supplier.company_name}
           </h3>
         </div>
@@ -162,28 +162,28 @@ const SupplierCard: React.FC<SupplierCardProps> = ({ supplier, onClick, onEdit }
       {/* Contact Info */}
       <div className="space-y-2 mb-4">
         {supplier.contact_person && (
-          <div className="flex items-center gap-2 text-sm text-gray-700">
+          <div className="flex items-center gap-2 text-sm text-text-secondary">
             <Building2 className="w-4 h-4 text-gray-400" />
             <span className="font-medium">{supplier.contact_person}</span>
             {supplier.contact_person_phone && (
-              <span className="text-gray-500">• {supplier.contact_person_phone}</span>
+              <span className="text-text-muted">• {supplier.contact_person_phone}</span>
             )}
           </div>
         )}
         {supplier.email && (
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-text-muted">
             <Mail className="w-4 h-4 text-gray-400" />
             <span className="truncate">{supplier.email}</span>
           </div>
         )}
         {supplier.phone && (
-          <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center gap-2 text-sm text-text-muted">
             <Phone className="w-4 h-4 text-gray-400" />
             <span>{supplier.phone}</span>
           </div>
         )}
         {supplier.address && (
-          <div className="flex items-start gap-2 text-sm text-gray-600">
+          <div className="flex items-start gap-2 text-sm text-text-muted">
             <MapPin className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
             <span className="line-clamp-2">{supplier.address}</span>
           </div>
@@ -192,7 +192,7 @@ const SupplierCard: React.FC<SupplierCardProps> = ({ supplier, onClick, onEdit }
 
       {/* Documents */}
       {(supplier.account_document_url || supplier.mof_certificate_url || supplier.bumiputera_registration_certificate_url) && (
-        <div className="pt-4 border-t border-gray-100 flex flex-wrap items-center gap-3">
+        <div className="pt-4 border-t border-border-subtle flex flex-wrap items-center gap-3">
           {supplier.account_document_url && (
             <a
               href={supplier.account_document_url}
@@ -297,10 +297,10 @@ const SupplierDetailModal: React.FC<SupplierDetailModalProps> = ({ isOpen, onClo
         {/* Basic Info */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl p-6 border-2 border-teal-200">
+            <div className="bg-gradient-to-br from-teal-50 to-teal-100 rounded-2xl p-6 border-2 border-accent-base/20">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">{supplier.company_name}</h2>
+                  <h2 className="text-2xl font-bold text-text-primary">{supplier.company_name}</h2>
                 </div>
                 <Button variant="outline" size="sm" onClick={onEdit}>
                   <Edit className="w-4 h-4 mr-2" />
@@ -313,10 +313,10 @@ const SupplierDetailModal: React.FC<SupplierDetailModalProps> = ({ isOpen, onClo
                   variant="outline"
                   className={
                     supplier.supplier_type === 'drug'
-                      ? 'bg-blue-100 text-blue-700 border-blue-200'
+                      ? 'bg-blue-100 text-blue-700 border-blue-500/20'
                       : supplier.supplier_type === 'non_drug'
-                      ? 'bg-purple-100 text-purple-700 border-purple-200'
-                      : 'bg-teal-100 text-teal-700 border-teal-200'
+                      ? 'bg-purple-100 text-purple-700 border-indigo-500/20'
+                      : 'bg-teal-100 text-teal-700 border-accent-base/20'
                   }
                 >
                   {supplier.supplier_type === 'drug'
@@ -329,10 +329,10 @@ const SupplierDetailModal: React.FC<SupplierDetailModalProps> = ({ isOpen, onClo
                   variant="outline"
                   className={
                     supplier.status === 'active'
-                      ? 'bg-emerald-100 text-emerald-700 border-emerald-200'
+                      ? 'bg-emerald-100 text-emerald-700 border-emerald-500/20'
                       : supplier.status === 'inactive'
-                      ? 'bg-amber-100 text-amber-700 border-amber-200'
-                      : 'bg-rose-100 text-rose-700 border-rose-200'
+                      ? 'bg-amber-100 text-amber-700 border-amber-500/20'
+                      : 'bg-rose-100 text-rose-700 border-rose-500/20'
                   }
                 >
                   {supplier.status.charAt(0).toUpperCase() + supplier.status.slice(1)}
@@ -342,16 +342,16 @@ const SupplierDetailModal: React.FC<SupplierDetailModalProps> = ({ isOpen, onClo
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {supplier.contact_person && (
                   <div>
-                    <p className="text-xs font-semibold text-gray-600 mb-1">Person in Charge</p>
-                    <p className="text-sm font-medium text-gray-900">{supplier.contact_person}</p>
+                    <p className="text-xs font-semibold text-text-muted mb-1">Person in Charge</p>
+                    <p className="text-sm font-medium text-text-primary">{supplier.contact_person}</p>
                     {supplier.contact_person_phone && (
-                      <p className="text-xs text-gray-600 mt-1">{supplier.contact_person_phone}</p>
+                      <p className="text-xs text-text-muted mt-1">{supplier.contact_person_phone}</p>
                     )}
                   </div>
                 )}
                 {supplier.email && (
                   <div>
-                    <p className="text-xs font-semibold text-gray-600 mb-1">Email</p>
+                    <p className="text-xs font-semibold text-text-muted mb-1">Email</p>
                     <a
                       href={`mailto:${supplier.email}`}
                       className="text-sm text-teal-600 hover:text-teal-700 font-medium flex items-center gap-1"
@@ -363,7 +363,7 @@ const SupplierDetailModal: React.FC<SupplierDetailModalProps> = ({ isOpen, onClo
                 )}
                 {supplier.phone && (
                   <div>
-                    <p className="text-xs font-semibold text-gray-600 mb-1">Phone</p>
+                    <p className="text-xs font-semibold text-text-muted mb-1">Phone</p>
                     <a
                       href={`tel:${supplier.phone}`}
                       className="text-sm text-teal-600 hover:text-teal-700 font-medium"
@@ -374,8 +374,8 @@ const SupplierDetailModal: React.FC<SupplierDetailModalProps> = ({ isOpen, onClo
                 )}
                 {supplier.address && (
                   <div className="md:col-span-2">
-                    <p className="text-xs font-semibold text-gray-600 mb-1">Address</p>
-                    <p className="text-sm text-gray-900">{supplier.address}</p>
+                    <p className="text-xs font-semibold text-text-muted mb-1">Address</p>
+                    <p className="text-sm text-text-primary">{supplier.address}</p>
                   </div>
                 )}
               </div>
@@ -383,20 +383,20 @@ const SupplierDetailModal: React.FC<SupplierDetailModalProps> = ({ isOpen, onClo
 
             {/* Documents */}
             {(supplier.account_document_url || supplier.mof_certificate_url || supplier.bumiputera_registration_certificate_url) && (
-              <div className="bg-white rounded-2xl p-6 border-2 border-gray-200">
-                <h3 className="text-lg font-bold text-gray-900 mb-4">Documents</h3>
+              <div className="bg-surface rounded-2xl p-6 border-2 border-border-default">
+                <h3 className="text-lg font-bold text-text-primary mb-4">Documents</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {supplier.account_document_url && (
                     <a
                       href={supplier.account_document_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-xl hover:border-teal-300 hover:bg-teal-50 transition-colors"
+                      className="flex items-center gap-3 p-4 border-2 border-border-default rounded-xl hover:border-teal-300 hover:bg-accent-base/10 transition-colors"
                     >
                       <FileText className="w-6 h-6 text-teal-600" />
                       <div className="flex-1">
-                        <p className="font-semibold text-gray-900 text-sm">Account Document</p>
-                        <p className="text-[10px] text-gray-500">Click to view PDF</p>
+                        <p className="font-semibold text-text-primary text-sm">Account Document</p>
+                        <p className="text-[10px] text-text-muted">Click to view PDF</p>
                       </div>
                       <ExternalLink className="w-4 h-4 text-gray-400" />
                     </a>
@@ -406,12 +406,12 @@ const SupplierDetailModal: React.FC<SupplierDetailModalProps> = ({ isOpen, onClo
                       href={supplier.mof_certificate_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-xl hover:border-teal-300 hover:bg-teal-50 transition-colors"
+                      className="flex items-center gap-3 p-4 border-2 border-border-default rounded-xl hover:border-teal-300 hover:bg-accent-base/10 transition-colors"
                     >
                       <FileText className="w-6 h-6 text-teal-600" />
                       <div className="flex-1">
-                        <p className="font-semibold text-gray-900 text-sm">MOF Certificate</p>
-                        <p className="text-[10px] text-gray-500">Click to view PDF</p>
+                        <p className="font-semibold text-text-primary text-sm">MOF Certificate</p>
+                        <p className="text-[10px] text-text-muted">Click to view PDF</p>
                       </div>
                       <ExternalLink className="w-4 h-4 text-gray-400" />
                     </a>
@@ -421,12 +421,12 @@ const SupplierDetailModal: React.FC<SupplierDetailModalProps> = ({ isOpen, onClo
                       href={supplier.bumiputera_registration_certificate_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-xl hover:border-teal-300 hover:bg-teal-50 transition-colors"
+                      className="flex items-center gap-3 p-4 border-2 border-border-default rounded-xl hover:border-teal-300 hover:bg-accent-base/10 transition-colors"
                     >
                       <FileText className="w-6 h-6 text-teal-600" />
                       <div className="flex-1">
-                        <p className="font-semibold text-gray-900 text-sm">Bumi Certificate</p>
-                        <p className="text-[10px] text-gray-500">Click to view PDF</p>
+                        <p className="font-semibold text-text-primary text-sm">Bumi Certificate</p>
+                        <p className="text-[10px] text-text-muted">Click to view PDF</p>
                       </div>
                       <ExternalLink className="w-4 h-4 text-gray-400" />
                     </a>
@@ -438,20 +438,20 @@ const SupplierDetailModal: React.FC<SupplierDetailModalProps> = ({ isOpen, onClo
 
           {/* Statistics Panel */}
           <div className="space-y-6">
-            <div className="bg-white rounded-3xl p-6 border-2 border-gray-100 shadow-sm overflow-hidden relative group">
+            <div className="bg-surface rounded-3xl p-6 border-2 border-border-subtle shadow-sm overflow-hidden relative group">
               {/* Background Accent */}
-              <div className="absolute top-0 right-0 w-32 h-32 bg-teal-50 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110 duration-500" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-accent-base/10 rounded-full -mr-16 -mt-16 transition-transform group-hover:scale-110 duration-500" />
               
               <div className="relative">
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                  <h3 className="text-xl font-bold text-text-primary flex items-center gap-2">
                     <div className="p-2 bg-teal-600 rounded-xl">
                       <TrendingUp className="w-5 h-5 text-white" />
                     </div>
                     Order Analysis
                   </h3>
                   {!isLoadingStats && statistics && statistics.totalOrders > 0 && (
-                    <div className="px-3 py-1 bg-teal-50 text-teal-700 rounded-full text-xs font-bold uppercase tracking-wider">
+                    <div className="px-3 py-1 bg-accent-base/10 text-teal-700 rounded-full text-xs font-bold uppercase tracking-wider">
                       Active
                     </div>
                   )}
@@ -463,40 +463,40 @@ const SupplierDetailModal: React.FC<SupplierDetailModalProps> = ({ isOpen, onClo
                       <div className="absolute inset-0 border-4 border-teal-100 rounded-full" />
                       <div className="absolute inset-0 border-4 border-teal-600 rounded-full border-t-transparent animate-spin" />
                     </div>
-                    <p className="text-sm font-medium text-gray-500">Calculating statistics...</p>
+                    <p className="text-sm font-medium text-text-muted">Calculating statistics...</p>
                   </div>
                 ) : statistics ? (
                   <div className="space-y-6">
                     {/* Primary Stats */}
                     <div className="grid grid-cols-1 gap-4">
-                      <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100 group/card hover:bg-white hover:shadow-md transition-all">
+                      <div className="bg-subtle/50 rounded-2xl p-5 border border-border-subtle group/card hover:bg-surface hover:shadow-md transition-colors">
                         <div className="flex items-center justify-between mb-2">
                           <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Procurement</p>
-                          <div className="p-2 bg-white rounded-lg border border-gray-100 text-teal-600">
+                          <div className="p-2 bg-surface rounded-lg border border-border-subtle text-teal-600">
                             <DollarSign className="w-4 h-4" />
                           </div>
                         </div>
-                        <p className="text-3xl font-black text-gray-900 tabular-nums">
+                        <p className="text-3xl font-black text-text-primary tabular-nums">
                           {formatCurrency(statistics.totalValue)}
                         </p>
-                        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-200/50">
+                        <div className="flex items-center gap-2 mt-3 pt-3 border-t border-border-default">
                           <Package className="w-4 h-4 text-gray-400" />
-                          <span className="text-sm font-bold text-gray-900">{statistics.totalOrders}</span>
-                          <span className="text-sm text-gray-500 font-medium">total orders processed</span>
+                          <span className="text-sm font-bold text-text-primary">{statistics.totalOrders}</span>
+                          <span className="text-sm text-text-muted font-medium">total orders processed</span>
                         </div>
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
-                        <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100 hover:bg-white hover:shadow-md transition-all">
+                        <div className="bg-subtle/50 rounded-2xl p-5 border border-border-subtle hover:bg-surface hover:shadow-md transition-colors">
                           <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Avg Value</p>
-                          <p className="text-lg font-bold text-gray-900">
+                          <p className="text-lg font-bold text-text-primary">
                             {formatCurrency(statistics.averageOrderValue).split('.')[0]}
                             <span className="text-xs opacity-50">.{formatCurrency(statistics.averageOrderValue).split('.')[1] || '00'}</span>
                           </p>
                         </div>
-                        <div className="bg-gray-50 rounded-2xl p-5 border border-gray-100 hover:bg-white hover:shadow-md transition-all">
+                        <div className="bg-subtle/50 rounded-2xl p-5 border border-border-subtle hover:bg-surface hover:shadow-md transition-colors">
                           <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Last Order</p>
-                          <p className="text-sm font-bold text-gray-900">
+                          <p className="text-sm font-bold text-text-primary">
                             {statistics.lastOrderDate 
                               ? new Date(statistics.lastOrderDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
                               : 'N/A'
@@ -518,24 +518,24 @@ const SupplierDetailModal: React.FC<SupplierDetailModalProps> = ({ isOpen, onClo
                             <button
                               key={yearData.year}
                               onClick={() => setSelectedYear(yearData.year)}
-                              className={`w-full group/year p-4 rounded-2xl border-2 transition-all relative overflow-hidden ${
+                              className={`w-full group/year p-4 rounded-2xl border-2 transition-colors relative overflow-hidden ${
                                 selectedYear === yearData.year
-                                  ? 'border-teal-600 bg-white shadow-lg shadow-teal-100'
-                                  : 'border-gray-100 bg-gray-50/50 hover:border-teal-200 hover:bg-white'
+                                  ? 'border-teal-600 bg-surface shadow-lg shadow-teal-100'
+                                  : 'border-border-subtle bg-subtle/50 hover:border-accent-base/20 hover:bg-surface'
                               }`}
                             >
                               <div className="relative z-10 flex items-center justify-between">
                                 <div>
-                                  <span className={`text-lg font-black ${selectedYear === yearData.year ? 'text-teal-600' : 'text-gray-900'}`}>
+                                  <span className={`text-lg font-black ${selectedYear === yearData.year ? 'text-teal-600' : 'text-text-primary'}`}>
                                     {yearData.year}
                                   </span>
-                                  <p className="text-xs font-bold text-gray-500 mt-0.5">
+                                  <p className="text-xs font-bold text-text-muted mt-0.5">
                                     {formatCurrency(yearData.totalValue)}
                                   </p>
                                 </div>
                                 <div className="text-right">
                                   <div className={`px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider mb-1 inline-block ${
-                                    selectedYear === yearData.year ? 'bg-teal-600 text-white' : 'bg-gray-200 text-gray-600'
+                                    selectedYear === yearData.year ? 'bg-teal-600 text-white' : 'bg-subtle text-text-muted'
                                   }`}>
                                     {yearData.orderCount} Orders
                                   </div>
@@ -552,19 +552,19 @@ const SupplierDetailModal: React.FC<SupplierDetailModalProps> = ({ isOpen, onClo
                     )}
 
                     {statistics.totalOrders === 0 && (
-                      <div className="bg-gray-50 rounded-2xl p-8 text-center border border-dashed border-gray-200">
-                        <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
+                      <div className="bg-subtle/50 rounded-2xl p-8 text-center border border-dashed border-border-default">
+                        <div className="w-16 h-16 bg-surface rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
                           <ShoppingCart className="w-8 h-8 text-gray-300" />
                         </div>
-                        <h4 className="text-sm font-bold text-gray-900 mb-1">No Orders Found</h4>
-                        <p className="text-xs text-gray-500 px-4">There is no historical procurement data recorded for this supplier.</p>
+                        <h4 className="text-sm font-bold text-text-primary mb-1">No Orders Found</h4>
+                        <p className="text-xs text-text-muted px-4">There is no historical procurement data recorded for this supplier.</p>
                       </div>
                     )}
                   </div>
                 ) : (
-                  <div className="bg-rose-50 rounded-2xl p-8 text-center border border-rose-100">
+                  <div className="bg-rose-500/10 rounded-2xl p-8 text-center border border-rose-100">
                     <AlertCircle className="w-10 h-10 text-rose-600 mx-auto mb-3" />
-                    <p className="text-sm font-bold text-rose-900">Unable to load analysis</p>
+                    <p className="text-sm font-bold text-rose-400 dark:text-rose-300 font-bold">Unable to load analysis</p>
                     <p className="text-xs text-rose-600 mt-1">Please verify your connection and try again.</p>
                   </div>
                 )}
@@ -708,7 +708,7 @@ const SupplierFormModal: React.FC<SupplierFormModalProps> = ({
     >
       <form onSubmit={handleSubmit} className="space-y-6 max-h-[calc(90vh-120px)] overflow-y-auto pr-2">
         {errors.submit && (
-          <div className="bg-rose-50 border-2 border-rose-200 rounded-xl p-4 flex items-center gap-2 text-rose-700">
+          <div className="bg-rose-500/10 border-2 border-rose-500/20 rounded-xl p-4 flex items-center gap-2 text-rose-700">
             <AlertCircle className="w-5 h-5" />
             <span className="font-medium">{errors.submit}</span>
           </div>
@@ -716,12 +716,12 @@ const SupplierFormModal: React.FC<SupplierFormModalProps> = ({
 
         {/* Basic Info */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+          <h3 className="text-lg font-semibold text-text-primary border-b border-border-default pb-2">
             Basic Information
           </h3>
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-text-secondary mb-1">
                 Company Name <span className="text-rose-500">*</span>
               </label>
               <Input
@@ -735,7 +735,7 @@ const SupplierFormModal: React.FC<SupplierFormModalProps> = ({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Supplier Type</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Supplier Type</label>
               <Select
                 value={(formData.supplier_type as SupplierType) || 'both'}
                 onChange={e =>
@@ -751,7 +751,7 @@ const SupplierFormModal: React.FC<SupplierFormModalProps> = ({
               </Select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Status</label>
               <Select
                 value={formData.status || 'active'}
                 onChange={e =>
@@ -771,33 +771,33 @@ const SupplierFormModal: React.FC<SupplierFormModalProps> = ({
 
         {/* Contact */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+          <h3 className="text-lg font-semibold text-text-primary border-b border-border-default pb-2">
             Contact & Address
           </h3>
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Person In Charge (PIC)</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Person In Charge (PIC)</label>
               <Input
                 value={formData.contact_person || ''}
                 onChange={e => setFormData({ ...formData, contact_person: e.target.value })}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">PIC Phone</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">PIC Phone</label>
               <Input
                 value={formData.contact_person_phone || ''}
                 onChange={e => setFormData({ ...formData, contact_person_phone: e.target.value })}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Main Phone</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Main Phone</label>
               <Input
                 value={formData.phone || ''}
                 onChange={e => setFormData({ ...formData, phone: e.target.value })}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Email</label>
               <Input
                 type="email"
                 value={formData.email || ''}
@@ -809,7 +809,7 @@ const SupplierFormModal: React.FC<SupplierFormModalProps> = ({
               />
             </div>
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Address</label>
               <Input
                 value={formData.address || ''}
                 onChange={e => setFormData({ ...formData, address: e.target.value })}
@@ -821,7 +821,7 @@ const SupplierFormModal: React.FC<SupplierFormModalProps> = ({
 
         {/* Documents */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+          <h3 className="text-lg font-semibold text-text-primary border-b border-border-default pb-2">
             Supporting Documents (PDF)
           </h3>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -852,7 +852,7 @@ const SupplierFormModal: React.FC<SupplierFormModalProps> = ({
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t sticky bottom-0 bg-white">
+        <div className="flex justify-end gap-3 pt-4 border-t sticky bottom-0 bg-surface">
           <Button type="button" variant="outline" onClick={onClose} disabled={isSaving}>
             Cancel
           </Button>
@@ -1065,20 +1065,20 @@ export const SupplierCatalogPage: React.FC = () => {
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
           <span className="text-slate-400">Catalog</span>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-          <span className="text-slate-800 font-extrabold tracking-wide">Supplier Catalog</span>
+          <span className="text-text-primary font-extrabold tracking-wide">Supplier Catalog</span>
         </nav>
 
         {/* Gradient Header Monument */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative z-20">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-gradient-to-tr from-slate-900 to-indigo-950 border border-slate-800/80 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/10 hover:rotate-2 transition-transform duration-300">
+            <div className="w-14 h-14 bg-surface border border-border-default rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/10 hover:rotate-2 transition-transform duration-300">
               <Building2 className="h-6 w-6 text-white" />
             </div>
             <div className="space-y-0.5">
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900">
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-transparent bg-clip-text bg-surface border border-border-default">
                 Supplier Catalog
               </h1>
-              <p className="text-slate-500 font-semibold text-[11px] flex items-center gap-1.5">
+              <p className="text-text-muted font-semibold text-[11px] flex items-center gap-1.5">
                 <Sparkles className="w-3 h-3 text-indigo-500" />
                 Registry of Verified Pharmaceutical & Medical Equipment Vendors
               </p>
@@ -1091,7 +1091,7 @@ export const SupplierCatalogPage: React.FC = () => {
                 setSelectedSupplier(null)
                 setShowAddModal(true)
               }}
-              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-slate-900 to-indigo-950 text-white text-xs font-bold uppercase tracking-wider hover:from-slate-800 hover:to-indigo-900 transition-all shadow-md shadow-slate-900/10 flex items-center gap-2"
+              className="px-4 py-2.5 rounded-xl bg-surface border border-border-default text-white text-xs font-bold uppercase tracking-wider hover:from-slate-800 hover:to-indigo-900 transition-colors shadow-md shadow-slate-900/10 flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
               Add Supplier
@@ -1100,48 +1100,48 @@ export const SupplierCatalogPage: React.FC = () => {
         </div>
 
         {/* Elevated Dashboard KPI Metrics Section wrapped in a luxurious white background card */}
-        <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] border border-slate-200 shadow-xl mb-6 relative z-10">
+        <div className="bg-surface p-6 sm:p-8 rounded-[2.5rem] border border-border-default shadow-xl mb-6 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Total Suppliers */}
-            <div className="bg-blue-50/50 border-2 border-blue-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-blue-50 hover:border-blue-200 hover:shadow-lg transition-all duration-300">
+            <div className="bg-blue-500/10 border-2 border-blue-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-blue-500/10 hover:border-blue-500/20 hover:shadow-lg transition-colors duration-150">
               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform duration-300" />
               <div className="flex flex-col gap-4 relative z-10">
-                <div className="w-12 h-12 bg-blue-100 border border-blue-200 rounded-2xl flex items-center justify-center text-blue-600 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <div className="w-12 h-12 bg-blue-100 border border-blue-500/20 rounded-2xl flex items-center justify-center text-blue-600 shadow-sm group-hover:scale-110 transition-transform duration-300">
                   <Building2 className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-xs font-black text-blue-900/60 uppercase tracking-widest">Total Registered</p>
-                  <h3 className="text-2xl sm:text-3xl font-black text-blue-900 mt-1">{kpis.total}</h3>
+                  <p className="text-xs font-black text-blue-400 dark:text-blue-300 font-bold/60 uppercase tracking-widest">Total Registered</p>
+                  <h3 className="text-2xl sm:text-3xl font-black text-blue-400 dark:text-blue-300 font-bold mt-1">{kpis.total}</h3>
                   <p className="text-xs font-bold text-blue-600 mt-2">Total verified vendors</p>
                 </div>
               </div>
             </div>
 
             {/* Active Suppliers */}
-            <div className="bg-emerald-50/50 border-2 border-emerald-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-emerald-50 hover:border-emerald-200 hover:shadow-lg transition-all duration-300">
+            <div className="bg-emerald-500/10 border-2 border-emerald-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-emerald-500/10 hover:border-emerald-500/20 hover:shadow-lg transition-colors duration-150">
               <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform duration-300" />
               <div className="flex flex-col gap-4 relative z-10">
-                <div className="w-12 h-12 bg-emerald-100 border border-emerald-200 rounded-2xl flex items-center justify-center text-emerald-600 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <div className="w-12 h-12 bg-emerald-100 border border-emerald-500/20 rounded-2xl flex items-center justify-center text-emerald-600 shadow-sm group-hover:scale-110 transition-transform duration-300">
                   <TrendingUp className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-xs font-black text-emerald-900/60 uppercase tracking-widest">Active Vendors</p>
-                  <h3 className="text-2xl sm:text-3xl font-black text-emerald-900 mt-1">{kpis.active}</h3>
+                  <p className="text-xs font-black text-emerald-400 dark:text-emerald-300 font-bold/60 uppercase tracking-widest">Active Vendors</p>
+                  <h3 className="text-2xl sm:text-3xl font-black text-emerald-400 dark:text-emerald-300 font-bold mt-1">{kpis.active}</h3>
                   <p className="text-xs font-bold text-emerald-600 mt-2">Eligible for purchase orders</p>
                 </div>
               </div>
             </div>
 
             {/* Blacklisted Suppliers */}
-            <div className="bg-rose-50/50 border-2 border-rose-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-rose-50 hover:border-rose-200 hover:shadow-lg transition-all duration-300">
+            <div className="bg-rose-500/10 border-2 border-rose-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-rose-500/10 hover:border-rose-500/20 hover:shadow-lg transition-colors duration-150">
               <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform duration-300" />
               <div className="flex flex-col gap-4 relative z-10">
-                <div className="w-12 h-12 bg-rose-100 border border-rose-200 rounded-2xl flex items-center justify-center text-rose-600 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <div className="w-12 h-12 bg-rose-100 border border-rose-500/20 rounded-2xl flex items-center justify-center text-rose-600 shadow-sm group-hover:scale-110 transition-transform duration-300">
                   <AlertCircle className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-xs font-black text-rose-900/60 uppercase tracking-widest">Blacklisted Vendors</p>
-                  <h3 className="text-2xl sm:text-3xl font-black text-rose-950 mt-1">{kpis.blacklisted}</h3>
+                  <p className="text-xs font-black text-rose-400 dark:text-rose-300 font-bold/60 uppercase tracking-widest">Blacklisted Vendors</p>
+                  <h3 className="text-2xl sm:text-3xl font-black text-rose-400 dark:text-rose-300 font-bold mt-1">{kpis.blacklisted}</h3>
                   <p className="text-xs font-bold text-rose-600 mt-2">Restricted from transactions</p>
                 </div>
               </div>
@@ -1150,8 +1150,8 @@ export const SupplierCatalogPage: React.FC = () => {
         </div>
 
         {/* Search & Filters */}
-        <div className="bg-white rounded-[2.5rem] border border-slate-200 p-6 sm:p-8 shadow-xl relative z-20 space-y-6">
-          <div className="bg-slate-50/50 p-4 rounded-3xl border border-slate-200/60 shadow-sm space-y-4">
+        <div className="bg-surface rounded-[2.5rem] border border-border-default p-6 sm:p-8 shadow-xl relative z-20 space-y-6">
+          <div className="bg-subtle/50 p-4 rounded-3xl border border-border-default shadow-sm space-y-4">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -1165,7 +1165,7 @@ export const SupplierCatalogPage: React.FC = () => {
                       loadSuppliers()
                     }
                   }}
-                  className="pl-11 pr-6 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                  className="pl-11 pr-6 py-2.5 bg-surface border border-border-default rounded-xl text-sm font-semibold text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors outline-none"
                 />
               </div>
               <button
@@ -1173,7 +1173,7 @@ export const SupplierCatalogPage: React.FC = () => {
                   setCurrentPage(1)
                   loadSuppliers()
                 }}
-                className="px-5 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-800 transition-all flex items-center justify-center gap-2"
+                className="px-5 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-800 transition-colors flex items-center justify-center gap-2"
               >
                 <Search className="w-4 h-4" />
                 Search
@@ -1187,7 +1187,7 @@ export const SupplierCatalogPage: React.FC = () => {
                   setTypeFilter(e.target.value)
                   setCurrentPage(1)
                 }}
-                className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold text-slate-700 outline-none"
+                className="bg-surface border border-border-default rounded-xl px-4 py-2 text-xs font-bold text-text-secondary outline-none"
               >
                 <option value="">All Types</option>
                 <option value="drug">Drug Only</option>
@@ -1201,7 +1201,7 @@ export const SupplierCatalogPage: React.FC = () => {
                   setStatusFilter(e.target.value)
                   setCurrentPage(1)
                 }}
-                className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold text-slate-700 outline-none"
+                className="bg-surface border border-border-default rounded-xl px-4 py-2 text-xs font-bold text-text-secondary outline-none"
               >
                 <option value="">All Status</option>
                 <option value="active">Active</option>
@@ -1217,7 +1217,7 @@ export const SupplierCatalogPage: React.FC = () => {
                   setCurrentPage(1)
                 }}
                 disabled={!hasActiveFilters}
-                className="px-4 py-2 bg-white border border-slate-200 hover:border-slate-300 text-slate-700 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:opacity-50 md:col-span-2"
+                className="px-4 py-2 bg-surface border border-border-default hover:border-border-default text-text-secondary rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 disabled:opacity-50 md:col-span-2"
               >
                 <X className="w-4 h-4" />
                 Clear Filters
@@ -1229,10 +1229,10 @@ export const SupplierCatalogPage: React.FC = () => {
           {isLoading ? (
             <LoadingOverlay />
           ) : suppliers.length === 0 ? (
-            <div className="bg-white rounded-2xl border-2 border-slate-100 p-12 text-center">
+            <div className="bg-surface rounded-2xl border-2 border-border-subtle p-12 text-center">
               <Building2 className="w-16 h-16 mx-auto mb-4 text-slate-400" />
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">No suppliers found</h3>
-              <p className="text-slate-600 mb-4">
+              <h3 className="text-lg font-semibold text-text-primary mb-2">No suppliers found</h3>
+              <p className="text-text-muted mb-4">
                 {hasActiveFilters
                   ? 'Try adjusting your filters or search query'
                   : 'Get started by adding your first supplier'}
@@ -1243,7 +1243,7 @@ export const SupplierCatalogPage: React.FC = () => {
                     setSelectedSupplier(null)
                     setShowAddModal(true)
                   }}
-                  className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-all inline-flex items-center gap-2"
+                  className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-colors inline-flex items-center gap-2"
                 >
                   <Plus className="w-4 h-4" />
                   Add Supplier
@@ -1263,7 +1263,7 @@ export const SupplierCatalogPage: React.FC = () => {
                 ))}
               </div>
               {totalPages > 1 && (
-                <div className="mt-6 border-t border-slate-100 pt-6">
+                <div className="mt-6 border-t border-border-subtle pt-6">
                   <Pagination
                     currentPage={currentPage}
                     totalPages={totalPages}

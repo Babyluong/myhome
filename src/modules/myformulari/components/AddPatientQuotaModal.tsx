@@ -110,7 +110,7 @@ export const AddPatientQuotaModal: React.FC<AddPatientQuotaModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs overflow-y-auto">
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+      <div className="bg-surface rounded-2xl border border-border-default shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150">
         
         {/* Header */}
         <div className="px-6 py-4 bg-slate-900 text-white flex items-center justify-between shrink-0">
@@ -136,7 +136,7 @@ export const AddPatientQuotaModal: React.FC<AddPatientQuotaModalProps> = ({
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-5">
           {errorMsg && (
-            <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800 font-medium flex items-center gap-2">
+            <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-400 font-medium flex items-center gap-2">
               <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
               <span>{errorMsg}</span>
             </div>
@@ -144,67 +144,67 @@ export const AddPatientQuotaModal: React.FC<AddPatientQuotaModalProps> = ({
 
           {/* Section 1: Maklumat Pesakit */}
           <div className="space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-1">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-text-muted border-b border-border-subtle pb-1">
               1. Maklumat Pesakit
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-medium text-slate-700 block mb-1">Nama Penuh Pesakit *</label>
+                <label className="text-xs font-medium text-text-secondary block mb-1">Nama Penuh Pesakit *</label>
                 <input
                   type="text"
                   required
                   value={patientName}
                   onChange={e => setPatientName(e.target.value)}
                   placeholder="Nama Pesakit"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:bg-white focus:outline-hidden focus:border-indigo-600"
+                  className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-lg text-xs text-text-primary focus:bg-surface focus:outline-hidden focus:border-indigo-600"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-medium text-slate-700 block mb-1">No. RN (Registration Number) *</label>
+                <label className="text-xs font-medium text-text-secondary block mb-1">No. RN (Registration Number) *</label>
                 <input
                   type="text"
                   required
                   value={patientRn}
                   onChange={e => setPatientRn(e.target.value)}
                   placeholder="Contoh: RN-884210-26"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono text-slate-900 focus:bg-white focus:outline-hidden focus:border-indigo-600"
+                  className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-lg text-xs font-mono text-text-primary focus:bg-surface focus:outline-hidden focus:border-indigo-600"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
-                <label className="text-xs font-medium text-slate-700 block mb-1">No. MyKad *</label>
+                <label className="text-xs font-medium text-text-secondary block mb-1">No. MyKad *</label>
                 <input
                   type="text"
                   required
                   value={patientMyKad}
                   onChange={e => setPatientMyKad(e.target.value)}
                   placeholder="700101-13-5001"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono text-slate-900 focus:bg-white focus:outline-hidden focus:border-indigo-600"
+                  className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-lg text-xs font-mono text-text-primary focus:bg-surface focus:outline-hidden focus:border-indigo-600"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-medium text-slate-700 block mb-1">Umur (Tahun)</label>
+                <label className="text-xs font-medium text-text-secondary block mb-1">Umur (Tahun)</label>
                 <input
                   type="number"
                   min="0"
                   max="120"
                   value={age}
                   onChange={e => setAge(e.target.value === '' ? '' : Number(e.target.value))}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 text-right focus:bg-white focus:outline-hidden focus:border-indigo-600"
+                  className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-lg text-xs text-text-primary text-right focus:bg-surface focus:outline-hidden focus:border-indigo-600"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-medium text-slate-700 block mb-1">Jantina</label>
+                <label className="text-xs font-medium text-text-secondary block mb-1">Jantina</label>
                 <select
                   value={gender}
                   onChange={e => setGender(e.target.value as any)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:bg-white focus:outline-hidden focus:border-indigo-600 cursor-pointer"
+                  className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-lg text-xs text-text-primary focus:bg-surface focus:outline-hidden focus:border-indigo-600 cursor-pointer"
                 >
                   <option value="Lelaki">Lelaki</option>
                   <option value="Perempuan">Perempuan</option>
@@ -215,43 +215,43 @@ export const AddPatientQuotaModal: React.FC<AddPatientQuotaModalProps> = ({
 
           {/* Section 2: Preskripsi & Kelulusan */}
           <div className="space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-1">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-text-muted border-b border-border-subtle pb-1">
               2. Pakar Preskriber & Kelulusan Khas
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-medium text-slate-700 block mb-1">Nama Pakar / Perunding *</label>
+                <label className="text-xs font-medium text-text-secondary block mb-1">Nama Pakar / Perunding *</label>
                 <input
                   type="text"
                   required
                   value={prescriberName}
                   onChange={e => setPrescriberName(e.target.value)}
                   placeholder="Dr. Noraini Hashim"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:bg-white focus:outline-hidden focus:border-indigo-600"
+                  className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-lg text-xs text-text-primary focus:bg-surface focus:outline-hidden focus:border-indigo-600"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-medium text-slate-700 block mb-1">Klinik / Jabatan *</label>
+                <label className="text-xs font-medium text-text-secondary block mb-1">Klinik / Jabatan *</label>
                 <input
                   type="text"
                   required
                   value={clinicDepartment}
                   onChange={e => setClinicDepartment(e.target.value)}
                   placeholder="Klinik Kardiologi"
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:bg-white focus:outline-hidden focus:border-indigo-600"
+                  className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-lg text-xs text-text-primary focus:bg-surface focus:outline-hidden focus:border-indigo-600"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label className="text-xs font-medium text-slate-700 block mb-1">Pihak Berkuasa Kelulusan</label>
+                <label className="text-xs font-medium text-text-secondary block mb-1">Pihak Berkuasa Kelulusan</label>
                 <select
                   value={approvalAuthority}
                   onChange={e => setApprovalAuthority(e.target.value as any)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:bg-white focus:outline-hidden focus:border-indigo-600 cursor-pointer"
+                  className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-lg text-xs text-text-primary focus:bg-surface focus:outline-hidden focus:border-indigo-600 cursor-pointer"
                 >
                   <option value="JKUT_HOSPITAL">JKUT Hospital (Jawatankuasa Ubat Tempatan)</option>
                   <option value="KPK_HQ">Kelulusan Khas KPK (Ketua Pengarah Kesihatan)</option>
@@ -261,89 +261,89 @@ export const AddPatientQuotaModal: React.FC<AddPatientQuotaModalProps> = ({
               </div>
 
               <div>
-                <label className="text-xs font-medium text-slate-700 block mb-1">No. Rujukan Kelulusan *</label>
+                <label className="text-xs font-medium text-text-secondary block mb-1">No. Rujukan Kelulusan *</label>
                 <input
                   type="text"
                   required
                   value={approvalRef}
                   onChange={e => setApprovalRef(e.target.value)}
                   placeholder="KKM/BFP/600-4/..."
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-mono text-slate-900 focus:bg-white focus:outline-hidden focus:border-indigo-600"
+                  className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-lg text-xs font-mono text-text-primary focus:bg-surface focus:outline-hidden focus:border-indigo-600"
                 />
               </div>
             </div>
 
             <div>
-              <label className="text-xs font-medium text-slate-700 block mb-1">Indikasi Klinikal Pesakit *</label>
+              <label className="text-xs font-medium text-text-secondary block mb-1">Indikasi Klinikal Pesakit *</label>
               <input
                 type="text"
                 required
                 value={clinicalIndication}
                 onChange={e => setClinicalIndication(e.target.value)}
                 placeholder="Indikasi klinikal yang diluluskan..."
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:bg-white focus:outline-hidden focus:border-indigo-600"
+                className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-lg text-xs text-text-primary focus:bg-surface focus:outline-hidden focus:border-indigo-600"
               />
             </div>
           </div>
 
           {/* Section 3: Kuota Dos Bulanan */}
           <div className="space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500 border-b border-slate-100 pb-1">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-text-muted border-b border-border-subtle pb-1">
               3. Peruntukan Dos Bulanan
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
-                <label className="text-xs font-medium text-slate-700 block mb-1">Dos Bulanan ({quotaItem.unit}) *</label>
+                <label className="text-xs font-medium text-text-secondary block mb-1">Dos Bulanan ({quotaItem.unit}) *</label>
                 <input
                   type="number"
                   min="1"
                   required
                   value={monthlyDoseUnits}
                   onChange={e => setMonthlyDoseUnits(e.target.value === '' ? '' : Number(e.target.value))}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs font-bold text-slate-900 text-right focus:bg-white focus:outline-hidden focus:border-indigo-600"
+                  className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-lg text-xs font-bold text-text-primary text-right focus:bg-surface focus:outline-hidden focus:border-indigo-600"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-medium text-slate-700 block mb-1">Tarikh Mula Kelulusan</label>
+                <label className="text-xs font-medium text-text-secondary block mb-1">Tarikh Mula Kelulusan</label>
                 <input
                   type="date"
                   value={approvalStartDate}
                   onChange={e => setApprovalStartDate(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:bg-white focus:outline-hidden focus:border-indigo-600 cursor-pointer"
+                  className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-lg text-xs text-text-primary focus:bg-surface focus:outline-hidden focus:border-indigo-600 cursor-pointer"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-medium text-slate-700 block mb-1">Tarikh Tamat Kelulusan</label>
+                <label className="text-xs font-medium text-text-secondary block mb-1">Tarikh Tamat Kelulusan</label>
                 <input
                   type="date"
                   value={approvalExpiryDate}
                   onChange={e => setApprovalExpiryDate(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:bg-white focus:outline-hidden focus:border-indigo-600 cursor-pointer"
+                  className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-lg text-xs text-text-primary focus:bg-surface focus:outline-hidden focus:border-indigo-600 cursor-pointer"
                 />
               </div>
             </div>
 
             <div>
-              <label className="text-xs font-medium text-slate-700 block mb-1">Catatan Tambahan</label>
+              <label className="text-xs font-medium text-text-secondary block mb-1">Catatan Tambahan</label>
               <input
                 type="text"
                 value={remarks}
                 onChange={e => setRemarks(e.target.value)}
                 placeholder="Catatan kepatuhan atau protokol rawatan..."
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-900 focus:bg-white focus:outline-hidden focus:border-indigo-600"
+                className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-lg text-xs text-text-primary focus:bg-surface focus:outline-hidden focus:border-indigo-600"
               />
             </div>
           </div>
 
           {/* Form Actions */}
-          <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-2.5">
+          <div className="pt-3 border-t border-border-subtle flex items-center justify-end gap-2.5">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-lg text-xs font-medium cursor-pointer transition-colors"
+              className="px-4 py-2 bg-surface border border-border-default text-text-secondary hover:bg-subtle/50 rounded-lg text-xs font-medium cursor-pointer transition-colors"
             >
               Batal
             </button>

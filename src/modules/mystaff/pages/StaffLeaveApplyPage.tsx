@@ -132,23 +132,23 @@ export const StaffLeaveApplyPage: React.FC = () => {
   }
 
   return (
-    <div className="p-6 md:p-8 w-full max-w-4xl mx-auto space-y-6 text-slate-800">
+    <div className="p-6 md:p-8 w-full max-w-4xl mx-auto space-y-6 text-text-primary">
       {/* Header Panel */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-white border border-slate-100 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-surface border border-border-subtle rounded-3xl p-6 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-teal-400 via-emerald-500 to-cyan-500" />
         
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate(ROUTES.STAFF_LEAVE)}
-            className="p-3 hover:bg-slate-50 border border-slate-100 rounded-2xl text-slate-400 hover:text-slate-700 transition-all shadow-sm"
+            className="p-3 hover:bg-subtle/50 border border-border-subtle rounded-2xl text-slate-400 hover:text-text-secondary transition-colors shadow-sm"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-800 flex items-center gap-2">
+            <h1 className="text-2xl font-black tracking-tight text-text-primary flex items-center gap-2">
               {isMs ? 'Leave Application Form' : 'Leave Application Form'}
             </h1>
-            <p className="text-sm text-slate-500 mt-0.5 font-medium">
+            <p className="text-sm text-text-muted mt-0.5 font-medium">
               {isMs ? 'Sistem Cuti Bersepadu Hospital (Perintah Am Bab C / HRMIS)' : 'Integrated Hospital Leave System (General Orders Chapter C / HRMIS)'}
             </p>
           </div>
@@ -156,11 +156,11 @@ export const StaffLeaveApplyPage: React.FC = () => {
       </div>
 
       {/* Form Container */}
-      <div className="bg-white border border-slate-100 rounded-3xl p-8 shadow-xl">
+      <div className="bg-surface border border-border-subtle rounded-3xl p-8 shadow-xl">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Leave Type Selection with Live Quota Card */}
           <div className="space-y-3">
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide">
+            <label className="block text-xs font-bold text-text-secondary uppercase tracking-wide">
               {isMs ? 'Pilihan Jenis Cuti' : 'Select Leave Type'} <span className="text-rose-500">*</span>
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
@@ -172,23 +172,23 @@ export const StaffLeaveApplyPage: React.FC = () => {
                   <div
                     key={type.id}
                     onClick={() => setSelectedTypeId(type.id)}
-                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
+                    className={`p-4 rounded-2xl border transition-colors cursor-pointer flex flex-col justify-between ${
                       isSelected
-                        ? 'border-emerald-500 bg-emerald-50/50 shadow-md ring-2 ring-emerald-400/30'
-                        : 'border-slate-200 hover:border-slate-300 bg-white'
+                        ? 'border-emerald-500 bg-emerald-500/10 shadow-md ring-2 ring-emerald-400/30'
+                        : 'border-border-default hover:border-border-default bg-surface'
                     }`}
                   >
                     <div>
                       <div className="flex items-center justify-between mb-1.5">
-                        <span className="text-xs font-bold font-mono px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
+                        <span className="text-xs font-bold font-mono px-2 py-0.5 rounded-full bg-subtle text-text-secondary">
                           {type.kod_cuti}
                         </span>
                         {isSelected && <CheckCircle2 className="w-4 h-4 text-emerald-600" />}
                       </div>
-                      <div className="font-bold text-slate-800 text-sm">{type.nama_cuti}</div>
+                      <div className="font-bold text-text-primary text-sm">{type.nama_cuti}</div>
                     </div>
 
-                    <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-xs font-mono">
+                    <div className="mt-3 pt-2 border-t border-border-subtle flex items-center justify-between text-xs font-mono">
                       <span className="text-slate-400 font-bold">{isMs ? 'Baki Layak:' : 'Balance:'}</span>
                       <span className="text-emerald-700 font-black">
                         {quota ? `${quota.baki_hari} ${isMs ? 'Hari' : 'Days'}` : (isMs ? 'Tertakluk' : 'Subject')}
@@ -201,15 +201,15 @@ export const StaffLeaveApplyPage: React.FC = () => {
           </div>
 
           {/* Date Range & Total Days */}
-          <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-4">
-            <div className="font-bold text-slate-800 text-sm flex items-center gap-2">
+          <div className="p-5 rounded-2xl bg-subtle/50 border border-border-default space-y-4">
+            <div className="font-bold text-text-primary text-sm flex items-center gap-2">
               <Calendar className="w-4 h-4 text-emerald-600" />
               <span>{isMs ? 'Tempoh Masa Cuti' : 'Leave Period & Duration'}</span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">
+                <label className="block text-xs font-bold text-text-muted mb-1">
                   {isMs ? 'Tarikh Mula Cuti' : 'Start Date'} <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -217,12 +217,12 @@ export const StaffLeaveApplyPage: React.FC = () => {
                   value={startDate}
                   onChange={e => setStartDate(e.target.value)}
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 bg-white"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-border-default text-sm font-mono focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 bg-surface"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">
+                <label className="block text-xs font-bold text-text-muted mb-1">
                   {isMs ? 'Tarikh Tamat Cuti' : 'End Date'} <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -230,15 +230,15 @@ export const StaffLeaveApplyPage: React.FC = () => {
                   value={endDate}
                   onChange={e => setEndDate(e.target.value)}
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 bg-white"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-border-default text-sm font-mono focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 bg-surface"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">
+                <label className="block text-xs font-bold text-text-muted mb-1">
                   {isMs ? 'Jumlah Bilangan Hari' : 'Total Days'}
                 </label>
-                <div className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-sm font-black font-mono text-emerald-700 flex items-center justify-between">
+                <div className="w-full px-3.5 py-2.5 rounded-xl bg-surface border border-border-default text-sm font-black font-mono text-emerald-700 flex items-center justify-between">
                   <span>{totalDays > 0 ? `${totalDays} ${isMs ? 'Hari' : 'Days'}` : (isMs ? '0 Hari' : '0 Days')}</span>
                   <Clock className="w-4 h-4 text-slate-400" />
                 </div>
@@ -249,7 +249,7 @@ export const StaffLeaveApplyPage: React.FC = () => {
           {/* Reason & Emergency Contact */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
+              <label className="block text-xs font-bold text-text-secondary mb-1">
                 {isMs ? 'Sebab Bercuti / Catatan' : 'Reason / Remarks'} <span className="text-rose-500">*</span>
               </label>
               <textarea
@@ -258,13 +258,13 @@ export const StaffLeaveApplyPage: React.FC = () => {
                 value={reason}
                 onChange={e => setReason(e.target.value)}
                 required
-                className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-border-default text-sm focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
               />
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label className="block text-xs font-bold text-text-secondary mb-1">
                   {isMs ? 'No. Telefon Semasa Bercuti (Kecemasan)' : 'Contact Number While on Leave (Emergency)'}
                 </label>
                 <input
@@ -272,12 +272,12 @@ export const StaffLeaveApplyPage: React.FC = () => {
                   placeholder={isMs ? "cth. 012-3456789" : "e.g. 012-3456789"}
                   value={emergencyContact}
                   onChange={e => setEmergencyContact(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-border-default text-sm font-mono"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 mb-1">
+                <label className="block text-xs font-bold text-text-secondary mb-1">
                   {isMs ? 'Pegawai Pengambil Alih Tugas (Replacement Officer)' : 'Relief / Covering Officer'}
                 </label>
                 <input
@@ -285,19 +285,19 @@ export const StaffLeaveApplyPage: React.FC = () => {
                   placeholder={isMs ? "Nama pegawai pengganti..." : "Replacement officer name..."}
                   value={replacementOfficerName}
                   onChange={e => setReplacementOfficerName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-border-default text-sm"
                 />
               </div>
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex justify-end gap-3 pt-6 border-t border-slate-100">
+          <div className="flex justify-end gap-3 pt-6 border-t border-border-subtle">
             <Button
               type="button"
               variant="outline"
               onClick={() => navigate(ROUTES.STAFF_LEAVE)}
-              className="border-slate-200 hover:bg-slate-50 text-slate-700 font-bold px-5"
+              className="border-border-default hover:bg-subtle/50 text-text-secondary font-bold px-5"
             >
               {isMs ? 'Batal' : 'Cancel'}
             </Button>

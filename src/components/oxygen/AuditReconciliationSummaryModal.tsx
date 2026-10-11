@@ -67,11 +67,11 @@ export const AuditReconciliationSummaryModal: React.FC<AuditReconciliationSummar
 
   const getStatusBadge = (status: string) => {
     const s = (status || '').toLowerCase();
-    if (s === 'available' || s === 'full') return 'bg-emerald-100 text-emerald-800 border-emerald-200';
-    if (s === 'used' || s === 'in_use' || s === 'issued') return 'bg-amber-100 text-amber-800 border-amber-200';
-    if (s === 'empty') return 'bg-slate-100 text-slate-800 border-slate-200';
-    if (s === 'return' || s === 'returned') return 'bg-purple-100 text-purple-800 border-purple-200';
-    return 'bg-gray-100 text-gray-800 border-gray-200';
+    if (s === 'available' || s === 'full') return 'bg-emerald-100 text-emerald-400 border-emerald-500/20';
+    if (s === 'used' || s === 'in_use' || s === 'issued') return 'bg-amber-100 text-amber-400 border-amber-500/20';
+    if (s === 'empty') return 'bg-subtle text-text-primary border-border-default';
+    if (s === 'return' || s === 'returned') return 'bg-purple-100 text-indigo-400 border-indigo-500/20';
+    return 'bg-subtle text-text-primary border-border-default';
   };
 
   return (
@@ -79,7 +79,7 @@ export const AuditReconciliationSummaryModal: React.FC<AuditReconciliationSummar
       
       {/* Modal Container */}
       <div 
-        className="relative bg-white w-full max-w-4xl rounded-3xl shadow-2xl border border-slate-200/80 overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200"
+        className="relative bg-surface w-full max-w-4xl rounded-3xl shadow-2xl border border-border-default overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200"
         onClick={(e) => e.stopPropagation()}
       >
         
@@ -92,7 +92,7 @@ export const AuditReconciliationSummaryModal: React.FC<AuditReconciliationSummar
             <div>
               <div className="flex items-center gap-2">
                 <h3 className="text-lg font-extrabold text-white tracking-tight">Audit Reconciliation Verification Summary</h3>
-                <span className="text-[10px] font-black bg-amber-400 text-amber-950 px-2 py-0.5 rounded-full uppercase tracking-wider">Double Check Required</span>
+                <span className="text-[10px] font-black bg-amber-400 text-amber-400 dark:text-amber-300 font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Double Check Required</span>
               </div>
               <p className="text-teal-200/90 text-xs font-semibold mt-0.5">
                 Review all reconciliation changes before saving to official inventory database
@@ -103,31 +103,31 @@ export const AuditReconciliationSummaryModal: React.FC<AuditReconciliationSummar
           <button
             onClick={onClose}
             disabled={isSaving}
-            className="w-9 h-9 rounded-full bg-teal-950/60 hover:bg-teal-900 border border-teal-800 flex items-center justify-center transition-all cursor-pointer disabled:opacity-50"
+            className="w-9 h-9 rounded-full bg-teal-950/60 hover:bg-teal-900 border border-teal-800 flex items-center justify-center transition-[transform,opacity,box-shadow,border-color] cursor-pointer disabled:opacity-50"
           >
             <X className="w-5 h-5 text-slate-300" />
           </button>
         </div>
 
         {/* Modal Scrollable Body */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50">
+        <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-subtle/50">
           
           {/* Auditor Profile Card */}
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="bg-surface border border-border-default rounded-2xl p-4 shadow-elevation-1 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-teal-50 border border-teal-150 flex items-center justify-center text-teal-700 shrink-0">
+              <div className="w-10 h-10 rounded-2xl bg-accent-base/10 border border-teal-150 flex items-center justify-center text-teal-700 shrink-0">
                 <UserCheck className="w-5 h-5" />
               </div>
               <div>
-                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Audited & Verified By</span>
-                <span className="text-sm font-extrabold text-slate-900">{auditorName}</span>
-                <span className="text-xs font-bold text-teal-700 bg-teal-50 border border-teal-100 px-2 py-0.5 rounded-md ml-2 inline-block">
+                <span className="text-[10px] font-extrabold text-text-secondary font-bold uppercase tracking-wider block">Audited & Verified By</span>
+                <span className="text-sm font-extrabold text-text-primary">{auditorName}</span>
+                <span className="text-xs font-bold text-teal-700 bg-accent-base/10 border border-teal-100 px-2 py-0.5 rounded-md ml-2 inline-block">
                   {auditorRole || 'Pharmacy Officer'}
                 </span>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 bg-slate-100/80 px-3 py-1.5 rounded-xl border border-slate-200/60">
+            <div className="flex items-center gap-2 text-xs font-semibold text-text-muted bg-subtle px-3 py-1.5 rounded-xl border border-border-default">
               <Clock className="w-4 h-4 text-slate-400" />
               <span>{new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })} — {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
             </div>
@@ -135,38 +135,38 @@ export const AuditReconciliationSummaryModal: React.FC<AuditReconciliationSummar
 
           {/* Audit Key Summary Metrics */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-2xs space-y-1">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Total Inventory Audited</span>
-              <div className="text-2xl font-black text-slate-900">{totalCylindersCount} <span className="text-xs text-slate-400 font-bold">cylinders</span></div>
-              <p className="text-[11px] text-slate-500 font-medium">Full stock reconciliation scope</p>
+            <div className="bg-surface border border-border-default rounded-2xl p-4 shadow-elevation-1 space-y-1">
+              <span className="text-[10px] font-black text-text-secondary font-bold uppercase tracking-wider">Total Inventory Audited</span>
+              <div className="text-2xl font-black text-text-primary">{totalCylindersCount} <span className="text-xs text-slate-400 font-bold">cylinders</span></div>
+              <p className="text-[11px] text-text-muted font-medium">Full stock reconciliation scope</p>
             </div>
 
-            <div className="bg-amber-50/80 border border-amber-200/80 rounded-2xl p-4 shadow-2xs space-y-1">
-              <span className="text-[10px] font-black text-amber-800 uppercase tracking-wider flex items-center gap-1">
+            <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4 shadow-elevation-1 space-y-1">
+              <span className="text-[10px] font-black text-amber-400 uppercase tracking-wider flex items-center gap-1">
                 <AlertTriangle className="w-3.5 h-3.5 text-amber-600" /> Reconciled Changes to Save
               </span>
-              <div className="text-2xl font-black text-amber-950">{changes.length} <span className="text-xs text-amber-800 font-bold">cylinders updated</span></div>
-              <p className="text-[11px] text-amber-800 font-semibold">Status or location modified</p>
+              <div className="text-2xl font-black text-amber-400 dark:text-amber-300 font-bold">{changes.length} <span className="text-xs text-amber-400 font-bold">cylinders updated</span></div>
+              <p className="text-[11px] text-amber-400 font-semibold">Status or location modified</p>
             </div>
 
-            <div className="bg-emerald-50/80 border border-emerald-200/80 rounded-2xl p-4 shadow-2xs space-y-1">
-              <span className="text-[10px] font-black text-emerald-800 uppercase tracking-wider flex items-center gap-1">
+            <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4 shadow-elevation-1 space-y-1">
+              <span className="text-[10px] font-black text-emerald-400 uppercase tracking-wider flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Unchanged & Matched
               </span>
-              <div className="text-2xl font-black text-emerald-950">{totalCylindersCount - changes.length} <span className="text-xs text-emerald-800 font-bold">cylinders</span></div>
-              <p className="text-[11px] text-emerald-800 font-semibold">Physical matches system status</p>
+              <div className="text-2xl font-black text-emerald-400 dark:text-emerald-300 font-bold">{totalCylindersCount - changes.length} <span className="text-xs text-emerald-400 font-bold">cylinders</span></div>
+              <p className="text-[11px] text-emerald-400 font-semibold">Physical matches system status</p>
             </div>
           </div>
 
           {/* Unit Allocation Breakdown Pills */}
           {Object.keys(unitBreakdown).length > 0 && (
-            <div className="bg-white border border-slate-200/80 rounded-2xl p-4 space-y-2 shadow-2xs">
-              <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+            <div className="bg-surface border border-border-default rounded-2xl p-4 space-y-2 shadow-elevation-1">
+              <span className="text-[10px] font-black text-text-secondary font-bold uppercase tracking-wider flex items-center gap-1.5">
                 <Building2 className="w-3.5 h-3.5 text-teal-600" /> Target Unit Allocation Summary for Modified Cylinders
               </span>
               <div className="flex flex-wrap gap-2 pt-1">
                 {Object.entries(unitBreakdown).map(([unit, count]) => (
-                  <span key={unit} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800">
+                  <span key={unit} className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-subtle/50 border border-border-default rounded-xl text-xs font-bold text-text-primary">
                     <span>{unit}</span>
                     <span className="px-2 py-0.5 bg-teal-600 text-white rounded-md text-[10px] font-extrabold">
                       {count} {count === 1 ? 'cyl' : 'cyls'}
@@ -178,11 +178,11 @@ export const AuditReconciliationSummaryModal: React.FC<AuditReconciliationSummar
           )}
 
           {/* Itemized Discrepancies & Changes Table */}
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-4 space-y-3 shadow-2xs">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div className="bg-surface border border-border-default rounded-2xl p-4 space-y-3 shadow-elevation-1">
+            <div className="flex items-center justify-between border-b border-border-subtle pb-3">
               <div className="flex items-center gap-2">
                 <ClipboardCheck className="w-4 h-4 text-teal-600" />
-                <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">
+                <h4 className="text-xs font-black text-text-primary uppercase tracking-wider">
                   Itemized Verification Checklist ({changes.length} Changes)
                 </h4>
               </div>
@@ -192,13 +192,13 @@ export const AuditReconciliationSummaryModal: React.FC<AuditReconciliationSummar
             {changes.length === 0 ? (
               <div className="p-6 text-center text-slate-400 space-y-1">
                 <CheckCircle2 className="w-8 h-8 mx-auto text-emerald-500" />
-                <p className="text-xs font-bold text-slate-700">No status or location changes detected.</p>
+                <p className="text-xs font-bold text-text-secondary">No status or location changes detected.</p>
                 <p className="text-[11px] text-slate-400">All physical inventory matches current database records.</p>
               </div>
             ) : (
               <div className="overflow-x-auto max-h-64 overflow-y-auto">
                 <table className="w-full text-left text-xs border-collapse">
-                  <thead className="bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-wider sticky top-0 z-10 border-b border-slate-200">
+                  <thead className="bg-subtle/50 text-[10px] font-black text-text-secondary font-bold uppercase tracking-wider sticky top-0 z-10 border-b border-border-default">
                     <tr>
                       <th scope="col" className="px-3.5 py-2.5">Cylinder Serial</th>
                       <th scope="col" className="px-3.5 py-2.5">Previous State</th>
@@ -207,15 +207,15 @@ export const AuditReconciliationSummaryModal: React.FC<AuditReconciliationSummar
                       <th scope="col" className="px-3.5 py-2.5">Target Unit / Location</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 font-semibold text-slate-700">
+                  <tbody className="divide-y divide-border-subtle font-semibold text-text-secondary">
                     {changes.map((item) => (
-                      <tr key={item.cylinderId} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="px-3.5 py-3 font-mono font-black text-slate-900">
+                      <tr key={item.cylinderId} className="hover:bg-subtle/50 transition-colors">
+                        <td className="px-3.5 py-3 font-mono font-black text-text-primary">
                           {item.serialNumber}
                           <span className="block text-[10px] text-slate-400 font-sans font-normal">{item.sizeInfo || 'Standard'}</span>
                         </td>
                         <td className="px-3.5 py-3">
-                          <span className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md text-[10px] font-bold uppercase border border-slate-200">
+                          <span className="px-2 py-0.5 bg-subtle text-text-secondary rounded-md text-[10px] font-bold uppercase border border-border-default">
                             {item.oldStatus}
                           </span>
                           <span className="block text-[10px] text-slate-400 font-normal mt-0.5">{item.oldLocation}</span>
@@ -229,7 +229,7 @@ export const AuditReconciliationSummaryModal: React.FC<AuditReconciliationSummar
                           </span>
                         </td>
                         <td className="px-3.5 py-3">
-                          <span className="px-2.5 py-1 bg-teal-50 text-teal-800 rounded-lg border border-teal-150 text-[10px] font-extrabold inline-block">
+                          <span className="px-2.5 py-1 bg-accent-base/10 text-teal-800 rounded-lg border border-teal-150 text-[10px] font-extrabold inline-block">
                             {item.newLocation || 'Pharmacy Store'}
                           </span>
                         </td>
@@ -242,8 +242,8 @@ export const AuditReconciliationSummaryModal: React.FC<AuditReconciliationSummar
           </div>
 
           {/* Auditor Remarks / Justification Input Box */}
-          <div className="bg-white border border-slate-200/80 rounded-2xl p-4 space-y-2 shadow-2xs">
-            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+          <div className="bg-surface border border-border-default rounded-2xl p-4 space-y-2 shadow-elevation-1">
+            <label className="block text-[10px] font-black text-text-muted uppercase tracking-wider flex items-center gap-1.5">
               <FileText className="w-3.5 h-3.5 text-teal-600" /> Audit Verification Remarks / Justification (Optional)
             </label>
             <textarea
@@ -251,19 +251,19 @@ export const AuditReconciliationSummaryModal: React.FC<AuditReconciliationSummar
               value={auditRemarks}
               onChange={(e) => setAuditRemarks(e.target.value)}
               placeholder="e.g. Physical stock count verified during ward round. 3 cylinders transferred to Nephrology."
-              className="w-full p-3 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-teal-500 transition-all"
+              className="w-full p-3 border border-border-default rounded-xl text-xs font-semibold text-text-primary placeholder:text-text-muted focus:outline-none focus:border-teal-500 transition-[transform,opacity,box-shadow,border-color]"
             />
           </div>
 
         </div>
 
         {/* Footer Action Buttons */}
-        <div className="px-6 py-4 border-t border-slate-200/80 bg-white flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0 shadow-lg">
+        <div className="px-6 py-4 border-t border-border-default bg-surface flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0 shadow-lg">
           <button
             type="button"
             disabled={isSaving}
             onClick={onClose}
-            className="w-full sm:w-auto px-5 py-2.5 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 rounded-xl text-xs font-black transition-all active:scale-95 cursor-pointer shadow-xs disabled:opacity-50"
+            className="w-full sm:w-auto px-5 py-2.5 bg-surface border border-border-default hover:bg-subtle text-text-secondary rounded-xl text-xs font-black transition-[transform,opacity,box-shadow,border-color] active:scale-95 cursor-pointer shadow-xs disabled:opacity-50"
           >
             ← BACK TO EDIT DRAFT
           </button>
@@ -272,7 +272,7 @@ export const AuditReconciliationSummaryModal: React.FC<AuditReconciliationSummar
             type="button"
             disabled={isSaving || changes.length === 0}
             onClick={handleConfirm}
-            className="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 disabled:from-slate-400 disabled:to-slate-500 text-white rounded-xl text-xs font-black tracking-wider uppercase shadow-md shadow-emerald-500/10 active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer"
+            className="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 disabled:from-slate-400 disabled:to-slate-500 text-white rounded-xl text-xs font-black tracking-wider uppercase shadow-md shadow-emerald-500/10 active:scale-95 transition-[transform,opacity,box-shadow,border-color] flex items-center justify-center gap-2 cursor-pointer"
           >
             {isSaving ? (
               <>

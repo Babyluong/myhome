@@ -152,7 +152,7 @@ export const SystemAdminDashboard: React.FC = () => {
       case 'info':
         return <CheckCircle className="w-4 h-4 text-info-600" />
       default:
-        return <AlertTriangle className="w-4 h-4 text-gray-600" />
+        return <AlertTriangle className="w-4 h-4 text-text-secondary" />
     }
   }
 
@@ -232,9 +232,9 @@ export const SystemAdminDashboard: React.FC = () => {
           transition={{ delay: 0.1 }}
           className="lg:col-span-2 card"
         >
-          <div className="p-6 border-b border-gray-100">
+          <div className="p-6 border-b border-border-subtle">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2">
                 <Globe className="w-5 h-5 text-primary-600" />
                 System-Wide Activity
               </h2>
@@ -252,7 +252,7 @@ export const SystemAdminDashboard: React.FC = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.1 + index * 0.05 }}
-                  className="p-4 hover:bg-gray-50 transition-colors"
+                  className="p-4 hover:bg-subtle/50 transition-colors"
                 >
                   <div className="flex items-start gap-3">
                     <div
@@ -268,9 +268,9 @@ export const SystemAdminDashboard: React.FC = () => {
                     </div>
 
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-900">{alert.title}</p>
-                      <p className="text-sm text-gray-600 mt-0.5">{alert.message}</p>
-                      <p className="text-xs text-gray-500 mt-1 flex items-center gap-1">
+                      <p className="text-sm font-medium text-text-primary">{alert.title}</p>
+                      <p className="text-sm text-text-secondary mt-0.5">{alert.message}</p>
+                      <p className="text-xs text-text-muted mt-1 flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         {getRelativeTime(alert.created_at)}
                       </p>
@@ -279,7 +279,7 @@ export const SystemAdminDashboard: React.FC = () => {
                 </motion.div>
               ))
             ) : (
-              <div className="p-8 text-center text-gray-500">
+              <div className="p-8 text-center text-text-muted">
                 <CheckCircle className="w-8 h-8 mx-auto mb-2 text-success-500" />
                 <p>No active alerts</p>
               </div>
@@ -294,8 +294,8 @@ export const SystemAdminDashboard: React.FC = () => {
           transition={{ delay: 0.2 }}
           className="card"
         >
-          <div className="p-6 border-b border-gray-100">
-            <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <div className="p-6 border-b border-border-subtle">
+            <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-warning-600" />
               Pending Tasks
             </h2>
@@ -308,7 +308,7 @@ export const SystemAdminDashboard: React.FC = () => {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 + index * 0.05 }}
-                  className="flex items-center justify-between p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors cursor-pointer"
+                  className="flex items-center justify-between p-3 bg-subtle/50 rounded-xl hover:bg-subtle transition-colors cursor-pointer"
                 >
                   <div className="flex items-center gap-3">
                     <div
@@ -319,7 +319,7 @@ export const SystemAdminDashboard: React.FC = () => {
                         task.priority === 'low' && 'bg-success-500'
                       )}
                     />
-                    <span className="text-sm text-gray-700">{task.title}</span>
+                    <span className="text-sm text-text-secondary">{task.title}</span>
                   </div>
                   <Badge
                     variant={
@@ -338,7 +338,7 @@ export const SystemAdminDashboard: React.FC = () => {
             ))}
           </div>
 
-          <div className="p-4 border-t border-gray-100">
+          <div className="p-4 border-t border-border-subtle">
             <Button variant="outline" className="w-full" as={Link} to={ROUTES.ADMIN_ALERTS}>
               View All Alerts
             </Button>
@@ -354,7 +354,7 @@ export const SystemAdminDashboard: React.FC = () => {
           transition={{ delay: 0.3 }}
           className="card p-6"
         >
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">System Health Status</h3>
+          <h3 className="text-lg font-semibold text-text-primary mb-4">System Health Status</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {healthStatus.map((health) => (
               <div
@@ -367,7 +367,7 @@ export const SystemAdminDashboard: React.FC = () => {
                 )}
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-700 capitalize">
+                  <span className="text-sm font-medium text-text-secondary capitalize">
                     {health.check_type}
                   </span>
                   <Badge
@@ -377,11 +377,11 @@ export const SystemAdminDashboard: React.FC = () => {
                     {health.status}
                   </Badge>
                 </div>
-                <div className="text-2xl font-bold text-gray-900">
+                <div className="text-2xl font-bold text-text-primary">
                   {health.value} {health.unit}
                 </div>
                 {health.message && (
-                  <p className="text-xs text-gray-600 mt-1">{health.message}</p>
+                  <p className="text-xs text-text-secondary mt-1">{health.message}</p>
                 )}
               </div>
             ))}
@@ -396,7 +396,7 @@ export const SystemAdminDashboard: React.FC = () => {
         transition={{ delay: 0.4 }}
         className="card p-6"
       >
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
+        <h3 className="text-lg font-semibold text-text-primary mb-4">Quick Actions</h3>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Button variant="outline" className="h-auto py-4 flex-col gap-2" as={Link} to={ROUTES.ADMIN_HOSPITALS}>
             <Building2 className="w-6 h-6" />

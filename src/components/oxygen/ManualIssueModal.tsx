@@ -872,32 +872,32 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
         }
       `}</style>
       <div 
-        className="bg-slate-50 w-full max-w-2xl h-full rounded-l-3xl shadow-2xl border-l border-slate-200 flex flex-col overflow-hidden animate-slide-in"
+        className="bg-subtle/50 w-full max-w-2xl h-full rounded-l-3xl shadow-2xl border-l border-border-default flex flex-col overflow-hidden animate-slide-in"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Drawer Header */}
-        <div className="px-5 py-4 sm:px-8 sm:py-6 border-b border-slate-200/80 flex items-center justify-between bg-white shadow-sm relative z-10">
+        <div className="px-5 py-4 sm:px-8 sm:py-6 border-b border-border-default flex items-center justify-between bg-surface shadow-sm relative z-10">
           <div className="flex items-center gap-2.5 sm:gap-3">
-            <div className="p-2 sm:p-2.5 bg-indigo-50 text-indigo-600 rounded-xl sm:rounded-2xl">
+            <div className="p-2 sm:p-2.5 bg-indigo-500/10 text-indigo-600 rounded-xl sm:rounded-2xl">
               <Store className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div>
-              <h3 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">Borang Pengeluaran Silinder Manual</h3>
-              <p className="text-[10px] sm:text-xs text-slate-500 font-medium mt-0.5">Record a manual cylinder issue to a department directly.</p>
+              <h3 className="text-base sm:text-lg font-extrabold text-text-primary tracking-tight">Borang Pengeluaran Silinder Manual</h3>
+              <p className="text-[10px] sm:text-xs text-text-muted font-medium mt-0.5">Record a manual cylinder issue to a department directly.</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 sm:p-2 hover:bg-slate-100 text-slate-400 hover:text-slate-600 rounded-xl transition-all duration-200 focus:outline-none"
+            className="p-1.5 sm:p-2 hover:bg-subtle text-slate-400 hover:text-text-secondary rounded-xl transition-[transform,opacity,box-shadow,border-color] duration-200 focus:outline-none"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Form Content */}
-        <form onSubmit={handleSubmitForm} className="flex-1 overflow-y-auto p-5 sm:p-8 space-y-5 sm:space-y-6 bg-slate-50/50">
+        <form onSubmit={handleSubmitForm} className="flex-1 overflow-y-auto p-5 sm:p-8 space-y-5 sm:space-y-6 bg-subtle/50">
           {error && (
-            <div className="p-3.5 bg-rose-50 border border-rose-100 rounded-xl sm:rounded-2xl flex items-start gap-2.5 text-rose-800 text-sm animate-in fade-in zoom-in-95 duration-200">
+            <div className="p-3.5 bg-rose-500/10 border border-rose-100 rounded-xl sm:rounded-2xl flex items-start gap-2.5 text-rose-400 text-sm animate-in fade-in zoom-in-95 duration-200">
               <ShieldAlert className="w-4 h-4 sm:w-5 sm:h-5 text-rose-500 shrink-0 mt-0.5" />
               <span className="font-semibold">{error}</span>
             </div>
@@ -905,7 +905,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
 
           {/* Department Selection */}
           <div className="space-y-1.5 sm:space-y-2">
-            <label className="block text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <label className="block text-[10px] sm:text-xs font-bold text-text-muted uppercase tracking-wider">
               Requesting Department *
             </label>
             <div className="relative">
@@ -915,7 +915,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                   setSelectedDeptId(e.target.value);
                   setSelectedRequesterId('');
                 }}
-                className="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 border border-slate-200 rounded-xl sm:rounded-2xl bg-white text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-semibold appearance-none cursor-pointer"
+                className="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 border border-border-default rounded-xl sm:rounded-2xl bg-surface text-xs sm:text-sm text-text-primary focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-[transform,opacity,box-shadow,border-color] font-semibold appearance-none cursor-pointer"
                 required
               >
                 <option value="">Select Department...</option>
@@ -960,7 +960,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
           {/* Requester Selection */}
           <div className="space-y-1.5 sm:space-y-2">
             <div className="flex justify-between items-center">
-              <label className="block text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">
+              <label className="block text-[10px] sm:text-xs font-bold text-text-muted uppercase tracking-wider">
                 Requested By (Requester) *
               </label>
               <button
@@ -971,7 +971,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                   setManualRequesterName('');
                   setError(null);
                 }}
-                className="text-xs font-bold text-indigo-600 hover:text-indigo-800 focus:outline-none transition-colors"
+                className="text-xs font-bold text-indigo-600 hover:text-indigo-400 focus:outline-none transition-colors"
               >
                 {isManualRequester ? 'Choose from system users' : 'Enter name manually'}
               </button>
@@ -983,7 +983,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                 placeholder="Enter requester name manually..."
                 value={manualRequesterName}
                 onChange={(e) => setManualRequesterName(e.target.value)}
-                className="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 border border-slate-200 rounded-xl sm:rounded-2xl bg-white text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-semibold"
+                className="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 border border-border-default rounded-xl sm:rounded-2xl bg-surface text-xs sm:text-sm text-text-primary placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-[transform,opacity,box-shadow,border-color] font-semibold"
                 required
               />
             ) : (
@@ -992,7 +992,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                   value={selectedRequesterId}
                   onChange={(e) => setSelectedRequesterId(e.target.value)}
                   disabled={!selectedDeptId}
-                  className="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 border border-slate-200 rounded-xl sm:rounded-2xl bg-white text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all font-semibold appearance-none cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 border border-border-default rounded-xl sm:rounded-2xl bg-surface text-xs sm:text-sm text-text-primary focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-[transform,opacity,box-shadow,border-color] font-semibold appearance-none cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                   required
                 >
                   <option value="">
@@ -1013,17 +1013,17 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
 
           {/* Tab Selector: Trackable vs Loan */}
           <div className="space-y-3.5">
-            <label className="block text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <label className="block text-[10px] sm:text-xs font-bold text-text-muted uppercase tracking-wider">
               Cylinders to Dispatch *
             </label>
-            <div className="flex bg-slate-100 p-1.5 rounded-2xl border-2 border-slate-200 shadow-inner gap-2 bg-gradient-to-b from-slate-100 to-slate-200/60">
+            <div className="flex bg-subtle p-1.5 rounded-2xl border-2 border-border-default shadow-inner gap-2 bg-gradient-to-b from-slate-100 to-slate-200/60">
               <button
                 type="button"
                 onClick={() => setCylinderTab('trackable')}
-                className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 text-xs font-extrabold rounded-xl transition-all cursor-pointer focus:outline-none ${
+                className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 text-xs font-extrabold rounded-xl transition-[transform,opacity,box-shadow,border-color] cursor-pointer focus:outline-none ${
                   cylinderTab === 'trackable' 
-                    ? 'bg-white text-indigo-700 shadow-md border border-indigo-250/70 ring-2 ring-indigo-500/5' 
-                    : 'text-slate-500 hover:text-slate-800 hover:bg-white/40'
+                    ? 'bg-surface text-indigo-700 shadow-md border border-indigo-250/70 ring-2 ring-indigo-500/5' 
+                    : 'text-text-muted hover:text-text-primary hover:bg-surface/40'
                 }`}
               >
                 <QrCode className={`w-4 h-4 shrink-0 transition-transform ${cylinderTab === 'trackable' ? 'scale-110 text-indigo-600' : 'text-slate-400'}`} />
@@ -1032,10 +1032,10 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
               <button
                 type="button"
                 onClick={() => { setCylinderTab('loan'); stopCamera(); }}
-                className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 text-xs font-extrabold rounded-xl transition-all cursor-pointer focus:outline-none ${
+                className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 text-xs font-extrabold rounded-xl transition-[transform,opacity,box-shadow,border-color] cursor-pointer focus:outline-none ${
                   cylinderTab === 'loan' 
-                    ? 'bg-white text-indigo-700 shadow-md border border-indigo-250/70 ring-2 ring-indigo-500/5' 
-                    : 'text-slate-500 hover:text-slate-800 hover:bg-white/40'
+                    ? 'bg-surface text-indigo-700 shadow-md border border-indigo-250/70 ring-2 ring-indigo-500/5' 
+                    : 'text-text-muted hover:text-text-primary hover:bg-surface/40'
                 }`}
               >
                 <Store className={`w-4 h-4 shrink-0 transition-transform ${cylinderTab === 'loan' ? 'scale-110 text-indigo-600' : 'text-slate-400'}`} />
@@ -1052,13 +1052,13 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col gap-0.5">
                       <span className="text-[10px] font-bold text-blue-400 uppercase tracking-widest font-mono">Camera Console</span>
-                      <span className="text-[9px] text-slate-500 font-mono">QR & Barcode Reader</span>
+                      <span className="text-[9px] text-text-muted font-mono">QR & Barcode Reader</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <button
                         type="button"
                         onClick={() => setAllowWardTransfer(!allowWardTransfer)}
-                        className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[10px] font-bold transition-all cursor-pointer border ${
+                        className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-[10px] font-bold transition-[transform,opacity,box-shadow,border-color] cursor-pointer border ${
                           allowWardTransfer
                             ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 shadow-[0_0_8px_rgba(245,158,11,0.2)]'
                             : 'bg-slate-800 text-slate-400 border-slate-700 hover:text-white'
@@ -1079,7 +1079,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                       <button
                         type="button"
                         onClick={() => setCameraActive(!cameraActive)}
-                        className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[10px] font-extrabold font-mono transition-all cursor-pointer ${
+                        className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[10px] font-extrabold font-mono transition-[transform,opacity,box-shadow,border-color] cursor-pointer ${
                           cameraActive 
                             ? 'bg-rose-500 hover:bg-rose-600 text-white' 
                             : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-[0_0_10px_rgba(79,70,229,0.3)]'
@@ -1092,7 +1092,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                   </div>
 
                   {cameraActive && (
-                    <div className={`relative aspect-video rounded-2xl overflow-hidden border border-slate-700 bg-slate-950 flex flex-col items-center justify-center shadow-inner transition-all duration-300 ${successFlash ? 'ring-8 ring-emerald-500/30' : ''}`}>
+                    <div className={`relative aspect-video rounded-2xl overflow-hidden border border-slate-700 bg-slate-950 flex flex-col items-center justify-center shadow-inner transition-[transform,opacity,box-shadow,border-color] duration-300 ${successFlash ? 'ring-8 ring-emerald-500/30' : ''}`}>
                       {successFlash && (
                         <div className="absolute inset-0 bg-emerald-500/10 backdrop-blur-xs flex items-center justify-center z-25">
                           <CheckCircle2 className="w-12 h-12 text-emerald-400 animate-bounce" />
@@ -1103,7 +1103,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                       ) : (
                         <div className="absolute inset-0 bg-slate-950/70 flex flex-col items-center justify-center p-4">
                           <QrCode className="w-6 h-6 text-indigo-400 animate-pulse mb-1.5" />
-                          <span className="text-[9px] font-bold text-slate-400 font-mono tracking-wider">LENS STREAM ACTIVE</span>
+                          <span className="text-[9px] font-bold text-text-secondary font-bold font-mono tracking-wider">LENS STREAM ACTIVE</span>
                         </div>
                       )}
                       <div className="absolute inset-x-8 top-1/2 h-0.5 bg-indigo-500 shadow-[0_0_8px_#4f46e5] animate-[pulse_1.2s_infinite] z-10" />
@@ -1130,7 +1130,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                       type="button"
                       onClick={() => handleCylinderSelectByCode(qrInput)}
                       disabled={!qrInput.trim()}
-                      className="px-4 py-1 bg-white hover:bg-slate-100 text-slate-900 rounded-lg text-xs font-bold transition-all disabled:opacity-40 flex items-center justify-center cursor-pointer shadow-xs"
+                      className="px-4 py-1 bg-surface hover:bg-subtle text-text-primary rounded-lg text-xs font-bold transition-[transform,opacity,box-shadow,border-color] disabled:opacity-40 flex items-center justify-center cursor-pointer shadow-xs"
                     >
                       Pick
                     </button>
@@ -1139,22 +1139,22 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
 
                 {/* Ward / External Cylinder Action Card */}
                 {pendingActionCylinder && (
-                  <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-2xl p-4 sm:p-5 space-y-3 shadow-md animate-in fade-in zoom-in-95 duration-200">
+                  <div className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-500/20 rounded-2xl p-4 sm:p-5 space-y-3 shadow-md animate-in fade-in zoom-in-95 duration-200">
                     <div className="flex items-start gap-3">
-                      <div className="p-2 bg-amber-100 text-amber-800 rounded-xl shrink-0 mt-0.5 shadow-xs">
+                      <div className="p-2 bg-amber-100 text-amber-400 rounded-xl shrink-0 mt-0.5 shadow-xs">
                         <AlertCircle className="w-5 h-5" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-xs font-black text-amber-950 uppercase tracking-wide">
+                          <span className="text-xs font-black text-amber-400 dark:text-amber-300 font-bold uppercase tracking-wide">
                             Silinder Ditemui di Lokasi Lain
                           </span>
-                          <span className="text-[10px] font-mono font-black px-2 py-0.5 bg-amber-200 text-amber-900 rounded-md uppercase">
+                          <span className="text-[10px] font-mono font-black px-2 py-0.5 bg-amber-200 text-amber-400 dark:text-amber-300 font-bold rounded-md uppercase">
                             Status: {pendingActionCylinder.status}
                           </span>
                         </div>
-                        <p className="text-xs text-amber-900 mt-1.5 font-medium leading-relaxed">
-                          Silinder <strong className="font-mono text-amber-950 font-bold bg-white/80 px-1.5 py-0.5 rounded border border-amber-200">{pendingActionCylinder.serial_number || pendingActionCylinder.qr_code}</strong> ({pendingActionCylinder.type_name_display || pendingActionCylinder.size_info?.code || 'P101-F'}) sedang direkodkan di lokasi <strong className="text-amber-950 underline decoration-amber-300 decoration-2 font-bold">{pendingActionCylinder.department?.department_name || getSafeLocationString(pendingActionCylinder.current_location, 'General Ward')}</strong>.
+                        <p className="text-xs text-amber-400 dark:text-amber-300 font-bold mt-1.5 font-medium leading-relaxed">
+                          Silinder <strong className="font-mono text-amber-400 dark:text-amber-300 font-bold font-bold bg-surface px-1.5 py-0.5 rounded border border-amber-500/20">{pendingActionCylinder.serial_number || pendingActionCylinder.qr_code}</strong> ({pendingActionCylinder.type_name_display || pendingActionCylinder.size_info?.code || 'P101-F'}) sedang direkodkan di lokasi <strong className="text-amber-400 dark:text-amber-300 font-bold underline decoration-amber-300 decoration-2 font-bold">{pendingActionCylinder.department?.department_name || getSafeLocationString(pendingActionCylinder.current_location, 'General Ward')}</strong>.
                         </p>
                       </div>
                       <button
@@ -1166,11 +1166,11 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                       </button>
                     </div>
 
-                    <div className="flex flex-wrap items-center justify-end gap-2 pt-2 border-t border-amber-200/80">
+                    <div className="flex flex-wrap items-center justify-end gap-2 pt-2 border-t border-amber-500/20">
                       <button
                         type="button"
                         onClick={() => setPendingActionCylinder(null)}
-                        className="px-3 py-1.5 text-xs font-bold text-slate-600 hover:text-slate-800 bg-white border border-slate-200 rounded-xl cursor-pointer shadow-2xs"
+                        className="px-3 py-1.5 text-xs font-bold text-text-secondary hover:text-text-primary bg-surface border border-border-default rounded-xl cursor-pointer shadow-elevation-1"
                       >
                         Batal
                       </button>
@@ -1178,7 +1178,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                         type="button"
                         disabled={isSubmittingAction}
                         onClick={() => handleCheckInToStoreAndSelect(pendingActionCylinder)}
-                        className="px-3.5 py-1.5 text-xs font-bold text-blue-700 bg-white hover:bg-blue-50 border border-blue-200 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shadow-2xs"
+                        className="px-3.5 py-1.5 text-xs font-bold text-blue-700 bg-surface hover:bg-blue-500/10 border border-blue-500/20 rounded-xl transition-[transform,opacity,box-shadow,border-color] flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shadow-elevation-1"
                       >
                         <RefreshCw className={`w-3.5 h-3.5 ${isSubmittingAction ? 'animate-spin' : ''}`} />
                         <span>Daftar Masuk Stor & Pilih</span>
@@ -1187,7 +1187,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                         type="button"
                         disabled={isSubmittingAction}
                         onClick={() => handleConfirmTransferAndSelect(pendingActionCylinder)}
-                        className="px-4 py-1.5 text-xs font-black text-white bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                        className="px-4 py-1.5 text-xs font-black text-white bg-gradient-to-r from-amber-600 to-orange-600 hover:from-amber-700 hover:to-orange-700 rounded-xl shadow-xs transition-[transform,opacity,box-shadow,border-color] flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                       >
                         <span>⚡ Pindahkan & Masukkan ke Borang</span>
                       </button>
@@ -1196,25 +1196,25 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                 )}
 
                 {/* Collapsible Supabase cylinder picker */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-4.5 space-y-3 shadow-xs">
+                <div className="bg-surface border border-border-default rounded-2xl p-4.5 space-y-3 shadow-xs">
                   <div className="flex items-center justify-between w-full">
                     <button
                       type="button"
                       onClick={() => setShowPicker(!showPicker)}
-                      className="flex items-center gap-1.5 text-[10px] font-bold text-slate-500 uppercase tracking-wider cursor-pointer focus:outline-none"
+                      className="flex items-center gap-1.5 text-[10px] font-bold text-text-muted uppercase tracking-wider cursor-pointer focus:outline-none"
                     >
                       <Database className="w-3.5 h-3.5 text-indigo-600" />
                       <span>Pilih Silinder dari Pengkalan Data</span>
                     </button>
                     <div className="flex items-center gap-1.5">
-                      <div className="flex bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-[9px] font-bold">
+                      <div className="flex bg-subtle p-0.5 rounded-lg border border-border-default text-[9px] font-bold">
                         <button
                           type="button"
                           onClick={() => setPickerScope('store')}
-                          className={`px-2 py-0.5 rounded-md transition-all cursor-pointer ${
+                          className={`px-2 py-0.5 rounded-md transition-[transform,opacity,box-shadow,border-color] cursor-pointer ${
                             pickerScope === 'store'
-                              ? 'bg-white text-indigo-700 shadow-xs'
-                              : 'text-slate-500 hover:text-slate-800'
+                              ? 'bg-surface text-indigo-700 shadow-xs'
+                              : 'text-text-muted hover:text-text-primary'
                           }`}
                         >
                           Stor ({availableCylinders.length})
@@ -1222,10 +1222,10 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                         <button
                           type="button"
                           onClick={() => setPickerScope('wards')}
-                          className={`px-2 py-0.5 rounded-md transition-all cursor-pointer ${
+                          className={`px-2 py-0.5 rounded-md transition-[transform,opacity,box-shadow,border-color] cursor-pointer ${
                             pickerScope === 'wards'
                               ? 'bg-amber-500 text-white shadow-xs'
-                              : 'text-slate-500 hover:text-slate-800'
+                              : 'text-text-muted hover:text-text-primary'
                           }`}
                         >
                           Pindah Wad ({wardCylinders.length})
@@ -1234,7 +1234,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                       <button
                         type="button"
                         onClick={() => setShowPicker(!showPicker)}
-                        className="text-[9px] text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-lg font-bold border border-indigo-100/50 cursor-pointer"
+                        className="text-[9px] text-indigo-600 bg-indigo-500/10 px-2 py-0.5 rounded-lg font-bold border border-indigo-100/50 cursor-pointer"
                       >
                         {showPicker ? 'Hide List' : 'Show List'}
                       </button>
@@ -1242,10 +1242,10 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                   </div>
 
                   {showPicker && (
-                    <div className="space-y-4 pt-3 border-t border-slate-200/50">
+                    <div className="space-y-4 pt-3 border-t border-border-default">
                       
                       {/* Size & Type Filter Tabs */}
-                      <div className="flex flex-wrap gap-1.5 pb-2.5 border-b border-slate-100">
+                      <div className="flex flex-wrap gap-1.5 pb-2.5 border-b border-border-subtle">
                         {availableTypes.map((tName) => {
                           const count = currentDisplayPool.filter(c => c.type_name_display === tName).length;
                           return (
@@ -1253,10 +1253,10 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                               key={tName}
                               type="button"
                               onClick={() => setSelectedTypeFilter(tName)}
-                              className={`px-2.5 py-1 rounded-lg text-[10px] font-extrabold transition-all cursor-pointer focus:outline-none ${
+                              className={`px-2.5 py-1 rounded-lg text-[10px] font-extrabold transition-[transform,opacity,box-shadow,border-color] cursor-pointer focus:outline-none ${
                                 selectedTypeFilter === tName
                                   ? 'bg-indigo-600 text-white shadow-xs'
-                                  : 'bg-slate-100 hover:bg-slate-250 text-slate-650'
+                                  : 'bg-subtle hover:bg-slate-250 text-slate-650'
                               }`}
                             >
                               {tName} ({count})
@@ -1277,7 +1277,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                         <div className="space-y-3.5 pr-1">
                           {Object.keys(groupedCylinders).map((typeName) => (
                             <div key={typeName} className="space-y-1.5">
-                              <span className="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider block bg-slate-100/60 px-2 py-1 rounded">
+                              <span className="text-[9px] font-extrabold text-text-secondary font-bold uppercase tracking-wider block bg-subtle px-2 py-1 rounded">
                                 {typeName}
                               </span>
                               <div className="grid grid-cols-4 gap-2">
@@ -1288,14 +1288,14 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                                       key={cyl.id}
                                       type="button"
                                       onClick={() => toggleCylinderSelect(cyl)}
-                                      className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg border text-left transition-all cursor-pointer shadow-2xs w-full text-xs ${
+                                      className={`flex items-center gap-1.5 px-2 py-1.5 rounded-lg border text-left transition-[transform,opacity,box-shadow,border-color] cursor-pointer shadow-elevation-1 w-full text-xs ${
                                         isSelected 
-                                          ? 'bg-indigo-50 border-indigo-200 text-indigo-900 font-bold' 
-                                          : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-800'
+                                          ? 'bg-indigo-500/10 border-indigo-500/20 text-indigo-400 dark:text-indigo-300 font-bold font-bold' 
+                                          : 'bg-surface hover:bg-subtle/50 border-border-default text-text-primary'
                                       }`}
                                     >
-                                      <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center transition-all flex-shrink-0 ${
-                                        isSelected ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-slate-300'
+                                      <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center transition-[transform,opacity,box-shadow,border-color] flex-shrink-0 ${
+                                        isSelected ? 'bg-indigo-600 border-indigo-600 text-white' : 'border-border-default'
                                       }`}>
                                         {isSelected && <Check className="w-2 h-2" />}
                                       </div>
@@ -1318,7 +1318,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
 
                       {/* Pagination Controls */}
                       {totalPickerPages > 1 && (
-                        <div className="flex items-center justify-between pt-2.5 text-[10px] font-bold text-slate-500 border-t border-slate-100">
+                        <div className="flex items-center justify-between pt-2.5 text-[10px] font-bold text-text-muted border-t border-border-subtle">
                           <span>
                             Showing {(pickerPage - 1) * pickerPageSize + 1} - {Math.min(pickerPage * pickerPageSize, totalPickerItems)} of {totalPickerItems} cylinders
                           </span>
@@ -1327,7 +1327,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                               type="button"
                               disabled={pickerPage === 1}
                               onClick={() => setPickerPage(prev => Math.max(1, prev - 1))}
-                              className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed rounded-md transition-colors font-bold text-[10px] focus:outline-none"
+                              className="px-2.5 py-1 bg-subtle hover:bg-subtle text-text-secondary disabled:opacity-40 disabled:cursor-not-allowed rounded-md transition-colors font-bold text-[10px] focus:outline-none"
                             >
                               Prev
                             </button>
@@ -1335,7 +1335,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                               type="button"
                               disabled={pickerPage === totalPickerPages}
                               onClick={() => setPickerPage(prev => Math.min(totalPickerPages, prev + 1))}
-                              className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed rounded-md transition-colors font-bold text-[10px] focus:outline-none"
+                              className="px-2.5 py-1 bg-subtle hover:bg-subtle text-text-secondary disabled:opacity-40 disabled:cursor-not-allowed rounded-md transition-colors font-bold text-[10px] focus:outline-none"
                             >
                               Next
                             </button>
@@ -1349,22 +1349,22 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                 {/* Selected log view */}
                 {selectedCylinders.length > 0 && (
                   <div className="space-y-2.5">
-                    <div className="flex items-center justify-between text-xs text-slate-600 font-bold">
+                    <div className="flex items-center justify-between text-xs text-text-secondary font-bold">
                       <span>Cylinders Added to Dispatch List:</span>
                       <button
                         type="button"
                         onClick={() => setSelectedCylinders([])}
-                        className="text-[10px] text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-100 rounded-lg px-2.5 py-1 font-bold transition-all cursor-pointer"
+                        className="text-[10px] text-rose-600 hover:text-rose-700 bg-rose-500/10 hover:bg-rose-100 border border-rose-100 rounded-lg px-2.5 py-1 font-bold transition-[transform,opacity,box-shadow,border-color] cursor-pointer"
                       >
                         Reset List
                       </button>
                     </div>
-                    <div className="flex flex-wrap gap-2 p-3 bg-white border border-slate-200/80 rounded-2xl shadow-inner">
+                    <div className="flex flex-wrap gap-2 p-3 bg-surface border border-border-default rounded-2xl shadow-inner">
                       {selectedCylinders.map(cyl => (
-                        <div key={cyl.id} className="inline-flex items-center gap-2 px-2.5 py-1.5 bg-indigo-50/50 border border-indigo-100 rounded-lg text-xs font-bold text-indigo-950 font-mono">
+                        <div key={cyl.id} className="inline-flex items-center gap-2 px-2.5 py-1.5 bg-indigo-500/10 border border-indigo-100 rounded-lg text-xs font-bold text-indigo-400 dark:text-indigo-300 font-bold font-mono">
                           <span>{cyl.serial_number}</span>
                           {cyl.is_transfer && (
-                            <span className="text-[9px] font-sans font-extrabold bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded border border-amber-200">
+                            <span className="text-[9px] font-sans font-extrabold bg-amber-100 text-amber-400 px-1.5 py-0.5 rounded border border-amber-500/20">
                               Pindah dari {getSafeLocationString(cyl.transfer_from, 'Wad')}
                             </span>
                           )}
@@ -1385,9 +1385,9 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
 
             {/* Cylinder Content B: Loan cylinders */}
             {cylinderTab === 'loan' && (
-              <div className="space-y-4 bg-white border border-slate-200/80 rounded-2xl p-4.5 shadow-2xs">
+              <div className="space-y-4 bg-surface border border-border-default rounded-2xl p-4.5 shadow-elevation-1">
                 <div className="flex flex-col gap-0.5 mb-2">
-                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Loan / Temporary Cylinders</span>
+                  <span className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider">Loan / Temporary Cylinders</span>
                   <span className="text-[9px] text-slate-450 font-semibold">Bulk entries not requiring tracking numbers</span>
                 </div>
 
@@ -1395,17 +1395,17 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Loan cylinder 101-F */}
-                  <div className="p-4 bg-slate-50/70 border border-slate-200/90 rounded-2xl flex flex-col gap-3 shadow-2xs">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                  <div className="p-4 bg-subtle/50 border border-border-default rounded-2xl flex flex-col gap-3 shadow-elevation-1">
+                    <div className="flex items-center justify-between border-b border-border-subtle pb-2">
                       <div>
-                        <span className="font-extrabold text-xs text-slate-900 block">101-F (1.4m³)</span>
-                        <span className="text-[10px] text-slate-500 block font-semibold">Medium Size Loan Cylinder</span>
+                        <span className="font-extrabold text-xs text-text-primary block">101-F (1.4m³)</span>
+                        <span className="text-[10px] text-text-muted block font-semibold">Medium Size Loan Cylinder</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
                           onClick={() => setLoanQtyF(Math.max(0, loanQtyF - 1))}
-                          className="w-7 h-7 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg flex items-center justify-center text-xs font-bold text-slate-600 shadow-2xs cursor-pointer"
+                          className="w-7 h-7 bg-surface hover:bg-subtle border border-border-default rounded-lg flex items-center justify-center text-xs font-bold text-text-secondary shadow-elevation-1 cursor-pointer"
                         >
                           -
                         </button>
@@ -1414,12 +1414,12 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                           min={0}
                           value={loanQtyF}
                           onChange={(e) => setLoanQtyF(Math.max(0, Number(e.target.value)))}
-                          className="w-12 py-1 border border-slate-250 bg-white rounded-lg text-center text-xs font-black text-slate-800 focus:outline-none"
+                          className="w-12 py-1 border border-slate-250 bg-surface rounded-lg text-center text-xs font-black text-text-primary focus:outline-none"
                         />
                         <button
                           type="button"
                           onClick={() => setLoanQtyF(loanQtyF + 1)}
-                          className="w-7 h-7 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg flex items-center justify-center text-xs font-bold text-slate-600 shadow-2xs cursor-pointer"
+                          className="w-7 h-7 bg-surface hover:bg-subtle border border-border-default rounded-lg flex items-center justify-center text-xs font-bold text-text-secondary shadow-elevation-1 cursor-pointer"
                         >
                           +
                         </button>
@@ -1428,7 +1428,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
 
                     {/* Serial Numbers Input for 101-F */}
                     <div className="space-y-1.5 relative">
-                      <label className="text-[10px] font-extrabold text-slate-600 uppercase tracking-wider block">
+                      <label className="text-[10px] font-extrabold text-text-secondary uppercase tracking-wider block">
                         Cylinder Serial Nos (e.g. Saboxy / Supplier)
                       </label>
                       <div className="flex gap-2 relative">
@@ -1450,13 +1450,13 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                               handleAddSerialF();
                             }
                           }}
-                          className="flex-1 px-3 py-1.5 border border-slate-250 bg-white rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                          className="flex-1 px-3 py-1.5 border border-slate-250 bg-surface rounded-xl text-xs font-semibold text-text-primary placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
                         />
                         <button
                           type="button"
                           onClick={() => handleAddSerialF()}
                           disabled={!serialInputF.trim()}
-                          className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white rounded-xl text-xs font-bold transition-all shadow-2xs cursor-pointer"
+                          className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white rounded-xl text-xs font-bold transition-[transform,opacity,box-shadow,border-color] shadow-elevation-1 cursor-pointer"
                         >
                           + Add
                         </button>
@@ -1466,9 +1466,9 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                       {showSuggestionsF && serialInputF.trim().length > 0 && (() => {
                         const suggestions = getSerialSuggestions('101-F', serialInputF);
                         return (
-                          <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200/90 rounded-2xl shadow-2xl z-50 max-h-52 overflow-y-auto divide-y divide-slate-100 ring-1 ring-slate-900/5">
-                            <div className="px-3 py-1.5 bg-slate-50/95 flex items-center justify-between sticky top-0 backdrop-blur-xs z-10">
-                              <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">
+                          <div className="absolute left-0 right-0 top-full mt-1 bg-surface border border-border-default rounded-2xl shadow-2xl z-50 max-h-52 overflow-y-auto divide-y divide-border-subtle ring-1 ring-slate-900/5">
+                            <div className="px-3 py-1.5 bg-subtle/50 flex items-center justify-between sticky top-0 backdrop-blur-xs z-10">
+                              <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider">
                                 Matching Cylinders ({suggestions.length})
                               </span>
                               <span className="text-[9px] text-indigo-600 font-bold">Click to add</span>
@@ -1482,33 +1482,33 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                                     e.preventDefault();
                                     handleAddSerialF(sugg.full_serial);
                                   }}
-                                  className="w-full px-3.5 py-2.5 text-left hover:bg-indigo-50/80 flex items-center justify-between transition-colors cursor-pointer group"
+                                  className="w-full px-3.5 py-2.5 text-left hover:bg-indigo-500/10 flex items-center justify-between transition-colors cursor-pointer group"
                                 >
                                   <div className="flex items-center gap-2">
-                                    <span className="font-extrabold text-xs text-slate-900 font-mono group-hover:text-indigo-700">
+                                    <span className="font-extrabold text-xs text-text-primary font-mono group-hover:text-indigo-700">
                                       🏷️ {sugg.full_serial}
                                     </span>
                                     {sugg.is_db_match && (
-                                      <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-md">
+                                      <span className="text-[9px] font-bold text-emerald-700 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded-md">
                                         In Stock
                                       </span>
                                     )}
                                   </div>
-                                  <span className="text-[10px] text-indigo-600 font-bold bg-indigo-50 group-hover:bg-indigo-600 group-hover:text-white border border-indigo-100 px-2.5 py-0.5 rounded-lg transition-all">
+                                  <span className="text-[10px] text-indigo-600 font-bold bg-indigo-500/10 group-hover:bg-indigo-600 group-hover:text-white border border-indigo-100 px-2.5 py-0.5 rounded-lg transition-[transform,opacity,box-shadow,border-color]">
                                     + Add
                                   </span>
                                 </button>
                               ))
                             ) : (
                               <div className="p-3 text-center">
-                                <p className="text-xs text-slate-500 mb-2">No matching cylinder found in stock.</p>
+                                <p className="text-xs text-text-muted mb-2">No matching cylinder found in stock.</p>
                                 <button
                                   type="button"
                                   onMouseDown={(e) => {
                                     e.preventDefault();
                                     handleAddSerialF(serialInputF);
                                   }}
-                                  className="w-full py-1.5 px-3 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs rounded-xl transition-colors border border-indigo-200 cursor-pointer"
+                                  className="w-full py-1.5 px-3 bg-indigo-500/10 hover:bg-indigo-100 text-indigo-700 font-bold text-xs rounded-xl transition-colors border border-indigo-500/20 cursor-pointer"
                                 >
                                   + Add "{serialInputF.trim()}" as custom serial
                                 </button>
@@ -1521,12 +1521,12 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                       {loanSerialsF.length > 0 && (
                         <div className="flex flex-wrap gap-1.5 pt-1">
                           {loanSerialsF.map((s, idx) => (
-                            <span key={idx} className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-50 border border-indigo-200 text-indigo-800 rounded-lg text-[10px] font-extrabold font-mono shadow-2xs">
+                            <span key={idx} className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-lg text-[10px] font-extrabold font-mono shadow-elevation-1">
                               🏷️ {s}
                               <button
                                 type="button"
                                 onClick={() => handleRemoveSerialF(idx)}
-                                className="text-indigo-500 hover:text-indigo-900 ml-0.5 cursor-pointer font-bold"
+                                className="text-indigo-500 hover:text-indigo-400 dark:text-indigo-300 font-bold ml-0.5 cursor-pointer font-bold"
                               >
                                 ✕
                               </button>
@@ -1547,22 +1547,22 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                       placeholder="Usage notes for 101-F loan..."
                       value={loanNotesF}
                       onChange={(e) => setLoanNotesF(e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white text-xs text-slate-700 focus:outline-none focus:border-indigo-500 font-medium"
+                      className="w-full px-3 py-2 border border-border-default rounded-xl bg-surface text-xs text-text-secondary focus:outline-none focus:border-indigo-500 font-medium"
                     />
                   </div>
 
                   {/* Loan cylinder 101-N */}
-                  <div className="p-4 bg-slate-50/70 border border-slate-200/90 rounded-2xl flex flex-col gap-3 shadow-2xs">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                  <div className="p-4 bg-subtle/50 border border-border-default rounded-2xl flex flex-col gap-3 shadow-elevation-1">
+                    <div className="flex items-center justify-between border-b border-border-subtle pb-2">
                       <div>
-                        <span className="font-extrabold text-xs text-slate-900 block">101-N (8.0m³)</span>
-                        <span className="text-[10px] text-slate-500 block font-semibold">Large Size Loan Cylinder</span>
+                        <span className="font-extrabold text-xs text-text-primary block">101-N (8.0m³)</span>
+                        <span className="text-[10px] text-text-muted block font-semibold">Large Size Loan Cylinder</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
                           onClick={() => setLoanQtyN(Math.max(0, loanQtyN - 1))}
-                          className="w-7 h-7 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg flex items-center justify-center text-xs font-bold text-slate-600 shadow-2xs cursor-pointer"
+                          className="w-7 h-7 bg-surface hover:bg-subtle border border-border-default rounded-lg flex items-center justify-center text-xs font-bold text-text-secondary shadow-elevation-1 cursor-pointer"
                         >
                           -
                         </button>
@@ -1571,12 +1571,12 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                           min={0}
                           value={loanQtyN}
                           onChange={(e) => setLoanQtyN(Math.max(0, Number(e.target.value)))}
-                          className="w-12 py-1 border border-slate-250 bg-white rounded-lg text-center text-xs font-black text-slate-800 focus:outline-none"
+                          className="w-12 py-1 border border-slate-250 bg-surface rounded-lg text-center text-xs font-black text-text-primary focus:outline-none"
                         />
                         <button
                           type="button"
                           onClick={() => setLoanQtyN(loanQtyN + 1)}
-                          className="w-7 h-7 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg flex items-center justify-center text-xs font-bold text-slate-600 shadow-2xs cursor-pointer"
+                          className="w-7 h-7 bg-surface hover:bg-subtle border border-border-default rounded-lg flex items-center justify-center text-xs font-bold text-text-secondary shadow-elevation-1 cursor-pointer"
                         >
                           +
                         </button>
@@ -1585,7 +1585,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
 
                     {/* Serial Numbers Input for 101-N */}
                     <div className="space-y-1.5 relative">
-                      <label className="text-[10px] font-extrabold text-slate-600 uppercase tracking-wider block">
+                      <label className="text-[10px] font-extrabold text-text-secondary uppercase tracking-wider block">
                         Cylinder Serial Nos (e.g. Saboxy / Supplier)
                       </label>
                       <div className="flex gap-2 relative">
@@ -1607,13 +1607,13 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                               handleAddSerialN();
                             }
                           }}
-                          className="flex-1 px-3 py-1.5 border border-slate-250 bg-white rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                          className="flex-1 px-3 py-1.5 border border-slate-250 bg-surface rounded-xl text-xs font-semibold text-text-primary placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
                         />
                         <button
                           type="button"
                           onClick={() => handleAddSerialN()}
                           disabled={!serialInputN.trim()}
-                          className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white rounded-xl text-xs font-bold transition-all shadow-2xs cursor-pointer"
+                          className="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 text-white rounded-xl text-xs font-bold transition-[transform,opacity,box-shadow,border-color] shadow-elevation-1 cursor-pointer"
                         >
                           + Add
                         </button>
@@ -1623,9 +1623,9 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                       {showSuggestionsN && serialInputN.trim().length > 0 && (() => {
                         const suggestions = getSerialSuggestions('101-N', serialInputN);
                         return (
-                          <div className="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200/90 rounded-2xl shadow-2xl z-50 max-h-52 overflow-y-auto divide-y divide-slate-100 ring-1 ring-slate-900/5">
-                            <div className="px-3 py-1.5 bg-slate-50/95 flex items-center justify-between sticky top-0 backdrop-blur-xs z-10">
-                              <span className="text-[10px] font-extrabold text-slate-500 uppercase tracking-wider">
+                          <div className="absolute left-0 right-0 top-full mt-1 bg-surface border border-border-default rounded-2xl shadow-2xl z-50 max-h-52 overflow-y-auto divide-y divide-border-subtle ring-1 ring-slate-900/5">
+                            <div className="px-3 py-1.5 bg-subtle/50 flex items-center justify-between sticky top-0 backdrop-blur-xs z-10">
+                              <span className="text-[10px] font-extrabold text-text-muted uppercase tracking-wider">
                                 Matching Cylinders ({suggestions.length})
                               </span>
                               <span className="text-[9px] text-indigo-600 font-bold">Click to add</span>
@@ -1639,33 +1639,33 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                                     e.preventDefault();
                                     handleAddSerialN(sugg.full_serial);
                                   }}
-                                  className="w-full px-3.5 py-2.5 text-left hover:bg-indigo-50/80 flex items-center justify-between transition-colors cursor-pointer group"
+                                  className="w-full px-3.5 py-2.5 text-left hover:bg-indigo-500/10 flex items-center justify-between transition-colors cursor-pointer group"
                                 >
                                   <div className="flex items-center gap-2">
-                                    <span className="font-extrabold text-xs text-slate-900 font-mono group-hover:text-indigo-700">
+                                    <span className="font-extrabold text-xs text-text-primary font-mono group-hover:text-indigo-700">
                                       🏷️ {sugg.full_serial}
                                     </span>
                                     {sugg.is_db_match && (
-                                      <span className="text-[9px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-1.5 py-0.5 rounded-md">
+                                      <span className="text-[9px] font-bold text-emerald-700 bg-emerald-500/10 border border-emerald-500/20 px-1.5 py-0.5 rounded-md">
                                         In Stock
                                       </span>
                                     )}
                                   </div>
-                                  <span className="text-[10px] text-indigo-600 font-bold bg-indigo-50 group-hover:bg-indigo-600 group-hover:text-white border border-indigo-100 px-2.5 py-0.5 rounded-lg transition-all">
+                                  <span className="text-[10px] text-indigo-600 font-bold bg-indigo-500/10 group-hover:bg-indigo-600 group-hover:text-white border border-indigo-100 px-2.5 py-0.5 rounded-lg transition-[transform,opacity,box-shadow,border-color]">
                                     + Add
                                   </span>
                                 </button>
                               ))
                             ) : (
                               <div className="p-3 text-center">
-                                <p className="text-xs text-slate-500 mb-2">No matching cylinder found in stock.</p>
+                                <p className="text-xs text-text-muted mb-2">No matching cylinder found in stock.</p>
                                 <button
                                   type="button"
                                   onMouseDown={(e) => {
                                     e.preventDefault();
                                     handleAddSerialN(serialInputN);
                                   }}
-                                  className="w-full py-1.5 px-3 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs rounded-xl transition-colors border border-indigo-200 cursor-pointer"
+                                  className="w-full py-1.5 px-3 bg-indigo-500/10 hover:bg-indigo-100 text-indigo-700 font-bold text-xs rounded-xl transition-colors border border-indigo-500/20 cursor-pointer"
                                 >
                                   + Add "{serialInputN.trim()}" as custom serial
                                 </button>
@@ -1678,12 +1678,12 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                       {loanSerialsN.length > 0 && (
                         <div className="flex flex-wrap gap-1.5 pt-1">
                           {loanSerialsN.map((s, idx) => (
-                            <span key={idx} className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-50 border border-indigo-200 text-indigo-800 rounded-lg text-[10px] font-extrabold font-mono shadow-2xs">
+                            <span key={idx} className="inline-flex items-center gap-1 px-2.5 py-1 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 rounded-lg text-[10px] font-extrabold font-mono shadow-elevation-1">
                               🏷️ {s}
                               <button
                                 type="button"
                                 onClick={() => handleRemoveSerialN(idx)}
-                                className="text-indigo-500 hover:text-indigo-900 ml-0.5 cursor-pointer font-bold"
+                                className="text-indigo-500 hover:text-indigo-400 dark:text-indigo-300 font-bold ml-0.5 cursor-pointer font-bold"
                               >
                                 ✕
                               </button>
@@ -1704,7 +1704,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
                       placeholder="Usage notes for 101-N loan..."
                       value={loanNotesN}
                       onChange={(e) => setLoanNotesN(e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-white text-xs text-slate-700 focus:outline-none focus:border-indigo-500 font-medium"
+                      className="w-full px-3 py-2 border border-border-default rounded-xl bg-surface text-xs text-text-secondary focus:outline-none focus:border-indigo-500 font-medium"
                     />
                   </div>
                 </div>
@@ -1714,7 +1714,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
 
           {/* Remarks */}
           <div className="space-y-1.5 sm:space-y-2">
-            <label className="block text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <label className="block text-[10px] sm:text-xs font-bold text-text-muted uppercase tracking-wider">
               Remarks / Justification
             </label>
             <textarea
@@ -1722,33 +1722,33 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
               value={remarks}
               onChange={(e) => setRemarks(e.target.value)}
               rows={2}
-              className="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 border border-slate-200 rounded-xl sm:rounded-2xl bg-white text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all"
+              className="w-full px-3.5 py-2.5 sm:px-4 sm:py-3 border border-border-default rounded-xl sm:rounded-2xl bg-surface text-xs sm:text-sm text-text-primary placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-[transform,opacity,box-shadow,border-color]"
             />
           </div>
 
           {/* Current User Info Card */}
-          <div className="p-4 bg-white border border-slate-200/80 rounded-xl sm:rounded-2xl text-[10px] sm:text-xs text-slate-600 flex items-center justify-between shadow-sm">
+          <div className="p-4 bg-surface border border-border-default rounded-xl sm:rounded-2xl text-[10px] sm:text-xs text-text-secondary flex items-center justify-between shadow-sm">
             <div className="flex items-center gap-2.5">
-              <div className="p-1.5 sm:p-2 bg-indigo-50 text-indigo-600 rounded-lg sm:rounded-xl">
+              <div className="p-1.5 sm:p-2 bg-indigo-500/10 text-indigo-600 rounded-lg sm:rounded-xl">
                 <UserIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
               <div>
-                <span className="text-[8px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Recorded by Officer (Issuer)</span>
-                <span className="font-extrabold text-slate-800 text-xs block mt-0.5">{currentUser?.full_name || 'Loading user...'}</span>
+                <span className="text-[8px] sm:text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider block">Recorded by Officer (Issuer)</span>
+                <span className="font-extrabold text-text-primary text-xs block mt-0.5">{currentUser?.full_name || 'Loading user...'}</span>
               </div>
             </div>
-            <span className="bg-slate-100 text-slate-600 font-bold px-2 py-0.5 rounded-lg text-[9px] sm:text-[10px] uppercase">
+            <span className="bg-subtle text-text-secondary font-bold px-2 py-0.5 rounded-lg text-[9px] sm:text-[10px] uppercase">
               {currentUser?.jawatan || 'Officer'}
             </span>
           </div>
         </form>
 
         {/* Drawer Footer Actions */}
-        <div className="px-5 py-4 sm:px-8 sm:py-5 border-t border-slate-200/80 flex justify-end gap-3 bg-white relative z-10">
+        <div className="px-5 py-4 sm:px-8 sm:py-5 border-t border-border-default flex justify-end gap-3 bg-surface relative z-10">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 border border-slate-200 rounded-xl sm:rounded-2xl text-slate-600 hover:text-slate-800 hover:bg-slate-50 font-bold text-xs sm:text-sm transition-all focus:outline-none"
+            className="px-4 py-2 border border-border-default rounded-xl sm:rounded-2xl text-text-secondary hover:text-text-primary hover:bg-subtle/50 font-bold text-xs sm:text-sm transition-[transform,opacity,box-shadow,border-color] focus:outline-none"
           >
             Cancel
           </button>
@@ -1756,7 +1756,7 @@ export const ManualIssueModal: React.FC<ManualIssueModalProps> = ({
             type="button"
             onClick={handleSubmitForm}
             disabled={isSubmitting}
-            className="px-5 py-2 rounded-xl sm:rounded-2xl text-white bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 disabled:from-slate-400 disabled:to-slate-400 disabled:cursor-not-allowed font-bold text-xs sm:text-sm shadow-lg shadow-indigo-600/10 transition-all hover:scale-[1.01] active:scale-[0.99] focus:outline-none"
+            className="px-5 py-2 rounded-xl sm:rounded-2xl text-white bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 disabled:from-slate-400 disabled:to-slate-400 disabled:cursor-not-allowed font-bold text-xs sm:text-sm shadow-lg shadow-indigo-600/10 transition-[transform,opacity,box-shadow,border-color] hover:scale-[1.01] active:scale-[0.99] focus:outline-none"
           >
             {isSubmitting ? 'Submitting...' : 'Issue Cylinders'}
           </button>

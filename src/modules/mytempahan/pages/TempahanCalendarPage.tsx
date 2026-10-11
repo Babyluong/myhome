@@ -190,32 +190,32 @@ export const TempahanCalendarPage: React.FC = () => {
   const hoursList = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00']
 
   return (
-    <div className="w-full p-4 sm:p-6 lg:p-8 space-y-6 text-slate-900 dark:text-slate-100">
+    <div className="w-full p-4 sm:p-6 lg:p-8 space-y-6 text-text-primary dark:text-slate-100">
       {/* 1. Top Controls Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xs">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-surface dark:bg-slate-900 p-5 rounded-2xl border border-border-default dark:border-slate-800 shadow-xs">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate(ROUTES.TEMPAHAN)}
-            className="p-2.5 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors shrink-0"
+            className="p-2.5 text-text-muted hover:text-text-primary dark:hover:text-white hover:bg-subtle dark:hover:bg-slate-800 rounded-xl transition-colors shrink-0"
             title="Back to Dashboard"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
 
-          <div className="w-10 h-10 rounded-xl bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800/80 flex items-center justify-center text-teal-700 dark:text-teal-300 shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-accent-base/10 dark:bg-teal-950/60 border border-accent-base/20 dark:border-teal-800/80 flex items-center justify-center text-teal-700 dark:text-teal-300 shrink-0">
             <CalendarDays className="w-5 h-5" />
           </div>
 
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
+              <h1 className="text-lg sm:text-xl font-bold text-text-primary dark:text-white">
                 {MONTH_NAMES[month]} {year}
               </h1>
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-subtle dark:bg-slate-800 text-text-secondary dark:text-slate-300 border border-border-default dark:border-slate-700">
                 {filteredBookings.length} Bookings
               </span>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <p className="text-xs text-text-muted dark:text-slate-400">
               Availability schedule for Lawas Hospital meeting rooms and conference halls
             </p>
           </div>
@@ -229,7 +229,7 @@ export const TempahanCalendarPage: React.FC = () => {
             <select
               value={selectedRoomId}
               onChange={e => setSelectedRoomId(e.target.value)}
-              className="px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-semibold text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
+              className="px-3 py-2 rounded-xl border border-border-default dark:border-slate-700 bg-surface dark:bg-slate-800 text-xs font-semibold text-text-primary dark:text-slate-200 focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
             >
               <option value="all">All Facilities & Rooms</option>
               {rooms.map(r => (
@@ -241,16 +241,16 @@ export const TempahanCalendarPage: React.FC = () => {
           </div>
 
           {/* Month / Week / Day Switcher */}
-          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200/80 dark:border-slate-700 text-xs font-semibold">
+          <div className="flex items-center bg-subtle dark:bg-slate-800 p-1 rounded-xl border border-border-default dark:border-slate-700 text-xs font-semibold">
             {(['month', 'week', 'day'] as CalendarView[]).map(v => (
               <button
                 key={v}
                 onClick={() => setActiveView(v)}
                 className={cn(
-                  'px-3 py-1.5 rounded-lg transition-all capitalize',
+                  'px-3 py-1.5 rounded-lg transition-colors capitalize',
                   activeView === v
-                    ? 'bg-white dark:bg-slate-700 text-teal-800 dark:text-teal-200 shadow-2xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-surface dark:bg-slate-700 text-teal-800 dark:text-teal-200 shadow-elevation-1'
+                    : 'text-text-muted dark:text-slate-400 hover:text-text-primary dark:hover:text-white'
                 )}
               >
                 {v === 'month' ? 'Month' : v === 'week' ? 'Week' : 'Day'}
@@ -259,23 +259,23 @@ export const TempahanCalendarPage: React.FC = () => {
           </div>
 
           {/* Month Pagination Controls */}
-          <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200/80 dark:border-slate-700">
+          <div className="flex items-center gap-1 bg-subtle dark:bg-slate-800 p-1 rounded-xl border border-border-default dark:border-slate-700">
             <button
               onClick={prevMonth}
-              className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
+              className="p-1.5 rounded-lg hover:bg-surface dark:hover:bg-slate-700 text-text-muted dark:text-slate-300 transition-colors"
               title="Previous Month"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               onClick={goToToday}
-              className="px-2.5 py-1 text-xs font-semibold hover:bg-white dark:hover:bg-slate-700 rounded-lg text-slate-700 dark:text-slate-200 transition-colors"
+              className="px-2.5 py-1 text-xs font-semibold hover:bg-surface dark:hover:bg-slate-700 rounded-lg text-text-secondary dark:text-slate-200 transition-colors"
             >
               Today
             </button>
             <button
               onClick={nextMonth}
-              className="p-1.5 rounded-lg hover:bg-white dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
+              className="p-1.5 rounded-lg hover:bg-surface dark:hover:bg-slate-700 text-text-muted dark:text-slate-300 transition-colors"
               title="Next Month"
             >
               <ChevronRight className="w-4 h-4" />
@@ -285,7 +285,7 @@ export const TempahanCalendarPage: React.FC = () => {
           {/* Quick Book Trigger */}
           <button
             onClick={() => navigate(ROUTES.TEMPAHAN_REQUEST_NEW)}
-            className="px-4 py-2 rounded-xl bg-teal-700 hover:bg-teal-800 active:bg-teal-900 text-white text-xs font-bold shadow-xs transition-all flex items-center gap-2"
+            className="px-4 py-2 rounded-xl bg-teal-700 hover:bg-teal-800 active:bg-teal-900 text-white text-xs font-bold shadow-xs transition-colors flex items-center gap-2"
           >
             <Plus className="w-4 h-4" />
             <span>Book Slot</span>
@@ -295,9 +295,9 @@ export const TempahanCalendarPage: React.FC = () => {
 
       {/* 2. Calendar View Content */}
       {activeView === 'month' && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-hidden">
+        <div className="bg-surface dark:bg-slate-900 rounded-2xl border border-border-default dark:border-slate-800 shadow-xs overflow-hidden">
           {/* Day Name Columns */}
-          <div className="grid grid-cols-7 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-center text-xs font-bold text-slate-600 dark:text-slate-300 py-3">
+          <div className="grid grid-cols-7 border-b border-border-default dark:border-slate-800 bg-subtle/50 dark:bg-slate-800/60 text-center text-xs font-bold text-text-muted dark:text-slate-300 py-3">
             {DAYS_SHORT.map(d => (
               <div key={d} className="uppercase tracking-wider text-[11px]">
                 {d}
@@ -306,7 +306,7 @@ export const TempahanCalendarPage: React.FC = () => {
           </div>
 
           {/* Month Cells Grid */}
-          <div className="grid grid-cols-7 auto-rows-fr divide-x divide-y divide-slate-100 dark:divide-slate-800/80">
+          <div className="grid grid-cols-7 auto-rows-fr divide-x divide-y divide-border-subtle dark:divide-slate-800/80">
             {calendarMatrix.map((cell, idx) => {
               const isToday = cell.dateStr === new Date().toISOString().slice(0, 10)
 
@@ -316,9 +316,9 @@ export const TempahanCalendarPage: React.FC = () => {
                   className={cn(
                     'min-h-[120px] p-2 flex flex-col justify-between transition-colors relative group',
                     cell.isCurrentMonth
-                      ? 'bg-white dark:bg-slate-900'
-                      : 'bg-slate-50/50 dark:bg-slate-800/30 text-slate-400 dark:text-slate-600',
-                    isToday && 'ring-2 ring-inset ring-teal-500/50 dark:ring-teal-400/40 bg-teal-50/20 dark:bg-teal-950/20'
+                      ? 'bg-surface dark:bg-slate-900'
+                      : 'bg-subtle/50 dark:bg-slate-800/30 text-slate-400 dark:text-text-muted',
+                    isToday && 'ring-2 ring-inset ring-teal-500/50 dark:ring-teal-400/40 bg-accent-base/10 dark:bg-teal-950/20'
                   )}
                 >
                   {/* Date Header & Holiday Label */}
@@ -330,8 +330,8 @@ export const TempahanCalendarPage: React.FC = () => {
                           isToday
                             ? 'bg-teal-700 text-white shadow-xs'
                             : cell.isCurrentMonth
-                            ? 'text-slate-800 dark:text-slate-200'
-                            : 'text-slate-400 dark:text-slate-600'
+                            ? 'text-text-primary dark:text-slate-200'
+                            : 'text-slate-400 dark:text-text-muted'
                         )}
                       >
                         {cell.dayNum}
@@ -340,7 +340,7 @@ export const TempahanCalendarPage: React.FC = () => {
                       {/* Quick book (+) button on hover */}
                       <button
                         onClick={() => navigate(`${ROUTES.TEMPAHAN_REQUEST_NEW}?date=${cell.dateStr}${selectedRoomId !== 'all' ? `&roomId=${selectedRoomId}` : ''}`)}
-                        className="opacity-0 group-hover:opacity-100 p-1 rounded-md bg-slate-100 dark:bg-slate-800 hover:bg-teal-100 dark:hover:bg-teal-900/50 text-slate-500 hover:text-teal-700 transition-all"
+                        className="opacity-0 group-hover:opacity-100 p-1 rounded-md bg-subtle dark:bg-slate-800 hover:bg-teal-100 dark:hover:bg-teal-900/50 text-text-muted hover:text-teal-700 transition-colors"
                         title="Book on this date"
                       >
                         <Plus className="w-3 h-3" />
@@ -349,7 +349,7 @@ export const TempahanCalendarPage: React.FC = () => {
 
                     {/* Holiday Chip */}
                     {cell.holiday && (
-                      <div className="text-[10px] font-semibold text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 border border-amber-200/80 dark:border-amber-800/80 px-1.5 py-0.5 rounded mb-1.5 truncate">
+                      <div className="text-[10px] font-semibold text-amber-700 dark:text-amber-300 bg-amber-500/10 dark:bg-amber-950/60 border border-amber-500/20 dark:border-amber-800/80 px-1.5 py-0.5 rounded mb-1.5 truncate">
                         ★ {cell.holiday}
                       </div>
                     )}
@@ -366,10 +366,10 @@ export const TempahanCalendarPage: React.FC = () => {
                         }}
                         className={cn(
                           'p-1.5 rounded-md text-[10px] font-medium border cursor-pointer truncate transition-transform hover:scale-[1.02]',
-                          b.status === 'approved' && 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
-                          b.status === 'pending' && 'bg-amber-50 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 border-amber-200 dark:border-amber-800',
-                          b.status === 'in_use' && 'bg-teal-50 dark:bg-teal-950/50 text-teal-800 dark:text-teal-300 border-teal-200 dark:border-teal-800',
-                          b.status === 'completed' && 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-400 border-slate-200 dark:border-slate-700'
+                          b.status === 'approved' && 'bg-emerald-500/10 dark:bg-emerald-950/50 text-emerald-400 dark:text-emerald-300 border-emerald-500/20 dark:border-emerald-800',
+                          b.status === 'pending' && 'bg-amber-500/10 dark:bg-amber-950/50 text-amber-400 dark:text-amber-300 border-amber-500/20 dark:border-amber-800',
+                          b.status === 'in_use' && 'bg-accent-base/10 dark:bg-teal-950/50 text-teal-800 dark:text-teal-300 border-accent-base/20 dark:border-teal-800',
+                          b.status === 'completed' && 'bg-subtle dark:bg-slate-800 text-text-secondary dark:text-slate-400 border-border-default dark:border-slate-700'
                         )}
                         title={`${b.start_time}-${b.end_time}: ${b.purpose} (${b.room?.name})`}
                       >
@@ -379,7 +379,7 @@ export const TempahanCalendarPage: React.FC = () => {
                     ))}
 
                     {cell.bookings.length > 3 && (
-                      <div className="text-[10px] font-bold text-slate-500 dark:text-slate-400 px-1">
+                      <div className="text-[10px] font-bold text-text-muted dark:text-slate-400 px-1">
                         +{cell.bookings.length - 3} more events
                       </div>
                     )}
@@ -393,13 +393,13 @@ export const TempahanCalendarPage: React.FC = () => {
 
       {/* Week View */}
       {activeView === 'week' && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xs overflow-x-auto">
+        <div className="bg-surface dark:bg-slate-900 rounded-2xl border border-border-default dark:border-slate-800 shadow-xs overflow-x-auto">
           <div className="min-w-[800px]">
             {/* Header Columns */}
-            <div className="grid grid-cols-8 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/60 text-center py-3">
-              <div className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase">Time</div>
+            <div className="grid grid-cols-8 border-b border-border-default dark:border-slate-800 bg-subtle/50 dark:bg-slate-800/60 text-center py-3">
+              <div className="text-xs font-bold text-slate-400 dark:text-text-muted uppercase">Time</div>
               {weekDays.map(d => (
-                <div key={d.dateStr} className="text-xs font-bold text-slate-700 dark:text-slate-200">
+                <div key={d.dateStr} className="text-xs font-bold text-text-secondary dark:text-slate-200">
                   <div className="uppercase text-[10px] text-slate-400">{d.dayName}</div>
                   <div className="text-sm font-mono">{d.dayNum}</div>
                   {d.holiday && (
@@ -412,10 +412,10 @@ export const TempahanCalendarPage: React.FC = () => {
             </div>
 
             {/* Time Slot Rows */}
-            <div className="divide-y divide-slate-100 dark:divide-slate-800">
+            <div className="divide-y divide-border-subtle dark:divide-slate-800">
               {hoursList.map(hour => (
                 <div key={hour} className="grid grid-cols-8 min-h-[56px]">
-                  <div className="p-2 text-xs font-mono font-semibold text-slate-400 dark:text-slate-500 border-r border-slate-100 dark:border-slate-800 text-center bg-slate-50/50 dark:bg-slate-800/20">
+                  <div className="p-2 text-xs font-mono font-semibold text-slate-400 dark:text-text-muted border-r border-border-subtle dark:border-slate-800 text-center bg-subtle/50 dark:bg-slate-800/20">
                     {hour}
                   </div>
                   {weekDays.map(d => {
@@ -427,7 +427,7 @@ export const TempahanCalendarPage: React.FC = () => {
                     return (
                       <div
                         key={d.dateStr}
-                        className="p-1 border-r border-slate-100 dark:border-slate-800/80 hover:bg-slate-50/80 dark:hover:bg-slate-800/40 transition-colors relative"
+                        className="p-1 border-r border-border-subtle dark:border-slate-800/80 hover:bg-subtle/50 dark:hover:bg-slate-800/40 transition-colors relative"
                       >
                         {match.map(b => (
                           <div
@@ -436,7 +436,7 @@ export const TempahanCalendarPage: React.FC = () => {
                               setSelectedBooking(b)
                               setDrawerOpen(true)
                             }}
-                            className="p-1.5 rounded-lg bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 text-[10px] text-teal-800 dark:text-teal-300 cursor-pointer shadow-2xs"
+                            className="p-1.5 rounded-lg bg-accent-base/10 dark:bg-teal-950/60 border border-accent-base/20 dark:border-teal-800 text-[10px] text-teal-800 dark:text-teal-300 cursor-pointer shadow-elevation-1"
                           >
                             <div className="font-bold truncate">{b.purpose}</div>
                             <div className="text-[9px] text-teal-600 dark:text-teal-400 font-mono">
@@ -456,13 +456,13 @@ export const TempahanCalendarPage: React.FC = () => {
 
       {/* Day View */}
       {activeView === 'day' && (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200/90 dark:border-slate-800 shadow-xs p-6 space-y-4">
-          <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
+        <div className="bg-surface dark:bg-slate-900 rounded-2xl border border-border-default dark:border-slate-800 shadow-xs p-6 space-y-4">
+          <div className="flex items-center justify-between pb-4 border-b border-border-subtle dark:border-slate-800">
             <div>
-              <h3 className="text-base font-bold text-slate-900 dark:text-white">
+              <h3 className="text-base font-bold text-text-primary dark:text-white">
                 Daily Agenda: {currentDate.toISOString().slice(0, 10)}
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-text-muted dark:text-slate-400">
                 Schedule of bookings across hospital operation hours.
               </p>
             </div>
@@ -474,7 +474,7 @@ export const TempahanCalendarPage: React.FC = () => {
             </button>
           </div>
 
-          <div className="divide-y divide-slate-100 dark:divide-slate-800">
+          <div className="divide-y divide-border-subtle dark:divide-slate-800">
             {hoursList.map(hour => {
               const match = filteredBookings.filter(b => {
                 const startH = b.start_time.slice(0, 2)
@@ -483,12 +483,12 @@ export const TempahanCalendarPage: React.FC = () => {
 
               return (
                 <div key={hour} className="py-3 flex items-start gap-4">
-                  <span className="w-16 text-xs font-mono font-bold text-slate-400 dark:text-slate-500 shrink-0">
+                  <span className="w-16 text-xs font-mono font-bold text-slate-400 dark:text-text-muted shrink-0">
                     {hour}
                   </span>
                   <div className="flex-1 space-y-2">
                     {match.length === 0 ? (
-                      <div className="text-xs text-slate-300 dark:text-slate-700 italic">Empty slot</div>
+                      <div className="text-xs text-slate-300 dark:text-text-secondary italic">Empty slot</div>
                     ) : (
                       match.map(b => (
                         <div
@@ -497,19 +497,19 @@ export const TempahanCalendarPage: React.FC = () => {
                             setSelectedBooking(b)
                             setDrawerOpen(true)
                           }}
-                          className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer transition-colors flex items-center justify-between"
+                          className="p-3 rounded-xl bg-subtle/50 dark:bg-slate-800/60 border border-border-default dark:border-slate-700 hover:bg-subtle dark:hover:bg-slate-800 cursor-pointer transition-colors flex items-center justify-between"
                         >
                           <div>
                             <div className="flex items-center gap-2">
                               <span className="font-mono font-bold text-teal-700 dark:text-teal-300 text-xs">
                                 {b.start_time} - {b.end_time}
                               </span>
-                              <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700">
+                              <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-700">
                                 {b.room?.name}
                               </span>
                             </div>
-                            <h4 className="font-bold text-sm text-slate-900 dark:text-white mt-1">{b.purpose}</h4>
-                            <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+                            <h4 className="font-bold text-sm text-text-primary dark:text-white mt-1">{b.purpose}</h4>
+                            <div className="text-xs text-text-muted dark:text-slate-400 mt-0.5">
                               Applicant: {b.pemohon_name} ({b.pemohon_department}) • {b.attendees_count} Pax
                             </div>
                           </div>

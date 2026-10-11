@@ -55,19 +55,19 @@ export const PengurusanBudgetTab: React.FC<PengurusanBudgetTabProps> = ({
   return (
     <div className="space-y-6">
       {/* 1. Header Navigation & Program Filters */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white border-2 border-slate-100 rounded-[2rem] p-6 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface border-2 border-border-subtle rounded-[2rem] p-6 shadow-sm">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-600 border border-blue-100 flex items-center justify-center">
             <Building className="w-6 h-6" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-xl font-black text-slate-900">Operating Budget (MOH Warrants)</h2>
-              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+              <h2 className="text-xl font-black text-text-primary">Operating Budget (MOH Warrants)</h2>
+              <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-700 border border-blue-500/20">
                 OPERATIONAL BUDGET
               </span>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-text-muted mt-0.5">
               Monitoring operating allocations & healthcare expenditures for Lawas Hospital
             </p>
           </div>
@@ -86,7 +86,7 @@ export const PengurusanBudgetTab: React.FC<PengurusanBudgetTabProps> = ({
             size="sm"
             variant="outline"
             onClick={() => onOpenCreatePO('020200')}
-            className="border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs rounded-xl px-4 py-2 shadow-sm"
+            className="border-border-default bg-surface hover:bg-subtle/50 text-text-secondary font-bold text-xs rounded-xl px-4 py-2 shadow-sm"
           >
             + Create Operating PO
           </Button>
@@ -94,33 +94,33 @@ export const PengurusanBudgetTab: React.FC<PengurusanBudgetTabProps> = ({
       </div>
 
       {/* Program Code Filter Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
+      <div className="flex items-center gap-2 border-b border-border-default pb-2">
         <button
           onClick={() => setSelectedProgram('all')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
             selectedProgram === 'all'
               ? 'bg-blue-600 text-white shadow-sm'
-              : 'text-slate-500 hover:text-slate-800 bg-white border border-slate-200'
+              : 'text-text-muted hover:text-text-primary bg-surface border border-border-default'
           }`}
         >
           All Programs ({pengurusanPrograms.length})
         </button>
         <button
           onClick={() => setSelectedProgram('020200')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
             selectedProgram === '020200'
               ? 'bg-blue-600 text-white shadow-sm'
-              : 'text-slate-500 hover:text-slate-800 bg-white border border-slate-200'
+              : 'text-text-muted hover:text-text-primary bg-surface border border-border-default'
           }`}
         >
           020200 - Hospital Management
         </button>
         <button
           onClick={() => setSelectedProgram('022300')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
             selectedProgram === '022300'
               ? 'bg-blue-600 text-white shadow-sm'
-              : 'text-slate-500 hover:text-slate-800 bg-white border border-slate-200'
+              : 'text-text-muted hover:text-text-primary bg-surface border border-border-default'
           }`}
         >
           022300 - Dietetics & Food Services
@@ -134,28 +134,28 @@ export const PengurusanBudgetTab: React.FC<PengurusanBudgetTabProps> = ({
             key={prog.programCode}
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            className="rounded-[2rem] bg-white border-2 border-slate-100 p-6 shadow-sm space-y-6"
+            className="rounded-[2rem] bg-surface border-2 border-border-subtle p-6 shadow-sm space-y-6"
           >
             {/* Program Header KPI */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border-subtle pb-5">
               <div>
                 <div className="flex items-center gap-2.5">
-                  <span className="px-2.5 py-1 bg-blue-50 text-blue-700 text-xs font-black font-mono rounded-lg border border-blue-200">
+                  <span className="px-2.5 py-1 bg-blue-500/10 text-blue-700 text-xs font-black font-mono rounded-lg border border-blue-500/20">
                     CODE {prog.programCode}
                   </span>
-                  <h3 className="text-lg font-black text-slate-900">{prog.programLabel}</h3>
+                  <h3 className="text-lg font-black text-text-primary">{prog.programLabel}</h3>
                 </div>
-                <p className="text-xs text-slate-500 mt-1">
+                <p className="text-xs text-text-muted mt-1">
                   Original Allocation + Additional MOH Warrants (Current Fiscal Year)
                 </p>
               </div>
 
-              <div className="grid grid-cols-3 gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200 text-center">
+              <div className="grid grid-cols-3 gap-3 bg-subtle/50 p-3.5 rounded-2xl border border-border-default text-center">
                 <div className="px-3">
                   <span className="text-[10px] text-slate-400 font-bold uppercase block">Allocation</span>
-                  <span className="text-sm font-black text-slate-900 font-mono">{formatCurrency(prog.totalAllocated)}</span>
+                  <span className="text-sm font-black text-text-primary font-mono">{formatCurrency(prog.totalAllocated)}</span>
                 </div>
-                <div className="px-3 border-x border-slate-200">
+                <div className="px-3 border-x border-border-default">
                   <span className="text-[10px] text-slate-400 font-bold uppercase block">Committed & Spent</span>
                   <span className="text-sm font-black text-amber-600 font-mono">
                     {formatCurrency(prog.committedAmount + prog.actualSpent)}
@@ -190,20 +190,20 @@ export const PengurusanBudgetTab: React.FC<PengurusanBudgetTabProps> = ({
                   return (
                     <div
                       key={obj.objekCode}
-                      className="rounded-2xl bg-slate-50/70 border border-slate-200/80 overflow-hidden transition-all"
+                      className="rounded-2xl bg-subtle/50 border border-border-default overflow-hidden transition-colors"
                     >
                       {/* Objek Head Bar */}
                       <div
                         onClick={() => toggleExpand(obj.objekCode)}
-                        className="p-4 flex items-center justify-between cursor-pointer hover:bg-slate-100/50 transition-colors"
+                        className="p-4 flex items-center justify-between cursor-pointer hover:bg-subtle transition-colors"
                       >
                         <div className="flex items-center gap-3">
-                          <div className="p-2 bg-white text-indigo-600 rounded-xl font-mono text-xs font-bold border border-slate-200 shadow-xs">
+                          <div className="p-2 bg-surface text-indigo-600 rounded-xl font-mono text-xs font-bold border border-border-default shadow-xs">
                             {obj.objekCode}
                           </div>
                           <div>
-                            <h5 className="text-xs sm:text-sm font-black text-slate-900">{obj.objekLabel}</h5>
-                            <span className="text-[10px] text-slate-500">
+                            <h5 className="text-xs sm:text-sm font-black text-text-primary">{obj.objekLabel}</h5>
+                            <span className="text-[10px] text-text-muted">
                               {obj.kategoriSummaries.length} Categories under this Object
                             </span>
                           </div>
@@ -211,7 +211,7 @@ export const PengurusanBudgetTab: React.FC<PengurusanBudgetTabProps> = ({
 
                         <div className="flex items-center gap-4">
                           <div className="text-right hidden sm:block">
-                            <span className="text-[10px] text-slate-500 block font-mono">
+                            <span className="text-[10px] text-text-muted block font-mono">
                               Balance: <strong className="text-emerald-600">{formatCurrency(obj.remainingBalance)}</strong>
                             </span>
                             <span className="text-[10px] text-slate-400">
@@ -219,7 +219,7 @@ export const PengurusanBudgetTab: React.FC<PengurusanBudgetTabProps> = ({
                             </span>
                           </div>
 
-                          <div className="p-1 rounded-lg bg-white border border-slate-200 text-slate-500">
+                          <div className="p-1 rounded-lg bg-surface border border-border-default text-text-muted">
                             {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                           </div>
                         </div>
@@ -227,10 +227,10 @@ export const PengurusanBudgetTab: React.FC<PengurusanBudgetTabProps> = ({
 
                       {/* Expanded Kategori Table */}
                       {isExpanded && (
-                        <div className="border-t border-slate-200 bg-white p-4 space-y-2.5">
+                        <div className="border-t border-border-default bg-surface p-4 space-y-2.5">
                           <table className="w-full text-left text-xs border-collapse">
                             <thead>
-                              <tr className="bg-slate-50/80 border-b border-slate-200 text-[10px] uppercase font-bold text-slate-500">
+                              <tr className="bg-subtle/50 border-b border-border-default text-[10px] uppercase font-bold text-text-muted">
                                 <th className="py-2.5 px-3">Category Code</th>
                                 <th className="py-2.5 px-3">Description / Details</th>
                                 <th className="py-2.5 px-3 text-right">Allocated</th>
@@ -239,23 +239,23 @@ export const PengurusanBudgetTab: React.FC<PengurusanBudgetTabProps> = ({
                                 <th className="py-2.5 px-3 text-center w-28">% Utilized</th>
                               </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100">
+                            <tbody className="divide-y divide-border-subtle">
                               {obj.kategoriSummaries.map((kat) => (
-                                <tr key={kat.kategoriCode} className="hover:bg-slate-50/50">
+                                <tr key={kat.kategoriCode} className="hover:bg-subtle/50">
                                   <td className="py-2.5 px-3 font-mono font-bold text-indigo-600">
                                     {kat.kategoriCode}
                                   </td>
-                                  <td className="py-2.5 px-3 text-slate-800">
+                                  <td className="py-2.5 px-3 text-text-primary">
                                     <div className="flex items-center gap-2">
                                       <span className="font-semibold">{kat.kategoriLabel}</span>
                                       {kat.isShared && (
-                                        <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-purple-50 text-purple-700 border border-purple-200 font-bold">
+                                        <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-indigo-500/10 text-purple-700 border border-indigo-500/20 font-bold">
                                           SHARED POOL
                                         </span>
                                       )}
                                     </div>
                                   </td>
-                                  <td className="py-2.5 px-3 text-right font-mono text-slate-700 font-semibold">
+                                  <td className="py-2.5 px-3 text-right font-mono text-text-secondary font-semibold">
                                     {formatCurrency(kat.totalAllocated)}
                                   </td>
                                   <td className="py-2.5 px-3 text-right font-mono text-amber-600 font-semibold">
@@ -265,7 +265,7 @@ export const PengurusanBudgetTab: React.FC<PengurusanBudgetTabProps> = ({
                                     {formatCurrency(kat.remainingBalance)}
                                   </td>
                                   <td className="py-2.5 px-3 text-center">
-                                    <span className="font-mono text-[11px] font-bold text-slate-700">
+                                    <span className="font-mono text-[11px] font-bold text-text-secondary">
                                       {kat.utilizationRate}%
                                     </span>
                                   </td>
@@ -285,24 +285,24 @@ export const PengurusanBudgetTab: React.FC<PengurusanBudgetTabProps> = ({
       </div>
 
       {/* 3. Live Waran Inflow Ledger (admin_warrants) */}
-      <div className="bg-white border-2 border-slate-100 rounded-[2rem] p-6 shadow-sm space-y-4">
-        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+      <div className="bg-surface border-2 border-border-subtle rounded-[2rem] p-6 shadow-sm space-y-4">
+        <div className="flex items-center justify-between border-b border-border-subtle pb-3">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 bg-blue-50 text-blue-600 rounded-xl border border-blue-100">
+            <div className="p-2 bg-blue-500/10 text-blue-600 rounded-xl border border-blue-100">
               <FileText className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-sm font-black text-slate-900">Received Warrant Allocation Ledger</h3>
-              <p className="text-[11px] text-slate-500">Official incoming fund inflows recorded from MOH</p>
+              <h3 className="text-sm font-black text-text-primary">Received Warrant Allocation Ledger</h3>
+              <p className="text-[11px] text-text-muted">Official incoming fund inflows recorded from MOH</p>
             </div>
           </div>
-          <span className="text-xs font-mono text-slate-500 font-bold">{warrants.length} Warrant Documents</span>
+          <span className="text-xs font-mono text-text-muted font-bold">{warrants.length} Warrant Documents</span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs border-collapse">
             <thead>
-              <tr className="bg-slate-50/80 border-y border-slate-100 text-slate-500 font-bold uppercase tracking-wider text-[10px]">
+              <tr className="bg-subtle/50 border-y border-border-subtle text-text-muted font-bold uppercase tracking-wider text-[10px]">
                 <th className="py-2.5 px-3">Warrant Doc No.</th>
                 <th className="py-2.5 px-3">Date</th>
                 <th className="py-2.5 px-3">Program / Activity</th>
@@ -311,14 +311,14 @@ export const PengurusanBudgetTab: React.FC<PengurusanBudgetTabProps> = ({
                 <th className="py-2.5 px-3 text-right">Warrant Amount (RM)</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-border-subtle">
               {warrants.map((w) => (
-                <tr key={w.id} className="hover:bg-slate-50/50">
-                  <td className="py-2.5 px-3 font-mono font-bold text-slate-900">{w.document_no}</td>
-                  <td className="py-2.5 px-3 text-slate-500">{w.warrant_date}</td>
+                <tr key={w.id} className="hover:bg-subtle/50">
+                  <td className="py-2.5 px-3 font-mono font-bold text-text-primary">{w.document_no}</td>
+                  <td className="py-2.5 px-3 text-text-muted">{w.warrant_date}</td>
                   <td className="py-2.5 px-3 font-mono text-blue-700 font-semibold">{w.vote_activity || w.program_code}</td>
-                  <td className="py-2.5 px-3 font-mono text-slate-700 font-semibold">{w.vote_code || w.objek_code}</td>
-                  <td className="py-2.5 px-3 text-slate-700 font-medium">{w.description || '-'}</td>
+                  <td className="py-2.5 px-3 font-mono text-text-secondary font-semibold">{w.vote_code || w.objek_code}</td>
+                  <td className="py-2.5 px-3 text-text-secondary font-medium">{w.description || '-'}</td>
                   <td className="py-2.5 px-3 text-right font-mono font-bold text-indigo-600">
                     {formatCurrency(Number(w.amount) || 0)}
                   </td>

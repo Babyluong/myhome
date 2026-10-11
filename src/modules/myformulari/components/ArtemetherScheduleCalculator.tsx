@@ -235,31 +235,31 @@ export const ArtemetherScheduleCalculator: React.FC<ArtemetherScheduleCalculator
     <div className="space-y-5">
       {/* 1. Clinical Guidance Alert Box */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
-        <div className="p-3.5 bg-amber-50/80 rounded-2xl border border-amber-200/90 flex gap-2.5 items-start">
+        <div className="p-3.5 bg-amber-500/10 rounded-2xl border border-amber-500/20 flex gap-2.5 items-start">
           <Utensils className="w-4 h-4 text-amber-700 shrink-0 mt-0.5" />
           <div className="space-y-0.5">
-            <span className="font-bold text-amber-950 block">Fat & Milk Absorption (Mandatory)</span>
-            <p className="text-slate-700 text-[11.5px] leading-relaxed">
+            <span className="font-bold text-amber-400 dark:text-amber-300 font-bold block">Fat & Milk Absorption (Mandatory)</span>
+            <p className="text-text-secondary text-[11.5px] leading-relaxed">
               Must be taken with fatty food or a glass of full-cream milk. Lumefantrine absorption increases 2–3 fold in the presence of lipids.
             </p>
           </div>
         </div>
 
-        <div className="p-3.5 bg-rose-50/80 rounded-2xl border border-rose-200/90 flex gap-2.5 items-start">
+        <div className="p-3.5 bg-rose-500/10 rounded-2xl border border-rose-500/20 flex gap-2.5 items-start">
           <RotateCcw className="w-4 h-4 text-rose-700 shrink-0 mt-0.5" />
           <div className="space-y-0.5">
-            <span className="font-bold text-rose-950 block">Vomiting Within 1 Hour</span>
-            <p className="text-slate-700 text-[11.5px] leading-relaxed">
+            <span className="font-bold text-rose-400 dark:text-rose-300 font-bold block">Vomiting Within 1 Hour</span>
+            <p className="text-text-secondary text-[11.5px] leading-relaxed">
               If the patient vomits within 1 hour (≤ 60 minutes) after taking any dose, repeat the full dose once more.
             </p>
           </div>
         </div>
 
-        <div className="p-3.5 bg-teal-50/80 rounded-2xl border border-teal-200/90 flex gap-2.5 items-start">
+        <div className="p-3.5 bg-accent-base/10 rounded-2xl border border-accent-base/20 flex gap-2.5 items-start">
           <ShieldCheck className="w-4 h-4 text-teal-700 shrink-0 mt-0.5" />
           <div className="space-y-0.5">
             <span className="font-bold text-teal-950 block">6-Dose Compliance (60 Hours)</span>
-            <p className="text-slate-700 text-[11.5px] leading-relaxed">
+            <p className="text-text-secondary text-[11.5px] leading-relaxed">
               Dose 1 (STAT Hour 0), Dose 2 (+8 Hours), followed by 4 doses spaced 12 hours apart (Hours 24, 36, 48, 60). All 6 doses must be fully completed.
             </p>
           </div>
@@ -267,18 +267,18 @@ export const ArtemetherScheduleCalculator: React.FC<ArtemetherScheduleCalculator
       </div>
 
       {/* 2. Interactive Calculator Card */}
-      <div className="bg-slate-50/90 rounded-2xl border border-slate-200 p-4 sm:p-6 space-y-5">
+      <div className="bg-subtle/50 rounded-2xl border border-border-default p-4 sm:p-6 space-y-5">
         {/* Top Control Bar: Header & Actions */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200/80">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-border-default">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-violet-100 text-violet-700 flex items-center justify-center font-bold">
               <Clock className="w-4 h-4" />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-slate-900">
+              <h4 className="text-sm font-bold text-text-primary">
                 6-Dose Regimen Schedule Calculator (Malaria Protocol)
               </h4>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-text-muted">
                 Enter initial first dose (STAT) time to calculate exact timings for all subsequent 6 doses.
               </p>
             </div>
@@ -288,10 +288,10 @@ export const ArtemetherScheduleCalculator: React.FC<ArtemetherScheduleCalculator
             <button
               type="button"
               onClick={handleCopySchedule}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer border ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors shadow-elevation-1 cursor-pointer border ${
                 copied
                   ? 'bg-emerald-600 text-white border-emerald-600'
-                  : 'bg-white hover:bg-slate-100 text-slate-700 border-slate-300'
+                  : 'bg-surface hover:bg-subtle text-text-secondary border-border-default'
               }`}
               title="Copy complete schedule for ward notes"
             >
@@ -302,16 +302,16 @@ export const ArtemetherScheduleCalculator: React.FC<ArtemetherScheduleCalculator
             <button
               type="button"
               onClick={handlePrintSchedule}
-              className="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer"
+              className="px-3 py-1.5 bg-surface hover:bg-subtle text-text-secondary border border-border-default rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors shadow-elevation-1 cursor-pointer"
             >
-              <Printer className="w-3.5 h-3.5 text-slate-500" />
+              <Printer className="w-3.5 h-3.5 text-text-muted" />
               <span>Cetak</span>
             </button>
 
             <button
               type="button"
               onClick={resetAllAdministered}
-              className="p-1.5 bg-white hover:bg-slate-100 text-slate-600 border border-slate-300 rounded-xl transition-all cursor-pointer"
+              className="p-1.5 bg-surface hover:bg-subtle text-text-muted border border-border-default rounded-xl transition-colors cursor-pointer"
               title="Reset administered checkmarks"
             >
               <RotateCcw className="w-3.5 h-3.5" />
@@ -323,19 +323,19 @@ export const ArtemetherScheduleCalculator: React.FC<ArtemetherScheduleCalculator
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
           {/* Stat Time Picker */}
           <div className="md:col-span-6 space-y-2">
-            <label className="text-xs font-bold text-slate-800 flex items-center justify-between">
+            <label className="text-xs font-bold text-text-primary flex items-center justify-between">
               <span className="flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5 text-violet-600" />
                 <span>First Dose / STAT Time (Hour 0):</span>
               </span>
-              <span className="text-[11px] font-normal text-slate-500">Diagnosis Time</span>
+              <span className="text-[11px] font-normal text-text-muted">Diagnosis Time</span>
             </label>
 
             <input
               type="datetime-local"
               value={statDateTime}
               onChange={e => setStatDateTime(e.target.value)}
-              className="w-full bg-white border border-slate-300 focus:border-violet-600 focus:ring-1 focus:ring-violet-600 text-slate-900 rounded-xl px-3 py-2 text-sm font-semibold font-mono outline-none shadow-2xs cursor-pointer"
+              className="w-full bg-surface border border-border-default focus:border-violet-600 focus:ring-1 focus:ring-violet-600 text-text-primary rounded-xl px-3 py-2 text-sm font-semibold font-mono outline-none shadow-elevation-1 cursor-pointer"
             />
 
             {/* Quick Timing Shortcuts */}
@@ -343,7 +343,7 @@ export const ArtemetherScheduleCalculator: React.FC<ArtemetherScheduleCalculator
               <button
                 type="button"
                 onClick={handleSetUserExample}
-                className="px-2.5 py-1 bg-violet-50 hover:bg-violet-100 text-violet-700 border border-violet-200 rounded-lg text-[11px] font-bold flex items-center gap-1 transition-all cursor-pointer"
+                className="px-2.5 py-1 bg-violet-50 hover:bg-violet-100 text-violet-700 border border-violet-200 rounded-lg text-[11px] font-bold flex items-center gap-1 transition-colors cursor-pointer"
                 title="Contoh: 16:00 31/08/2026"
               >
                 <Sparkles className="w-3 h-3 text-violet-600" />
@@ -353,7 +353,7 @@ export const ArtemetherScheduleCalculator: React.FC<ArtemetherScheduleCalculator
               <button
                 type="button"
                 onClick={handleSetNow}
-                className="px-2 py-1 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-lg text-[11px] font-medium transition-all cursor-pointer"
+                className="px-2 py-1 bg-surface hover:bg-subtle text-text-secondary border border-border-default rounded-lg text-[11px] font-medium transition-colors cursor-pointer"
               >
                 Current Time
               </button>
@@ -361,7 +361,7 @@ export const ArtemetherScheduleCalculator: React.FC<ArtemetherScheduleCalculator
               <button
                 type="button"
                 onClick={() => handleSetTimeHour(8, 0)}
-                className="px-2 py-1 bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 rounded-lg text-[11px] font-medium transition-all cursor-pointer"
+                className="px-2 py-1 bg-surface hover:bg-subtle text-text-muted border border-border-default rounded-lg text-[11px] font-medium transition-colors cursor-pointer"
               >
                 08:00
               </button>
@@ -369,7 +369,7 @@ export const ArtemetherScheduleCalculator: React.FC<ArtemetherScheduleCalculator
               <button
                 type="button"
                 onClick={() => handleSetTimeHour(12, 0)}
-                className="px-2 py-1 bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 rounded-lg text-[11px] font-medium transition-all cursor-pointer"
+                className="px-2 py-1 bg-surface hover:bg-subtle text-text-muted border border-border-default rounded-lg text-[11px] font-medium transition-colors cursor-pointer"
               >
                 12:00
               </button>
@@ -377,7 +377,7 @@ export const ArtemetherScheduleCalculator: React.FC<ArtemetherScheduleCalculator
               <button
                 type="button"
                 onClick={() => handleSetTimeHour(16, 0)}
-                className="px-2 py-1 bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 rounded-lg text-[11px] font-medium transition-all cursor-pointer"
+                className="px-2 py-1 bg-surface hover:bg-subtle text-text-muted border border-border-default rounded-lg text-[11px] font-medium transition-colors cursor-pointer"
               >
                 16:00
               </button>
@@ -385,7 +385,7 @@ export const ArtemetherScheduleCalculator: React.FC<ArtemetherScheduleCalculator
               <button
                 type="button"
                 onClick={() => handleSetTimeHour(20, 0)}
-                className="px-2 py-1 bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 rounded-lg text-[11px] font-medium transition-all cursor-pointer"
+                className="px-2 py-1 bg-surface hover:bg-subtle text-text-muted border border-border-default rounded-lg text-[11px] font-medium transition-colors cursor-pointer"
               >
                 20:00
               </button>
@@ -394,7 +394,7 @@ export const ArtemetherScheduleCalculator: React.FC<ArtemetherScheduleCalculator
 
           {/* Weight Category Selector */}
           <div className="md:col-span-6 space-y-2">
-            <label className="text-xs font-bold text-slate-800 flex items-center justify-between">
+            <label className="text-xs font-bold text-text-primary flex items-center justify-between">
               <span className="flex items-center gap-1.5">
                 <Scale className="w-3.5 h-3.5 text-teal-600" />
                 <span>Weight Category & Tablet Quantity:</span>
@@ -412,12 +412,12 @@ export const ArtemetherScheduleCalculator: React.FC<ArtemetherScheduleCalculator
                     key={tier.id}
                     type="button"
                     onClick={() => setSelectedWeight(tier.id)}
-                    className={`p-2 rounded-xl text-left transition-all border cursor-pointer ${
+                    className={`p-2 rounded-xl text-left transition-colors border cursor-pointer ${
                       isSelected
                         ? tier.isContraindicated
-                          ? 'bg-rose-50 border-rose-400 text-rose-900 shadow-2xs font-bold'
-                          : 'bg-violet-600 border-violet-600 text-white shadow-2xs font-bold'
-                        : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100'
+                          ? 'bg-rose-500/10 border-rose-400 text-rose-400 dark:text-rose-300 font-bold shadow-elevation-1 font-bold'
+                          : 'bg-violet-600 border-violet-600 text-white shadow-elevation-1 font-bold'
+                        : 'bg-surface border-border-default text-text-secondary hover:bg-subtle'
                     }`}
                   >
                     <div className="text-[11px] truncate">{tier.shortLabel}</div>
@@ -432,8 +432,8 @@ export const ArtemetherScheduleCalculator: React.FC<ArtemetherScheduleCalculator
             {/* Selected Summary Pill */}
             <div className={`p-2 rounded-xl text-xs flex items-center gap-2 border ${
               activeTier.isContraindicated
-                ? 'bg-rose-50 border-rose-200 text-rose-800'
-                : 'bg-teal-50 border-teal-200 text-teal-900'
+                ? 'bg-rose-500/10 border-rose-500/20 text-rose-400'
+                : 'bg-accent-base/10 border-accent-base/20 text-teal-900'
             }`}>
               <Pill className="w-3.5 h-3.5 shrink-0" />
               <span className="text-[11px] font-medium">
@@ -448,19 +448,19 @@ export const ArtemetherScheduleCalculator: React.FC<ArtemetherScheduleCalculator
         {/* 3. Clinical Schedule Table */}
         <div className="space-y-2 pt-2">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-800 uppercase tracking-wider">
+            <span className="text-xs font-bold text-text-primary uppercase tracking-wider">
               6-Dose Administration Schedule (STAT &rarr; 8H &rarr; BD):
             </span>
-            <span className="text-[11px] text-slate-500">
+            <span className="text-[11px] text-text-muted">
               Total Treatment Duration: <strong>60 Jam</strong>
             </span>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-2xs">
+          <div className="bg-surface rounded-2xl border border-border-default overflow-hidden shadow-elevation-1">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs border-collapse">
                 <thead>
-                  <tr className="bg-slate-50/80 border-b border-slate-200 text-slate-600 font-bold text-[11px]">
+                  <tr className="bg-subtle/50 border-b border-border-default text-text-muted font-bold text-[11px]">
                     <th className="py-2.5 px-3.5 w-12 text-center">Dose</th>
                     <th className="py-2.5 px-3.5">Phase & Interval</th>
                     <th className="py-2.5 px-3.5">Date & Day</th>
@@ -469,7 +469,7 @@ export const ArtemetherScheduleCalculator: React.FC<ArtemetherScheduleCalculator
                     <th className="py-2.5 px-3.5 text-center">Status / Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 font-medium">
+                <tbody className="divide-y divide-border-subtle font-medium">
                   {doseSchedule.map(dose => {
                     const isGiven = !!administeredDoses[dose.doseNumber]
 
@@ -478,12 +478,12 @@ export const ArtemetherScheduleCalculator: React.FC<ArtemetherScheduleCalculator
                         key={dose.doseNumber}
                         className={`transition-colors ${
                           isGiven
-                            ? 'bg-emerald-50/60 text-emerald-950'
+                            ? 'bg-emerald-500/10 text-emerald-400 dark:text-emerald-300 font-bold'
                             : dose.isFinalDose
-                            ? 'bg-purple-50/40 hover:bg-purple-50/70'
+                            ? 'bg-indigo-500/10 hover:bg-indigo-500/10'
                             : dose.doseNumber === 1
-                            ? 'bg-amber-50/40 hover:bg-amber-50/70'
-                            : 'hover:bg-slate-50/80'
+                            ? 'bg-amber-500/10 hover:bg-amber-500/10'
+                            : 'hover:bg-subtle/50'
                         }`}
                       >
                         {/* 1. Dose Number Badge */}
@@ -495,7 +495,7 @@ export const ArtemetherScheduleCalculator: React.FC<ArtemetherScheduleCalculator
                               ? 'bg-purple-600 text-white'
                               : dose.doseNumber === 1
                               ? 'bg-amber-500 text-white'
-                              : 'bg-slate-200 text-slate-800'
+                              : 'bg-subtle text-text-primary'
                           }`}>
                             {dose.doseNumber}
                           </span>
@@ -503,38 +503,38 @@ export const ArtemetherScheduleCalculator: React.FC<ArtemetherScheduleCalculator
 
                         {/* 2. Phase & Subtitle */}
                         <td className="py-3 px-3.5">
-                          <div className="font-bold text-slate-900 flex items-center gap-1.5">
+                          <div className="font-bold text-text-primary flex items-center gap-1.5">
                             <span>{dose.phaseTitle}</span>
                             {dose.isFinalDose && (
-                              <span className="text-[10px] bg-purple-100 text-purple-800 px-1.5 py-0.2 rounded font-bold">
+                              <span className="text-[10px] bg-purple-100 text-indigo-400 px-1.5 py-0.2 rounded font-bold">
                                 FINAL
                               </span>
                             )}
                           </div>
-                          <span className="text-[11px] text-slate-500 block">
+                          <span className="text-[11px] text-text-muted block">
                             {dose.phaseSubtitle}
                           </span>
                         </td>
 
                         {/* 3. Date & Day */}
                         <td className="py-3 px-3.5 whitespace-nowrap">
-                          <span className="font-bold text-slate-900 block">{dose.dayName}</span>
-                          <span className="text-[11px] text-slate-500 font-mono">{dose.dateFormatted}</span>
+                          <span className="font-bold text-text-primary block">{dose.dayName}</span>
+                          <span className="text-[11px] text-text-muted font-mono">{dose.dateFormatted}</span>
                         </td>
 
                         {/* 4. Time 24H & Military */}
                         <td className="py-3 px-3.5 whitespace-nowrap">
-                          <div className="text-base font-black text-slate-900 font-mono tracking-tight">
+                          <div className="text-base font-black text-text-primary font-mono tracking-tight">
                             {dose.time24H}
                           </div>
-                          <span className="text-[10.5px] text-slate-500 font-mono font-semibold">
+                          <span className="text-[10.5px] text-text-muted font-mono font-semibold">
                             ({dose.timeMilitary})
                           </span>
                         </td>
 
                         {/* 5. Tablets Quantity */}
                         <td className="py-3 px-3.5 whitespace-nowrap">
-                          <span className={`font-bold ${activeTier.isContraindicated ? 'text-rose-600' : 'text-slate-900'}`}>
+                          <span className={`font-bold ${activeTier.isContraindicated ? 'text-rose-600' : 'text-text-primary'}`}>
                             {dose.tabletText}
                           </span>
                           <span className="text-[10.5px] text-slate-400 block">
@@ -547,10 +547,10 @@ export const ArtemetherScheduleCalculator: React.FC<ArtemetherScheduleCalculator
                           <button
                             type="button"
                             onClick={() => toggleAdministered(dose.doseNumber)}
-                            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
+                            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold transition-colors cursor-pointer border ${
                               isGiven
-                                ? 'bg-emerald-600 text-white border-emerald-600 shadow-2xs'
-                                : 'bg-white hover:bg-slate-100 text-slate-600 border-slate-300'
+                                ? 'bg-emerald-600 text-white border-emerald-600 shadow-elevation-1'
+                                : 'bg-surface hover:bg-subtle text-text-muted border-border-default'
                             }`}
                           >
                             {isGiven ? (
@@ -576,14 +576,14 @@ export const ArtemetherScheduleCalculator: React.FC<ArtemetherScheduleCalculator
         </div>
 
         {/* Footer Note */}
-        <div className="p-3 bg-white rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-600">
+        <div className="p-3 bg-surface rounded-xl border border-border-default flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-text-muted">
           <div className="flex items-center gap-2">
             <Info className="w-4 h-4 text-violet-600 shrink-0" />
             <span>
               <strong>Interval Formula:</strong> Dose 1 (STAT) &rarr; (+8h) &rarr; Dose 2 &rarr; (+16h) &rarr; Dose 3 (Hour 24) &rarr; (+12h) &rarr; Dose 4 (Hour 36) &rarr; (+12h) &rarr; Dose 5 (Hour 48) &rarr; (+12h) &rarr; Dose 6 (Hour 60 - Completed).
             </span>
           </div>
-          <span className="text-[11px] font-bold text-slate-700 font-mono whitespace-nowrap">
+          <span className="text-[11px] font-bold text-text-secondary font-mono whitespace-nowrap">
             MOH FUKKM Protocol
           </span>
         </div>

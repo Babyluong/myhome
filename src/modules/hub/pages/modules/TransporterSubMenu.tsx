@@ -238,47 +238,47 @@ export const TransporterSubMenu: React.FC = () => {
       {/* Quick stats panel */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
         <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
-          <div className="flex justify-between items-start text-slate-500">
+          <div className="flex justify-between items-start text-text-muted">
             <span className="text-xs sm:text-sm font-medium">Trips in Transit</span>
             <Clock className="w-4 h-4 text-blue-400 flex-shrink-0" />
           </div>
           <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-white min-h-[36px] flex items-center">
             {stats.loading ? <Skeleton className="h-8 w-16 bg-slate-800/80 rounded-lg inline-block" /> : stats.activeTrips}
           </div>
-          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">Currently active</p>
+          <p className="text-[11px] sm:text-xs text-text-muted mt-1">Currently active</p>
         </div>
 
         <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
-          <div className="flex justify-between items-start text-slate-500">
+          <div className="flex justify-between items-start text-text-muted">
             <span className="text-xs sm:text-sm font-medium">New Requests</span>
             <CheckCircle2 className="w-4 h-4 text-amber-400 flex-shrink-0" />
           </div>
           <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-amber-400 min-h-[36px] flex items-center">
             {stats.loading ? <Skeleton className="h-8 w-16 bg-slate-800/80 rounded-lg inline-block" /> : stats.pendingRequests}
           </div>
-          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">Pending action</p>
+          <p className="text-[11px] sm:text-xs text-text-muted mt-1">Pending action</p>
         </div>
 
         <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
-          <div className="flex justify-between items-start text-slate-500">
+          <div className="flex justify-between items-start text-text-muted">
             <span className="text-xs sm:text-sm font-medium">Registered Fleet</span>
             <Car className="w-4 h-4 text-cyan-400 flex-shrink-0" />
           </div>
           <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-cyan-400 min-h-[36px] flex items-center">
             {stats.loading ? <Skeleton className="h-8 w-16 bg-slate-800/80 rounded-lg inline-block" /> : stats.totalVehicles}
           </div>
-          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">Ambulances & SG Cars</p>
+          <p className="text-[11px] sm:text-xs text-text-muted mt-1">Ambulances & SG Cars</p>
         </div>
 
         <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
-          <div className="flex justify-between items-start text-slate-500">
+          <div className="flex justify-between items-start text-text-muted">
             <span className="text-xs sm:text-sm font-medium">Maintenance Status</span>
             <AlertTriangle className="w-4 h-4 text-rose-400 flex-shrink-0" />
           </div>
           <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-rose-400 min-h-[36px] flex items-center">
             {stats.loading ? <Skeleton className="h-8 w-16 bg-slate-800/80 rounded-lg inline-block" /> : stats.activeIssues}
           </div>
-          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">Vehicles in service</p>
+          <p className="text-[11px] sm:text-xs text-text-muted mt-1">Vehicles in service</p>
         </div>
       </div>
 
@@ -294,7 +294,7 @@ export const TransporterSubMenu: React.FC = () => {
               <button
                 key={idx}
                 onClick={() => navigate(item.path)}
-                className="group text-left bg-slate-900/40 backdrop-blur-md border border-slate-800/80 rounded-2xl p-4 sm:p-6 hover:bg-slate-800/40 hover:border-slate-700/80 active:scale-[0.98] transition-all duration-200 shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[170px] cursor-pointer"
+                className="group text-left bg-slate-900/40 backdrop-blur-md border border-slate-800/80 rounded-2xl p-4 sm:p-6 hover:bg-slate-800/40 hover:border-slate-700/80 active:scale-[0.98] transition-colors duration-150 shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[170px] cursor-pointer"
               >
                 <div>
                   <div className="flex justify-between items-center mb-4">

@@ -35,12 +35,12 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
 
   if (!guideline) {
     return (
-      <div className="h-full min-h-[500px] flex flex-col items-center justify-center p-8 bg-white rounded-3xl border border-slate-200 text-center text-slate-400 space-y-3">
-        <div className="w-16 h-16 rounded-3xl bg-slate-50 flex items-center justify-center text-slate-400 border border-slate-100 shadow-inner">
+      <div className="h-full min-h-[500px] flex flex-col items-center justify-center p-8 bg-surface rounded-3xl border border-border-default text-center text-slate-400 space-y-3">
+        <div className="w-16 h-16 rounded-3xl bg-subtle/50 flex items-center justify-center text-slate-400 border border-border-subtle shadow-inner">
           <Layers className="w-8 h-8 opacity-60" />
         </div>
         <div>
-          <h3 className="text-base font-bold text-slate-700">Select Clinical Guideline</h3>
+          <h3 className="text-base font-bold text-text-secondary">Select Clinical Guideline</h3>
           <p className="text-xs text-slate-400 mt-1 max-w-sm">
             Please select an organ system category or search in the menu on the left to view detailed treatment plans.
           </p>
@@ -66,7 +66,7 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
   }
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden space-y-6">
+    <div className="bg-surface rounded-3xl border border-border-default shadow-sm overflow-hidden space-y-6">
       {/* 1. OFFICIAL MONOGRAPH HEADER */}
       <div
         className={`p-6 sm:p-8 text-white relative overflow-hidden ${
@@ -134,10 +134,10 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
             <button
               type="button"
               onClick={handleCopyPrescription}
-              className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-2 shadow-xs ${
+              className={`px-4 py-2 rounded-xl text-xs font-black transition-colors cursor-pointer flex items-center gap-2 shadow-xs ${
                 copied
                   ? 'bg-emerald-600 text-white shadow-md'
-                  : 'bg-white text-slate-900 hover:bg-slate-100'
+                  : 'bg-surface text-text-primary hover:bg-subtle'
               }`}
             >
               {copied ? (
@@ -147,7 +147,7 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
                 </>
               ) : (
                 <>
-                  <Copy className="w-4 h-4 text-slate-600" />
+                  <Copy className="w-4 h-4 text-text-muted" />
                   <span>Copy Prescription</span>
                 </>
               )}
@@ -158,7 +158,7 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
               <button
                 type="button"
                 onClick={() => onOpenCalculator(guideline.firstLineDrugs?.[0])}
-                className="px-4 py-2 bg-cyan-600/90 hover:bg-cyan-600 text-white rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-2 border border-cyan-400/40 shadow-xs"
+                className="px-4 py-2 bg-cyan-600/90 hover:bg-cyan-600 text-white rounded-xl text-xs font-black transition-colors cursor-pointer flex items-center gap-2 border border-cyan-400/40 shadow-xs"
               >
                 <Calculator className="w-4 h-4 text-cyan-200" />
                 <span>Calculate Dose (mg/kg)</span>
@@ -169,7 +169,7 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
             <button
               type="button"
               onClick={() => window.print()}
-              className="px-3.5 py-2 bg-white/10 hover:bg-white/20 text-slate-200 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border border-white/15"
+              className="px-3.5 py-2 bg-white/10 hover:bg-surface/20 text-slate-200 rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5 border border-white/15"
             >
               <Printer className="w-4 h-4 opacity-80" />
               <span>Cetak</span>
@@ -179,10 +179,10 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
             <button
               type="button"
               onClick={() => setIsBookmarked(!isBookmarked)}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 border ${
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5 border ${
                 isBookmarked
                   ? 'bg-amber-400 text-slate-950 border-amber-400 font-black'
-                  : 'bg-white/10 hover:bg-white/20 text-slate-200 border-white/15'
+                  : 'bg-white/10 hover:bg-surface/20 text-slate-200 border-white/15'
               }`}
             >
               <Bookmark className="w-4 h-4" />
@@ -196,7 +196,7 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
       <div className="p-6 sm:p-8 space-y-6">
         {/* Paediatric Weight Formula Callout */}
         {guideline.pediatricWeightDoseHint && (
-          <div className="p-4 bg-cyan-50/90 border-2 border-cyan-200 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div className="p-4 bg-surface border border-sky-500/30 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-xs">
             <div className="flex items-center gap-3 text-cyan-950">
               <div className="p-2.5 rounded-xl bg-cyan-200/70 text-cyan-900 flex-shrink-0">
                 <Baby className="w-5 h-5" />
@@ -214,7 +214,7 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
               <button
                 type="button"
                 onClick={() => onOpenCalculator(guideline.firstLineDrugs?.[0])}
-                className="px-3.5 py-2 bg-cyan-700 hover:bg-cyan-800 text-white rounded-xl font-black text-xs shadow-2xs self-start sm:self-auto cursor-pointer flex items-center gap-1.5 flex-shrink-0"
+                className="px-3.5 py-2 bg-accent-base hover:bg-accent-hover text-accent-foreground rounded-xl font-bold text-xs shadow-xs self-start sm:self-auto cursor-pointer flex items-center gap-1.5 flex-shrink-0"
               >
                 <Calculator className="w-3.5 h-3.5" />
                 <span>Open Dose Calculator</span>
@@ -224,15 +224,15 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
         )}
 
         {/* Primary Pathogens Bar */}
-        <div className="text-xs text-slate-700 bg-slate-50 p-4 rounded-2xl border border-slate-200/90 flex flex-wrap items-center gap-2">
-          <span className="font-black text-slate-900 uppercase tracking-wider text-[11px] flex items-center gap-1.5">
+        <div className="text-xs text-text-secondary bg-subtle/50 p-4 rounded-2xl border border-border-default flex flex-wrap items-center gap-2">
+          <span className="font-black text-text-primary uppercase tracking-wider text-[11px] flex items-center gap-1.5">
             <Sparkles className="w-3.5 h-3.5 text-emerald-700" />
             <span>Primary Microorganisms / Pathogens:</span>
           </span>
           {guideline.primaryPathogens.map((p, idx) => (
             <span
               key={idx}
-              className="italic text-slate-800 bg-white px-3 py-1 rounded-lg border border-slate-200 font-semibold shadow-2xs"
+              className="italic text-text-primary bg-surface px-3 py-1 rounded-lg border border-border-default font-semibold shadow-elevation-1"
             >
               {p}
             </span>
@@ -241,47 +241,47 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
 
         {/* 3. THERAPY REGIMENS MATRIX */}
         <div className="space-y-4">
-          <h3 className="text-xs font-black uppercase tracking-wider text-slate-800 flex items-center gap-2">
+          <h3 className="text-xs font-black uppercase tracking-wider text-text-primary flex items-center gap-2">
             <span>Antimicrobial Treatment Plan Matrix (NAG 2024)</span>
           </h3>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {/* CARD 1: First Line */}
-            <div className="p-5 rounded-3xl bg-emerald-50/80 border-2 border-emerald-300 shadow-2xs space-y-3 flex flex-col justify-between">
+            <div className="p-5 rounded-2xl bg-surface border border-emerald-500/30 dark:bg-slate-900/60 dark:border-emerald-500/30 shadow-xs space-y-3 flex flex-col justify-between">
               <div className="space-y-2.5">
-                <div className="flex items-center justify-between pb-2 border-b border-emerald-200">
+                <div className="flex items-center justify-between pb-2 border-b border-emerald-500/20">
                   <div className="flex items-center gap-2">
-                    <span className="p-1 rounded-md bg-emerald-600 text-white">
+                    <span className="p-1 rounded-md bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">
                       <CheckCircle2 className="w-3.5 h-3.5" />
                     </span>
-                    <h4 className="text-xs font-black text-emerald-950 uppercase tracking-wider">
+                    <h4 className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">
                       First-Line Treatment
                     </h4>
                   </div>
-                  <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-emerald-200 text-emerald-900">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                     1st-Line
                   </span>
                 </div>
 
-                <div className="text-base font-black text-emerald-950 leading-snug">
+                <div className="text-sm sm:text-base font-bold text-text-primary leading-snug">
                   {guideline.firstLineTherapy.regimen}
                 </div>
 
-                <div className="text-xs text-emerald-950 leading-relaxed bg-white/90 p-3.5 rounded-2xl border border-emerald-200 font-medium space-y-1">
-                  <strong className="text-emerald-950 block text-[11px] uppercase tracking-wider">
+                <div className="text-xs leading-relaxed bg-subtle dark:bg-slate-950/60 p-3.5 rounded-xl border border-border-default font-medium space-y-1">
+                  <strong className="text-text-primary block text-[11px] uppercase tracking-wider font-semibold">
                     Dosage &amp; Route:
                   </strong>
-                  <span className="text-slate-800">{guideline.firstLineTherapy.routeAndDose}</span>
+                  <span className="text-text-secondary">{guideline.firstLineTherapy.routeAndDose}</span>
                 </div>
               </div>
 
-              <div className="space-y-2 pt-3 border-t border-emerald-200">
-                <div className="flex items-center gap-2 text-xs font-bold text-emerald-950">
-                  <Clock className="w-4 h-4 text-emerald-700 flex-shrink-0" />
+              <div className="space-y-2 pt-3 border-t border-border-subtle">
+                <div className="flex items-center gap-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                  <Clock className="w-4 h-4 flex-shrink-0" />
                   <span>Treatment Duration: {guideline.firstLineTherapy.durationDays}</span>
                 </div>
                 {guideline.firstLineTherapy.remarks && (
-                  <p className="text-[11px] text-emerald-800 italic leading-relaxed">
+                  <p className="text-[11px] text-text-muted italic leading-relaxed">
                     * {guideline.firstLineTherapy.remarks}
                   </p>
                 )}
@@ -289,41 +289,41 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
             </div>
 
             {/* CARD 2: Second Line */}
-            <div className="p-5 rounded-3xl bg-blue-50/80 border-2 border-blue-300 shadow-2xs space-y-3 flex flex-col justify-between">
+            <div className="p-5 rounded-2xl bg-surface border border-sky-500/30 dark:bg-slate-900/60 dark:border-sky-500/30 shadow-xs space-y-3 flex flex-col justify-between">
               <div className="space-y-2.5">
-                <div className="flex items-center justify-between pb-2 border-b border-blue-200">
+                <div className="flex items-center justify-between pb-2 border-b border-sky-500/20">
                   <div className="flex items-center gap-2">
-                    <span className="p-1 rounded-md bg-blue-600 text-white">
+                    <span className="p-1 rounded-md bg-sky-500/10 text-sky-500 border border-sky-500/20">
                       <FileText className="w-3.5 h-3.5" />
                     </span>
-                    <h4 className="text-xs font-black text-blue-950 uppercase tracking-wider">
+                    <h4 className="text-xs font-bold text-sky-600 dark:text-sky-400 uppercase tracking-wider">
                       Second-Line Treatment
                     </h4>
                   </div>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-blue-200 text-blue-900">
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20">
                     Alternative
                   </span>
                 </div>
 
-                <div className="text-base font-black text-blue-950 leading-snug">
+                <div className="text-sm sm:text-base font-bold text-text-primary leading-snug">
                   {guideline.secondLineTherapy.regimen}
                 </div>
 
-                <div className="text-xs text-blue-950 leading-relaxed bg-white/90 p-3.5 rounded-2xl border border-blue-200 font-medium space-y-1">
-                  <strong className="text-blue-950 block text-[11px] uppercase tracking-wider">
+                <div className="text-xs leading-relaxed bg-subtle dark:bg-slate-950/60 p-3.5 rounded-xl border border-border-default font-medium space-y-1">
+                  <strong className="text-text-primary block text-[11px] uppercase tracking-wider font-semibold">
                     Dosage &amp; Route:
                   </strong>
-                  <span className="text-slate-800">{guideline.secondLineTherapy.routeAndDose}</span>
+                  <span className="text-text-secondary">{guideline.secondLineTherapy.routeAndDose}</span>
                 </div>
               </div>
 
-              <div className="space-y-2 pt-3 border-t border-blue-200">
-                <div className="flex items-center gap-2 text-xs font-bold text-blue-950">
-                  <Clock className="w-4 h-4 text-blue-700 flex-shrink-0" />
+              <div className="space-y-2 pt-3 border-t border-border-subtle">
+                <div className="flex items-center gap-2 text-xs font-semibold text-sky-600 dark:text-sky-400">
+                  <Clock className="w-4 h-4 flex-shrink-0" />
                   <span>Treatment Duration: {guideline.secondLineTherapy.durationDays}</span>
                 </div>
                 {guideline.secondLineTherapy.remarks && (
-                  <p className="text-[11px] text-blue-800 italic leading-relaxed">
+                  <p className="text-[11px] text-text-muted italic leading-relaxed">
                     * {guideline.secondLineTherapy.remarks}
                   </p>
                 )}
@@ -332,48 +332,48 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
 
             {/* CARD 3: Penicillin Allergy Option */}
             {guideline.penicillinAllergyOption ? (
-              <div className="p-5 rounded-3xl bg-amber-50/80 border-2 border-amber-300 shadow-2xs space-y-3 flex flex-col justify-between">
+              <div className="p-5 rounded-2xl bg-surface border border-amber-500/30 dark:bg-slate-900/60 dark:border-amber-500/30 shadow-xs space-y-3 flex flex-col justify-between">
                 <div className="space-y-2.5">
-                  <div className="flex items-center justify-between pb-2 border-b border-amber-200">
+                  <div className="flex items-center justify-between pb-2 border-b border-amber-500/20">
                     <div className="flex items-center gap-2">
-                      <span className="p-1 rounded-md bg-amber-600 text-white">
+                      <span className="p-1 rounded-md bg-amber-500/10 text-amber-500 border border-amber-500/20">
                         <AlertTriangle className="w-3.5 h-3.5" />
                       </span>
-                      <h4 className="text-xs font-black text-amber-950 uppercase tracking-wider">
+                      <h4 className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">
                         If Penicillin Allergy
                       </h4>
                     </div>
-                    <span className="text-[10px] font-black px-2 py-0.5 rounded-md bg-amber-200 text-amber-900">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
                       Safety Warning
                     </span>
                   </div>
 
-                  <div className="text-base font-black text-amber-950 leading-snug">
+                  <div className="text-sm sm:text-base font-bold text-text-primary leading-snug">
                     {guideline.penicillinAllergyOption.regimen}
                   </div>
 
-                  <div className="text-xs text-amber-950 leading-relaxed bg-white/90 p-3.5 rounded-2xl border border-amber-200 font-medium space-y-1">
-                    <strong className="text-amber-950 block text-[11px] uppercase tracking-wider">
+                  <div className="text-xs leading-relaxed bg-subtle dark:bg-slate-950/60 p-3.5 rounded-xl border border-border-default font-medium space-y-1">
+                    <strong className="text-text-primary block text-[11px] uppercase tracking-wider font-semibold">
                       Dosage &amp; Route:
                     </strong>
-                    <span className="text-slate-800">{guideline.penicillinAllergyOption.routeAndDose}</span>
+                    <span className="text-text-secondary">{guideline.penicillinAllergyOption.routeAndDose}</span>
                   </div>
                 </div>
 
                 {guideline.penicillinAllergyOption.remarks && (
-                  <div className="pt-3 border-t border-amber-200">
-                    <p className="text-[11px] text-amber-900 italic leading-relaxed">
+                  <div className="pt-3 border-t border-border-subtle">
+                    <p className="text-[11px] text-text-muted italic leading-relaxed">
                       * {guideline.penicillinAllergyOption.remarks}
                     </p>
                   </div>
                 )}
               </div>
             ) : (
-              <div className="p-5 rounded-3xl bg-slate-50 border-2 border-slate-200 text-xs text-slate-600 flex flex-col items-center justify-center text-center space-y-2.5">
+              <div className="p-5 rounded-3xl bg-subtle/50 border-2 border-border-default text-xs text-text-muted flex flex-col items-center justify-center text-center space-y-2.5">
                 <AlertCircle className="w-8 h-8 text-slate-400" />
                 <div>
-                  <p className="font-bold text-slate-800">No Specific Allergy Data</p>
-                  <p className="text-[11px] text-slate-500 mt-1 max-w-xs">
+                  <p className="font-bold text-text-primary">No Specific Allergy Data</p>
+                  <p className="text-[11px] text-text-muted mt-1 max-w-xs">
                     Refer to Physician / Infectious Disease (ID) Specialist for severe penicillin allergy cases.
                   </p>
                 </div>
@@ -384,22 +384,22 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
 
         {/* 4. ORAL STEP-DOWN PROTOCOL BANNER */}
         {guideline.oralStepDownOption && (
-          <div className="p-5 bg-gradient-to-r from-indigo-50/90 to-blue-50/90 border-2 border-indigo-200 rounded-3xl text-xs space-y-2.5 shadow-2xs">
+          <div className="p-5 bg-surface border border-border-default rounded-2xl text-xs space-y-2.5 shadow-xs">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <span className="font-black text-indigo-950 flex items-center gap-2 text-xs sm:text-sm">
-                <ArrowRightLeft className="w-4 h-4 text-indigo-600 flex-shrink-0" />
+              <span className="font-bold text-text-primary flex items-center gap-2 text-xs sm:text-sm">
+                <ArrowRightLeft className="w-4 h-4 text-sky-500 flex-shrink-0" />
                 <span>MOH Oral Step-Down Protocol:</span>
               </span>
-              <span className="text-[10px] bg-indigo-200 text-indigo-950 px-3 py-1 rounded-full font-black self-start sm:self-auto">
+              <span className="text-[10px] bg-indigo-200 text-indigo-400 dark:text-indigo-300 font-bold px-3 py-1 rounded-full font-black self-start sm:self-auto">
                 Clinically Stable &amp; Afebrile &gt;24-48 Hours
               </span>
             </div>
-            <div className="p-4 bg-white/90 rounded-2xl border border-indigo-100 space-y-1.5">
-              <p className="text-indigo-950 font-black text-xs sm:text-sm">
+            <div className="p-4 bg-surface rounded-2xl border border-indigo-100 space-y-1.5">
+              <p className="text-indigo-400 dark:text-indigo-300 font-bold font-black text-xs sm:text-sm">
                 {guideline.oralStepDownOption.regimen}
               </p>
-              <p className="text-indigo-900 text-[11px] leading-relaxed">
-                <strong className="text-indigo-950">Switch Criteria: </strong>
+              <p className="text-indigo-400 dark:text-indigo-300 font-bold text-[11px] leading-relaxed">
+                <strong className="text-indigo-400 dark:text-indigo-300 font-bold">Switch Criteria: </strong>
                 {guideline.oralStepDownOption.criteria}
               </p>
             </div>
@@ -408,12 +408,12 @@ export const NAGClinicalMonograph: React.FC<NAGClinicalMonographProps> = ({
 
         {/* 5. AMS STEWARDSHIP & RESTRICTIONS POLICY */}
         {guideline.amsNotes && guideline.amsNotes.length > 0 && (
-          <div className="bg-slate-50 p-5 sm:p-6 rounded-3xl border border-slate-200 text-xs text-slate-700 space-y-2.5">
-            <h5 className="font-black text-slate-900 uppercase tracking-wider flex items-center gap-2 text-xs">
+          <div className="bg-subtle/50 p-5 sm:p-6 rounded-3xl border border-border-default text-xs text-text-secondary space-y-2.5">
+            <h5 className="font-black text-text-primary uppercase tracking-wider flex items-center gap-2 text-xs">
               <ShieldCheck className="w-4 h-4 text-emerald-700" />
               <span>Antimicrobial Stewardship Notes (MOH AMS Policy):</span>
             </h5>
-            <ul className="space-y-1.5 list-disc list-inside text-slate-700">
+            <ul className="space-y-1.5 list-disc list-inside text-text-secondary">
               {guideline.amsNotes.map((note, idx) => (
                 <li key={idx} className="leading-relaxed">
                   {note}

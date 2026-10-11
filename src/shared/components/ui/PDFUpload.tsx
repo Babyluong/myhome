@@ -197,7 +197,7 @@ export const PDFUpload: React.FC<PDFUploadProps> = ({
   return (
     <div className={cn('w-full', className)}>
       {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+        <label className="block text-sm font-medium text-text-secondary mb-1.5">
           {label}
           {extractFirstPageOnly && (
             <span className="ml-2 text-xs text-amber-600 font-normal">
@@ -210,15 +210,15 @@ export const PDFUpload: React.FC<PDFUploadProps> = ({
       {isProcessing ? (
         <div className="border-2 border-dashed border-teal-300 rounded-xl p-8 bg-teal-50 flex flex-col items-center justify-center">
           <Loader2 className="w-8 h-8 text-teal-600 animate-spin mb-3" />
-          <p className="text-sm font-medium text-gray-700">
+          <p className="text-sm font-medium text-text-secondary">
             {extractFirstPageOnly ? 'Extracting first page...' : 'Processing PDF...'}
           </p>
-          <p className="text-xs text-gray-500 mt-1">Please wait</p>
+          <p className="text-xs text-text-muted mt-1">Please wait</p>
         </div>
       ) : previewUrl || displayFile ? (
         <div className="space-y-3">
           {/* Preview */}
-          <div className="relative group border-2 border-gray-200 rounded-xl overflow-hidden bg-gray-50 h-[28rem] flex flex-col">
+          <div className="relative group border-2 border-border-default rounded-xl overflow-hidden bg-subtle/50 h-[28rem] flex flex-col">
             {previewUrl && <PDFViewer url={previewUrl} />}
             <button
               type="button"
@@ -230,19 +230,19 @@ export const PDFUpload: React.FC<PDFUploadProps> = ({
           </div>
 
           {/* File Info */}
-          <div className="bg-white border-2 border-gray-200 rounded-xl p-4">
+          <div className="bg-surface border-2 border-border-default rounded-xl p-4">
             <div className="flex items-start gap-3">
               <div className="flex-shrink-0 w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center">
                 <FileText className="w-6 h-6 text-teal-600" />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <p className="text-sm font-semibold text-gray-900 truncate">
+                  <p className="text-sm font-semibold text-text-primary truncate">
                     {displayFile?.name}
                   </p>
                   <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
                 </div>
-                <div className="flex items-center gap-4 text-xs text-gray-600">
+                <div className="flex items-center gap-4 text-xs text-text-muted">
                   <span>{formatFileSize(displayFile?.size || 0)}</span>
                   {pageCount !== null && (
                     <span>
@@ -288,13 +288,13 @@ export const PDFUpload: React.FC<PDFUploadProps> = ({
           onDrop={handleDrop}
           onClick={() => inputRef.current?.click()}
           className={cn(
-            'relative border-2 border-dashed rounded-xl p-8 cursor-pointer transition-all',
+            'relative border-2 border-dashed rounded-xl p-8 cursor-pointer transition-colors',
             'hover:border-teal-400 hover:bg-teal-50/50',
             dragActive
               ? 'border-teal-500 bg-teal-50'
               : error
               ? 'border-error-300 bg-error-50'
-              : 'border-gray-300 bg-gray-50'
+              : 'border-border-default bg-subtle/50'
           )}
         >
           <input
@@ -309,7 +309,7 @@ export const PDFUpload: React.FC<PDFUploadProps> = ({
             <div
               className={cn(
                 'w-16 h-16 rounded-full flex items-center justify-center mb-4',
-                dragActive ? 'bg-teal-100' : 'bg-gray-100'
+                dragActive ? 'bg-teal-100' : 'bg-subtle'
               )}
             >
               <Upload
@@ -320,10 +320,10 @@ export const PDFUpload: React.FC<PDFUploadProps> = ({
               />
             </div>
 
-            <p className="text-base font-semibold text-gray-700 mb-1">
+            <p className="text-base font-semibold text-text-secondary mb-1">
               {dragActive ? 'Drop PDF file here' : 'Click to upload or drag and drop'}
             </p>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-text-muted">
               PDF files up to {formatFileSize(maxSize)}
             </p>
             {extractFirstPageOnly && (
@@ -343,7 +343,7 @@ export const PDFUpload: React.FC<PDFUploadProps> = ({
       )}
 
       {helperText && !error && !displayFile && (
-        <p className="mt-2 text-sm text-gray-500">{helperText}</p>
+        <p className="mt-2 text-sm text-text-muted">{helperText}</p>
       )}
     </div>
   )

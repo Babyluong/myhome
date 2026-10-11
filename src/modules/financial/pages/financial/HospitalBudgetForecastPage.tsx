@@ -630,24 +630,24 @@ export default function HospitalBudgetForecastPage() {
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
-          className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-slate-200 pb-5 gap-4"
+          className="flex flex-col md:flex-row md:items-center md:justify-between border-b border-border-default pb-5 gap-4"
         >
           <div>
             <div className="flex items-center gap-2">
-              <Badge variant="primary" className="bg-indigo-50 text-indigo-700 border-indigo-200 text-[10px] font-black uppercase py-0.5 tracking-wider">
+              <Badge variant="primary" className="bg-indigo-500/10 text-indigo-700 border-indigo-500/20 text-[10px] font-black uppercase py-0.5 tracking-wider">
                 Strategic Intelligence
               </Badge>
               {isSupabaseConfigured() ? (
-                <Badge variant="success" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[9px] font-bold">
+                <Badge variant="success" className="bg-emerald-500/10 text-emerald-700 border-emerald-500/20 text-[9px] font-bold">
                   DATABASE ON
                 </Badge>
               ) : (
-                <Badge variant="warning" className="bg-amber-50 text-amber-700 border-amber-200 text-[9px] font-bold">
+                <Badge variant="warning" className="bg-amber-500/10 text-amber-700 border-amber-500/20 text-[9px] font-bold">
                   SANDBOX FALLBACK
                 </Badge>
               )}
             </div>
-            <h1 className="text-xl font-black text-slate-900 tracking-tight mt-1 uppercase">
+            <h1 className="text-xl font-black text-text-primary tracking-tight mt-1 uppercase">
               Hospital Budget Forecasting & Run-Rates
             </h1>
             <p className="text-xs font-semibold text-slate-400 mt-1">
@@ -656,10 +656,10 @@ export default function HospitalBudgetForecastPage() {
           </div>
 
           {/* Month Slider Control */}
-          <div className="bg-white border border-slate-200/80 p-3 rounded-2xl flex items-center gap-4 shadow-sm">
+          <div className="bg-surface border border-border-default p-3 rounded-2xl flex items-center gap-4 shadow-sm">
             <div className="flex items-center gap-2">
               <Sliders className="w-4 h-4 text-indigo-600" />
-              <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Elapsed Time:</span>
+              <span className="text-[10px] font-black text-text-muted uppercase tracking-wider">Elapsed Time:</span>
             </div>
             <input
               type="range"
@@ -667,17 +667,17 @@ export default function HospitalBudgetForecastPage() {
               max="10"
               value={selectedMonthIndex}
               onChange={(e) => setSelectedMonthIndex(parseInt(e.target.value))}
-              className="w-[120px] h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+              className="w-[120px] h-1.5 bg-subtle rounded-lg appearance-none cursor-pointer accent-indigo-600"
             />
-            <span className="text-xs font-black text-indigo-650 bg-indigo-50 border border-indigo-200/60 px-2.5 py-1 rounded-xl shadow-xs">
+            <span className="text-xs font-black text-indigo-650 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-1 rounded-xl shadow-xs">
               {months[selectedMonthIndex]} ({selectedMonthIndex + 1} Months)
             </span>
             <button
               onClick={() => void loadForecastData()}
-              className="p-1.5 hover:bg-slate-50 rounded-xl transition-all duration-200 border border-slate-200/40"
+              className="p-1.5 hover:bg-subtle/50 rounded-xl transition-colors duration-150 border border-border-default"
               title="Recalculate Ledgers"
             >
-              <RefreshCw className="w-3.5 h-3.5 text-slate-500" />
+              <RefreshCw className="w-3.5 h-3.5 text-text-muted" />
             </button>
           </div>
         </motion.div>
@@ -690,10 +690,10 @@ export default function HospitalBudgetForecastPage() {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4"
         >
           {/* Annual Allocation */}
-          <div className="bg-white rounded-3xl p-5 border border-slate-200/60 shadow-sm flex flex-col justify-between">
+          <div className="bg-surface rounded-3xl p-5 border border-border-default shadow-sm flex flex-col justify-between">
             <div>
-              <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Annual Allocation</span>
-              <h3 className="text-lg font-black text-slate-800 mt-2 font-mono">
+              <span className="text-[10px] font-black uppercase text-text-secondary font-bold tracking-wider">Annual Allocation</span>
+              <h3 className="text-lg font-black text-text-primary mt-2 font-mono">
                 {formatCurrency(totalAllocation).replace('MYR', 'RM')}
               </h3>
             </div>
@@ -703,10 +703,10 @@ export default function HospitalBudgetForecastPage() {
           </div>
 
           {/* YTD Spent */}
-          <div className="bg-white rounded-3xl p-5 border border-slate-200/60 shadow-sm flex flex-col justify-between">
+          <div className="bg-surface rounded-3xl p-5 border border-border-default shadow-sm flex flex-col justify-between">
             <div>
-              <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">YTD Spent</span>
-              <h3 className="text-lg font-black text-slate-800 mt-2 font-mono">
+              <span className="text-[10px] font-black uppercase text-text-secondary font-bold tracking-wider">YTD Spent</span>
+              <h3 className="text-lg font-black text-text-primary mt-2 font-mono">
                 {formatCurrency(totalYtdSpent).replace('MYR', 'RM')}
               </h3>
             </div>
@@ -716,9 +716,9 @@ export default function HospitalBudgetForecastPage() {
           </div>
 
           {/* Avg Monthly Burn */}
-          <div className="bg-white rounded-3xl p-5 border border-slate-200/60 shadow-sm flex flex-col justify-between">
+          <div className="bg-surface rounded-3xl p-5 border border-border-default shadow-sm flex flex-col justify-between">
             <div>
-              <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Avg Monthly Burn</span>
+              <span className="text-[10px] font-black uppercase text-text-secondary font-bold tracking-wider">Avg Monthly Burn</span>
               <h3 className="text-lg font-black text-indigo-650 mt-2 font-mono">
                 {formatCurrency(totalAvgBurn).replace('MYR', 'RM')}
               </h3>
@@ -729,10 +729,10 @@ export default function HospitalBudgetForecastPage() {
           </div>
 
           {/* Projected EOY Spend */}
-          <div className="bg-white rounded-3xl p-5 border border-slate-200/60 shadow-sm flex flex-col justify-between">
+          <div className="bg-surface rounded-3xl p-5 border border-border-default shadow-sm flex flex-col justify-between">
             <div>
-              <span className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Projected EOY Spend</span>
-              <h3 className="text-lg font-black text-slate-800 mt-2 font-mono">
+              <span className="text-[10px] font-black uppercase text-text-secondary font-bold tracking-wider">Projected EOY Spend</span>
+              <h3 className="text-lg font-black text-text-primary mt-2 font-mono">
                 {formatCurrency(totalProjectedSpend).replace('MYR', 'RM')}
               </h3>
             </div>
@@ -743,10 +743,10 @@ export default function HospitalBudgetForecastPage() {
 
           {/* Budget Needed */}
           <div className={cn(
-            "rounded-3xl p-5 border shadow-sm transition-all duration-300 flex flex-col justify-between",
+            "rounded-3xl p-5 border shadow-sm transition-colors duration-150 flex flex-col justify-between",
             totalShortfall > 0
-              ? 'bg-rose-50/60 border-rose-200 text-rose-950 animate-pulse-slow'
-              : 'bg-emerald-50 border-emerald-200 text-emerald-950'
+              ? 'bg-rose-500/10 border-rose-500/20 text-rose-400 dark:text-rose-300 font-bold animate-pulse-slow'
+              : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 dark:text-emerald-300 font-bold'
           )}>
             <div>
               <span className="text-[10px] font-black uppercase tracking-wider block">Budget Needed To Add</span>
@@ -754,7 +754,7 @@ export default function HospitalBudgetForecastPage() {
                 {formatCurrency(totalShortfall).replace('MYR', 'RM')}
               </h3>
             </div>
-            <p className="text-[9px] font-bold mt-3 text-slate-500 flex items-center gap-1">
+            <p className="text-[9px] font-bold mt-3 text-text-muted flex items-center gap-1">
               {totalShortfall > 0 ? (
                 <>
                   <AlertCircle className="w-3.5 h-3.5 text-rose-500" />
@@ -775,14 +775,14 @@ export default function HospitalBudgetForecastPage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
-          className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm"
+          className="bg-surface border border-border-default rounded-3xl p-6 shadow-sm"
         >
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-3">
             <div>
-              <span className="bg-indigo-50 text-indigo-700 text-[9px] font-black px-2 py-0.5 rounded border border-indigo-200 uppercase tracking-widest">
+              <span className="bg-indigo-500/10 text-indigo-700 text-[9px] font-black px-2 py-0.5 rounded border border-indigo-500/20 uppercase tracking-widest">
                 Forecast Visualization
               </span>
-              <h3 className="text-xs font-black text-slate-800 uppercase tracking-wider mt-1">
+              <h3 className="text-xs font-black text-text-primary uppercase tracking-wider mt-1">
                 Warrant Allocation vs Projected Spend by Vote
               </h3>
             </div>
@@ -827,15 +827,15 @@ export default function HospitalBudgetForecastPage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.3 }}
-          className="bg-slate-50 border border-slate-200/80 p-5 rounded-3xl shadow-sm"
+          className="bg-subtle/50 border border-border-default p-5 rounded-3xl shadow-sm"
         >
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/60 pb-3.5 mb-4 gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-border-default pb-3.5 mb-4 gap-4">
             <div>
               <div className="flex items-center gap-2">
-                <span className="bg-indigo-100 text-indigo-800 text-[9px] font-black px-2 py-0.5 rounded border border-indigo-200 tracking-wider">
+                <span className="bg-indigo-100 text-indigo-400 text-[9px] font-black px-2 py-0.5 rounded border border-indigo-500/20 tracking-wider">
                   PLAYGROUND WIDGET
                 </span>
-                <span className="text-slate-800 text-xs font-black uppercase tracking-wider">Scenario Budget Modeler</span>
+                <span className="text-text-primary text-xs font-black uppercase tracking-wider">Scenario Budget Modeler</span>
               </div>
               <p className="text-[10px] text-slate-400 mt-1 font-semibold">
                 Test simulated revisions to balance predicted year-end shortfalls
@@ -846,7 +846,7 @@ export default function HospitalBudgetForecastPage() {
               <button
                 onClick={() => setSandboxActive(!sandboxActive)}
                 className={cn(
-                  "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all duration-200 shadow-sm",
+                  "px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-colors duration-150 shadow-sm",
                   sandboxActive
                     ? 'bg-emerald-600 border-emerald-500 text-white hover:bg-emerald-700'
                     : 'bg-indigo-650 border-indigo-650 text-white hover:bg-indigo-700'
@@ -860,7 +860,7 @@ export default function HospitalBudgetForecastPage() {
                   setSandboxAmount(1000000)
                 }}
                 disabled={!sandboxActive}
-                className="text-[10px] font-bold text-slate-400 hover:text-slate-600 disabled:opacity-40 disabled:cursor-not-allowed uppercase tracking-wider"
+                className="text-[10px] font-bold text-slate-400 hover:text-text-muted disabled:opacity-40 disabled:cursor-not-allowed uppercase tracking-wider"
               >
                 Reset
               </button>
@@ -876,7 +876,7 @@ export default function HospitalBudgetForecastPage() {
                 <select
                   value={sandboxTarget}
                   onChange={(e) => setSandboxTarget(e.target.value)}
-                  className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-700 outline-none focus:ring-1 focus:ring-indigo-500"
+                  className="w-full bg-surface border border-border-default rounded-xl px-3 py-2.5 text-xs font-bold text-text-secondary outline-none focus:ring-1 focus:ring-indigo-500"
                 >
                   {processedData.filter(c => c.id !== 'cat-other').map(c => (
                     <option key={c.id} value={c.id}>
@@ -898,7 +898,7 @@ export default function HospitalBudgetForecastPage() {
                     min="0"
                     value={sandboxAmount}
                     onChange={(e) => setSandboxAmount(Math.max(0, parseInt(e.target.value) || 0))}
-                    className="w-full bg-white border border-slate-200 rounded-xl pl-8 pr-3 py-2 text-xs font-black text-slate-700 outline-none focus:ring-1 focus:ring-indigo-500"
+                    className="w-full bg-surface border border-border-default rounded-xl pl-8 pr-3 py-2 text-xs font-black text-text-secondary outline-none focus:ring-1 focus:ring-indigo-500"
                   />
                 </div>
               </div>
@@ -915,7 +915,7 @@ export default function HospitalBudgetForecastPage() {
                     step="50000"
                     value={sandboxAmount}
                     onChange={(e) => setSandboxAmount(parseInt(e.target.value))}
-                    className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-650"
+                    className="w-full h-1 bg-subtle rounded-lg appearance-none cursor-pointer accent-indigo-650"
                   />
                 </div>
               </div>
@@ -928,10 +928,10 @@ export default function HospitalBudgetForecastPage() {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.4 }}
-          className="overflow-hidden rounded-3xl border border-slate-200/80 shadow-sm bg-white"
+          className="overflow-hidden rounded-3xl border border-border-default shadow-sm bg-surface"
         >
-          <div className="px-5 py-4 bg-slate-50 border-b border-slate-200">
-            <h3 className="text-[10px] font-black text-slate-700 uppercase tracking-widest">
+          <div className="px-5 py-4 bg-subtle/50 border-b border-border-default">
+            <h3 className="text-[10px] font-black text-text-secondary uppercase tracking-widest">
               Detail Run-Rate Projections by Category & Vote Code
             </h3>
           </div>
@@ -949,18 +949,18 @@ export default function HospitalBudgetForecastPage() {
                   <th className="p-4 text-center bg-slate-900">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 font-semibold text-slate-700">
+              <tbody className="divide-y divide-border-subtle font-semibold text-text-secondary">
                 {processedData.map((cat: any) => (
-                  <tr key={cat.id} className="hover:bg-slate-50/50 transition-colors">
+                  <tr key={cat.id} className="hover:bg-subtle/50 transition-colors">
                     <td className="p-4">
                       <div>
-                        <span className="px-2 py-0.5 rounded bg-slate-100 text-slate-800 text-[9px] font-mono border border-slate-200">
+                        <span className="px-2 py-0.5 rounded bg-subtle text-text-primary text-[9px] font-mono border border-border-default">
                           {cat.voteCode === 'Other' ? 'Other' : `${cat.voteCode}-${cat.voteActivity}`}
                         </span>
-                        <div className="text-xs font-black text-slate-800 mt-1.5 flex items-center gap-1.5">
+                        <div className="text-xs font-black text-text-primary mt-1.5 flex items-center gap-1.5">
                           {cat.categoryName}
                           {cat.savedTopup && (
-                            <Badge variant="success" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[8px] font-black py-0 px-1">
+                            <Badge variant="success" className="bg-emerald-500/10 text-emerald-700 border-emerald-500/20 text-[8px] font-black py-0 px-1">
                               REVISED
                             </Badge>
                           )}
@@ -971,13 +971,13 @@ export default function HospitalBudgetForecastPage() {
                     <td className="p-4 text-right font-mono font-bold text-slate-650">
                       {formatCurrency(cat.allocation).replace('MYR', 'RM')}
                     </td>
-                    <td className="p-4 text-right font-mono text-slate-600">
+                    <td className="p-4 text-right font-mono text-text-muted">
                       {formatCurrency(cat.ytdSpent).replace('MYR', 'RM')}
                     </td>
                     <td className="p-4 text-right font-mono text-indigo-650 font-bold">
                       {formatCurrency(cat.avgMonthlyUse).replace('MYR', 'RM')}
                     </td>
-                    <td className="p-4 text-right font-mono font-extrabold text-slate-800">
+                    <td className="p-4 text-right font-mono font-extrabold text-text-primary">
                       {formatCurrency(cat.eoyProjectedSpend).replace('MYR', 'RM')}
                     </td>
                     
@@ -991,8 +991,8 @@ export default function HospitalBudgetForecastPage() {
                         <span className={cn(
                           "text-[8px] font-black uppercase px-1.5 py-0.5 rounded mt-1.5 block",
                           cat.isDeficit
-                            ? "bg-rose-50 text-rose-600 border border-rose-200"
-                            : "bg-emerald-50 text-emerald-600 border border-emerald-200"
+                            ? "bg-rose-500/10 text-rose-600 border border-rose-500/20"
+                            : "bg-emerald-500/10 text-emerald-600 border border-emerald-500/20"
                         )}>
                           {cat.isDeficit ? "Budget Needed" : "Safe Surplus"}
                         </span>
@@ -1001,7 +1001,7 @@ export default function HospitalBudgetForecastPage() {
 
                     <td className="p-4">
                       <div className="flex flex-col items-center">
-                        <div className="text-[10px] font-bold text-slate-600 flex items-center gap-1">
+                        <div className="text-[10px] font-bold text-text-muted flex items-center gap-1">
                           <span className="capitalize">{cat.trend}</span>
                           <span>{cat.trend === 'increasing' ? '📈' : cat.trend === 'decreasing' ? '📉' : '➡'}</span>
                         </div>
@@ -1013,7 +1013,7 @@ export default function HospitalBudgetForecastPage() {
                       {cat.id !== 'cat-other' ? (
                         <button
                           onClick={(e) => handleOpenDrawer(cat.id, e.currentTarget.getBoundingClientRect().top)}
-                          className="px-3 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-xl text-[10px] font-black border border-indigo-200/50 transition-all flex items-center gap-1 mx-auto"
+                          className="px-3 py-1.5 bg-indigo-500/10 hover:bg-indigo-100 text-indigo-600 rounded-xl text-[10px] font-black border border-indigo-500/20 transition-colors flex items-center gap-1 mx-auto"
                         >
                           <span>Backup Reasons</span>
                           <ChevronRight className="w-3 h-3" />
@@ -1037,27 +1037,27 @@ export default function HospitalBudgetForecastPage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.5 }}
-            className="lg:col-span-2 bg-slate-50/50 rounded-2xl border border-slate-200/80 p-5 shadow-sm"
+            className="lg:col-span-2 bg-subtle/50 rounded-2xl border border-border-default p-5 shadow-sm"
           >
-            <h3 className="text-[10px] font-black text-slate-700 uppercase tracking-widest mb-3.5">
+            <h3 className="text-[10px] font-black text-text-secondary uppercase tracking-widest mb-3.5">
               Quarter Portion Run-Rates Analysis
             </h3>
             <div className="space-y-3.5">
               {quarterlyAnalysis.map((q) => {
                 const percentUsed = (q.spent / q.allocation) * 100
                 return (
-                  <div key={q.quarter} className="bg-white p-3 border border-slate-200/50 rounded-2xl shadow-sm">
+                  <div key={q.quarter} className="bg-surface p-3 border border-border-default rounded-2xl shadow-sm">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-xs font-black text-slate-800">{q.quarter}</span>
-                        <span className="text-[8px] bg-slate-100 border border-slate-200 text-slate-500 font-bold px-1.5 py-0.5 rounded uppercase">
+                        <span className="text-xs font-black text-text-primary">{q.quarter}</span>
+                        <span className="text-[8px] bg-subtle border border-border-default text-text-muted font-bold px-1.5 py-0.5 rounded uppercase">
                           {q.isProjected ? 'Projected Portion' : 'Completed Actual'}
                         </span>
                       </div>
                       
                       <div className="flex items-center gap-3">
-                        <span className="text-[10px] font-bold text-slate-500">
-                          Spent: <span className="font-extrabold text-slate-800">{formatCurrency(q.spent).replace('MYR', 'RM')}</span> / {formatCurrency(q.allocation).replace('MYR', 'RM')}
+                        <span className="text-[10px] font-bold text-text-muted">
+                          Spent: <span className="font-extrabold text-text-primary">{formatCurrency(q.spent).replace('MYR', 'RM')}</span> / {formatCurrency(q.allocation).replace('MYR', 'RM')}
                         </span>
                         <span className={cn(
                           "text-[10px] font-black",
@@ -1070,10 +1070,10 @@ export default function HospitalBudgetForecastPage() {
                       </div>
                     </div>
 
-                    <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden relative">
+                    <div className="w-full h-1.5 bg-subtle rounded-full overflow-hidden relative">
                       <div
                         className={cn(
-                          "h-full rounded-full transition-all duration-500",
+                          "h-full rounded-full transition-colors duration-500",
                           q.status === 'safe' ? 'bg-emerald-500' : q.status === 'warning' ? 'bg-amber-450' : 'bg-rose-500 animate-pulse'
                         )}
                         style={{ width: `${Math.min(percentUsed, 100)}%` }}
@@ -1090,37 +1090,37 @@ export default function HospitalBudgetForecastPage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.6 }}
-            className="bg-slate-50/50 border border-slate-200/80 rounded-2xl p-5 shadow-sm flex flex-col justify-between"
+            className="bg-subtle/50 border border-border-default rounded-2xl p-5 shadow-sm flex flex-col justify-between"
           >
             <div>
-              <h3 className="text-[10px] font-black text-slate-700 uppercase tracking-widest mb-3.5">
+              <h3 className="text-[10px] font-black text-text-secondary uppercase tracking-widest mb-3.5">
                 Stability Indicators
               </h3>
               <div className="space-y-3.5">
                 
-                <div className="bg-white border border-slate-200/50 rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
+                <div className="bg-surface border border-border-default rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
                   <div>
-                    <span className="text-[10px] text-slate-500 block font-black">Model Precision Baseline</span>
+                    <span className="text-[10px] text-text-muted block font-black">Model Precision Baseline</span>
                     <span className="text-[8px] text-slate-400 block font-bold mt-0.5">Strategic run-rate variance</span>
                   </div>
                   <div className="text-right">
                     <span className="text-sm font-black text-indigo-650 block">93.2%</span>
-                    <span className="text-[8px] bg-indigo-50 border border-indigo-200 text-indigo-600 font-extrabold px-1.5 py-0.5 rounded tracking-widest uppercase mt-1 inline-block">
+                    <span className="text-[8px] bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 font-extrabold px-1.5 py-0.5 rounded tracking-widest uppercase mt-1 inline-block">
                       High
                     </span>
                   </div>
                 </div>
 
-                <div className="bg-white border border-slate-200/50 rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
+                <div className="bg-surface border border-border-default rounded-2xl p-3.5 flex justify-between items-center shadow-sm">
                   <div>
-                    <span className="text-[10px] text-slate-500 block font-black">Action Needed Shortfalls</span>
+                    <span className="text-[10px] text-text-muted block font-black">Action Needed Shortfalls</span>
                     <span className="text-[8px] text-slate-400 block font-bold mt-0.5">Deficit categories matching Q4</span>
                   </div>
                   <div className="text-right">
                     <span className="text-sm font-black text-rose-600 block">
                       {processedData.filter(c => c.isDeficit && c.id !== 'cat-other').length} Categories
                     </span>
-                    <span className="text-[8px] bg-rose-50 border border-rose-200 text-rose-600 font-extrabold px-1.5 py-0.5 rounded tracking-widest uppercase mt-1 inline-block">
+                    <span className="text-[8px] bg-rose-500/10 border border-rose-500/20 text-rose-600 font-extrabold px-1.5 py-0.5 rounded tracking-widest uppercase mt-1 inline-block">
                       Critical
                     </span>
                   </div>
@@ -1130,9 +1130,9 @@ export default function HospitalBudgetForecastPage() {
             </div>
             
             {/* Disclaimer Info */}
-            <div className="mt-6 flex items-start gap-2 bg-indigo-50/50 border border-indigo-100 rounded-2xl p-3">
+            <div className="mt-6 flex items-start gap-2 bg-indigo-500/10 border border-indigo-100 rounded-2xl p-3">
               <Info className="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" />
-              <p className="text-[9px] font-bold text-indigo-950 leading-normal">
+              <p className="text-[9px] font-bold text-indigo-400 dark:text-indigo-300 font-bold leading-normal">
                 This forecasting report is generated using linear run-rate regression models on live KKM warrant ledgers. Sandboxed simulations are intended for impact planning and do not bind official government allocations.
               </p>
             </div>
@@ -1165,12 +1165,12 @@ export default function HospitalBudgetForecastPage() {
                 marginTop: `${Math.max(20, drawerTopPosition)}px`,
                 maxHeight: `calc(100vh - ${Math.max(20, drawerTopPosition)}px - 40px)`
               }}
-              className="relative w-full max-w-3xl bg-white border border-slate-200 shadow-2xl flex flex-col rounded-3xl mr-6 mb-6 overflow-hidden z-50"
+              className="relative w-full max-w-3xl bg-surface border border-border-default shadow-2xl flex flex-col rounded-3xl mr-6 mb-6 overflow-hidden z-50"
             >
               {/* Header */}
-              <div className="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+              <div className="p-5 border-b border-border-default flex items-center justify-between bg-subtle/50">
                 <div>
-                  <h3 className="text-xs font-black text-slate-800 uppercase tracking-wider">
+                  <h3 className="text-xs font-black text-text-primary uppercase tracking-wider">
                     Backup Justifications Drawer
                   </h3>
                   <p className="text-[10px] text-slate-400 font-semibold mt-0.5">
@@ -1179,9 +1179,9 @@ export default function HospitalBudgetForecastPage() {
                 </div>
                 <button
                   onClick={() => setActiveDrawerId(null)}
-                  className="p-1.5 hover:bg-slate-200 rounded-xl transition-all"
+                  className="p-1.5 hover:bg-subtle rounded-xl transition-colors"
                 >
-                  <X className="w-4 h-4 text-slate-500" />
+                  <X className="w-4 h-4 text-text-muted" />
                 </button>
               </div>
 
@@ -1195,28 +1195,28 @@ export default function HospitalBudgetForecastPage() {
                 return (
                   <div className="flex-1 overflow-y-auto p-5 space-y-6">
                     {/* Item Information Card */}
-                    <div className="bg-slate-50 rounded-2xl border border-slate-200/60 p-4 space-y-3">
-                      <span className="bg-indigo-50 border border-indigo-200 text-indigo-600 text-[8px] font-black px-2 py-0.5 rounded tracking-widest uppercase inline-block">
+                    <div className="bg-subtle/50 rounded-2xl border border-border-default p-4 space-y-3">
+                      <span className="bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 text-[8px] font-black px-2 py-0.5 rounded tracking-widest uppercase inline-block">
                         Clinical Item
                       </span>
-                      <h4 className="text-xs font-black text-slate-800 leading-tight">
+                      <h4 className="text-xs font-black text-text-primary leading-tight">
                         {item.name}
                       </h4>
                       
-                      <div className="grid grid-cols-2 gap-3 text-[10px] border-t border-slate-200/50 pt-3">
+                      <div className="grid grid-cols-2 gap-3 text-[10px] border-t border-border-default pt-3">
                         <div>
                           <span className="text-slate-400 block font-bold uppercase tracking-wider text-[8px]">Item Code</span>
-                          <span className="font-mono font-black text-slate-700">{item.code}</span>
+                          <span className="font-mono font-black text-text-secondary">{item.code}</span>
                         </div>
                         <div>
                           <span className="text-slate-400 block font-bold uppercase tracking-wider text-[8px]">Caseload Volume</span>
-                          <span className="font-black text-slate-700">{item.monthlyConsumption}</span>
+                          <span className="font-black text-text-secondary">{item.monthlyConsumption}</span>
                         </div>
                       </div>
                       
-                      <div className="border-t border-slate-200/50 pt-3">
+                      <div className="border-t border-border-default pt-3">
                         <span className="text-slate-400 block font-bold uppercase tracking-wider text-[8px]">Clinical Reason</span>
-                        <p className="text-[10px] font-semibold text-slate-600 mt-1 leading-relaxed">
+                        <p className="text-[10px] font-semibold text-text-muted mt-1 leading-relaxed">
                           {item.reason}
                         </p>
                       </div>
@@ -1224,7 +1224,7 @@ export default function HospitalBudgetForecastPage() {
 
                     {/* Edit Revisions Form */}
                     <div className="space-y-4 pt-2">
-                      <h4 className="text-[10px] font-black text-slate-700 uppercase tracking-widest border-b pb-2">
+                      <h4 className="text-[10px] font-black text-text-secondary uppercase tracking-widest border-b pb-2">
                         Simulated Supplementary Revision
                       </h4>
 
@@ -1240,7 +1240,7 @@ export default function HospitalBudgetForecastPage() {
                             step="10000"
                             value={drawerTopup}
                             onChange={(e) => setDrawerTopup(Math.max(0, parseInt(e.target.value) || 0))}
-                            className="w-full bg-white border border-slate-200 rounded-xl pl-8 pr-3 py-2 text-xs font-black text-slate-700 outline-none focus:ring-1 focus:ring-indigo-500 font-mono"
+                            className="w-full bg-surface border border-border-default rounded-xl pl-8 pr-3 py-2 text-xs font-black text-text-secondary outline-none focus:ring-1 focus:ring-indigo-500 font-mono"
                           />
                         </div>
                       </div>
@@ -1253,7 +1253,7 @@ export default function HospitalBudgetForecastPage() {
                         <select
                           value={drawerPriority}
                           onChange={(e) => setDrawerPriority(e.target.value)}
-                          className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-700 outline-none focus:ring-1 focus:ring-indigo-500"
+                          className="w-full bg-surface border border-border-default rounded-xl px-3 py-2.5 text-xs font-bold text-text-secondary outline-none focus:ring-1 focus:ring-indigo-500"
                         >
                           <option value="LOW">LOW - Normal operational budget</option>
                           <option value="MEDIUM">MEDIUM - Recommended replenishment</option>
@@ -1272,7 +1272,7 @@ export default function HospitalBudgetForecastPage() {
                           value={drawerText}
                           onChange={(e) => setDrawerText(e.target.value)}
                           placeholder="Provide local clinical scenario details to support this request to KKM..."
-                          className="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-semibold text-slate-700 outline-none focus:ring-1 focus:ring-indigo-500 placeholder:text-slate-300"
+                          className="w-full bg-surface border border-border-default rounded-xl p-3 text-xs font-semibold text-text-secondary outline-none focus:ring-1 focus:ring-indigo-500 placeholder:text-slate-300"
                         />
                       </div>
                     </div>
@@ -1281,9 +1281,9 @@ export default function HospitalBudgetForecastPage() {
               })()}
 
               {/* Footer */}
-              <div className="p-5 border-t border-slate-200 bg-slate-50 flex items-center justify-between gap-4">
+              <div className="p-5 border-t border-border-default bg-subtle/50 flex items-center justify-between gap-4">
                 {savedJustifications[activeDrawerId || ''] ? (
-                  <Badge variant="success" className="bg-emerald-50 text-emerald-700 border-emerald-200 text-[9px] font-bold py-1 px-2 flex items-center gap-1 shadow-xs">
+                  <Badge variant="success" className="bg-emerald-500/10 text-emerald-700 border-emerald-500/20 text-[9px] font-bold py-1 px-2 flex items-center gap-1 shadow-xs">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Active revision
                   </Badge>
                 ) : (
@@ -1294,7 +1294,7 @@ export default function HospitalBudgetForecastPage() {
                   <Button
                     onClick={() => setActiveDrawerId(null)}
                     variant="outline"
-                    className="rounded-xl text-[10px] uppercase font-black tracking-wider text-slate-500"
+                    className="rounded-xl text-[10px] uppercase font-black tracking-wider text-text-muted"
                   >
                     Cancel
                   </Button>

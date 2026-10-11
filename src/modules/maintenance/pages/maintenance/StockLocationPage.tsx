@@ -56,7 +56,7 @@ export const StockLocationPage: React.FC = () => {
       '-20C': { color: 'bg-cyan-100 text-cyan-700', label: '-20°C' },
       '-80C': { color: 'bg-indigo-100 text-indigo-700', label: '-80°C' },
     }
-    const cfg = map[temp] || { color: 'bg-gray-100 text-gray-700', label: temp }
+    const cfg = map[temp] || { color: 'bg-subtle text-text-secondary', label: temp }
     return (
       <span className={`px-2 py-0.5 rounded text-xs font-medium ${cfg.color}`}>
         {cfg.label}
@@ -75,11 +75,11 @@ export const StockLocationPage: React.FC = () => {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-text-primary flex items-center gap-2">
             <MapPin className="w-6 h-6 text-violet-600" />
             Stock Locations
           </h1>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-sm text-text-muted mt-1">
             Manage storage locations for drugs and non-drug items.
           </p>
         </div>
@@ -97,9 +97,9 @@ export const StockLocationPage: React.FC = () => {
           <p className="text-2xl font-bold text-violet-800 mt-1">{locations.length}</p>
         </div>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+        <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
           <span className="text-sm font-medium text-blue-700">Warehouses</span>
-          <p className="text-2xl font-bold text-blue-800 mt-1">{locationsByType['warehouse'] || 0}</p>
+          <p className="text-2xl font-bold text-blue-400 mt-1">{locationsByType['warehouse'] || 0}</p>
         </div>
 
         <div className="bg-green-50 border border-green-200 rounded-xl p-4">
@@ -107,9 +107,9 @@ export const StockLocationPage: React.FC = () => {
           <p className="text-2xl font-bold text-green-800 mt-1">{locationsByType['pharmacy'] || 0}</p>
         </div>
 
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+        <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4">
           <span className="text-sm font-medium text-amber-700">Wards</span>
-          <p className="text-2xl font-bold text-amber-800 mt-1">{locationsByType['ward'] || 0}</p>
+          <p className="text-2xl font-bold text-amber-400 mt-1">{locationsByType['ward'] || 0}</p>
         </div>
 
         <div className="bg-cyan-50 border border-cyan-200 rounded-xl p-4">
@@ -127,7 +127,7 @@ export const StockLocationPage: React.FC = () => {
 
       {/* Error */}
       {!isLoading && error && (
-        <div className="flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+        <div className="flex items-start gap-2 rounded-xl border border-rose-500/20 bg-rose-500/10 p-4 text-sm text-rose-700">
           <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
           <div>
             <p className="font-medium">Failed to load locations</p>
@@ -138,7 +138,7 @@ export const StockLocationPage: React.FC = () => {
 
       {/* Table */}
       {!isLoading && !error && (
-        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+        <div className="bg-surface border border-border-default rounded-2xl shadow-sm overflow-hidden">
           <Table>
             <Table.Head>
               <Table.Row>
@@ -153,7 +153,7 @@ export const StockLocationPage: React.FC = () => {
             <Table.Body>
               {locations.length === 0 && (
                 <Table.Row>
-                  <Table.Cell colSpan={6} className="text-center text-sm text-gray-500 py-8">
+                  <Table.Cell colSpan={6} className="text-center text-sm text-text-muted py-8">
                     No stock locations configured. Add your first location to get started.
                   </Table.Cell>
                 </Table.Row>
@@ -161,10 +161,10 @@ export const StockLocationPage: React.FC = () => {
 
               {locations.map((location) => (
                 <Table.Row key={location.id}>
-                  <Table.Cell className="font-mono text-xs text-gray-700">
+                  <Table.Cell className="font-mono text-xs text-text-secondary">
                     {location.location_code}
                   </Table.Cell>
-                  <Table.Cell className="text-sm font-medium text-gray-900">
+                  <Table.Cell className="text-sm font-medium text-text-primary">
                     <div className="flex items-center gap-2">
                       <Building2 className="w-4 h-4 text-gray-400" />
                       {location.location_name}
@@ -179,7 +179,7 @@ export const StockLocationPage: React.FC = () => {
                       {renderTemperatureBadge(location.temperature_required)}
                     </div>
                   </Table.Cell>
-                  <Table.Cell className="text-right text-sm text-gray-600">
+                  <Table.Cell className="text-right text-sm text-text-muted">
                     {location.capacity ? `${location.capacity} units` : '—'}
                   </Table.Cell>
                   <Table.Cell className="text-center">

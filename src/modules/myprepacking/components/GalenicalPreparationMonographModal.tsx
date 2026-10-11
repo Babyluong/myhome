@@ -144,7 +144,7 @@ export const GalenicalPreparationMonographModal: React.FC<GalenicalPreparationMo
   }
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 md:p-6 print:p-0 print:bg-white print:static print:overflow-visible">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 md:p-6 print:p-0 print:bg-surface print:static print:overflow-visible">
       <div 
         className="relative w-full max-w-4xl bg-surface border border-border-default rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh] print:max-h-none print:shadow-none print:border-none print:rounded-none"
         role="dialog"
@@ -152,7 +152,7 @@ export const GalenicalPreparationMonographModal: React.FC<GalenicalPreparationMo
         aria-labelledby="monograph-title"
       >
         {/* Top Official Header Bar */}
-        <div className="bg-canvas text-text-primary p-4 sm:p-5 border-b border-border-default print:bg-white print:text-black print:border-b-2 print:border-black">
+        <div className="bg-canvas text-text-primary p-4 sm:p-5 border-b border-border-default print:bg-surface print:text-black print:border-b-2 print:border-black">
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-1">
               <div className="flex flex-wrap items-center gap-2">
@@ -224,7 +224,7 @@ export const GalenicalPreparationMonographModal: React.FC<GalenicalPreparationMo
                   key={tab.id}
                   type="button"
                   onClick={() => setActiveTab(tab.id as TabKey)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shrink-0 active:scale-[0.98] ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 active:scale-[0.98] ${
                     active
                       ? 'bg-teal-700 text-white font-bold shadow-xs'
                       : 'text-text-muted hover:text-text-primary hover:bg-subtle'
@@ -305,7 +305,7 @@ export const GalenicalPreparationMonographModal: React.FC<GalenicalPreparationMo
                           key={preset}
                           type="button"
                           onClick={() => setBatchSize(preset)}
-                          className={`px-2 py-0.5 text-[10px] font-mono rounded font-semibold transition-all cursor-pointer ${
+                          className={`px-2 py-0.5 text-[10px] font-mono rounded font-semibold transition-colors cursor-pointer ${
                             batchSize === preset
                               ? 'bg-teal-700 text-white shadow-xs'
                               : 'text-text-muted hover:text-text-primary hover:bg-subtle'
@@ -567,7 +567,7 @@ export const GalenicalPreparationMonographModal: React.FC<GalenicalPreparationMo
                 type="button"
                 disabled={item.status !== 'active'}
                 onClick={() => onStartBatch(item)}
-                className={`px-4 py-2 text-xs font-bold rounded-lg flex items-center gap-1.5 transition-all cursor-pointer active:scale-[0.98] ${
+                className={`px-4 py-2 text-xs font-bold rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer active:scale-[0.98] ${
                   item.status !== 'active'
                     ? 'bg-subtle text-text-muted cursor-not-allowed border border-border-default'
                     : 'bg-teal-700 hover:bg-teal-600 text-white shadow-xs'

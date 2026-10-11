@@ -35,8 +35,6 @@ import {
   PrepackLedgerItemWithBalances
 } from '../services/prepackKewPs4Service'
 import type { PrepackKewPs4Transaction, PrepackStoreVerification } from '../types/prepack'
-import { StoreToCounterTransferModal } from '../components/StoreToCounterTransferModal'
-import { PrepackBatchCreateModal } from '../components/PrepackBatchCreateModal'
 import { PrepackCheckFoundModal } from '../components/PrepackCheckFoundModal'
 import { PrepackStoreVerificationModal } from '../components/PrepackStoreVerificationModal'
 import { PrepackBringForwardModal } from '../components/PrepackBringForwardModal'
@@ -64,21 +62,24 @@ export const PrepackKewPs4LedgerPage: React.FC = () => {
   const [showVerifDrawer, setShowVerifDrawer] = useState(false)
 
   // Modals
-  const [transferModalOpen, setTransferModalOpen] = useState(false)
-  const [batchModalOpen, setBatchModalOpen] = useState(false)
   const [checkFoundModalOpen, setCheckFoundModalOpen] = useState(false)
   const [storeVerifModalOpen, setStoreVerifModalOpen] = useState(false)
   const [bringForwardModalOpen, setBringForwardModalOpen] = useState(false)
 
-  // Load items catalog
+  // Load items catalog (active items only)
   const loadItems = async () => {
     setLoadingItems(true)
     try {
-      const res = await getPrepackLedgerItems(hospitalId)
-      const list = res.data || []
+      const res = await getPrepackLedgerItems(hospitalId, true)
+      const list = (res.data || []).filter(item => item.status === 'active')
       setItems(list)
-      if (list.length > 0 && !selectedItemId) {
-        setSelectedItemId(list[0].id)
+      if (list.length > 0) {
+        setSelectedItemId(prev => {
+          if (prev && list.some(i => i.id === prev)) return prev
+          return list[0].id
+        })
+      } else {
+        setSelectedItemId('')
       }
     } catch (err) {
       console.error('Error loading prepack ledger items:', err)
@@ -166,42 +167,22 @@ export const PrepackKewPs4LedgerPage: React.FC = () => {
             </div>
           </div>
 
-          {/* Action Toolbar — Strict Single Accent Hierarchy */}
+          {/* Action Toolbar */}
           <div className="flex items-center flex-wrap gap-2">
-            {/* Primary Action */}
-            <button
-              onClick={() => setBatchModalOpen(true)}
-              className="min-h-[36px] px-3.5 py-1.5 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-teal-500/40"
-            >
-              <PackageCheck className="w-3.5 h-3.5" />
-              <span>Pack UOD / Prepack</span>
-            </button>
-
-            {/* Secondary Action */}
-            <button
-              onClick={() => setTransferModalOpen(true)}
-              className="min-h-[36px] px-3.5 py-1.5 bg-surface hover:bg-subtle active:scale-[0.98] text-text-primary border border-border-default hover:border-border-strong rounded-lg text-xs font-medium flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
-            >
-              <ArrowRightLeft className="w-3.5 h-3.5 text-text-muted" />
-              <span>Transfer Store to Counter</span>
-            </button>
-
-            <div className="h-5 w-px bg-border-subtle mx-0.5 hidden sm:block" />
-
-            {/* Tertiary Utilities */}
+            {/* Statutory Utilities */}
             <button
               onClick={() => setBringForwardModalOpen(true)}
               title="Bring Forward (Previous Card Balance)"
-              className="min-h-[36px] px-2.5 py-1.5 bg-surface hover:bg-subtle active:scale-[0.98] text-text-secondary hover:text-text-primary rounded-lg border border-border-default hover:border-border-strong transition-all text-xs flex items-center gap-1 cursor-pointer shadow-xs"
+              className="min-h-[36px] px-3 py-1.5 bg-surface hover:bg-subtle active:scale-[0.98] text-text-secondary hover:text-text-primary rounded-lg border border-border-default hover:border-border-strong transition-colors text-xs font-medium flex items-center gap-1.5 cursor-pointer shadow-xs"
             >
               <FastForward className="w-3.5 h-3.5 text-text-muted" />
-              <span className="hidden md:inline">B.F.</span>
+              <span>B.F.</span>
             </button>
 
             <button
               onClick={() => setCheckFoundModalOpen(true)}
               title="Physical Stock Check & Audit (KEW.PS-10)"
-              className="min-h-[36px] px-2.5 py-1.5 bg-surface hover:bg-subtle active:scale-[0.98] text-text-secondary hover:text-text-primary rounded-lg border border-border-default hover:border-border-strong transition-all text-xs flex items-center gap-1 cursor-pointer shadow-xs"
+              className="min-h-[36px] px-2.5 py-1.5 bg-surface hover:bg-subtle active:scale-[0.98] text-text-secondary hover:text-text-primary rounded-lg border border-border-default hover:border-border-strong transition-colors text-xs flex items-center gap-1 cursor-pointer shadow-xs"
             >
               <Scale className="w-3.5 h-3.5 text-text-muted" />
               <span className="hidden md:inline">Stock Audit</span>
@@ -210,7 +191,7 @@ export const PrepackKewPs4LedgerPage: React.FC = () => {
             <button
               onClick={() => setStoreVerifModalOpen(true)}
               title="Annual Store Verification (KEW.PS-14)"
-              className="min-h-[36px] px-2.5 py-1.5 bg-surface hover:bg-subtle active:scale-[0.98] text-text-secondary hover:text-text-primary rounded-lg border border-border-default hover:border-border-strong transition-all text-xs flex items-center gap-1 cursor-pointer shadow-xs"
+              className="min-h-[36px] px-2.5 py-1.5 bg-surface hover:bg-subtle active:scale-[0.98] text-text-secondary hover:text-text-primary rounded-lg border border-border-default hover:border-border-strong transition-colors text-xs flex items-center gap-1 cursor-pointer shadow-xs"
             >
               <ShieldCheck className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
               <span className="hidden md:inline">KEW.PS-14</span>
@@ -220,7 +201,7 @@ export const PrepackKewPs4LedgerPage: React.FC = () => {
               disabled={!selectedItem}
               onClick={() => selectedItem && exportPrepackKewPs4Pdf(selectedItem, filteredTransactions)}
               title="Print KEW.PS-4 PDF Form (Official Form)"
-              className="min-h-[36px] min-w-[36px] p-2 bg-surface hover:bg-subtle active:scale-[0.98] text-text-secondary hover:text-text-primary rounded-lg border border-border-default hover:border-border-strong transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shadow-xs flex items-center justify-center"
+              className="min-h-[36px] min-w-[36px] p-2 bg-surface hover:bg-subtle active:scale-[0.98] text-text-secondary hover:text-text-primary rounded-lg border border-border-default hover:border-border-strong transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shadow-xs flex items-center justify-center"
             >
               <Printer className="w-4 h-4 text-text-muted" />
             </button>
@@ -229,7 +210,7 @@ export const PrepackKewPs4LedgerPage: React.FC = () => {
               disabled={!selectedItem}
               onClick={() => selectedItem && exportPrepackKewPs4Csv(selectedItem, filteredTransactions)}
               title="Export Ledger CSV File"
-              className="min-h-[36px] min-w-[36px] p-2 bg-surface hover:bg-subtle active:scale-[0.98] text-text-secondary hover:text-text-primary rounded-lg border border-border-default hover:border-border-strong transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shadow-xs flex items-center justify-center"
+              className="min-h-[36px] min-w-[36px] p-2 bg-surface hover:bg-subtle active:scale-[0.98] text-text-secondary hover:text-text-primary rounded-lg border border-border-default hover:border-border-strong transition-colors disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer shadow-xs flex items-center justify-center"
             >
               <Download className="w-4 h-4 text-text-muted" />
             </button>
@@ -237,7 +218,7 @@ export const PrepackKewPs4LedgerPage: React.FC = () => {
             <button
               onClick={handleRefresh}
               title="Refresh Ledger Data"
-              className="min-h-[36px] min-w-[36px] p-2 bg-surface hover:bg-subtle active:scale-[0.98] text-text-secondary hover:text-text-primary rounded-lg border border-border-default hover:border-border-strong transition-all cursor-pointer shadow-xs flex items-center justify-center"
+              className="min-h-[36px] min-w-[36px] p-2 bg-surface hover:bg-subtle active:scale-[0.98] text-text-secondary hover:text-text-primary rounded-lg border border-border-default hover:border-border-strong transition-colors cursor-pointer shadow-xs flex items-center justify-center"
             >
               <RefreshCw className={`w-4 h-4 text-text-muted ${loadingTx || loadingItems ? 'animate-spin' : ''}`} />
             </button>
@@ -256,13 +237,18 @@ export const PrepackKewPs4LedgerPage: React.FC = () => {
             <select
               value={selectedItemId}
               onChange={e => setSelectedItemId(e.target.value)}
-              className="w-full px-3 py-2 text-sm bg-subtle/70 hover:bg-subtle border border-border-default hover:border-border-strong focus:border-border-strong focus:ring-2 focus:ring-teal-500/20 rounded-lg text-text-primary font-medium transition-all cursor-pointer outline-none"
+              disabled={items.length === 0}
+              className="w-full px-3 py-2 text-sm bg-subtle/70 hover:bg-subtle border border-border-default hover:border-border-strong focus:border-border-strong focus:ring-2 focus:ring-teal-500/20 rounded-lg text-text-primary font-medium transition-colors cursor-pointer outline-none disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {items.map(item => (
-                <option key={item.id} value={item.id}>
-                  {item.item_name} [{item.item_code}] - {item.dosage_form.toUpperCase()} ({item.pack_type})
-                </option>
-              ))}
+              {items.length === 0 ? (
+                <option value="">No active medications found in catalog</option>
+              ) : (
+                items.map(item => (
+                  <option key={item.id} value={item.id}>
+                    {item.item_name} [{item.item_code}] - {item.dosage_form.toUpperCase()} ({item.pack_type})
+                  </option>
+                ))
+              )}
             </select>
           </div>
 
@@ -278,7 +264,7 @@ export const PrepackKewPs4LedgerPage: React.FC = () => {
               </span>
               <button
                 onClick={() => setShowVerifDrawer(!showVerifDrawer)}
-                className="px-2.5 py-1 bg-surface hover:bg-subtle text-text-secondary rounded-md font-medium text-xs border border-border-default hover:border-border-strong flex items-center gap-1.5 transition-all cursor-pointer shadow-xs active:scale-[0.98]"
+                className="px-2.5 py-1 bg-surface hover:bg-subtle text-text-secondary rounded-md font-medium text-xs border border-border-default hover:border-border-strong flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs active:scale-[0.98]"
               >
                 <History className="w-3.5 h-3.5 text-text-muted" />
                 <span>Verifications ({verifications.length})</span>
@@ -291,7 +277,7 @@ export const PrepackKewPs4LedgerPage: React.FC = () => {
         {selectedItem && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 pt-1">
             {/* Tier 1: Main Store */}
-            <div className="p-3.5 rounded-xl bg-subtle/40 hover:bg-subtle/70 border border-border-subtle relative transition-all duration-200">
+            <div className="p-3.5 rounded-xl bg-subtle/40 hover:bg-subtle/70 border border-border-subtle relative transition-colors duration-150">
               <div className="flex items-center justify-between text-xs text-text-secondary font-medium mb-1">
                 <span className="flex items-center gap-1.5 uppercase tracking-wider text-[10px] text-text-muted">
                   <Building2 className="w-3.5 h-3.5" />
@@ -309,7 +295,7 @@ export const PrepackKewPs4LedgerPage: React.FC = () => {
             </div>
 
             {/* Tier 2: Prepack Counter */}
-            <div className="p-3.5 rounded-xl bg-subtle/40 hover:bg-subtle/70 border border-border-subtle relative transition-all duration-200">
+            <div className="p-3.5 rounded-xl bg-subtle/40 hover:bg-subtle/70 border border-border-subtle relative transition-colors duration-150">
               <div className="flex items-center justify-between text-xs text-text-secondary font-medium mb-1">
                 <span className="flex items-center gap-1.5 uppercase tracking-wider text-[10px] text-text-muted">
                   <ArrowRightLeft className="w-3.5 h-3.5" />
@@ -327,7 +313,7 @@ export const PrepackKewPs4LedgerPage: React.FC = () => {
             </div>
 
             {/* Tier 3: Finished Packs */}
-            <div className="p-3.5 rounded-xl bg-subtle/40 hover:bg-subtle/70 border border-border-subtle relative transition-all duration-200">
+            <div className="p-3.5 rounded-xl bg-subtle/40 hover:bg-subtle/70 border border-border-subtle relative transition-colors duration-150">
               <div className="flex items-center justify-between text-xs text-text-secondary font-medium mb-1">
                 <span className="flex items-center gap-1.5 uppercase tracking-wider text-[10px] text-text-muted">
                   <PackageCheck className="w-3.5 h-3.5" />
@@ -345,7 +331,7 @@ export const PrepackKewPs4LedgerPage: React.FC = () => {
             </div>
 
             {/* Aggregate Total */}
-            <div className="p-3.5 rounded-xl bg-subtle/40 hover:bg-subtle/70 border border-border-subtle relative transition-all duration-200">
+            <div className="p-3.5 rounded-xl bg-subtle/40 hover:bg-subtle/70 border border-border-subtle relative transition-colors duration-150">
               <div className="flex items-center justify-between text-xs text-text-secondary font-medium mb-1">
                 <span className="flex items-center gap-1.5 uppercase tracking-wider text-[10px] text-text-muted">
                   <Boxes className="w-3.5 h-3.5" />
@@ -440,7 +426,7 @@ export const PrepackKewPs4LedgerPage: React.FC = () => {
             placeholder="Search reference no., batch, officer..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 text-xs bg-subtle/70 hover:bg-subtle border border-border-default hover:border-border-strong focus:border-border-strong rounded-lg text-text-primary placeholder:text-text-muted outline-none transition-all"
+            className="w-full pl-9 pr-3 py-1.5 text-xs bg-subtle/70 hover:bg-subtle border border-border-default hover:border-border-strong focus:border-border-strong rounded-lg text-text-primary placeholder:text-text-muted outline-none transition-colors"
           />
         </div>
 
@@ -502,22 +488,6 @@ export const PrepackKewPs4LedgerPage: React.FC = () => {
             <p className="text-xs text-text-muted mt-1 max-w-sm mx-auto leading-relaxed">
               No store stock movements, UOD packaging sessions, or transactions recorded for this item's bin card yet.
             </p>
-            <div className="flex items-center justify-center gap-2.5 mt-4">
-              <button
-                onClick={() => setBatchModalOpen(true)}
-                className="px-3.5 py-1.5 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer"
-              >
-                <PackageCheck className="w-3.5 h-3.5" />
-                <span>Pack UOD</span>
-              </button>
-              <button
-                onClick={() => setTransferModalOpen(true)}
-                className="px-3.5 py-1.5 bg-surface hover:bg-subtle active:scale-[0.98] text-text-primary rounded-lg text-xs font-medium flex items-center gap-1.5 border border-border-default hover:border-border-strong shadow-xs transition-all cursor-pointer"
-              >
-                <ArrowRightLeft className="w-3.5 h-3.5 text-text-muted" />
-                <span>Transfer from Main Store</span>
-              </button>
-            </div>
           </div>
         ) : (
           <>
@@ -720,22 +690,6 @@ export const PrepackKewPs4LedgerPage: React.FC = () => {
       </div>
 
       {/* Modals */}
-      <StoreToCounterTransferModal
-        isOpen={transferModalOpen}
-        onClose={() => setTransferModalOpen(false)}
-        onSuccess={handleRefresh}
-        items={items}
-        preselectedItemId={selectedItemId}
-      />
-
-      <PrepackBatchCreateModal
-        isOpen={batchModalOpen}
-        onClose={() => setBatchModalOpen(false)}
-        onSuccess={handleRefresh}
-        items={items}
-        preselectedItemId={selectedItemId}
-      />
-
       <PrepackCheckFoundModal
         isOpen={checkFoundModalOpen}
         onClose={() => setCheckFoundModalOpen(false)}

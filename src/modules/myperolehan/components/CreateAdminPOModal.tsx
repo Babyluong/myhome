@@ -275,29 +275,29 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
         initial={{ opacity: 0, scale: 0.95, y: 10 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 10 }}
-        className="relative w-full max-w-4xl bg-white border border-slate-200 rounded-[2rem] p-6 sm:p-8 text-slate-900 shadow-2xl overflow-hidden my-auto"
+        className="relative w-full max-w-4xl bg-surface border border-border-default rounded-[2rem] p-6 sm:p-8 text-text-primary shadow-2xl overflow-hidden my-auto"
       >
         {/* Modal Header */}
-        <div className="flex items-center justify-between pb-5 border-b border-slate-100 mb-6">
+        <div className="flex items-center justify-between pb-5 border-b border-border-subtle mb-6">
           <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-600 border border-indigo-100 flex items-center justify-center">
               <ShoppingCart className="w-6 h-6" />
             </div>
             <div>
-              <h2 className="text-xl font-black text-slate-900 flex items-center gap-2">
+              <h2 className="text-xl font-black text-text-primary flex items-center gap-2">
                 <span>Create Purchase Order (PO)</span>
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 font-bold border border-indigo-200">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-700 font-bold border border-indigo-500/20">
                   NEW ORDER
                 </span>
               </h2>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-text-muted">
                 Select budget code (Operating / Development) & catalog items for local purchase order
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+            className="p-2 rounded-xl text-slate-400 hover:text-text-secondary hover:bg-subtle transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -314,47 +314,47 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
               <button
                 type="button"
                 onClick={() => setBudgetType('warrant')}
-                className={`p-3.5 rounded-2xl border-2 flex items-center gap-3 transition-all ${
+                className={`p-3.5 rounded-2xl border-2 flex items-center gap-3 transition-colors ${
                   budgetType === 'warrant'
-                    ? 'bg-blue-50/50 border-blue-500 text-blue-900 shadow-xs'
-                    : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
+                    ? 'bg-blue-500/10 border-blue-500 text-blue-400 dark:text-blue-300 font-bold shadow-xs'
+                    : 'bg-surface border-border-default text-text-muted hover:border-border-default'
                 }`}
               >
                 <Building className={`w-5 h-5 ${budgetType === 'warrant' ? 'text-blue-600' : 'text-slate-400'}`} />
                 <div className="text-left">
                   <p className="text-xs font-bold">Operating Budget</p>
-                  <p className="text-[10px] text-slate-500 font-mono">020200 & 022300 (MOH Warrants)</p>
+                  <p className="text-[10px] text-text-muted font-mono">020200 & 022300 (MOH Warrants)</p>
                 </div>
               </button>
 
               <button
                 type="button"
                 onClick={() => setBudgetType('pembangunan')}
-                className={`p-3.5 rounded-2xl border-2 flex items-center gap-3 transition-all ${
+                className={`p-3.5 rounded-2xl border-2 flex items-center gap-3 transition-colors ${
                   budgetType === 'pembangunan'
-                    ? 'bg-amber-50/50 border-amber-500 text-amber-900 shadow-xs'
-                    : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
+                    ? 'bg-amber-500/10 border-amber-500 text-amber-400 dark:text-amber-300 font-bold shadow-xs'
+                    : 'bg-surface border-border-default text-text-muted hover:border-border-default'
                 }`}
               >
                 <HardHat className={`w-5 h-5 ${budgetType === 'pembangunan' ? 'text-amber-600' : 'text-slate-400'}`} />
                 <div className="text-left">
                   <p className="text-xs font-bold">Development Budget</p>
-                  <p className="text-[10px] text-slate-500 font-mono">P42 (Leasing, PSH, Training)</p>
+                  <p className="text-[10px] text-text-muted font-mono">P42 (Leasing, PSH, Training)</p>
                 </div>
               </button>
             </div>
           </div>
 
           {/* 2. Cascading Taxonomy Pickers */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-subtle/50 p-4 rounded-2xl border border-border-default">
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-text-muted mb-1.5">
                 Program / Activity
               </label>
               <select
                 value={selectedProgramCode}
                 onChange={(e) => setSelectedProgramCode(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:border-indigo-500 focus:outline-none shadow-xs"
+                className="w-full px-3 py-2 bg-surface border border-border-default rounded-xl text-xs text-text-primary focus:border-indigo-500 focus:outline-none shadow-xs"
               >
                 {filteredPrograms.map((p) => (
                   <option key={p.id} value={p.code}>
@@ -365,13 +365,13 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-text-muted mb-1.5">
                 Object Code
               </label>
               <select
                 value={selectedObjekCode}
                 onChange={(e) => setSelectedObjekCode(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:border-indigo-500 focus:outline-none shadow-xs"
+                className="w-full px-3 py-2 bg-surface border border-border-default rounded-xl text-xs text-text-primary focus:border-indigo-500 focus:outline-none shadow-xs"
               >
                 {filteredObjeks.map((o) => (
                   <option key={o.id} value={o.code}>
@@ -382,13 +382,13 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+              <label className="block text-[11px] font-bold uppercase tracking-wider text-text-muted mb-1.5">
                 Expenditure Category
               </label>
               <select
                 value={selectedKategoriCode}
                 onChange={(e) => setSelectedKategoriCode(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:border-indigo-500 focus:outline-none shadow-xs"
+                className="w-full px-3 py-2 bg-surface border border-border-default rounded-xl text-xs text-text-primary focus:border-indigo-500 focus:outline-none shadow-xs"
               >
                 {filteredKategoris.map((k) => (
                   <option key={k.id} value={k.code}>
@@ -402,13 +402,13 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
           {/* 3. Supplier & Date Metadata */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-bold text-slate-500 mb-1.5">
+              <label className="block text-xs font-bold text-text-muted mb-1.5">
                 Appointed Supplier
               </label>
               <select
                 value={selectedSupplierId}
                 onChange={(e) => setSelectedSupplierId(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:border-indigo-500 focus:outline-none shadow-xs"
+                className="w-full px-3 py-2 bg-surface border border-border-default rounded-xl text-xs text-text-primary focus:border-indigo-500 focus:outline-none shadow-xs"
               >
                 <option value="">-- Select Supplier (Optional) --</option>
                 {suppliers.map((s) => (
@@ -420,26 +420,26 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-500 mb-1.5">
+              <label className="block text-xs font-bold text-text-muted mb-1.5">
                 Order Date
               </label>
               <input
                 type="date"
                 value={orderDate}
                 onChange={(e) => setOrderDate(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:border-indigo-500 focus:outline-none shadow-xs"
+                className="w-full px-3 py-2 bg-surface border border-border-default rounded-xl text-xs text-text-primary focus:border-indigo-500 focus:outline-none shadow-xs"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-500 mb-1.5">
+              <label className="block text-xs font-bold text-text-muted mb-1.5">
                 Expected Delivery Date
               </label>
               <input
                 type="date"
                 value={expectedDeliveryDate}
                 onChange={(e) => setExpectedDeliveryDate(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:border-indigo-500 focus:outline-none shadow-xs"
+                className="w-full px-3 py-2 bg-surface border border-border-default rounded-xl text-xs text-text-primary focus:border-indigo-500 focus:outline-none shadow-xs"
               />
             </div>
           </div>
@@ -447,13 +447,13 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
           {/* 4. Order Items Builder */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-black uppercase tracking-wider text-slate-500">
+              <label className="text-xs font-black uppercase tracking-wider text-text-muted">
                 Order Items / Services List ({items.length})
               </label>
               <button
                 type="button"
                 onClick={handleAddItem}
-                className="text-xs font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1.5 px-3 py-1 bg-indigo-50 rounded-lg border border-indigo-100"
+                className="text-xs font-bold text-indigo-600 hover:text-indigo-700 flex items-center gap-1.5 px-3 py-1 bg-indigo-500/10 rounded-lg border border-indigo-100"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Add Item</span>
@@ -464,13 +464,13 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
               {items.map((item, idx) => (
                 <div
                   key={idx}
-                  className="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl grid grid-cols-12 gap-2.5 items-center"
+                  className="p-3.5 bg-subtle/50 border border-border-default rounded-2xl grid grid-cols-12 gap-2.5 items-center"
                 >
                   <div className="col-span-12 sm:col-span-6 space-y-1">
                     <select
                       value={item.perihal_id || ''}
                       onChange={(e) => handleItemChange(idx, 'perihal_id', e.target.value)}
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-700 focus:border-indigo-500 focus:outline-none"
+                      className="w-full px-2.5 py-1.5 bg-surface border border-border-default rounded-lg text-xs text-text-secondary focus:border-indigo-500 focus:outline-none"
                     >
                       <option value="">-- Select From Catalog (Optional) --</option>
                       {catalogItems.map((cat) => (
@@ -485,32 +485,32 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
                       placeholder="Item / Service Description..."
                       value={item.item_description}
                       onChange={(e) => handleItemChange(idx, 'item_description', e.target.value)}
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 focus:border-indigo-500 focus:outline-none"
+                      className="w-full px-2.5 py-1.5 bg-surface border border-border-default rounded-lg text-xs text-text-primary focus:border-indigo-500 focus:outline-none"
                       required
                     />
                   </div>
 
                   <div className="col-span-4 sm:col-span-2">
-                    <label className="block text-[10px] text-slate-500 mb-0.5">Quantity</label>
+                    <label className="block text-[10px] text-text-muted mb-0.5">Quantity</label>
                     <input
                       type="number"
                       min="1"
                       value={item.quantity}
                       onChange={(e) => handleItemChange(idx, 'quantity', Number(e.target.value))}
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-mono focus:border-indigo-500 focus:outline-none"
+                      className="w-full px-2.5 py-1.5 bg-surface border border-border-default rounded-lg text-xs text-text-primary font-mono focus:border-indigo-500 focus:outline-none"
                       required
                     />
                   </div>
 
                   <div className="col-span-4 sm:col-span-2">
-                    <label className="block text-[10px] text-slate-500 mb-0.5">Unit Price (RM)</label>
+                    <label className="block text-[10px] text-text-muted mb-0.5">Unit Price (RM)</label>
                     <input
                       type="number"
                       step="0.01"
                       min="0"
                       value={item.unit_price}
                       onChange={(e) => handleItemChange(idx, 'unit_price', Number(e.target.value))}
-                      className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 font-mono focus:border-indigo-500 focus:outline-none"
+                      className="w-full px-2.5 py-1.5 bg-surface border border-border-default rounded-lg text-xs text-text-primary font-mono focus:border-indigo-500 focus:outline-none"
                       required
                     />
                   </div>
@@ -526,7 +526,7 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
                       <button
                         type="button"
                         onClick={() => handleRemoveItem(idx)}
-                        className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors"
+                        className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-500/10 rounded-lg transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -538,9 +538,9 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
           </div>
 
           {/* 5. Notes & Total Footer */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center bg-slate-50 p-4 rounded-2xl border border-slate-200">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 items-center bg-subtle/50 p-4 rounded-2xl border border-border-default">
             <div>
-              <label className="block text-xs font-bold text-slate-500 mb-1">
+              <label className="block text-xs font-bold text-text-muted mb-1">
                 Notes / Order Justification
               </label>
               <textarea
@@ -548,12 +548,12 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
                 placeholder="e.g. Ward supplies replenishment & emergency maintenance..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:border-indigo-500 focus:outline-none resize-none"
+                className="w-full px-3 py-2 bg-surface border border-border-default rounded-xl text-xs text-text-primary focus:border-indigo-500 focus:outline-none resize-none"
               />
             </div>
 
-            <div className="p-4 bg-indigo-50 border border-indigo-100 rounded-xl text-right">
-              <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <div className="p-4 bg-indigo-500/10 border border-indigo-100 rounded-xl text-right">
+              <p className="text-xs font-bold text-text-muted uppercase tracking-wider">
                 Grand Total Order Amount
               </p>
               <p className="text-2xl font-black text-indigo-600 font-mono mt-0.5">
@@ -563,12 +563,12 @@ export const CreateAdminPOModal: React.FC<CreateAdminPOModalProps> = ({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-border-subtle">
             <Button
               type="button"
               variant="outline"
               onClick={onClose}
-              className="border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold"
+              className="border-border-default hover:bg-subtle/50 text-text-secondary rounded-xl font-bold"
             >
               Cancel
             </Button>

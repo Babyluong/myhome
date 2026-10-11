@@ -124,7 +124,7 @@ const TransporterDashboardPage: React.FC = () => {
           <div className="flex flex-wrap items-center gap-2">
             <button 
               onClick={() => navigate('/transporter/requests/new')}
-              className="inline-flex items-center gap-2 px-3.5 py-2 bg-accent-base hover:bg-accent-hover text-white rounded-lg text-xs font-semibold shadow-sm transition-all"
+              className="inline-flex items-center gap-2 px-3.5 py-2 bg-accent-base hover:bg-accent-hover text-white rounded-lg text-xs font-semibold shadow-sm transition-colors"
             >
               <Plus className="w-3.5 h-3.5" />
               <span>New Request</span>
@@ -133,7 +133,7 @@ const TransporterDashboardPage: React.FC = () => {
             {userRole === 'transport_admin' && (
               <button 
                 onClick={() => navigate('/transporter/admin/roles')}
-                className="inline-flex items-center gap-2 px-3.5 py-2 bg-surface hover:bg-subtle border border-border-default text-text-primary rounded-lg text-xs font-semibold shadow-sm transition-all"
+                className="inline-flex items-center gap-2 px-3.5 py-2 bg-surface hover:bg-subtle border border-border-default text-text-primary rounded-lg text-xs font-semibold shadow-sm transition-colors"
               >
                 <Settings className="w-3.5 h-3.5 text-text-muted" />
                 <span>Driver Permissions</span>
@@ -305,7 +305,7 @@ const TransporterDashboardPage: React.FC = () => {
           <div className="p-4 grid grid-cols-2 md:grid-cols-5 gap-3">
             <button 
               onClick={() => navigate('/transporter/admin/vehicles')}
-              className="p-3.5 bg-subtle hover:bg-surface border border-border-default hover:border-accent-base/40 rounded-xl transition-all duration-200 text-center flex flex-col items-center gap-2 group"
+              className="p-3.5 bg-subtle hover:bg-surface border border-border-default hover:border-accent-base/40 rounded-xl transition-colors duration-150 text-center flex flex-col items-center gap-2 group"
             >
               <Truck className="w-5 h-5 text-text-secondary group-hover:text-accent-base transition-colors" />
               <span className="text-xs font-medium text-text-primary group-hover:text-accent-base transition-colors">
@@ -314,7 +314,7 @@ const TransporterDashboardPage: React.FC = () => {
             </button>
             <button 
               onClick={() => navigate('/transporter/admin/vehicles/issues')}
-              className="p-3.5 bg-subtle hover:bg-surface border border-border-default hover:border-accent-base/40 rounded-xl transition-all duration-200 text-center flex flex-col items-center gap-2 group"
+              className="p-3.5 bg-subtle hover:bg-surface border border-border-default hover:border-accent-base/40 rounded-xl transition-colors duration-150 text-center flex flex-col items-center gap-2 group"
             >
               <AlertOctagon className="w-5 h-5 text-text-secondary group-hover:text-rose-500 transition-colors" />
               <span className="text-xs font-medium text-text-primary group-hover:text-rose-500 transition-colors">
@@ -323,7 +323,7 @@ const TransporterDashboardPage: React.FC = () => {
             </button>
             <button 
               onClick={() => navigate('/transporter/admin/vehicles/movement')}
-              className="p-3.5 bg-subtle hover:bg-surface border border-border-default hover:border-accent-base/40 rounded-xl transition-all duration-200 text-center flex flex-col items-center gap-2 group"
+              className="p-3.5 bg-subtle hover:bg-surface border border-border-default hover:border-accent-base/40 rounded-xl transition-colors duration-150 text-center flex flex-col items-center gap-2 group"
             >
               <Activity className="w-5 h-5 text-text-secondary group-hover:text-accent-base transition-colors" />
               <span className="text-xs font-medium text-text-primary group-hover:text-accent-base transition-colors">
@@ -332,7 +332,7 @@ const TransporterDashboardPage: React.FC = () => {
             </button>
             <button 
               onClick={() => navigate('/transporter/driver/monitor')}
-              className="p-3.5 bg-subtle hover:bg-surface border border-border-default hover:border-accent-base/40 rounded-xl transition-all duration-200 text-center flex flex-col items-center gap-2 group"
+              className="p-3.5 bg-subtle hover:bg-surface border border-border-default hover:border-accent-base/40 rounded-xl transition-colors duration-150 text-center flex flex-col items-center gap-2 group"
             >
               <Users className="w-5 h-5 text-text-secondary group-hover:text-accent-base transition-colors" />
               <span className="text-xs font-medium text-text-primary group-hover:text-accent-base transition-colors">
@@ -341,7 +341,7 @@ const TransporterDashboardPage: React.FC = () => {
             </button>
             <button 
               onClick={() => navigate('/transporter/admin/reports')}
-              className="p-3.5 bg-subtle hover:bg-surface border border-border-default hover:border-accent-base/40 rounded-xl transition-all duration-200 text-center flex flex-col items-center gap-2 group"
+              className="p-3.5 bg-subtle hover:bg-surface border border-border-default hover:border-accent-base/40 rounded-xl transition-colors duration-150 text-center flex flex-col items-center gap-2 group"
             >
               <TrendingUp className="w-5 h-5 text-text-secondary group-hover:text-accent-base transition-colors" />
               <span className="text-xs font-medium text-text-primary group-hover:text-accent-base transition-colors">

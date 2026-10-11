@@ -20,6 +20,8 @@ import {
   type SystemAnnouncement, 
   getRecentProductionCommits,
   getLiveDeploymentMetadata,
+  getSystemUpdateLogs,
+  syncLiveProductionReleases,
   CURRENT_SYSTEM_VERSION,
   BUILD_COMMIT_HASH
 } from '@/services/systemAnnouncementService'
@@ -40,11 +42,37 @@ export const SystemUpdateLogModal: React.FC<SystemUpdateLogModalProps> = ({
   language = 'ms',
 }) => {
   const [activeTab, setActiveTab] = useState<'all' | 'updates' | 'maintenance' | 'commits'>('all')
+  const [displayLogs, setDisplayLogs] = useState<SystemAnnouncement[]>(logs)
   const [commits, setCommits] = useState<any[]>([])
   const [buildMeta, setBuildMeta] = useState<any>(null)
   const [isCommitsLoading, setIsCommitsLoading] = useState(false)
+  const [isSyncing, setIsSyncing] = useState(false)
 
-  // Fetch live commits when modal opens
+  // Keep displayLogs in sync with parent props
+  useEffect(() => {
+    if (logs && logs.length > 0) {
+      setDisplayLogs(logs)
+    }
+  }, [logs])
+
+  // Explicit sync handler
+  const handleSync = async () => {
+    try {
+      setIsSyncing(true)
+      const res = await syncLiveProductionReleases()
+      setBuildMeta(res.metadata)
+      setCommits(res.commits || [])
+      if (res.logs && res.logs.length > 0) {
+        setDisplayLogs(res.logs)
+      }
+    } catch (err) {
+      console.warn('Sync failed:', err)
+    } finally {
+      setIsSyncing(false)
+    }
+  }
+
+  // Fetch live commits and verified releases when modal opens
   useEffect(() => {
     if (!isOpen) return
     let isMounted = true
@@ -52,13 +80,17 @@ export const SystemUpdateLogModal: React.FC<SystemUpdateLogModalProps> = ({
     const loadData = async () => {
       try {
         setIsCommitsLoading(true)
-        const [metaData, commitList] = await Promise.all([
+        const [metaData, commitList, freshLogs] = await Promise.all([
           getLiveDeploymentMetadata(),
-          getRecentProductionCommits()
+          getRecentProductionCommits(),
+          getSystemUpdateLogs()
         ])
         if (isMounted) {
           setBuildMeta(metaData)
           setCommits(commitList || [])
+          if (freshLogs && freshLogs.length > 0) {
+            setDisplayLogs(freshLogs)
+          }
         }
       } catch (err) {
         console.warn('Error loading commit history:', err)
@@ -76,13 +108,14 @@ export const SystemUpdateLogModal: React.FC<SystemUpdateLogModalProps> = ({
 
   if (!isOpen) return null
 
-  const filteredLogs = logs.filter((item) => {
+  const filteredLogs = displayLogs.filter((item) => {
     if (activeTab === 'updates') return item.type === 'system_update'
     if (activeTab === 'maintenance') return item.type === 'maintenance'
     return true
   })
 
-  const currentVersion = logs.find(l => l.version_tag)?.version_tag || buildMeta?.version || CURRENT_SYSTEM_VERSION
+  const semverLog = displayLogs.find(l => l.version_tag && /^v?\d+\.\d+\.\d+/i.test(l.version_tag))
+  const currentVersion = semverLog?.version_tag || buildMeta?.version || CURRENT_SYSTEM_VERSION
   const activeCommit = buildMeta?.commitHash || BUILD_COMMIT_HASH
 
   return (
@@ -126,14 +159,27 @@ export const SystemUpdateLogModal: React.FC<SystemUpdateLogModalProps> = ({
               </div>
             </div>
 
-            <button
-              type="button"
-              onClick={onClose}
-              className="p-1.5 text-text-muted hover:text-text-primary rounded-lg hover:bg-subtle transition-colors"
-              aria-label="Close modal"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleSync}
+                disabled={isSyncing}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-text-secondary hover:text-text-primary bg-surface-subtle hover:bg-subtle border border-border-default rounded-lg transition-colors disabled:opacity-50"
+                title="Sync and verify latest production releases"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 text-accent-base ${isSyncing ? 'animate-spin' : ''}`} />
+                <span className="hidden sm:inline">{isSyncing ? 'Syncing...' : 'Sync Now'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={onClose}
+                className="p-1.5 text-text-muted hover:text-text-primary rounded-lg hover:bg-subtle transition-colors"
+                aria-label="Close modal"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
           </div>
 
           {/* Filter Tabs */}
@@ -141,42 +187,42 @@ export const SystemUpdateLogModal: React.FC<SystemUpdateLogModalProps> = ({
             <button
               type="button"
               onClick={() => setActiveTab('all')}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition-all shrink-0 ${
+              className={`px-3 py-1.5 rounded-lg font-semibold transition-colors shrink-0 ${
                 activeTab === 'all'
-                  ? 'bg-surface text-text-primary border border-border-default shadow-2xs'
+                  ? 'bg-surface text-text-primary border border-border-default shadow-elevation-1'
                   : 'text-text-muted hover:text-text-primary'
               }`}
             >
-              All Releases ({logs.length})
+              All Releases ({displayLogs.length})
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('updates')}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition-all shrink-0 ${
+              className={`px-3 py-1.5 rounded-lg font-semibold transition-colors shrink-0 ${
                 activeTab === 'updates'
-                  ? 'bg-surface text-text-primary border border-border-default shadow-2xs'
+                  ? 'bg-surface text-text-primary border border-border-default shadow-elevation-1'
                   : 'text-text-muted hover:text-text-primary'
               }`}
             >
-              System Updates ({logs.filter(l => l.type === 'system_update').length})
+              System Updates ({displayLogs.filter(l => l.type === 'system_update').length})
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('maintenance')}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition-all shrink-0 ${
+              className={`px-3 py-1.5 rounded-lg font-semibold transition-colors shrink-0 ${
                 activeTab === 'maintenance'
-                  ? 'bg-surface text-text-primary border border-border-default shadow-2xs'
+                  ? 'bg-surface text-text-primary border border-border-default shadow-elevation-1'
                   : 'text-text-muted hover:text-text-primary'
               }`}
             >
-              Maintenance ({logs.filter(l => l.type === 'maintenance').length})
+              Maintenance ({displayLogs.filter(l => l.type === 'maintenance').length})
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('commits')}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition-all shrink-0 flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-lg font-semibold transition-colors shrink-0 flex items-center gap-1.5 ${
                 activeTab === 'commits'
-                  ? 'bg-surface text-text-primary border border-border-default shadow-2xs'
+                  ? 'bg-surface text-text-primary border border-border-default shadow-elevation-1'
                   : 'text-text-muted hover:text-text-primary'
               }`}
             >
@@ -203,7 +249,7 @@ export const SystemUpdateLogModal: React.FC<SystemUpdateLogModalProps> = ({
                   commits.map((commit, idx) => (
                     <div 
                       key={commit.hash || idx}
-                      className="p-3 rounded-xl bg-surface border border-border-default hover:border-border-strong transition-all flex flex-col gap-2 shadow-2xs"
+                      className="p-3 rounded-xl bg-surface border border-border-default hover:border-border-strong transition-colors flex flex-col gap-2 shadow-elevation-1"
                     >
                       <div className="flex items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
@@ -211,7 +257,9 @@ export const SystemUpdateLogModal: React.FC<SystemUpdateLogModalProps> = ({
                             {commit.shortHash || commit.hash?.slice(0, 7)}
                           </span>
                           <span className="text-xs text-text-secondary">
-                            {commit.author}
+                            {(!commit.author || commit.author.toLowerCase().includes('lawas') || commit.author.toLowerCase().includes('ci/cd'))
+                              ? 'H.O.M.E. System Administrator'
+                              : commit.author}
                           </span>
                         </div>
 
@@ -254,6 +302,9 @@ export const SystemUpdateLogModal: React.FC<SystemUpdateLogModalProps> = ({
                 filteredLogs.map((item, idx) => {
                   const isUpdate = item.type === 'system_update'
                   const isMaintenance = item.type === 'maintenance'
+                  const cleanVersionTag = item.version_tag 
+                    ? (item.version_tag.toLowerCase().startsWith('build-') ? 'v' + item.version_tag.slice(6) : item.version_tag)
+                    : (isUpdate ? 'Update' : 'Maintenance')
 
                   return (
                     <div key={item.id} className={`pt-3.5 ${idx === 0 ? 'pt-0' : ''}`}>
@@ -263,10 +314,10 @@ export const SystemUpdateLogModal: React.FC<SystemUpdateLogModalProps> = ({
                             isUpdate 
                               ? 'bg-accent-subtle text-accent-base border-accent-base/30'
                               : isMaintenance
-                                ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30'
+                                ? 'bg-amber-500/15 text-amber-400 dark:text-amber-300 border-amber-500/30'
                                 : 'bg-surface-subtle text-text-secondary border-border-default'
                           }`}>
-                            {item.version_tag ? item.version_tag : (isUpdate ? 'Update' : 'Maintenance')}
+                            {cleanVersionTag}
                           </span>
                           
                           <h4 className="text-sm font-bold text-text-primary">
@@ -281,7 +332,7 @@ export const SystemUpdateLogModal: React.FC<SystemUpdateLogModalProps> = ({
                       </div>
 
                       <p className="text-xs text-text-secondary leading-relaxed mt-2 whitespace-pre-line">
-                        {item.content}
+                        {item.content?.replace(/\(Lawas@2025\)/gi, '')?.replace(/Lawas@2025/gi, 'H.O.M.E. System Administrator')}
                       </p>
 
                       {item.scheduled_start && item.scheduled_end && (
@@ -309,7 +360,11 @@ export const SystemUpdateLogModal: React.FC<SystemUpdateLogModalProps> = ({
 
                         <div className="flex items-center gap-1 text-text-muted">
                           <span>Published by:</span>
-                          <span className="font-semibold text-text-secondary">{item.created_by_name || 'System Administrator'}</span>
+                          <span className="font-semibold text-text-secondary">
+                            {(!item.created_by_name || item.created_by_name.toLowerCase().includes('ci/cd') || item.created_by_name.toLowerCase().includes('lawas'))
+                              ? 'H.O.M.E. System Administrator'
+                              : item.created_by_name}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -323,15 +378,29 @@ export const SystemUpdateLogModal: React.FC<SystemUpdateLogModalProps> = ({
           <div className="p-3 sm:px-5 bg-surface/50 border-t border-border-default flex items-center justify-between text-[11px] text-text-muted">
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Automated Production Sync Active</span>
+              <span>
+                Production Sync Active
+                {activeCommit ? ` • Deployed: ${activeCommit}` : ''}
+              </span>
             </div>
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-3.5 py-1.5 rounded-lg bg-ink text-ink-text hover:bg-ink-hover font-medium text-xs transition-colors shadow-2xs"
-            >
-              Close
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleSync}
+                disabled={isSyncing}
+                className="text-[11px] text-accent-base hover:underline disabled:opacity-50 flex items-center gap-1 font-medium"
+              >
+                <RefreshCw className={`w-3 h-3 ${isSyncing ? 'animate-spin' : ''}`} />
+                <span>{isSyncing ? 'Syncing...' : 'Check Updates'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-3.5 py-1.5 rounded-lg bg-ink text-ink-text hover:bg-ink-hover font-medium text-xs transition-colors shadow-elevation-1"
+              >
+                Close
+              </button>
+            </div>
           </div>
         </motion.div>
       </div>

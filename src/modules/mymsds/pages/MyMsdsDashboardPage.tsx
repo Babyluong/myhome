@@ -124,14 +124,14 @@ export default function MyMsdsDashboardPage() {
           <>
             <button
               onClick={() => setShowEmergencyModal(true)}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 font-semibold text-xs border border-rose-500/30 transition-all cursor-pointer shadow-2xs"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 font-semibold text-xs border border-rose-500/30 transition-colors cursor-pointer shadow-elevation-1"
             >
               <ShieldAlert className="w-4 h-4" />
               <span>Prosedur Tumpahan & Kecemasan</span>
             </button>
             <button
               onClick={() => window.print()}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-subtle hover:bg-hover text-text-primary font-semibold text-xs transition-all border border-border-default shadow-2xs cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-subtle hover:bg-hover text-text-primary font-semibold text-xs transition-colors border border-border-default shadow-elevation-1 cursor-pointer"
             >
               <Download className="w-4 h-4 text-text-muted" />
               <span>Eksport Laporan</span>
@@ -141,7 +141,7 @@ export default function MyMsdsDashboardPage() {
       />
 
       {/* Modern Integrated Horizontal Metric Strip */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 p-4 rounded-xl bg-surface border border-border-default shadow-2xs">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 p-4 rounded-xl bg-surface border border-border-default shadow-elevation-1">
         <div className="flex items-center gap-3 pr-4 border-r border-border-default">
           <div className="p-2.5 rounded-lg bg-accent-subtle text-accent-base border border-accent-base/20 shrink-0">
             <FlaskConical className="w-5 h-5" />
@@ -184,7 +184,7 @@ export default function MyMsdsDashboardPage() {
       </div>
 
       {/* Controls & Filter Bar */}
-      <div className="p-4 rounded-xl bg-surface border border-border-default shadow-2xs space-y-3">
+      <div className="p-4 rounded-xl bg-surface border border-border-default shadow-elevation-1 space-y-3">
         <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
           {/* Search Box */}
           <div className="relative flex-1">
@@ -194,7 +194,7 @@ export default function MyMsdsDashboardPage() {
               placeholder="Cari bahan kimia, CAS Number, formula (CH₂O), ID atau lokasi..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-8 py-2 rounded-lg bg-subtle border border-border-default text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-base focus:bg-surface text-xs transition-all"
+              className="w-full pl-9 pr-8 py-2 rounded-lg bg-subtle border border-border-default text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-base focus:bg-surface text-xs transition-colors"
             />
             {searchTerm && (
               <button
@@ -218,7 +218,7 @@ export default function MyMsdsDashboardPage() {
               <button
                 key={chip.id}
                 onClick={() => setQuickFilter(chip.id)}
-                className={`px-2.5 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-all border ${
+                className={`px-2.5 py-1 rounded-lg text-xs font-medium whitespace-nowrap transition-colors border ${
                   quickFilter === chip.id
                     ? 'bg-accent-subtle text-accent-base border-accent-base/30 font-semibold'
                     : 'bg-subtle text-text-secondary border-border-default hover:bg-hover'
@@ -233,9 +233,9 @@ export default function MyMsdsDashboardPage() {
           <div className="flex items-center gap-1 p-0.5 rounded-lg bg-subtle border border-border-default self-end lg:self-auto shrink-0">
             <button
               onClick={() => setViewMode('table')}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-colors ${
                 viewMode === 'table'
-                  ? 'bg-surface text-accent-base shadow-2xs border border-border-default'
+                  ? 'bg-surface text-accent-base shadow-elevation-1 border border-border-default'
                   : 'text-text-muted hover:text-text-primary'
               }`}
             >
@@ -244,9 +244,9 @@ export default function MyMsdsDashboardPage() {
             </button>
             <button
               onClick={() => setViewMode('grid')}
-              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-all ${
+              className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-colors ${
                 viewMode === 'grid'
-                  ? 'bg-surface text-accent-base shadow-2xs border border-border-default'
+                  ? 'bg-surface text-accent-base shadow-elevation-1 border border-border-default'
                   : 'text-text-muted hover:text-text-primary'
               }`}
             >
@@ -320,7 +320,7 @@ export default function MyMsdsDashboardPage() {
           <p className="text-xs text-text-muted">Cuba ubah kata kunci carian atau tetapan penapis anda.</p>
           <button
             onClick={resetAllFilters}
-            className="mt-3 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-subtle text-text-primary border border-border-default text-xs font-semibold hover:bg-hover transition-all"
+            className="mt-3 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-subtle text-text-primary border border-border-default text-xs font-semibold hover:bg-hover transition-colors"
           >
             <RotateCcw className="w-3.5 h-3.5 text-text-muted" />
             <span>Reset Penapis</span>
@@ -328,7 +328,7 @@ export default function MyMsdsDashboardPage() {
         </div>
       ) : viewMode === 'table' ? (
         /* Enterprise Master Data Table View */
-        <div className="overflow-x-auto rounded-xl bg-surface border border-border-default shadow-2xs">
+        <div className="overflow-x-auto rounded-xl bg-surface border border-border-default shadow-elevation-1">
           <table className="w-full text-left text-xs">
             <thead className="bg-subtle/80 text-text-secondary uppercase font-semibold text-[10px] tracking-wider border-b border-border-default select-none">
               <tr>
@@ -469,7 +469,7 @@ export default function MyMsdsDashboardPage() {
               <div className="mt-6 pt-4 border-t border-border-default flex justify-end">
                 <button
                   onClick={() => setShowEmergencyModal(false)}
-                  className="px-4 py-2 rounded-lg bg-subtle hover:bg-hover text-text-primary text-xs font-semibold border border-border-default transition-all"
+                  className="px-4 py-2 rounded-lg bg-subtle hover:bg-hover text-text-primary text-xs font-semibold border border-border-default transition-colors"
                 >
                   Tutup Panduan
                 </button>

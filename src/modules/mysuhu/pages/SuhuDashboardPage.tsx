@@ -128,7 +128,7 @@ export const SuhuDashboardPage: React.FC = () => {
       {summary.breach > 0 && (
         <div 
           onClick={() => navigate('/suhu/breaches')}
-          className="flex items-center justify-between p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl cursor-pointer hover:bg-rose-500/15 transition-all shadow-2xs group"
+          className="flex items-center justify-between p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl cursor-pointer hover:bg-rose-500/15 transition-colors shadow-elevation-1 group"
         >
           <div className="flex items-center gap-3">
             <div className="p-2 bg-rose-500/20 text-rose-600 dark:text-rose-400 rounded-lg">
@@ -147,32 +147,32 @@ export const SuhuDashboardPage: React.FC = () => {
 
       {/* Hospital KPI Stats */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3.5">
-        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-2xs">
+        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-elevation-1">
           <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wider">Total Units</span>
           <div className="text-2xl sm:text-3xl font-bold font-mono text-text-primary mt-1 tabular-nums">{loading ? <Skeleton className="h-8 w-14 bg-subtle inline-block rounded" /> : summary.total}</div>
         </div>
-        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-2xs">
+        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-elevation-1">
           <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
             Normal
           </span>
           <div className="text-2xl sm:text-3xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1 tabular-nums">{loading ? <Skeleton className="h-8 w-14 bg-subtle inline-block rounded" /> : summary.normal}</div>
         </div>
-        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-2xs">
+        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-elevation-1">
           <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wider flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
             Warning
           </span>
           <div className="text-2xl sm:text-3xl font-bold font-mono text-amber-600 dark:text-amber-400 mt-1 tabular-nums">{loading ? <Skeleton className="h-8 w-14 bg-subtle inline-block rounded" /> : summary.warning}</div>
         </div>
-        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-2xs">
+        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-elevation-1">
           <span className="text-[11px] font-semibold text-rose-600 dark:text-rose-400 uppercase tracking-wider flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
             Breach
           </span>
           <div className="text-2xl sm:text-3xl font-bold font-mono text-rose-600 dark:text-rose-400 mt-1 tabular-nums">{loading ? <Skeleton className="h-8 w-14 bg-subtle inline-block rounded" /> : summary.breach}</div>
         </div>
-        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-2xs">
+        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-elevation-1">
           <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wider flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-text-muted" />
             No Readings
@@ -188,7 +188,7 @@ export const SuhuDashboardPage: React.FC = () => {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-surface border border-border-default rounded-xl p-5 shadow-2xs space-y-4 animate-pulse">
+              <div key={i} className="bg-surface border border-border-default rounded-xl p-5 shadow-elevation-1 space-y-4 animate-pulse">
                 <div className="flex justify-between items-start gap-4 mb-4">
                   <Skeleton className="w-10 h-10 rounded-lg bg-subtle flex-shrink-0" />
                   <Skeleton className="h-4 w-16 rounded bg-subtle" />
@@ -205,7 +205,7 @@ export const SuhuDashboardPage: React.FC = () => {
             ))}
           </div>
         ) : visibleDepartments.length === 0 ? (
-          <div className="bg-surface border border-border-default rounded-xl p-12 text-center shadow-2xs">
+          <div className="bg-surface border border-border-default rounded-xl p-12 text-center shadow-elevation-1">
             <Building className="w-12 h-12 text-text-muted opacity-40 mx-auto mb-3" />
             <p className="text-sm font-semibold text-text-primary">No departments configured with temperature monitoring</p>
             <p className="text-xs text-text-muted mt-1">Please contact system administrator to enroll your department.</p>
@@ -225,11 +225,11 @@ export const SuhuDashboardPage: React.FC = () => {
                 <div 
                   key={dept.id}
                   onClick={() => navigate(`/suhu/department/${dept.id}`)}
-                  className={`bg-surface border rounded-xl p-5 shadow-2xs hover:bg-subtle/30 cursor-pointer transition-all duration-150 flex flex-col justify-between group relative overflow-hidden ${borderClass}`}
+                  className={`bg-surface border rounded-xl p-5 shadow-elevation-1 hover:bg-subtle/30 cursor-pointer transition-colors duration-150 flex flex-col justify-between group relative overflow-hidden ${borderClass}`}
                 >
                   <div>
                     <div className="flex justify-between items-start gap-4 mb-3">
-                      <div className="p-2.5 bg-subtle text-text-secondary rounded-lg group-hover:bg-accent-subtle group-hover:text-accent-base transition-all">
+                      <div className="p-2.5 bg-subtle text-text-secondary rounded-lg group-hover:bg-accent-subtle group-hover:text-accent-base transition-colors">
                         <Building className="w-4 h-4 sm:w-5 sm:h-5" />
                       </div>
                       
@@ -290,7 +290,7 @@ export const SuhuDashboardPage: React.FC = () => {
                       )}
                     </div>
                     
-                    <span className="text-xs font-semibold text-accent-base flex items-center gap-1 transform group-hover:translate-x-0.5 transition-all">
+                    <span className="text-xs font-semibold text-accent-base flex items-center gap-1 transform group-hover:translate-x-0.5 transition-colors">
                       Open &rarr;
                     </span>
                   </div>

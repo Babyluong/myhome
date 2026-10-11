@@ -209,23 +209,23 @@ export const TimeOffClaimPage: React.FC = () => {
   }
 
   return (
-    <div className="p-6 md:p-8 w-full space-y-6 text-slate-800">
+    <div className="p-6 md:p-8 w-full space-y-6 text-text-primary">
       {/* Header Panel */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-white border border-slate-100 rounded-3xl p-6 shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-cyan-400" />
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-surface border border-border-subtle rounded-3xl p-6 shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-1.5 bg-surface border border-border-default" />
 
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate(ROUTES.TIMEOFF_DASHBOARD)}
-            className="p-3 hover:bg-slate-50 border border-slate-100 rounded-2xl text-slate-400 hover:text-slate-700 transition-all shadow-sm"
+            className="p-3 hover:bg-subtle/50 border border-border-subtle rounded-2xl text-slate-400 hover:text-text-secondary transition-colors shadow-sm"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-800 flex items-center gap-2">
+            <h1 className="text-2xl font-black tracking-tight text-text-primary flex items-center gap-2">
               {isMs ? 'Borang Tuntutan Cuti Gantian' : 'Time Off Claim Form'}
             </h1>
-            <p className="text-sm text-slate-500 mt-0.5 font-medium">
+            <p className="text-sm text-text-muted mt-0.5 font-medium">
               {isMs
                 ? 'Tuntutan penggantian waktu rehat bagi kerja lebih masa / hari kelepasan am'
                 : 'Claim compensatory time off for overtime or public holiday work'}
@@ -234,10 +234,10 @@ export const TimeOffClaimPage: React.FC = () => {
         </div>
 
         {/* Current Balance Indicator */}
-        <div className="flex items-center gap-3 bg-blue-50/70 border border-blue-100 rounded-2xl px-4 py-2.5">
+        <div className="flex items-center gap-3 bg-blue-500/10 border border-blue-100 rounded-2xl px-4 py-2.5">
           <Clock className="w-5 h-5 text-blue-600" />
           <div>
-            <div className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+            <div className="text-[11px] font-bold text-text-secondary font-bold uppercase tracking-wider">
               {isMs ? 'Baki Semasa' : 'Current Balance'}
             </div>
             <div className="text-sm font-black font-mono text-blue-700">
@@ -248,11 +248,11 @@ export const TimeOffClaimPage: React.FC = () => {
       </div>
 
       {/* Main Form */}
-      <div className="bg-white border border-slate-100 rounded-3xl p-8 shadow-xl">
+      <div className="bg-surface border border-border-subtle rounded-3xl p-8 shadow-xl">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Section 1: Work Type Selection */}
           <div className="space-y-3">
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide">
+            <label className="block text-xs font-bold text-text-secondary uppercase tracking-wide">
               {isMs ? '1. Jenis Kerja Luar Waktu' : '1. Extra Work Category'}{' '}
               <span className="text-rose-500">*</span>
             </label>
@@ -286,18 +286,18 @@ export const TimeOffClaimPage: React.FC = () => {
                   <div
                     key={item.id}
                     onClick={() => setWorkType(item.id as ToilWorkType)}
-                    className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between ${
+                    className={`p-4 rounded-2xl border transition-colors cursor-pointer flex flex-col justify-between ${
                       isSelected
-                        ? 'border-blue-500 bg-blue-50/50 shadow-md ring-2 ring-blue-400/30'
-                        : 'border-slate-200 hover:border-slate-300 bg-white'
+                        ? 'border-blue-500 bg-blue-500/10 shadow-md ring-2 ring-blue-400/30'
+                        : 'border-border-default hover:border-border-default bg-surface'
                     }`}
                   >
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <span className="font-bold text-slate-800 text-sm">{item.title}</span>
+                        <span className="font-bold text-text-primary text-sm">{item.title}</span>
                         {isSelected && <CheckCircle2 className="w-4 h-4 text-blue-600" />}
                       </div>
-                      <p className="text-xs text-slate-500">{item.desc}</p>
+                      <p className="text-xs text-text-muted">{item.desc}</p>
                     </div>
                   </div>
                 )
@@ -306,8 +306,8 @@ export const TimeOffClaimPage: React.FC = () => {
           </div>
 
           {/* Section 2: Date and Time of Extra Work */}
-          <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-4">
-            <div className="font-bold text-slate-800 text-sm flex items-center justify-between">
+          <div className="p-5 rounded-2xl bg-subtle/50 border border-border-default space-y-4">
+            <div className="font-bold text-text-primary text-sm flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-blue-600" />
                 <span>{isMs ? '2. Tarikh & Tempoh Masa Kerja' : '2. Date & Work Duration'}</span>
@@ -319,7 +319,7 @@ export const TimeOffClaimPage: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
               <div className="sm:col-span-1">
-                <label className="block text-xs font-bold text-slate-600 mb-1">
+                <label className="block text-xs font-bold text-text-muted mb-1">
                   {isMs ? 'Tarikh Bertugas' : 'Work Date'} <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -328,12 +328,12 @@ export const TimeOffClaimPage: React.FC = () => {
                   max={new Date().toISOString().split('T')[0]}
                   onChange={(e) => setWorkDate(e.target.value)}
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-border-default text-sm font-mono focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-surface"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">
+                <label className="block text-xs font-bold text-text-muted mb-1">
                   {isMs ? 'Masa Mula' : 'Start Time'} <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -341,12 +341,12 @@ export const TimeOffClaimPage: React.FC = () => {
                   value={timeStart}
                   onChange={(e) => setTimeStart(e.target.value)}
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-border-default text-sm font-mono focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-surface"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">
+                <label className="block text-xs font-bold text-text-muted mb-1">
                   {isMs ? 'Masa Tamat' : 'End Time'} <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -354,15 +354,15 @@ export const TimeOffClaimPage: React.FC = () => {
                   value={timeEnd}
                   onChange={(e) => setTimeEnd(e.target.value)}
                   required
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-mono focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-border-default text-sm font-mono focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-surface"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 mb-1">
+                <label className="block text-xs font-bold text-text-muted mb-1">
                   {isMs ? 'Jumlah Jam Dituntut' : 'Hours Claimed'}
                 </label>
-                <div className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-200 text-sm font-black font-mono text-blue-600 flex items-center justify-between">
+                <div className="w-full px-3.5 py-2.5 rounded-xl bg-surface border border-border-default text-sm font-black font-mono text-blue-600 flex items-center justify-between">
                   <span>
                     {calculatedHours} {isMs ? 'Jam' : 'Hours'}
                   </span>
@@ -375,7 +375,7 @@ export const TimeOffClaimPage: React.FC = () => {
           {/* Section 3: Location and Work Details */}
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
+              <label className="block text-xs font-bold text-text-secondary mb-1">
                 {isMs ? '3. Lokasi Bertugas' : '3. Work Location'}{' '}
                 <span className="text-rose-500">*</span>
               </label>
@@ -391,13 +391,13 @@ export const TimeOffClaimPage: React.FC = () => {
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
                   required
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border-default text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-surface"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 mb-1">
+              <label className="block text-xs font-bold text-text-secondary mb-1">
                 {isMs ? '4. Keterangan Tugas Yang Dilaksanakan' : '4. Description of Work Done'}{' '}
                 <span className="text-rose-500">*</span>
               </label>
@@ -411,7 +411,7 @@ export const TimeOffClaimPage: React.FC = () => {
                 value={workDescription}
                 onChange={(e) => setWorkDescription(e.target.value)}
                 required
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-white"
+                className="w-full px-4 py-3 rounded-xl border border-border-default text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 bg-surface"
               />
             </div>
           </div>
@@ -419,7 +419,7 @@ export const TimeOffClaimPage: React.FC = () => {
           {/* Section 4: Proof Upload (Mandatory Attendance Card) */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide">
+              <label className="block text-xs font-bold text-text-secondary uppercase tracking-wide">
                 {isMs
                   ? '5. Bukti Kerja Tambahan (Kad Perakam Waktu / Surat Arahan)'
                   : '5. Proof of Extra Work (Attendance Card / Duty Letter)'}{' '}
@@ -429,9 +429,9 @@ export const TimeOffClaimPage: React.FC = () => {
             </div>
 
             {!selectedFile ? (
-              <label className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-slate-200 hover:border-blue-400 rounded-2xl cursor-pointer bg-slate-50/50 hover:bg-blue-50/20 transition-all">
+              <label className="flex flex-col items-center justify-center p-8 border-2 border-dashed border-border-default hover:border-blue-400 rounded-2xl cursor-pointer bg-subtle/50 hover:bg-blue-500/10 transition-colors">
                 <UploadCloud className="w-10 h-10 text-blue-500 mb-2" />
-                <span className="text-sm font-bold text-slate-700">
+                <span className="text-sm font-bold text-text-secondary">
                   {isMs
                     ? 'Klik untuk muat naik atau seret fail ke sini'
                     : 'Click to upload or drag and drop'}
@@ -450,14 +450,14 @@ export const TimeOffClaimPage: React.FC = () => {
                 />
               </label>
             ) : (
-              <div className="p-4 rounded-2xl bg-blue-50/60 border border-blue-200 flex items-center justify-between">
+              <div className="p-4 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="p-2.5 rounded-xl bg-blue-600 text-white">
                     <FileCheck className="w-5 h-5" />
                   </div>
                   <div>
-                    <div className="text-sm font-bold text-slate-800">{selectedFile.name}</div>
-                    <div className="text-xs text-slate-500 font-mono">
+                    <div className="text-sm font-bold text-text-primary">{selectedFile.name}</div>
+                    <div className="text-xs text-text-muted font-mono">
                       {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
                     </div>
                   </div>
@@ -466,7 +466,7 @@ export const TimeOffClaimPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleRemoveFile}
-                  className="p-2 hover:bg-blue-100 rounded-xl text-slate-500 hover:text-rose-600 transition-colors"
+                  className="p-2 hover:bg-blue-100 rounded-xl text-text-muted hover:text-rose-600 transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -474,7 +474,7 @@ export const TimeOffClaimPage: React.FC = () => {
             )}
 
             {filePreview && (
-              <div className="mt-2 p-2 bg-slate-50 rounded-xl border border-slate-200 inline-block">
+              <div className="mt-2 p-2 bg-subtle/50 rounded-xl border border-border-default inline-block">
                 <img
                   src={filePreview}
                   alt="Proof Preview"
@@ -485,12 +485,12 @@ export const TimeOffClaimPage: React.FC = () => {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-between pt-6 border-t border-slate-100">
+          <div className="flex items-center justify-between pt-6 border-t border-border-subtle">
             <Button
               type="button"
               variant="outline"
               onClick={() => navigate(ROUTES.TIMEOFF_DASHBOARD)}
-              className="border-slate-200 hover:bg-slate-50 text-slate-700 font-bold px-6"
+              className="border-border-default hover:bg-subtle/50 text-text-secondary font-bold px-6"
             >
               {isMs ? 'Batal' : 'Cancel'}
             </Button>

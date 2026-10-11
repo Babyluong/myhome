@@ -189,7 +189,7 @@ export const PorterDriverPanelPage: React.FC = () => {
         <div className="flex items-center gap-1.5 bg-slate-950 p-1.5 rounded-2xl border border-slate-800 self-stretch sm:self-auto justify-center">
           <button
             onClick={() => handleStatusToggle('available')}
-            className={`px-3 py-2 rounded-xl text-xs font-bold transition-all ${
+            className={`px-3 py-2 rounded-xl text-xs font-bold transition-colors ${
               currentPorter?.current_status === 'available'
                 ? 'bg-emerald-600 text-white shadow-md'
                 : 'text-slate-400 hover:text-slate-200'
@@ -199,7 +199,7 @@ export const PorterDriverPanelPage: React.FC = () => {
           </button>
           <button
             onClick={() => handleStatusToggle('on_break')}
-            className={`px-3 py-2 rounded-xl text-xs font-bold transition-all ${
+            className={`px-3 py-2 rounded-xl text-xs font-bold transition-colors ${
               currentPorter?.current_status === 'on_break'
                 ? 'bg-amber-600 text-white shadow-md'
                 : 'text-slate-400 hover:text-slate-200'
@@ -209,7 +209,7 @@ export const PorterDriverPanelPage: React.FC = () => {
           </button>
           <button
             onClick={() => handleStatusToggle('offline')}
-            className={`px-3 py-2 rounded-xl text-xs font-bold transition-all ${
+            className={`px-3 py-2 rounded-xl text-xs font-bold transition-colors ${
               currentPorter?.current_status === 'offline'
                 ? 'bg-slate-700 text-white shadow-md'
                 : 'text-slate-400 hover:text-slate-200'
@@ -241,7 +241,7 @@ export const PorterDriverPanelPage: React.FC = () => {
               <span className="text-[10px] font-bold text-emerald-400 uppercase">1. Pickup at (Origin):</span>
               <p className="text-sm font-extrabold text-white">{activeJob.origin_department_name}</p>
               <p className="text-xs text-slate-400">{activeJob.origin_location_details}</p>
-              <p className="text-[11px] text-slate-500 mt-1">Requester: {activeJob.requester_name} ({activeJob.requester_phone})</p>
+              <p className="text-[11px] text-text-muted mt-1">Requester: {activeJob.requester_name} ({activeJob.requester_phone})</p>
             </div>
 
             <div className="space-y-1">
@@ -249,7 +249,7 @@ export const PorterDriverPanelPage: React.FC = () => {
               <p className="text-sm font-extrabold text-white">{activeJob.destination_department_name}</p>
               <p className="text-xs text-slate-400">{activeJob.destination_location_details}</p>
               {activeJob.recipient_name && (
-                <p className="text-[11px] text-slate-500 mt-1">Recipient: {activeJob.recipient_name}</p>
+                <p className="text-[11px] text-text-muted mt-1">Recipient: {activeJob.recipient_name}</p>
               )}
             </div>
           </div>
@@ -271,7 +271,7 @@ export const PorterDriverPanelPage: React.FC = () => {
             {activeJob.status === 'accepted' && (
               <Button
                 onClick={() => handleStepProgression('at_pickup')}
-                className="w-full py-4 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-black rounded-2xl shadow-xl shadow-sky-500/25 text-base flex items-center justify-center gap-3"
+                className="w-full py-4 bg-accent-base hover:bg-accent-hover text-white font-black rounded-2xl shadow-xl shadow-sky-500/25 text-base flex items-center justify-center gap-3"
               >
                 <MapPin className="w-6 h-6" />
                 <span>1. I HAVE ARRIVED AT PICKUP LOCATION</span>
@@ -281,7 +281,7 @@ export const PorterDriverPanelPage: React.FC = () => {
             {activeJob.status === 'at_pickup' && (
               <Button
                 onClick={() => handleStepProgression('in_transit')}
-                className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-black rounded-2xl shadow-xl shadow-blue-500/25 text-base flex items-center justify-center gap-3"
+                className="w-full py-4 bg-surface border border-border-default hover:from-blue-700 hover:to-indigo-700 text-white font-black rounded-2xl shadow-xl shadow-blue-500/25 text-base flex items-center justify-center gap-3"
               >
                 <Play className="w-6 h-6" />
                 <span>2. CONFIRM PICKUP & START TRANSIT</span>
@@ -301,7 +301,7 @@ export const PorterDriverPanelPage: React.FC = () => {
             {activeJob.status === 'at_destination' && (
               <Button
                 onClick={() => handleStepProgression('delivered')}
-                className="w-full py-4 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-black rounded-2xl shadow-xl shadow-emerald-500/25 text-base flex items-center justify-center gap-3"
+                className="w-full py-4 bg-surface border border-border-default hover:from-emerald-700 hover:to-teal-700 text-white font-black rounded-2xl shadow-xl shadow-emerald-500/25 text-base flex items-center justify-center gap-3"
               >
                 <CheckCircle2 className="w-6 h-6" />
                 <span>4. COMPLETE DELIVERY & REQUEST RECIPIENT VERIFICATION</span>
@@ -332,16 +332,16 @@ export const PorterDriverPanelPage: React.FC = () => {
 
           <div className="space-y-3">
             {poolJobs.length === 0 ? (
-              <div className="p-16 text-center text-slate-500 bg-slate-900/60 rounded-3xl border border-slate-800">
-                <PersonStanding className="w-12 h-12 mx-auto text-slate-700 mb-3" />
+              <div className="p-16 text-center text-text-muted bg-slate-900/60 rounded-3xl border border-slate-800">
+                <PersonStanding className="w-12 h-12 mx-auto text-text-secondary mb-3" />
                 <p className="font-bold text-slate-400">No new tasks in pool.</p>
-                <p className="text-xs text-slate-500 mt-1">Radar is actively listening for ward requests.</p>
+                <p className="text-xs text-text-muted mt-1">Radar is actively listening for ward requests.</p>
               </div>
             ) : (
               poolJobs.map((job) => (
                 <div
                   key={job.id}
-                  className="bg-slate-900 border border-slate-800 hover:border-sky-500/50 p-5 rounded-2xl shadow-lg transition-all flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+                  className="bg-slate-900 border border-slate-800 hover:border-sky-500/50 p-5 rounded-2xl shadow-lg transition-colors flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
                 >
                   <div className="space-y-1 min-w-0">
                     <div className="flex items-center gap-2">

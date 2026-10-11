@@ -109,11 +109,11 @@ export const KunciAuditPage: React.FC = () => {
   const getFizikalBadge = (status: AuditFizikal) => {
     switch (status) {
       case 'present':
-        return <Badge className="border-emerald-200 text-emerald-700 bg-emerald-50 text-[10px] font-bold">{language === 'ms' ? 'Wujud (Present)' : 'Present'}</Badge>
+        return <Badge className="border-emerald-500/20 text-emerald-700 bg-emerald-500/10 text-[10px] font-bold">{language === 'ms' ? 'Wujud (Present)' : 'Present'}</Badge>
       case 'missing':
-        return <Badge className="border-rose-200 text-rose-700 bg-rose-50 text-[10px] font-bold animate-pulse">{language === 'ms' ? 'Hilang (Missing)' : 'Missing'}</Badge>
+        return <Badge className="border-rose-500/20 text-rose-700 bg-rose-500/10 text-[10px] font-bold animate-pulse">{language === 'ms' ? 'Hilang (Missing)' : 'Missing'}</Badge>
       case 'damaged':
-        return <Badge className="border-amber-200 text-amber-700 bg-amber-50 text-[10px] font-bold">{language === 'ms' ? 'Rosak (Damaged)' : 'Damaged'}</Badge>
+        return <Badge className="border-amber-500/20 text-amber-700 bg-amber-500/10 text-[10px] font-bold">{language === 'ms' ? 'Rosak (Damaged)' : 'Damaged'}</Badge>
       default:
         return <Badge variant="gray">{status}</Badge>
     }
@@ -136,7 +136,7 @@ export const KunciAuditPage: React.FC = () => {
         </div>
         <Button
           onClick={() => setModalOpen(true)}
-          className="bg-amber-500 hover:bg-amber-600 text-white rounded-xl shadow-soft font-semibold flex items-center gap-2"
+          className="bg-amber-500 hover:bg-amber-600 text-white rounded-xl shadow-elevation-1 font-semibold flex items-center gap-2"
         >
           <Plus className="w-5 h-5" />
           {language === 'ms' ? 'Lakukan Audit Baru' : 'Perform New Audit'}
@@ -144,7 +144,7 @@ export const KunciAuditPage: React.FC = () => {
       </div>
 
       {/* JKNS Audit Requirements Notice */}
-      <div className="bg-amber-50 border border-amber-200 text-amber-800 rounded-xl p-4 flex gap-3 items-start">
+      <div className="bg-amber-500/10 border border-amber-500/20 text-amber-400 rounded-xl p-4 flex gap-3 items-start">
         <ClipboardCheck className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
         <div>
           <h4 className="text-sm font-bold">
@@ -159,9 +159,9 @@ export const KunciAuditPage: React.FC = () => {
       </div>
 
       {/* Audits Log Table Card */}
-      <Card className="rounded-2xl shadow-soft bg-white border border-slate-200">
-        <CardHeader className="border-b border-slate-100 pb-4">
-          <CardTitle className="text-lg font-bold text-slate-800 flex items-center gap-2">
+      <Card className="rounded-2xl shadow-elevation-1 bg-surface border border-border-default">
+        <CardHeader className="border-b border-border-subtle pb-4">
+          <CardTitle className="text-lg font-bold text-text-primary flex items-center gap-2">
             <Calendar className="w-5 h-5 text-amber-500" />
             {language === 'ms' ? 'Sejarah Pemeriksaan Audit Kunci' : 'Key Audit Inspection History'}
           </CardTitle>
@@ -184,8 +184,8 @@ export const KunciAuditPage: React.FC = () => {
             <>
               {/* Desktop View: Full Table */}
               <div className="hidden md:block overflow-x-auto">
-                <table className="w-full text-left text-sm text-slate-600">
-                  <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-100">
+                <table className="w-full text-left text-sm text-text-muted">
+                  <thead className="bg-subtle/50 text-text-muted font-semibold border-b border-border-subtle">
                     <tr>
                       <th className="p-4">{language === 'ms' ? 'Tarikh Audit' : 'Audit Date'}</th>
                       <th className="p-4">{language === 'ms' ? 'Kunci (Kod)' : 'Key (Code)'}</th>
@@ -196,24 +196,24 @@ export const KunciAuditPage: React.FC = () => {
                       <th className="p-4">{language === 'ms' ? 'Ulasan / Siri Catatan' : 'Remarks / Seal Serial'}</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="divide-y divide-border-subtle">
                     {audits.map((audit) => {
                       const auditor = MOCK_AUDITORS.find(a => a.id === audit.auditor_id)?.full_name || (language === 'ms' ? 'Auditor Hospital' : 'Hospital Auditor')
                       const isDuplicate = audit.kunci?.status_sampul !== 'not_applicable'
 
                       return (
-                        <tr key={audit.id} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="p-4 font-mono text-xs text-slate-500">
+                        <tr key={audit.id} className="hover:bg-subtle/50 transition-colors">
+                          <td className="p-4 font-mono text-xs text-text-muted">
                             {audit.tarikh_audit}
                           </td>
                           <td className="p-4">
-                            <div className="font-semibold text-slate-800">{audit.kunci?.nama_kunci}</div>
+                            <div className="font-semibold text-text-primary">{audit.kunci?.nama_kunci}</div>
                             <div className="text-xs text-slate-400 font-mono mt-0.5">{audit.kunci?.kod_kunci}</div>
                           </td>
-                          <td className="p-4 text-xs text-slate-500">
+                          <td className="p-4 text-xs text-text-muted">
                             {audit.kunci?.lokasi_fizikal}
                           </td>
-                          <td className="p-4 font-medium text-slate-800 text-xs">
+                          <td className="p-4 font-medium text-text-primary text-xs">
                             {auditor}
                           </td>
                           <td className="p-4">
@@ -222,11 +222,11 @@ export const KunciAuditPage: React.FC = () => {
                           <td className="p-4">
                             {isDuplicate ? (
                               audit.sampul_bermeterai_utuh ? (
-                                <Badge className="border-emerald-200 text-emerald-700 bg-emerald-50 text-[10px]">
+                                <Badge className="border-emerald-500/20 text-emerald-700 bg-emerald-500/10 text-[10px]">
                                   {language === 'ms' ? 'UTUH' : 'INTACT'}
                                 </Badge>
                               ) : (
-                                <Badge className="border-rose-200 text-rose-700 bg-rose-50 text-[10px] animate-pulse">
+                                <Badge className="border-rose-500/20 text-rose-700 bg-rose-500/10 text-[10px] animate-pulse">
                                   {language === 'ms' ? 'TERBUKA / ROSAK' : 'BROKEN / OPENED'}
                                 </Badge>
                               )
@@ -234,7 +234,7 @@ export const KunciAuditPage: React.FC = () => {
                               <span className="text-slate-300">-</span>
                             )}
                           </td>
-                          <td className="p-4 text-xs text-slate-500 max-w-xs truncate" title={audit.catatan || ''}>
+                          <td className="p-4 text-xs text-text-muted max-w-xs truncate" title={audit.catatan || ''}>
                             {audit.catatan || <span className="text-slate-300">{language === 'ms' ? 'Tiada catatan khusus' : 'No specific remarks'}</span>}
                           </td>
                         </tr>
@@ -245,7 +245,7 @@ export const KunciAuditPage: React.FC = () => {
               </div>
 
               {/* Mobile View: High-End Native Cards (Zero Horizontal Scroll!) */}
-              <div className="md:hidden divide-y divide-slate-100">
+              <div className="md:hidden divide-y divide-border-subtle">
                 {audits.map((audit) => {
                   const auditor = MOCK_AUDITORS.find(a => a.id === audit.auditor_id)?.full_name || (language === 'ms' ? 'Auditor Hospital' : 'Hospital Auditor')
                   const isDuplicate = audit.kunci?.status_sampul !== 'not_applicable'
@@ -254,10 +254,10 @@ export const KunciAuditPage: React.FC = () => {
                     <div key={audit.id} className="p-4 space-y-3">
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <span className="font-mono font-bold text-slate-500 text-xs block">
+                          <span className="font-mono font-bold text-text-muted text-xs block">
                             {audit.kunci?.kod_kunci}
                           </span>
-                          <h4 className="font-bold text-slate-900 text-sm">
+                          <h4 className="font-bold text-text-primary text-sm">
                             {audit.kunci?.nama_kunci}
                           </h4>
                         </div>
@@ -265,11 +265,11 @@ export const KunciAuditPage: React.FC = () => {
                           {getFizikalBadge(audit.status_fizikal)}
                           {isDuplicate && (
                             audit.sampul_bermeterai_utuh ? (
-                              <Badge className="border-emerald-200 text-emerald-700 bg-emerald-50 text-[9px]">
+                              <Badge className="border-emerald-500/20 text-emerald-700 bg-emerald-500/10 text-[9px]">
                                 {language === 'ms' ? 'SAMPUL UTUH' : 'SEAL INTACT'}
                               </Badge>
                             ) : (
-                              <Badge className="border-rose-200 text-rose-700 bg-rose-50 text-[9px] animate-pulse">
+                              <Badge className="border-rose-500/20 text-rose-700 bg-rose-500/10 text-[9px] animate-pulse">
                                 {language === 'ms' ? 'TERBUKA / ROSAK' : 'SEAL BROKEN'}
                               </Badge>
                             )
@@ -277,35 +277,35 @@ export const KunciAuditPage: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50/70 p-3 rounded-xl border border-slate-100">
+                      <div className="grid grid-cols-2 gap-2 text-xs bg-subtle/50 p-3 rounded-xl border border-border-subtle">
                         <div>
-                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                          <span className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                             {language === 'ms' ? 'Tarikh Audit' : 'Audit Date'}
                           </span>
-                          <span className="font-mono text-slate-700 font-semibold block">
+                          <span className="font-mono text-text-secondary font-semibold block">
                             {audit.tarikh_audit}
                           </span>
                         </div>
                         <div>
-                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                          <span className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                             {language === 'ms' ? 'Pegawai Auditor' : 'Auditor'}
                           </span>
-                          <span className="text-slate-800 font-semibold truncate block">
+                          <span className="text-text-primary font-semibold truncate block">
                             {auditor}
                           </span>
                         </div>
                         <div className="col-span-2">
-                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                          <span className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                             {language === 'ms' ? 'Lokasi Pintu / Peti' : 'Location'}
                           </span>
-                          <span className="text-slate-700 block">
+                          <span className="text-text-secondary block">
                             {audit.kunci?.lokasi_fizikal || '-'}
                           </span>
                         </div>
                       </div>
 
                       {audit.catatan && (
-                        <p className="text-xs text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-200/60 italic font-medium">
+                        <p className="text-xs text-text-muted bg-subtle/50 p-2.5 rounded-lg border border-border-default italic font-medium">
                           "{audit.catatan}"
                         </p>
                       )}
@@ -326,14 +326,14 @@ export const KunciAuditPage: React.FC = () => {
       >
         <form onSubmit={handleAuditSubmit} className="space-y-4 pt-2">
           <div>
-            <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
+            <label className="block text-xs font-semibold text-text-muted mb-1.5 uppercase">
               {language === 'ms' ? 'Pilih Kunci Untuk Diaudit *' : 'Select Key To Audit *'}
             </label>
             <select
               value={selectedKeyId}
               onChange={(e) => setSelectedKeyId(e.target.value)}
               required
-              className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
+              className="w-full rounded-xl border border-border-default p-2.5 text-sm bg-subtle/50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-surface transition-colors"
             >
               <option value="">{language === 'ms' ? '-- Sila Pilih Kunci --' : '-- Please Select Key --'}</option>
               {keys.map((k) => (
@@ -346,14 +346,14 @@ export const KunciAuditPage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
+              <label className="block text-xs font-semibold text-text-muted mb-1.5 uppercase">
                 {language === 'ms' ? 'Status Fizikal Kunci *' : 'Physical Key Status *'}
               </label>
               <select
                 value={physicalStatus}
                 onChange={(e) => setPhysicalStatus(e.target.value as any)}
                 required
-                className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
+                className="w-full rounded-xl border border-border-default p-2.5 text-sm bg-subtle/50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-surface transition-colors"
               >
                 <option value="present">{language === 'ms' ? 'Ada / Wujud (Present)' : 'Present / Accounted For'}</option>
                 <option value="missing">{language === 'ms' ? 'Hilang / Tiada (Missing)' : 'Missing / Unaccounted'}</option>
@@ -362,28 +362,28 @@ export const KunciAuditPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
+              <label className="block text-xs font-semibold text-text-muted mb-1.5 uppercase">
                 {language === 'ms' ? 'Pegawai Auditor (Kakitangan Aktif)' : 'Auditing Officer (Active Staff)'}
               </label>
               <input
                 type="text"
                 disabled
                 value={loggedUser?.full_name || 'Staff (You)'}
-                className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-100 text-slate-500"
+                className="w-full rounded-xl border border-border-default p-2.5 text-sm bg-subtle text-text-muted"
               />
             </div>
           </div>
 
           {isSelectedKeyDuplicate && (
-            <div className="p-4 bg-slate-50 border border-slate-100 rounded-xl space-y-2">
+            <div className="p-4 bg-subtle/50 border border-border-subtle rounded-xl space-y-2">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={envelopeIntact}
                   onChange={(e) => setEnvelopeIntact(e.target.checked)}
-                  className="rounded border-slate-300 text-amber-500 focus:ring-amber-500 w-4 h-4"
+                  className="rounded border-border-default text-amber-500 focus:ring-amber-500 w-4 h-4"
                 />
-                <span className="text-xs font-bold text-slate-700">
+                <span className="text-xs font-bold text-text-secondary">
                   {language === 'ms' 
                     ? 'Sampul Surat Bermeterai Kunci Pendua Masih Utuh' 
                     : 'Duplicate Key Sealed Security Envelope Is Intact'}
@@ -398,7 +398,7 @@ export const KunciAuditPage: React.FC = () => {
           )}
 
           <div>
-            <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
+            <label className="block text-xs font-semibold text-text-muted mb-1.5 uppercase">
               {language === 'ms' ? 'Catatan Semakan & Siri Nombor Meterai' : 'Audit Remarks & Seal Serial Number'}
             </label>
             <textarea
@@ -406,7 +406,7 @@ export const KunciAuditPage: React.FC = () => {
               value={remarks}
               onChange={(e) => setRemarks(e.target.value)}
               placeholder={language === 'ms' ? 'E.g., Semakan fizikal teratur. Tiada tanda kerosakan. Siri meterai sampul KKM-4281 disahkan...' : 'E.g., Physical check satisfactory. No damage detected. Security envelope seal #KKM-4281 verified intact...'}
-              className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all resize-none"
+              className="w-full rounded-xl border border-border-default p-2.5 text-sm bg-subtle/50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-surface transition-colors resize-none"
             />
           </div>
 
@@ -414,13 +414,13 @@ export const KunciAuditPage: React.FC = () => {
             <Button
               type="button"
               onClick={() => setModalOpen(false)}
-              className="border-slate-200 text-slate-500 hover:bg-slate-50 px-4 py-2 border rounded-xl"
+              className="border-border-default text-text-muted hover:bg-subtle/50 px-4 py-2 border rounded-xl"
             >
               {language === 'ms' ? 'Batal' : 'Cancel'}
             </Button>
             <Button
               type="submit"
-              className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-5 py-2 rounded-xl shadow-soft"
+              className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-5 py-2 rounded-xl shadow-elevation-1"
             >
               {language === 'ms' ? 'Simpan Audit' : 'Save Audit Record'}
             </Button>

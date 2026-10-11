@@ -170,7 +170,7 @@ Address: Block E1, E3, E6, E7 & E10, Parcel E, Federal Government Administrative
             <Button
               variant="outline"
               onClick={() => navigate(ROUTES.LOGIN)}
-              className="border-white/20 text-white hover:bg-white/10"
+              className="border-white/20 text-white hover:bg-surface/10"
             >
               Back to Login
             </Button>
@@ -184,34 +184,34 @@ Address: Block E1, E3, E6, E7 & E10, Parcel E, Federal Government Administrative
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-12 p-8 bg-white rounded-2xl shadow-lg border border-slate-200"
+          className="mb-12 p-8 bg-surface rounded-2xl shadow-lg border border-border-default"
         >
           <div className="flex items-start gap-4 mb-6">
             <div className="p-3 bg-teal-100 rounded-xl">
               <FileText className="w-6 h-6 text-teal-600" />
             </div>
             <div className="flex-1">
-              <h2 className="text-2xl font-bold text-slate-900 mb-3">
+              <h2 className="text-2xl font-bold text-text-primary mb-3">
                 Terms and Conditions of Use
               </h2>
-              <p className="text-slate-700 leading-relaxed text-lg">
+              <p className="text-text-secondary leading-relaxed text-lg">
                 These Terms of Service govern your access to and use of the Hospital Operation Management Ecosystem (HOME) system, 
                 operated by the Ministry of Health Malaysia. Please read these terms carefully before using the system.
               </p>
             </div>
           </div>
-          <div className="mt-6 p-4 bg-amber-50 rounded-xl border-l-4 border-amber-500">
+          <div className="mt-6 p-4 bg-amber-500/10 rounded-xl border-l-4 border-amber-500">
             <div className="flex items-start gap-3">
               <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-amber-800">
+              <p className="text-sm text-amber-400">
                 <strong>Important:</strong> By accessing and using the HOME system, you acknowledge that you have read, 
                 understood, and agree to be bound by these Terms of Service. Violation of these terms may result in 
                 immediate termination of access and potential legal action.
               </p>
             </div>
           </div>
-          <div className="mt-4 p-4 bg-slate-50 rounded-xl border-l-4 border-slate-400">
-            <p className="text-sm text-slate-600">
+          <div className="mt-4 p-4 bg-subtle/50 rounded-xl border-l-4 border-slate-400">
+            <p className="text-sm text-text-secondary">
               <strong>Last Updated:</strong> {new Date().toLocaleDateString('en-MY', { year: 'numeric', month: 'long', day: 'numeric' })}
             </p>
           </div>
@@ -227,17 +227,17 @@ Address: Block E1, E3, E6, E7 & E10, Parcel E, Federal Government Administrative
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="p-8 bg-white rounded-2xl shadow-md border border-slate-200 hover:shadow-lg transition-shadow"
+                className="p-8 bg-surface rounded-2xl shadow-md border border-border-default hover:shadow-lg transition-shadow"
               >
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-teal-50 rounded-xl flex-shrink-0">
+                  <div className="p-3 bg-accent-base/10 rounded-xl flex-shrink-0">
                     <Icon className="w-6 h-6 text-teal-600" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-slate-900 mb-4">
+                    <h3 className="text-xl font-bold text-text-primary mb-4">
                       {section.title}
                     </h3>
-                    <p className="text-slate-700 leading-relaxed whitespace-pre-line">
+                    <p className="text-text-secondary leading-relaxed whitespace-pre-line">
                       {section.content}
                     </p>
                   </div>
@@ -252,15 +252,15 @@ Address: Block E1, E3, E6, E7 & E10, Parcel E, Federal Government Administrative
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.3 }}
-          className="mt-12 p-6 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-2xl border border-teal-200"
+          className="mt-12 p-6 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-2xl border border-accent-base/20"
         >
           <div className="flex items-start gap-4">
             <CheckCircle className="w-6 h-6 text-teal-600 flex-shrink-0 mt-1" />
             <div>
-              <h4 className="font-bold text-slate-900 mb-2">
+              <h4 className="font-bold text-text-primary mb-2">
                 Compliance and Responsibility
               </h4>
-              <p className="text-slate-700 text-sm leading-relaxed">
+              <p className="text-text-secondary text-sm leading-relaxed">
                 All users are expected to comply with these Terms of Service and all applicable laws and regulations. 
                 Failure to comply may result in disciplinary action, termination of access, and potential legal consequences. 
                 If you have questions about these terms, please contact the system administrator.

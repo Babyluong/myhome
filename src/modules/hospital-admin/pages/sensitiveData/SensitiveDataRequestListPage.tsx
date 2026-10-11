@@ -28,12 +28,12 @@ const statusConfig: Record<SensitiveDataRequestStatus, { color: string; bgColor:
   pending: { color: 'text-amber-600', bgColor: 'bg-amber-100', icon: Clock, variant: 'warning' },
   approved: { color: 'text-green-600', bgColor: 'bg-green-100', icon: CheckCircle, variant: 'success' },
   denied: { color: 'text-red-600', bgColor: 'bg-red-100', icon: XCircle, variant: 'error' },
-  expired: { color: 'text-gray-500', bgColor: 'bg-gray-100', icon: Clock, variant: 'gray' },
+  expired: { color: 'text-text-muted', bgColor: 'bg-subtle', icon: Clock, variant: 'gray' },
   revoked: { color: 'text-red-500', bgColor: 'bg-red-50', icon: XCircle, variant: 'error' },
 }
 
 const urgencyConfig: Record<SensitiveDataUrgency, { color: string; label: string }> = {
-  routine: { color: 'text-gray-600', label: 'Routine' },
+  routine: { color: 'text-text-muted', label: 'Routine' },
   urgent: { color: 'text-amber-600', label: 'Urgent' },
   emergency: { color: 'text-red-600', label: 'Emergency' },
 }
@@ -141,7 +141,7 @@ export const SensitiveDataRequestListPage: React.FC = () => {
               variant="outline" 
               onClick={fetchRequests}
               disabled={isLoading}
-              className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
+              className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-surface/20"
               leftIcon={<RefreshCw className={cn('w-4 h-4', isLoading && 'animate-spin')} />}
             >
               Refresh
@@ -159,7 +159,7 @@ export const SensitiveDataRequestListPage: React.FC = () => {
         transition={{ delay: 0.1 }}
         className="grid grid-cols-1 md:grid-cols-4 gap-4"
       >
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-shadow">
+        <div className="bg-surface rounded-xl border border-border-default shadow-sm p-6 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
               <Clock className="w-6 h-6 text-amber-600" />
@@ -167,13 +167,13 @@ export const SensitiveDataRequestListPage: React.FC = () => {
             <TrendingUp className="w-5 h-5 text-slate-400" />
           </div>
           <div className="space-y-1">
-            <p className="text-3xl font-bold text-slate-900">{pendingCounts.total}</p>
-            <p className="text-sm font-medium text-slate-600">Pending Requests</p>
-            <p className="text-xs text-slate-500">Awaiting review</p>
+            <p className="text-3xl font-bold text-text-primary">{pendingCounts.total}</p>
+            <p className="text-sm font-medium text-text-muted">Pending Requests</p>
+            <p className="text-xs text-text-muted">Awaiting review</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-shadow">
+        <div className="bg-surface rounded-xl border border-border-default shadow-sm p-6 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-error-100 rounded-xl flex items-center justify-center">
               <AlertTriangle className="w-6 h-6 text-error-600" />
@@ -181,13 +181,13 @@ export const SensitiveDataRequestListPage: React.FC = () => {
             <TrendingUp className="w-5 h-5 text-slate-400" />
           </div>
           <div className="space-y-1">
-            <p className="text-3xl font-bold text-slate-900">{pendingCounts.emergency}</p>
-            <p className="text-sm font-medium text-slate-600">Emergency</p>
-            <p className="text-xs text-slate-500">High priority</p>
+            <p className="text-3xl font-bold text-text-primary">{pendingCounts.emergency}</p>
+            <p className="text-sm font-medium text-text-muted">Emergency</p>
+            <p className="text-xs text-text-muted">High priority</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-shadow">
+        <div className="bg-surface rounded-xl border border-border-default shadow-sm p-6 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
               <AlertTriangle className="w-6 h-6 text-amber-600" />
@@ -195,23 +195,23 @@ export const SensitiveDataRequestListPage: React.FC = () => {
             <TrendingUp className="w-5 h-5 text-slate-400" />
           </div>
           <div className="space-y-1">
-            <p className="text-3xl font-bold text-slate-900">{pendingCounts.urgent}</p>
-            <p className="text-sm font-medium text-slate-600">Urgent</p>
-            <p className="text-xs text-slate-500">Requires attention</p>
+            <p className="text-3xl font-bold text-text-primary">{pendingCounts.urgent}</p>
+            <p className="text-sm font-medium text-text-muted">Urgent</p>
+            <p className="text-xs text-text-muted">Requires attention</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-shadow">
+        <div className="bg-surface rounded-xl border border-border-default shadow-sm p-6 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center">
-              <FileText className="w-6 h-6 text-slate-600" />
+            <div className="w-12 h-12 bg-subtle rounded-xl flex items-center justify-center">
+              <FileText className="w-6 h-6 text-text-muted" />
             </div>
             <FileText className="w-5 h-5 text-slate-400" />
           </div>
           <div className="space-y-1">
-            <p className="text-3xl font-bold text-slate-900">{pendingCounts.routine}</p>
-            <p className="text-sm font-medium text-slate-600">Routine</p>
-            <p className="text-xs text-slate-500">Standard priority</p>
+            <p className="text-3xl font-bold text-text-primary">{pendingCounts.routine}</p>
+            <p className="text-sm font-medium text-text-muted">Routine</p>
+            <p className="text-xs text-text-muted">Standard priority</p>
           </div>
         </div>
       </motion.div>
@@ -221,7 +221,7 @@ export const SensitiveDataRequestListPage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15 }}
-        className="bg-white rounded-xl border border-slate-200 shadow-sm p-6"
+        className="bg-surface rounded-xl border border-border-default shadow-sm p-6"
       >
         <div className="flex items-center gap-4">
           <div className="flex-1 relative">
@@ -233,18 +233,18 @@ export const SensitiveDataRequestListPage: React.FC = () => {
                 setSearch(e.target.value)
                 setCurrentPage(1)
               }}
-              className="pl-12 h-11 border-slate-300 focus:border-primary-500 focus:ring-primary-500"
+              className="pl-12 h-11 border-border-default focus:border-primary-500 focus:ring-primary-500"
             />
           </div>
           <div className="flex items-center gap-2">
-            <Filter className="w-5 h-5 text-slate-500" />
+            <Filter className="w-5 h-5 text-text-muted" />
             <Select
               value={statusFilter}
               onChange={(e) => {
                 setStatusFilter(e.target.value)
                 setCurrentPage(1)
               }}
-              className="w-40 h-11 border-slate-300 focus:border-primary-500"
+              className="w-40 h-11 border-border-default focus:border-primary-500"
             >
               <option value="all">All Status</option>
               {Object.entries(SENSITIVE_DATA_REQUEST_STATUS).map(([key, value]) => (
@@ -259,7 +259,7 @@ export const SensitiveDataRequestListPage: React.FC = () => {
                 setUrgencyFilter(e.target.value)
                 setCurrentPage(1)
               }}
-              className="w-40 h-11 border-slate-300 focus:border-primary-500"
+              className="w-40 h-11 border-border-default focus:border-primary-500"
             >
               <option value="all">All Urgency</option>
               {Object.entries(SENSITIVE_DATA_URGENCY).map(([key, value]) => (
@@ -274,7 +274,7 @@ export const SensitiveDataRequestListPage: React.FC = () => {
                 setCategoryFilter(e.target.value)
                 setCurrentPage(1)
               }}
-              className="w-48 h-11 border-slate-300 focus:border-primary-500"
+              className="w-48 h-11 border-border-default focus:border-primary-500"
             >
               <option value="all">All Categories</option>
               {Object.entries(SENSITIVE_DATA_CATEGORY).map(([key, value]) => (
@@ -292,11 +292,11 @@ export const SensitiveDataRequestListPage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden"
+        className="bg-surface rounded-xl border border-border-default shadow-sm overflow-hidden"
       >
-        <div className="p-6 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
+        <div className="p-6 border-b border-border-default bg-gradient-to-r from-slate-50 to-white">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2">
               <Shield className="w-5 h-5 text-primary-600" />
               Access Requests
             </h2>
@@ -308,17 +308,17 @@ export const SensitiveDataRequestListPage: React.FC = () => {
         {isLoading ? (
           <div className="p-12 text-center">
             <RefreshCw className="w-8 h-8 text-slate-400 mx-auto animate-spin mb-4" />
-            <p className="text-slate-500">Loading requests...</p>
+            <p className="text-text-muted">Loading requests...</p>
           </div>
         ) : requests.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12">
             <Shield className="w-12 h-12 text-slate-400 mb-4" />
-            <h3 className="text-lg font-medium text-slate-900 mb-1">No requests found</h3>
-            <p className="text-sm text-slate-500">Try adjusting your filters</p>
+            <h3 className="text-lg font-medium text-text-primary mb-1">No requests found</h3>
+            <p className="text-sm text-text-muted">Try adjusting your filters</p>
           </div>
         ) : (
           <>
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-border-subtle">
               {requests.map((request, index) => {
                 const statusConf = statusConfig[request.status]
                 const StatusIcon = statusConf.icon
@@ -330,7 +330,7 @@ export const SensitiveDataRequestListPage: React.FC = () => {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.02 }}
-                    className="p-4 hover:bg-gray-50 transition-colors cursor-pointer"
+                    className="p-4 hover:bg-subtle/50 transition-colors cursor-pointer"
                     onClick={() => navigate(`${ROUTES.ADMIN_SENSITIVE_DATA_REQUESTS}/${request.id}`)}
                   >
                     <div className="flex items-start gap-4">
@@ -356,18 +356,18 @@ export const SensitiveDataRequestListPage: React.FC = () => {
                           </Badge>
                         </div>
 
-                        <p className="font-medium text-gray-900">
+                        <p className="font-medium text-text-primary">
                           Patient: {request.patient_name}
                         </p>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-text-muted">
                           IC: {request.patient_ic}
                         </p>
 
-                        <p className="text-sm text-gray-600 mt-2 line-clamp-2">
+                        <p className="text-sm text-text-muted mt-2 line-clamp-2">
                           {request.justification}
                         </p>
 
-                        <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
+                        <div className="flex items-center gap-4 mt-3 text-xs text-text-muted">
                           <span className="flex items-center gap-1">
                             <User className="w-3 h-3" />
                             {request.requestor?.full_name || 'Unknown'}
@@ -403,7 +403,7 @@ export const SensitiveDataRequestListPage: React.FC = () => {
             </div>
 
             {/* Pagination */}
-            <div className="border-t border-slate-200 bg-slate-50/50">
+            <div className="border-t border-border-default bg-subtle/50">
               <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}

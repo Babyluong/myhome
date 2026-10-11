@@ -44,7 +44,7 @@ export const Avatar: React.FC<AvatarProps> = ({
     return (
       <div
         className={cn(
-          'relative flex-shrink-0 rounded-full overflow-hidden bg-gray-100',
+          'relative flex-shrink-0 rounded-full overflow-hidden bg-subtle',
           sizes[size],
           className
         )}
@@ -77,7 +77,7 @@ export const Avatar: React.FC<AvatarProps> = ({
   return (
     <div
       className={cn(
-        'relative flex-shrink-0 rounded-full flex items-center justify-center bg-gray-200 text-gray-500',
+        'relative flex-shrink-0 rounded-full flex items-center justify-center bg-subtle text-text-muted',
         sizes[size],
         className
       )}

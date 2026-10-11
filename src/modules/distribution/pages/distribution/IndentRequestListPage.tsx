@@ -374,11 +374,11 @@ export const IndentRequestListPage: React.FC = () => {
       <div className="p-4 rounded-xl bg-slate-900/90 border border-slate-800/90 space-y-3">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
           <div>
-            <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
+            <label className="block text-[11px] font-semibold text-text-secondary font-bold uppercase tracking-wider mb-1">
               Search Indent No. / Dept
             </label>
             <div className="relative">
-              <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
+              <Search className="w-4 h-4 text-text-muted absolute left-3 top-2.5" />
               <Input
                 placeholder="Search..."
                 value={search}
@@ -389,7 +389,7 @@ export const IndentRequestListPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
+            <label className="block text-[11px] font-semibold text-text-secondary font-bold uppercase tracking-wider mb-1">
               Department
             </label>
             <Select
@@ -407,7 +407,7 @@ export const IndentRequestListPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
+            <label className="block text-[11px] font-semibold text-text-secondary font-bold uppercase tracking-wider mb-1">
               Status
             </label>
             <Select
@@ -426,7 +426,7 @@ export const IndentRequestListPage: React.FC = () => {
           </div>
 
           <div>
-            <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1">
+            <label className="block text-[11px] font-semibold text-text-secondary font-bold uppercase tracking-wider mb-1">
               Priority
             </label>
             <Select
@@ -457,14 +457,14 @@ export const IndentRequestListPage: React.FC = () => {
       ) : (
         <div className="bg-slate-900/90 border border-slate-800/90 rounded-2xl overflow-hidden shadow-xl">
           {requests.length === 0 ? (
-            <div className="py-16 text-center text-xs text-slate-500">
+            <div className="py-16 text-center text-xs text-text-muted">
               No department indent requests found.
             </div>
           ) : (
             <>
               <div className="hidden lg:block overflow-x-auto">
                 <table className="w-full text-left text-xs text-slate-300">
-                  <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-800">
+                  <thead className="bg-slate-950 text-text-secondary font-bold uppercase tracking-wider text-[10px] border-b border-slate-800">
                     <tr>
                       <th className="p-3.5 pl-5">Indent No.</th>
                       <th className="p-3.5">Department & Requester</th>
@@ -499,13 +499,13 @@ export const IndentRequestListPage: React.FC = () => {
                                 <Building2 className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
                                 {row.requesting_department?.department_name || 'Department'}
                               </span>
-                              <span className="text-slate-500 font-bold text-xs">➔</span>
+                              <span className="text-text-muted font-bold text-xs">➔</span>
                               <span className="font-bold text-emerald-400 text-[11px] flex items-center gap-1 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-800/60">
                                 🎯 {row.fulfilling_department?.department_name || 'Pharmacy logistic'}
                               </span>
                             </div>
                             <p className="text-[11px] text-slate-400 flex items-center gap-1.5 font-medium">
-                              <User className="w-3 h-3 text-slate-500 flex-shrink-0" />
+                              <User className="w-3 h-3 text-text-muted flex-shrink-0" />
                               <span>Requester: <strong className="text-slate-200">{row.requester?.full_name || 'Staff'}</strong></span>
                             </p>
                           </div>
@@ -549,7 +549,7 @@ export const IndentRequestListPage: React.FC = () => {
 
                             return (
                               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-slate-400 text-xs font-medium">
-                                <Package className="w-3.5 h-3.5 text-slate-500" />
+                                <Package className="w-3.5 h-3.5 text-text-muted" />
                                 {items.length} items
                               </span>
                             )
@@ -602,11 +602,11 @@ export const IndentRequestListPage: React.FC = () => {
                               </span>
                             ) : (
                               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-medium bg-slate-900 text-slate-400 border border-slate-800">
-                                <Clock className="w-3 h-3 text-slate-500" /> Awaiting {row.fulfilling_department?.department_name || 'Target Unit'}
+                                <Clock className="w-3 h-3 text-text-muted" /> Awaiting {row.fulfilling_department?.department_name || 'Target Unit'}
                               </span>
                             )
                           ) : (
-                            <span className="text-[11px] text-slate-500 italic">—</span>
+                            <span className="text-[11px] text-text-muted italic">—</span>
                           )}
                         </td>
                         <td className="p-3.5 pr-5 text-right" onClick={(e) => e.stopPropagation()}>
@@ -690,13 +690,13 @@ export const IndentRequestListPage: React.FC = () => {
                             <Building2 className="w-3.5 h-3.5 text-slate-400" />
                             {row.requesting_department?.department_name || 'Department'}
                           </span>
-                          <span className="text-slate-500 font-bold">➔</span>
+                          <span className="text-text-muted font-bold">➔</span>
                           <span className="font-bold text-emerald-400 text-[11px] bg-emerald-950/70 px-1.5 py-0.5 rounded border border-emerald-800/60">
                             🎯 {row.fulfilling_department?.department_name || 'Pharmacy logistic'}
                           </span>
                         </div>
                         <div className="text-[11px] text-slate-400 flex items-center gap-1 pt-0.5">
-                          <User className="w-3 h-3 text-slate-500" />
+                          <User className="w-3 h-3 text-text-muted" />
                           <span>Pemohon: <strong className="text-slate-200">{row.requester?.full_name || 'Staff'}</strong></span>
                         </div>
                       </div>
@@ -715,7 +715,7 @@ export const IndentRequestListPage: React.FC = () => {
                           )}
                           {drugCount === 0 && nonDrugCount === 0 && (
                             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-950 border border-slate-800 text-slate-400 text-[10px]">
-                              <Package className="w-3 h-3 text-slate-500" /> {items.length} items
+                              <Package className="w-3 h-3 text-text-muted" /> {items.length} items
                             </span>
                           )}
                         </div>

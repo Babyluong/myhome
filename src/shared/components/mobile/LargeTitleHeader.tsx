@@ -44,7 +44,7 @@ export const LargeTitleHeader: React.FC<LargeTitleHeaderProps> = ({
       <div
         className={cn(
           "fixed top-0 left-0 right-0 z-30 h-13 px-3",
-          "flex items-center justify-between border-b transition-all duration-200",
+          "flex items-center justify-between border-b transition-colors duration-150",
           isCollapsed
             ? "bg-surface/95 backdrop-blur-md border-border-default shadow-xs"
             : "bg-transparent border-transparent pointer-events-none"
@@ -56,7 +56,7 @@ export const LargeTitleHeader: React.FC<LargeTitleHeaderProps> = ({
             <button
               type="button"
               onClick={handleBack}
-              className="p-1.5 -ml-1 rounded-lg text-text-primary hover:bg-subtle active:scale-95 transition-all"
+              className="p-1.5 -ml-1 rounded-lg text-text-primary hover:bg-subtle active:scale-95 transition-colors"
               aria-label="Back"
             >
               <ChevronLeft className="w-5 h-5" />
@@ -86,7 +86,7 @@ export const LargeTitleHeader: React.FC<LargeTitleHeaderProps> = ({
               <button
                 type="button"
                 onClick={handleBack}
-                className="p-1 -ml-1 rounded-lg text-text-muted hover:text-text-primary hover:bg-subtle active:scale-95 transition-all"
+                className="p-1 -ml-1 rounded-lg text-text-muted hover:text-text-primary hover:bg-subtle active:scale-95 transition-colors"
                 aria-label="Back"
               >
                 <ChevronLeft className="w-5 h-5" />

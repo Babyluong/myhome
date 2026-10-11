@@ -165,11 +165,11 @@ export default function InventoryTable({
   }, [searchQuery, filters]);
 
   return (
-    <div className="rounded-2xl bg-white p-8 shadow-xl border border-slate-200/50">
+    <div className="rounded-2xl bg-surface p-8 shadow-xl border border-border-default">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">{title}</h2>
-          <p className="text-slate-600 mt-1">{description}</p>
+          <h2 className="text-2xl font-bold text-text-primary">{title}</h2>
+          <p className="text-text-secondary mt-1">{description}</p>
         </div>
         <InventorySearchFilter 
           placeholder={placeholder}
@@ -178,22 +178,22 @@ export default function InventoryTable({
         />
       </div>
     
-      <div className="overflow-hidden rounded-xl border border-slate-200">
+      <div className="overflow-hidden rounded-xl border border-border-default">
         <table className="min-w-full">
-          <thead className="bg-gradient-to-r from-slate-50 to-slate-100">
+          <thead className="bg-subtle/50">
             <tr>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700 uppercase tracking-wider">Item Code</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700 uppercase tracking-wider">Item Name</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700 uppercase tracking-wider">Brand Name</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700 uppercase tracking-wider">Dosage Form</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700 uppercase tracking-wider">SKU/PKU</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700 uppercase tracking-wider">Batch No</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700 uppercase tracking-wider">Expiry</th>
-              <th className="px-6 py-4 text-right text-sm font-semibold text-slate-700 uppercase tracking-wider">Quantity</th>
-              <th className="px-6 py-4 text-right text-sm font-semibold text-slate-700 uppercase tracking-wider">Min Level</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-text-secondary uppercase tracking-wider">Item Code</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-text-secondary uppercase tracking-wider">Item Name</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-text-secondary uppercase tracking-wider">Brand Name</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-text-secondary uppercase tracking-wider">Dosage Form</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-text-secondary uppercase tracking-wider">SKU/PKU</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-text-secondary uppercase tracking-wider">Batch No</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-text-secondary uppercase tracking-wider">Expiry</th>
+              <th className="px-6 py-4 text-right text-sm font-semibold text-text-secondary uppercase tracking-wider">Quantity</th>
+              <th className="px-6 py-4 text-right text-sm font-semibold text-text-secondary uppercase tracking-wider">Min Level</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-slate-100">
+          <tbody className="bg-surface divide-y divide-border-subtle">
             {paginatedItems.flatMap(item => {
               const itemBatches = batchesByItem.get(item.id) || [];
               
@@ -217,16 +217,16 @@ export default function InventoryTable({
               // Show each batch as a separate row
               return itemBatches.map((batch, index) => {
                 return (
-                  <tr key={`${item.id}-${batch.id}`} className={`hover:bg-slate-50 transition-colors duration-150 ${index === 0 ? 'border-t-2 border-slate-200' : ''}`}>
-                    <td className="px-6 py-4 text-sm font-mono text-slate-700 bg-slate-50">{index === 0 ? item.drugCode : ''}</td>
-                    <td className="px-6 py-4 text-sm font-semibold text-slate-900">{index === 0 ? item.name : ''}</td>
-                    <td className="px-6 py-4 text-sm text-slate-600">{batch.brandName}</td>
-                    <td className="px-6 py-4 text-sm text-slate-600">{index === 0 ? item.dosageForm : ''}</td>
-                    <td className="px-6 py-4 text-sm text-slate-500">{batch.sku}</td>
-                    <td className="px-6 py-4 text-sm font-mono text-slate-700">{batch.batchNo}</td>
-                    <td className="px-6 py-4 text-sm text-slate-700">{batch.expiry}</td>
-                    <td className="px-6 py-4 text-right text-sm font-bold text-slate-900">{batch.quantity}</td>
-                    <td className="px-6 py-4 text-right text-sm font-semibold text-slate-600">{index === 0 ? item.minLevel : ''}</td>
+                  <tr key={`${item.id}-${batch.id}`} className={`hover:bg-subtle/50 transition-colors duration-150 ${index === 0 ? 'border-t-2 border-border-default' : ''}`}>
+                    <td className="px-6 py-4 text-sm font-mono text-text-secondary bg-subtle/50">{index === 0 ? item.drugCode : ''}</td>
+                    <td className="px-6 py-4 text-sm font-semibold text-text-primary">{index === 0 ? item.name : ''}</td>
+                    <td className="px-6 py-4 text-sm text-text-secondary">{batch.brandName}</td>
+                    <td className="px-6 py-4 text-sm text-text-secondary">{index === 0 ? item.dosageForm : ''}</td>
+                    <td className="px-6 py-4 text-sm text-text-muted">{batch.sku}</td>
+                    <td className="px-6 py-4 text-sm font-mono text-text-secondary">{batch.batchNo}</td>
+                    <td className="px-6 py-4 text-sm text-text-secondary">{batch.expiry}</td>
+                    <td className="px-6 py-4 text-right text-sm font-bold text-text-primary">{batch.quantity}</td>
+                    <td className="px-6 py-4 text-right text-sm font-semibold text-text-secondary">{index === 0 ? item.minLevel : ''}</td>
                   </tr>
                 );
               });
@@ -237,14 +237,14 @@ export default function InventoryTable({
 
       {/* Pagination Controls */}
       <div className="mt-6 flex items-center justify-between">
-        <div className="text-sm text-slate-600">
+        <div className="text-sm text-text-secondary">
           Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} items
         </div>
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
-            className="px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+            className="px-3 py-2 text-sm font-medium text-text-muted bg-surface border border-border-default rounded-lg hover:bg-subtle/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
           >
             Previous
           </button>
@@ -269,7 +269,7 @@ export default function InventoryTable({
                   className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${
                     currentPage === pageNum
                       ? 'bg-blue-600 text-white'
-                      : 'text-slate-700 bg-white border border-slate-300 hover:bg-slate-50'
+                      : 'text-text-secondary bg-surface border border-border-default hover:bg-subtle/50'
                   }`}
                 >
                   {pageNum}
@@ -281,7 +281,7 @@ export default function InventoryTable({
           <button
             onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
             disabled={currentPage === totalPages}
-            className="px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+            className="px-3 py-2 text-sm font-medium text-text-muted bg-surface border border-border-default rounded-lg hover:bg-subtle/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
           >
             Next
           </button>

@@ -68,21 +68,21 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="relative w-full max-w-lg bg-white border border-slate-200 rounded-[2rem] p-6 sm:p-8 text-slate-900 shadow-2xl overflow-hidden my-auto"
+        className="relative w-full max-w-lg bg-surface border border-border-default rounded-[2rem] p-6 sm:p-8 text-text-primary shadow-2xl overflow-hidden my-auto"
       >
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+        <div className="flex items-center justify-between pb-4 border-b border-border-subtle mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 border border-emerald-100 flex items-center justify-center">
               <CreditCard className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-black text-slate-900">Record Payment Voucher / EFT Disbursement</h3>
-              <p className="text-xs text-slate-500 font-mono">LPO: {lpo.lpo_number}</p>
+              <h3 className="text-lg font-black text-text-primary">Record Payment Voucher / EFT Disbursement</h3>
+              <p className="text-xs text-text-muted font-mono">LPO: {lpo.lpo_number}</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+            className="p-2 rounded-xl text-slate-400 hover:text-text-secondary hover:bg-subtle transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -90,34 +90,34 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-slate-600 mb-1.5">
+            <label className="block text-xs font-bold text-text-muted mb-1.5">
               Voucher Reference No. / EFT Transaction No.
             </label>
             <input
               type="text"
               value={paymentRef}
               onChange={(e) => setPaymentRef(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 font-mono focus:bg-white focus:border-indigo-500 focus:outline-none"
+              className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-xs text-text-primary font-mono focus:bg-surface focus:border-indigo-500 focus:outline-none"
               required
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1.5">
+              <label className="block text-xs font-bold text-text-muted mb-1.5">
                 Payment Completion Date
               </label>
               <input
                 type="date"
                 value={paymentDate}
                 onChange={(e) => setPaymentDate(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:border-indigo-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-xs text-text-primary focus:bg-surface focus:border-indigo-500 focus:outline-none"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1.5">
+              <label className="block text-xs font-bold text-text-muted mb-1.5">
                 Payment Amount (RM)
               </label>
               <input
@@ -126,28 +126,28 @@ export const RecordPaymentModal: React.FC<RecordPaymentModalProps> = ({
                 min="0"
                 value={amount}
                 onChange={(e) => setAmount(Number(e.target.value))}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 font-mono font-bold focus:bg-white focus:border-indigo-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-xs text-text-primary font-mono font-bold focus:bg-surface focus:border-indigo-500 focus:outline-none"
                 required
               />
             </div>
           </div>
 
-          <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800">
+          <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs text-emerald-400">
             <p className="font-bold flex items-center gap-1.5">
               <CheckCircle2 className="w-4 h-4 text-emerald-600" />
               <span>Ledger Synchronization Impact:</span>
             </p>
-            <p className="text-[11px] text-slate-600 mt-1">
+            <p className="text-[11px] text-text-muted mt-1">
               After recording payment, order status will change to <strong>COMPLETED</strong> and official warrant balance will update automatically.
             </p>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-border-subtle">
             <Button
               type="button"
               variant="outline"
               onClick={onClose}
-              className="border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold"
+              className="border-border-default hover:bg-subtle/50 text-text-secondary rounded-xl font-bold"
             >
               Cancel
             </Button>

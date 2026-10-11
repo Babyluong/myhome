@@ -12,8 +12,8 @@ interface TallManLetteringProps {
  */
 export const TallManLettering: React.FC<TallManLetteringProps> = ({
   name,
-  className = 'font-bold text-slate-900',
-  highlightClassName = 'font-black tracking-wider text-rose-600 bg-rose-50 px-1 py-0.5 rounded border border-rose-200'
+  className = 'font-bold text-text-primary',
+  highlightClassName = 'font-black tracking-wider text-rose-600 bg-rose-500/10 px-1 py-0.5 rounded border border-rose-500/20'
 }) => {
   if (!name) return null
 
@@ -57,7 +57,7 @@ export const TallManLettering: React.FC<TallManLetteringProps> = ({
       {parts.map((p, idx) => (
         <span
           key={idx}
-          className={p.isTallMan ? highlightClassName : 'text-slate-800 font-semibold'}
+          className={p.isTallMan ? highlightClassName : 'text-text-primary font-semibold'}
         >
           {p.text}
         </span>

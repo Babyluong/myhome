@@ -112,7 +112,7 @@ export const DepartmentListPage: React.FC = () => {
       render: (_: unknown, row: DepartmentWithRelations) => (
         <div className="flex items-center gap-2">
           <Building2 className="w-5 h-5 text-teal-600" />
-          <span className="font-mono font-semibold text-slate-900">{row.department_code}</span>
+          <span className="font-mono font-semibold text-text-primary">{row.department_code}</span>
         </div>
       ),
     },
@@ -122,8 +122,8 @@ export const DepartmentListPage: React.FC = () => {
       sortable: true,
       render: (_: unknown, row: DepartmentWithRelations) => (
         <div className="space-y-1">
-          <div className="font-semibold text-slate-900">{row.department_name}</div>
-          {row.description && <div className="text-sm text-slate-500">{row.description}</div>}
+          <div className="font-semibold text-text-primary">{row.department_name}</div>
+          {row.description && <div className="text-sm text-text-muted">{row.description}</div>}
         </div>
       ),
     },
@@ -131,14 +131,14 @@ export const DepartmentListPage: React.FC = () => {
       key: 'hospital',
       label: 'Hospital',
       render: (_: unknown, row: DepartmentWithRelations) => (
-        <span className="text-sm font-medium text-slate-700">{row.hospital?.hospital_name || 'N/A'}</span>
+        <span className="text-sm font-medium text-text-secondary">{row.hospital?.hospital_name || 'N/A'}</span>
       ),
     },
     {
       key: 'head_of_department',
       label: 'Head of Department',
       render: (_: unknown, row: DepartmentWithRelations) => (
-        <span className="text-sm text-slate-700">
+        <span className="text-sm text-text-secondary">
           {row.head_of_department?.full_name || 'Not assigned'}
         </span>
       ),
@@ -161,7 +161,7 @@ export const DepartmentListPage: React.FC = () => {
       label: 'Created',
       sortable: true,
       render: (_: unknown, row: DepartmentWithRelations) => (
-        <span className="text-sm text-slate-500">{formatDate(row.created_at)}</span>
+        <span className="text-sm text-text-muted">{formatDate(row.created_at)}</span>
       ),
     },
     {
@@ -189,7 +189,7 @@ export const DepartmentListPage: React.FC = () => {
                   setDepartmentToDelete(row)
                   setShowDeleteModal(true)
                 }}
-                className="p-2 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                className="p-2 text-text-muted hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                 title="Delete"
               >
                 <Trash2 className="w-4 h-4" />
@@ -203,7 +203,7 @@ export const DepartmentListPage: React.FC = () => {
                 e.stopPropagation()
                 navigate(`${ROUTES.ADMIN_DEPARTMENTS}/${row.id}`)
               }}
-              className="text-slate-600 border-slate-200"
+              className="text-text-muted border-border-default"
             >
               View Details
             </Button>
@@ -238,7 +238,7 @@ export const DepartmentListPage: React.FC = () => {
                 variant="outline"
                 onClick={fetchDepartments}
                 disabled={isLoading}
-                className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
+                className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-surface/20"
                 leftIcon={<RefreshCw className={cn('w-4 h-4', isLoading && 'animate-spin')} />}
               >
                 Refresh
@@ -247,7 +247,7 @@ export const DepartmentListPage: React.FC = () => {
                 <Button
                   variant="primary"
                   onClick={() => navigate(`${ROUTES.ADMIN_DEPARTMENTS}/new`)}
-                  className="bg-white text-emerald-600 hover:bg-emerald-50 shadow-lg"
+                  className="bg-surface text-emerald-600 hover:bg-emerald-500/10 shadow-lg"
                   leftIcon={<Plus className="w-5 h-5" />}
                 >
                   Add Department
@@ -275,7 +275,7 @@ export const DepartmentListPage: React.FC = () => {
         transition={{ delay: 0.1 }}
         className="grid grid-cols-1 md:grid-cols-3 gap-4"
       >
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-shadow">
+        <div className="bg-surface rounded-xl border border-border-default shadow-sm p-6 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-success-100 rounded-xl flex items-center justify-center">
               <CheckCircle className="w-6 h-6 text-success-600" />
@@ -283,27 +283,27 @@ export const DepartmentListPage: React.FC = () => {
             <TrendingUp className="w-5 h-5 text-slate-400" />
           </div>
           <div className="space-y-1">
-            <p className="text-3xl font-bold text-slate-900">{stats.active}</p>
-            <p className="text-sm font-medium text-slate-600">Active Departments</p>
-            <p className="text-xs text-slate-500">Currently operational</p>
+            <p className="text-3xl font-bold text-text-primary">{stats.active}</p>
+            <p className="text-sm font-medium text-text-muted">Active Departments</p>
+            <p className="text-xs text-text-muted">Currently operational</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-shadow">
+        <div className="bg-surface rounded-xl border border-border-default shadow-sm p-6 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between mb-4">
-            <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center">
-              <Building2 className="w-6 h-6 text-slate-600" />
+            <div className="w-12 h-12 bg-subtle rounded-xl flex items-center justify-center">
+              <Building2 className="w-6 h-6 text-text-muted" />
             </div>
             <TrendingUp className="w-5 h-5 text-slate-400" />
           </div>
           <div className="space-y-1">
-            <p className="text-3xl font-bold text-slate-900">{stats.inactive}</p>
-            <p className="text-sm font-medium text-slate-600">Inactive</p>
-            <p className="text-xs text-slate-500">Not operational</p>
+            <p className="text-3xl font-bold text-text-primary">{stats.inactive}</p>
+            <p className="text-sm font-medium text-text-muted">Inactive</p>
+            <p className="text-xs text-text-muted">Not operational</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-shadow">
+        <div className="bg-surface rounded-xl border border-border-default shadow-sm p-6 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center">
               <FileText className="w-6 h-6 text-primary-600" />
@@ -311,9 +311,9 @@ export const DepartmentListPage: React.FC = () => {
             <FileText className="w-5 h-5 text-slate-400" />
           </div>
           <div className="space-y-1">
-            <p className="text-3xl font-bold text-slate-900">{total}</p>
-            <p className="text-sm font-medium text-slate-600">Total Departments</p>
-            <p className="text-xs text-slate-500">All departments</p>
+            <p className="text-3xl font-bold text-text-primary">{total}</p>
+            <p className="text-sm font-medium text-text-muted">Total Departments</p>
+            <p className="text-xs text-text-muted">All departments</p>
           </div>
         </div>
       </motion.div>
@@ -323,7 +323,7 @@ export const DepartmentListPage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15 }}
-        className="bg-white rounded-xl border border-slate-200 shadow-sm p-6"
+        className="bg-surface rounded-xl border border-border-default shadow-sm p-6"
       >
         <div className="flex items-center gap-4">
           <div className="flex-1 relative">
@@ -335,19 +335,19 @@ export const DepartmentListPage: React.FC = () => {
                 setSearch(e.target.value)
                 setCurrentPage(1)
               }}
-              className="pl-12 h-11 border-slate-300 focus:border-primary-500 focus:ring-primary-500"
+              className="pl-12 h-11 border-border-default focus:border-primary-500 focus:ring-primary-500"
             />
           </div>
           {!isHospitalAdmin && (
             <div className="flex items-center gap-2">
-              <Filter className="w-5 h-5 text-slate-500" />
+              <Filter className="w-5 h-5 text-text-muted" />
               <Select
                 value={hospitalFilter}
                 onChange={(e) => {
                   setHospitalFilter(e.target.value)
                   setCurrentPage(1)
                 }}
-                className="w-48 h-11 border-slate-300 focus:border-primary-500"
+                className="w-48 h-11 border-border-default focus:border-primary-500"
               >
                 <option value="all">All Hospitals</option>
                 {hospitals.map((h) => (
@@ -359,14 +359,14 @@ export const DepartmentListPage: React.FC = () => {
             </div>
           )}
           <div className="flex items-center gap-2">
-            <Filter className="w-5 h-5 text-slate-500" />
+            <Filter className="w-5 h-5 text-text-muted" />
             <Select
               value={statusFilter}
               onChange={(e) => {
                 setStatusFilter(e.target.value)
                 setCurrentPage(1)
               }}
-              className="w-48 h-11 border-slate-300 focus:border-primary-500"
+              className="w-48 h-11 border-border-default focus:border-primary-500"
             >
               <option value="all">All Status</option>
               <option value="active">Active</option>
@@ -381,11 +381,11 @@ export const DepartmentListPage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden"
+        className="bg-surface rounded-xl border border-border-default shadow-sm overflow-hidden"
       >
-        <div className="p-6 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
+        <div className="p-6 border-b border-border-default bg-gradient-to-r from-slate-50 to-white">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2">
               <Building2 className="w-5 h-5 text-primary-600" />
               Departments
             </h2>
@@ -413,14 +413,14 @@ export const DepartmentListPage: React.FC = () => {
             emptyMessage={
               <div className="flex flex-col items-center justify-center py-12">
                 <AlertCircle className="w-12 h-12 text-slate-400 mb-4" />
-                <p className="text-slate-600 font-medium">No departments found</p>
-                <p className="text-sm text-slate-500 mt-1">Try adjusting your filters</p>
+                <p className="text-text-muted font-medium">No departments found</p>
+                <p className="text-sm text-text-muted mt-1">Try adjusting your filters</p>
               </div>
             }
             onRowClick={(row) => navigate(`${ROUTES.ADMIN_DEPARTMENTS}/${row.id}`)}
           />
         </div>
-        <div className="border-t border-slate-200 bg-slate-50/50">
+        <div className="border-t border-border-default bg-subtle/50">
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
@@ -446,7 +446,7 @@ export const DepartmentListPage: React.FC = () => {
         title="Delete Department"
       >
         <div className="space-y-4">
-          <p className="text-slate-700">
+          <p className="text-text-secondary">
             Are you sure you want to delete <strong>{departmentToDelete?.department_name}</strong>? This action cannot be
             undone.
           </p>

@@ -72,16 +72,16 @@ export const MySubmissionsPage: React.FC = () => {
         changesCount={activeStaff?.changesCount || 0}
       />
 
-      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-5 shadow-xs">
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-800 rounded-2xl p-5 shadow-xs">
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 rounded-xl border border-emerald-200 dark:border-emerald-800">
+          <div className="p-3 bg-emerald-500/10 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 rounded-xl border border-emerald-500/20 dark:border-emerald-800">
             <FileCheck2 className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-lg md:text-xl font-bold text-slate-900 dark:text-white">
+            <h2 className="text-lg md:text-xl font-bold text-text-primary dark:text-white">
               My Clinical Procedures Logbook & Submissions
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-text-muted dark:text-slate-400 mt-0.5">
               Review procedure records saved as drafts, submitted for clinical review, or certified.
             </p>
           </div>
@@ -92,7 +92,7 @@ export const MySubmissionsPage: React.FC = () => {
             setEditingSubmission(null);
             setIsSubmitModalOpen(true);
           }}
-          className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold rounded-xl shadow-xs flex items-center gap-1.5 self-start sm:self-auto transition-all active:scale-95"
+          className="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold rounded-xl shadow-xs flex items-center gap-1.5 self-start sm:self-auto transition-colors active:scale-95"
         >
           <Plus className="w-4 h-4" />
           <span>Log New Procedure</span>

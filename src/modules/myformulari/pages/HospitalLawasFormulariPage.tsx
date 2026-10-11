@@ -309,7 +309,7 @@ export const HospitalLawasFormulariPage: React.FC = () => {
 
             <button
               onClick={() => navigate('/pharmacy/inventory/facility-drugs')}
-              className="h-8 px-3 rounded-md text-[12px] font-medium text-white/55 hover:text-white/90 border border-white/[0.09] hover:border-white/20 bg-transparent hover:bg-white/[0.05] transition-all duration-150 flex items-center gap-1.5"
+              className="h-8 px-3 rounded-md text-[12px] font-medium text-white/55 hover:text-white/90 border border-white/[0.09] hover:border-white/20 bg-transparent hover:bg-surface/[0.05] transition-colors duration-150 flex items-center gap-1.5"
             >
               <Warehouse className="w-3.5 h-3.5" />
               MyInventory
@@ -318,7 +318,7 @@ export const HospitalLawasFormulariPage: React.FC = () => {
             <button
               onClick={handleExportExcel}
               disabled={isLoading || items.length === 0}
-              className="h-8 px-3 rounded-md text-[12px] font-medium text-white/55 hover:text-white/90 border border-white/[0.09] hover:border-white/20 bg-transparent hover:bg-white/[0.05] transition-all duration-150 flex items-center gap-1.5 disabled:opacity-30 disabled:cursor-not-allowed"
+              className="h-8 px-3 rounded-md text-[12px] font-medium text-white/55 hover:text-white/90 border border-white/[0.09] hover:border-white/20 bg-transparent hover:bg-surface/[0.05] transition-colors duration-150 flex items-center gap-1.5 disabled:opacity-30 disabled:cursor-not-allowed"
             >
               <FileSpreadsheet className="w-3.5 h-3.5" />
               Export
@@ -326,7 +326,7 @@ export const HospitalLawasFormulariPage: React.FC = () => {
 
             <button
               onClick={() => window.print()}
-              className="h-8 px-3 rounded-md text-[12px] font-medium text-white/55 hover:text-white/90 border border-white/[0.09] hover:border-white/20 bg-transparent hover:bg-white/[0.05] transition-all duration-150 flex items-center gap-1.5"
+              className="h-8 px-3 rounded-md text-[12px] font-medium text-white/55 hover:text-white/90 border border-white/[0.09] hover:border-white/20 bg-transparent hover:bg-surface/[0.05] transition-colors duration-150 flex items-center gap-1.5"
             >
               <Printer className="w-3.5 h-3.5" />
               Cetak
@@ -335,7 +335,7 @@ export const HospitalLawasFormulariPage: React.FC = () => {
             <button
               onClick={() => fetchData(true)}
               disabled={isRefreshing}
-              className="h-8 px-3.5 rounded-md text-[12px] font-semibold text-white bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 border border-emerald-500/30 transition-all duration-150 flex items-center gap-1.5 disabled:opacity-50"
+              className="h-8 px-3.5 rounded-md text-[12px] font-semibold text-white bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 border border-emerald-500/30 transition-colors duration-150 flex items-center gap-1.5 disabled:opacity-50"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
               {isRefreshing ? 'Memuat...' : 'Muat Semula'}
@@ -376,7 +376,7 @@ export const HospitalLawasFormulariPage: React.FC = () => {
               className={`w-full flex items-center justify-between px-2.5 py-2 rounded-md text-[12.5px] mb-1 transition-colors duration-100 ${
                 selectedGroup === 'all'
                   ? 'bg-emerald-500/10 text-emerald-400 font-semibold border border-emerald-500/20'
-                  : 'text-white/50 hover:text-white/80 hover:bg-white/[0.04]'
+                  : 'text-white/50 hover:text-white/80 hover:bg-surface/[0.04]'
               }`}
             >
               <span className="flex items-center gap-2">
@@ -399,7 +399,7 @@ export const HospitalLawasFormulariPage: React.FC = () => {
                   className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-md text-[12px] mb-0.5 transition-colors duration-100 ${
                     isActive
                       ? 'bg-white/[0.09] text-white font-semibold border border-white/[0.12]'
-                      : 'text-white/45 hover:text-white/75 hover:bg-white/[0.03]'
+                      : 'text-white/45 hover:text-white/75 hover:bg-surface/[0.03]'
                   }`}
                 >
                   <span className="flex items-center gap-2 truncate">
@@ -425,7 +425,7 @@ export const HospitalLawasFormulariPage: React.FC = () => {
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
                 placeholder={language === 'ms' ? 'Cari ubat, generik, bentuk dos (sirap, pesari, supositori)...' : 'Search drug, generic, dosage form (syrup, pessary, suppository)...'}
-                className="w-full pl-9 pr-8 py-2 bg-white/[0.04] border border-white/[0.08] rounded-md text-[12.5px] text-white placeholder-white/20 focus:outline-none focus:border-emerald-500/40 focus:bg-white/[0.06] transition-all"
+                className="w-full pl-9 pr-8 py-2 bg-white/[0.04] border border-white/[0.08] rounded-md text-[12.5px] text-white placeholder-white/20 focus:outline-none focus:border-emerald-500/40 focus:bg-surface/[0.06] transition-colors"
               />
               {searchTerm && (
                 <button onClick={() => setSearchTerm('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-white/25 hover:text-white/50">
@@ -464,7 +464,7 @@ export const HospitalLawasFormulariPage: React.FC = () => {
                 <button
                   onClick={() => setViewMode('grouped')}
                   title="Paparan Daftar Berkumpulan (Piawaian Kerajaan)"
-                  className={`px-2.5 py-1 rounded text-[11px] font-medium flex items-center gap-1.5 transition-all duration-100 ${viewMode === 'grouped' ? 'bg-white/[0.12] text-white shadow-sm' : 'text-white/35 hover:text-white/65'}`}
+                  className={`px-2.5 py-1 rounded text-[11px] font-medium flex items-center gap-1.5 transition-colors duration-100 ${viewMode === 'grouped' ? 'bg-white/[0.12] text-white shadow-sm' : 'text-white/35 hover:text-white/65'}`}
                 >
                   <Layers className="w-3.5 h-3.5" />
                   <span>Daftar Kumpulan</span>
@@ -472,7 +472,7 @@ export const HospitalLawasFormulariPage: React.FC = () => {
                 <button
                   onClick={() => setViewMode('table')}
                   title="Paparan Daftar Induk Lengkap"
-                  className={`px-2.5 py-1 rounded text-[11px] font-medium flex items-center gap-1.5 transition-all duration-100 ${viewMode === 'table' ? 'bg-white/[0.12] text-white shadow-sm' : 'text-white/35 hover:text-white/65'}`}
+                  className={`px-2.5 py-1 rounded text-[11px] font-medium flex items-center gap-1.5 transition-colors duration-100 ${viewMode === 'table' ? 'bg-white/[0.12] text-white shadow-sm' : 'text-white/35 hover:text-white/65'}`}
                 >
                   <AlignJustify className="w-3.5 h-3.5" />
                   <span>Daftar Induk</span>
@@ -482,7 +482,7 @@ export const HospitalLawasFormulariPage: React.FC = () => {
               {hasActiveFilters && (
                 <button
                   onClick={resetFilters}
-                  className="h-8 px-2.5 rounded-md text-[12px] text-rose-400/90 hover:text-rose-300 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-all"
+                  className="h-8 px-2.5 rounded-md text-[12px] text-rose-400/90 hover:text-rose-300 hover:bg-rose-500/10 border border-transparent hover:border-rose-500/20 transition-colors"
                 >
                   Reset Penapis
                 </button>
@@ -527,7 +527,7 @@ export const HospitalLawasFormulariPage: React.FC = () => {
                 </p>
                 <button
                   onClick={resetFilters}
-                  className="h-8 px-4 rounded-md text-[12px] font-medium text-white/60 border border-white/15 hover:bg-white/[0.05] hover:text-white transition-all"
+                  className="h-8 px-4 rounded-md text-[12px] font-medium text-white/60 border border-white/15 hover:bg-surface/[0.05] hover:text-white transition-colors"
                 >
                   Reset Penapis
                 </button>
@@ -545,7 +545,7 @@ export const HospitalLawasFormulariPage: React.FC = () => {
                       {/* Group Header Banner */}
                       <button
                         onClick={() => toggleGroup(groupMeta.id)}
-                        className="w-full flex items-center justify-between px-4 py-3.5 bg-white/[0.025] hover:bg-white/[0.045] border-b border-white/[0.06] transition-colors group text-left"
+                        className="w-full flex items-center justify-between px-4 py-3.5 bg-white/[0.025] hover:bg-surface/[0.045] border-b border-white/[0.06] transition-colors group text-left"
                       >
                         <div className="flex items-center gap-3 min-w-0">
                           <div className="w-7 h-7 rounded-md bg-white/[0.06] border border-white/[0.09] flex items-center justify-center flex-shrink-0 group-hover:border-emerald-500/30 transition-colors">
@@ -600,7 +600,7 @@ export const HospitalLawasFormulariPage: React.FC = () => {
                                 <div
                                   key={drug.id || drug.facility_inventory_id || idx}
                                   onClick={() => handleOpenDetail(drug)}
-                                  className="px-4 py-3 hover:bg-white/[0.035] cursor-pointer transition-colors duration-100 group"
+                                  className="px-4 py-3 hover:bg-surface/[0.035] cursor-pointer transition-colors duration-100 group"
                                 >
                                   {/* Desktop Grid Layout */}
                                   <div className="hidden lg:grid grid-cols-12 gap-3 items-center">
@@ -661,7 +661,7 @@ export const HospitalLawasFormulariPage: React.FC = () => {
                                         <Warehouse className="w-3 h-3 text-white/20 flex-shrink-0" />
                                         <span className="truncate">{drug.location || 'Stor Utama'}</span>
                                       </span>
-                                      <div className="p-1 rounded text-white/20 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all flex-shrink-0">
+                                      <div className="p-1 rounded text-white/20 group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-colors flex-shrink-0">
                                         <ArrowRight className="w-3.5 h-3.5" />
                                       </div>
                                     </div>
@@ -742,7 +742,7 @@ export const HospitalLawasFormulariPage: React.FC = () => {
                         <tr
                           key={drug.id || drug.facility_inventory_id || idx}
                           onClick={() => handleOpenDetail(drug)}
-                          className="hover:bg-white/[0.035] cursor-pointer transition-colors duration-100 group"
+                          className="hover:bg-surface/[0.035] cursor-pointer transition-colors duration-100 group"
                         >
                           <td className="px-4 py-3 text-[11px] font-mono text-white/25 tabular-nums">{idx + 1}</td>
                           <td className="px-4 py-3 max-w-[320px]">

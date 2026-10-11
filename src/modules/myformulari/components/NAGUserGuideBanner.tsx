@@ -27,11 +27,11 @@ export const NAGUserGuideBanner: React.FC<NAGUserGuideBannerProps> = ({ onQuickF
   }
 
   return (
-    <div className="bg-gradient-to-br from-slate-900 via-emerald-950 to-teal-950 text-white rounded-3xl border border-emerald-500/20 shadow-xl overflow-hidden transition-all duration-300">
+    <div className="bg-gradient-to-br from-slate-900 via-emerald-950 to-teal-950 text-white rounded-3xl border border-emerald-500/20 shadow-xl overflow-hidden transition-colors duration-150">
       {/* Header Bar */}
       <div
         onClick={toggleOpen}
-        className="p-4 sm:p-5 flex items-center justify-between gap-4 cursor-pointer select-none hover:bg-white/5 transition-colors"
+        className="p-4 sm:p-5 flex items-center justify-between gap-4 cursor-pointer select-none hover:bg-surface/5 transition-colors"
       >
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-300 shadow-inner flex-shrink-0">
@@ -59,7 +59,7 @@ export const NAGUserGuideBanner: React.FC<NAGUserGuideBannerProps> = ({ onQuickF
           <span className="text-xs text-emerald-300 font-bold hidden md:inline">
             {isOpen ? 'Hide Guide' : 'Open User Guide'}
           </span>
-          <div className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-emerald-200">
+          <div className="p-2 rounded-xl bg-white/10 hover:bg-surface/20 text-emerald-200">
             {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
           </div>
         </div>
@@ -71,7 +71,7 @@ export const NAGUserGuideBanner: React.FC<NAGUserGuideBannerProps> = ({ onQuickF
           {/* 4 Steps Grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 pt-4">
             {/* Step 1 */}
-            <div className="p-4 bg-white/5 hover:bg-white/10 transition-colors rounded-2xl border border-white/10 space-y-2">
+            <div className="p-4 bg-white/5 hover:bg-surface/10 transition-colors rounded-2xl border border-white/10 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                   Step 1
@@ -85,7 +85,7 @@ export const NAGUserGuideBanner: React.FC<NAGUserGuideBannerProps> = ({ onQuickF
             </div>
 
             {/* Step 2 */}
-            <div className="p-4 bg-white/5 hover:bg-white/10 transition-colors rounded-2xl border border-white/10 space-y-2">
+            <div className="p-4 bg-white/5 hover:bg-surface/10 transition-colors rounded-2xl border border-white/10 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
                   Step 2
@@ -99,7 +99,7 @@ export const NAGUserGuideBanner: React.FC<NAGUserGuideBannerProps> = ({ onQuickF
             </div>
 
             {/* Step 3 */}
-            <div className="p-4 bg-white/5 hover:bg-white/10 transition-colors rounded-2xl border border-white/10 space-y-2">
+            <div className="p-4 bg-white/5 hover:bg-surface/10 transition-colors rounded-2xl border border-white/10 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30">
                   Step 3
@@ -113,7 +113,7 @@ export const NAGUserGuideBanner: React.FC<NAGUserGuideBannerProps> = ({ onQuickF
             </div>
 
             {/* Step 4 */}
-            <div className="p-4 bg-white/5 hover:bg-white/10 transition-colors rounded-2xl border border-white/10 space-y-2">
+            <div className="p-4 bg-white/5 hover:bg-surface/10 transition-colors rounded-2xl border border-white/10 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md bg-purple-500/20 text-purple-300 border border-purple-500/30">
                   Step 4

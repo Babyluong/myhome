@@ -263,7 +263,7 @@ export const CCAllocationPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#fcfdfe] relative font-sans overflow-x-hidden pb-16 text-slate-900">
+    <div className="min-h-screen bg-[#fcfdfe] relative font-sans overflow-x-hidden pb-16 text-text-primary">
       {/* Premium Ambient Radial Lights */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-teal-500/[0.04] to-emerald-500/[0.02] rounded-full blur-[140px] pointer-events-none -z-10 animate-pulse-subtle" />
       <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-cyan-500/[0.02] to-sky-500/[0.03] rounded-full blur-[120px] pointer-events-none -z-10" />
@@ -281,7 +281,7 @@ export const CCAllocationPage: React.FC = () => {
           <nav className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
             <span className="text-slate-400">Financial</span>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-            <span className="text-slate-800 font-extrabold tracking-wide">CC Allocation</span>
+            <span className="text-text-primary font-extrabold tracking-wide">CC Allocation</span>
           </nav>
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-20">
@@ -293,7 +293,7 @@ export const CCAllocationPage: React.FC = () => {
                 <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900">
                   CC Allocation (080702)
                 </h1>
-                <p className="text-slate-500 font-semibold text-[11px] flex items-center gap-1.5">
+                <p className="text-text-muted font-semibold text-[11px] flex items-center gap-1.5">
                   <Sparkles className="w-3 h-3 text-teal-500 animate-pulse" />
                   Track purchase orders (PO/LPO) distribution constraints and warrant status
                 </p>
@@ -306,7 +306,7 @@ export const CCAllocationPage: React.FC = () => {
 
         {/* Loading */}
         {isLoading && (
-          <div className="flex flex-col items-center justify-center py-20 bg-white rounded-[2rem] border border-slate-150 shadow-sm">
+          <div className="flex flex-col items-center justify-center py-20 bg-surface rounded-[2rem] border border-slate-150 shadow-sm">
             <Spinner size="lg" className="text-teal-650 mb-4" />
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Compiling CC sheets...</p>
           </div>
@@ -334,7 +334,7 @@ export const CCAllocationPage: React.FC = () => {
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-teal-50/30 border-l-4 border-teal-600 rounded-r-2xl p-4 flex items-start gap-3 shadow-sm"
+              className="bg-accent-base/10 border-l-4 border-teal-600 rounded-r-2xl p-4 flex items-start gap-3 shadow-sm"
             >
               <Info className="w-5 h-5 text-teal-605 mt-0.5 shrink-0" />
               <div>
@@ -346,7 +346,7 @@ export const CCAllocationPage: React.FC = () => {
             </motion.div>
 
             {/* Filtering Bar */}
-            <div className="bg-white/80 backdrop-blur-md p-4 rounded-[2rem] border border-slate-200/80 shadow-xl shadow-slate-200/10 flex flex-col gap-4">
+            <div className="bg-surface backdrop-blur-md p-4 rounded-[2rem] border border-border-default shadow-xl shadow-slate-200/10 flex flex-col gap-4">
               
               {/* Row 1: Search Bar */}
               <div className="relative w-full">
@@ -356,7 +356,7 @@ export const CCAllocationPage: React.FC = () => {
                   placeholder="Search by PO/LPO number, supplier, items..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-11 pr-4 h-11 bg-slate-50 hover:bg-slate-100/50 border border-slate-150 rounded-2xl text-sm font-semibold focus:ring-2 focus:ring-slate-900/10 focus:bg-white transition-all outline-none"
+                  className="w-full pl-11 pr-4 h-11 bg-subtle/50 hover:bg-subtle border border-slate-150 rounded-2xl text-sm font-semibold focus:ring-2 focus:ring-slate-900/10 focus:bg-surface transition-colors outline-none"
                 />
               </div>
 
@@ -364,12 +364,12 @@ export const CCAllocationPage: React.FC = () => {
               <div className="flex flex-wrap items-center justify-between gap-4 w-full">
                 <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
                   
-                  <div className="flex items-center gap-2 bg-slate-50 border border-slate-150 rounded-2xl px-4 py-2.5 min-w-[130px]">
+                  <div className="flex items-center gap-2 bg-subtle/50 border border-slate-150 rounded-2xl px-4 py-2.5 min-w-[130px]">
                     <Calendar className="w-4 h-4 text-slate-400" />
                     <select
                       value={selectedYear}
                       onChange={(e) => setSelectedYear(Number(e.target.value))}
-                      className="bg-transparent text-xs font-black text-slate-700 focus:outline-none cursor-pointer w-full outline-none"
+                      className="bg-transparent text-xs font-black text-text-secondary focus:outline-none cursor-pointer w-full outline-none"
                     >
                       {years.map((year) => (
                         <option key={year} value={year}>
@@ -379,11 +379,11 @@ export const CCAllocationPage: React.FC = () => {
                     </select>
                   </div>
 
-                  <div className="bg-slate-50 border border-slate-150 rounded-2xl px-4 py-2.5 flex items-center justify-between min-w-[150px]">
+                  <div className="bg-subtle/50 border border-slate-150 rounded-2xl px-4 py-2.5 flex items-center justify-between min-w-[150px]">
                     <select
                       value={filterVoteActivity}
                       onChange={(e) => setFilterVoteActivity(e.target.value)}
-                      className="bg-transparent text-xs font-black text-slate-700 focus:outline-none cursor-pointer w-full outline-none"
+                      className="bg-transparent text-xs font-black text-text-secondary focus:outline-none cursor-pointer w-full outline-none"
                     >
                       <option value="all">All Activities</option>
                       <option value="27401">27401 - Drug</option>
@@ -395,11 +395,11 @@ export const CCAllocationPage: React.FC = () => {
                     </select>
                   </div>
 
-                  <div className="bg-slate-50 border border-slate-150 rounded-2xl px-4 py-2.5 flex items-center justify-between min-w-[160px]">
+                  <div className="bg-subtle/50 border border-slate-150 rounded-2xl px-4 py-2.5 flex items-center justify-between min-w-[160px]">
                     <select
                       value={filterDepartment}
                       onChange={(e) => setFilterDepartment(e.target.value)}
-                      className="bg-transparent text-xs font-black text-slate-700 focus:outline-none cursor-pointer w-full outline-none"
+                      className="bg-transparent text-xs font-black text-text-secondary focus:outline-none cursor-pointer w-full outline-none"
                     >
                       <option value="all">All Departments</option>
                       {WARRANT_DEPARTMENTS.map((dept) => (
@@ -410,11 +410,11 @@ export const CCAllocationPage: React.FC = () => {
                     </select>
                   </div>
 
-                  <div className="bg-slate-50 border border-slate-150 rounded-2xl px-4 py-2.5 flex items-center justify-between min-w-[160px]">
+                  <div className="bg-subtle/50 border border-slate-150 rounded-2xl px-4 py-2.5 flex items-center justify-between min-w-[160px]">
                     <select
                       value={filterCategory}
                       onChange={(e) => setFilterCategory(e.target.value)}
-                      className="bg-transparent text-xs font-black text-slate-700 focus:outline-none cursor-pointer w-full outline-none"
+                      className="bg-transparent text-xs font-black text-text-secondary focus:outline-none cursor-pointer w-full outline-none"
                     >
                       <option value="all">All Categories</option>
                       {WARRANT_CATEGORIES.map((cat) => (
@@ -425,11 +425,11 @@ export const CCAllocationPage: React.FC = () => {
                     </select>
                   </div>
 
-                  <div className="bg-slate-50 border border-slate-150 rounded-2xl px-4 py-2.5 flex items-center justify-between min-w-[150px]">
+                  <div className="bg-subtle/50 border border-slate-150 rounded-2xl px-4 py-2.5 flex items-center justify-between min-w-[150px]">
                     <select
                       value={filterStatus}
                       onChange={(e) => setFilterStatus(e.target.value)}
-                      className="bg-transparent text-xs font-black text-slate-700 focus:outline-none cursor-pointer w-full outline-none"
+                      className="bg-transparent text-xs font-black text-text-secondary focus:outline-none cursor-pointer w-full outline-none"
                     >
                       <option value="all">All Statuses</option>
                       <option value="pending">Pending</option>
@@ -443,7 +443,7 @@ export const CCAllocationPage: React.FC = () => {
                 <div className="flex items-center gap-2 shrink-0">
                   <button
                     onClick={() => window.location.reload()}
-                    className="h-10 w-10 flex items-center justify-center rounded-2xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-450 hover:text-slate-800 transition-colors shadow-sm active:scale-95"
+                    className="h-10 w-10 flex items-center justify-center rounded-2xl bg-subtle/50 hover:bg-subtle border border-border-default text-slate-450 hover:text-text-primary transition-colors shadow-sm active:scale-95"
                     title="Refresh Data"
                   >
                     <RefreshCw className="w-4 h-4" />
@@ -453,18 +453,18 @@ export const CCAllocationPage: React.FC = () => {
             </div>
 
             {/* Elevated Dashboard KPI Metrics Section wrapped in a luxurious white background card */}
-            <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] border border-slate-200 shadow-xl mb-10 relative z-10">
+            <div className="bg-surface p-6 sm:p-8 rounded-[2.5rem] border border-border-default shadow-xl mb-10 relative z-10">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                                {/* Total Allocation */}
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.05 }}
-                  className="bg-teal-50/50 border-2 border-teal-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-teal-50 hover:border-teal-200 hover:shadow-xl hover:shadow-teal-100/40 hover:-translate-y-1 transition-all duration-300 cursor-default"
+                  className="bg-accent-base/10 border-2 border-teal-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-accent-base/10 hover:border-accent-base/20 hover:shadow-xl hover:shadow-teal-100/40 hover:-translate-y-1 transition-colors duration-150 cursor-default"
                 >
                   <div className="absolute top-0 right-0 w-32 h-32 bg-teal-500/10 rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
                   <div className="flex flex-col gap-4 relative z-10">
-                    <div className="w-12 h-12 bg-teal-100 border border-teal-200 rounded-2xl flex items-center justify-center text-teal-605 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                    <div className="w-12 h-12 bg-teal-100 border border-accent-base/20 rounded-2xl flex items-center justify-center text-teal-605 shadow-sm group-hover:scale-110 transition-transform duration-300">
                       <Wallet className="w-6 h-6" />
                     </div>
                     <div>
@@ -487,16 +487,16 @@ export const CCAllocationPage: React.FC = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.1 }}
-                  className="bg-rose-50/50 border-2 border-rose-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-rose-50 hover:border-rose-200 hover:shadow-xl hover:shadow-rose-100/40 hover:-translate-y-1 transition-all duration-300 cursor-default"
+                  className="bg-rose-500/10 border-2 border-rose-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-rose-500/10 hover:border-rose-500/20 hover:shadow-xl hover:shadow-rose-100/40 hover:-translate-y-1 transition-colors duration-150 cursor-default"
                 >
                   <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
                   <div className="flex flex-col gap-4 relative z-10">
-                    <div className="w-12 h-12 bg-rose-100 border border-rose-200 rounded-2xl flex items-center justify-center text-rose-600 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                    <div className="w-12 h-12 bg-rose-100 border border-rose-500/20 rounded-2xl flex items-center justify-center text-rose-600 shadow-sm group-hover:scale-110 transition-transform duration-300">
                       <ShoppingCart className="w-6 h-6" />
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-rose-900/60 uppercase tracking-widest leading-none">Total Expenses</p>
-                      <h3 className="text-2xl sm:text-3xl xl:text-4xl font-black text-rose-900 mt-2.5 tracking-tight tabular-nums truncate" title={formatCurrency(summary.total_expenses).replace('MYR', 'RM')}>
+                      <p className="text-xs font-bold text-rose-400 dark:text-rose-300 font-bold/60 uppercase tracking-widest leading-none">Total Expenses</p>
+                      <h3 className="text-2xl sm:text-3xl xl:text-4xl font-black text-rose-400 dark:text-rose-300 font-bold mt-2.5 tracking-tight tabular-nums truncate" title={formatCurrency(summary.total_expenses).replace('MYR', 'RM')}>
                         {formatCurrency(summary.total_expenses).replace('MYR', 'RM')}
                       </h3>
                       <p className="text-[11px] font-bold text-rose-605 mt-2 flex items-center gap-1.5 pt-0.5">
@@ -513,10 +513,10 @@ export const CCAllocationPage: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.15 }}
                   className={cn(
-                    "p-6 rounded-[2.5rem] relative overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-default border-2",
+                    "p-6 rounded-[2.5rem] relative overflow-hidden group hover:shadow-xl hover:-translate-y-1 transition-colors duration-150 cursor-default border-2",
                     summary.total_balance < 0 
-                      ? "bg-rose-50/50 border-rose-100 hover:bg-rose-50 hover:border-rose-200 hover:shadow-rose-100/40" 
-                      : "bg-blue-50/50 border-blue-100 hover:bg-blue-50 hover:border-blue-200 hover:shadow-blue-100/40"
+                      ? "bg-rose-500/10 border-rose-100 hover:bg-rose-500/10 hover:border-rose-500/20 hover:shadow-rose-100/40" 
+                      : "bg-blue-500/10 border-blue-100 hover:bg-blue-500/10 hover:border-blue-500/20 hover:shadow-blue-100/40"
                   )}
                 >
                   <div className={cn(
@@ -526,20 +526,20 @@ export const CCAllocationPage: React.FC = () => {
                   <div className="flex flex-col gap-4 relative z-10">
                     <div className={cn(
                       "w-12 h-12 border rounded-2xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300",
-                      summary.total_balance < 0 ? "bg-rose-100 border-rose-200 text-rose-600" : "bg-blue-100 border-blue-200 text-blue-600"
+                      summary.total_balance < 0 ? "bg-rose-100 border-rose-500/20 text-rose-600" : "bg-blue-100 border-blue-500/20 text-blue-600"
                     )}>
                       <PieChart className="w-6 h-6" />
                     </div>
                     <div>
                       <p className={cn(
                         "text-xs font-bold uppercase tracking-widest leading-none",
-                        summary.total_balance < 0 ? "text-rose-900/60" : "text-blue-900/60"
+                        summary.total_balance < 0 ? "text-rose-400 dark:text-rose-300 font-bold/60" : "text-blue-400 dark:text-blue-300 font-bold/60"
                       )}>
                         {filterVoteActivity !== 'all' ? 'Activity Balance' : 'Consolidated Balance'}
                       </p>
                       <h3 className={cn(
                         "text-2xl sm:text-3xl xl:text-4xl font-black mt-2.5 tracking-tight tabular-nums truncate",
-                        summary.total_balance < 0 ? "text-rose-900" : "text-blue-900"
+                        summary.total_balance < 0 ? "text-rose-400 dark:text-rose-300 font-bold" : "text-blue-400 dark:text-blue-300 font-bold"
                       )} title={formatCurrency(summary.total_balance).replace('MYR', 'RM')}>
                         {formatCurrency(summary.total_balance).replace('MYR', 'RM')}
                       </h3>
@@ -556,18 +556,18 @@ export const CCAllocationPage: React.FC = () => {
               </div>
 
               {/* Sub-metrics Row */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 pt-8 border-t border-slate-100">
-                <div className="bg-amber-50/50 border-2 border-amber-100 p-5 rounded-[2rem] flex items-center gap-4 group hover:bg-amber-50 hover:border-amber-200 hover:shadow-xl transition-all duration-300 cursor-default">
-                  <div className="w-10 h-10 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center border border-amber-200 shadow-sm group-hover:scale-110 transition-transform duration-200">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 pt-8 border-t border-border-subtle">
+                <div className="bg-amber-500/10 border-2 border-amber-100 p-5 rounded-[2rem] flex items-center gap-4 group hover:bg-amber-500/10 hover:border-amber-500/20 hover:shadow-xl transition-colors duration-150 cursor-default">
+                  <div className="w-10 h-10 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center border border-amber-500/20 shadow-sm group-hover:scale-110 transition-transform duration-200">
                     <AlertTriangle className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-[9px] font-black text-amber-900/65 uppercase tracking-widest leading-none">Committed Liabilities</p>
-                    <h4 className="text-lg font-black text-amber-900 mt-1.5 tabular-nums">{formatCurrency(summary.total_liabilities).replace('MYR', 'RM')}</h4>
+                    <p className="text-[9px] font-black text-amber-400 dark:text-amber-300 font-bold/65 uppercase tracking-widest leading-none">Committed Liabilities</p>
+                    <h4 className="text-lg font-black text-amber-400 dark:text-amber-300 font-bold mt-1.5 tabular-nums">{formatCurrency(summary.total_liabilities).replace('MYR', 'RM')}</h4>
                   </div>
                 </div>
 
-                <div className="bg-sky-50/50 border-2 border-sky-100 p-5 rounded-[2rem] flex items-center gap-4 group hover:bg-sky-50 hover:border-sky-200 hover:shadow-xl transition-all duration-300 cursor-default">
+                <div className="bg-sky-50/50 border-2 border-sky-100 p-5 rounded-[2rem] flex items-center gap-4 group hover:bg-sky-50 hover:border-sky-200 hover:shadow-xl transition-colors duration-150 cursor-default">
                   <div className="w-10 h-10 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center border border-sky-200 shadow-sm group-hover:scale-110 transition-transform duration-200">
                     <BarChart2 className="w-5 h-5" />
                   </div>
@@ -577,8 +577,8 @@ export const CCAllocationPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-teal-50/50 border-2 border-teal-100 p-5 rounded-[2rem] flex items-center gap-4 group hover:bg-teal-50 hover:border-teal-200 hover:shadow-xl transition-all duration-300 cursor-default">
-                  <div className="w-10 h-10 bg-teal-100 text-teal-605 rounded-2xl flex items-center justify-center border border-teal-200 shadow-sm group-hover:scale-110 transition-transform duration-200">
+                <div className="bg-accent-base/10 border-2 border-teal-100 p-5 rounded-[2rem] flex items-center gap-4 group hover:bg-accent-base/10 hover:border-accent-base/20 hover:shadow-xl transition-colors duration-150 cursor-default">
+                  <div className="w-10 h-10 bg-teal-100 text-teal-605 rounded-2xl flex items-center justify-center border border-accent-base/20 shadow-sm group-hover:scale-110 transition-transform duration-200">
                     <PieChart className="w-5 h-5" />
                   </div>
                   <div className="flex-1">
@@ -586,8 +586,8 @@ export const CCAllocationPage: React.FC = () => {
                       <p className="text-[9px] font-black text-teal-900/65 uppercase tracking-widest leading-none">Usage rate</p>
                       <span className="text-[10px] font-black text-teal-600 leading-none">{summary.usage_percentage.toFixed(1)}%</span>
                     </div>
-                    <div className="mt-2 h-1.5 bg-slate-200 rounded-full overflow-hidden">
-                      <div className="h-full bg-teal-500 rounded-full transition-all duration-500" style={{ width: `${Math.min(summary.usage_percentage, 100)}%` }} />
+                    <div className="mt-2 h-1.5 bg-subtle rounded-full overflow-hidden">
+                      <div className="h-full bg-teal-500 rounded-full transition-colors duration-500" style={{ width: `${Math.min(summary.usage_percentage, 100)}%` }} />
                     </div>
                   </div>
                 </div>
@@ -595,11 +595,11 @@ export const CCAllocationPage: React.FC = () => {
             </div>
 
             {/* Main Records Table Registry Card Wrapper */}
-            <div className="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/30 border border-slate-200/80 overflow-hidden relative z-10">
-              <div className="p-6 lg:p-8 border-b border-slate-100 flex items-center justify-between">
+            <div className="bg-surface rounded-[2.5rem] shadow-xl shadow-slate-200/30 border border-border-default overflow-hidden relative z-10">
+              <div className="p-6 lg:p-8 border-b border-border-subtle flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2">
-                    <FileText className="w-5 h-5 text-indigo-950" />
+                  <h3 className="text-lg font-black text-text-primary tracking-tight flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-indigo-400 dark:text-indigo-300 font-bold" />
                     Deduction Logs
                   </h3>
                   <p className="text-xs text-slate-400 font-bold uppercase tracking-widest mt-0.5">{filteredExpenses.length} entries registered</p>
@@ -610,26 +610,26 @@ export const CCAllocationPage: React.FC = () => {
               <div className="hidden lg:block px-4 pb-4">
                 <table className="w-full border-collapse">
                   <thead>
-                    <tr className="bg-gradient-to-r from-slate-50 to-indigo-50/10 border-b border-slate-200/80">
+                    <tr className="bg-subtle/50 border-b border-border-default">
                       <th className="w-1.5 p-0" />
-                      <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Date</th>
-                      <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">PO Number</th>
-                      <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">LPO Number</th>
-                      <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Type</th>
-                      <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Amount</th>
-                      <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Approved By</th>
-                      <th className="px-6 py-4 text-center text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Status</th>
+                      <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Date</th>
+                      <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">PO Number</th>
+                      <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">LPO Number</th>
+                      <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Type</th>
+                      <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Amount</th>
+                      <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Approved By</th>
+                      <th className="px-6 py-4 text-center text-[10px] font-black uppercase tracking-[0.2em] text-text-secondary font-bold">Status</th>
                       <th className="w-10 px-3 py-4" />
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="divide-y divide-border-subtle">
                     {paginatedExpenses.length > 0 ? (
                       paginatedExpenses.map((expense) => (
                         <tr 
                           key={expense.id} 
                           onClick={() => expense.po_id && handlePOClick(expense.po_id)}
                           className={cn(
-                            "hover:bg-slate-50/50 transition-colors duration-200 group relative h-16",
+                            "hover:bg-subtle/50 transition-colors duration-200 group relative h-16",
                             expense.po_id ? "cursor-pointer" : "cursor-default"
                           )}
                         >
@@ -638,7 +638,7 @@ export const CCAllocationPage: React.FC = () => {
                             <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-indigo-650 scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-center rounded-r" />
                           </td>
                           <td className="px-6 py-4">
-                            <span className="font-semibold text-xs text-slate-500 tabular-nums">{formatDate(expense.expense_date)}</span>
+                            <span className="font-semibold text-xs text-text-muted tabular-nums">{formatDate(expense.expense_date)}</span>
                           </td>
                           <td className="px-6 py-4">
                             {expense.po_id ? (
@@ -647,7 +647,7 @@ export const CCAllocationPage: React.FC = () => {
                                   e.stopPropagation();
                                   handlePOClick(expense.po_id);
                                 }}
-                                className="font-mono font-black text-xs text-indigo-650 hover:text-indigo-800 hover:underline transition-all tabular-nums"
+                                className="font-mono font-black text-xs text-indigo-650 hover:text-indigo-400 hover:underline transition-colors tabular-nums"
                               >
                                 {expense.po_number}
                               </button>
@@ -662,16 +662,16 @@ export const CCAllocationPage: React.FC = () => {
                               </div>
                             )}
                           </td>
-                          <td className="px-6 py-4 font-mono text-xs font-bold text-slate-700 tabular-nums">
+                          <td className="px-6 py-4 font-mono text-xs font-bold text-text-secondary tabular-nums">
                             {expense.lpo_number || '—'}
                           </td>
                           <td className="px-6 py-4">
                             {getPoTypeBadge(expense.po_type)}
                           </td>
-                          <td className="px-6 py-4 font-black text-slate-900 tabular-nums">
+                          <td className="px-6 py-4 font-black text-text-primary tabular-nums">
                             {formatCurrency(Number(expense.amount)).replace('MYR', 'RM')}
                           </td>
-                          <td className="px-6 py-4 text-xs font-bold text-slate-600">
+                          <td className="px-6 py-4 text-xs font-bold text-text-muted">
                             {expense.purchase_order?.approver?.full_name || '—'}
                           </td>
                           <td className="px-6 py-4 text-center">
@@ -679,14 +679,14 @@ export const CCAllocationPage: React.FC = () => {
                           </td>
                           <td className="w-10 px-3 py-4 text-right">
                             {expense.po_id && (
-                              <ChevronRight className="w-4 h-4 text-slate-400 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" />
+                              <ChevronRight className="w-4 h-4 text-slate-400 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-colors duration-150" />
                             )}
                           </td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={9} className="py-16 text-center text-slate-400 font-bold uppercase tracking-widest text-[10px]">
+                        <td colSpan={9} className="py-16 text-center text-text-muted font-medium font-bold uppercase tracking-widest text-[10px]">
                           No expenses matching parameters
                         </td>
                       </tr>
@@ -701,7 +701,7 @@ export const CCAllocationPage: React.FC = () => {
                   paginatedExpenses.map((expense) => (
                     <div 
                       key={expense.id} 
-                      className="bg-white border-2 border-slate-100 rounded-[2rem] p-5 shadow-sm active:bg-slate-50 transition-all duration-200 cursor-pointer"
+                      className="bg-surface border-2 border-border-subtle rounded-[2rem] p-5 shadow-sm active:bg-subtle/50 transition-colors duration-150 cursor-pointer"
                       onClick={() => expense.po_id && handlePOClick(expense.po_id)}
                     >
                       <div className="flex justify-between items-start mb-4">
@@ -720,7 +720,7 @@ export const CCAllocationPage: React.FC = () => {
                       <div className="grid grid-cols-2 gap-4 mb-4 pt-3 border-t border-slate-50">
                         <div>
                           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">LPO Number</span>
-                          <span className="text-xs font-mono font-bold text-slate-800">{expense.lpo_number || '—'}</span>
+                          <span className="text-xs font-mono font-bold text-text-primary">{expense.lpo_number || '—'}</span>
                         </div>
                         <div className="text-right">
                           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Amount</span>
@@ -731,7 +731,7 @@ export const CCAllocationPage: React.FC = () => {
                       <div className="mt-3 pt-3 border-t border-slate-50 flex items-center justify-between">
                         <div>
                           <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Approved By</span>
-                          <span className="text-xs font-bold text-slate-700">
+                          <span className="text-xs font-bold text-text-secondary">
                             {expense.purchase_order?.approver?.full_name || '—'}
                           </span>
                         </div>
@@ -740,7 +740,7 @@ export const CCAllocationPage: React.FC = () => {
                     </div>
                   ))
                 ) : (
-                  <div className="text-center py-16 bg-slate-50/50 rounded-3xl border border-dashed border-slate-200">
+                  <div className="text-center py-16 bg-subtle/50 rounded-3xl border border-dashed border-border-default">
                     <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">No expenses logged</p>
                   </div>
                 )}
@@ -748,22 +748,22 @@ export const CCAllocationPage: React.FC = () => {
 
               {/* Pagination Controls */}
               {!isLoading && filteredExpenses.length > 0 && (
-                <div className="mt-8 pt-6 pb-6 px-8 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="mt-8 pt-6 pb-6 px-8 border-t border-border-subtle flex flex-col sm:flex-row items-center justify-between gap-4">
                   {/* Count Summary */}
                   <div className="text-xs font-semibold text-slate-400 flex items-center gap-1.5 uppercase tracking-wider">
-                    Showing <span className="text-slate-900 font-bold">{(currentPage - 1) * pageSize + 1}</span> to <span className="text-slate-900 font-bold">{Math.min(currentPage * pageSize, filteredExpenses.length)}</span> of <span className="text-slate-900 font-bold">{filteredExpenses.length}</span> entries
+                    Showing <span className="text-text-primary font-bold">{(currentPage - 1) * pageSize + 1}</span> to <span className="text-text-primary font-bold">{Math.min(currentPage * pageSize, filteredExpenses.length)}</span> of <span className="text-text-primary font-bold">{filteredExpenses.length}</span> entries
                   </div>
 
                   {/* Page Controls */}
                   <div className="flex flex-wrap items-center gap-3">
                     {/* Jump-to dropdown */}
                     {totalPages > 1 && (
-                      <div className="flex items-center gap-1.5 text-xs text-slate-500 font-semibold bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200/50">
+                      <div className="flex items-center gap-1.5 text-xs text-text-muted font-semibold bg-subtle/50 px-3 py-1.5 rounded-xl border border-border-default">
                         <span>Jump to</span>
                         <select 
                           value={currentPage}
                           onChange={(e) => setCurrentPage(Number(e.target.value))}
-                          className="bg-white border border-slate-200/80 rounded-lg px-1.5 py-0.5 font-bold text-slate-700 outline-none focus:border-indigo-500 cursor-pointer"
+                          className="bg-surface border border-border-default rounded-lg px-1.5 py-0.5 font-bold text-text-secondary outline-none focus:border-indigo-500 cursor-pointer"
                         >
                           {Array.from({ length: totalPages }).map((_, i) => (
                             <option key={i + 1} value={i + 1}>{i + 1}</option>
@@ -773,18 +773,18 @@ export const CCAllocationPage: React.FC = () => {
                     )}
 
                     {/* Standard Pill Controls with Chevron/Chevron Double */}
-                    <div className="flex items-center gap-1 bg-slate-100/60 p-1 rounded-2xl border border-slate-200/20">
+                    <div className="flex items-center gap-1 bg-subtle p-1 rounded-2xl border border-border-default">
                       <button
                         onClick={() => setCurrentPage(1)}
                         disabled={currentPage === 1}
-                        className="w-9 h-9 flex items-center justify-center rounded-xl transition-all disabled:opacity-20 disabled:cursor-not-allowed hover:bg-white hover:shadow-sm text-slate-600 active:scale-95"
+                        className="w-9 h-9 flex items-center justify-center rounded-xl transition-colors disabled:opacity-20 disabled:cursor-not-allowed hover:bg-surface hover:shadow-sm text-text-muted active:scale-95"
                       >
                         <ChevronsLeft className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                         disabled={currentPage === 1}
-                        className="w-9 h-9 flex items-center justify-center rounded-xl transition-all disabled:opacity-20 disabled:cursor-not-allowed hover:bg-white hover:shadow-sm text-slate-600 active:scale-95"
+                        className="w-9 h-9 flex items-center justify-center rounded-xl transition-colors disabled:opacity-20 disabled:cursor-not-allowed hover:bg-surface hover:shadow-sm text-text-muted active:scale-95"
                       >
                         <ChevronLeft className="w-4 h-4" />
                       </button>
@@ -795,10 +795,10 @@ export const CCAllocationPage: React.FC = () => {
                           key={pageNum}
                           onClick={() => setCurrentPage(pageNum)}
                           className={cn(
-                            "h-9 w-9 rounded-xl font-bold text-xs active:scale-95 transition-all border",
+                            "h-9 w-9 rounded-xl font-bold text-xs active:scale-95 transition-colors border",
                             currentPage === pageNum 
                               ? 'bg-slate-900 text-white border-slate-900 shadow-md shadow-slate-900/10' 
-                              : 'border-slate-200/30 text-slate-500 bg-white hover:bg-slate-50'
+                              : 'border-border-default text-text-muted bg-surface hover:bg-subtle/50'
                           )}
                         >
                           {pageNum}
@@ -808,14 +808,14 @@ export const CCAllocationPage: React.FC = () => {
                       <button
                         onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                         disabled={currentPage >= totalPages}
-                        className="w-9 h-9 flex items-center justify-center rounded-xl transition-all disabled:opacity-20 disabled:cursor-not-allowed hover:bg-white hover:shadow-sm text-slate-600 active:scale-95"
+                        className="w-9 h-9 flex items-center justify-center rounded-xl transition-colors disabled:opacity-20 disabled:cursor-not-allowed hover:bg-surface hover:shadow-sm text-text-muted active:scale-95"
                       >
                         <ChevronRight className="w-4 h-4" />
                       </button>
                       <button
                         onClick={() => setCurrentPage(totalPages)}
                         disabled={currentPage >= totalPages}
-                        className="w-9 h-9 flex items-center justify-center rounded-xl transition-all disabled:opacity-20 disabled:cursor-not-allowed hover:bg-white hover:shadow-sm text-slate-600 active:scale-95"
+                        className="w-9 h-9 flex items-center justify-center rounded-xl transition-colors disabled:opacity-20 disabled:cursor-not-allowed hover:bg-surface hover:shadow-sm text-text-muted active:scale-95"
                       >
                         <ChevronsRight className="w-4 h-4" />
                       </button>
@@ -848,23 +848,23 @@ export const CCAllocationPage: React.FC = () => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed right-0 top-0 h-full w-full max-w-xl bg-white shadow-2xl z-[70] flex flex-col font-sans"
+              className="fixed right-0 top-0 h-full w-full max-w-xl bg-surface shadow-2xl z-[70] flex flex-col font-sans"
             >
               {/* Header */}
-              <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-white sticky top-0 z-10">
+              <div className="p-6 border-b border-border-subtle flex items-center justify-between bg-surface sticky top-0 z-10">
                 <div className="flex items-center gap-4">
                   <div className="w-11 h-11 bg-gradient-to-tr from-slate-900 to-teal-950 rounded-2xl flex items-center justify-center">
                     <FileText className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-base font-black text-slate-900 tracking-tight">Purchase Order Details</h2>
+                    <h2 className="text-base font-black text-text-primary tracking-tight">Purchase Order Details</h2>
                     <p className="text-[10px] font-black text-slate-400 font-mono uppercase tracking-widest">{selectedPO?.po_number}</p>
                   </div>
                 </div>
                 
                 <button
                   onClick={() => setIsDrawerOpen(false)}
-                  className="p-2 hover:bg-slate-50 rounded-xl transition-colors text-slate-400 hover:text-slate-800"
+                  className="p-2 hover:bg-subtle/50 rounded-xl transition-colors text-slate-400 hover:text-text-primary"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -880,36 +880,36 @@ export const CCAllocationPage: React.FC = () => {
                   <>
                     {/* Header Info */}
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-slate-50 border border-slate-150 p-4 rounded-2xl">
+                      <div className="bg-subtle/50 border border-slate-150 p-4 rounded-2xl">
                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Department</p>
-                        <p className="text-xs font-bold text-slate-800 leading-tight">
+                        <p className="text-xs font-bold text-text-primary leading-tight">
                           {WARRANT_DEPARTMENTS.find(d => d.value === normalize(selectedPO.department || ''))?.label || selectedPO.department || 'N/A'}
                         </p>
                       </div>
-                      <div className="bg-slate-50 border border-slate-150 p-4 rounded-2xl">
+                      <div className="bg-subtle/50 border border-slate-150 p-4 rounded-2xl">
                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Category & Vote</p>
-                        <p className="text-xs font-bold text-slate-800 leading-tight">
+                        <p className="text-xs font-bold text-text-primary leading-tight">
                           {WARRANT_CATEGORIES.find(c => c.value === selectedPO.category)?.label || selectedPO.category || 'N/A'}
-                          {selectedPO.vote_code && <span className="block text-[10px] text-slate-500 mt-1 font-semibold font-mono">{selectedPO.vote_code} - {selectedPO.vote_activity}</span>}
+                          {selectedPO.vote_code && <span className="block text-[10px] text-text-muted mt-1 font-semibold font-mono">{selectedPO.vote_code} - {selectedPO.vote_activity}</span>}
                         </p>
                       </div>
-                      <div className="bg-slate-50 border border-slate-150 p-4 rounded-2xl">
+                      <div className="bg-subtle/50 border border-slate-150 p-4 rounded-2xl">
                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Supplier</p>
-                        <p className="text-xs font-bold text-slate-800 leading-tight">{selectedPO.supplier?.company_name || selectedPO.manual_supplier_name || 'N/A'}</p>
+                        <p className="text-xs font-bold text-text-primary leading-tight">{selectedPO.supplier?.company_name || selectedPO.manual_supplier_name || 'N/A'}</p>
                       </div>
-                      <div className="bg-slate-50 border border-slate-150 p-4 rounded-2xl">
+                      <div className="bg-subtle/50 border border-slate-150 p-4 rounded-2xl">
                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Order Date</p>
-                        <p className="text-xs font-bold text-slate-800 leading-tight">{formatDate(selectedPO.order_date)}</p>
+                        <p className="text-xs font-bold text-text-primary leading-tight">{formatDate(selectedPO.order_date)}</p>
                       </div>
-                      <div className="bg-slate-50 border border-slate-150 p-4 rounded-2xl">
+                      <div className="bg-subtle/50 border border-slate-150 p-4 rounded-2xl">
                         <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Created By</p>
-                        <p className="text-xs font-bold text-slate-800 leading-tight leading-snug">{selectedPO.creator_name || selectedPO.creator?.full_name || selectedPO.signature_snapshot?.applicantName || 'Pegawai Bertanggungjawab'}</p>
+                        <p className="text-xs font-bold text-text-primary leading-tight leading-snug">{selectedPO.creator_name || selectedPO.creator?.full_name || selectedPO.signature_snapshot?.applicantName || 'Pegawai Bertanggungjawab'}</p>
                         <p className="text-[9px] text-slate-400 mt-1 font-bold">{formatDateTime(selectedPO.created_at)}</p>
                       </div>
                       {(selectedPO.status === 'approved' || selectedPO.approved_at) && (
-                        <div className="bg-slate-50 border border-slate-150 p-4 rounded-2xl">
+                        <div className="bg-subtle/50 border border-slate-150 p-4 rounded-2xl">
                           <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Approved By</p>
-                          <p className="text-xs font-bold text-slate-800 leading-snug">
+                          <p className="text-xs font-bold text-text-primary leading-snug">
                             {selectedPO.approver_name || selectedPO.approver?.full_name || selectedPO.signature_snapshot?.headName || 'System (Auto)'}
                           </p>
                           {selectedPO.approved_at && (
@@ -921,11 +921,11 @@ export const CCAllocationPage: React.FC = () => {
 
                     {/* Cancellation Reason if applicable */}
                     {selectedPO.status === 'cancelled' && selectedPO.notes && (
-                      <div className="bg-rose-50 border border-rose-100 p-5 rounded-2xl flex items-start gap-3">
+                      <div className="bg-rose-500/10 border border-rose-100 p-5 rounded-2xl flex items-start gap-3">
                         <AlertTriangle className="w-5 h-5 text-rose-600 mt-0.5 shrink-0" />
                         <div>
                           <p className="text-[9px] font-black text-rose-650 uppercase tracking-widest mb-1">Cancellation Reason</p>
-                          <p className="text-xs font-bold text-rose-900 leading-relaxed">{selectedPO.notes}</p>
+                          <p className="text-xs font-bold text-rose-400 dark:text-rose-300 font-bold leading-relaxed">{selectedPO.notes}</p>
                         </div>
                       </div>
                     )}
@@ -933,9 +933,9 @@ export const CCAllocationPage: React.FC = () => {
                     {/* Items Table */}
                     <div className="space-y-3">
                       <h3 className="text-xs font-black text-slate-450 uppercase tracking-widest">Purchase Items</h3>
-                      <div className="border border-slate-150 rounded-2xl overflow-hidden bg-slate-50/50">
+                      <div className="border border-slate-150 rounded-2xl overflow-hidden bg-subtle/50">
                         <table className="w-full text-left">
-                          <thead className="bg-slate-50 border-b border-slate-150 text-[9px] font-black text-slate-400 uppercase">
+                          <thead className="bg-subtle/50 border-b border-slate-150 text-[9px] font-black text-text-secondary font-bold uppercase">
                             <tr>
                               <th className="py-3 px-4">Item Name</th>
                               <th className="py-3 px-4 text-center">Qty</th>
@@ -943,14 +943,14 @@ export const CCAllocationPage: React.FC = () => {
                               <th className="py-3 px-4 text-right">Total</th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-slate-100">
+                          <tbody className="divide-y divide-border-subtle">
                             {selectedPO.items?.map((item: any, idx: number) => (
-                              <tr key={idx} className="text-xs hover:bg-slate-50 transition-colors">
-                                <td className="py-4 px-4 font-bold text-slate-800">{item.item_name}</td>
-                                <td className="py-4 px-4 text-center text-slate-500 font-bold">
+                              <tr key={idx} className="text-xs hover:bg-subtle/50 transition-colors">
+                                <td className="py-4 px-4 font-bold text-text-primary">{item.item_name}</td>
+                                <td className="py-4 px-4 text-center text-text-muted font-bold">
                                   {item.quantity_ordered || item.quantity} {item.packaging_description || item.uom}
                                 </td>
-                                <td className="py-4 px-4 text-right text-slate-500 font-semibold tabular-nums">{formatCurrency(Number(item.unit_price)).replace('MYR', '')}</td>
+                                <td className="py-4 px-4 text-right text-text-muted font-semibold tabular-nums">{formatCurrency(Number(item.unit_price)).replace('MYR', '')}</td>
                                 <td className="py-4 px-4 text-right font-black text-indigo-650 tabular-nums">{formatCurrency(Number(item.total_price)).replace('MYR', '')}</td>
                               </tr>
                             ))}
@@ -960,7 +960,7 @@ export const CCAllocationPage: React.FC = () => {
                     </div>
 
                     {/* Summary */}
-                    <div className="border-t border-slate-100 pt-6 flex justify-between items-center">
+                    <div className="border-t border-border-subtle pt-6 flex justify-between items-center">
                       <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Grand Total</span>
                       <span className="text-xl font-black text-indigo-655 tabular-nums">{formatCurrency(Number(selectedPO.total_amount))}</span>
                     </div>

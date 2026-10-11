@@ -898,7 +898,7 @@ export const CylinderDispatchPrintView: React.FC<CylinderDispatchPrintViewProps>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 hover:bg-slate-200 text-slate-400 hover:text-slate-600 rounded-full transition-all focus:outline-none"
+            className="p-1.5 hover:bg-slate-200 text-slate-400 hover:text-slate-600 rounded-full transition-[transform,opacity,box-shadow,border-color] focus:outline-none"
           >
             <X className="w-5 h-5" />
           </button>
@@ -1434,14 +1434,14 @@ export const CylinderDispatchPrintView: React.FC<CylinderDispatchPrintViewProps>
         <div className="px-6 py-4 border-t border-slate-200 flex justify-end gap-3 bg-slate-50">
           <button
             onClick={onClose}
-            className="px-4 py-2 border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-100 font-semibold text-sm transition-all focus:outline-none"
+            className="px-4 py-2 border border-slate-200 rounded-xl text-slate-600 hover:bg-slate-100 font-semibold text-sm transition-[transform,opacity,box-shadow,border-color] focus:outline-none"
           >
             Tutup
           </button>
           <button
             onClick={handlePrint}
             disabled={!request}
-            className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-xl flex items-center gap-2 shadow-lg shadow-blue-500/20 disabled:bg-blue-400 disabled:cursor-not-allowed transition-all focus:outline-none"
+            className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-xl flex items-center gap-2 shadow-lg shadow-blue-500/20 disabled:bg-blue-400 disabled:cursor-not-allowed transition-[transform,opacity,box-shadow,border-color] focus:outline-none"
           >
             <Printer className="w-4 h-4" />
             Cetak Dokumen

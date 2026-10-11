@@ -102,13 +102,13 @@ export const AuditReasonModal: React.FC<AuditReasonModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-200">
       <div
-        className="bg-white rounded-3xl max-w-lg w-full shadow-2xl border border-slate-200 overflow-hidden text-slate-800 scale-100 transition-all"
+        className="bg-surface rounded-3xl max-w-lg w-full shadow-2xl border border-border-default overflow-hidden text-text-primary scale-100 transition-colors"
         role="dialog"
         aria-modal="true"
       >
         {/* Top Header Banner */}
         <div className={`p-6 border-b ${
-          isDelete ? 'bg-rose-50/80 border-rose-200' : 'bg-amber-50/80 border-amber-200'
+          isDelete ? 'bg-rose-500/10 border-rose-500/20' : 'bg-amber-500/10 border-amber-500/20'
         } relative`}>
           <div className="flex items-start gap-4">
             <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black shrink-0 ${
@@ -119,18 +119,18 @@ export const AuditReasonModal: React.FC<AuditReasonModalProps> = ({
             <div className="flex-1 pr-6">
               <div className="flex items-center gap-2">
                 <span className={`text-[10px] font-mono font-black uppercase px-2 py-0.5 rounded-md ${
-                  isDelete ? 'bg-rose-200 text-rose-900' : 'bg-amber-200 text-amber-900'
+                  isDelete ? 'bg-rose-200 text-rose-400 dark:text-rose-300 font-bold' : 'bg-amber-200 text-amber-400 dark:text-amber-300 font-bold'
                 }`}>
                   {isDelete
                     ? isMs ? 'AUDIT PEMADAMAN' : 'DELETION AUDIT'
                     : isMs ? 'AUDIT PINDAAN' : 'MODIFICATION AUDIT'}
                 </span>
               </div>
-              <h3 className="text-lg font-black text-slate-900 mt-1">
+              <h3 className="text-lg font-black text-text-primary mt-1">
                 {title}
               </h3>
-              <p className="text-xs text-slate-600 mt-0.5 font-medium line-clamp-1">
-                {isMs ? 'Rekod:' : 'Record:'} <span className="font-bold text-slate-900">"{recordTitle}"</span>
+              <p className="text-xs text-text-muted mt-0.5 font-medium line-clamp-1">
+                {isMs ? 'Rekod:' : 'Record:'} <span className="font-bold text-text-primary">"{recordTitle}"</span>
               </p>
             </div>
           </div>
@@ -138,7 +138,7 @@ export const AuditReasonModal: React.FC<AuditReasonModalProps> = ({
           <button
             onClick={onClose}
             disabled={isLoading}
-            className="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-white/80 transition-all"
+            className="absolute top-5 right-5 p-2 rounded-xl text-slate-400 hover:text-text-secondary hover:bg-surface transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -147,15 +147,15 @@ export const AuditReasonModal: React.FC<AuditReasonModalProps> = ({
         {/* Modal Body & Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           {/* Audit Identity Notice */}
-          <div className="p-3 rounded-2xl bg-slate-50 border border-slate-200 flex items-center gap-3 text-xs">
-            <div className="w-8 h-8 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center font-bold text-xs shrink-0">
+          <div className="p-3 rounded-2xl bg-subtle/50 border border-border-default flex items-center gap-3 text-xs">
+            <div className="w-8 h-8 rounded-full bg-subtle text-text-secondary flex items-center justify-center font-bold text-xs shrink-0">
               <User className="w-4 h-4" />
             </div>
             <div className="min-w-0 flex-1">
-              <div className="font-bold text-slate-900 truncate">
+              <div className="font-bold text-text-primary truncate">
                 {isMs ? `Tindakan direkod atas nama: ${actorName}` : `Action recorded under: ${actorName}`}
               </div>
-              <div className="text-[11px] text-slate-500 font-medium">
+              <div className="text-[11px] text-text-muted font-medium">
                 {actorRole || (isMs ? 'Pegawai Bertugas' : 'Duty Officer')} •{' '}
                 {new Date().toLocaleDateString(isMs ? 'ms-MY' : 'en-MY', {
                   day: 'numeric',
@@ -169,7 +169,7 @@ export const AuditReasonModal: React.FC<AuditReasonModalProps> = ({
 
           {/* Preset Quick Reason Chips */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-slate-900 uppercase tracking-wider block">
+            <label className="text-xs font-bold text-text-primary uppercase tracking-wider block">
               {isMs ? 'Pilihan Sebab Pantas:' : 'Quick Preset Reasons:'}
             </label>
             <div className="flex flex-wrap gap-1.5">
@@ -181,12 +181,12 @@ export const AuditReasonModal: React.FC<AuditReasonModalProps> = ({
                     setReason(opt)
                     setError('')
                   }}
-                  className={`text-xs px-3 py-1.5 rounded-xl font-medium border transition-all text-left ${
+                  className={`text-xs px-3 py-1.5 rounded-xl font-medium border transition-colors text-left ${
                     reason === opt
                       ? isDelete
-                        ? 'bg-rose-100 text-rose-950 border-rose-300 font-bold shadow-xs'
-                        : 'bg-amber-100 text-amber-950 border-amber-300 font-bold shadow-xs'
-                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:border-slate-300'
+                        ? 'bg-rose-100 text-rose-400 dark:text-rose-300 font-bold border-rose-300 font-bold shadow-xs'
+                        : 'bg-amber-100 text-amber-400 dark:text-amber-300 font-bold border-amber-300 font-bold shadow-xs'
+                      : 'bg-subtle/50 text-text-secondary border-border-default hover:bg-subtle hover:border-border-default'
                   }`}
                 >
                   {opt}
@@ -198,7 +198,7 @@ export const AuditReasonModal: React.FC<AuditReasonModalProps> = ({
           {/* Reason Textarea (Mandatory) */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-slate-900 uppercase tracking-wider">
+              <label className="text-xs font-bold text-text-primary uppercase tracking-wider">
                 {isMs ? 'Sebab / Justifikasi Terperinci' : 'Detailed Reason / Justification'}{' '}
                 <span className="text-rose-600">*</span>
               </label>
@@ -222,10 +222,10 @@ export const AuditReasonModal: React.FC<AuditReasonModalProps> = ({
                     ? 'Cth: Tarikh dipinda ke 20 Ogos kerana dewan mesyuarat penuh...'
                     : 'E.g., Date moved to Aug 20 due to meeting room unavailability...'
               }
-              className={`w-full p-3 rounded-2xl border text-xs font-medium focus:outline-none focus:ring-2 placeholder:text-slate-400 transition-all ${
+              className={`w-full p-3 rounded-2xl border text-xs font-medium focus:outline-none focus:ring-2 placeholder:text-text-muted transition-colors ${
                 error
-                  ? 'border-rose-400 focus:ring-rose-400/20 bg-rose-50/30'
-                  : 'border-slate-200 focus:border-slate-900 focus:ring-slate-900/10'
+                  ? 'border-rose-400 focus:ring-rose-400/20 bg-rose-500/10'
+                  : 'border-border-default focus:border-slate-900 focus:ring-slate-900/10'
               }`}
             />
             {error && (
@@ -237,19 +237,19 @@ export const AuditReasonModal: React.FC<AuditReasonModalProps> = ({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+          <div className="flex items-center justify-end gap-3 pt-3 border-t border-border-subtle">
             <button
               type="button"
               onClick={onClose}
               disabled={isLoading}
-              className="px-4 py-2.5 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100 font-bold text-xs transition-all"
+              className="px-4 py-2.5 rounded-xl border border-border-default text-text-secondary hover:bg-subtle font-bold text-xs transition-colors"
             >
               {isMs ? 'Batal' : 'Cancel'}
             </button>
             <button
               type="submit"
               disabled={isLoading}
-              className={`px-5 py-2.5 rounded-xl font-bold text-xs text-white shadow-md hover:shadow-lg transition-all flex items-center gap-2 ${
+              className={`px-5 py-2.5 rounded-xl font-bold text-xs text-white shadow-md hover:shadow-lg transition-colors flex items-center gap-2 ${
                 isDelete
                   ? 'bg-rose-600 hover:bg-rose-700 active:scale-95'
                   : 'bg-slate-900 hover:bg-black active:scale-95'

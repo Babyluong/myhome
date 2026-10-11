@@ -66,7 +66,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 			)}
 			
 			{/* Sidebar with slide animation */}
-			<aside className={`fixed left-0 top-0 h-screen border-r border-slate-800/80 bg-slate-950/95 backdrop-blur-xl z-50 shadow-2xl shadow-slate-950/50 transition-all duration-300 ease-in-out ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 w-72 lg:w-72`} suppressHydrationWarning>
+			<aside className={`fixed left-0 top-0 h-screen border-r border-slate-800/80 bg-slate-950/95 backdrop-blur-xl z-50 shadow-2xl shadow-slate-950/50 transition-[transform,opacity,box-shadow,border-color] duration-300 ease-in-out ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 w-72 lg:w-72`} suppressHydrationWarning>
 				<div className="h-full flex flex-col overflow-y-auto custom-scrollbar" suppressHydrationWarning>
 					{/* Header */}
 					<div className="px-4 py-4 bg-slate-900 border-b border-slate-800 shadow-lg">
@@ -96,7 +96,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 					<div className="lg:hidden flex items-center justify-end px-2 py-1">
 						<button 
 							onClick={() => setSidebarCollapsed(!sidebarCollapsed)} 
-							className="p-2 rounded-lg hover:bg-slate-800 transition-all duration-200 hover:scale-110 active:scale-95"
+							className="p-2 rounded-lg hover:bg-slate-800 transition-[transform,opacity,box-shadow,border-color] duration-200 hover:scale-110 active:scale-95"
 							title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
 						>
 							<svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -112,9 +112,9 @@ export function AppShell({ children }: { children: ReactNode }) {
 						<div className="space-y-3">
 							{!sidebarCollapsed && (
 								<div className="flex gap-2 text-xs animate-fade-in">
-									<Link href="/dev/login?role=pharmacy_logistics" className="text-slate-400 hover:text-teal-400 transition-all duration-200 font-medium hover:scale-105" suppressHydrationWarning>Grant logistics</Link>
-									<span className="text-slate-600">·</span>
-									<Link href="/dev/login?role=admin" className="text-slate-400 hover:text-teal-400 transition-all duration-200 font-medium hover:scale-105" suppressHydrationWarning>Grant admin</Link>
+									<Link href="/dev/login?role=pharmacy_logistics" className="text-slate-400 hover:text-teal-400 transition-[transform,opacity,box-shadow,border-color] duration-200 font-medium hover:scale-105" suppressHydrationWarning>Grant logistics</Link>
+									<span className="text-text-secondary">·</span>
+									<Link href="/dev/login?role=admin" className="text-slate-400 hover:text-teal-400 transition-[transform,opacity,box-shadow,border-color] duration-200 font-medium hover:scale-105" suppressHydrationWarning>Grant admin</Link>
 								</div>
 							)}
 							<button 
@@ -126,7 +126,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 									}
 									window.location.href = '/logout';
 								}}
-								className="inline-flex w-full items-center justify-center rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 px-4 py-2.5 text-slate-300 hover:text-white font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98]" suppressHydrationWarning>
+								className="inline-flex w-full items-center justify-center rounded-xl bg-slate-900 hover:bg-slate-800 border border-slate-800 px-4 py-2.5 text-slate-300 hover:text-white font-semibold text-sm transition-[transform,opacity,box-shadow,border-color] duration-200 shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-[0.98]" suppressHydrationWarning>
 								<svg className="w-4 h-4 mr-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
 								</svg>
@@ -137,14 +137,14 @@ export function AppShell({ children }: { children: ReactNode }) {
 				</div>
 			</aside>
 
-			<div className={`h-screen overflow-y-auto transition-all duration-300 lg:ml-72`} suppressHydrationWarning>
+			<div className={`h-screen overflow-y-auto transition-[transform,opacity,box-shadow,border-color] duration-300 lg:ml-72`} suppressHydrationWarning>
 				{/* Top Header */}
 				<header className={`sticky top-0 right-0 left-0 border-b border-slate-800/80 bg-slate-950/90 backdrop-blur-xl z-40 shadow-xl header-safe-pt ${mounted ? 'animate-slide-in-top' : ''}`}>
 					<div className="flex items-center justify-between w-full h-16 px-4 md:px-6">
 						<div className="flex items-center gap-4">
 							<button 
 								onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-								className="lg:hidden p-2 rounded-lg hover:bg-slate-800 transition-all duration-200 hover:scale-110 active:scale-95 text-slate-400"
+								className="lg:hidden p-2 rounded-lg hover:bg-slate-800 transition-[transform,opacity,box-shadow,border-color] duration-200 hover:scale-110 active:scale-95 text-slate-400"
 								suppressHydrationWarning
 							>
 								<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -157,7 +157,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 						<div className="flex items-center gap-2 md:gap-4">
 							<div className="relative hidden md:block">
 								<input 
-									className="w-40 lg:w-64 rounded-xl border border-slate-800 bg-slate-900/80 backdrop-blur-sm px-4 py-2 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500/40 transition-all duration-200 shadow-sm" 
+									className="w-40 lg:w-64 rounded-xl border border-slate-800 bg-slate-900/80 backdrop-blur-sm px-4 py-2 text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500/40 transition-[transform,opacity,box-shadow,border-color] duration-200 shadow-sm" 
 									placeholder="Search..." 
 									suppressHydrationWarning 
 								/>

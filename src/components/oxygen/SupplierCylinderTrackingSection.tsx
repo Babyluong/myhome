@@ -263,35 +263,35 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
     switch (status) {
       case 'available':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
             {language === 'ms' ? 'Tersedia Penuh (Stor)' : 'Available Full (Store)'}
           </span>
         );
       case 'issued':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 text-blue-700 border border-blue-200/80">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20">
             <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
             {language === 'ms' ? 'Sedang Digunakan (Wad)' : 'In Use (Ward)'}
           </span>
         );
       case 'empty':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-800 border border-amber-200/80">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
             {language === 'ms' ? 'Kosong (Sedia Pulang)' : 'Empty (Ready to Return)'}
           </span>
         );
       case 'returned_to_supplier':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-50 text-rose-700 border border-rose-200/80">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
             <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
             {language === 'ms' ? 'Di Pembekal (Pengisian)' : 'With Supplier (Refill)'}
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-subtle text-text-secondary border border-border-default">
             {status}
           </span>
         );
@@ -301,26 +301,26 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
   return (
     <div className="space-y-5">
       {/* Executive Header Card */}
-      <div className="bg-white border border-slate-200/90 rounded-2xl p-5 md:p-6 shadow-xs space-y-5">
+      <div className="bg-surface border border-border-default rounded-2xl p-5 md:p-6 shadow-xs space-y-5">
         {/* Top Control Bar: Mode Switcher + Action Buttons */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-4 border-b border-border-subtle">
           {/* Segmented Mode Selector */}
-          <div className="inline-flex flex-wrap sm:flex-nowrap items-center bg-slate-100/90 p-1 rounded-xl border border-slate-200/80 gap-1 w-full sm:w-auto">
+          <div className="inline-flex flex-wrap sm:flex-nowrap items-center bg-subtle p-1 rounded-xl border border-border-default gap-1 w-full sm:w-auto">
             {/* Mode 1: Cylinders at Supplier (Pending Receive) */}
             <button
               type="button"
               onClick={() => handleModeChange('at_supplier')}
-              className={`flex-1 sm:flex-initial px-3 sm:px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+              className={`flex-1 sm:flex-initial px-3 sm:px-4 py-2 rounded-lg text-xs font-semibold transition-[transform,opacity,box-shadow,border-color] duration-150 flex items-center justify-center gap-2 cursor-pointer ${
                 detectionMode === 'at_supplier'
-                  ? 'bg-white text-rose-700 shadow-2xs border border-slate-200/80 font-bold'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                  ? 'bg-surface text-rose-400 shadow-elevation-1 border border-border-default font-bold'
+                  : 'text-text-secondary hover:text-text-primary hover:bg-subtle'
               }`}
             >
               <Truck className={`w-3.5 h-3.5 shrink-0 ${detectionMode === 'at_supplier' ? 'text-rose-600' : 'text-slate-400'}`} />
               <span className="sm:hidden">{language === 'ms' ? 'Di Pembekal' : 'At Supplier'}</span>
               <span className="hidden sm:inline">{language === 'ms' ? 'Di Pembekal (Belum Diterima Semula)' : 'Out at Supplier (Pending Return)'}</span>
               <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold shrink-0 ${
-                detectionMode === 'at_supplier' ? 'bg-rose-100 text-rose-700' : 'bg-slate-200/80 text-slate-600'
+                detectionMode === 'at_supplier' ? 'bg-rose-500/20 text-rose-400' : 'bg-slate-200/80 text-text-secondary'
               }`}>
                 {summaryData?.atSupplierCount ?? 0}
               </span>
@@ -330,17 +330,17 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
             <button
               type="button"
               onClick={() => handleModeChange('in_hospital')}
-              className={`flex-1 sm:flex-initial px-3 sm:px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+              className={`flex-1 sm:flex-initial px-3 sm:px-4 py-2 rounded-lg text-xs font-semibold transition-[transform,opacity,box-shadow,border-color] duration-150 flex items-center justify-center gap-2 cursor-pointer ${
                 detectionMode === 'in_hospital'
-                  ? 'bg-white text-blue-700 shadow-2xs border border-slate-200/80 font-bold'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                  ? 'bg-surface text-blue-400 shadow-elevation-1 border border-border-default font-bold'
+                  : 'text-text-secondary hover:text-text-primary hover:bg-subtle'
               }`}
             >
               <Building2 className={`w-3.5 h-3.5 shrink-0 ${detectionMode === 'in_hospital' ? 'text-blue-600' : 'text-slate-400'}`} />
               <span className="sm:hidden">{language === 'ms' ? 'Di Hospital' : 'In Hospital'}</span>
               <span className="hidden sm:inline">{language === 'ms' ? 'Di Hospital (Belum Dipulangkan)' : 'In Hospital (Pending Supplier Return)'}</span>
               <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono font-bold shrink-0 ${
-                detectionMode === 'in_hospital' ? 'bg-blue-100 text-blue-700' : 'bg-slate-200/80 text-slate-600'
+                detectionMode === 'in_hospital' ? 'bg-blue-500/20 text-blue-400' : 'bg-slate-200/80 text-text-secondary'
               }`}>
                 {summaryData?.inHospitalCount ?? 0}
               </span>
@@ -354,9 +354,9 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
               onClick={loadTrackingData}
               disabled={isLoading}
               title={language === 'ms' ? 'Segerakkan Data' : 'Sync Live Data'}
-              className="px-3 py-2 rounded-xl bg-white border border-slate-200/90 hover:bg-slate-50 text-slate-700 font-semibold text-xs shadow-2xs hover:border-slate-300 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer"
+              className="px-3 py-2 rounded-xl bg-surface border border-border-default hover:bg-subtle/50 text-text-secondary font-semibold text-xs shadow-elevation-1 hover:border-border-default active:scale-95 transition-[transform,opacity,box-shadow,border-color] flex items-center gap-1.5 cursor-pointer"
             >
-              <RefreshCw className={`w-3.5 h-3.5 text-slate-500 ${isLoading ? 'animate-spin text-teal-600' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 text-text-muted ${isLoading ? 'animate-spin text-teal-600' : ''}`} />
               <span className="hidden sm:inline">{language === 'ms' ? 'Segerak' : 'Refresh'}</span>
             </button>
 
@@ -364,9 +364,9 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
               type="button"
               onClick={handleExportCsv}
               disabled={filteredCylinders.length === 0}
-              className="px-3 py-2 rounded-xl bg-white border border-slate-200/90 hover:bg-slate-50 text-slate-700 font-semibold text-xs shadow-2xs hover:border-slate-300 active:scale-95 transition-all flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+              className="px-3 py-2 rounded-xl bg-surface border border-border-default hover:bg-subtle/50 text-text-secondary font-semibold text-xs shadow-elevation-1 hover:border-border-default active:scale-95 transition-[transform,opacity,box-shadow,border-color] flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
             >
-              <Download className="w-3.5 h-3.5 text-slate-500" />
+              <Download className="w-3.5 h-3.5 text-text-muted" />
               <span>{language === 'ms' ? 'Eksport' : 'Export'}</span>
             </button>
 
@@ -375,7 +375,7 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
                 type="button"
                 onClick={onOpenReceiveModal}
                 disabled={isViewOnly}
-                className="px-3.5 py-2 rounded-xl bg-[#008f76] hover:bg-[#007a65] text-white font-semibold text-xs shadow-2xs active:scale-[0.98] transition-all flex items-center gap-1.5 cursor-pointer"
+                className="px-3.5 py-2 rounded-xl bg-[#008f76] hover:bg-[#007a65] text-white font-semibold text-xs shadow-elevation-1 active:scale-[0.98] transition-[transform,opacity,box-shadow,border-color] flex items-center gap-1.5 cursor-pointer"
               >
                 <PackageCheck className="w-3.5 h-3.5" />
                 <span>{language === 'ms' ? 'Terima Dari Pembekal' : 'Receive From Supplier'}</span>
@@ -387,7 +387,7 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
                 type="button"
                 onClick={onOpenReturnModal}
                 disabled={isViewOnly}
-                className="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs shadow-2xs active:scale-[0.98] transition-all flex items-center gap-1.5 cursor-pointer"
+                className="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-semibold text-xs shadow-elevation-1 active:scale-[0.98] transition-[transform,opacity,box-shadow,border-color] flex items-center gap-1.5 cursor-pointer"
               >
                 <Truck className="w-3.5 h-3.5" />
                 <span>{language === 'ms' ? 'Cipta Dokumen Pulang' : 'Create Return Document'}</span>
@@ -400,8 +400,8 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
         <div className="flex items-center space-x-3.5">
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center border shrink-0 ${
             detectionMode === 'at_supplier'
-              ? 'bg-rose-50 border-rose-200/80 text-rose-600'
-              : 'bg-blue-50 border-blue-200/80 text-blue-600'
+              ? 'bg-rose-500/10 border-rose-500/20 text-rose-600'
+              : 'bg-blue-500/10 border-blue-500/20 text-blue-600'
           }`}>
             {detectionMode === 'at_supplier' ? (
               <Truck className="w-5 h-5" />
@@ -411,18 +411,18 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+              <h3 className="text-sm sm:text-base font-bold text-text-primary tracking-tight">
                 {detectionMode === 'at_supplier'
                   ? (language === 'ms' ? 'Silinder Dipulangkan Ke Pembekal (Belum Diterima Semula)' : 'Cylinders Returned to Supplier (Awaiting Return Refill)')
                   : (language === 'ms' ? 'Silinder Dibekalkan Oleh Pembekal (Belum Dipulangkan)' : 'Cylinders Supplied to Hospital (Awaiting Return to Supplier)')}
               </h3>
               <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
-                detectionMode === 'at_supplier' ? 'bg-rose-100 text-rose-700' : 'bg-blue-100 text-blue-700'
+                detectionMode === 'at_supplier' ? 'bg-rose-500/20 text-rose-400' : 'bg-blue-500/20 text-blue-400'
               }`}>
                 {detectionMode === 'at_supplier' ? 'Audit Pengisian Luar' : 'Audit Simpanan Premis'}
               </span>
             </div>
-            <p className="text-slate-500 text-xs mt-0.5">
+            <p className="text-text-muted text-xs mt-0.5">
               {detectionMode === 'at_supplier'
                 ? (language === 'ms' 
                     ? 'Senarai silinder milik hospital yang telah dihantar kepada pembekal untuk isian semula tetapi belum diterima semula (silinder pinjaman pembekal dikecualikan).' 
@@ -435,27 +435,27 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
         </div>
 
         {/* Live Operational Metrics Chip Row (Clean 2x2 on Mobile, 4-Col on Desktop) */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 pt-4 border-t border-slate-100">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3 pt-4 border-t border-border-subtle">
           {/* KPI 1 */}
           <div 
             onClick={() => setStatusFilter('all')}
             title={language === 'ms' ? 'Klik untuk papar semua status' : 'Click to view all statuses'}
-            className={`border rounded-xl p-3 cursor-pointer transition-all ${
+            className={`border rounded-xl p-3 cursor-pointer transition-[transform,opacity,box-shadow,border-color] ${
               statusFilter === 'all'
-                ? 'bg-white border-teal-500/80 shadow-2xs ring-1 ring-teal-500/20'
-                : 'bg-slate-50/70 border-slate-200/80 hover:bg-white hover:border-slate-300'
+                ? 'bg-surface border-teal-500/80 shadow-elevation-1 ring-1 ring-teal-500/20'
+                : 'bg-subtle/50 border-border-default hover:bg-surface hover:border-border-default'
             }`}
           >
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block truncate">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted block truncate">
               {detectionMode === 'at_supplier'
                 ? (language === 'ms' ? 'Di Pembekal' : 'At Supplier')
                 : (language === 'ms' ? 'Di Hospital' : 'In Hospital')}
             </span>
-            <div className="text-lg sm:text-xl font-bold text-slate-900 font-mono tabular-nums mt-1 flex items-baseline gap-1">
+            <div className="text-lg sm:text-xl font-bold text-text-primary font-mono tabular-nums mt-1 flex items-baseline gap-1">
               {detectionMode === 'at_supplier' ? summaryData?.atSupplierCount ?? 0 : summaryData?.inHospitalCount ?? 0}
-              <span className="text-xs font-sans font-normal text-slate-500">cyl</span>
+              <span className="text-xs font-sans font-normal text-text-muted">cyl</span>
             </div>
-            <span className="text-[10px] text-slate-500 font-medium truncate block mt-0.5">
+            <span className="text-[10px] text-text-muted font-medium truncate block mt-0.5">
               {language === 'ms' ? 'Pangkalan data langsung' : 'Tracked via live DB'}
             </span>
           </div>
@@ -470,18 +470,18 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
               }
             }}
             title={language === 'ms' ? 'Klik untuk tapis status ini' : 'Click to toggle this status filter'}
-            className={`rounded-xl p-3 border cursor-pointer transition-all ${
+            className={`rounded-xl p-3 border cursor-pointer transition-[transform,opacity,box-shadow,border-color] ${
             detectionMode === 'at_supplier'
               ? statusFilter === 'overdue'
-                ? 'bg-rose-100/70 border-rose-400 ring-1 ring-rose-400/20 text-rose-950 font-bold shadow-2xs'
+                ? 'bg-rose-500/20/70 border-rose-400 ring-1 ring-rose-400/20 text-rose-400 dark:text-rose-300 font-bold font-bold shadow-elevation-1'
                 : (summaryData?.atSupplierOverdueCount || 0) > 0
-                  ? 'bg-rose-50/60 border-rose-200/80 text-rose-900 hover:border-rose-300'
-                  : 'bg-slate-50/70 border-slate-200/80 text-slate-900 hover:bg-white'
+                  ? 'bg-rose-500/10 border-rose-500/20 text-rose-400 dark:text-rose-300 font-bold hover:border-rose-300'
+                  : 'bg-subtle/50 border-border-default text-text-primary hover:bg-surface'
               : statusFilter === 'empty'
-                ? 'bg-amber-100/70 border-amber-400 ring-1 ring-amber-400/20 text-amber-950 font-bold shadow-2xs'
+                ? 'bg-amber-100/70 border-amber-400 ring-1 ring-amber-400/20 text-amber-400 dark:text-amber-300 font-bold font-bold shadow-elevation-1'
                 : (summaryData?.inHospitalEmptyCount || 0) > 0
-                  ? 'bg-amber-50/60 border-amber-200/80 text-amber-900 hover:border-amber-300'
-                  : 'bg-slate-50/70 border-slate-200/80 text-slate-900 hover:bg-white'
+                  ? 'bg-amber-500/10 border-amber-500/20 text-amber-400 dark:text-amber-300 font-bold hover:border-amber-300'
+                  : 'bg-subtle/50 border-border-default text-text-primary hover:bg-surface'
           }`}>
             <span className="text-[10px] font-bold uppercase tracking-wider block truncate opacity-70">
               {detectionMode === 'at_supplier'
@@ -510,24 +510,24 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
           </div>
 
           {/* KPI 3 */}
-          <div className="bg-slate-50/70 border border-slate-200/80 rounded-xl p-3">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block truncate">
+          <div className="bg-subtle/50 border border-border-default rounded-xl p-3">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted block truncate">
               {language === 'ms' ? 'Pembekal Terlibat' : 'Active Suppliers'}
             </span>
-            <div className="text-lg sm:text-xl font-bold text-slate-900 font-mono tabular-nums mt-1">
+            <div className="text-lg sm:text-xl font-bold text-text-primary font-mono tabular-nums mt-1">
               {availableSuppliers.length}
             </div>
-            <span className="text-[10px] text-slate-500 font-medium truncate block mt-0.5" title={availableSuppliers.length > 0 ? availableSuppliers.join(', ') : 'BORNEO INDAH SDN BHD'}>
+            <span className="text-[10px] text-text-muted font-medium truncate block mt-0.5" title={availableSuppliers.length > 0 ? availableSuppliers.join(', ') : 'BORNEO INDAH SDN BHD'}>
               {availableSuppliers.length > 0 ? availableSuppliers.join(', ') : 'BORNEO INDAH SDN BHD'}
             </span>
           </div>
 
           {/* KPI 4 */}
-          <div className="bg-slate-50/70 border border-slate-200/80 rounded-xl p-3">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block truncate">
+          <div className="bg-subtle/50 border border-border-default rounded-xl p-3">
+            <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted block truncate">
               {language === 'ms' ? 'Status Data' : 'Data Integrity'}
             </span>
-            <div className="text-xs sm:text-sm font-bold text-slate-900 mt-1 flex items-center gap-1.5 truncate">
+            <div className="text-xs sm:text-sm font-bold text-text-primary mt-1 flex items-center gap-1.5 truncate">
               <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
               <span className="truncate">{language === 'ms' ? '100% Disahkan' : '100% Verified'}</span>
             </div>
@@ -540,7 +540,7 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
       </div>
 
       {/* Search & Filter Toolbar (Responsive 2x2 Grid on Mobile, Flex on Desktop) */}
-      <div className="bg-white border border-slate-200/90 rounded-xl p-3 sm:p-3.5 shadow-2xs space-y-2.5">
+      <div className="bg-surface border border-border-default rounded-xl p-3 sm:p-3.5 shadow-elevation-1 space-y-2.5">
         {/* Prominent Serial Number Search (Full Width) */}
         <div className="relative w-full">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
@@ -551,12 +551,12 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
             placeholder={language === 'ms' 
               ? 'Imbas / Cari No. Siri (cth: SABOXY-, O2-P101-)...' 
               : 'Scan / Search Serial No. (e.g. SABOXY-, O2-P101-)...'}
-            className="w-full pl-9 pr-8 py-2 bg-slate-50/80 hover:bg-slate-100/70 focus:bg-white border border-slate-200/90 rounded-lg text-xs font-mono font-medium text-slate-800 placeholder:text-slate-400 placeholder:font-sans focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-600 transition-all"
+            className="w-full pl-9 pr-8 py-2 bg-subtle/50 hover:bg-subtle focus:bg-surface border border-border-default rounded-lg text-xs font-mono font-medium text-text-primary placeholder:text-text-muted placeholder:font-sans focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-600 transition-[transform,opacity,box-shadow,border-color]"
           />
           {searchTerm && (
             <button
               onClick={() => setSearchTerm('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer p-0.5"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-text-secondary cursor-pointer p-0.5"
             >
               ✕
             </button>
@@ -569,7 +569,7 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
           <select
             value={supplierFilter}
             onChange={(e) => setSupplierFilter(e.target.value)}
-            className="w-full md:w-auto px-2.5 py-1.5 bg-slate-50 border border-slate-200/90 rounded-lg text-xs font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-teal-500 cursor-pointer truncate"
+            className="w-full md:w-auto px-2.5 py-1.5 bg-subtle/50 border border-border-default rounded-lg text-xs font-medium text-text-secondary focus:outline-none focus:ring-1 focus:ring-teal-500 cursor-pointer truncate"
           >
             <option value="all">{language === 'ms' ? 'Semua Pembekal' : 'All Suppliers'}</option>
             {availableSuppliers.map(sup => (
@@ -581,7 +581,7 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
           <select
             value={sizeFilter}
             onChange={(e) => setSizeFilter(e.target.value)}
-            className="w-full md:w-auto px-2.5 py-1.5 bg-slate-50 border border-slate-200/90 rounded-lg text-xs font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-teal-500 cursor-pointer truncate"
+            className="w-full md:w-auto px-2.5 py-1.5 bg-subtle/50 border border-border-default rounded-lg text-xs font-medium text-text-secondary focus:outline-none focus:ring-1 focus:ring-teal-500 cursor-pointer truncate"
           >
             <option value="all">{language === 'ms' ? 'Semua Saiz' : 'All Sizes'}</option>
             {availableSizes.map(sz => (
@@ -593,7 +593,7 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="w-full md:w-auto px-2.5 py-1.5 bg-slate-50 border border-slate-200/90 rounded-lg text-xs font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-teal-500 cursor-pointer truncate"
+            className="w-full md:w-auto px-2.5 py-1.5 bg-subtle/50 border border-border-default rounded-lg text-xs font-medium text-text-secondary focus:outline-none focus:ring-1 focus:ring-teal-500 cursor-pointer truncate"
           >
             <option value="all">{language === 'ms' ? 'Semua Status' : 'All Status'}</option>
             {detectionMode === 'at_supplier' ? (
@@ -630,7 +630,7 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
           <select
             value={agingFilter}
             onChange={(e) => setAgingFilter(e.target.value as any)}
-            className="w-full md:w-auto px-2.5 py-1.5 bg-slate-50 border border-slate-200/90 rounded-lg text-xs font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-teal-500 cursor-pointer truncate"
+            className="w-full md:w-auto px-2.5 py-1.5 bg-subtle/50 border border-border-default rounded-lg text-xs font-medium text-text-secondary focus:outline-none focus:ring-1 focus:ring-teal-500 cursor-pointer truncate"
           >
             <option value="all">{language === 'ms' ? 'Semua Tempoh' : 'All Durations'}</option>
             <option value="normal">{language === 'ms' ? '≤ 7 Hari (Biasa)' : '≤ 7 Days (Normal)'}</option>
@@ -640,10 +640,10 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
         </div>
 
         {/* Counter and Reset */}
-        <div className="flex items-center justify-between gap-3 text-xs text-slate-500 font-medium pt-1 border-t border-slate-100">
+        <div className="flex items-center justify-between gap-3 text-xs text-text-muted font-medium pt-1 border-t border-border-subtle">
           <span>
             {language === 'ms' ? 'Memaparkan' : 'Showing'}{' '}
-            <strong className="text-slate-800 font-mono font-bold">{filteredCylinders.length}</strong>{' '}
+            <strong className="text-text-primary font-mono font-bold">{filteredCylinders.length}</strong>{' '}
             {language === 'ms' ? 'silinder' : 'cylinders'}
           </span>
 
@@ -666,38 +666,38 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
       </div>
 
       {/* Main Table Container */}
-      <div className="bg-white border border-slate-200/90 rounded-2xl shadow-xs overflow-hidden">
+      <div className="bg-surface border border-border-default rounded-2xl shadow-xs overflow-hidden">
         {isLoading ? (
           <div className="py-24 flex flex-col items-center justify-center gap-3">
             <RefreshCw className="w-10 h-10 text-teal-600 animate-spin" />
-            <span className="text-slate-600 font-bold text-sm">
+            <span className="text-text-secondary font-bold text-sm">
               {language === 'ms' ? 'Mengimbas dan mengesan rekod silinder pembekal...' : 'Detecting and reconciling supplier cylinder inventory...'}
             </span>
             <span className="text-slate-400 text-xs font-mono">100% Live Supabase Query</span>
           </div>
         ) : error ? (
           <div className="py-16 px-6 flex flex-col items-center justify-center text-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-rose-50 border border-rose-200 flex items-center justify-center text-rose-600">
+            <div className="w-12 h-12 rounded-full bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-600">
               <AlertTriangle className="w-6 h-6" />
             </div>
-            <h4 className="text-sm font-bold text-slate-900">{language === 'ms' ? 'Ralat Memuat Rekod' : 'Error Loading Records'}</h4>
-            <p className="text-xs text-slate-500 max-w-md">{error}</p>
+            <h4 className="text-sm font-bold text-text-primary">{language === 'ms' ? 'Ralat Memuat Rekod' : 'Error Loading Records'}</h4>
+            <p className="text-xs text-text-muted max-w-md">{error}</p>
             <button
               onClick={loadTrackingData}
-              className="mt-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition-all"
+              className="mt-2 px-4 py-2 bg-subtle hover:bg-subtle text-text-primary rounded-xl text-xs font-bold transition-[transform,opacity,box-shadow,border-color]"
             >
               {language === 'ms' ? 'Cuba Semula' : 'Retry'}
             </button>
           </div>
         ) : filteredCylinders.length === 0 ? (
           <div className="py-20 flex flex-col items-center justify-center text-center gap-3">
-            <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400">
+            <div className="w-14 h-14 rounded-2xl bg-subtle/50 border border-border-default flex items-center justify-center text-slate-400">
               <ShieldCheck className="w-7 h-7 text-teal-600" />
             </div>
-            <h4 className="text-sm font-bold text-slate-800">
+            <h4 className="text-sm font-bold text-text-primary">
               {language === 'ms' ? 'Tiada Silinder Dijumpai' : 'No Cylinders Detected'}
             </h4>
-            <p className="text-xs text-slate-500 max-w-sm">
+            <p className="text-xs text-text-muted max-w-sm">
               {detectionMode === 'at_supplier'
                 ? (language === 'ms' 
                     ? 'No unreturned cylinders found matching your search criteria.' 
@@ -710,7 +710,7 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
         ) : (
           <>
             {/* Mobile View: High-End Native Cards (Zero Horizontal Cutoff) */}
-            <div className="md:hidden divide-y divide-slate-100 bg-white">
+            <div className="md:hidden divide-y divide-border-subtle bg-surface">
               {paginatedCylinders.map((cyl, idx) => {
                 const globalIdx = (currentPage - 1) * pageSize + idx + 1;
                 const isCopied = copiedSerial === cyl.serial_number;
@@ -725,7 +725,7 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
                           type="button"
                           onClick={(e) => handleCopySerial(cyl.serial_number, e)}
                           title="Salin No. Siri"
-                          className="inline-flex items-center gap-1 px-2 py-0.5 bg-slate-50 hover:bg-teal-50 border border-slate-200/90 hover:border-teal-300 rounded-md text-xs font-mono font-bold text-slate-900 transition-colors truncate"
+                          className="inline-flex items-center gap-1 px-2 py-0.5 bg-subtle/50 hover:bg-accent-base/10 border border-border-default hover:border-teal-300 rounded-md text-xs font-mono font-bold text-text-primary transition-colors truncate"
                         >
                           <span className="truncate">{cyl.serial_number}</span>
                           {isCopied ? (
@@ -735,7 +735,7 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
                           )}
                         </button>
                         {cyl.supplier_tagged && (
-                          <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-50 text-amber-700 border border-amber-200 shrink-0">
+                          <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-500/10 text-amber-700 border border-amber-500/20 shrink-0">
                             Loan
                           </span>
                         )}
@@ -744,12 +744,12 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
                       {/* Aging Badge */}
                       <div className="shrink-0">
                         {cyl.is_overdue ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
                             <AlertTriangle className="w-3 h-3 text-rose-600" />
                             <span>{cyl.days_elapsed} {language === 'ms' ? 'hari' : 'd'}</span>
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-subtle text-text-secondary border border-border-default">
                             <Clock className="w-3 h-3 text-slate-400" />
                             <span>{cyl.days_elapsed} {language === 'ms' ? 'hari' : 'd'}</span>
                           </span>
@@ -758,12 +758,12 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
                     </div>
 
                     {/* 2x2 Details Grid */}
-                    <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50/70 p-2.5 rounded-lg border border-slate-100">
+                    <div className="grid grid-cols-2 gap-2 text-xs bg-subtle/50 p-2.5 rounded-lg border border-border-subtle">
                       <div>
                         <span className="text-[10px] font-semibold text-slate-400 block uppercase tracking-wider">
                           {language === 'ms' ? 'Jenis & Saiz' : 'Type & Size'}
                         </span>
-                        <span className="font-semibold text-slate-800 truncate block mt-0.5">
+                        <span className="font-semibold text-text-primary truncate block mt-0.5">
                           {cyl.size_name || cyl.size_code || cyl.type_name || 'Standard'} {cyl.capacity ? `(${cyl.capacity})` : ''}
                         </span>
                       </div>
@@ -771,7 +771,7 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
                         <span className="text-[10px] font-semibold text-slate-400 block uppercase tracking-wider">
                           {language === 'ms' ? 'Pembekal' : 'Supplier'}
                         </span>
-                        <span className="font-semibold text-slate-800 truncate block mt-0.5" title={cyl.supplier_name}>
+                        <span className="font-semibold text-text-primary truncate block mt-0.5" title={cyl.supplier_name}>
                           {cyl.supplier_name || 'BORNEO INDAH'}
                         </span>
                       </div>
@@ -787,7 +787,7 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
                         <span className="text-[10px] font-semibold text-slate-400 block uppercase tracking-wider">
                           {detectionMode === 'at_supplier' ? (language === 'ms' ? 'Dispatch Date' : 'Dispatch Date') : (language === 'ms' ? 'Tarikh Terima' : 'Receive Date')}
                         </span>
-                        <span className="text-slate-700 font-medium block mt-0.5">
+                        <span className="text-text-secondary font-medium block mt-0.5">
                           {cyl.document_date ? new Date(cyl.document_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }) : '-'}
                         </span>
                       </div>
@@ -797,12 +797,12 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
                     <div className="flex items-center justify-between gap-2 pt-0.5">
                       <div className="min-w-0 flex-1">
                         {detectionMode === 'at_supplier' ? (
-                          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-700">
+                          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-400">
                             <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
                             <span>{language === 'ms' ? 'Di Pembekal (Isian Semula)' : 'At Supplier (Refill)'}</span>
                           </span>
                         ) : (
-                          <div className="flex items-center gap-1 text-xs text-slate-600 font-medium truncate">
+                          <div className="flex items-center gap-1 text-xs text-text-secondary font-medium truncate">
                             <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                             <span className="truncate">{typeof cyl.current_location === 'object' ? (cyl.current_location as any)?.location_name || 'Pharmacy Store' : cyl.current_location || 'Pharmacy Store'}</span>
                           </div>
@@ -816,7 +816,7 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
                               type="button"
                               onClick={onOpenReceiveModal}
                               disabled={isViewOnly}
-                              className="px-3 py-1.5 bg-[#008f76] hover:bg-[#007a65] text-white rounded-lg text-xs font-semibold shadow-2xs active:scale-95 transition-all inline-flex items-center gap-1 cursor-pointer"
+                              className="px-3 py-1.5 bg-[#008f76] hover:bg-[#007a65] text-white rounded-lg text-xs font-semibold shadow-elevation-1 active:scale-95 transition-[transform,opacity,box-shadow,border-color] inline-flex items-center gap-1 cursor-pointer"
                             >
                               <PackageCheck className="w-3.5 h-3.5" />
                               <span>{language === 'ms' ? 'Terima' : 'Receive'}</span>
@@ -828,7 +828,7 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
                               type="button"
                               onClick={onOpenReturnModal}
                               disabled={isViewOnly}
-                              className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold shadow-2xs active:scale-95 transition-all inline-flex items-center gap-1 cursor-pointer"
+                              className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold shadow-elevation-1 active:scale-95 transition-[transform,opacity,box-shadow,border-color] inline-flex items-center gap-1 cursor-pointer"
                             >
                               <Truck className="w-3.5 h-3.5" />
                               <span>{language === 'ms' ? 'Pulangkan' : 'Return'}</span>
@@ -850,9 +850,9 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-slate-200/90 bg-slate-50 text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                  <tr className="border-b border-border-default bg-subtle/50 text-[10px] font-bold uppercase tracking-wider text-text-muted">
                     <th className="py-2.5 px-3 w-10 text-center">#</th>
-                    <th className="py-2.5 px-4 sticky left-0 z-10 bg-slate-50 border-r border-slate-200 shadow-[2px_0_4px_-1px_rgba(0,0,0,0.06)]">
+                    <th className="py-2.5 px-4 sticky left-0 z-10 bg-subtle/50 border-r border-border-default shadow-[2px_0_4px_-1px_rgba(0,0,0,0.06)]">
                       {language === 'ms' ? 'Nombor Siri Silinder' : 'Cylinder Serial Number'}
                     </th>
                     <th className="py-2.5 px-4 whitespace-nowrap">
@@ -881,7 +881,7 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-xs text-slate-700">
+                <tbody className="divide-y divide-border-subtle text-xs text-text-secondary">
                   {paginatedCylinders.map((cyl, idx) => {
                     const globalIdx = (currentPage - 1) * pageSize + idx + 1;
                     const isCopied = copiedSerial === cyl.serial_number;
@@ -889,7 +889,7 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
                     return (
                       <tr 
                         key={cyl.id}
-                        className="hover:bg-slate-50/80 transition-colors group"
+                        className="hover:bg-subtle/50 transition-colors group"
                       >
                         {/* Index */}
                         <td className="py-3 px-3 text-center font-mono text-slate-400 font-semibold text-[11px]">
@@ -897,13 +897,13 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
                         </td>
 
                         {/* Cylinder Serial Number - STICKY COLUMN */}
-                        <td className="py-3 px-4 sticky left-0 z-10 bg-white group-hover:bg-slate-50 border-r border-slate-200 shadow-[2px_0_4px_-1px_rgba(0,0,0,0.06)] whitespace-nowrap">
+                        <td className="py-3 px-4 sticky left-0 z-10 bg-surface group-hover:bg-subtle/50 border-r border-border-default shadow-[2px_0_4px_-1px_rgba(0,0,0,0.06)] whitespace-nowrap">
                           <div className="flex items-center gap-2">
                             <button
                               type="button"
                               onClick={(e) => handleCopySerial(cyl.serial_number, e)}
                               title="Salin Nombor Siri"
-                              className="group/copy flex items-center gap-1.5 px-2 py-0.5 bg-slate-50 hover:bg-teal-50 border border-slate-200/90 hover:border-teal-300 rounded-md text-xs font-mono font-bold text-slate-900 hover:text-teal-700 transition-all cursor-pointer shadow-2xs"
+                              className="group/copy flex items-center gap-1.5 px-2 py-0.5 bg-subtle/50 hover:bg-accent-base/10 border border-border-default hover:border-teal-300 rounded-md text-xs font-mono font-bold text-text-primary hover:text-teal-700 transition-[transform,opacity,box-shadow,border-color] cursor-pointer shadow-elevation-1"
                             >
                               <span>{cyl.serial_number}</span>
                               {isCopied ? (
@@ -914,7 +914,7 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
                             </button>
 
                             {cyl.supplier_tagged && (
-                              <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                              <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-amber-500/10 text-amber-700 border border-amber-500/20">
                                 Loan
                               </span>
                             )}
@@ -928,17 +928,17 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
 
                         {/* Type & Size */}
                         <td className="py-3 px-4 whitespace-nowrap">
-                          <div className="font-semibold text-slate-800">
+                          <div className="font-semibold text-text-primary">
                             {cyl.type_name || 'Medical Oxygen'}
                           </div>
-                          <div className="text-[11px] text-slate-500 font-mono">
+                          <div className="text-[11px] text-text-muted font-mono">
                             {cyl.size_name || cyl.size_code || '-'} {cyl.capacity ? `(${cyl.capacity})` : ''}
                           </div>
                         </td>
 
                         {/* Supplier */}
                         <td className="py-3 px-4 whitespace-nowrap">
-                          <div className="flex items-center gap-1.5 font-semibold text-slate-800">
+                          <div className="flex items-center gap-1.5 font-semibold text-text-primary">
                             <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                             <span>{cyl.supplier_name || 'BORNEO INDAH SDN BHD'}</span>
                           </div>
@@ -947,14 +947,14 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
                         {/* Reference Document */}
                         <td className="py-3 px-4 font-mono text-[11px] whitespace-nowrap">
                           {cyl.document_number ? (
-                            <div className="flex items-center gap-1 font-bold text-teal-800 bg-teal-50/70 px-2 py-0.5 rounded border border-teal-200/60 w-fit">
+                            <div className="flex items-center gap-1 font-bold text-teal-800 bg-accent-base/10 px-2 py-0.5 rounded border border-accent-base/20 w-fit">
                               <span>{cyl.document_number}</span>
                             </div>
                           ) : (
                             <span className="text-slate-400 italic font-sans">-</span>
                           )}
                           {cyl.delivery_order_no && (
-                            <span className="text-[10px] text-slate-500 block mt-0.5">
+                            <span className="text-[10px] text-text-muted block mt-0.5">
                               DO: {cyl.delivery_order_no}
                             </span>
                           )}
@@ -962,24 +962,24 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
 
                         {/* Date & Aging */}
                         <td className="py-3 px-4 whitespace-nowrap">
-                          <div className="font-medium text-slate-800">
+                          <div className="font-medium text-text-primary">
                             {cyl.document_date 
                               ? new Date(cyl.document_date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
                               : '-'}
                           </div>
                           <div className="mt-0.5">
                             {cyl.is_overdue ? (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/10 text-rose-400 border border-rose-500/20">
                                 <AlertTriangle className="w-3 h-3 text-rose-600" />
                                 {cyl.days_elapsed} {language === 'ms' ? 'hari (Lewat)' : 'days (Overdue)'}
                               </span>
                             ) : cyl.days_elapsed > 7 ? (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
                                 <Clock className="w-3 h-3 text-amber-600" />
                                 {cyl.days_elapsed} {language === 'ms' ? 'hari' : 'days'}
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-subtle text-text-secondary border border-border-default">
                                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                                 {cyl.days_elapsed} {language === 'ms' ? 'hari' : 'days'}
                               </span>
@@ -999,7 +999,7 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
                           ) : (
                             <div>
                               {getStatusBadge(cyl.current_status)}
-                              <div className="flex items-center gap-1 text-[11px] text-slate-600 font-medium mt-0.5">
+                              <div className="flex items-center gap-1 text-[11px] text-text-secondary font-medium mt-0.5">
                                 <MapPin className="w-3 h-3 text-slate-400" />
                                 <span>{typeof cyl.current_location === 'object' ? (cyl.current_location as any)?.location_name || 'Pharmacy Store' : cyl.current_location || 'Pharmacy Store'}</span>
                               </div>
@@ -1015,7 +1015,7 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
                                 type="button"
                                 onClick={onOpenReceiveModal}
                                 disabled={isViewOnly}
-                                className="px-3 py-1.5 bg-[#008f76] hover:bg-[#007a65] text-white rounded-lg text-xs font-semibold transition-all shadow-2xs active:scale-95 inline-flex items-center gap-1.5 cursor-pointer"
+                                className="px-3 py-1.5 bg-[#008f76] hover:bg-[#007a65] text-white rounded-lg text-xs font-semibold transition-[transform,opacity,box-shadow,border-color] shadow-elevation-1 active:scale-95 inline-flex items-center gap-1.5 cursor-pointer"
                               >
                                 <PackageCheck className="w-3.5 h-3.5" />
                                 <span>{language === 'ms' ? 'Terima' : 'Receive'}</span>
@@ -1029,7 +1029,7 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
                                 type="button"
                                 onClick={onOpenReturnModal}
                                 disabled={isViewOnly}
-                                className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold transition-all shadow-2xs active:scale-95 inline-flex items-center gap-1.5 cursor-pointer"
+                                className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-lg text-xs font-semibold transition-[transform,opacity,box-shadow,border-color] shadow-elevation-1 active:scale-95 inline-flex items-center gap-1.5 cursor-pointer"
                               >
                                 <Truck className="w-3.5 h-3.5" />
                                 <span>{language === 'ms' ? 'Pulangkan' : 'Return'}</span>
@@ -1052,22 +1052,22 @@ export const SupplierCylinderTrackingSection: React.FC<SupplierCylinderTrackingS
 
         {/* Pagination Toolbar */}
         {!isLoading && filteredCylinders.length > pageSize && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100 bg-slate-50/50">
-            <span className="text-xs text-slate-500">
-              {language === 'ms' ? 'Halaman' : 'Page'} <strong className="text-slate-800">{currentPage}</strong> {language === 'ms' ? 'daripada' : 'of'} <strong className="text-slate-800">{totalPages}</strong>
+          <div className="flex items-center justify-between px-4 py-3 border-t border-border-subtle bg-subtle/50">
+            <span className="text-xs text-text-muted">
+              {language === 'ms' ? 'Halaman' : 'Page'} <strong className="text-text-primary">{currentPage}</strong> {language === 'ms' ? 'daripada' : 'of'} <strong className="text-text-primary">{totalPages}</strong>
             </span>
             <div className="flex items-center gap-1">
               <button
                 onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                 disabled={currentPage === 1}
-                className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
+                className="px-3 py-1.5 rounded-lg border border-border-default bg-surface hover:bg-subtle/50 text-text-secondary text-xs font-bold disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
               >
                 {language === 'ms' ? 'Sebelumnya' : 'Previous'}
               </button>
               <button
                 onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                 disabled={currentPage === totalPages}
-                className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-bold disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
+                className="px-3 py-1.5 rounded-lg border border-border-default bg-surface hover:bg-subtle/50 text-text-secondary text-xs font-bold disabled:opacity-40 cursor-pointer disabled:cursor-not-allowed"
               >
                 {language === 'ms' ? 'Seterusnya' : 'Next'}
               </button>

@@ -91,7 +91,7 @@ export const MyAdminDashboard: React.FC = () => {
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>Main Hub</span>
         </button>
-        <ChevronRight className="w-3 h-3 text-slate-600" />
+        <ChevronRight className="w-3 h-3 text-text-muted" />
         <span className="text-slate-300 font-medium">MyAdmin</span>
       </div>
 
@@ -149,7 +149,7 @@ export const MyAdminDashboard: React.FC = () => {
                     : 'text-text-muted hover:text-text-primary hover:bg-subtle/50'
                 }`}
               >
-                <Icon className={`w-4 h-4 transition-colors ${isActive ? 'text-accent-base' : 'text-slate-500'}`} />
+                <Icon className={`w-4 h-4 transition-colors ${isActive ? 'text-accent-base' : 'text-text-muted'}`} />
                 <span>{tab.label}</span>
                 {typeof tab.badge === 'number' && tab.badge > 0 && (
                   <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 tabular-nums">

@@ -1224,35 +1224,35 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
     switch (request.status) {
       case 'approved':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200/80 shadow-2xs">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-500/10 text-blue-700 border border-blue-500/20 shadow-elevation-1">
             <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
             Diluluskan • Sedia Diagih
           </span>
         );
       case 'issued':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200/80 shadow-2xs">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-indigo-500/10 text-indigo-700 border border-indigo-500/20 shadow-elevation-1">
             <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600" />
             Dikeluarkan • Dalam Transit Wad
           </span>
         );
       case 'completed':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80 shadow-2xs">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 shadow-elevation-1">
             <CheckCheck className="w-3.5 h-3.5 text-emerald-600" />
             Selesai Diterima
           </span>
         );
       case 'rejected':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200/80 shadow-2xs">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-500/10 text-rose-700 border border-rose-500/20 shadow-elevation-1">
             <Ban className="w-3.5 h-3.5 text-rose-600" />
             Permohonan Ditolak
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200/80 shadow-2xs">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-700 border border-amber-500/20 shadow-elevation-1">
             <Clock className="w-3.5 h-3.5 text-amber-600" />
             Menunggu Kelulusan
           </span>
@@ -1262,19 +1262,19 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-2 sm:p-4 md:p-6 bg-slate-950/60 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="bg-white w-full max-w-5xl rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200/90 flex flex-col h-[95vh] sm:h-auto sm:max-h-[90vh] overflow-hidden">
+      <div className="bg-surface w-full max-w-5xl rounded-2xl sm:rounded-3xl shadow-2xl border border-border-default flex flex-col h-[95vh] sm:h-auto sm:max-h-[90vh] overflow-hidden">
         
         {/* Modal Header */}
-        <div className="px-5 sm:px-7 py-4 border-b border-slate-200/80 flex items-center justify-between bg-slate-50/80 backdrop-blur-md shrink-0">
+        <div className="px-5 sm:px-7 py-4 border-b border-border-default flex items-center justify-between bg-subtle/50 backdrop-blur-md shrink-0">
           <div className="flex items-center gap-3 min-w-0">
             <div>
               <div className="flex items-center gap-2 flex-wrap mb-1">
                 <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-wide border ${
                   request.request_type === 'manual_issue'
-                    ? 'bg-purple-50 text-purple-700 border-purple-200/80'
+                    ? 'bg-indigo-500/10 text-purple-700 border-indigo-500/20'
                     : request.is_external_facility
-                    ? 'bg-indigo-50 text-indigo-700 border-indigo-200/80'
-                    : 'bg-blue-50 text-blue-700 border-blue-200/80'
+                    ? 'bg-indigo-500/10 text-indigo-700 border-indigo-500/20'
+                    : 'bg-blue-500/10 text-blue-700 border-blue-500/20'
                 }`}>
                   {request.request_type === 'manual_issue'
                     ? 'Manual Issue'
@@ -1286,7 +1286,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                 <button
                   type="button"
                   onClick={handleCopyRef}
-                  className="group inline-flex items-center gap-1 font-mono text-xs sm:text-sm font-black text-slate-800 hover:text-blue-600 transition-colors bg-white px-2 py-0.5 rounded-lg border border-slate-200/80 shadow-2xs"
+                  className="group inline-flex items-center gap-1 font-mono text-xs sm:text-sm font-black text-text-primary hover:text-blue-600 transition-colors bg-surface px-2 py-0.5 rounded-lg border border-border-default shadow-elevation-1"
                   title="Salin Nombor Rujukan"
                 >
                   <span>{request.request_number}</span>
@@ -1302,7 +1302,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                 </div>
               </div>
 
-              <h3 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+              <h3 className="text-base sm:text-lg font-extrabold text-text-primary tracking-tight flex items-center gap-2">
                 <span>Butiran Permohonan Silinder Oksigen</span>
                 <span className="sm:hidden text-xs">{getStatusBadge()}</span>
               </h3>
@@ -1314,10 +1314,10 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
               type="button"
               onClick={() => setSoundEnabled(!soundEnabled)}
               title={soundEnabled ? 'Matikan bunyi indikator' : 'Aktifkan bunyi indikator'}
-              className={`p-2 rounded-xl transition-all border ${
+              className={`p-2 rounded-xl transition-[transform,opacity,box-shadow,border-color] border ${
                 soundEnabled 
-                  ? 'bg-blue-50 text-blue-600 border-blue-200 hover:bg-blue-100' 
-                  : 'bg-slate-100 text-slate-400 border-slate-200 hover:bg-slate-200'
+                  ? 'bg-blue-500/10 text-blue-600 border-blue-500/20 hover:bg-blue-100' 
+                  : 'bg-subtle text-slate-400 border-border-default hover:bg-subtle'
               }`}
             >
               {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
@@ -1327,7 +1327,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                 stopCamera();
                 onClose();
               }}
-              className="p-2 hover:bg-slate-100 text-slate-400 hover:text-slate-700 rounded-xl transition-all border border-transparent hover:border-slate-200 focus:outline-none"
+              className="p-2 hover:bg-subtle text-slate-400 hover:text-text-secondary rounded-xl transition-[transform,opacity,box-shadow,border-color] border border-transparent hover:border-border-default focus:outline-none"
               title="Tutup (ESC)"
             >
               <X className="w-5 h-5" />
@@ -1338,7 +1338,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
         {/* Modal Scrollable Body */}
         <div className="flex-1 overflow-y-auto px-4 sm:px-7 py-5 space-y-5">
           {error && (
-            <div className="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-rose-900 text-xs sm:text-sm font-semibold flex items-center gap-3 animate-in fade-in">
+            <div className="p-4 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-rose-400 dark:text-rose-300 font-bold text-xs sm:text-sm font-semibold flex items-center gap-3 animate-in fade-in">
               <AlertCircle className="w-5 h-5 text-rose-600 shrink-0" />
               <div className="flex-1">{error}</div>
               <button
@@ -1352,9 +1352,9 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
           )}
 
           {/* Compact Modern Horizontal Stepper (Desktop & Mobile Unified) */}
-          <div className="bg-slate-50/70 border border-slate-200/80 rounded-2xl p-3.5 sm:p-4 shadow-2xs">
+          <div className="bg-subtle/50 border border-border-default rounded-2xl p-3.5 sm:p-4 shadow-elevation-1">
             <div className="flex items-center justify-between mb-3 px-1">
-              <span className="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+              <span className="text-[10px] sm:text-[11px] font-bold text-text-muted uppercase tracking-wider flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-slate-400" />
                 Kitaran Hayat Permohonan (Lifecycle Status)
               </span>
@@ -1376,14 +1376,14 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                   <div key={step.key} className="relative z-10 flex flex-col items-center text-center flex-1 px-1">
                     {/* Circle Indicator */}
                     <div
-                      className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs transition-all duration-200 shadow-2xs ${
+                      className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs transition-[transform,opacity,box-shadow,border-color] duration-200 shadow-elevation-1 ${
                         isError
                           ? 'bg-rose-600 text-white ring-4 ring-rose-100'
                           : isComplete
                           ? 'bg-emerald-600 text-white ring-4 ring-emerald-100'
                           : isCurrent
                           ? 'bg-blue-600 text-white ring-4 ring-blue-100 animate-pulse'
-                          : 'bg-white text-slate-400 border border-slate-300 ring-2 ring-slate-100'
+                          : 'bg-surface text-slate-400 border border-border-default ring-2 ring-slate-100'
                       }`}
                     >
                       {isError ? (
@@ -1402,7 +1402,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                           isError
                             ? 'text-rose-700 font-extrabold'
                             : isComplete
-                            ? 'text-slate-800'
+                            ? 'text-text-primary'
                             : isCurrent
                             ? 'text-blue-700 font-extrabold'
                             : 'text-slate-400'
@@ -1411,7 +1411,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                         {step.label}
                       </span>
                       {step.date ? (
-                        <span className="text-[9px] sm:text-[10px] text-slate-500 font-mono tabular-nums leading-tight mt-0.5">
+                        <span className="text-[9px] sm:text-[10px] text-text-muted font-mono tabular-nums leading-tight mt-0.5">
                           {new Date(step.date).toLocaleDateString('ms-MY', {
                             day: 'numeric',
                             month: 'numeric',
@@ -1432,31 +1432,31 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
 
           {/* External Facility Indent Banner */}
           {request.is_external_facility && (
-            <div className="p-4 bg-gradient-to-r from-indigo-50/90 via-purple-50/40 to-blue-50/90 border border-indigo-200/90 rounded-2xl flex items-start gap-3 shadow-2xs">
+            <div className="p-4 bg-gradient-to-r from-indigo-50/90 via-purple-50/40 to-blue-50/90 border border-indigo-500/20 rounded-2xl flex items-start gap-3 shadow-elevation-1">
               <div className="p-2.5 bg-indigo-600 text-white rounded-xl shrink-0 mt-0.5 shadow-xs">
                 <Share2 className="w-5 h-5" />
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h4 className="text-xs sm:text-sm font-extrabold text-indigo-950">
+                  <h4 className="text-xs sm:text-sm font-extrabold text-indigo-400 dark:text-indigo-300 font-bold">
                     Indent Antara Fasiliti Kesihatan (Inter-Facility Requisition)
                   </h4>
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-200/80 text-indigo-800 uppercase tracking-wide">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-200/80 text-indigo-400 uppercase tracking-wide">
                     {request.indent_direction === 'inbound' ? 'Inbound (Masuk)' : 'Outbound (Keluar)'}
                   </span>
                 </div>
-                <div className="mt-2 flex items-center gap-2 text-xs sm:text-sm font-extrabold text-slate-800 flex-wrap">
+                <div className="mt-2 flex items-center gap-2 text-xs sm:text-sm font-extrabold text-text-primary flex-wrap">
                   {request.indent_direction === 'inbound' ? (
                     <>
-                      <span className="text-indigo-700 bg-white px-2.5 py-1 rounded-lg border border-indigo-200 shadow-2xs">{request.external_facility_name || 'Fasiliti Luar'}</span>
+                      <span className="text-indigo-700 bg-surface px-2.5 py-1 rounded-lg border border-indigo-500/20 shadow-elevation-1">{request.external_facility_name || 'Fasiliti Luar'}</span>
                       <span className="text-indigo-400 font-black">➔</span>
-                      <span className="text-slate-900 bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs">{request.department?.department_name || 'Unit Farmasi Logistik (Hospital Lawas)'}</span>
+                      <span className="text-text-primary bg-surface px-2.5 py-1 rounded-lg border border-border-default shadow-elevation-1">{request.department?.department_name || 'Unit Farmasi Logistik (Hospital Lawas)'}</span>
                     </>
                   ) : (
                     <>
-                      <span className="text-slate-900 bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs">{request.department?.department_name || 'Unit Farmasi Logistik (Hospital Lawas)'}</span>
+                      <span className="text-text-primary bg-surface px-2.5 py-1 rounded-lg border border-border-default shadow-elevation-1">{request.department?.department_name || 'Unit Farmasi Logistik (Hospital Lawas)'}</span>
                       <span className="text-indigo-400 font-black">➔</span>
-                      <span className="text-indigo-700 bg-white px-2.5 py-1 rounded-lg border border-indigo-200 shadow-2xs">{request.external_facility_name || 'Fasiliti Luar'}</span>
+                      <span className="text-indigo-700 bg-surface px-2.5 py-1 rounded-lg border border-indigo-500/20 shadow-elevation-1">{request.external_facility_name || 'Fasiliti Luar'}</span>
                     </>
                   )}
                 </div>
@@ -1467,13 +1467,13 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
           {/* Requisition Overview Grid (4 Columns Desktop, 2 Columns Mobile) */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {/* Department */}
-            <div className="p-3.5 bg-slate-50/70 border border-slate-200/80 rounded-2xl flex flex-col justify-between shadow-2xs">
-              <div className="flex items-center gap-1.5 text-slate-500 mb-1">
+            <div className="p-3.5 bg-subtle/50 border border-border-default rounded-2xl flex flex-col justify-between shadow-elevation-1">
+              <div className="flex items-center gap-1.5 text-text-muted mb-1">
                 <Building2 className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                 <span className="text-[10px] font-bold uppercase tracking-wider">Jabatan / Wad</span>
               </div>
               <div>
-                <p className="font-extrabold text-slate-900 text-xs sm:text-sm truncate" title={request.department?.department_name || 'Pharmacy Store'}>
+                <p className="font-extrabold text-text-primary text-xs sm:text-sm truncate" title={request.department?.department_name || 'Pharmacy Store'}>
                   {request.department?.department_name || 'Farmasi Logistik'}
                 </p>
                 {request.department?.department_code && (
@@ -1485,22 +1485,22 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
             </div>
 
             {/* Priority */}
-            <div className="p-3.5 bg-slate-50/70 border border-slate-200/80 rounded-2xl flex flex-col justify-between shadow-2xs">
-              <div className="flex items-center gap-1.5 text-slate-500 mb-1">
+            <div className="p-3.5 bg-subtle/50 border border-border-default rounded-2xl flex flex-col justify-between shadow-elevation-1">
+              <div className="flex items-center gap-1.5 text-text-muted mb-1">
                 <Zap className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                 <span className="text-[10px] font-bold uppercase tracking-wider">Keutamaan</span>
               </div>
               <div>
                 {request.priority?.toLowerCase() === 'stat' || request.priority?.toLowerCase() === 'emergency' ? (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200 animate-pulse">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-400 border border-rose-500/20 animate-pulse">
                     <Flame className="w-3 h-3 text-rose-600" /> STAT / Kecemasan
                   </span>
                 ) : request.priority?.toLowerCase() === 'urgent' ? (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-400 border border-amber-500/20">
                     <AlertTriangle className="w-3 h-3 text-amber-600" /> Segera (Urgent)
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-200/70 text-slate-700">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-200/70 text-text-secondary">
                     Normal
                   </span>
                 )}
@@ -1508,29 +1508,29 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
             </div>
 
             {/* Requester */}
-            <div className="p-3.5 bg-slate-50/70 border border-slate-200/80 rounded-2xl flex flex-col justify-between shadow-2xs">
-              <div className="flex items-center gap-1.5 text-slate-500 mb-1">
+            <div className="p-3.5 bg-subtle/50 border border-border-default rounded-2xl flex flex-col justify-between shadow-elevation-1">
+              <div className="flex items-center gap-1.5 text-text-muted mb-1">
                 <User className="w-3.5 h-3.5 text-indigo-600 shrink-0" />
                 <span className="text-[10px] font-bold uppercase tracking-wider">Pemohon (Requester)</span>
               </div>
               <div>
-                <p className="font-extrabold text-slate-900 text-xs sm:text-sm truncate" title={request.requester?.full_name || 'Manual Issue'}>
+                <p className="font-extrabold text-text-primary text-xs sm:text-sm truncate" title={request.requester?.full_name || 'Manual Issue'}>
                   {request.requester?.full_name || 'Manual Issue'}
                 </p>
-                <span className="text-[10px] text-slate-500 block truncate">
+                <span className="text-[10px] text-text-muted block truncate">
                   {request.requester?.jawatan || 'Kakitangan Wad'}
                 </span>
               </div>
             </div>
 
             {/* Issuer */}
-            <div className="p-3.5 bg-slate-50/70 border border-slate-200/80 rounded-2xl flex flex-col justify-between shadow-2xs">
-              <div className="flex items-center gap-1.5 text-slate-500 mb-1">
+            <div className="p-3.5 bg-subtle/50 border border-border-default rounded-2xl flex flex-col justify-between shadow-elevation-1">
+              <div className="flex items-center gap-1.5 text-text-muted mb-1">
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                 <span className="text-[10px] font-bold uppercase tracking-wider">Pegawai Pengeluar</span>
               </div>
               <div>
-                <p className="font-extrabold text-slate-900 text-xs sm:text-sm truncate" title={
+                <p className="font-extrabold text-text-primary text-xs sm:text-sm truncate" title={
                   isCylinderAuthorizedOfficer(request.issuer)
                     ? request.issuer.full_name
                     : (isIssuing && isAuthorizedOfficer)
@@ -1547,7 +1547,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                     ? request.issuer.full_name
                     : 'Belum Ditugaskan'}
                 </p>
-                <span className="text-[10px] text-slate-500 block truncate">
+                <span className="text-[10px] text-text-muted block truncate">
                   {isCylinderAuthorizedOfficer(request.issuer)
                     ? (request.issuer.jawatan || 'Unit Farmasi Logistik')
                     : (isIssuing && isAuthorizedOfficer)
@@ -1562,27 +1562,27 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
 
           {/* Remarks or Rejection Reason Callout */}
           {request.remarks && (
-            <div className="p-3.5 bg-slate-50 border border-slate-200/80 rounded-2xl text-xs sm:text-sm shadow-2xs">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block mb-1">
+            <div className="p-3.5 bg-subtle/50 border border-border-default rounded-2xl text-xs sm:text-sm shadow-elevation-1">
+              <span className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider block mb-1">
                 Catatan Permohonan (Remarks)
               </span>
-              <p className="text-slate-800 font-medium">{request.remarks}</p>
+              <p className="text-text-primary font-medium">{request.remarks}</p>
             </div>
           )}
 
           {request.rejection_reason && (
-            <div className={`p-4 rounded-2xl text-xs sm:text-sm border shadow-2xs ${
+            <div className={`p-4 rounded-2xl text-xs sm:text-sm border shadow-elevation-1 ${
               request.status === 'rejected'
-                ? 'bg-rose-50 border-rose-200'
-                : 'bg-amber-50/80 border-amber-200'
+                ? 'bg-rose-500/10 border-rose-500/20'
+                : 'bg-amber-500/10 border-amber-500/20'
             }`}>
               <span className={`text-[10px] font-bold uppercase tracking-wider block mb-1 ${
-                request.status === 'rejected' ? 'text-rose-700' : 'text-amber-800'
+                request.status === 'rejected' ? 'text-rose-700' : 'text-amber-400'
               }`}>
                 {request.status === 'rejected' ? 'Sebab Penolakan (Rejection Reason)' : 'Justifikasi Permohonan'}
               </span>
               <p className={`font-semibold ${
-                request.status === 'rejected' ? 'text-rose-900' : 'text-slate-800'
+                request.status === 'rejected' ? 'text-rose-400 dark:text-rose-300 font-bold' : 'text-text-primary'
               }`}>
                 {request.rejection_reason}
               </p>
@@ -1592,7 +1592,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
           {/* Items requested vs issued */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs sm:text-sm font-extrabold text-slate-800 uppercase tracking-wider flex items-center gap-2">
+              <span className="text-xs sm:text-sm font-extrabold text-text-primary uppercase tracking-wider flex items-center gap-2">
                 <Layers className="w-4 h-4 text-blue-600" />
                 Senarai Item Silinder Permohonan
               </span>
@@ -1623,10 +1623,10 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                     }
                     setIsEditingItems(!isEditingItems);
                   }}
-                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border shadow-2xs ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-[transform,opacity,box-shadow,border-color] border shadow-elevation-1 ${
                     isEditingItems
-                      ? 'bg-rose-50 border-rose-200 text-rose-700 hover:bg-rose-100'
-                      : 'bg-blue-50 border-blue-200 text-blue-700 hover:bg-blue-100'
+                      ? 'bg-rose-500/10 border-rose-500/20 text-rose-700 hover:bg-rose-100'
+                      : 'bg-blue-500/10 border-blue-500/20 text-blue-700 hover:bg-blue-100'
                   }`}
                 >
                   <Edit3 className="w-3.5 h-3.5" />
@@ -1637,27 +1637,27 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
 
             {isEditingItems ? (
               /* Inline Edit Mode with Cylinder Type & Stock Selection */
-              <div className="p-4 sm:p-5 bg-gradient-to-br from-amber-50/70 via-slate-50 to-blue-50/40 border border-amber-300/80 rounded-2xl space-y-4 animate-in fade-in duration-150 shadow-2xs">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-amber-100/70 p-3 rounded-xl border border-amber-200/90 text-amber-950 text-xs">
+              <div className="p-4 sm:p-5 bg-gradient-to-br from-amber-50/70 via-slate-50 to-blue-50/40 border border-amber-300/80 rounded-2xl space-y-4 animate-in fade-in duration-150 shadow-elevation-1">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 bg-amber-100/70 p-3 rounded-xl border border-amber-500/20 text-amber-400 dark:text-amber-300 font-bold text-xs">
                   <div className="flex items-center gap-2.5">
                     <ShieldAlert className="w-4 h-4 shrink-0 text-amber-600" />
                     <span>
                       <strong>Jejak Audit Aktif:</strong> Anda boleh menukar jenis silinder (cth. 101-N ke P101-F) dan kuantiti mengikut ketersediaan stok sebenar stor farmasi.
                     </span>
                   </div>
-                  <span className="shrink-0 font-bold px-2 py-0.5 rounded-full bg-amber-200/80 text-amber-900 text-[10px] uppercase">
+                  <span className="shrink-0 font-bold px-2 py-0.5 rounded-full bg-amber-200/80 text-amber-400 dark:text-amber-300 font-bold text-[10px] uppercase">
                     Mod Kemaskini Item
                   </span>
                 </div>
 
                 {/* Live Store Stock Bar */}
-                <div className="p-3 bg-white/90 border border-slate-200/90 rounded-xl space-y-1.5 shadow-2xs">
-                  <div className="flex items-center justify-between text-xs font-bold text-slate-700">
+                <div className="p-3 bg-surface border border-border-default rounded-xl space-y-1.5 shadow-elevation-1">
+                  <div className="flex items-center justify-between text-xs font-bold text-text-secondary">
                     <span className="flex items-center gap-1.5">
                       <Database className="w-3.5 h-3.5 text-blue-600" />
                       Ketersediaan Silinder di Stor Farmasi Lawas:
                     </span>
-                    <span className="text-[11px] font-mono text-slate-500 font-semibold">
+                    <span className="text-[11px] font-mono text-text-muted font-semibold">
                       {allAvailableCylinders.length} unit keseluruhan
                     </span>
                   </div>
@@ -1667,10 +1667,10 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                       return (
                         <span
                           key={opt.key}
-                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold border transition-all ${
+                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold border transition-[transform,opacity,box-shadow,border-color] ${
                             stock > 0
-                              ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                              : 'bg-slate-50 text-slate-400 border-slate-200 opacity-60'
+                              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                              : 'bg-subtle/50 text-slate-400 border-border-default opacity-60'
                           }`}
                         >
                           <span className="font-mono">{opt.size_code}</span>
@@ -1678,7 +1678,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                             ({opt.valve_type === 'BN' ? 'Bullnose' : 'Pin Index'})
                           </span>
                           <span className={`px-1.5 py-0.2 rounded font-mono text-[10px] ${
-                            stock > 0 ? 'bg-emerald-200/70 text-emerald-900' : 'bg-slate-200 text-slate-500'
+                            stock > 0 ? 'bg-emerald-200/70 text-emerald-400 dark:text-emerald-300 font-bold' : 'bg-subtle text-text-muted'
                           }`}>
                             {stock} unit
                           </span>
@@ -1689,16 +1689,16 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                 </div>
 
                 {/* Items Editable Table / Cards */}
-                <div className="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-2xs">
+                <div className="border border-border-default rounded-xl overflow-hidden bg-surface shadow-elevation-1">
                   <table className="w-full border-collapse text-left text-xs">
                     <thead>
-                      <tr className="bg-slate-50 font-bold text-slate-500 uppercase text-[11px] tracking-wider border-b border-slate-200">
+                      <tr className="bg-subtle/50 font-bold text-text-muted uppercase text-[11px] tracking-wider border-b border-border-default">
                         <th className="px-3.5 py-3 w-7/12 sm:w-1/2">Pilih Jenis & Saiz Silinder (Ikut Stor)</th>
                         <th className="px-3.5 py-3 text-center w-3/12 sm:w-1/4">Kuantiti Baru</th>
                         <th className="px-3.5 py-3 text-right w-2/12 sm:w-1/4">Tindakan</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody className="divide-y divide-border-subtle">
                       {editingItems.map((itm, idx) => {
                         const currentOpt =
                           CYLINDER_CATALOG_OPTIONS.find((o) => o.key === itm.selectedKey) ||
@@ -1707,17 +1707,17 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                         const hasSufficientStock = stock >= itm.quantity;
 
                         return (
-                          <tr key={itm.id || idx} className="hover:bg-slate-50/50 transition-colors">
+                          <tr key={itm.id || idx} className="hover:bg-subtle/50 transition-colors">
                             <td className="px-3.5 py-3 align-top">
                               <div className="space-y-1.5">
                                 <div className="flex items-center gap-2">
-                                  <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-600 font-bold text-[10px] flex items-center justify-center shrink-0 font-mono">
+                                  <span className="w-5 h-5 rounded-full bg-subtle text-text-secondary font-bold text-[10px] flex items-center justify-center shrink-0 font-mono">
                                     #{idx + 1}
                                   </span>
                                   <select
                                     value={itm.selectedKey || currentOpt.key}
                                     onChange={(e) => handleEditItemTypeChange(itm.id, e.target.value)}
-                                    className="w-full px-3 py-2 rounded-xl bg-white border border-slate-300 hover:border-blue-500 text-xs font-bold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 shadow-2xs cursor-pointer transition-all"
+                                    className="w-full px-3 py-2 rounded-xl bg-surface border border-border-default hover:border-blue-500 text-xs font-bold text-text-primary focus:outline-none focus:ring-2 focus:ring-blue-500/20 shadow-elevation-1 cursor-pointer transition-[transform,opacity,box-shadow,border-color]"
                                   >
                                     {CYLINDER_CATALOG_OPTIONS.map((opt) => {
                                       const optStock = getCatalogOptionStock(opt);
@@ -1733,17 +1733,17 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                                 {/* Live stock feedback badge */}
                                 <div className="pl-7 flex items-center gap-2 flex-wrap">
                                   {hasSufficientStock ? (
-                                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-500/10 px-2 py-0.5 rounded-md border border-emerald-500/20">
                                       <CheckCircle2 className="w-3 h-3 text-emerald-600" />
                                       {stock} unit sedia di stor (Mencukupi untuk {itm.quantity} unit)
                                     </span>
                                   ) : stock > 0 ? (
-                                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200">
+                                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-700 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
                                       <AlertCircle className="w-3 h-3 text-amber-600" />
                                       Baki stor hanya {stock} unit (Kurang {itm.quantity - stock} unit)
                                     </span>
                                   ) : (
-                                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded-md border border-rose-200">
+                                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-500/10 px-2 py-0.5 rounded-md border border-rose-500/20">
                                       <AlertCircle className="w-3 h-3 text-rose-600" />
                                       Tiada stok fizikal sedia di stor untuk silinder ini
                                     </span>
@@ -1760,12 +1760,12 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
 
                             <td className="px-3.5 py-3 align-top text-center">
                               <div className="flex flex-col items-center gap-1">
-                                <div className="inline-flex items-center rounded-xl border border-slate-200 bg-slate-50 p-0.5 shadow-inner">
+                                <div className="inline-flex items-center rounded-xl border border-border-default bg-subtle/50 p-0.5 shadow-inner">
                                   <button
                                     type="button"
                                     onClick={() => handleEditQtyChange(itm.id, Math.max(1, (Number(itm.quantity) || 1) - 1))}
                                     disabled={(Number(itm.quantity) || 1) <= 1}
-                                    className="w-7 h-7 flex items-center justify-center rounded-lg bg-white text-slate-700 font-bold hover:bg-slate-100 shadow-2xs disabled:opacity-30 disabled:cursor-not-allowed transition-all active:scale-95"
+                                    className="w-7 h-7 flex items-center justify-center rounded-lg bg-surface text-text-secondary font-bold hover:bg-subtle shadow-elevation-1 disabled:opacity-30 disabled:cursor-not-allowed transition-[transform,opacity,box-shadow,border-color] active:scale-95"
                                     title="Kurangkan kuantiti"
                                   >
                                     -
@@ -1788,7 +1788,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                                   <button
                                     type="button"
                                     onClick={() => handleEditQtyChange(itm.id, (Number(itm.quantity) || 0) + 1)}
-                                    className="w-7 h-7 flex items-center justify-center rounded-lg bg-white text-slate-700 font-bold hover:bg-slate-100 shadow-2xs transition-all active:scale-95"
+                                    className="w-7 h-7 flex items-center justify-center rounded-lg bg-surface text-text-secondary font-bold hover:bg-subtle shadow-elevation-1 transition-[transform,opacity,box-shadow,border-color] active:scale-95"
                                     title="Tambah kuantiti"
                                   >
                                     +
@@ -1802,7 +1802,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                               <button
                                 type="button"
                                 onClick={() => handleRemoveItem(itm.id)}
-                                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs border border-rose-200 transition-colors shadow-2xs"
+                                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-100 text-rose-700 font-bold text-xs border border-rose-500/20 transition-colors shadow-elevation-1"
                                 title="Padam item ini"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -1815,7 +1815,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
 
                       {editingItems.length === 0 && (
                         <tr>
-                          <td colSpan={3} className="p-6 text-center text-slate-400 italic">
+                          <td colSpan={3} className="p-6 text-center text-text-muted font-medium italic">
                             Semua item telah dipadam. Tekan butang di bawah untuk menambah item baru.
                           </td>
                         </tr>
@@ -1829,7 +1829,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                   <button
                     type="button"
                     onClick={handleAddNewItem}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-blue-50 text-blue-700 font-bold text-xs border border-blue-300 shadow-2xs transition-all active:scale-95"
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-surface hover:bg-blue-500/10 text-blue-700 font-bold text-xs border border-blue-300 shadow-elevation-1 transition-[transform,opacity,box-shadow,border-color] active:scale-95"
                   >
                     <Plus className="w-4 h-4 text-blue-600" />
                     <span>+ Tambah Item Silinder Baru</span>
@@ -1837,8 +1837,8 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                 </div>
 
                 {/* Audit Trail Input */}
-                <div className="space-y-1.5 pt-2 border-t border-amber-200/60">
-                  <label className="block text-[11px] font-bold text-slate-700 uppercase tracking-wider">
+                <div className="space-y-1.5 pt-2 border-t border-amber-500/20">
+                  <label className="block text-[11px] font-bold text-text-secondary uppercase tracking-wider">
                     Sebab Perubahan Kuantiti / Jenis Silinder (Catatan Log Audit)
                   </label>
                   <input
@@ -1846,7 +1846,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                     value={editReason}
                     onChange={(e) => setEditReason(e.target.value)}
                     placeholder="cth: Menukar silinder 101-N ke P101-F mengikut ketersediaan fizikal stor farmasi"
-                    className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-2xs"
+                    className="w-full px-3 py-2 bg-surface border border-border-default rounded-xl text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 shadow-elevation-1"
                   />
                 </div>
 
@@ -1855,7 +1855,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                   <button
                     type="button"
                     onClick={() => setIsEditingItems(false)}
-                    className="px-4 py-2 border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 font-semibold text-xs rounded-xl shadow-2xs transition-all"
+                    className="px-4 py-2 border border-border-default bg-surface hover:bg-subtle/50 text-text-secondary font-semibold text-xs rounded-xl shadow-elevation-1 transition-[transform,opacity,box-shadow,border-color]"
                   >
                     Batal
                   </button>
@@ -1863,7 +1863,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                     type="button"
                     onClick={handleSaveItemEdits}
                     disabled={isSavingEdit || editingItems.length === 0}
-                    className="inline-flex items-center gap-1.5 px-5 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-500/25 transition-all active:scale-95"
+                    className="inline-flex items-center gap-1.5 px-5 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-500/25 transition-[transform,opacity,box-shadow,border-color] active:scale-95"
                   >
                     {isSavingEdit ? (
                       <RefreshCw className="w-3.5 h-3.5 animate-spin" />
@@ -1878,17 +1878,17 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
               /* Enhanced Modern Cylinder Dispatch Scanning Station */
               <div className="space-y-4">
                 {/* Overall Dispatch Progress Header */}
-                <div className="p-4 bg-gradient-to-r from-blue-50/70 via-slate-50 to-indigo-50/70 border border-blue-200/80 rounded-2xl space-y-2.5 shadow-2xs">
+                <div className="p-4 bg-gradient-to-r from-blue-50/70 via-slate-50 to-indigo-50/70 border border-blue-500/20 rounded-2xl space-y-2.5 shadow-elevation-1">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                     <div className="flex items-center gap-2.5">
                       <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-xs shrink-0">
                         <PackageCheck className="w-4 h-4" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-extrabold text-slate-900">
+                        <h4 className="text-sm font-extrabold text-text-primary">
                           Stesen Imbasan & Pengagihan Silinder Oksigen
                         </h4>
-                        <p className="text-[11px] text-slate-500">
+                        <p className="text-[11px] text-text-muted">
                           Imbas kod bar / kod QR atau pilih nombor siri silinder fizikal dari stor.
                         </p>
                       </div>
@@ -1896,8 +1896,8 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                     <div className="flex items-center gap-2 self-start sm:self-auto flex-wrap">
                       <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold font-mono tabular-nums ${
                         isAllCylindersAssigned
-                          ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                          : 'bg-blue-100 text-blue-800 border border-blue-300'
+                          ? 'bg-emerald-100 text-emerald-400 border border-emerald-300'
+                          : 'bg-blue-100 text-blue-400 border border-blue-300'
                       }`}>
                         {isAllCylindersAssigned ? (
                           <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
@@ -1912,7 +1912,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                   {/* Progress Bar */}
                   <div className="w-full bg-slate-200/80 h-2 rounded-full overflow-hidden">
                     <div
-                      className={`h-full transition-all duration-300 ease-out ${
+                      className={`h-full transition-[transform,opacity,box-shadow,border-color] duration-300 ease-out ${
                         isAllCylindersAssigned ? 'bg-emerald-500' : 'bg-blue-600'
                       }`}
                       style={{
@@ -1966,42 +1966,42 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                   return (
                     <div
                       key={itm.id}
-                      className="p-4 sm:p-5 bg-white border border-slate-200/90 rounded-2xl space-y-3.5 shadow-2xs transition-all"
+                      className="p-4 sm:p-5 bg-surface border border-border-default rounded-2xl space-y-3.5 shadow-elevation-1 transition-[transform,opacity,box-shadow,border-color]"
                     >
                       {/* Item Header with Clean Metadata & Counters */}
-                      <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-100">
+                      <div className="flex items-start justify-between gap-3 pb-3 border-b border-border-subtle">
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <h4 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+                            <h4 className="text-sm sm:text-base font-bold text-text-primary tracking-tight">
                               {displaySize}
                             </h4>
                             {wardNote && (
-                              <span className="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-slate-100 text-slate-600 border border-slate-200/60">
+                              <span className="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-subtle text-text-secondary border border-border-default">
                                 {wardNote}
                               </span>
                             )}
                           </div>
-                          <div className="flex items-center gap-2 mt-1 text-xs text-slate-500 font-medium">
-                            <span>Kuantiti Diperlukan: <strong className="font-mono text-slate-800">{targetQty} unit</strong></span>
+                          <div className="flex items-center gap-2 mt-1 text-xs text-text-muted font-medium">
+                            <span>Kuantiti Diperlukan: <strong className="font-mono text-text-primary">{targetQty} unit</strong></span>
                             <span className="text-slate-300">•</span>
-                            <span>Baki: <strong className="font-mono text-slate-800">{Math.max(0, targetQty - assignedList.length)} unit</strong></span>
+                            <span>Baki: <strong className="font-mono text-text-primary">{Math.max(0, targetQty - assignedList.length)} unit</strong></span>
                           </div>
                         </div>
 
                         <div className="shrink-0">
                           {request.is_external_facility ? (
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-300 shadow-2xs">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-300 shadow-elevation-1">
                               <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
                               <span>✓ {targetQty} unit sedia</span>
                             </span>
                           ) : (
                             <span
-                              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold font-mono tabular-nums border shadow-2xs ${
+                              className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold font-mono tabular-nums border shadow-elevation-1 ${
                                 isFulfilled
-                                  ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                                  ? 'bg-emerald-500/10 text-emerald-400 border-emerald-300'
                                   : assignedList.length > 0
-                                  ? 'bg-blue-50 text-blue-700 border-blue-200'
-                                  : 'bg-slate-50 text-slate-600 border-slate-200'
+                                  ? 'bg-blue-500/10 text-blue-700 border-blue-500/20'
+                                  : 'bg-subtle/50 text-text-secondary border-border-default'
                               }`}
                             >
                               {isFulfilled ? (
@@ -2021,27 +2021,27 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                       </div>
 
                       {request.is_external_facility ? (
-                        <div className="p-4 bg-gradient-to-r from-blue-50/90 via-indigo-50/60 to-emerald-50/90 border border-blue-200/90 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-2xs">
+                        <div className="p-4 bg-gradient-to-r from-blue-50/90 via-indigo-50/60 to-emerald-50/90 border border-blue-500/20 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-elevation-1">
                           <div className="flex items-center gap-3">
                             <div className="w-9 h-9 rounded-xl bg-indigo-600 text-white flex items-center justify-center shrink-0 shadow-xs">
                               <Share2 className="w-4 h-4" />
                             </div>
                             <div>
                               <div className="flex items-center gap-2 flex-wrap">
-                                <span className="text-xs font-extrabold text-indigo-950 uppercase tracking-wider">
+                                <span className="text-xs font-extrabold text-indigo-400 dark:text-indigo-300 font-bold uppercase tracking-wider">
                                   Pinjaman / Indent: {request.external_facility_name || 'Hospital Luar'}
                                 </span>
-                                <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-100 text-indigo-800 uppercase">
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-100 text-indigo-400 uppercase">
                                   {request.indent_direction === 'inbound' ? 'Inbound' : 'Outbound'}
                                 </span>
                               </div>
-                              <p className="text-xs text-slate-600 mt-1 leading-relaxed">
+                              <p className="text-xs text-text-secondary mt-1 leading-relaxed">
                                 Pengeluaran sebanyak <strong>{targetQty} unit</strong> disahkan terus secara kuantiti fizikal. Tiada imbasan nombor siri diperlukan.
                               </p>
                             </div>
                           </div>
                           <div className="shrink-0 flex items-center gap-2">
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-emerald-300 text-emerald-800 font-bold text-xs shadow-2xs">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-surface border border-emerald-300 text-emerald-400 font-bold text-xs shadow-elevation-1">
                               <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                               <span>{targetQty} Unit Sah</span>
                             </span>
@@ -2051,7 +2051,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                         <>
                           {/* Item Error Message */}
                           {itemErr && (
-                            <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-rose-900 text-xs font-semibold flex items-center gap-2 animate-in fade-in">
+                            <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-rose-400 dark:text-rose-300 font-bold text-xs font-semibold flex items-center gap-2 animate-in fade-in">
                               <AlertCircle className="w-4 h-4 shrink-0 text-rose-600" />
                               <span className="flex-1">{itemErr}</span>
                               <button
@@ -2083,7 +2083,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                               <button
                                 type="button"
                                 onClick={stopCamera}
-                                className="absolute top-3 right-3 bg-black/70 hover:bg-black text-white p-2 rounded-full backdrop-blur-md transition-all shadow-md"
+                                className="absolute top-3 right-3 bg-black/70 hover:bg-black text-white p-2 rounded-full backdrop-blur-md transition-[transform,opacity,box-shadow,border-color] shadow-md"
                                 title="Tutup Kamera"
                               >
                                 <X className="w-4 h-4" />
@@ -2118,17 +2118,17 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                                       ? `✓ Selesai: Semua ${targetQty} silinder telah diimbas`
                                       : `Imbas QR / taip siri ${displaySize.split('—')[0].trim()}...`
                                   }
-                                  className={`w-full pl-9 pr-3 py-2.5 rounded-xl text-xs sm:text-sm font-mono shadow-2xs transition-all ${
+                                  className={`w-full pl-9 pr-3 py-2.5 rounded-xl text-xs sm:text-sm font-mono shadow-elevation-1 transition-[transform,opacity,box-shadow,border-color] ${
                                     isFulfilled
-                                      ? 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed'
-                                      : 'bg-white border border-slate-300 text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500'
+                                      ? 'bg-subtle text-slate-400 border border-border-default cursor-not-allowed'
+                                      : 'bg-surface border border-border-default text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500'
                                   }`}
                                 />
 
                                 {/* Autocomplete suggestions dropdown */}
                                 {suggestions.length > 0 && !isFulfilled && (
-                                  <div className="absolute z-30 left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden divide-y divide-slate-100 animate-in fade-in zoom-in-95 duration-100">
-                                    <div className="px-3 py-1.5 bg-slate-50 text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between">
+                                  <div className="absolute z-30 left-0 right-0 mt-1 bg-surface border border-border-default rounded-xl shadow-xl overflow-hidden divide-y divide-border-subtle animate-in fade-in zoom-in-95 duration-100">
+                                    <div className="px-3 py-1.5 bg-subtle/50 text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider flex items-center justify-between">
                                       <span>Padanan Silinder {displaySize} ({suggestions.length})</span>
                                       <span className="text-[9px] text-blue-600 font-semibold">Tersedia di Stor</span>
                                     </div>
@@ -2142,15 +2142,15 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                                             handleAssignCylinder(itm.id, sug);
                                             setScanInputs((prev) => ({ ...prev, [itm.id]: '' }));
                                           }}
-                                          className="w-full px-3 py-2 text-left hover:bg-blue-50 flex items-center justify-between text-xs transition-colors group"
+                                          className="w-full px-3 py-2 text-left hover:bg-blue-500/10 flex items-center justify-between text-xs transition-colors group"
                                         >
                                           <div className="flex items-center gap-2 min-w-0">
                                             <QrCode className="w-3.5 h-3.5 text-blue-600 shrink-0" />
-                                            <span className="font-mono font-bold text-slate-800 group-hover:text-blue-700 truncate">
+                                            <span className="font-mono font-bold text-text-primary group-hover:text-blue-700 truncate">
                                               {sug.serial_number || sug.qr_code}
                                             </span>
                                             <span className={`px-1.5 py-0.5 rounded text-[10px] font-extrabold uppercase shrink-0 ${
-                                              isBN ? 'bg-indigo-50 text-indigo-700' : 'bg-emerald-50 text-emerald-700'
+                                              isBN ? 'bg-indigo-500/10 text-indigo-700' : 'bg-emerald-500/10 text-emerald-700'
                                             }`}>
                                               {sug.type_info?.name || (isBN ? 'Bullnose' : 'Pin Index')}
                                             </span>
@@ -2179,12 +2179,12 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                                     startCamera(itm.id);
                                   }
                                 }}
-                                className={`h-[42px] px-3 sm:px-3.5 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-1.5 border shrink-0 ${
+                                className={`h-[42px] px-3 sm:px-3.5 rounded-xl text-xs font-semibold transition-[transform,opacity,box-shadow,border-color] flex items-center justify-center gap-1.5 border shrink-0 ${
                                   isFulfilled
-                                    ? 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed'
+                                    ? 'bg-subtle border-border-default text-slate-400 cursor-not-allowed'
                                     : isItemCameraActive
-                                    ? 'bg-rose-50 border-rose-200 text-rose-700 hover:bg-rose-100 ring-2 ring-rose-200'
-                                    : 'bg-white border-slate-200 hover:bg-slate-50 text-slate-700 hover:border-slate-300 shadow-2xs'
+                                    ? 'bg-rose-500/10 border-rose-500/20 text-rose-700 hover:bg-rose-100 ring-2 ring-rose-200'
+                                    : 'bg-surface border-border-default hover:bg-subtle/50 text-text-secondary hover:border-border-default shadow-elevation-1'
                                 }`}
                                 title={isFulfilled ? 'Kouta item telah lengkap' : 'Imbas Kod Bar / QR menggunakan Kamera'}
                               >
@@ -2197,7 +2197,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                                 type="button"
                                 disabled={isFulfilled || !currentScanVal.trim()}
                                 onClick={() => handleAssignByCode(itm.id, itm, currentScanVal)}
-                                className="h-[42px] px-3.5 sm:px-4 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 disabled:bg-slate-100 disabled:text-slate-400 disabled:border disabled:border-slate-200 text-white font-bold text-xs shrink-0 transition-all flex items-center justify-center gap-1.5 shadow-2xs"
+                                className="h-[42px] px-3.5 sm:px-4 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 disabled:bg-subtle disabled:text-slate-400 disabled:border disabled:border-border-default text-white font-bold text-xs shrink-0 transition-[transform,opacity,box-shadow,border-color] flex items-center justify-center gap-1.5 shadow-elevation-1"
                               >
                                 <span>Tugaskan</span>
                                 <CornerDownLeft className="w-3.5 h-3.5 hidden sm:inline" />
@@ -2214,10 +2214,10 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                                     [itm.id]: !prev[itm.id],
                                   }))
                                 }
-                                className={`h-[38px] px-3 rounded-xl border text-xs font-semibold transition-all flex items-center justify-center gap-1.5 ${
+                                className={`h-[38px] px-3 rounded-xl border text-xs font-semibold transition-[transform,opacity,box-shadow,border-color] flex items-center justify-center gap-1.5 ${
                                   isBrowserOpen
-                                    ? 'bg-blue-50 border-blue-300 text-blue-700 shadow-inner'
-                                    : 'bg-white border-slate-200/90 hover:bg-slate-50 text-slate-700 hover:border-slate-300 shadow-2xs'
+                                    ? 'bg-blue-500/10 border-blue-300 text-blue-700 shadow-inner'
+                                    : 'bg-surface border-border-default hover:bg-subtle/50 text-text-secondary hover:border-border-default shadow-elevation-1'
                                 }`}
                               >
                                 <Database className="w-3.5 h-3.5 text-blue-600 shrink-0" />
@@ -2233,19 +2233,19 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
 
                           {/* Manual Database Inventory Browser Drawer */}
                           {isBrowserOpen && (
-                            <div className="p-3.5 sm:p-4 bg-slate-50/80 border border-slate-200 rounded-2xl space-y-3 animate-in fade-in duration-150 shadow-inner">
+                            <div className="p-3.5 sm:p-4 bg-subtle/50 border border-border-default rounded-2xl space-y-3 animate-in fade-in duration-150 shadow-inner">
                               {/* Filter Header showing strict type/size isolation */}
-                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-slate-200/80">
+                              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-2 border-b border-border-default">
                                 <div className="flex items-center gap-2 flex-wrap">
-                                  <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                                  <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wider">
                                     Hanya Menunjukkan:
                                   </span>
-                                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 font-extrabold text-xs">
+                                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-400 font-extrabold text-xs">
                                     <Database className="w-3 h-3 text-blue-600" />
                                     {displaySize}
                                   </span>
                                 </div>
-                                <span className="text-xs font-mono font-bold text-slate-600">
+                                <span className="text-xs font-mono font-bold text-text-secondary">
                                   {filteredPool.length} / {availablePool.length} unit tersedia
                                 </span>
                               </div>
@@ -2262,32 +2262,32 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                                     }))
                                   }
                                   placeholder={`Cari nombor siri atau kod bar ${displaySize}...`}
-                                  className="w-full pl-8 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 shadow-2xs font-mono"
+                                  className="w-full pl-8 pr-3 py-2 bg-surface border border-border-default rounded-xl text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-blue-500/20 shadow-elevation-1 font-mono"
                                 />
                               </div>
 
-                              <div className="max-h-56 overflow-y-auto divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white shadow-2xs">
+                              <div className="max-h-56 overflow-y-auto divide-y divide-border-subtle rounded-xl border border-border-default bg-surface shadow-elevation-1">
                                 {filteredPool.length > 0 ? (
                                   filteredPool.map((cyl) => {
                                     const isBN = (cyl.type_info?.code || '').toUpperCase() === 'BN' || (cyl.type_info?.name || '').toUpperCase().includes('BULL');
                                     return (
                                       <div
                                         key={cyl.id}
-                                        className="p-3 hover:bg-blue-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs transition-colors"
+                                        className="p-3 hover:bg-blue-500/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs transition-colors"
                                       >
                                         <div className="flex items-center gap-2.5 min-w-0">
                                           <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0 shadow-xs" title="Tersedia" />
                                           <div className="min-w-0">
                                             <div className="flex items-center gap-2 flex-wrap">
-                                              <span className="font-mono font-extrabold text-slate-900 tracking-tight">
+                                              <span className="font-mono font-extrabold text-text-primary tracking-tight">
                                                 {cyl.serial_number || cyl.qr_code}
                                               </span>
                                               <span className={`px-2 py-0.5 rounded-md text-[10px] font-extrabold uppercase ${
-                                                isBN ? 'bg-indigo-50 text-indigo-700 border border-indigo-200' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                                isBN ? 'bg-indigo-500/10 text-indigo-700 border border-indigo-500/20' : 'bg-emerald-500/10 text-emerald-700 border border-emerald-500/20'
                                               }`}>
                                                 {cyl.type_info?.name || (isBN ? 'Bullnose' : 'Pin Index')}
                                               </span>
-                                              <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-slate-100 text-slate-600">
+                                              <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-semibold bg-subtle text-text-secondary">
                                                 {cyl.size_info?.code || ''}
                                               </span>
                                             </div>
@@ -2300,10 +2300,10 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                                           type="button"
                                           disabled={isFulfilled}
                                           onClick={() => handleAssignCylinder(itm.id, cyl)}
-                                          className={`shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all border shadow-2xs flex items-center justify-center gap-1 ${
+                                          className={`shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-[transform,opacity,box-shadow,border-color] border shadow-elevation-1 flex items-center justify-center gap-1 ${
                                             isFulfilled
-                                              ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed'
-                                              : 'bg-blue-50 hover:bg-blue-600 hover:text-white text-blue-700 border-blue-200 hover:border-blue-600 active:scale-95'
+                                              ? 'bg-subtle text-slate-400 border-border-default cursor-not-allowed'
+                                              : 'bg-blue-500/10 hover:bg-blue-600 hover:text-white text-blue-700 border-blue-500/20 hover:border-blue-600 active:scale-95'
                                           }`}
                                         >
                                           {isFulfilled ? 'Selesai' : '+ Pilih'}
@@ -2313,7 +2313,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                                   })
                                 ) : (
                                   <div className="p-6 text-center text-xs text-slate-400 italic space-y-1">
-                                    <p className="font-medium text-slate-500">Tiada silinder {displaySize} dijumpai dalam stor.</p>
+                                    <p className="font-medium text-text-muted">Tiada silinder {displaySize} dijumpai dalam stor.</p>
                                     <p className="text-[11px] text-slate-400">Pastikan silinder berstatus 'available' di Stor Farmasi.</p>
                                   </div>
                                 )}
@@ -2322,27 +2322,27 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                           )}
 
                           {/* Manifest Silinder Ditugaskan (Clean High-Density Architecture) */}
-                          <div className="space-y-2.5 pt-2 border-t border-slate-100">
+                          <div className="space-y-2.5 pt-2 border-t border-border-subtle">
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2">
-                                <span className="text-[10px] sm:text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                                <span className="text-[10px] sm:text-[11px] font-bold text-text-muted uppercase tracking-wider">
                                   Silinder Ditugaskan
                                 </span>
                                 <span className={`text-xs font-mono font-bold px-2 py-0.5 rounded-md ${
                                   isFulfilled
-                                    ? 'bg-emerald-100 text-emerald-800'
-                                    : 'bg-slate-100 text-slate-700'
+                                    ? 'bg-emerald-100 text-emerald-400'
+                                    : 'bg-subtle text-text-secondary'
                                 }`}>
                                   {assignedList.length} / {targetQty}
                                 </span>
                               </div>
                               {isFulfilled ? (
-                                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 shadow-2xs">
+                                <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/20 shadow-elevation-1">
                                   <CheckCircle2 className="w-3.5 h-3.5" />
                                   Kouta Lengkap ({targetQty} unit)
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
+                                <span className="inline-flex items-center gap-1 text-[11px] font-medium text-amber-700 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/20">
                                   <AlertCircle className="w-3.5 h-3.5" />
                                   Perlu {targetQty - assignedList.length} lagi
                                 </span>
@@ -2358,19 +2358,19 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                                     return (
                                       <div
                                         key={assignedCyl.id || slotIdx}
-                                        className="p-2.5 bg-white border border-emerald-300/80 hover:border-emerald-400 rounded-xl flex items-center justify-between gap-2 shadow-2xs transition-all animate-in fade-in duration-150 group"
+                                        className="p-2.5 bg-surface border border-emerald-300/80 hover:border-emerald-400 rounded-xl flex items-center justify-between gap-2 shadow-elevation-1 transition-[transform,opacity,box-shadow,border-color] animate-in fade-in duration-150 group"
                                       >
                                         <div className="flex items-center gap-2.5 min-w-0">
-                                          <div className="w-6 h-6 rounded-lg bg-emerald-100 border border-emerald-200 text-emerald-800 font-bold text-[11px] flex items-center justify-center shrink-0 font-mono">
+                                          <div className="w-6 h-6 rounded-lg bg-emerald-100 border border-emerald-500/20 text-emerald-400 font-bold text-[11px] flex items-center justify-center shrink-0 font-mono">
                                             {slotIdx + 1}
                                           </div>
                                           <div className="min-w-0">
                                             <div className="flex items-center gap-1.5 flex-wrap">
-                                              <span className="font-mono font-bold text-slate-900 text-xs sm:text-sm tracking-tight truncate">
+                                              <span className="font-mono font-bold text-text-primary text-xs sm:text-sm tracking-tight truncate">
                                                 {assignedCyl.serial_number || assignedCyl.qr_code}
                                               </span>
                                               <span className={`px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase ${
-                                                isBN ? 'bg-indigo-50 text-indigo-700 border border-indigo-200/70' : 'bg-emerald-50 text-emerald-700 border border-emerald-200/70'
+                                                isBN ? 'bg-indigo-500/10 text-indigo-700 border border-indigo-500/20' : 'bg-emerald-500/10 text-emerald-700 border border-emerald-500/20'
                                               }`}>
                                                 {assignedCyl.type_info?.name || (isBN ? 'Bullnose' : 'Pin Index')}
                                               </span>
@@ -2384,7 +2384,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                                         <button
                                           type="button"
                                           onClick={() => handleRemoveCylinder(itm.id, assignedCyl.id)}
-                                          className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors shrink-0"
+                                          className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-500/10 transition-colors shrink-0"
                                           title="Padam silinder ini"
                                         >
                                           <Trash2 className="w-3.5 h-3.5" />
@@ -2396,7 +2396,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
 
                                 {/* Compact shortage helper if quota is not yet reached */}
                                 {!isFulfilled && (
-                                  <div className="p-2.5 bg-amber-50/70 border border-dashed border-amber-200 rounded-xl flex items-center justify-between gap-2 text-xs text-amber-900">
+                                  <div className="p-2.5 bg-amber-500/10 border border-dashed border-amber-500/20 rounded-xl flex items-center justify-between gap-2 text-xs text-amber-400 dark:text-amber-300 font-bold">
                                     <div className="flex items-center gap-2 min-w-0">
                                       <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
                                       <span className="truncate">
@@ -2411,7 +2411,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                                           [itm.id]: true,
                                         }))
                                       }
-                                      className="shrink-0 px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold text-[11px] transition-colors flex items-center gap-1 shadow-2xs active:scale-95"
+                                      className="shrink-0 px-2.5 py-1 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-400 dark:text-amber-300 font-bold font-bold text-[11px] transition-colors flex items-center gap-1 shadow-elevation-1 active:scale-95"
                                     >
                                       <Database className="w-3 h-3 text-amber-700" />
                                       <span>Buka Senarai Stor</span>
@@ -2421,13 +2421,13 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                               </div>
                             ) : (
                               /* Clean Empty State - No repetitive empty slot cards */
-                              <div className="p-4 bg-slate-50/80 border border-dashed border-slate-200 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+                              <div className="p-4 bg-subtle/50 border border-dashed border-border-default rounded-xl flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
                                 <div className="flex items-center gap-3">
-                                  <div className="w-8 h-8 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center shrink-0">
+                                  <div className="w-8 h-8 rounded-xl bg-subtle border border-border-default text-text-muted flex items-center justify-center shrink-0">
                                     <PackageCheck className="w-4 h-4 text-slate-400" />
                                   </div>
                                   <div>
-                                    <h5 className="text-xs font-bold text-slate-700">Belum ada silinder ditugaskan</h5>
+                                    <h5 className="text-xs font-bold text-text-secondary">Belum ada silinder ditugaskan</h5>
                                     <p className="text-[11px] text-slate-400 mt-0.5">
                                       {availablePool.length > 0
                                         ? `${availablePool.length} unit tersedia di stor. Sila imbas kod bar / kod QR atau klik 'Pilih dari Stor'.`
@@ -2445,7 +2445,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                                         [itm.id]: true,
                                       }))
                                     }
-                                    className="shrink-0 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-2xs transition-all flex items-center gap-1.5 active:scale-95"
+                                    className="shrink-0 px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-elevation-1 transition-[transform,opacity,box-shadow,border-color] flex items-center gap-1.5 active:scale-95"
                                   >
                                     <Database className="w-3.5 h-3.5" />
                                     <span>Pilih dari Stor ({availablePool.length} unit)</span>
@@ -2462,10 +2462,10 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
               </div>
             ) : (
               /* Regular Clean Table View (Pending / Approved / Completed) */
-              <div className="border border-slate-200/80 rounded-2xl overflow-hidden shadow-2xs bg-white">
+              <div className="border border-border-default rounded-2xl overflow-hidden shadow-elevation-1 bg-surface">
                 <table className="w-full border-collapse text-left text-xs sm:text-sm">
                   <thead>
-                    <tr className="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-200">
+                    <tr className="bg-subtle/50 text-[11px] font-bold text-text-muted uppercase tracking-wider border-b border-border-default">
                       <th className="px-4 py-3">Kod & Saiz Silinder</th>
                       <th className="px-4 py-3 text-center">Kuantiti Dimohon</th>
                       <th className="px-4 py-3 text-center">
@@ -2474,34 +2474,34 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                       <th className="px-4 py-3">Catatan Penggunaan</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 text-slate-700">
+                  <tbody className="divide-y divide-border-subtle text-text-secondary">
                     {(request.items || []).map((itm) => {
                       const displaySize = formatCylinderSizeLabel(itm.size_code, itm.usage_notes);
                       const currentSupplyQty = supplyQuantities[itm.id] ?? itm.quantity_requested;
                       const isAdjusted = currentSupplyQty !== itm.quantity_requested;
 
                       return (
-                        <tr key={itm.id} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="px-4 py-3 font-extrabold text-slate-900">
+                        <tr key={itm.id} className="hover:bg-subtle/50 transition-colors">
+                          <td className="px-4 py-3 font-extrabold text-text-primary">
                             <div>{displaySize}</div>
                             {itm.usage_notes && (
                               <span className="text-[10px] text-slate-400 font-normal block">{itm.usage_notes}</span>
                             )}
                           </td>
                           <td className="px-4 py-3 text-center font-mono">
-                            <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 text-xs font-bold">
+                            <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-subtle text-text-primary text-xs font-bold">
                               {itm.quantity_requested} Unit
                             </span>
                           </td>
                           <td className="px-4 py-3 text-center">
                             {request.status === 'pending' && isPharmacyStaff ? (
                               <div className="inline-flex items-center gap-2">
-                                <div className="inline-flex items-center rounded-xl border border-slate-200 bg-slate-50 p-0.5 shadow-inner">
+                                <div className="inline-flex items-center rounded-xl border border-border-default bg-subtle/50 p-0.5 shadow-inner">
                                   <button
                                     type="button"
                                     onClick={() => handleQtyChange(itm.id, Math.max(0, (Number(currentSupplyQty) || 0) - 1))}
                                     disabled={isSubmitting || (Number(currentSupplyQty) || 0) <= 0}
-                                    className="w-7 h-7 flex items-center justify-center rounded-lg bg-white hover:bg-slate-100 text-slate-700 font-bold text-sm shadow-2xs transition-all disabled:opacity-30 disabled:cursor-not-allowed active:scale-95"
+                                    className="w-7 h-7 flex items-center justify-center rounded-lg bg-surface hover:bg-subtle text-text-secondary font-bold text-sm shadow-elevation-1 transition-[transform,opacity,box-shadow,border-color] disabled:opacity-30 disabled:cursor-not-allowed active:scale-95"
                                     title="Kurangkan kuantiti"
                                   >
                                     -
@@ -2525,14 +2525,14 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                                     type="button"
                                     onClick={() => handleQtyChange(itm.id, (Number(currentSupplyQty) || 0) + 1)}
                                     disabled={isSubmitting}
-                                    className="w-7 h-7 flex items-center justify-center rounded-lg bg-white hover:bg-slate-100 text-slate-700 font-bold text-sm shadow-2xs transition-all disabled:opacity-30 active:scale-95"
+                                    className="w-7 h-7 flex items-center justify-center rounded-lg bg-surface hover:bg-subtle text-text-secondary font-bold text-sm shadow-elevation-1 transition-[transform,opacity,box-shadow,border-color] disabled:opacity-30 active:scale-95"
                                     title="Tambah kuantiti"
                                   >
                                     +
                                   </button>
                                 </div>
                                 {isAdjusted && (
-                                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-400 border border-amber-500/20">
                                     Diubah ({currentSupplyQty})
                                   </span>
                                 )}
@@ -2541,11 +2541,11 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                               <span className="text-slate-400 font-medium">-</span>
                             ) : (
                               <div className="flex flex-col items-center gap-1">
-                                <span className="font-extrabold text-slate-900 font-mono text-sm">
+                                <span className="font-extrabold text-text-primary font-mono text-sm">
                                   {itm.quantity_issued !== undefined && itm.quantity_issued !== null ? itm.quantity_issued : itm.quantity_requested} Unit
                                 </span>
                                 {itm.quantity_issued !== undefined && itm.quantity_issued !== itm.quantity_requested && (
-                                  <span className="text-[10px] text-amber-800 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-full font-bold">
+                                  <span className="text-[10px] text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-full font-bold">
                                     Sebahagian ({itm.quantity_issued}/{itm.quantity_requested})
                                   </span>
                                 )}
@@ -2556,7 +2556,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                                       .map((s: string, sIdx: number) => (
                                         <span
                                           key={sIdx}
-                                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-blue-50 border border-blue-200 text-blue-700 text-[10px] font-mono font-bold"
+                                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-700 text-[10px] font-mono font-bold"
                                         >
                                           <QrCode className="w-2.5 h-2.5 text-blue-500" />
                                           {s}
@@ -2567,7 +2567,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                               </div>
                             )}
                           </td>
-                          <td className="px-4 py-3 text-slate-500 text-xs">
+                          <td className="px-4 py-3 text-text-muted text-xs">
                             {(() => {
                               const raw = itm.usage_notes || '';
                               if (itm.dispatched_serials && itm.dispatched_serials.length > 0) {
@@ -2588,7 +2588,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
 
           {/* Rejection Form Modal Drawer */}
           {showRejectForm && (
-            <form onSubmit={handleReject} className="p-4 border border-rose-200 bg-rose-50/30 rounded-2xl space-y-3 animate-in fade-in">
+            <form onSubmit={handleReject} className="p-4 border border-rose-500/20 bg-rose-500/10 rounded-2xl space-y-3 animate-in fade-in">
               <label className="block text-xs font-extrabold text-rose-700 uppercase tracking-wider">
                 Alasan Penolakan Permohonan (Rejection Reason)
               </label>
@@ -2597,21 +2597,21 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                 onChange={(e) => setRejectionReason(e.target.value)}
                 placeholder="Sila nyatakan sebab permohonan ini ditolak..."
                 rows={2}
-                className="w-full px-4 py-2 border border-slate-200 rounded-xl bg-white text-xs sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500"
+                className="w-full px-4 py-2 border border-border-default rounded-xl bg-surface text-xs sm:text-sm text-text-primary focus:outline-none focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500"
                 required
               />
               <div className="flex justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setShowRejectForm(false)}
-                  className="px-3.5 py-1.5 border border-slate-200 rounded-xl text-slate-600 font-semibold text-xs bg-white hover:bg-slate-50 shadow-2xs"
+                  className="px-3.5 py-1.5 border border-border-default rounded-xl text-text-secondary font-semibold text-xs bg-surface hover:bg-subtle/50 shadow-elevation-1"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="px-4 py-1.5 rounded-xl text-white bg-rose-600 hover:bg-rose-700 disabled:bg-rose-400 font-bold text-xs shadow-sm transition-all"
+                  className="px-4 py-1.5 rounded-xl text-white bg-rose-600 hover:bg-rose-700 disabled:bg-rose-400 font-bold text-xs shadow-sm transition-[transform,opacity,box-shadow,border-color]"
                 >
                   {isSubmitting ? 'Memproses...' : 'Sahkan Tolak Permohonan'}
                 </button>
@@ -2621,14 +2621,14 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
         </div>
 
         {/* Modal Footer (Sticky Ergonomic Action Bar) */}
-        <div className="sticky bottom-0 z-20 px-4 sm:px-7 py-3.5 sm:py-4 border-t border-slate-200/80 bg-white/95 backdrop-blur-xl flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shadow-lg shrink-0">
+        <div className="sticky bottom-0 z-20 px-4 sm:px-7 py-3.5 sm:py-4 border-t border-border-default bg-white/95 backdrop-blur-xl flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shadow-lg shrink-0">
           {/* Left Side Status / Helper Indicator */}
           <div className="flex-1 min-w-0">
             {request.status === 'pending' && currentUser?.id === request.created_by && !showRejectForm && !isSubmitting && (
               <button
                 type="button"
                 onClick={handleCancel}
-                className="px-3.5 py-2 border border-rose-200 rounded-xl text-rose-600 hover:bg-rose-50 font-semibold text-xs sm:text-sm transition-all shadow-2xs"
+                className="px-3.5 py-2 border border-rose-500/20 rounded-xl text-rose-600 hover:bg-rose-500/10 font-semibold text-xs sm:text-sm transition-[transform,opacity,box-shadow,border-color] shadow-elevation-1"
               >
                 Batalkan Permohonan
               </button>
@@ -2637,12 +2637,12 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
             {isIssuing && (
               <div className="flex items-center gap-2 text-xs">
                 {request.is_external_facility ? (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 font-semibold shadow-2xs">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-semibold shadow-elevation-1">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                     <span>Fasiliti Luar: {totalRequiredCylinders} unit disahkan fizikal</span>
                   </span>
                 ) : !isAllCylindersAssigned ? (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 border border-slate-200 font-medium">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-subtle text-text-secondary border border-border-default font-medium">
                     <Info className="w-3.5 h-3.5 text-blue-500 shrink-0" />
                     <span>
                       {totalAssignedCylinders === 0
@@ -2651,7 +2651,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                     </span>
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200 font-semibold shadow-2xs">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-semibold shadow-elevation-1">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                     <span>Semua {totalRequiredCylinders} silinder lengkap & sedia untuk dispatch</span>
                   </span>
@@ -2671,7 +2671,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                       stopCamera();
                       onDelete(request);
                     }}
-                    className="px-3.5 py-2.5 border border-rose-200 rounded-xl text-rose-600 hover:bg-rose-50 font-semibold text-xs sm:text-sm transition-all flex items-center gap-1.5 focus:outline-none shadow-2xs"
+                    className="px-3.5 py-2.5 border border-rose-500/20 rounded-xl text-rose-600 hover:bg-rose-500/10 font-semibold text-xs sm:text-sm transition-[transform,opacity,box-shadow,border-color] flex items-center gap-1.5 focus:outline-none shadow-elevation-1"
                     title="Padam Rekod Permohonan"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -2684,7 +2684,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                     stopCamera();
                     onClose();
                   }}
-                  className="px-4 sm:px-5 py-2.5 border border-slate-200 rounded-xl text-slate-600 hover:text-slate-800 hover:bg-slate-100 font-semibold text-xs sm:text-sm transition-all focus:outline-none shadow-2xs"
+                  className="px-4 sm:px-5 py-2.5 border border-border-default rounded-xl text-text-secondary hover:text-text-primary hover:bg-subtle font-semibold text-xs sm:text-sm transition-[transform,opacity,box-shadow,border-color] focus:outline-none shadow-elevation-1"
                 >
                   Tutup (Close)
                 </button>
@@ -2693,7 +2693,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
 
             {/* Non-pharmacy information banner for pending requests */}
             {!isPharmacyStaff && request.status === 'pending' && (
-              <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs font-semibold">
+              <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 dark:text-amber-300 font-bold text-xs font-semibold">
                 <Clock className="w-4 h-4 text-amber-600 shrink-0" />
                 <span>Menunggu kelulusan Pegawai Farmasi / Penolong Pegawai Farmasi</span>
               </div>
@@ -2701,7 +2701,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
 
             {/* Non-pharmacy information banner for approved requests awaiting pharmacy dispatch */}
             {!isPharmacyStaff && request.status === 'approved' && !isIssuing && (
-              <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 text-xs font-semibold">
+              <div className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 dark:text-blue-300 font-bold text-xs font-semibold">
                 <PackageCheck className="w-4 h-4 text-blue-600 shrink-0" />
                 <span>Permohonan diluluskan. Menunggu pengeluaran fizikal oleh Pegawai Farmasi.</span>
               </div>
@@ -2714,7 +2714,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                   type="button"
                   onClick={() => setShowRejectForm(true)}
                   disabled={isSubmitting}
-                  className="px-4 py-2.5 rounded-xl border border-rose-200 text-rose-600 hover:bg-rose-50 font-semibold text-xs sm:text-sm transition-all focus:outline-none shadow-2xs"
+                  className="px-4 py-2.5 rounded-xl border border-rose-500/20 text-rose-600 hover:bg-rose-500/10 font-semibold text-xs sm:text-sm transition-[transform,opacity,box-shadow,border-color] focus:outline-none shadow-elevation-1"
                 >
                   Tolak Permohonan
                 </button>
@@ -2722,7 +2722,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                   type="button"
                   onClick={handleApprove}
                   disabled={isSubmitting}
-                  className="px-5 py-2.5 rounded-xl text-white bg-blue-600 hover:bg-blue-700 active:scale-95 disabled:bg-blue-400 font-bold text-xs sm:text-sm shadow-md shadow-blue-500/25 transition-all focus:outline-none flex items-center gap-1.5"
+                  className="px-5 py-2.5 rounded-xl text-white bg-blue-600 hover:bg-blue-700 active:scale-95 disabled:bg-blue-400 font-bold text-xs sm:text-sm shadow-md shadow-blue-500/25 transition-[transform,opacity,box-shadow,border-color] focus:outline-none flex items-center gap-1.5"
                 >
                   {isSubmitting ? <RefreshCw className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
                   <span>Luluskan Permohonan</span>
@@ -2738,7 +2738,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                   setIsIssuing(true);
                 }}
                 disabled={isSubmitting}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-white bg-blue-600 hover:bg-blue-700 active:scale-95 disabled:bg-blue-400 font-bold text-xs sm:text-sm shadow-md shadow-blue-500/25 transition-all focus:outline-none flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-white bg-blue-600 hover:bg-blue-700 active:scale-95 disabled:bg-blue-400 font-bold text-xs sm:text-sm shadow-md shadow-blue-500/25 transition-[transform,opacity,box-shadow,border-color] focus:outline-none flex items-center justify-center gap-2"
               >
                 <PackageCheck className="w-4 h-4" />
                 <span>Mulakan Pengeluaran (Dispatch Cylinders)</span>
@@ -2753,7 +2753,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                     stopCamera();
                     setIsIssuing(false);
                   }}
-                  className="px-4 py-2.5 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs sm:text-sm rounded-xl transition-all shadow-2xs focus:outline-none text-center"
+                  className="px-4 py-2.5 border border-border-default bg-surface hover:bg-subtle/50 text-text-secondary font-semibold text-xs sm:text-sm rounded-xl transition-[transform,opacity,box-shadow,border-color] shadow-elevation-1 focus:outline-none text-center"
                 >
                   Kembali (Back)
                 </button>
@@ -2761,10 +2761,10 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                   type="button"
                   onClick={handleIssue}
                   disabled={!isAllCylindersAssigned || isSubmitting}
-                  className={`px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-all focus:outline-none flex items-center justify-center gap-2 whitespace-nowrap ${
+                  className={`px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition-[transform,opacity,box-shadow,border-color] focus:outline-none flex items-center justify-center gap-2 whitespace-nowrap ${
                     isAllCylindersAssigned && !isSubmitting
                       ? 'bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white shadow-lg shadow-emerald-500/25 cursor-pointer'
-                      : 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed shadow-none'
+                      : 'bg-subtle text-slate-400 border border-border-default cursor-not-allowed shadow-none'
                   }`}
                 >
                   <CheckCircle2 className="w-4 h-4 shrink-0" />
@@ -2785,7 +2785,7 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
                 type="button"
                 onClick={handleComplete}
                 disabled={isSubmitting}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-white bg-emerald-600 hover:bg-emerald-700 active:scale-95 disabled:bg-emerald-400 font-bold text-xs sm:text-sm shadow-lg shadow-emerald-500/25 transition-all focus:outline-none flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-white bg-emerald-600 hover:bg-emerald-700 active:scale-95 disabled:bg-emerald-400 font-bold text-xs sm:text-sm shadow-lg shadow-emerald-500/25 transition-[transform,opacity,box-shadow,border-color] focus:outline-none flex items-center justify-center gap-2"
               >
                 <CheckCheck className="w-4 h-4" />
                 <span>Sahkan Penerimaan Wad</span>

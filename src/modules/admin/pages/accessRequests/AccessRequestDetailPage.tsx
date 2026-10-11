@@ -249,7 +249,7 @@ export const AccessRequestDetailPage: React.FC = () => {
   if (!request) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-slate-600">Access request not found</p>
+        <p className="text-text-muted">Access request not found</p>
       </div>
     )
   }
@@ -280,7 +280,7 @@ export const AccessRequestDetailPage: React.FC = () => {
           >
             Back to Requests
           </Button>
-          <h1 className="text-2xl font-bold text-slate-900">Access Request Details</h1>
+          <h1 className="text-2xl font-bold text-text-primary">Access Request Details</h1>
         </div>
         {request.status === ACCESS_REQUEST_STATUS.PENDING && (
           <div className="flex items-center gap-3">
@@ -308,7 +308,7 @@ export const AccessRequestDetailPage: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         className={cn(
           'p-4 rounded-xl border flex items-center gap-3',
-          request.status === ACCESS_REQUEST_STATUS.PENDING && 'bg-amber-50 border-amber-200',
+          request.status === ACCESS_REQUEST_STATUS.PENDING && 'bg-amber-500/10 border-amber-500/20',
           request.status === ACCESS_REQUEST_STATUS.APPROVED && 'bg-green-50 border-green-200',
           request.status === ACCESS_REQUEST_STATUS.REJECTED && 'bg-red-50 border-red-200'
         )}
@@ -322,10 +322,10 @@ export const AccessRequestDetailPage: React.FC = () => {
           )}
         />
         <div className="flex-1">
-          <p className="font-semibold text-slate-900">
+          <p className="font-semibold text-text-primary">
             Status: {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
           </p>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-text-muted">
             Requested on {formatDate(request.created_at)}
             {request.reviewed_at && ` â€¢ Reviewed on ${formatDate(request.reviewed_at)}`}
           </p>
@@ -342,7 +342,7 @@ export const AccessRequestDetailPage: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-xl border border-slate-200 shadow-sm p-6"
+            className="bg-surface rounded-xl border border-border-default shadow-sm p-6"
           >
             <div className="flex items-start gap-6">
               <Avatar
@@ -352,8 +352,8 @@ export const AccessRequestDetailPage: React.FC = () => {
                 size="xl"
               />
               <div className="flex-1">
-                <h2 className="text-2xl font-bold text-slate-900 mb-2">{request.full_name}</h2>
-                <p className="text-slate-600 mb-4">{request.email}</p>
+                <h2 className="text-2xl font-bold text-text-primary mb-2">{request.full_name}</h2>
+                <p className="text-text-muted mb-4">{request.email}</p>
 
                 <div className="grid grid-cols-2 gap-4">
                   <InfoItem icon={Hash} label="IC Number" value={request.ic_number} />
@@ -384,9 +384,9 @@ export const AccessRequestDetailPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="bg-white rounded-xl border border-slate-200 shadow-sm p-6"
+            className="bg-surface rounded-xl border border-border-default shadow-sm p-6"
           >
-            <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
               <Building2 className="w-5 h-5" />
               Department & Role Information
             </h3>
@@ -415,9 +415,9 @@ export const AccessRequestDetailPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white rounded-xl border border-slate-200 shadow-sm p-6"
+            className="bg-surface rounded-xl border border-border-default shadow-sm p-6"
           >
-            <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
               <AlertCircle className="w-5 h-5" />
               Emergency Contact
             </h3>
@@ -457,9 +457,9 @@ export const AccessRequestDetailPage: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
-              className="bg-white rounded-xl border border-slate-200 shadow-sm p-6"
+              className="bg-surface rounded-xl border border-border-default shadow-sm p-6"
             >
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">Review Information</h3>
+              <h3 className="text-lg font-semibold text-text-primary mb-4">Review Information</h3>
               <div className="space-y-3">
                 <InfoItem
                   icon={User}
@@ -488,9 +488,9 @@ export const AccessRequestDetailPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-white rounded-xl border border-slate-200 shadow-sm p-6"
+            className="bg-surface rounded-xl border border-border-default shadow-sm p-6"
           >
-            <h3 className="text-lg font-semibold text-slate-900 mb-4">Timeline</h3>
+            <h3 className="text-lg font-semibold text-text-primary mb-4">Timeline</h3>
             <div className="space-y-4">
               <TimelineItem
                 icon={FileText}
@@ -523,7 +523,7 @@ export const AccessRequestDetailPage: React.FC = () => {
         size="md"
       >
         <div className="space-y-4">
-          <p className="text-slate-700">
+          <p className="text-text-secondary">
             Are you sure you want to approve this access request? A user account will be created for{' '}
             <strong>{request.full_name}</strong>.
           </p>
@@ -574,7 +574,7 @@ export const AccessRequestDetailPage: React.FC = () => {
         size="md"
       >
         <div className="space-y-4">
-          <p className="text-slate-700">
+          <p className="text-text-secondary">
             Are you sure you want to reject this access request from <strong>{request.full_name}</strong>?
           </p>
 
@@ -619,8 +619,8 @@ const InfoItem: React.FC<InfoItemProps> = ({ icon: Icon, label, value, fullWidth
   <div className={cn('flex items-start gap-3', fullWidth && 'md:col-span-2')}>
     <Icon className={cn('text-slate-400 flex-shrink-0 mt-0.5', small ? 'w-4 h-4' : 'w-5 h-5')} />
     <div className="flex-1 min-w-0">
-      <p className={cn('text-slate-500', small ? 'text-xs' : 'text-sm')}>{label}</p>
-      <p className={cn('font-semibold text-slate-900 mt-0.5', small ? 'text-sm' : 'text-base')}>
+      <p className={cn('text-text-muted', small ? 'text-xs' : 'text-sm')}>{label}</p>
+      <p className={cn('font-semibold text-text-primary mt-0.5', small ? 'text-sm' : 'text-base')}>
         {value}
       </p>
     </div>
@@ -639,14 +639,14 @@ const TimelineItem: React.FC<TimelineItemProps> = ({ icon: Icon, title, date, ac
     <div
       className={cn(
         'w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0',
-        active ? 'bg-teal-100 text-teal-600' : 'bg-slate-100 text-slate-400'
+        active ? 'bg-teal-100 text-teal-600' : 'bg-subtle text-slate-400'
       )}
     >
       <Icon className="w-5 h-5" />
     </div>
     <div className="flex-1 pt-1">
-      <p className={cn('font-medium', active ? 'text-slate-900' : 'text-slate-500')}>{title}</p>
-      <p className="text-sm text-slate-500 mt-0.5">{date}</p>
+      <p className={cn('font-medium', active ? 'text-text-primary' : 'text-text-muted')}>{title}</p>
+      <p className="text-sm text-text-muted mt-0.5">{date}</p>
     </div>
   </div>
 )

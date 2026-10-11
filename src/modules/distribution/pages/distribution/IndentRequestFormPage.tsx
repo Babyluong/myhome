@@ -246,7 +246,7 @@ export const IndentRequestFormPage: React.FC = () => {
                 </option>
               ))}
             </Select>
-            <p className="text-[11px] text-slate-500 mt-1">
+            <p className="text-[11px] text-text-muted mt-1">
               Items available are based on this department's entitlement configuration.
             </p>
           </div>
@@ -389,13 +389,13 @@ export const IndentRequestFormPage: React.FC = () => {
             </h2>
 
             {cartItems.length === 0 ? (
-              <div className="py-10 text-center text-xs text-slate-500 border border-dashed border-slate-800 rounded-xl">
+              <div className="py-10 text-center text-xs text-text-muted border border-dashed border-slate-800 rounded-xl">
                 No items added yet. Select an item above and click "Add Item".
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs text-slate-300">
-                  <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider text-[10px]">
+                  <thead className="bg-slate-950 text-text-secondary font-bold uppercase tracking-wider text-[10px]">
                     <tr>
                       <th className="p-2.5">Item Code & Name</th>
                       <th className="p-2.5">Type</th>

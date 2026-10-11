@@ -139,18 +139,18 @@ const MyGalleryPage: React.FC = () => {
 
           <div className="flex items-center gap-3">
             <div className="relative group">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 group-focus-within:text-indigo-400 transition-colors" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted group-focus-within:text-indigo-400 transition-colors" />
               <input 
                 type="text"
                 placeholder="Cari album..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2.5 bg-slate-900/50 border border-slate-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all w-64 backdrop-blur-sm"
+                className="pl-10 pr-4 py-2.5 bg-slate-900/50 border border-slate-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-colors w-64 backdrop-blur-sm"
               />
             </div>
             <Button 
               onClick={() => setIsCreateModalOpen(true)}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-5 py-2.5 flex items-center gap-2 transition-all shadow-lg shadow-indigo-500/20 border-none"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl px-5 py-2.5 flex items-center gap-2 transition-colors shadow-lg shadow-indigo-500/20 border-none"
             >
               <Plus className="w-4 h-4" />
               <span>Album Baru</span>
@@ -191,7 +191,7 @@ const MyGalleryPage: React.FC = () => {
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       />
                     ) : (
-                      <div className="flex flex-col items-center gap-3 text-slate-700 group-hover:text-indigo-400 transition-colors">
+                      <div className="flex flex-col items-center gap-3 text-text-secondary group-hover:text-indigo-400 transition-colors">
                         <FolderOpen className="w-12 h-12" />
                         <span className="text-[10px] font-bold uppercase tracking-[0.2em]">Tiada Gambar</span>
                       </div>
@@ -207,7 +207,7 @@ const MyGalleryPage: React.FC = () => {
                             {album.photo_count} gambar
                           </p>
                         </div>
-                        <div className="ml-3 p-2 bg-indigo-500/20 text-indigo-400 rounded-lg opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                        <div className="ml-3 p-2 bg-indigo-500/20 text-indigo-400 rounded-lg opacity-0 group-hover:opacity-100 transition-colors transform translate-x-2 group-hover:translate-x-0">
                           <ChevronRight className="w-4 h-4" />
                         </div>
                       </div>
@@ -221,17 +221,17 @@ const MyGalleryPage: React.FC = () => {
           <div className="flex flex-col items-center justify-center py-32 text-center space-y-6">
             <div className="relative">
               <div className="absolute inset-0 bg-indigo-500/10 blur-3xl rounded-full" />
-              <div className="relative p-8 bg-slate-900/50 rounded-full border border-slate-800 text-slate-700 backdrop-blur-xl">
+              <div className="relative p-8 bg-slate-900/50 rounded-full border border-slate-800 text-text-secondary backdrop-blur-xl">
                 <FolderOpen className="w-20 h-20" />
               </div>
             </div>
             <div className="space-y-2">
               <h3 className="text-2xl font-bold text-slate-200">Tiada Album Dijumpai</h3>
-              <p className="text-slate-500 max-w-xs mx-auto">Mula dengan mencipta album pertama anda untuk menyimpan kenangan hospital.</p>
+              <p className="text-text-muted max-w-xs mx-auto">Mula dengan mencipta album pertama anda untuk menyimpan kenangan hospital.</p>
             </div>
             <Button 
               onClick={() => setIsCreateModalOpen(true)}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-xl shadow-xl shadow-indigo-500/20 transition-all border-none"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-xl shadow-xl shadow-indigo-500/20 transition-colors border-none"
             >
               Cipta Album Sekarang
             </Button>
@@ -263,7 +263,7 @@ const MyGalleryPage: React.FC = () => {
               placeholder="Brief description about this album..."
               value={newAlbumDesc}
               onChange={(e) => setNewAlbumDesc(e.target.value)}
-              className="w-full min-h-[120px] px-4 py-3 bg-slate-900/50 border border-slate-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-all resize-none placeholder:text-slate-600"
+              className="w-full min-h-[120px] px-4 py-3 bg-slate-900/50 border border-slate-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 transition-colors resize-none placeholder:text-text-muted"
             />
           </div>
 

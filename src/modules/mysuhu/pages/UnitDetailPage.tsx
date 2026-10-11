@@ -277,10 +277,10 @@ export const UnitDetailPage: React.FC = () => {
 
   if (!unit) {
     return (
-      <div className="text-center py-16 text-slate-550 bg-white border border-slate-100 rounded-3xl shadow-xl p-8">
+      <div className="text-center py-16 text-slate-550 bg-surface border border-border-subtle rounded-3xl shadow-xl p-8">
         <AlertTriangle className="w-12 h-12 text-rose-500 mx-auto mb-4" />
         <h3 className="text-base font-bold text-slate-750">Unit Not Found</h3>
-        <button onClick={() => navigate('/suhu/dashboard')} className="mt-4 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-black shadow transition-all">
+        <button onClick={() => navigate('/suhu/dashboard')} className="mt-4 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-black shadow transition-colors">
           Back to Dashboard
         </button>
       </div>
@@ -295,18 +295,18 @@ export const UnitDetailPage: React.FC = () => {
     <div className="w-full space-y-6">
       
       {/* Header and Back Link */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-white border border-slate-100 rounded-3xl p-6 shadow-xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-teal-400 via-[#00a68a] to-emerald-500" />
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-surface border border-border-subtle rounded-3xl p-6 shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-1.5 bg-accent-base" />
         
         <div className="flex items-start gap-4">
           {/* Equipment Photo in Portrait Ratio (3:4) */}
           {uploadingPhoto ? (
-            <div className="w-20 h-[106px] sm:w-24 sm:h-[128px] rounded-2xl border border-slate-200 bg-slate-50 flex flex-col items-center justify-center gap-1 flex-shrink-0 mt-1" style={{ aspectRatio: '3/4' }}>
+            <div className="w-20 h-[106px] sm:w-24 sm:h-[128px] rounded-2xl border border-border-default bg-subtle/50 flex flex-col items-center justify-center gap-1 flex-shrink-0 mt-1" style={{ aspectRatio: '3/4' }}>
               <Spinner size="sm" />
               <span className="text-[8px] font-bold text-slate-400">Saving...</span>
             </div>
           ) : unit.photo_url ? (
-            <div className="relative group/unitphoto w-20 h-[106px] sm:w-24 sm:h-[128px] rounded-2xl overflow-hidden border border-slate-200 shadow-sm flex-shrink-0 bg-slate-50 mt-1" style={{ aspectRatio: '3/4' }}>
+            <div className="relative group/unitphoto w-20 h-[106px] sm:w-24 sm:h-[128px] rounded-2xl overflow-hidden border border-border-default shadow-sm flex-shrink-0 bg-subtle/50 mt-1" style={{ aspectRatio: '3/4' }}>
               <img 
                 src={unit.photo_url} 
                 alt={unit.nama_unit} 
@@ -318,12 +318,12 @@ export const UnitDetailPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setPreviewPhotoUrl(unit.photo_url!)}
-                  className="p-1.5 bg-white/90 text-slate-700 rounded-lg shadow"
+                  className="p-1.5 bg-surface text-text-secondary rounded-lg shadow"
                   title="View Full Photo"
                 >
                   <Eye className="w-3.5 h-3.5" />
                 </button>
-                <label className="p-1.5 bg-white/90 text-[#00a68a] rounded-lg shadow cursor-pointer" title="Change Photo">
+                <label className="p-1.5 bg-surface text-[#00a68a] rounded-lg shadow cursor-pointer" title="Change Photo">
                   <Camera className="w-3.5 h-3.5" />
                   <input 
                     type="file" 
@@ -339,7 +339,7 @@ export const UnitDetailPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={handleDeletePhoto}
-                  className="p-1.5 bg-white/90 text-rose-600 rounded-lg shadow"
+                  className="p-1.5 bg-surface text-rose-600 rounded-lg shadow"
                   title="Remove Photo"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -348,7 +348,7 @@ export const UnitDetailPage: React.FC = () => {
             </div>
           ) : (
             <label 
-              className="w-20 h-[106px] sm:w-24 sm:h-[128px] rounded-2xl border-2 border-dashed border-slate-200 hover:border-[#00a68a] bg-slate-50 hover:bg-emerald-50/40 flex flex-col items-center justify-center gap-1 cursor-pointer flex-shrink-0 text-slate-400 hover:text-[#00a68a] transition-colors mt-1 p-1 text-center"
+              className="w-20 h-[106px] sm:w-24 sm:h-[128px] rounded-2xl border-2 border-dashed border-border-default hover:border-[#00a68a] bg-subtle/50 hover:bg-emerald-500/10 flex flex-col items-center justify-center gap-1 cursor-pointer flex-shrink-0 text-slate-400 hover:text-[#00a68a] transition-colors mt-1 p-1 text-center"
               style={{ aspectRatio: '3/4' }}
               title="Attach photo of this freezer or room"
             >
@@ -377,10 +377,10 @@ export const UnitDetailPage: React.FC = () => {
             </button>
             
             <div className="flex flex-wrap items-center gap-2.5">
-              <Badge variant="gray" className="bg-slate-100 text-slate-600 border-transparent font-mono text-[9px] px-2 py-0.5 rounded-md">
+              <Badge variant="gray" className="bg-subtle text-text-muted border-transparent font-mono text-[9px] px-2 py-0.5 rounded-md">
                 {unit.unit_id}
               </Badge>
-              <h1 className="text-xl font-black text-slate-800">{unit.nama_unit}</h1>
+              <h1 className="text-xl font-black text-text-primary">{unit.nama_unit}</h1>
             </div>
             <p className="text-xs text-slate-400 mt-1 font-semibold">
               Location: <span className="text-slate-605 font-bold">{unit.lokasi?.nama_lokasi}</span> &bull; 
@@ -393,7 +393,7 @@ export const UnitDetailPage: React.FC = () => {
           <button 
             onClick={handleExportPdf}
             disabled={exporting}
-            className="flex items-center gap-1.5 px-4 py-2.5 bg-white border border-slate-200 text-slate-700 hover:text-slate-905 rounded-xl text-xs font-black shadow-sm hover:shadow-md transition-all disabled:opacity-50"
+            className="flex items-center gap-1.5 px-4 py-2.5 bg-surface border border-border-default text-text-secondary hover:text-slate-905 rounded-xl text-xs font-black shadow-sm hover:shadow-md transition-colors disabled:opacity-50"
           >
             <Download className="w-4 h-4 text-slate-450" />
             <span>{exporting ? 'Exporting...' : 'Download PDF'}</span>
@@ -401,7 +401,7 @@ export const UnitDetailPage: React.FC = () => {
 
           <button 
             onClick={() => setShowLogDrawer(true)}
-            className="flex items-center gap-1.5 px-4 py-2.5 bg-[#00a68a] hover:bg-[#008f76] text-white rounded-xl text-xs font-black shadow-md shadow-teal-500/10 hover:shadow-lg transition-all"
+            className="flex items-center gap-1.5 px-4 py-2.5 bg-[#00a68a] hover:bg-[#008f76] text-white rounded-xl text-xs font-black shadow-md shadow-teal-500/10 hover:shadow-lg transition-colors"
           >
             <Plus className="w-4 h-4" />
             <span>Log Temperature</span>
@@ -411,9 +411,9 @@ export const UnitDetailPage: React.FC = () => {
 
       {/* KPI Info Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg">
+        <div className="bg-surface border border-border-subtle p-5 rounded-3xl shadow-lg">
           <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Current Temp</span>
-          <p className="text-3xl font-black font-mono text-slate-800 mt-2 tabular-nums">
+          <p className="text-3xl font-black font-mono text-text-primary mt-2 tabular-nums">
             {unit.latest_reading ? `${unit.latest_reading.suhu.toFixed(1)}°C` : '—'}
           </p>
           <span className="text-[10px] text-slate-400 font-bold mt-1 block">
@@ -421,43 +421,43 @@ export const UnitDetailPage: React.FC = () => {
           </span>
         </div>
 
-        <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg">
+        <div className="bg-surface border border-border-subtle p-5 rounded-3xl shadow-lg">
           <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Threshold Limits</span>
-          <p className="text-2xl font-black font-mono text-slate-800 mt-2">
+          <p className="text-2xl font-black font-mono text-text-primary mt-2">
             {minLimit}°C to {maxLimit}°C
           </p>
           <span className="text-[10px] text-slate-400 font-bold mt-1 block">Target Safe Bounds</span>
         </div>
 
-        <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg">
+        <div className="bg-surface border border-border-subtle p-5 rounded-3xl shadow-lg">
           <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Monitoring Status</span>
           <div className="mt-2.5">
             {unit.status_pemantauan === 'normal' && (
-              <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200/50 px-3 py-1 text-xs rounded-lg border font-black">
+              <Badge className="bg-emerald-500/10 text-emerald-700 border-emerald-500/20 px-3 py-1 text-xs rounded-lg border font-black">
                 ✅ NORMAL
               </Badge>
             )}
             {unit.status_pemantauan === 'warning' && (
-              <Badge className="bg-amber-50 text-amber-700 border-amber-200/50 px-3 py-1 text-xs rounded-lg border font-black animate-pulse">
+              <Badge className="bg-amber-500/10 text-amber-700 border-amber-500/20 px-3 py-1 text-xs rounded-lg border font-black animate-pulse">
                 ⚠️ WARNING
               </Badge>
             )}
             {unit.status_pemantauan === 'breach' && (
-              <Badge className="bg-rose-50 text-rose-700 border-rose-200/50 px-3 py-1 text-xs rounded-lg border font-black animate-pulse">
+              <Badge className="bg-rose-500/10 text-rose-700 border-rose-500/20 px-3 py-1 text-xs rounded-lg border font-black animate-pulse">
                 🔴 BREACH
               </Badge>
             )}
             {unit.status_pemantauan === 'no_reading' && (
-              <Badge className="bg-slate-50 text-slate-400 border-slate-200 px-3 py-1 text-xs rounded-lg border font-black">
+              <Badge className="bg-subtle/50 text-slate-400 border-border-default px-3 py-1 text-xs rounded-lg border font-black">
                 ⌛ NO READING
               </Badge>
             )}
           </div>
         </div>
 
-        <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg">
+        <div className="bg-surface border border-border-subtle p-5 rounded-3xl shadow-lg">
           <span className="text-xs font-bold text-slate-400 uppercase tracking-wide">Log Integrity (&gt;4h)</span>
-          <p className="text-2xl font-black text-slate-800 mt-2">
+          <p className="text-2xl font-black text-text-primary mt-2">
             {unit.status_pemantauan === 'no_reading' ? '🔴 Deficit' : '✅ Maintained'}
           </p>
           <span className="text-[10px] text-slate-400 font-bold mt-1 block">Automatic 4-hour check</span>
@@ -465,21 +465,21 @@ export const UnitDetailPage: React.FC = () => {
       </div>
 
       {/* Chart Section */}
-      <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-xl">
+      <div className="bg-surface border border-border-subtle rounded-3xl p-6 shadow-xl">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-          <h3 className="text-base font-extrabold text-slate-800 flex items-center gap-2">
+          <h3 className="text-base font-extrabold text-text-primary flex items-center gap-2">
             <Activity className="w-5 h-5 text-rose-500" />
             <span>Temperature Timeline Analytics (°C)</span>
           </h3>
 
           {/* Date Toggle */}
           <div className="flex flex-wrap items-center gap-3">
-            <div className="bg-slate-100 p-1 border border-slate-200/60 rounded-xl flex gap-1 text-xs">
+            <div className="bg-subtle p-1 border border-border-default rounded-xl flex gap-1 text-xs">
               {(['24h', '7d', '30d', 'custom'] as const).map(range => (
                 <button 
                   key={range}
                   onClick={() => setDateRange(range)}
-                  className={`px-3 py-1.5 rounded-lg transition-all font-bold ${dateRange === range ? 'bg-[#00a68a] text-white shadow-md' : 'text-slate-500 hover:text-slate-800'}`}
+                  className={`px-3 py-1.5 rounded-lg transition-colors font-bold ${dateRange === range ? 'bg-[#00a68a] text-white shadow-md' : 'text-text-muted hover:text-text-primary'}`}
                 >
                   {range === '24h' ? '24 Hours' : range === '7d' ? '7 Days' : range === '30d' ? '30 Days' : 'Custom'}
                 </button>
@@ -492,14 +492,14 @@ export const UnitDetailPage: React.FC = () => {
                   type="date"
                   value={customStartDate}
                   onChange={(e) => setCustomStartDate(e.target.value)}
-                  className="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-slate-700 outline-none focus:border-[#00a68a]"
+                  className="bg-surface border border-border-default rounded-xl px-2.5 py-1.5 text-text-secondary outline-none focus:border-[#00a68a]"
                 />
                 <span className="text-slate-400 font-bold">to</span>
                 <input 
                   type="date"
                   value={customEndDate}
                   onChange={(e) => setCustomEndDate(e.target.value)}
-                  className="bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-slate-700 outline-none focus:border-[#00a68a]"
+                  className="bg-surface border border-border-default rounded-xl px-2.5 py-1.5 text-text-secondary outline-none focus:border-[#00a68a]"
                 />
               </div>
             )}
@@ -508,12 +508,12 @@ export const UnitDetailPage: React.FC = () => {
 
         {/* Recharts Container */}
         {chartData.length === 0 ? (
-          <div className="h-72 flex flex-col justify-center items-center text-slate-400 bg-slate-55 rounded-2xl border border-dashed border-slate-200">
+          <div className="h-72 flex flex-col justify-center items-center text-slate-400 bg-slate-55 rounded-2xl border border-dashed border-border-default">
             <Calendar className="w-10 h-10 text-slate-300 mb-2" />
-            <p className="text-xs font-bold text-slate-500">No temperature records logged for this range.</p>
+            <p className="text-xs font-bold text-text-muted">No temperature records logged for this range.</p>
           </div>
         ) : (
-          <div ref={chartRef} className="h-72 w-full p-2 bg-slate-50/20 rounded-2xl border border-slate-100">
+          <div ref={chartRef} className="h-72 w-full p-2 bg-subtle/50 rounded-2xl border border-border-subtle">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData} margin={{ top: 15, right: 10, left: -20, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
@@ -538,20 +538,20 @@ export const UnitDetailPage: React.FC = () => {
                       const data = payload[0].payload.rawReading;
                       const status = data.status_bacaan;
                       
-                      let badgeColor = 'text-emerald-700 bg-emerald-50 border-emerald-200';
-                      if (status === 'warning') badgeColor = 'text-amber-700 bg-amber-50 border-amber-200';
-                      if (status === 'breach') badgeColor = 'text-rose-700 bg-rose-50 border-rose-200';
+                      let badgeColor = 'text-emerald-700 bg-emerald-500/10 border-emerald-500/20';
+                      if (status === 'warning') badgeColor = 'text-amber-700 bg-amber-500/10 border-amber-500/20';
+                      if (status === 'breach') badgeColor = 'text-rose-700 bg-rose-500/10 border-rose-500/20';
 
                       return (
-                        <div className="bg-white border border-slate-155 p-3.5 rounded-xl shadow-xl space-y-1">
+                        <div className="bg-surface border border-slate-155 p-3.5 rounded-xl shadow-xl space-y-1">
                           <p className="text-[10px] text-slate-400 font-bold">{format(new Date(data.tarikh_masa), 'dd MMM yyyy, HH:mm')}</p>
                           <div className="flex items-center gap-1.5 py-0.5">
-                            <span className="text-sm font-black text-slate-800 font-mono">{data.suhu.toFixed(1)}°C</span>
+                            <span className="text-sm font-black text-text-primary font-mono">{data.suhu.toFixed(1)}°C</span>
                             <Badge className={`${badgeColor} text-[8px] font-bold px-1.5 py-0.2 border rounded-md`}>
                               {status.toUpperCase()}
                             </Badge>
                           </div>
-                          {data.nota && <p className="text-[10px] text-slate-500 italic max-w-[200px]">Notes: {data.nota}</p>}
+                          {data.nota && <p className="text-[10px] text-text-muted italic max-w-[200px]">Notes: {data.nota}</p>}
                           {data.is_corrected && (
                             <p className="text-[9px] text-rose-650 font-bold max-w-[200px]">
                               Correction: {data.correction_note}
@@ -605,15 +605,15 @@ export const UnitDetailPage: React.FC = () => {
       </div>
 
       {/* Historical Logs List */}
-      <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-xl overflow-hidden">
-        <h3 className="text-base font-extrabold text-slate-800 flex items-center gap-2 mb-4">
+      <div className="bg-surface border border-border-subtle rounded-3xl p-6 shadow-xl overflow-hidden">
+        <h3 className="text-base font-extrabold text-text-primary flex items-center gap-2 mb-4">
           <FileText className="w-5 h-5 text-slate-400" />
           <span>Temperature Log Records</span>
         </h3>
 
         <div className="hidden md:block overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-700">
-            <thead className="bg-slate-50 text-[10px] text-slate-400 font-bold uppercase tracking-wider border-b border-slate-100">
+          <table className="w-full text-left text-xs text-text-secondary">
+            <thead className="bg-subtle/50 text-[10px] text-text-secondary font-bold font-bold uppercase tracking-wider border-b border-border-subtle">
               <tr>
                 <th className="px-4 py-3">No.</th>
                 <th className="px-4 py-3">Date & Time Logged</th>
@@ -625,20 +625,20 @@ export const UnitDetailPage: React.FC = () => {
                 <th className="px-4 py-3 text-right">Correct</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-border-subtle">
               {filteredReadings.map((reading, index) => {
                 const status = reading.status_bacaan;
-                let badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200/50';
-                if (status === 'warning') badgeClass = 'bg-amber-50 text-amber-700 border-amber-200/50';
-                if (status === 'breach') badgeClass = 'bg-rose-50 text-rose-700 border-rose-200/50';
+                let badgeClass = 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20';
+                if (status === 'warning') badgeClass = 'bg-amber-500/10 text-amber-700 border-amber-500/20';
+                if (status === 'breach') badgeClass = 'bg-rose-500/10 text-rose-700 border-rose-500/20';
 
                 return (
-                  <tr key={reading.id} className="hover:bg-slate-50/50 transition-colors">
+                  <tr key={reading.id} className="hover:bg-subtle/50 transition-colors">
                     <td className="px-4 py-3 font-bold text-slate-400">{index + 1}</td>
-                    <td className="px-4 py-3 font-semibold whitespace-nowrap text-slate-600">
+                    <td className="px-4 py-3 font-semibold whitespace-nowrap text-text-muted">
                       {format(new Date(reading.tarikh_masa), 'dd/MM/yyyy HH:mm')}
                     </td>
-                    <td className="px-4 py-3 font-black font-mono text-sm text-slate-800">
+                    <td className="px-4 py-3 font-black font-mono text-sm text-text-primary">
                       {reading.suhu.toFixed(1)}°C
                     </td>
                     <td className="px-4 py-3 font-mono text-slate-400 text-[10px]">
@@ -649,13 +649,13 @@ export const UnitDetailPage: React.FC = () => {
                         {status.toUpperCase()}
                       </Badge>
                     </td>
-                    <td className="px-4 py-3 max-w-[200px] truncate font-medium text-slate-500" title={reading.nota && reading.nota !== 'Auto-plotted compliance reading' ? reading.nota : ''}>
+                    <td className="px-4 py-3 max-w-[200px] truncate font-medium text-text-muted" title={reading.nota && reading.nota !== 'Auto-plotted compliance reading' ? reading.nota : ''}>
                       {reading.is_corrected && (
                         <span className="text-rose-600 font-bold mr-1">[CORRECTED]</span>
                       )}
                       {reading.nota && reading.nota !== 'Auto-plotted compliance reading' ? reading.nota : '—'}
                     </td>
-                    <td className="px-4 py-3 text-slate-500 font-medium">
+                    <td className="px-4 py-3 text-text-muted font-medium">
                       {reading.dicatat_oleh_user?.full_name || 'Authorized Staff'}
                     </td>
                     <td className="px-4 py-3 text-right">
@@ -665,7 +665,7 @@ export const UnitDetailPage: React.FC = () => {
                           setCorrectNote(reading.correction_note || '')
                           setShowCorrectModal(true)
                         }}
-                        className="p-1.5 bg-white border border-slate-200 hover:border-slate-350 text-slate-450 hover:text-slate-700 rounded-lg transition-colors shadow-sm"
+                        className="p-1.5 bg-surface border border-border-default hover:border-slate-350 text-slate-450 hover:text-text-secondary rounded-lg transition-colors shadow-sm"
                         title="Annotate incorrect entry"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
@@ -679,18 +679,18 @@ export const UnitDetailPage: React.FC = () => {
         </div>
 
         {/* Mobile View: High-End Native Cards */}
-        <div className="md:hidden divide-y divide-slate-100">
+        <div className="md:hidden divide-y divide-border-subtle">
           {filteredReadings.map((reading) => {
             const status = reading.status_bacaan;
-            let badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-200/50';
-            if (status === 'warning') badgeClass = 'bg-amber-50 text-amber-700 border-amber-200/50';
-            if (status === 'breach') badgeClass = 'bg-rose-50 text-rose-700 border-rose-200/50';
+            let badgeClass = 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20';
+            if (status === 'warning') badgeClass = 'bg-amber-500/10 text-amber-700 border-amber-500/20';
+            if (status === 'breach') badgeClass = 'bg-rose-500/10 text-rose-700 border-rose-500/20';
 
             return (
-              <div key={reading.id} className="p-4 space-y-2 hover:bg-slate-50/50 transition">
+              <div key={reading.id} className="p-4 space-y-2 hover:bg-subtle/50 transition">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <span className="font-mono text-base font-black text-slate-900 block">
+                    <span className="font-mono text-base font-black text-text-primary block">
                       {reading.suhu.toFixed(1)}°C
                     </span>
                     <span className="text-[10px] font-mono text-slate-400">
@@ -707,7 +707,7 @@ export const UnitDetailPage: React.FC = () => {
                         setCorrectNote(reading.correction_note || '')
                         setShowCorrectModal(true)
                       }}
-                      className="p-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg transition"
+                      className="p-1.5 bg-subtle hover:bg-subtle text-text-muted rounded-lg transition"
                       title="Betulkan"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
@@ -716,7 +716,7 @@ export const UnitDetailPage: React.FC = () => {
                 </div>
 
                 {reading.nota && reading.nota !== 'Auto-plotted compliance reading' && (
-                  <div className="text-xs text-slate-500 bg-slate-50 p-2 rounded-lg border border-slate-100">
+                  <div className="text-xs text-text-muted bg-subtle/50 p-2 rounded-lg border border-border-subtle">
                     {reading.is_corrected && (
                       <span className="text-rose-600 font-bold mr-1">[DIKEMAS KINI]</span>
                     )}
@@ -741,14 +741,14 @@ export const UnitDetailPage: React.FC = () => {
       {/* 1. Logging Drawer */}
       {showLogDrawer && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex justify-end">
-          <div className="bg-white border-l border-slate-200 w-full max-w-md h-full p-6 shadow-2xl overflow-y-auto flex flex-col justify-between text-slate-800">
+          <div className="bg-surface border-l border-border-default w-full max-w-md h-full p-6 shadow-2xl overflow-y-auto flex flex-col justify-between text-text-primary">
             <div>
-              <div className="flex justify-between items-center mb-6 border-b border-slate-100 pb-4">
-                <h3 className="text-lg font-black text-slate-800 flex items-center gap-2">
+              <div className="flex justify-between items-center mb-6 border-b border-border-subtle pb-4">
+                <h3 className="text-lg font-black text-text-primary flex items-center gap-2">
                   <Thermometer className="w-5 h-5 text-rose-650" />
                   <span>Log Temperature Reading</span>
                 </h3>
-                <button onClick={() => setShowLogDrawer(false)} className="text-slate-400 hover:text-slate-700 font-bold text-sm">
+                <button onClick={() => setShowLogDrawer(false)} className="text-slate-400 hover:text-text-secondary font-bold text-sm">
                   Close
                 </button>
               </div>
@@ -763,7 +763,7 @@ export const UnitDetailPage: React.FC = () => {
                     placeholder="e.g. 4.2"
                     value={logTemp}
                     onChange={(e) => setLogTemp(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-sm text-slate-700 focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-colors font-semibold"
+                    className="w-full bg-subtle/50 border border-border-default rounded-2xl px-4 py-2.5 text-sm text-text-secondary focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-colors font-semibold"
                   />
                   <p className="text-[10px] text-slate-400 font-bold mt-1">Target range: {minLimit}°C to {maxLimit}°C</p>
                 </div>
@@ -775,7 +775,7 @@ export const UnitDetailPage: React.FC = () => {
                     required
                     value={logDateTime}
                     onChange={(e) => setLogDateTime(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-sm text-slate-700 focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-colors font-semibold"
+                    className="w-full bg-subtle/50 border border-border-default rounded-2xl px-4 py-2.5 text-sm text-text-secondary focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-colors font-semibold"
                   />
                 </div>
 
@@ -785,7 +785,7 @@ export const UnitDetailPage: React.FC = () => {
                     type="text" 
                     disabled
                     value={user?.full_name || 'Authorized Staff'}
-                    className="w-full bg-slate-100 border border-slate-200/80 rounded-2xl px-4 py-2.5 text-sm text-slate-400 cursor-not-allowed font-semibold"
+                    className="w-full bg-subtle border border-border-default rounded-2xl px-4 py-2.5 text-sm text-slate-400 cursor-not-allowed font-semibold"
                   />
                 </div>
 
@@ -795,21 +795,21 @@ export const UnitDetailPage: React.FC = () => {
                     placeholder="Enter details like defrost cycle, door left open, etc."
                     value={logNota}
                     onChange={(e) => setLogNota(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-sm text-slate-700 focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-colors h-24 resize-none font-semibold"
+                    className="w-full bg-subtle/50 border border-border-default rounded-2xl px-4 py-2.5 text-sm text-text-secondary focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-colors h-24 resize-none font-semibold"
                   />
                 </div>
 
                 <button 
                   type="submit"
                   disabled={submitting}
-                  className="w-full py-3 bg-[#00a68a] hover:bg-[#008f76] text-white rounded-2xl font-bold transition-all shadow-md mt-4 disabled:opacity-50"
+                  className="w-full py-3 bg-[#00a68a] hover:bg-[#008f76] text-white rounded-2xl font-bold transition-colors shadow-md mt-4 disabled:opacity-50"
                 >
                   {submitting ? 'Saving...' : 'Save Log'}
                 </button>
               </form>
             </div>
             
-            <p className="text-[10px] text-slate-400 font-bold text-center border-t border-slate-100 pt-4">
+            <p className="text-[10px] text-slate-400 font-bold text-center border-t border-border-subtle pt-4">
               Complies with hospital quality and MSQH standards.
             </p>
           </div>
@@ -819,34 +819,34 @@ export const UnitDetailPage: React.FC = () => {
       {/* 2. Breach Modal */}
       {showBreachModal && breachInfo && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-100 rounded-3xl max-w-md w-full p-6 shadow-2xl text-slate-800">
+          <div className="bg-surface border border-border-subtle rounded-3xl max-w-md w-full p-6 shadow-2xl text-text-primary">
             <div className="flex items-center gap-3 text-rose-650 mb-4 animate-bounce">
               <AlertTriangle className="w-10 h-10" />
-              <h3 className="text-lg font-black text-slate-900 leading-tight">TEMPERATURE BREACH ALERT</h3>
+              <h3 className="text-lg font-black text-text-primary leading-tight">TEMPERATURE BREACH ALERT</h3>
             </div>
             
-            <p className="text-sm text-slate-600 leading-relaxed mb-4 font-medium">
+            <p className="text-sm text-text-muted leading-relaxed mb-4 font-medium">
               The temperature you entered ({breachInfo.temp.toFixed(1)}°C) falls outside the designated safe target 
               range configured for this equipment ({minLimit}°C to {maxLimit}°C).
             </p>
 
-            <div className="bg-slate-50 p-4 rounded-2xl border border-slate-200 mb-5 text-xs text-slate-500 space-y-1.5">
+            <div className="bg-subtle/50 p-4 rounded-2xl border border-border-default mb-5 text-xs text-text-muted space-y-1.5">
               <p>&bull; Status: <span className="font-bold text-rose-600">{breachInfo.status.toUpperCase()}</span></p>
-              <p>&bull; This event will be logged in the <span className="font-bold text-slate-700">Breach Auditing History Log</span>.</p>
+              <p>&bull; This event will be logged in the <span className="font-bold text-text-secondary">Breach Auditing History Log</span>.</p>
               <p>&bull; Please ensure you log the reason or corrective actions taken in the comments.</p>
             </div>
 
             <div className="flex gap-3 justify-end">
               <button 
                 onClick={() => setShowBreachModal(false)}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all"
+                className="px-4 py-2 bg-subtle hover:bg-subtle text-text-secondary rounded-xl text-xs font-bold transition-colors"
               >
                 Cancel & Edit
               </button>
               <button 
                 onClick={() => executeLogSubmit(breachInfo.temp)}
                 disabled={submitting}
-                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-all shadow-md"
+                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-colors shadow-md"
               >
                 {submitting ? 'Saving...' : 'Yes, Save Anyway'}
               </button>
@@ -858,9 +858,9 @@ export const UnitDetailPage: React.FC = () => {
       {/* 3. Correction Modal */}
       {showCorrectModal && (
         <div className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-100 rounded-3xl max-w-md w-full p-6 shadow-2xl text-slate-800">
-            <h3 className="text-lg font-black text-slate-900 mb-3">Annotate Incorrect Entry</h3>
-            <p className="text-xs text-slate-500 leading-relaxed mb-4 font-semibold">
+          <div className="bg-surface border border-border-subtle rounded-3xl max-w-md w-full p-6 shadow-2xl text-text-primary">
+            <h3 className="text-lg font-black text-text-primary mb-3">Annotate Incorrect Entry</h3>
+            <p className="text-xs text-text-muted leading-relaxed mb-4 font-semibold">
               Logs cannot be deleted in order to preserve the integrity of medical audit history. You may attach a formal correction annotation explaining the typo or physical adjustment.
             </p>
 
@@ -872,7 +872,7 @@ export const UnitDetailPage: React.FC = () => {
                   placeholder="Enter details like key-in typo (e.g. 44.0 corrected to 4.4) or manual calibration."
                   value={correctNote}
                   onChange={(e) => setCorrectNote(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4.5 py-3 text-xs text-slate-700 focus:outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-500/10 transition-colors h-24 resize-none font-semibold"
+                  className="w-full bg-subtle/50 border border-border-default rounded-2xl px-4.5 py-3 text-xs text-text-secondary focus:outline-none focus:border-rose-600 focus:ring-2 focus:ring-rose-500/10 transition-colors h-24 resize-none font-semibold"
                 />
               </div>
             </div>
@@ -883,14 +883,14 @@ export const UnitDetailPage: React.FC = () => {
                   setShowCorrectModal(false)
                   setCorrectReadingId(null)
                 }}
-                className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all"
+                className="px-4 py-2 bg-subtle hover:bg-subtle text-text-secondary rounded-xl text-xs font-bold transition-colors"
               >
                 Cancel
               </button>
               <button 
                 onClick={handleCorrectionSubmit}
                 disabled={submitting || !correctNote.trim()}
-                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-all shadow-md disabled:opacity-50"
+                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition-colors shadow-md disabled:opacity-50"
               >
                 {submitting ? 'Saving...' : 'Save Annotation'}
               </button>

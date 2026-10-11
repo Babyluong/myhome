@@ -559,11 +559,11 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
       {/* Backdrop overlay */}
       <div 
         onClick={onClose}
-        className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs transition-all duration-300"
+        className="absolute inset-0 bg-slate-900/60 backdrop-blur-xs transition-[transform,opacity,box-shadow,border-color] duration-300"
       />
 
       {/* Drawer Panel */}
-      <div className={`relative w-full max-w-3xl bg-slate-50 border-l border-slate-200/80 shadow-2xl flex flex-col h-full transform transition-transform duration-300 cubic-bezier(0.16, 1, 0.3, 1) ${isAnimating ? 'translate-x-0' : 'translate-x-full'}`}>
+      <div className={`relative w-full max-w-3xl bg-subtle/50 border-l border-border-default shadow-2xl flex flex-col h-full transform transition-transform duration-300 cubic-bezier(0.16, 1, 0.3, 1) ${isAnimating ? 'translate-x-0' : 'translate-x-full'}`}>
         
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 bg-gradient-to-r from-teal-900 to-emerald-900 border-b border-teal-950 text-white shadow-lg shrink-0">
@@ -581,7 +581,7 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-teal-950/60 hover:bg-teal-900 border border-teal-800 flex items-center justify-center transition-all duration-200 cursor-pointer"
+            className="w-8 h-8 rounded-full bg-teal-950/60 hover:bg-teal-900 border border-teal-800 flex items-center justify-center transition-[transform,opacity,box-shadow,border-color] duration-200 cursor-pointer"
           >
             <X className="w-4 h-4 text-slate-300" />
           </button>
@@ -591,21 +591,21 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5">
           
           {/* Controls Bar & Sound Toggle */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white border border-slate-200/80 rounded-2xl p-4 shadow-xs gap-3">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-surface border border-border-default rounded-2xl p-4 shadow-xs gap-3">
             <div className="flex flex-col gap-0.5">
-              <span className="text-xs font-black text-slate-800 flex items-center gap-1.5">
+              <span className="text-xs font-black text-text-primary flex items-center gap-1.5">
                 <Sparkles className="w-4 h-4 text-teal-600" /> Continuous Batch Scanner
               </span>
-              <span className="text-[11px] text-slate-500 font-semibold">Scan cylinder after cylinder — ready for next scan immediately.</span>
+              <span className="text-[11px] text-text-muted font-semibold">Scan cylinder after cylinder — ready for next scan immediately.</span>
             </div>
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={() => setSoundEnabled(!soundEnabled)}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition-[transform,opacity,box-shadow,border-color] cursor-pointer ${
                   soundEnabled 
-                    ? 'bg-teal-50 border-teal-200 text-teal-700' 
-                    : 'bg-slate-50 border-slate-200 text-slate-400'
+                    ? 'bg-accent-base/10 border-accent-base/20 text-teal-700' 
+                    : 'bg-subtle/50 border-border-default text-slate-400'
                 }`}
                 title="Toggle Beep Sound"
               >
@@ -616,7 +616,7 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
           </div>
 
           {/* Auto-Register on Scan Banner */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 px-4 py-2.5 bg-gradient-to-r from-emerald-50 to-teal-50/70 border border-emerald-200/80 rounded-2xl shadow-xs">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 px-4 py-2.5 bg-gradient-to-r from-emerald-50 to-teal-50/70 border border-emerald-500/20 rounded-2xl shadow-xs">
             <div className="flex items-center gap-2.5">
               <span className="flex h-2.5 w-2.5 relative shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -624,14 +624,14 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
               </span>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-black text-emerald-950">
+                  <span className="text-xs font-black text-emerald-400 dark:text-emerald-300 font-bold">
                     ⚡ Auto-Register Unknown Cylinders on Scan
                   </span>
                   <span className="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-emerald-600 text-white shadow-xs">
                     Live Supabase Sync
                   </span>
                 </div>
-                <p className="text-[10px] text-emerald-800 font-medium mt-0.5">
+                <p className="text-[10px] text-emerald-400 font-medium mt-0.5">
                   Scanning any unlisted physical cylinder tag will instantly create & register it in the database.
                 </p>
               </div>
@@ -639,10 +639,10 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
             <button
               type="button"
               onClick={() => setAutoRegisterOnScan(!autoRegisterOnScan)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 shrink-0 ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-black transition-[transform,opacity,box-shadow,border-color] flex items-center justify-center gap-1.5 shrink-0 ${
                 autoRegisterOnScan
                   ? 'bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm'
-                  : 'bg-slate-200 hover:bg-slate-300 text-slate-700'
+                  : 'bg-subtle hover:bg-slate-300 text-text-secondary'
               }`}
             >
               <Sparkles className="w-3.5 h-3.5" />
@@ -662,7 +662,7 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
                 <button
                   type="button"
                   onClick={() => setCameraActive(!cameraActive)}
-                  className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black font-mono transition-all cursor-pointer ${
+                  className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-black font-mono transition-[transform,opacity,box-shadow,border-color] cursor-pointer ${
                     cameraActive 
                       ? 'bg-rose-500 hover:bg-rose-600 text-white' 
                       : 'bg-teal-600 hover:bg-teal-700 text-white'
@@ -673,7 +673,7 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
               </div>
 
               {cameraActive ? (
-                <div className={`relative aspect-video rounded-xl overflow-hidden border border-slate-750 bg-slate-950 flex flex-col items-center justify-center shadow-inner transition-all duration-300 ${successFlash ? 'ring-4 ring-teal-400/50' : ''}`}>
+                <div className={`relative aspect-video rounded-xl overflow-hidden border border-slate-750 bg-slate-950 flex flex-col items-center justify-center shadow-inner transition-[transform,opacity,box-shadow,border-color] duration-300 ${successFlash ? 'ring-4 ring-teal-400/50' : ''}`}>
                   {successFlash && (
                     <div className="absolute inset-0 bg-teal-500/20 backdrop-blur-xs flex items-center justify-center z-20">
                       <CheckCircle2 className="w-12 h-12 text-teal-400 animate-bounce" />
@@ -692,7 +692,7 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
                     <div className="absolute inset-0 bg-slate-950/80 flex flex-col items-center justify-center p-4">
                       <QrCode className="w-8 h-8 text-teal-400/80 animate-pulse mb-2" />
                       <span className="text-[10px] font-bold text-slate-300 font-mono tracking-wider">AUTO SCANNER RUNNING</span>
-                      <span className="text-[9px] text-slate-500 font-mono mt-1">Point QR label to webcam stream</span>
+                      <span className="text-[9px] text-text-muted font-mono mt-1">Point QR label to webcam stream</span>
                     </div>
                   )}
 
@@ -712,17 +712,17 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
                 <div className="h-36 border border-dashed border-slate-700/60 rounded-xl flex flex-col items-center justify-center text-center p-4 bg-slate-950/40 text-slate-400">
                   <Camera className="w-6 h-6 mb-2 opacity-50 text-slate-300" />
                   <span className="text-[10px] font-bold font-mono tracking-wide uppercase">Camera view paused</span>
-                  <span className="text-[9px] text-slate-500 mt-1">Click START CAMERA to begin scanning QR code tags.</span>
+                  <span className="text-[9px] text-text-muted mt-1">Click START CAMERA to begin scanning QR code tags.</span>
                 </div>
               )}
             </div>
 
             {/* Batch Defaults & Handheld Input Box */}
-            <div className="bg-white border border-slate-200/80 rounded-2xl p-4 space-y-3.5 shadow-xs flex flex-col justify-between">
+            <div className="bg-surface border border-border-default rounded-2xl p-4 space-y-3.5 shadow-xs flex flex-col justify-between">
               
               {/* Default Unit Setting */}
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+                <label className="block text-[10px] font-extrabold text-text-muted uppercase tracking-wider flex items-center gap-1">
                   <Building2 className="w-3.5 h-3.5 text-teal-600" /> Target Unit / Location for Scans
                 </label>
                 <select
@@ -736,7 +736,7 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
                       setBatchStatus('used');
                     }
                   }}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-slate-50 text-xs font-bold text-slate-800 focus:outline-none focus:border-teal-500 focus:bg-white transition-all cursor-pointer"
+                  className="w-full px-3 py-2 border border-border-default rounded-xl bg-subtle/50 text-xs font-bold text-text-primary focus:outline-none focus:border-teal-500 focus:bg-surface transition-[transform,opacity,box-shadow,border-color] cursor-pointer"
                 >
                   {RECONCILIATION_UNITS.map(u => (
                     <option key={u.id} value={u.id}>
@@ -748,13 +748,13 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
 
               {/* Default Physical Status */}
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-extrabold text-slate-500 uppercase tracking-wider flex items-center gap-1">
+                <label className="block text-[10px] font-extrabold text-text-muted uppercase tracking-wider flex items-center gap-1">
                   <Layers className="w-3.5 h-3.5 text-teal-600" /> Default Physical Status for Scans
                 </label>
                 <select
                   value={batchStatus}
                   onChange={(e) => setBatchStatus(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-xl bg-slate-50 text-xs font-bold text-slate-800 focus:outline-none focus:border-teal-500 focus:bg-white transition-all cursor-pointer"
+                  className="w-full px-3 py-2 border border-border-default rounded-xl bg-subtle/50 text-xs font-bold text-text-primary focus:outline-none focus:border-teal-500 focus:bg-surface transition-[transform,opacity,box-shadow,border-color] cursor-pointer"
                 >
                   {RECONCILIATION_STATUSES.map(s => (
                     <option key={s.id} value={s.id}>
@@ -766,7 +766,7 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
 
               {/* Quick Serial Entry for Handheld Barcode Reader */}
               <form onSubmit={handleManualSubmit} className="space-y-1.5 pt-1">
-                <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
+                <label className="block text-[10px] font-extrabold text-text-secondary font-bold uppercase tracking-wider">
                   Handheld Barcode / Serial Entry
                 </label>
                 <div className="flex gap-2">
@@ -775,11 +775,11 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
                     value={manualCodeInput}
                     onChange={(e) => setManualCodeInput(e.target.value)}
                     placeholder="e.g. O2-P101-F-0044..."
-                    className="flex-1 px-3 py-2 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-teal-500 transition-all"
+                    className="flex-1 px-3 py-2 border border-border-default rounded-xl text-xs font-mono font-bold text-text-primary placeholder:text-text-muted focus:outline-none focus:border-teal-500 transition-[transform,opacity,box-shadow,border-color]"
                   />
                   <button
                     type="submit"
-                    className="px-3.5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1 shrink-0"
+                    className="px-3.5 py-2 bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold transition-[transform,opacity,box-shadow,border-color] cursor-pointer flex items-center gap-1 shrink-0"
                   >
                     <Plus className="w-4 h-4" /> Add
                   </button>
@@ -825,10 +825,10 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
                       key={c.id}
                       type="button"
                       onClick={() => handleSelectAmbiguous(c)}
-                      className={`flex-1 py-2.5 rounded-xl text-xs font-extrabold transition-all cursor-pointer border-2 flex flex-col items-center justify-center gap-1 shadow-xs hover:scale-[1.02] active:scale-95 ${
-                        isBN ? 'bg-white border-blue-300 text-blue-700 hover:bg-blue-50'
-                        : isPI ? 'bg-white border-purple-300 text-purple-700 hover:bg-purple-50'
-                        : 'bg-white border-slate-300 text-slate-700 hover:bg-slate-50'
+                      className={`flex-1 py-2.5 rounded-xl text-xs font-extrabold transition-[transform,opacity,box-shadow,border-color] cursor-pointer border-2 flex flex-col items-center justify-center gap-1 shadow-xs hover:scale-[1.02] active:scale-95 ${
+                        isBN ? 'bg-surface border-blue-300 text-blue-700 hover:bg-blue-500/10'
+                        : isPI ? 'bg-surface border-purple-300 text-purple-700 hover:bg-indigo-500/10'
+                        : 'bg-surface border-border-default text-text-secondary hover:bg-subtle/50'
                       }`}
                     >
                       <span className="text-base leading-none">{isBN ? '🔵' : isPI ? '🟣' : '⚪'}</span>
@@ -843,12 +843,12 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
 
           {/* Status Message Notification Banner */}
           {statusMessage && (
-            <div className={`p-4 rounded-xl text-xs font-bold border flex items-start gap-3 transition-all duration-300 ${
+            <div className={`p-4 rounded-xl text-xs font-bold border flex items-start gap-3 transition-[transform,opacity,box-shadow,border-color] duration-300 ${
               statusMessage.type === 'success' 
-                ? 'bg-emerald-50 border-emerald-200 text-emerald-900' 
+                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400 dark:text-emerald-300 font-bold' 
                 : statusMessage.type === 'error'
-                ? 'bg-rose-50 border-rose-200 text-rose-900'
-                : 'bg-teal-50 border-teal-200 text-teal-900'
+                ? 'bg-rose-500/10 border-rose-500/20 text-rose-400 dark:text-rose-300 font-bold'
+                : 'bg-accent-base/10 border-accent-base/20 text-teal-900'
             }`}>
               {statusMessage.type === 'success' ? (
                 <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
@@ -863,7 +863,7 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
                   <button
                     type="button"
                     onClick={onClose}
-                    className="inline-flex items-center gap-1 text-[11px] font-black text-emerald-700 hover:text-emerald-900 underline mt-1 cursor-pointer"
+                    className="inline-flex items-center gap-1 text-[11px] font-black text-emerald-700 hover:text-emerald-400 dark:text-emerald-300 font-bold underline mt-1 cursor-pointer"
                   >
                     <Table className="w-3.5 h-3.5" /> Click here to close scanner & review Audit Table on Dashboard
                   </button>
@@ -876,15 +876,15 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
               QR labels on MOH cylinders do NOT encode valve type (BN/PI).
               Staff must visually confirm against the physical label sticker. */}
           {lastScannedCylinder && (
-            <div className="p-4 rounded-2xl border-2 border-amber-300 bg-amber-50 space-y-3 shadow-sm">
+            <div className="p-4 rounded-2xl border-2 border-amber-300 bg-amber-500/10 space-y-3 shadow-sm">
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-xl bg-amber-100 border border-amber-200 flex items-center justify-center shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-amber-100 border border-amber-500/20 flex items-center justify-center shrink-0">
                   <Wrench className="w-4 h-4 text-amber-600" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-xs font-black text-amber-900">Verify Valve Type</span>
-                    <span className="font-mono text-[10px] font-bold text-amber-700 bg-amber-100 border border-amber-200 px-2 py-0.5 rounded-md truncate">
+                    <span className="text-xs font-black text-amber-400 dark:text-amber-300 font-bold">Verify Valve Type</span>
+                    <span className="font-mono text-[10px] font-bold text-amber-700 bg-amber-100 border border-amber-500/20 px-2 py-0.5 rounded-md truncate">
                       {lastScannedCylinder.serial_number}
                     </span>
                   </div>
@@ -895,10 +895,10 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
                     <span className="text-[9px] text-amber-600 font-bold uppercase tracking-wider">Recorded as:</span>
                     <span className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border ${
                       lastScannedCylinder.type_info?.code === 'BN'
-                        ? 'bg-blue-100 text-blue-800 border-blue-200'
+                        ? 'bg-blue-100 text-blue-400 border-blue-500/20'
                         : lastScannedCylinder.type_info?.code === 'PI'
-                        ? 'bg-purple-100 text-purple-800 border-purple-200'
-                        : 'bg-slate-100 text-slate-600 border-slate-200'
+                        ? 'bg-purple-100 text-indigo-400 border-indigo-500/20'
+                        : 'bg-subtle text-text-secondary border-border-default'
                     }`}>
                       {lastScannedCylinder.type_info?.code === 'BN'
                         ? '🔵 Bullnose (BN)'
@@ -922,10 +922,10 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
                   type="button"
                   onClick={() => handleCorrectValveType('BN')}
                   disabled={isCorrectingValveType}
-                  className={`flex-1 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer border-2 flex items-center justify-center gap-1.5 ${
+                  className={`flex-1 py-2 rounded-xl text-xs font-extrabold transition-[transform,opacity,box-shadow,border-color] cursor-pointer border-2 flex items-center justify-center gap-1.5 ${
                     lastScannedCylinder.type_info?.code === 'BN'
                       ? 'bg-blue-100 border-blue-300 text-blue-700 opacity-60 cursor-default'
-                      : 'bg-white border-blue-300 text-blue-700 hover:bg-blue-50 shadow-xs'
+                      : 'bg-surface border-blue-300 text-blue-700 hover:bg-blue-500/10 shadow-xs'
                   }`}
                 >
                   🔵 Bullnose (BN)
@@ -935,10 +935,10 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
                   type="button"
                   onClick={() => handleCorrectValveType('PI')}
                   disabled={isCorrectingValveType}
-                  className={`flex-1 py-2 rounded-xl text-xs font-extrabold transition-all cursor-pointer border-2 flex items-center justify-center gap-1.5 ${
+                  className={`flex-1 py-2 rounded-xl text-xs font-extrabold transition-[transform,opacity,box-shadow,border-color] cursor-pointer border-2 flex items-center justify-center gap-1.5 ${
                     lastScannedCylinder.type_info?.code === 'PI'
                       ? 'bg-purple-100 border-purple-300 text-purple-700 opacity-60 cursor-default'
-                      : 'bg-white border-purple-300 text-purple-700 hover:bg-purple-50 shadow-xs'
+                      : 'bg-surface border-purple-300 text-purple-700 hover:bg-indigo-500/10 shadow-xs'
                   }`}
                 >
                   {isCorrectingValveType ? <RefreshCw className="w-3 h-3 animate-spin" /> : '🟣 Pin Index (PI)'}
@@ -948,7 +948,7 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
               <button
                 type="button"
                 onClick={() => setEditingCylinder(lastScannedCylinder)}
-                className="w-full py-2 rounded-xl text-xs font-bold border border-amber-300 bg-white hover:bg-amber-100 text-amber-900 flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+                className="w-full py-2 rounded-xl text-xs font-bold border border-amber-300 bg-surface hover:bg-amber-100 text-amber-400 dark:text-amber-300 font-bold flex items-center justify-center gap-1.5 transition-[transform,opacity,box-shadow,border-color] cursor-pointer shadow-elevation-1"
                 title="Update Cylinder Details (Serial No., Size, Valve)"
               >
                 <Pencil className="w-3.5 h-3.5 text-amber-700" />
@@ -959,24 +959,24 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
 
           {/* APPLIED TO AUDIT DRAFT SUMMARY SECTION */}
           {appliedSummary.length > 0 && (
-            <div className="bg-emerald-50/70 border-2 border-emerald-200/80 rounded-2xl p-4 space-y-3 shadow-xs">
+            <div className="bg-emerald-500/10 border-2 border-emerald-500/20 rounded-2xl p-4 space-y-3 shadow-xs">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Table className="w-4 h-4 text-emerald-700" />
-                  <h4 className="text-xs font-black uppercase text-emerald-900 tracking-wider">
+                  <h4 className="text-xs font-black uppercase text-emerald-400 dark:text-emerald-300 font-bold tracking-wider">
                     Applied to Reconciliation Audit Table ({appliedSummary.length})
                   </h4>
                 </div>
                 <button
                   type="button"
                   onClick={onClose}
-                  className="inline-flex items-center gap-1 text-xs font-black px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-xs transition-all cursor-pointer"
+                  className="inline-flex items-center gap-1 text-xs font-black px-3 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-xs transition-[transform,opacity,box-shadow,border-color] cursor-pointer"
                 >
                   Close & Review Audit Table <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
 
-              <p className="text-[11px] text-emerald-800 font-semibold">
+              <p className="text-[11px] text-emerald-400 font-semibold">
                 The cylinders below have been applied to the <strong>Reconciliation Audit Table</strong> on the Oxygen Dashboard. Close this panel to review and save the final audit!
               </p>
 
@@ -984,10 +984,10 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
                 {appliedSummary.map(item => (
                   <span 
                     key={item.scanId}
-                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-white border border-emerald-300 rounded-xl text-xs font-bold text-slate-800 shadow-2xs"
+                    className="inline-flex items-center gap-1.5 px-3 py-1 bg-surface border border-emerald-300 rounded-xl text-xs font-bold text-text-primary shadow-elevation-1"
                   >
                     <Check className="w-3.5 h-3.5 text-emerald-600 stroke-[3px]" />
-                    <span className="font-mono text-slate-900">{item.cylinder.serial_number}</span>
+                    <span className="font-mono text-text-primary">{item.cylinder.serial_number}</span>
                     <span className="text-[10px] text-emerald-700 bg-emerald-100 px-1.5 py-0.5 rounded-md font-extrabold uppercase">
                       {item.status} ({item.unitLocation})
                     </span>
@@ -1002,10 +1002,10 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <ListPlus className="w-4 h-4 text-teal-600" />
-                <h4 className="text-sm font-extrabold text-slate-900 tracking-tight">
+                <h4 className="text-sm font-extrabold text-text-primary tracking-tight">
                   Scanned Cylinder Queue
                 </h4>
-                <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-teal-100 text-teal-800 border border-teal-200">
+                <span className="text-xs font-black px-2.5 py-0.5 rounded-full bg-teal-100 text-teal-800 border border-accent-base/20">
                   {scannedBatch.length} {scannedBatch.length === 1 ? 'cylinder' : 'cylinders'}
                 </span>
               </div>
@@ -1014,7 +1014,7 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
                 <button
                   type="button"
                   onClick={() => setScannedBatch([])}
-                  className="text-xs font-bold text-rose-600 hover:text-rose-800 hover:bg-rose-50 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
+                  className="text-xs font-bold text-rose-600 hover:text-rose-400 hover:bg-rose-500/10 px-2.5 py-1 rounded-lg transition-colors cursor-pointer"
                 >
                   Clear Queue
                 </button>
@@ -1022,9 +1022,9 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
             </div>
 
             {scannedBatch.length === 0 ? (
-              <div className="p-8 border-2 border-dashed border-slate-200/80 rounded-2xl text-center bg-white text-slate-400 space-y-2">
-                <QrCode className="w-8 h-8 mx-auto opacity-30 text-slate-500" />
-                <p className="text-xs font-bold text-slate-600">No cylinders currently in queue.</p>
+              <div className="p-8 border-2 border-dashed border-border-default rounded-2xl text-center bg-surface text-slate-400 space-y-2">
+                <QrCode className="w-8 h-8 mx-auto opacity-30 text-text-muted" />
+                <p className="text-xs font-bold text-text-secondary">No cylinders currently in queue.</p>
                 <p className="text-[11px] text-slate-400">Point the camera scanner or enter serial numbers to add cylinders to this list.</p>
               </div>
             ) : (
@@ -1032,31 +1032,31 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
                 {scannedBatch.map((item, index) => (
                   <div 
                     key={item.scanId}
-                    className="p-3.5 bg-white border border-slate-200/80 hover:border-teal-300 rounded-2xl shadow-xs transition-all flex flex-col md:flex-row md:items-center justify-between gap-3"
+                    className="p-3.5 bg-surface border border-border-default hover:border-teal-300 rounded-2xl shadow-xs transition-[transform,opacity,box-shadow,border-color] flex flex-col md:flex-row md:items-center justify-between gap-3"
                   >
                     {/* Cylinder Serial & Details */}
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-teal-50 border border-teal-150 text-teal-700 font-extrabold text-xs flex items-center justify-center shrink-0 font-mono">
+                      <div className="w-8 h-8 rounded-xl bg-accent-base/10 border border-teal-150 text-teal-700 font-extrabold text-xs flex items-center justify-center shrink-0 font-mono">
                         #{scannedBatch.length - index}
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-mono font-black text-sm text-slate-900">{item.cylinder.serial_number}</span>
+                          <span className="font-mono font-black text-sm text-text-primary">{item.cylinder.serial_number}</span>
                           {/* Valve type badge — BN (Bullnose) or PI (Pin Index) — must be verified against physical label */}
                           {item.cylinder.type_info?.code && (
                             <span className={`text-[9px] font-extrabold px-2 py-0.5 rounded-full border ${
                               item.cylinder.type_info.code === 'BN'
-                                ? 'bg-blue-100 text-blue-700 border-blue-200'
+                                ? 'bg-blue-100 text-blue-700 border-blue-500/20'
                                 : item.cylinder.type_info.code === 'PI'
-                                ? 'bg-purple-100 text-purple-700 border-purple-200'
-                                : 'bg-slate-100 text-slate-500 border-slate-200'
+                                ? 'bg-purple-100 text-purple-700 border-indigo-500/20'
+                                : 'bg-subtle text-text-muted border-border-default'
                             }`}>
                               {item.cylinder.type_info.code === 'BN' ? '🔵 BN' : item.cylinder.type_info.code === 'PI' ? '🟣 PI' : item.cylinder.type_info.code}
                             </span>
                           )}
                           <span className="text-[10px] font-bold text-slate-400">{item.scannedAt}</span>
                         </div>
-                        <p className="text-[11px] font-bold text-slate-500 mt-0.5">
+                        <p className="text-[11px] font-bold text-text-muted mt-0.5">
                           {item.cylinder.type_info?.type_name || 'Medical Oxygen Cylinder'} — {item.cylinder.size_info?.capacity ? `${item.cylinder.size_info.capacity}m³` : 'Standard'}
                         </p>
                       </div>
@@ -1070,7 +1070,7 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
                         <select
                           value={item.unitLocation}
                           onChange={(e) => handleUpdateItemUnit(item.scanId, e.target.value)}
-                          className="w-full px-2.5 py-1.5 border border-slate-200 rounded-xl bg-slate-50 text-xs font-bold text-slate-800 focus:outline-none focus:border-teal-500 focus:bg-white transition-all cursor-pointer"
+                          className="w-full px-2.5 py-1.5 border border-border-default rounded-xl bg-subtle/50 text-xs font-bold text-text-primary focus:outline-none focus:border-teal-500 focus:bg-surface transition-[transform,opacity,box-shadow,border-color] cursor-pointer"
                         >
                           {RECONCILIATION_UNITS.map(u => (
                             <option key={u.id} value={u.id}>
@@ -1085,7 +1085,7 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
                         <select
                           value={item.status}
                           onChange={(e) => handleUpdateItemStatus(item.scanId, e.target.value)}
-                          className="w-full px-2.5 py-1.5 border border-slate-200 rounded-xl bg-white text-xs font-bold text-slate-800 focus:outline-none focus:border-teal-500 transition-all cursor-pointer"
+                          className="w-full px-2.5 py-1.5 border border-border-default rounded-xl bg-surface text-xs font-bold text-text-primary focus:outline-none focus:border-teal-500 transition-[transform,opacity,box-shadow,border-color] cursor-pointer"
                         >
                           {RECONCILIATION_STATUSES.map(s => (
                             <option key={s.id} value={s.id}>
@@ -1099,7 +1099,7 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
                       <button
                         type="button"
                         onClick={() => setEditingCylinder(item.cylinder)}
-                        className="p-2 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-xl transition-all cursor-pointer shrink-0"
+                        className="p-2 text-slate-400 hover:text-teal-600 hover:bg-accent-base/10 rounded-xl transition-[transform,opacity,box-shadow,border-color] cursor-pointer shrink-0"
                         title="Edit cylinder details (serial, size, valve)"
                       >
                         <Pencil className="w-4 h-4" />
@@ -1109,7 +1109,7 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
                       <button
                         type="button"
                         onClick={() => handleRemoveBatchItem(item.scanId)}
-                        className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all cursor-pointer shrink-0"
+                        className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-500/10 rounded-xl transition-[transform,opacity,box-shadow,border-color] cursor-pointer shrink-0"
                         title="Remove cylinder from scan list"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -1125,11 +1125,11 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
         </div>
 
         {/* Footer Actions */}
-        <div className="px-6 py-4 border-t border-slate-200/80 bg-white flex items-center justify-between shrink-0 shadow-lg">
+        <div className="px-6 py-4 border-t border-border-default bg-surface flex items-center justify-between shrink-0 shadow-lg">
           <button
             type="button"
             onClick={onClose}
-            className="px-5 py-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-black transition-all active:scale-95 cursor-pointer shadow-xs"
+            className="px-5 py-2.5 bg-surface border border-border-default hover:bg-subtle/50 text-text-secondary rounded-xl text-xs font-black transition-[transform,opacity,box-shadow,border-color] active:scale-95 cursor-pointer shadow-xs"
           >
             CLOSE PANEL
           </button>
@@ -1138,7 +1138,7 @@ export const ScanReconciliationModal: React.FC<ScanReconciliationModalProps> = (
             type="button"
             disabled={scannedBatch.length === 0}
             onClick={handleApplyAllBatch}
-            className="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white rounded-xl text-xs font-black tracking-wider uppercase shadow-md shadow-emerald-500/10 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2 cursor-pointer"
+            className="px-6 py-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white rounded-xl text-xs font-black tracking-wider uppercase shadow-md shadow-emerald-500/10 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-[transform,opacity,box-shadow,border-color] flex items-center gap-2 cursor-pointer"
           >
             <CheckCheck className="w-4 h-4" />
             Apply All ({scannedBatch.length}) to Audit Table

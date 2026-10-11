@@ -121,7 +121,7 @@ export const TransferRequestListPage: React.FC = () => {
     {
       key: 'transfer_type',
       label: 'Type',
-      className: 'text-xs uppercase text-gray-500',
+      className: 'text-xs uppercase text-text-muted',
       render: (_, row) => (
         <div className="flex items-center gap-1">
           <ArrowRightLeft className="w-3 h-3" />
@@ -132,7 +132,7 @@ export const TransferRequestListPage: React.FC = () => {
     {
       key: 'from_hospital_id',
       label: 'From → To',
-      className: 'text-sm text-gray-900',
+      className: 'text-sm text-text-primary',
       render: (_, row) => (
         <span>
           {row.from_hospital?.nama || row.from_department?.department_name || '—'}
@@ -144,13 +144,13 @@ export const TransferRequestListPage: React.FC = () => {
     {
       key: 'request_date',
       label: 'Request Date',
-      className: 'text-sm text-gray-600',
+      className: 'text-sm text-text-muted',
       render: (value) => formatDate(value as string | undefined),
     },
     {
       key: 'required_date',
       label: 'Required Date',
-      className: 'text-sm text-gray-600',
+      className: 'text-sm text-text-muted',
       render: (value) => formatDate(value as string | undefined),
     },
     {
@@ -172,11 +172,11 @@ export const TransferRequestListPage: React.FC = () => {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-text-primary flex items-center gap-2">
             <Truck className="w-6 h-6 text-purple-600" />
             Transfer Requests
           </h1>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-sm text-text-muted mt-1">
             Manage inter-facility and intra-facility stock transfers.
           </p>
         </div>
@@ -189,19 +189,19 @@ export const TransferRequestListPage: React.FC = () => {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-purple-50 border border-purple-200 rounded-xl p-4">
+        <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-xl p-4">
           <span className="text-sm font-medium text-purple-700">Total Transfers</span>
-          <p className="text-2xl font-bold text-purple-800 mt-1">{total}</p>
+          <p className="text-2xl font-bold text-indigo-400 mt-1">{total}</p>
         </div>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+        <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
           <span className="text-sm font-medium text-blue-700">Incoming Pending</span>
-          <p className="text-2xl font-bold text-blue-800 mt-1">{pendingCounts.incoming}</p>
+          <p className="text-2xl font-bold text-blue-400 mt-1">{pendingCounts.incoming}</p>
         </div>
 
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+        <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4">
           <span className="text-sm font-medium text-amber-700">Outgoing Pending</span>
-          <p className="text-2xl font-bold text-amber-800 mt-1">{pendingCounts.outgoing}</p>
+          <p className="text-2xl font-bold text-amber-400 mt-1">{pendingCounts.outgoing}</p>
         </div>
 
         <div className="bg-green-50 border border-green-200 rounded-xl p-4">
@@ -213,9 +213,9 @@ export const TransferRequestListPage: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col md:flex-row md:items-end gap-4 bg-gray-50 p-4 rounded-xl border border-gray-200">
+      <div className="flex flex-col md:flex-row md:items-end gap-4 bg-subtle/50 p-4 rounded-xl border border-border-default">
         <div className="flex-1">
-          <label className="block text-xs font-medium text-gray-600 mb-1">Search</label>
+          <label className="block text-xs font-medium text-text-muted mb-1">Search</label>
           <div className="relative">
             <Search className="w-4 h-4 text-gray-400 absolute left-3 top-2.5" />
             <Input
@@ -228,7 +228,7 @@ export const TransferRequestListPage: React.FC = () => {
         </div>
 
         <div className="w-full md:w-44">
-          <label className="block text-xs font-medium text-gray-600 mb-1">Type</label>
+          <label className="block text-xs font-medium text-text-muted mb-1">Type</label>
           <Select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value as TransferType | 'all')}>
             <option value="all">All Types</option>
             <option value="inter_facility">Inter-Facility</option>
@@ -237,7 +237,7 @@ export const TransferRequestListPage: React.FC = () => {
         </div>
 
         <div className="w-full md:w-44">
-          <label className="block text-xs font-medium text-gray-600 mb-1">Status</label>
+          <label className="block text-xs font-medium text-text-muted mb-1">Status</label>
           <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as TransferStatus | 'all')}>
             <option value="all">All Status</option>
             <option value="pending">Pending</option>
@@ -248,7 +248,7 @@ export const TransferRequestListPage: React.FC = () => {
           </Select>
         </div>
 
-        <div className="flex items-center gap-1 text-xs text-gray-500">
+        <div className="flex items-center gap-1 text-xs text-text-muted">
           <Filter className="w-3 h-3" />
           <span>{total} transfers</span>
         </div>
@@ -263,7 +263,7 @@ export const TransferRequestListPage: React.FC = () => {
 
       {/* Error */}
       {!isLoading && error && (
-        <div className="flex items-start gap-2 rounded-xl border border-rose-200 bg-rose-50 p-4 text-sm text-rose-700">
+        <div className="flex items-start gap-2 rounded-xl border border-rose-500/20 bg-rose-500/10 p-4 text-sm text-rose-700">
           <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
           <div>
             <p className="font-medium">Failed to load transfers</p>
@@ -275,16 +275,16 @@ export const TransferRequestListPage: React.FC = () => {
       {/* Table */}
       {!isLoading && !error && (
         <>
-          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+          <div className="bg-surface border border-border-default rounded-2xl shadow-sm overflow-hidden">
             {transfers.length === 0 ? (
-              <div className="py-12 text-center text-sm text-gray-500">
+              <div className="py-12 text-center text-sm text-text-muted">
                 No transfer requests found.
               </div>
             ) : (
               <>
                 <div className="hidden md:block overflow-x-auto">
-                  <table className="w-full text-left text-sm text-gray-700">
-                    <thead className="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                  <table className="w-full text-left text-sm text-text-secondary">
+                    <thead className="bg-subtle/50 border-b border-border-default text-xs font-semibold text-text-muted uppercase tracking-wider">
                       <tr>
                         <th className="p-3.5 pl-4">Transfer No.</th>
                         <th className="p-3.5">Type</th>
@@ -295,29 +295,29 @@ export const TransferRequestListPage: React.FC = () => {
                         <th className="p-3.5 text-center">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-200">
+                    <tbody className="divide-y divide-border-default">
                       {transfers.map((row) => (
-                        <tr key={row.id} className="hover:bg-gray-50/80 transition-colors">
+                        <tr key={row.id} className="hover:bg-subtle/50 transition-colors">
                           <td className="p-3.5 pl-4 font-mono text-xs text-purple-600 font-medium">
                             {row.transfer_number}
                           </td>
-                          <td className="p-3.5 text-xs uppercase text-gray-500">
+                          <td className="p-3.5 text-xs uppercase text-text-muted">
                             <div className="flex items-center gap-1">
                               <ArrowRightLeft className="w-3 h-3" />
                               {row.transfer_type === 'inter_facility' ? 'Inter' : 'Intra'}
                             </div>
                           </td>
-                          <td className="p-3.5 text-sm text-gray-900">
+                          <td className="p-3.5 text-sm text-text-primary">
                             <span>
                               {row.from_hospital?.nama || row.from_department?.department_name || '—'}
                               <span className="text-gray-400 mx-1">→</span>
                               {row.to_hospital?.nama || row.to_department?.department_name || '—'}
                             </span>
                           </td>
-                          <td className="p-3.5 text-sm text-gray-600">
+                          <td className="p-3.5 text-sm text-text-muted">
                             {formatDate(row.request_date)}
                           </td>
-                          <td className="p-3.5 text-sm text-gray-600">
+                          <td className="p-3.5 text-sm text-text-muted">
                             {formatDate(row.required_date)}
                           </td>
                           <td className="p-3.5 text-center">
@@ -333,15 +333,15 @@ export const TransferRequestListPage: React.FC = () => {
                 </div>
 
                 {/* Mobile View: High-End Responsive Cards */}
-                <div className="md:hidden divide-y divide-gray-100">
+                <div className="md:hidden divide-y divide-border-subtle">
                   {transfers.map((row) => (
-                    <div key={row.id} className="p-4 space-y-2.5 hover:bg-gray-50/60 transition">
+                    <div key={row.id} className="p-4 space-y-2.5 hover:bg-subtle/50 transition">
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <span className="font-mono text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200 inline-block">
+                          <span className="font-mono text-xs font-bold text-purple-700 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20 inline-block">
                             {row.transfer_number}
                           </span>
-                          <div className="flex items-center gap-1 text-[11px] text-gray-500 mt-1 uppercase font-medium">
+                          <div className="flex items-center gap-1 text-[11px] text-text-muted mt-1 uppercase font-medium">
                             <ArrowRightLeft className="w-3 h-3 text-purple-500" />
                             {row.transfer_type === 'inter_facility' ? 'Inter-Facility' : 'Intra-Facility'}
                           </div>
@@ -352,23 +352,23 @@ export const TransferRequestListPage: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="bg-gray-50/80 rounded-xl p-2.5 border border-gray-100 text-xs">
-                        <div className="text-gray-500 text-[10px] uppercase font-semibold">Laluan Pindahan</div>
-                        <div className="font-medium text-gray-900 mt-0.5">
+                      <div className="bg-subtle/50 rounded-xl p-2.5 border border-border-subtle text-xs">
+                        <div className="text-text-muted text-[10px] uppercase font-semibold">Laluan Pindahan</div>
+                        <div className="font-medium text-text-primary mt-0.5">
                           {row.from_hospital?.nama || row.from_department?.department_name || '—'}
                           <span className="text-gray-400 mx-1.5 font-bold">→</span>
                           {row.to_hospital?.nama || row.to_department?.department_name || '—'}
                         </div>
                       </div>
 
-                      <div className="flex items-center justify-between text-[11px] text-gray-500 pt-1">
+                      <div className="flex items-center justify-between text-[11px] text-text-muted pt-1">
                         <div>
                           <span className="text-gray-400">Tarikh Mohon: </span>
-                          <span className="font-medium text-gray-700">{formatDate(row.request_date)}</span>
+                          <span className="font-medium text-text-secondary">{formatDate(row.request_date)}</span>
                         </div>
                         <div>
                           <span className="text-gray-400">Diperlukan: </span>
-                          <span className="font-medium text-gray-700">{formatDate(row.required_date)}</span>
+                          <span className="font-medium text-text-secondary">{formatDate(row.required_date)}</span>
                         </div>
                       </div>
                     </div>
@@ -380,7 +380,7 @@ export const TransferRequestListPage: React.FC = () => {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between text-sm text-gray-600">
+            <div className="flex items-center justify-between text-sm text-text-muted">
               <span>
                 Page {page} of {totalPages}
               </span>
@@ -388,14 +388,14 @@ export const TransferRequestListPage: React.FC = () => {
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page === 1}
-                  className="p-1.5 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="p-1.5 rounded-lg border border-border-default hover:bg-subtle disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <ChevronLeft className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page === totalPages}
-                  className="p-1.5 rounded-lg border border-gray-300 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="p-1.5 rounded-lg border border-border-default hover:bg-subtle disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>

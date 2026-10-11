@@ -1185,7 +1185,7 @@ export const ExcelImport: React.FC<ExcelImportProps> = ({
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title={title} size="xl">
       <div className="space-y-6">
-        {description && <p className="text-sm text-gray-600">{description}</p>}
+        {description && <p className="text-sm text-text-secondary">{description}</p>}
 
         {/* File Upload Area */}
         {!file && (
@@ -1196,11 +1196,11 @@ export const ExcelImport: React.FC<ExcelImportProps> = ({
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
             className={cn(
-              'relative border-2 border-dashed rounded-xl p-8 cursor-pointer transition-all',
-              'hover:border-teal-400 hover:bg-teal-50/50',
+              'relative border-2 border-dashed rounded-xl p-8 cursor-pointer transition-[transform,opacity,box-shadow,border-color]',
+              'hover:border-teal-400 hover:bg-accent-base/10',
               dragActive
-                ? 'border-teal-500 bg-teal-50'
-                : 'border-gray-300 bg-gray-50'
+                ? 'border-teal-500 bg-accent-base/10'
+                : 'border-border-default bg-subtle/50'
             )}
           >
             <input
@@ -1218,7 +1218,7 @@ export const ExcelImport: React.FC<ExcelImportProps> = ({
               <div
                 className={cn(
                   'w-16 h-16 rounded-full flex items-center justify-center mb-4',
-                  dragActive ? 'bg-teal-100' : 'bg-gray-100'
+                  dragActive ? 'bg-teal-100' : 'bg-subtle'
                 )}
               >
                 {isProcessing ? (
@@ -1228,7 +1228,7 @@ export const ExcelImport: React.FC<ExcelImportProps> = ({
                 )}
               </div>
 
-              <p className="text-base font-medium text-gray-700">
+              <p className="text-base font-medium text-text-secondary">
                 {isProcessing || isImporting || isAnalyzingVision
                   ? isImporting
                     ? 'Importing data automatically...'
@@ -1239,7 +1239,7 @@ export const ExcelImport: React.FC<ExcelImportProps> = ({
                   ? `Drop ${catalogType ? 'document' : 'Excel'} file here`
                   : `Click to upload or drag and drop`}
               </p>
-              <p className="mt-2 text-sm text-gray-500">
+              <p className="mt-2 text-sm text-text-muted">
                 {isProcessing || isImporting || isAnalyzingVision
                   ? isAnalyzingVision
                     ? 'Vision AI is extracting catalog information from your document'
@@ -1263,7 +1263,7 @@ export const ExcelImport: React.FC<ExcelImportProps> = ({
         {/* Auto-Import Progress */}
         {(isProcessing || isImporting || isAnalyzingVision) && file && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-teal-50 rounded-lg border border-teal-200">
+            <div className="flex items-center justify-between p-4 bg-accent-base/10 rounded-lg border border-accent-base/20">
               <div className="flex items-center gap-3">
                 {isImporting || isAnalyzingVision ? (
                   <Loader2 className="w-5 h-5 text-teal-600 animate-spin" />
@@ -1271,14 +1271,14 @@ export const ExcelImport: React.FC<ExcelImportProps> = ({
                   <Sparkles className="w-5 h-5 text-teal-600" />
                 )}
                 <div>
-                  <p className="text-sm font-medium text-gray-900">
+                  <p className="text-sm font-medium text-text-primary">
                     {isImporting 
                       ? 'Importing data...' 
                       : isAnalyzingVision
                       ? 'AI is analyzing your document...'
                       : 'Mapping columns automatically...'}
                   </p>
-                  <p className="text-xs text-gray-600">
+                  <p className="text-xs text-text-secondary">
                     {file.name} â€¢{' '}
                     {importProgress && importProgress.total > 0
                       ? `${importProgress.processed}/${importProgress.total} items processed (${Math.round(
@@ -1295,9 +1295,9 @@ export const ExcelImport: React.FC<ExcelImportProps> = ({
             </div>
 
             {importProgress && importProgress.total > 0 && (
-              <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+              <div className="w-full bg-subtle rounded-full h-2 overflow-hidden">
                 <div
-                  className="h-2 bg-teal-500 transition-all"
+                  className="h-2 bg-teal-500 transition-[transform,opacity,box-shadow,border-color]"
                   style={{ width: `${Math.round((importProgress.processed / importProgress.total) * 100)}%` }}
                 />
               </div>
@@ -1305,14 +1305,14 @@ export const ExcelImport: React.FC<ExcelImportProps> = ({
             
             {/* Vision AI Results Preview */}
             {visionResult && visionResult.items.length > 0 && !isImporting && (
-              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="p-4 bg-blue-500/10 rounded-lg border border-blue-500/20">
                 <div className="flex items-start gap-3">
                   <FileImage className="w-5 h-5 text-blue-600 mt-0.5" />
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900">
+                    <p className="text-sm font-medium text-text-primary">
                       âœ“ Successfully extracted {visionResult.total_items} valid item(s)
                     </p>
-                    <p className="text-xs text-gray-600 mt-1">
+                    <p className="text-xs text-text-secondary mt-1">
                       Confidence: {Math.round(visionResult.confidence * 100)}%
                       {visionResult.errors && visionResult.errors.length > 0 && (
                         <span className="text-amber-600 ml-2">
@@ -1321,7 +1321,7 @@ export const ExcelImport: React.FC<ExcelImportProps> = ({
                       )}
                     </p>
                     {visionResult.errors && visionResult.errors.length > 0 && (
-                      <p className="text-xs text-amber-700 mt-2 bg-amber-50 p-2 rounded">
+                      <p className="text-xs text-amber-700 mt-2 bg-amber-500/10 p-2 rounded">
                         Note: Invalid items (table headers, labels, or incomplete data) were automatically filtered out.
                       </p>
                     )}
@@ -1336,7 +1336,7 @@ export const ExcelImport: React.FC<ExcelImportProps> = ({
         {file && excelColumns.length > 0 && !isProcessing && !isImporting && importResult && importResult.errors.length > 0 && (
           <div className="space-y-4">
             {/* File Info */}
-            <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-subtle/50 rounded-lg">
               <div className="flex items-center gap-3">
                 {getFileType(file) === 'pdf' ? (
                   <FileText className="w-5 h-5 text-teal-600" />
@@ -1346,8 +1346,8 @@ export const ExcelImport: React.FC<ExcelImportProps> = ({
                   <FileSpreadsheet className="w-5 h-5 text-teal-600" />
                 )}
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{file.name}</p>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-sm font-medium text-text-primary">{file.name}</p>
+                  <p className="text-xs text-text-muted">
                     {visionResult ? `${visionResult.total_items} items extracted` : excelData.length > 0 ? `${excelData.length} rows found` : 'No data found'}
                   </p>
                 </div>
@@ -1360,7 +1360,7 @@ export const ExcelImport: React.FC<ExcelImportProps> = ({
                   setMappings([])
                   setImportResult(null)
                 }}
-                className="p-1 text-gray-400 hover:text-gray-600"
+                className="p-1 text-gray-400 hover:text-text-secondary"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1370,25 +1370,25 @@ export const ExcelImport: React.FC<ExcelImportProps> = ({
             <div className="space-y-3">
               <div className="flex items-center gap-2 mb-4">
                 <Sparkles className="w-5 h-5 text-teal-600" />
-                <h3 className="text-lg font-semibold text-gray-900">Column Mapping</h3>
-                <span className="text-xs text-gray-500">({mappings.length} mapped)</span>
+                <h3 className="text-lg font-semibold text-text-primary">Column Mapping</h3>
+                <span className="text-xs text-text-muted">({mappings.length} mapped)</span>
               </div>
 
               <div className="max-h-96 overflow-y-auto space-y-2 pr-2">
                 {excelColumns.map((excelCol) => {
                   const mapping = mappings.find(m => m.excelColumn === excelCol)
                   return (
-                    <div key={excelCol} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                    <div key={excelCol} className="flex items-center gap-3 p-3 bg-subtle/50 rounded-lg">
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-700">{excelCol}</p>
-                        <p className="text-xs text-gray-500">Excel Column</p>
+                        <p className="text-sm font-medium text-text-secondary">{excelCol}</p>
+                        <p className="text-xs text-text-muted">Excel Column</p>
                       </div>
                       <div className="text-gray-400">â†’</div>
                       <div className="flex-1">
                         <select
                           value={mapping?.targetField || ''}
                           onChange={(e) => handleMappingChange(excelCol, e.target.value)}
-                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+                          className="w-full px-3 py-2 text-sm border border-border-default rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                         >
                           <option value="">-- Not mapped --</option>
                           {targetFields.map((field) => (
@@ -1410,7 +1410,7 @@ export const ExcelImport: React.FC<ExcelImportProps> = ({
                                 : 'bg-orange-500'
                             )}
                           />
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-text-muted">
                             {Math.round(mapping.confidence * 100)}%
                           </span>
                         </div>
@@ -1449,7 +1449,7 @@ export const ExcelImport: React.FC<ExcelImportProps> = ({
                 <AlertCircle className="w-5 h-5 text-red-600 mt-0.5" />
               )}
               <div className="flex-1">
-                <p className="text-sm font-medium text-gray-900">
+                <p className="text-sm font-medium text-text-primary">
                   {importResult.errors.length === 0
                     ? `âœ“ Successfully imported ${importResult.success} item(s)`
                     : `Import failed: ${importResult.success} item(s) imported, ${importResult.errors.length} error(s)`}

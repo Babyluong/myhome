@@ -56,7 +56,7 @@ export const Switch: React.FC<SwitchProps> = ({
       >
         <span
           className={cn(
-            'inline-block rounded-full bg-white shadow-sm transform transition-transform',
+            'inline-block rounded-full bg-surface shadow-sm transform transition-transform',
             thumbSizeClasses[size],
             translateClasses[size]
           )}
@@ -68,7 +68,7 @@ export const Switch: React.FC<SwitchProps> = ({
             <label
               className={cn(
                 'block text-sm font-medium cursor-pointer',
-                disabled ? 'text-slate-400' : 'text-slate-700'
+                disabled ? 'text-slate-400' : 'text-text-secondary'
               )}
               onClick={() => !disabled && onChange(!checked)}
             >
@@ -76,7 +76,7 @@ export const Switch: React.FC<SwitchProps> = ({
             </label>
           )}
           {description && (
-            <p className={cn('text-xs mt-0.5', disabled ? 'text-slate-400' : 'text-slate-500')}>
+            <p className={cn('text-xs mt-0.5', disabled ? 'text-slate-400' : 'text-text-muted')}>
               {description}
             </p>
           )}

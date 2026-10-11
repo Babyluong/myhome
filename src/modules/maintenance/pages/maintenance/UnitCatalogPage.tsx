@@ -246,7 +246,7 @@ const UnitCatalogFormModal: React.FC<UnitCatalogFormModalProps> = ({
           }
         />
         {availableDepartments.length === 0 && !isLoadingDepartments && !departmentsError && (
-          <div className="text-sm text-amber-600 bg-amber-50 p-3 rounded-lg border border-amber-200">
+          <div className="text-sm text-amber-600 bg-amber-500/10 p-3 rounded-lg border border-amber-500/20">
             <p className="font-medium mb-1">No departments found</p>
             <p className="text-xs">
               Make sure modules are activated for this hospital and departments are created that match the activated modules.
@@ -298,13 +298,13 @@ const UnitCatalogFormModal: React.FC<UnitCatalogFormModalProps> = ({
         )}
 
         <div className="w-full">
-          <label className="block text-sm font-medium text-gray-700 mb-1.5">Notes</label>
+          <label className="block text-sm font-medium text-text-secondary mb-1.5">Notes</label>
           <textarea
             value={formData.notes || ''}
             onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value || null }))}
             placeholder="Additional notes (optional)"
             rows={3}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent resize-none"
+            className="w-full px-3 py-2 border border-border-default rounded-lg focus:ring-2 focus:ring-violet-500 focus:border-transparent resize-none"
           />
         </div>
 
@@ -388,7 +388,7 @@ const ChangeHistoryModal: React.FC<ChangeHistoryModalProps> = ({ isOpen, onClose
         ) : (
           <>
             {changes.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">No changes recorded</div>
+              <div className="text-center py-8 text-text-muted">No changes recorded</div>
             ) : (
               <div className="space-y-4">
                 {changes.map((change) => (
@@ -396,7 +396,7 @@ const ChangeHistoryModal: React.FC<ChangeHistoryModalProps> = ({ isOpen, onClose
                     <div className="flex items-start justify-between mb-2">
                       <div>
                         <p className="font-medium">{formatFieldName(change.field_name)}</p>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-text-muted">
                           Changed by {change.changed_by_user?.full_name || 'Unknown'} on{' '}
                           {new Date(change.changed_at).toLocaleString()}
                         </p>
@@ -404,20 +404,20 @@ const ChangeHistoryModal: React.FC<ChangeHistoryModalProps> = ({ isOpen, onClose
                     </div>
                     <div className="grid grid-cols-2 gap-4 mt-3">
                       <div>
-                        <p className="text-xs text-gray-500 mb-1">Old Value</p>
+                        <p className="text-xs text-text-muted mb-1">Old Value</p>
                         <p className="text-sm font-mono bg-red-50 p-2 rounded">
                           {formatValue(change.old_value)}
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500 mb-1">New Value</p>
+                        <p className="text-xs text-text-muted mb-1">New Value</p>
                         <p className="text-sm font-mono bg-green-50 p-2 rounded">
                           {formatValue(change.new_value)}
                         </p>
                       </div>
                     </div>
                     {change.change_reason && (
-                      <p className="text-xs text-gray-500 mt-2">Reason: {change.change_reason}</p>
+                      <p className="text-xs text-text-muted mt-2">Reason: {change.change_reason}</p>
                     )}
                   </div>
                 ))}
@@ -710,7 +710,7 @@ const CatalogItemsModal: React.FC<CatalogItemsModalProps> = ({
           className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
             item.is_active
               ? 'bg-green-100 text-green-700 hover:bg-green-200'
-              : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              : 'bg-subtle text-text-muted hover:bg-subtle'
           }`}
         >
           {item.is_active ? 'Active' : 'Inactive'}
@@ -751,14 +751,14 @@ const CatalogItemsModal: React.FC<CatalogItemsModalProps> = ({
     >
       <div className="space-y-4">
         {/* Tabs */}
-        <div className="border-b border-gray-100">
+        <div className="border-b border-border-subtle">
           <div className="flex gap-4">
             <button
               onClick={() => setActiveTab('drug')}
               className={`px-4 py-2 text-sm font-semibold border-b-2 transition-colors ${
                 activeTab === 'drug'
                   ? 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-gray-400 hover:text-gray-600'
+                  : 'border-transparent text-gray-400 hover:text-text-muted'
               }`}
             >
               Drugs ({catalog.drug_items_count || 0})
@@ -768,7 +768,7 @@ const CatalogItemsModal: React.FC<CatalogItemsModalProps> = ({
               className={`px-4 py-2 text-sm font-semibold border-b-2 transition-colors ${
                 activeTab === 'non_drug'
                   ? 'border-indigo-600 text-indigo-600'
-                  : 'border-transparent text-gray-400 hover:text-gray-600'
+                  : 'border-transparent text-gray-400 hover:text-text-muted'
               }`}
             >
               Non-Drugs ({catalog.non_drug_items_count || 0})
@@ -782,7 +782,7 @@ const CatalogItemsModal: React.FC<CatalogItemsModalProps> = ({
             <Spinner size="lg" />
           </div>
         ) : (
-          <div className="bg-white rounded-lg border overflow-hidden">
+          <div className="bg-surface rounded-lg border overflow-hidden">
             <Table
               columns={itemColumns}
               data={items}
@@ -837,9 +837,9 @@ const CatalogItemsModal: React.FC<CatalogItemsModalProps> = ({
           />
 
           {/* Default Settings */}
-          <div className="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
+          <div className="grid grid-cols-3 gap-4 p-4 bg-subtle/50 rounded-lg">
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Min Limit</label>
+              <label className="block text-xs font-medium text-text-secondary mb-1">Min Limit</label>
               <Input
                 type="number"
                 value={defaultMinLimit.toString()}
@@ -849,7 +849,7 @@ const CatalogItemsModal: React.FC<CatalogItemsModalProps> = ({
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Max Limit</label>
+              <label className="block text-xs font-medium text-text-secondary mb-1">Max Limit</label>
               <Input
                 type="number"
                 value={defaultMaxLimit?.toString() || ''}
@@ -860,13 +860,13 @@ const CatalogItemsModal: React.FC<CatalogItemsModalProps> = ({
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-700 mb-1">Active Status</label>
+              <label className="block text-xs font-medium text-text-secondary mb-1">Active Status</label>
               <button
                 onClick={() => setDefaultActive(!defaultActive)}
                 className={`w-full px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
                   defaultActive
                     ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    : 'bg-subtle text-text-muted hover:bg-subtle'
                 }`}
               >
                 {defaultActive ? 'Active' : 'Inactive'}
@@ -883,12 +883,12 @@ const CatalogItemsModal: React.FC<CatalogItemsModalProps> = ({
             <>
               <div className="border rounded-lg max-h-96 overflow-y-auto">
                 {availableItems.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
+                  <div className="text-center py-8 text-text-muted">
                     No {activeTab === 'drug' ? 'drugs' : 'non-drugs'} found. Try a different search.
                   </div>
                 ) : (
                   <table className="w-full">
-                    <thead className="bg-gray-50 sticky top-0">
+                    <thead className="bg-subtle/50 sticky top-0">
                       <tr>
                         <th className="px-4 py-2 text-left">
                           <input
@@ -898,19 +898,19 @@ const CatalogItemsModal: React.FC<CatalogItemsModalProps> = ({
                             className="rounded"
                           />
                         </th>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-700">Code</th>
-                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-700">Name</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-text-secondary">Code</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-text-secondary">Name</th>
                         {activeTab === 'drug' && (
-                          <th className="px-4 py-2 text-left text-xs font-medium text-gray-700">Generic</th>
+                          <th className="px-4 py-2 text-left text-xs font-medium text-text-secondary">Generic</th>
                         )}
-                        <th className="px-4 py-2 text-left text-xs font-medium text-gray-700">Unit</th>
+                        <th className="px-4 py-2 text-left text-xs font-medium text-text-secondary">Unit</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y">
                       {availableItems.map((item: any) => (
                         <tr
                           key={item.id}
-                          className={`hover:bg-gray-50 cursor-pointer ${
+                          className={`hover:bg-subtle/50 cursor-pointer ${
                             selectedItemIds.has(item.id) ? 'bg-violet-50' : ''
                           }`}
                           onClick={() => handleToggleSelection(item.id)}
@@ -936,11 +936,11 @@ const CatalogItemsModal: React.FC<CatalogItemsModalProps> = ({
                           </td>
                           {activeTab === 'drug' && (
                             <td className="px-4 py-2">
-                              <span className="text-xs text-gray-600">{item.generic_name || '—'}</span>
+                              <span className="text-xs text-text-muted">{item.generic_name || '—'}</span>
                             </td>
                           )}
                           <td className="px-4 py-2">
-                            <span className="text-xs text-gray-600">
+                            <span className="text-xs text-text-muted">
                               {activeTab === 'drug' ? item.unit_of_measure : item.unit_of_measure}
                             </span>
                           </td>
@@ -954,7 +954,7 @@ const CatalogItemsModal: React.FC<CatalogItemsModalProps> = ({
               {/* Pagination */}
               {totalPages > 1 && (
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">
+                  <span className="text-sm text-text-muted">
                     Page {currentPage} of {totalPages}
                   </span>
                   <div className="flex gap-2">
@@ -980,7 +980,7 @@ const CatalogItemsModal: React.FC<CatalogItemsModalProps> = ({
 
               {/* Action Buttons */}
               <div className="flex items-center justify-between pt-4 border-t">
-                <span className="text-sm text-gray-600">
+                <span className="text-sm text-text-muted">
                   {selectedItemIds.size} item(s) selected
                 </span>
                 <div className="flex gap-3">
@@ -1259,7 +1259,7 @@ export const UnitCatalogPage: React.FC = () => {
       key: 'responsible',
       label: 'Responsible',
       render: (catalog: UnitCatalogWithRelations) => (
-        <span className="text-sm font-medium text-gray-600">
+        <span className="text-sm font-medium text-text-muted">
           {catalog.responsible_user?.full_name || <span className="text-gray-300 font-normal">—</span>}
         </span>
       ),
@@ -1268,10 +1268,10 @@ export const UnitCatalogPage: React.FC = () => {
       key: 'last_updated',
       label: 'Last Updated',
       render: (catalog: UnitCatalogWithRelations) => (
-        <div className="text-[11px] text-gray-500 leading-normal">
+        <div className="text-[11px] text-text-muted leading-normal">
           {catalog.last_updated_at ? (
             <>
-              <p className="font-medium text-gray-700">{new Date(catalog.last_updated_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</p>
+              <p className="font-medium text-text-secondary">{new Date(catalog.last_updated_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</p>
               <p className="text-gray-400">
                 by {catalog.last_updated_by_user?.full_name || 'Unknown'}
               </p>
@@ -1295,7 +1295,7 @@ export const UnitCatalogPage: React.FC = () => {
               setShowItemsModal(true)
             }}
             title="Manage Items"
-            className="w-8 h-8 p-0 flex items-center justify-center border-gray-200 text-gray-500 hover:text-gray-800 hover:bg-gray-50 rounded-lg"
+            className="w-8 h-8 p-0 flex items-center justify-center border-border-default text-text-muted hover:text-text-primary hover:bg-subtle/50 rounded-lg"
           >
             <Package className="w-4 h-4" />
           </Button>
@@ -1307,7 +1307,7 @@ export const UnitCatalogPage: React.FC = () => {
               setShowEditModal(true)
             }}
             title="Edit Unit"
-            className="w-8 h-8 p-0 flex items-center justify-center border-gray-200 text-gray-500 hover:text-gray-800 hover:bg-gray-50 rounded-lg"
+            className="w-8 h-8 p-0 flex items-center justify-center border-border-default text-text-muted hover:text-text-primary hover:bg-subtle/50 rounded-lg"
           >
             <Edit className="w-4 h-4" />
           </Button>
@@ -1319,7 +1319,7 @@ export const UnitCatalogPage: React.FC = () => {
               setShowHistoryModal(true)
             }}
             title="View History"
-            className="w-8 h-8 p-0 flex items-center justify-center border-gray-200 text-gray-500 hover:text-gray-800 hover:bg-gray-50 rounded-lg"
+            className="w-8 h-8 p-0 flex items-center justify-center border-border-default text-text-muted hover:text-text-primary hover:bg-subtle/50 rounded-lg"
           >
             <History className="w-4 h-4" />
           </Button>
@@ -1333,7 +1333,7 @@ export const UnitCatalogPage: React.FC = () => {
       <div className="p-6">
         <div className="text-center py-12">
           <AlertCircle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-600">No hospital assigned. Please contact your administrator.</p>
+          <p className="text-text-muted">No hospital assigned. Please contact your administrator.</p>
         </div>
       </div>
     )
@@ -1344,11 +1344,11 @@ export const UnitCatalogPage: React.FC = () => {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-text-primary flex items-center gap-2">
             <Building2 className="w-6 h-6 text-violet-600" />
             Unit Catalog
           </h1>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-sm text-text-muted mt-1">
             Manage what each department can indent, capacity limits, and track inventory counts.
           </p>
         </div>
@@ -1407,21 +1407,21 @@ export const UnitCatalogPage: React.FC = () => {
       )}
 
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-4">
+      <div className="bg-surface rounded-xl border border-border-subtle shadow-sm p-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider block mb-1.5">Search Departments</label>
+            <label className="text-[10px] font-semibold text-text-muted uppercase tracking-wider block mb-1.5">Search Departments</label>
             <Input
               placeholder="Search by name or code..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               leftIcon={<Search className="w-4 h-4 text-gray-400" />}
-              className="text-sm bg-gray-50/50 border-gray-200/80 focus:bg-white"
+              className="text-sm bg-subtle/50 border-border-default focus:bg-surface"
             />
           </div>
 
           <div>
-            <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider block mb-1.5">Filter by Module</label>
+            <label className="text-[10px] font-semibold text-text-muted uppercase tracking-wider block mb-1.5">Filter by Module</label>
             <Select
               value={moduleFilter}
               onChange={(e) => setModuleFilter(e.target.value)}
@@ -1429,12 +1429,12 @@ export const UnitCatalogPage: React.FC = () => {
                 { value: 'all', label: 'All Modules' },
                 ...availableModules.map((m) => ({ value: m.code, label: m.name })),
               ]}
-              className="text-sm bg-gray-50/50 border-gray-200/80 focus:bg-white"
+              className="text-sm bg-subtle/50 border-border-default focus:bg-surface"
             />
           </div>
 
           <div>
-            <label className="text-[10px] font-semibold text-gray-500 uppercase tracking-wider block mb-1.5">Status</label>
+            <label className="text-[10px] font-semibold text-text-muted uppercase tracking-wider block mb-1.5">Status</label>
             <Select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
@@ -1444,7 +1444,7 @@ export const UnitCatalogPage: React.FC = () => {
                 { value: 'inactive', label: 'Inactive' },
                 { value: 'suspended', label: 'Suspended' },
               ]}
-              className="text-sm bg-gray-50/50 border-gray-200/80 focus:bg-white"
+              className="text-sm bg-subtle/50 border-border-default focus:bg-surface"
             />
           </div>
         </div>
@@ -1454,7 +1454,7 @@ export const UnitCatalogPage: React.FC = () => {
       {isLoading ? (
         <LoadingOverlay />
       ) : (
-        <div className="bg-white rounded-lg border overflow-hidden">
+        <div className="bg-surface rounded-lg border overflow-hidden">
           <Table
             columns={tableColumns}
             data={catalogs}

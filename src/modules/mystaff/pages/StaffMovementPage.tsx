@@ -602,28 +602,28 @@ export const StaffMovementPage: React.FC = () => {
   ]
 
   return (
-    <div className="p-6 md:p-8 w-full space-y-6 text-slate-800">
+    <div className="p-6 md:p-8 w-full space-y-6 text-text-primary">
       {/* Header Panel */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-white border border-slate-100 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-surface border border-border-subtle rounded-3xl p-6 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-teal-400 via-emerald-500 to-green-500" />
         
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate(ROUTES.STAFF_DASHBOARD)}
-            className="p-3 hover:bg-slate-50 border border-slate-100 rounded-2xl text-slate-400 hover:text-slate-700 transition-all shadow-sm"
+            className="p-3 hover:bg-subtle/50 border border-border-subtle rounded-2xl text-slate-400 hover:text-text-secondary transition-colors shadow-sm"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-black tracking-tight text-slate-800">
+              <h1 className="text-2xl font-black tracking-tight text-text-primary">
                 {isMs ? 'Log Pergerakan Staf & Rekod Keluar Pejabat' : 'Staff Movement & Out of Station Log'}
               </h1>
-              <Badge variant="gray" className="font-mono text-[10px] font-bold py-0.5 px-2 text-emerald-700 bg-emerald-50 border-emerald-200">
+              <Badge variant="gray" className="font-mono text-[10px] font-bold py-0.5 px-2 text-emerald-700 bg-emerald-500/10 border-emerald-500/20">
                 {isMs ? 'JABATAN FARMASI' : 'PHARMACY DEPARTMENT'}
               </Badge>
             </div>
-            <p className="text-sm text-slate-500 mt-0.5 font-medium">
+            <p className="text-sm text-text-muted mt-0.5 font-medium">
               {isMs
                 ? 'Borang Pergerakan Pegawai Farmasi (Mesyuarat, Kursus, Lawatan Tapak, CME & Tugasan Rasmi)'
                 : 'Officer Movement Log (Meetings, Courses, Site Visits, CME & Official Duties)'}
@@ -635,7 +635,7 @@ export const StaffMovementPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsAuditDrawerOpen(true)}
-            className="px-4 py-2.5 min-h-[44px] rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 text-slate-700 font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-xs flex-1 sm:flex-initial"
+            className="px-4 py-2.5 min-h-[44px] rounded-2xl border border-border-default bg-subtle/50 hover:bg-subtle hover:border-border-default text-text-secondary font-bold text-xs flex items-center justify-center gap-2 transition-colors shadow-xs flex-1 sm:flex-initial"
           >
             <History className="w-4 h-4 text-emerald-600" />
             <span>{isMs ? 'Log Audit & Pindaan' : 'Audit Trail & History'}</span>
@@ -643,7 +643,7 @@ export const StaffMovementPage: React.FC = () => {
 
           <Button
             onClick={handleOpenCreate}
-            className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-2xl shadow-md hover:shadow-lg font-bold flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] transition-all text-sm flex-1 sm:flex-initial"
+            className="bg-accent-base hover:bg-accent-hover text-white rounded-2xl shadow-md hover:shadow-lg font-bold flex items-center justify-center gap-2 px-5 py-2.5 min-h-[44px] transition-colors text-sm flex-1 sm:flex-initial"
           >
             <Plus className="w-4 h-4" />
             <span>{isMs ? 'Catat Pergerakan Baharu' : 'Record New Movement'}</span>
@@ -652,7 +652,7 @@ export const StaffMovementPage: React.FC = () => {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg flex flex-col md:flex-row gap-4 justify-between items-center">
+      <div className="bg-surface border border-border-subtle p-5 rounded-3xl shadow-lg flex flex-col md:flex-row gap-4 justify-between items-center">
         {/* Search */}
         <div className="relative w-full md:w-80">
           <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -661,7 +661,7 @@ export const StaffMovementPage: React.FC = () => {
             placeholder={isMs ? "Cari tajuk, destinasi, pegawai farmasi atau pelapor..." : "Search title, destination, officer or submitter..."}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 font-medium placeholder:text-slate-400"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border-default text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 font-medium placeholder:text-text-muted"
           />
         </div>
 
@@ -681,10 +681,10 @@ export const StaffMovementPage: React.FC = () => {
             <button
               key={cat.id}
               onClick={() => setSelectedType(cat.id)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-colors ${
                 selectedType === cat.id
                   ? 'bg-slate-900 text-white shadow-sm'
-                  : 'bg-slate-100/80 text-slate-600 hover:bg-slate-200/80'
+                  : 'bg-subtle text-text-muted hover:bg-subtle'
               }`}
             >
               {cat.label}
@@ -698,10 +698,10 @@ export const StaffMovementPage: React.FC = () => {
         {isLoading ? (
           <SkeletonTable rows={5} columns={9} />
         ) : (
-          <div className="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-xl">
+          <div className="bg-surface border border-border-subtle rounded-3xl overflow-hidden shadow-xl">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm text-slate-700">
-                <thead className="bg-slate-50/80 border-b border-slate-100 text-xs uppercase font-black text-slate-600 tracking-wider font-mono">
+              <table className="w-full text-left text-sm text-text-secondary">
+                <thead className="bg-subtle/50 border-b border-border-subtle text-xs uppercase font-black text-text-muted tracking-wider font-mono">
                   <tr>
                     <th className="px-6 py-4">{isMs ? 'Pegawai Terlibat (Farmasi)' : 'Involved Officer'}</th>
                     <th className="px-6 py-4">{isMs ? 'Kategori & Tajuk Pergerakan' : 'Category & Movement Title'}</th>
@@ -714,12 +714,12 @@ export const StaffMovementPage: React.FC = () => {
                     <th className="px-6 py-4 text-right">{isMs ? 'Tindakan' : 'Actions'}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 font-medium">
+                <tbody className="divide-y divide-border-subtle font-medium">
                   {filteredMovements.length === 0 ? (
                     <tr>
-                      <td colSpan={9} className="text-center py-16 text-slate-400">
+                      <td colSpan={9} className="text-center py-16 text-text-muted font-medium">
                         <Briefcase className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                        <p className="font-bold text-slate-600">
+                        <p className="font-bold text-text-muted">
                           {isMs ? 'Tiada rekod pergerakan dijumpai' : 'No movement records found'}
                         </p>
                         <p className="text-xs text-slate-400 mt-0.5">
@@ -734,27 +734,27 @@ export const StaffMovementPage: React.FC = () => {
                       const isLoggedByOther = m.logged_by_name && m.logged_by_name !== (m.user?.full_name || '')
 
                       return (
-                        <tr key={m.id} className="hover:bg-slate-50/60 transition-colors">
+                        <tr key={m.id} className="hover:bg-subtle/50 transition-colors">
                           <td className="px-6 py-4">
                             <div className="flex items-center gap-3">
-                              <div className="w-9 h-9 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center justify-center font-bold text-xs shrink-0">
+                              <div className="w-9 h-9 rounded-full bg-emerald-100 text-emerald-400 border border-emerald-500/20 flex items-center justify-center font-bold text-xs shrink-0">
                                 {m.user?.full_name?.charAt(0) || 'P'}
                               </div>
                               <div>
-                                <div className="font-bold text-slate-900">{m.user?.full_name || (isMs ? 'Pegawai Farmasi' : 'Pharmacy Officer')}</div>
-                                <div className="text-xs text-slate-500">{m.user?.jawatan || (isMs ? 'Pegawai Farmasi UF9' : 'Pharmacy Officer')}</div>
+                                <div className="font-bold text-text-primary">{m.user?.full_name || (isMs ? 'Pegawai Farmasi' : 'Pharmacy Officer')}</div>
+                                <div className="text-xs text-text-muted">{m.user?.jawatan || (isMs ? 'Pegawai Farmasi UF9' : 'Pharmacy Officer')}</div>
                               </div>
                             </div>
                           </td>
 
                           <td className="px-6 py-4">
-                            <div className="font-bold text-slate-800">{m.tajuk}</div>
+                            <div className="font-bold text-text-primary">{m.tajuk}</div>
                             <div className="flex items-center gap-1.5 flex-wrap mt-1">
-                              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold border border-emerald-200 font-mono">
+                              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 font-bold border border-emerald-500/20 font-mono">
                                 {m.jenis_pergerakan}
                               </span>
                               {m.last_edited_by_name && (
-                                <span className="text-[10px] text-amber-900 font-bold bg-amber-100/80 border border-amber-300 px-2 py-0.5 rounded flex items-center gap-1" title={m.last_edit_reason || (isMs ? 'Pindaan data' : 'Data modification')}>
+                                <span className="text-[10px] text-amber-400 dark:text-amber-300 font-bold font-bold bg-amber-100/80 border border-amber-300 px-2 py-0.5 rounded flex items-center gap-1" title={m.last_edit_reason || (isMs ? 'Pindaan data' : 'Data modification')}>
                                   <Edit3 className="w-3 h-3 text-amber-700 shrink-0" />
                                   <span>{isMs ? `Dipinda: ${m.last_edited_by_name}` : `Modified: ${m.last_edited_by_name}`}</span>
                                 </span>
@@ -763,22 +763,22 @@ export const StaffMovementPage: React.FC = () => {
                           </td>
 
                           <td className="px-6 py-4">
-                            <div className="flex items-center gap-1.5 text-slate-800 font-semibold">
+                            <div className="flex items-center gap-1.5 text-text-primary font-semibold">
                               <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                               <span>{m.destination}</span>
                             </div>
                           </td>
 
                           <td className="px-6 py-4 font-mono text-xs">
-                            <div className="text-slate-800 font-bold">
+                            <div className="text-text-primary font-bold">
                               {m.tarikh_mula} {m.tarikh_mula !== m.tarikh_tamat && `— ${m.tarikh_tamat}`}
                             </div>
-                            <div className="text-slate-500">
+                            <div className="text-text-muted">
                               {m.masa_keluar || '08:00'} - {m.masa_balik || '17:00'}
                             </div>
                           </td>
 
-                          <td className="px-6 py-4 text-xs text-slate-600 max-w-xs">
+                          <td className="px-6 py-4 text-xs text-text-muted max-w-xs">
                             <div className="line-clamp-2 leading-relaxed">{m.tujuan}</div>
                           </td>
 
@@ -790,7 +790,7 @@ export const StaffMovementPage: React.FC = () => {
                                 download={m.attachment_name || 'Document_Attachment'}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 hover:bg-emerald-600 hover:text-white transition-all shadow-xs text-xs font-bold max-w-[180px] group/doc"
+                                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-600 hover:text-white transition-colors shadow-xs text-xs font-bold max-w-[180px] group/doc"
                               >
                                 <FileText className="w-3.5 h-3.5 text-emerald-600 group-hover/doc:text-white shrink-0" />
                                 <span className="truncate">
@@ -808,7 +808,7 @@ export const StaffMovementPage: React.FC = () => {
                           {/* Logged By Column */}
                           <td className="px-6 py-4">
                             <div className="flex flex-col">
-                              <span className="text-xs font-bold text-slate-900 flex items-center gap-1">
+                              <span className="text-xs font-bold text-text-primary flex items-center gap-1">
                                 <UserCheck className="w-3.5 h-3.5 text-emerald-600" />
                                 <span>{m.logged_by_name || m.user?.full_name || user?.full_name || 'AMRI AMIT'}</span>
                               </span>
@@ -819,7 +819,7 @@ export const StaffMovementPage: React.FC = () => {
                           </td>
 
                           <td className="px-6 py-4">
-                            <span className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            <span className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-bold bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
                               <CheckCircle2 className="w-3 h-3" />
                               {isMs ? 'Disahkan' : 'Confirmed'}
                             </span>
@@ -831,14 +831,14 @@ export const StaffMovementPage: React.FC = () => {
                               <button
                                 onClick={(e) => handleOpenEdit(m, e)}
                                 title={isMs ? "Kemaskini Rekod & Rekod Log Pindaan" : "Edit Record & Log Modification"}
-                                className="p-2.5 text-slate-500 hover:text-emerald-700 hover:bg-emerald-50 rounded-xl transition-all border border-slate-200 shadow-2xs hover:shadow-xs min-h-[44px] min-w-[44px] flex items-center justify-center"
+                                className="p-2.5 text-text-muted hover:text-emerald-700 hover:bg-emerald-500/10 rounded-xl transition-colors border border-border-default shadow-elevation-1 hover:shadow-xs min-h-[44px] min-w-[44px] flex items-center justify-center"
                               >
                                 <Pencil className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={(e) => handleOpenDelete(m, e)}
                                 title={isMs ? "Padam Pergerakan & Rekod Sebab Pemadaman" : "Delete Movement & Log Reason"}
-                                className="p-2.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all border border-slate-200 shadow-2xs hover:shadow-xs min-h-[44px] min-w-[44px] flex items-center justify-center"
+                                className="p-2.5 text-slate-400 hover:text-rose-600 hover:bg-rose-500/10 rounded-xl transition-colors border border-border-default shadow-elevation-1 hover:shadow-xs min-h-[44px] min-w-[44px] flex items-center justify-center"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
@@ -860,9 +860,9 @@ export const StaffMovementPage: React.FC = () => {
         {isLoading ? (
           <SkeletonMobileCardList count={4} />
         ) : filteredMovements.length === 0 ? (
-          <div className="bg-white border border-slate-100 rounded-3xl p-8 text-center text-slate-400 shadow-xl">
+          <div className="bg-surface border border-border-subtle rounded-3xl p-8 text-center text-slate-400 shadow-xl">
             <Briefcase className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-            <p className="font-bold text-slate-600">
+            <p className="font-bold text-text-muted">
               {isMs ? 'Tiada rekod pergerakan dijumpai' : 'No movement records found'}
             </p>
             <p className="text-xs text-slate-400 mt-0.5">
@@ -880,55 +880,55 @@ export const StaffMovementPage: React.FC = () => {
             return (
               <div
                 key={m.id}
-                className="bg-white border border-slate-100 rounded-3xl p-5 shadow-lg space-y-4 hover:border-emerald-200 transition-all"
+                className="bg-surface border border-border-subtle rounded-3xl p-5 shadow-lg space-y-4 hover:border-emerald-500/20 transition-colors"
               >
                 {/* Officer & Status Header */}
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 flex items-center justify-center font-bold text-sm shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-400 border border-emerald-500/20 flex items-center justify-center font-bold text-sm shrink-0">
                       {officerName.charAt(0) || 'P'}
                     </div>
                     <div className="min-w-0">
-                      <div className="font-bold text-slate-900 text-sm truncate">{officerName}</div>
-                      <div className="text-xs text-slate-500 truncate">{officerRole}</div>
+                      <div className="font-bold text-text-primary text-sm truncate">{officerName}</div>
+                      <div className="text-xs text-text-muted truncate">{officerRole}</div>
                     </div>
                   </div>
 
-                  <span className="inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-full font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
+                  <span className="inline-flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-full font-bold bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 shrink-0">
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     {isMs ? 'Disahkan' : 'Confirmed'}
                   </span>
                 </div>
 
                 {/* Category & Title */}
-                <div className="space-y-1.5 pt-1 border-t border-slate-100">
+                <div className="space-y-1.5 pt-1 border-t border-border-subtle">
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold border border-emerald-200 font-mono uppercase">
+                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-700 font-bold border border-emerald-500/20 font-mono uppercase">
                       {m.jenis_pergerakan}
                     </span>
                     {m.last_edited_by_name && (
-                      <span className="text-[10px] text-amber-900 font-bold bg-amber-100/80 border border-amber-300 px-2 py-0.5 rounded flex items-center gap-1">
+                      <span className="text-[10px] text-amber-400 dark:text-amber-300 font-bold font-bold bg-amber-100/80 border border-amber-300 px-2 py-0.5 rounded flex items-center gap-1">
                         <Edit3 className="w-3 h-3 text-amber-700 shrink-0" />
                         <span>{isMs ? `Dipinda: ${m.last_edited_by_name}` : `Modified: ${m.last_edited_by_name}`}</span>
                       </span>
                     )}
                   </div>
-                  <h3 className="font-extrabold text-base text-slate-900 leading-snug">{m.tajuk}</h3>
+                  <h3 className="font-extrabold text-base text-text-primary leading-snug">{m.tajuk}</h3>
                 </div>
 
                 {/* Destination & Date/Time Details */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs bg-slate-50/80 p-3 rounded-2xl border border-slate-100">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs bg-subtle/50 p-3 rounded-2xl border border-border-subtle">
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span className="font-semibold text-slate-800 truncate">{m.destination}</span>
+                    <span className="font-semibold text-text-primary truncate">{m.destination}</span>
                   </div>
                   <div className="flex items-center gap-2 font-mono">
                     <Calendar className="w-4 h-4 text-indigo-500 shrink-0" />
-                    <span className="text-slate-800 font-bold">
+                    <span className="text-text-primary font-bold">
                       {m.tarikh_mula} {m.tarikh_mula !== m.tarikh_tamat && `— ${m.tarikh_tamat}`}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 font-mono text-slate-600 sm:col-span-2">
+                  <div className="flex items-center gap-2 font-mono text-text-muted sm:col-span-2">
                     <Clock className="w-4 h-4 text-amber-500 shrink-0" />
                     <span>{m.masa_keluar || '08:00'} — {m.masa_balik || '17:00'}</span>
                   </div>
@@ -936,7 +936,7 @@ export const StaffMovementPage: React.FC = () => {
 
                 {/* Purpose */}
                 {m.tujuan && (
-                  <p className="text-xs text-slate-600 leading-relaxed bg-white border border-slate-100 p-3 rounded-xl">
+                  <p className="text-xs text-text-muted leading-relaxed bg-surface border border-border-subtle p-3 rounded-xl">
                     {m.tujuan}
                   </p>
                 )}
@@ -949,7 +949,7 @@ export const StaffMovementPage: React.FC = () => {
                       download={m.attachment_name || 'Document_Attachment'}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 hover:bg-emerald-600 hover:text-white transition-all text-xs font-bold"
+                      className="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-600 hover:text-white transition-colors text-xs font-bold"
                     >
                       <FileText className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                       <span className="truncate max-w-[220px]">
@@ -961,9 +961,9 @@ export const StaffMovementPage: React.FC = () => {
                 )}
 
                 {/* Footer: Submitter info + Action Buttons */}
-                <div className="flex items-center justify-between pt-3 border-t border-slate-100 gap-3">
-                  <div className="text-[11px] text-slate-500">
-                    <div className="flex items-center gap-1 font-bold text-slate-700">
+                <div className="flex items-center justify-between pt-3 border-t border-border-subtle gap-3">
+                  <div className="text-[11px] text-text-muted">
+                    <div className="flex items-center gap-1 font-bold text-text-secondary">
                       <UserCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                       <span className="truncate max-w-[150px]">{m.logged_by_name || officerName}</span>
                     </div>
@@ -976,14 +976,14 @@ export const StaffMovementPage: React.FC = () => {
                     <button
                       onClick={(e) => handleOpenEdit(m, e)}
                       title={isMs ? "Kemaskini Rekod" : "Edit Record"}
-                      className="p-2.5 text-slate-600 hover:text-emerald-700 bg-slate-50 hover:bg-emerald-50 rounded-xl transition-all border border-slate-200 min-h-[44px] min-w-[44px] flex items-center justify-center shadow-xs"
+                      className="p-2.5 text-text-muted hover:text-emerald-700 bg-subtle/50 hover:bg-emerald-500/10 rounded-xl transition-colors border border-border-default min-h-[44px] min-w-[44px] flex items-center justify-center shadow-xs"
                     >
                       <Pencil className="w-4 h-4" />
                     </button>
                     <button
                       onClick={(e) => handleOpenDelete(m, e)}
                       title={isMs ? "Padam Pergerakan" : "Delete Movement"}
-                      className="p-2.5 text-rose-500 hover:text-rose-700 bg-rose-50/50 hover:bg-rose-100 rounded-xl transition-all border border-rose-200 min-h-[44px] min-w-[44px] flex items-center justify-center shadow-xs"
+                      className="p-2.5 text-rose-500 hover:text-rose-700 bg-rose-500/10 hover:bg-rose-100 rounded-xl transition-colors border border-rose-500/20 min-h-[44px] min-w-[44px] flex items-center justify-center shadow-xs"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -1014,21 +1014,21 @@ export const StaffMovementPage: React.FC = () => {
             : isMs ? 'Rekod rasmi urusan pergerakan keluar pejabat, mesyuarat luar, kursus dan tugasan stesen' : 'Official registration for out-of-office travel, external meetings, courses, and station duties'
         }
       >
-        <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-6 pb-24 text-slate-800">
+        <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-6 pb-24 text-text-primary">
           {/* Target Selection Switcher: Diri Sendiri vs Pegawai Lain di Jabatan Farmasi */}
           <div className="space-y-3">
-            <label className="text-xs font-bold text-slate-900 uppercase tracking-wider block">
+            <label className="text-xs font-bold text-text-primary uppercase tracking-wider block">
               {isMs ? 'Pilihan Pegawai / Sasaran Pendaftaran' : 'Target Officer Selection'}
             </label>
 
-            <div className="grid grid-cols-2 gap-3 p-1.5 bg-slate-100 rounded-2xl border border-slate-200/80">
+            <div className="grid grid-cols-2 gap-3 p-1.5 bg-subtle rounded-2xl border border-border-default">
               <button
                 type="button"
                 onClick={() => setLogTarget('self')}
-                className={`py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                className={`py-2.5 px-4 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2 ${
                   logTarget === 'self'
-                    ? 'bg-white text-slate-900 shadow-sm border border-slate-200'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-surface text-text-primary shadow-sm border border-border-default'
+                    : 'text-text-muted hover:text-text-primary'
                 }`}
               >
                 <User className="w-4 h-4 text-emerald-600" />
@@ -1038,10 +1038,10 @@ export const StaffMovementPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setLogTarget('other')}
-                className={`py-2.5 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+                className={`py-2.5 px-4 rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2 ${
                   logTarget === 'other'
-                    ? 'bg-white text-slate-900 shadow-sm border border-slate-200'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-surface text-text-primary shadow-sm border border-border-default'
+                    : 'text-text-muted hover:text-text-primary'
                 }`}
               >
                 <Users className="w-4 h-4 text-emerald-600" />
@@ -1051,20 +1051,20 @@ export const StaffMovementPage: React.FC = () => {
           </div>
 
           {/* Officer Context Card (Submitter & Moving Officer) */}
-          <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50/60 to-slate-50 border border-emerald-200/80 space-y-3">
+          <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50/60 to-slate-50 border border-emerald-500/20 space-y-3">
             {/* Submitter info */}
             <div className="flex items-center justify-between border-b border-emerald-100/80 pb-2.5">
               <div className="flex items-center gap-2 text-xs">
-                <span className="text-[11px] font-bold text-emerald-800 uppercase tracking-wide">
+                <span className="text-[11px] font-bold text-emerald-400 uppercase tracking-wide">
                   {editingMovement
                     ? isMs ? 'Pegawai Yang Meminda:' : 'Amended By:'
                     : isMs ? 'Didaftarkan Oleh (Pelapor):' : 'Submitted By (Reporter):'}
                 </span>
-                <span className="font-extrabold text-slate-900">
+                <span className="font-extrabold text-text-primary">
                   {user?.full_name || 'AMRI AMIT'} ({user?.jawatan || (isMs ? 'Penolong Pegawai Farmasi U5' : 'Assistant Pharmacy Officer U5')})
                 </span>
               </div>
-              <span className="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-mono font-bold bg-white border border-emerald-300 text-emerald-700 shadow-xs">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-mono font-bold bg-surface border border-emerald-300 text-emerald-700 shadow-xs">
                 {editingMovement
                   ? isMs ? 'MOD PINDAAN' : 'EDIT MODE'
                   : isMs ? 'JABATAN FARMASI' : 'PHARMACY DEPT'}
@@ -1078,13 +1078,13 @@ export const StaffMovementPage: React.FC = () => {
                   {user?.full_name ? user.full_name.charAt(0) : 'A'}
                 </div>
                 <div>
-                  <p className="text-[11px] font-bold text-emerald-800 uppercase tracking-wide">
+                  <p className="text-[11px] font-bold text-emerald-400 uppercase tracking-wide">
                     {isMs ? 'Pegawai Yang Keluar Stesen' : 'Officer Leaving Station'}
                   </p>
-                  <h4 className="text-base font-extrabold text-slate-900 leading-snug">
+                  <h4 className="text-base font-extrabold text-text-primary leading-snug">
                     {user?.full_name || 'AMRI AMIT'}
                   </h4>
-                  <p className="text-xs text-slate-600 font-medium mt-0.5">
+                  <p className="text-xs text-text-muted font-medium mt-0.5">
                     {user?.jawatan || (isMs ? 'Penolong Pegawai Farmasi U5' : 'Assistant Pharmacy Officer U5')} • {isMs ? 'Jabatan Farmasi' : 'Pharmacy Department'}
                   </p>
                 </div>
@@ -1092,13 +1092,13 @@ export const StaffMovementPage: React.FC = () => {
             ) : (
               <div className="space-y-3 pt-1">
                 <div className="flex items-center justify-between">
-                  <p className="text-[11px] font-bold text-emerald-800 uppercase tracking-wide">
+                  <p className="text-[11px] font-bold text-emerald-400 uppercase tracking-wide">
                     {isMs ? 'Pilih Pegawai Farmasi Terlibat:' : 'Select Involved Officer:'}
                   </p>
                   <button
                     type="button"
                     onClick={() => setIsManualOfficer(!isManualOfficer)}
-                    className="text-[11px] font-bold text-emerald-700 hover:text-emerald-900 underline"
+                    className="text-[11px] font-bold text-emerald-700 hover:text-emerald-400 dark:text-emerald-300 font-bold underline"
                   >
                     {isManualOfficer
                       ? isMs ? 'Pilih Dari Senarai Farmasi' : 'Select from List'
@@ -1110,7 +1110,7 @@ export const StaffMovementPage: React.FC = () => {
                   <select
                     value={selectedColleagueId}
                     onChange={e => setSelectedColleagueId(e.target.value)}
-                    className="w-full px-4 py-3 rounded-2xl border border-emerald-300 bg-white text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm"
+                    className="w-full px-4 py-3 rounded-2xl border border-emerald-300 bg-surface text-sm font-semibold text-text-primary focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm"
                   >
                     {colleagues.map(col => (
                       <option key={col.id} value={col.id}>
@@ -1119,9 +1119,9 @@ export const StaffMovementPage: React.FC = () => {
                     ))}
                   </select>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-white p-3.5 rounded-2xl border border-emerald-300 shadow-sm">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-surface p-3.5 rounded-2xl border border-emerald-300 shadow-sm">
                     <div>
-                      <label className="text-[10px] font-bold text-slate-600 uppercase tracking-wider block mb-1">
+                      <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">
                         {isMs ? 'Nama Pegawai' : 'Officer Name'}
                       </label>
                       <input
@@ -1129,11 +1129,11 @@ export const StaffMovementPage: React.FC = () => {
                         placeholder={isMs ? "cth. Mohamad Aiman bin Mat Zaki" : "e.g. Mohamad Aiman bin Mat Zaki"}
                         value={manualOfficerName}
                         onChange={e => setManualOfficerName(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        className="w-full px-3 py-2 rounded-xl border border-border-default text-xs font-semibold text-text-primary focus:outline-none focus:ring-2 focus:ring-emerald-500"
                       />
                     </div>
                     <div>
-                      <label className="text-[10px] font-bold text-slate-600 uppercase tracking-wider block mb-1">
+                      <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">
                         {isMs ? 'Jawatan / Gred' : 'Designation / Grade'}
                       </label>
                       <input
@@ -1141,7 +1141,7 @@ export const StaffMovementPage: React.FC = () => {
                         placeholder={isMs ? "cth. Pegawai Farmasi UF9" : "e.g. Pharmacy Officer UF9"}
                         value={manualOfficerRole}
                         onChange={e => setManualOfficerRole(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl border border-slate-300 text-xs font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                        className="w-full px-3 py-2 rounded-xl border border-border-default text-xs font-semibold text-text-primary focus:outline-none focus:ring-2 focus:ring-emerald-500"
                       />
                     </div>
                   </div>
@@ -1152,16 +1152,16 @@ export const StaffMovementPage: React.FC = () => {
 
           {/* Mandatory Edit Reason Box if Editing */}
           {editingMovement && (
-            <div className="p-4 rounded-2xl bg-amber-50/90 border-2 border-amber-400 space-y-3 shadow-xs">
+            <div className="p-4 rounded-2xl bg-amber-500/10 border-2 border-amber-400 space-y-3 shadow-xs">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-black text-amber-950 uppercase tracking-wider flex items-center gap-1.5">
+                <label className="text-xs font-black text-amber-400 dark:text-amber-300 font-bold uppercase tracking-wider flex items-center gap-1.5">
                   <ShieldCheck className="w-4 h-4 text-amber-700" />
                   <span>
                     {isMs ? 'Sebab / Justifikasi Pindaan (Mandatori Rekod Audit)' : 'Reason / Justification for Amendment (Mandatory Audit Trail)'}{' '}
                     <span className="text-rose-600">*</span>
                   </span>
                 </label>
-                <span className="text-[10px] font-mono font-bold text-amber-800 bg-amber-200/80 px-2 py-0.5 rounded">
+                <span className="text-[10px] font-mono font-bold text-amber-400 bg-amber-200/80 px-2 py-0.5 rounded">
                   AUDIT LOG
                 </span>
               </div>
@@ -1188,10 +1188,10 @@ export const StaffMovementPage: React.FC = () => {
                     type="button"
                     key={idx}
                     onClick={() => setEditReason(chip)}
-                    className={`text-xs px-2.5 py-1 rounded-lg border font-medium transition-all ${
+                    className={`text-xs px-2.5 py-1 rounded-lg border font-medium transition-colors ${
                       editReason === chip
                         ? 'bg-amber-500 text-white border-amber-600 font-bold shadow-xs'
-                        : 'bg-white text-slate-700 border-amber-200 hover:bg-amber-100/60'
+                        : 'bg-surface text-text-secondary border-amber-500/20 hover:bg-amber-100/60'
                     }`}
                   >
                     {chip}
@@ -1209,14 +1209,14 @@ export const StaffMovementPage: React.FC = () => {
                     ? 'Cth: Dipinda atas pertukaran jadual mesyuarat oleh pihak penganjur...'
                     : 'E.g., Modified due to organizer rescheduling the meeting time...'
                 }
-                className="w-full p-3 rounded-xl border border-amber-300 bg-white text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
+                className="w-full p-3 rounded-xl border border-amber-300 bg-surface text-xs font-medium text-text-primary focus:outline-none focus:ring-2 focus:ring-amber-500/30"
               />
             </div>
           )}
 
           {/* Movement Type Grid */}
           <div className="space-y-2.5">
-            <label className="text-xs font-bold text-slate-900 uppercase tracking-wider block">
+            <label className="text-xs font-bold text-text-primary uppercase tracking-wider block">
               {isMs ? 'Kategori Pergerakan' : 'Movement Category'} <span className="text-rose-500">*</span>
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -1228,20 +1228,20 @@ export const StaffMovementPage: React.FC = () => {
                     key={cat.id}
                     type="button"
                     onClick={() => setFormType(cat.id)}
-                    className={`p-3.5 rounded-2xl border text-left transition-all flex items-start gap-3 relative ${
+                    className={`p-3.5 rounded-2xl border text-left transition-colors flex items-start gap-3 relative ${
                       isSelected
-                        ? 'border-emerald-600 bg-emerald-50/70 shadow-sm ring-2 ring-emerald-500/20'
-                        : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/50'
+                        ? 'border-emerald-600 bg-emerald-500/10 shadow-sm ring-2 ring-emerald-500/20'
+                        : 'border-border-default bg-surface hover:border-border-default hover:bg-subtle/50'
                     }`}
                   >
-                    <div className="p-2 rounded-xl bg-white shadow-2xs border border-slate-100 shrink-0">
+                    <div className="p-2 rounded-xl bg-surface shadow-elevation-1 border border-border-subtle shrink-0">
                       <IconComponent className="w-4 h-4 text-emerald-600" />
                     </div>
                     <div className="flex-1 min-w-0 pr-4">
-                      <div className="font-extrabold text-xs text-slate-900 leading-snug">
+                      <div className="font-extrabold text-xs text-text-primary leading-snug">
                         {cat.label}
                       </div>
-                      <div className="text-[11px] text-slate-500 font-medium leading-tight mt-0.5 line-clamp-1">
+                      <div className="text-[11px] text-text-muted font-medium leading-tight mt-0.5 line-clamp-1">
                         {cat.desc}
                       </div>
                     </div>
@@ -1259,7 +1259,7 @@ export const StaffMovementPage: React.FC = () => {
           {/* Form Fields: Tajuk & Destinasi */}
           <div className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-900 uppercase tracking-wider block">
+              <label className="text-xs font-bold text-text-primary uppercase tracking-wider block">
                 {isMs ? 'Tajuk / Ringkasan Pergerakan' : 'Movement Title / Subject'} <span className="text-rose-500">*</span>
               </label>
               <input
@@ -1268,12 +1268,12 @@ export const StaffMovementPage: React.FC = () => {
                 placeholder={isMs ? "cth. Mesyuarat Jawatankuasa Ubat Negeri Bil. 2/2026" : "e.g. State Drug Committee Meeting No. 2/2026"}
                 value={formTitle}
                 onChange={e => setFormTitle(e.target.value)}
-                className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-600 transition-all shadow-2xs"
+                className="w-full px-4 py-3 rounded-2xl border border-border-default bg-surface text-sm font-medium text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-600 transition-colors shadow-elevation-1"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-900 uppercase tracking-wider block">
+              <label className="text-xs font-bold text-text-primary uppercase tracking-wider block">
                 {isMs ? 'Destinasi / Lokasi Lawatan' : 'Destination / Venue'} <span className="text-rose-500">*</span>
               </label>
               <div className="relative">
@@ -1284,16 +1284,16 @@ export const StaffMovementPage: React.FC = () => {
                   placeholder={isMs ? "cth. Bilik Mesyuarat Utama, Hospital Miri / Dewan Sri Lawas" : "e.g. Main Conference Room, Hospital Miri / Sri Lawas Hall"}
                   value={formDestination}
                   onChange={e => setFormDestination(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-600 transition-all shadow-2xs"
+                  className="w-full pl-10 pr-4 py-3 rounded-2xl border border-border-default bg-surface text-sm font-medium text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-600 transition-colors shadow-elevation-1"
                 />
               </div>
             </div>
           </div>
 
           {/* Date & Time Range Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-200/80">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-subtle/50 p-4 rounded-2xl border border-border-default">
             <div className="space-y-3">
-              <h5 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+              <h5 className="text-xs font-bold text-text-primary uppercase tracking-wider flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5 text-emerald-600" />
                 <span>{isMs ? 'Tarikh & Masa Keluar' : 'Departure Date & Time'}</span>
               </h5>
@@ -1303,20 +1303,20 @@ export const StaffMovementPage: React.FC = () => {
                   required
                   value={formStartDate}
                   onChange={e => setFormStartDate(e.target.value)}
-                  className="w-full p-2.5 rounded-xl border border-slate-300 bg-white text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full p-2.5 rounded-xl border border-border-default bg-surface text-xs font-medium text-text-primary focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
                 <input
                   type="time"
                   required
                   value={formStartTime}
                   onChange={e => setFormStartTime(e.target.value)}
-                  className="w-full p-2.5 rounded-xl border border-slate-300 bg-white text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full p-2.5 rounded-xl border border-border-default bg-surface text-xs font-medium text-text-primary focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
             </div>
 
             <div className="space-y-3">
-              <h5 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+              <h5 className="text-xs font-bold text-text-primary uppercase tracking-wider flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-emerald-600" />
                 <span>{isMs ? 'Tarikh & Jangkaan Balik' : 'Expected Return Date & Time'}</span>
               </h5>
@@ -1326,14 +1326,14 @@ export const StaffMovementPage: React.FC = () => {
                   required
                   value={formEndDate}
                   onChange={e => setFormEndDate(e.target.value)}
-                  className="w-full p-2.5 rounded-xl border border-slate-300 bg-white text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full p-2.5 rounded-xl border border-border-default bg-surface text-xs font-medium text-text-primary focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
                 <input
                   type="time"
                   required
                   value={formEndTime}
                   onChange={e => setFormEndTime(e.target.value)}
-                  className="w-full p-2.5 rounded-xl border border-slate-300 bg-white text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full p-2.5 rounded-xl border border-border-default bg-surface text-xs font-medium text-text-primary focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>
             </div>
@@ -1341,7 +1341,7 @@ export const StaffMovementPage: React.FC = () => {
 
           {/* Purpose / Scope */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-900 uppercase tracking-wider block">
+            <label className="text-xs font-bold text-text-primary uppercase tracking-wider block">
               {isMs ? 'Tujuan Terperinci / Catatan Tambahan' : 'Purpose / Additional Notes'} <span className="text-rose-500">*</span>
             </label>
             <textarea
@@ -1350,29 +1350,29 @@ export const StaffMovementPage: React.FC = () => {
               placeholder={isMs ? "cth. Menghadiri bengkel persediaan audit farmasi hospital dan semakan stok logistik..." : "e.g. Attending hospital pharmacy audit workshop and reviewing logistics stock..."}
               value={formPurpose}
               onChange={e => setFormPurpose(e.target.value)}
-              className="w-full p-3.5 rounded-2xl border border-slate-200 bg-white text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-600 transition-all shadow-2xs resize-none"
+              className="w-full p-3.5 rounded-2xl border border-border-default bg-surface text-sm font-medium text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-emerald-500/30 focus:border-emerald-600 transition-colors shadow-elevation-1 resize-none"
             />
           </div>
 
           {/* Document Attachment & Direct Access Section */}
-          <div className="space-y-2.5 p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+          <div className="space-y-2.5 p-4 rounded-2xl bg-subtle/50 border border-border-default">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+              <label className="text-xs font-bold text-text-primary uppercase tracking-wider flex items-center gap-1.5">
                 <Paperclip className="w-3.5 h-3.5 text-emerald-600" />
                 <span>{isMs ? 'Dokumen Rujukan / Surat Panggilan / Slaid (Pilihan)' : 'Reference Document / Invitation Letter / Slides (Optional)'}</span>
               </label>
-              <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200 text-[10px] font-bold">
+              <div className="flex items-center gap-1 bg-surface p-0.5 rounded-lg border border-border-default text-[10px] font-bold">
                 <button
                   type="button"
                   onClick={() => setDocInputMode('upload')}
-                  className={`px-2 py-0.5 rounded ${docInputMode === 'upload' ? 'bg-emerald-600 text-white' : 'text-slate-600'}`}
+                  className={`px-2 py-0.5 rounded ${docInputMode === 'upload' ? 'bg-emerald-600 text-white' : 'text-text-muted'}`}
                 >
                   {isMs ? 'Muat Naik' : 'Upload File'}
                 </button>
                 <button
                   type="button"
                   onClick={() => setDocInputMode('url')}
-                  className={`px-2 py-0.5 rounded ${docInputMode === 'url' ? 'bg-emerald-600 text-white' : 'text-slate-600'}`}
+                  className={`px-2 py-0.5 rounded ${docInputMode === 'url' ? 'bg-emerald-600 text-white' : 'text-text-muted'}`}
                 >
                   {isMs ? 'Pautan' : 'Link URL'}
                 </button>
@@ -1393,10 +1393,10 @@ export const StaffMovementPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-full border-2 border-dashed border-slate-300 hover:border-emerald-500 rounded-2xl p-4 text-center transition-all bg-white hover:bg-emerald-50/30 group"
+                    className="w-full border-2 border-dashed border-border-default hover:border-emerald-500 rounded-2xl p-4 text-center transition-colors bg-surface hover:bg-emerald-500/10 group"
                   >
                     <UploadCloud className="w-7 h-7 text-slate-400 group-hover:text-emerald-600 mx-auto mb-1.5 transition-colors" />
-                    <p className="text-xs font-bold text-slate-700 group-hover:text-emerald-900">
+                    <p className="text-xs font-bold text-text-secondary group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
                       {isMs ? 'Klik untuk Pilih Dokumen / Surat Panggilan Tugas / Slaid' : 'Click to Upload Document / Letter / Slides'}
                     </p>
                     <p className="text-[10px] text-slate-400 mt-0.5">
@@ -1404,13 +1404,13 @@ export const StaffMovementPage: React.FC = () => {
                     </p>
                   </button>
                 ) : (
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-white border border-emerald-200 shadow-xs">
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-surface border border-emerald-500/20 shadow-xs">
                     <div className="flex items-center gap-2.5 min-w-0">
                       <div className="p-2 rounded-lg bg-emerald-100 text-emerald-700 shrink-0">
                         <FileText className="w-4 h-4" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-xs font-bold text-slate-900 truncate">{formDocName}</p>
+                        <p className="text-xs font-bold text-text-primary truncate">{formDocName}</p>
                         <p className="text-[10px] text-emerald-700 font-medium">
                           {isMs ? 'Dokumen sedia untuk akses segera' : 'Document ready for direct access'}
                         </p>
@@ -1419,7 +1419,7 @@ export const StaffMovementPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={handleRemoveDoc}
-                      className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                      className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-500/10 rounded-lg transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -1433,19 +1433,19 @@ export const StaffMovementPage: React.FC = () => {
                   placeholder={isMs ? "Nama Dokumen (cth. Surat Panggilan Mesyuarat MTC Bil 3.pdf)" : "Document Name (e.g. Official Meeting Invitation Letter.pdf)"}
                   value={formDocName}
                   onChange={e => setFormDocName(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  className="w-full px-3.5 py-2 rounded-xl border border-border-default bg-surface text-xs font-medium text-text-primary focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                 />
                 <input
                   type="url"
                   placeholder={isMs ? "URL Dokumen Google Drive / Portal KKM (cth. https://drive.google.com/...)" : "Document URL Google Drive / Portal (e.g. https://drive.google.com/...)"}
                   value={formDocUrl}
                   onChange={e => setFormDocUrl(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                  className="w-full px-3.5 py-2 rounded-xl border border-border-default bg-surface text-xs font-medium text-text-primary focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
                 />
               </div>
             )}
 
-            <p className="text-xs text-slate-600 font-medium flex items-center gap-1.5 pt-1">
+            <p className="text-xs text-text-muted font-medium flex items-center gap-1.5 pt-1">
               <Info className="w-4 h-4 text-emerald-600 shrink-0" />
               <span>
                 {isMs
@@ -1456,7 +1456,7 @@ export const StaffMovementPage: React.FC = () => {
           </div>
 
           {/* Drawer Sticky Action Bar */}
-          <div className="flex items-center justify-end gap-3 pt-6 border-t border-slate-200">
+          <div className="flex items-center justify-end gap-3 pt-6 border-t border-border-default">
             <Button
               type="button"
               variant="outline"
@@ -1464,14 +1464,14 @@ export const StaffMovementPage: React.FC = () => {
                 setIsSlideOverOpen(false)
                 setEditingMovement(null)
               }}
-              className="border-slate-300 hover:bg-slate-100 text-slate-700 font-bold rounded-2xl px-5 py-2.5 shadow-sm"
+              className="border-border-default hover:bg-subtle text-text-secondary font-bold rounded-2xl px-5 py-2.5 shadow-sm"
             >
               {isMs ? 'Batal' : 'Cancel'}
             </Button>
             <Button
               type="submit"
               disabled={submitting}
-              className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-2xl px-6 py-2.5 shadow-md hover:shadow-lg transition-all flex items-center gap-2"
+              className="bg-surface border border-border-default hover:from-emerald-700 hover:to-teal-700 text-white font-bold rounded-2xl px-6 py-2.5 shadow-md hover:shadow-lg transition-colors flex items-center gap-2"
             >
               {submitting && <Spinner size="sm" className="text-white" />}
               <span>

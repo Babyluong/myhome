@@ -275,7 +275,7 @@ export const PrepackLabelStudioPage: React.FC = () => {
                   type="button"
                   key={f.id}
                   onClick={() => setFormat(f.id as LabelFormat)}
-                  className={`w-full p-2.5 rounded-lg border text-left transition-all active:scale-[0.98] cursor-pointer ${
+                  className={`w-full p-2.5 rounded-lg border text-left transition-colors active:scale-[0.98] cursor-pointer ${
                     format === f.id
                       ? 'border-teal-500/40 bg-teal-500/10 text-teal-700 dark:text-teal-300 font-semibold shadow-xs'
                       : 'border-border-subtle hover:border-border-default bg-subtle/40 hover:bg-subtle/80 text-text-secondary'
@@ -321,7 +321,7 @@ export const PrepackLabelStudioPage: React.FC = () => {
                     type="button"
                     key={q}
                     onClick={() => setPrintQuantity(q)}
-                    className="px-2.5 py-1 text-xs bg-surface hover:bg-subtle text-text-secondary border border-border-default hover:border-border-strong rounded-md font-medium cursor-pointer active:scale-[0.98] transition-all shadow-xs"
+                    className="px-2.5 py-1 text-xs bg-surface hover:bg-subtle text-text-secondary border border-border-default hover:border-border-strong rounded-md font-medium cursor-pointer active:scale-[0.98] transition-colors shadow-xs"
                   >
                     {q}x
                   </button>
@@ -330,7 +330,7 @@ export const PrepackLabelStudioPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setPrintQuantity(selectedBatch.quantity_packed)}
-                    className="px-2.5 py-1 text-xs bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/20 hover:bg-teal-500/20 rounded-md font-semibold cursor-pointer active:scale-[0.98] transition-all shadow-xs"
+                    className="px-2.5 py-1 text-xs bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/20 hover:bg-teal-500/20 rounded-md font-semibold cursor-pointer active:scale-[0.98] transition-colors shadow-xs"
                   >
                     Match Batch ({selectedBatch.quantity_packed})
                   </button>
@@ -367,7 +367,7 @@ export const PrepackLabelStudioPage: React.FC = () => {
             <button
               onClick={handleDirectPrint}
               disabled={!selectedBatch}
-              className="w-full min-h-[38px] py-2 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] text-white font-semibold text-xs rounded-lg flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full min-h-[38px] py-2 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] text-white font-semibold text-xs rounded-lg flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <Printer className="w-4 h-4" />
               <span>Print to Thermal Printer ({printQuantity} labels)</span>
@@ -376,7 +376,7 @@ export const PrepackLabelStudioPage: React.FC = () => {
             <button
               onClick={handleDownloadPdf}
               disabled={!selectedBatch || isGeneratingPdf}
-              className="w-full min-h-[36px] py-1.5 bg-surface hover:bg-subtle active:scale-[0.98] text-text-primary font-medium text-xs rounded-lg flex items-center justify-center gap-2 border border-border-default hover:border-border-strong transition-all cursor-pointer shadow-xs disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-full min-h-[36px] py-1.5 bg-surface hover:bg-subtle active:scale-[0.98] text-text-primary font-medium text-xs rounded-lg flex items-center justify-center gap-2 border border-border-default hover:border-border-strong transition-colors cursor-pointer shadow-xs disabled:opacity-40 disabled:cursor-not-allowed"
             >
               <Download className="w-4 h-4 text-text-muted" />
               <span>{isGeneratingPdf ? 'Generating PDF...' : 'Download Label PDF'}</span>
@@ -399,7 +399,7 @@ export const PrepackLabelStudioPage: React.FC = () => {
             <div className="w-full flex flex-col items-center">
               {/* UOD 50x25 */}
               {format === 'uod_50x25' && (
-                <div className="w-[320px] h-[160px] bg-white text-black p-3 rounded-lg shadow-xl border-2 border-gray-600 font-sans relative flex flex-col justify-between select-none">
+                <div className="w-[320px] h-[160px] bg-surface text-black p-3 rounded-lg shadow-xl border-2 border-gray-600 font-sans relative flex flex-col justify-between select-none">
                   <div>
                     <div className="text-[9px] font-black tracking-tight uppercase border-b-2 border-black pb-0.5 mb-1 flex justify-between items-center">
                       <span>{hospitalHeader} • UOD</span>
@@ -408,7 +408,7 @@ export const PrepackLabelStudioPage: React.FC = () => {
                     <div className="text-[12px] font-black leading-tight line-clamp-2 uppercase">
                       {selectedBatch.prepack_item.item_name}
                     </div>
-                    <div className="text-[9.5px] text-gray-800 font-semibold mt-0.5">
+                    <div className="text-[9.5px] text-text-primary font-semibold mt-0.5">
                       Dose: {selectedBatch.prepack_item.strength || '1 Unit'} ({selectedBatch.prepack_item.dosage_form})
                     </div>
                   </div>
@@ -417,12 +417,12 @@ export const PrepackLabelStudioPage: React.FC = () => {
                     <div className="text-[8.5px] space-y-0.5 leading-tight">
                       <div className="font-mono font-bold">Lot: {selectedBatch.batch_number}</div>
                       {includeMfgDetails && (
-                        <div className="text-[7.5px] text-gray-700">Mfg: {selectedBatch.mfg_batch_number} (Exp: {selectedBatch.mfg_expiry_date})</div>
+                        <div className="text-[7.5px] text-text-secondary">Mfg: {selectedBatch.mfg_batch_number} (Exp: {selectedBatch.mfg_expiry_date})</div>
                       )}
                       <div className="text-[9.5px] font-black text-black">
                         EXP: {selectedBatch.prepack_expiry_date}
                       </div>
-                      <div className="text-[8px] text-gray-600">Packed: {selectedBatch.pack_date}</div>
+                      <div className="text-[8px] text-text-muted">Packed: {selectedBatch.pack_date}</div>
                     </div>
 
                     {includeQr && qrDataUrl && (
@@ -434,7 +434,7 @@ export const PrepackLabelStudioPage: React.FC = () => {
 
               {/* UOD 40x20 */}
               {format === 'uod_40x20' && (
-                <div className="w-[260px] h-[130px] bg-white text-black p-2.5 rounded-lg shadow-xl border-2 border-gray-600 font-sans relative flex flex-col justify-between select-none">
+                <div className="w-[260px] h-[130px] bg-surface text-black p-2.5 rounded-lg shadow-xl border-2 border-gray-600 font-sans relative flex flex-col justify-between select-none">
                   <div>
                     <div className="text-[8.5px] font-black uppercase flex justify-between border-b border-black pb-0.5 mb-0.5">
                       <span>{hospitalHeader}</span>
@@ -460,7 +460,7 @@ export const PrepackLabelStudioPage: React.FC = () => {
 
               {/* Bulk 70x35 */}
               {format === 'bulk_70x35' && (
-                <div className={`w-[380px] h-[190px] bg-white text-black p-4 rounded-lg shadow-xl font-sans relative flex flex-col justify-between select-none overflow-hidden ${
+                <div className={`w-[380px] h-[190px] bg-surface text-black p-4 rounded-lg shadow-xl font-sans relative flex flex-col justify-between select-none overflow-hidden ${
                   selectedBatch.prepack_item.pack_type === 'external'
                     ? 'border-2 border-red-600'
                     : 'border-2 border-black'
@@ -482,17 +482,17 @@ export const PrepackLabelStudioPage: React.FC = () => {
                     <div className="text-[13px] font-black uppercase leading-tight line-clamp-2">
                       {selectedBatch.prepack_item.item_name}
                     </div>
-                    <div className="text-[10px] text-gray-800 font-medium mt-0.5">
+                    <div className="text-[10px] text-text-primary font-medium mt-0.5">
                       Quantity: {selectedBatch.prepack_item.units_per_pack} units/pack ({selectedBatch.prepack_item.package_type})
                     </div>
                   </div>
 
-                  <div className="flex justify-between items-center text-[9px] border-t border-gray-300 pt-1">
+                  <div className="flex justify-between items-center text-[9px] border-t border-border-default pt-1">
                     <div>
                       <div className="font-mono font-bold">Batch No: {selectedBatch.batch_number}</div>
-                      <div className="text-gray-700">Mfg Batch: {selectedBatch.mfg_batch_number} (Exp: {selectedBatch.mfg_expiry_date})</div>
+                      <div className="text-text-secondary">Mfg Batch: {selectedBatch.mfg_batch_number} (Exp: {selectedBatch.mfg_expiry_date})</div>
                       <div className="font-black text-[10px]">EXPIRY DATE: {selectedBatch.prepack_expiry_date}</div>
-                      <div className="text-[8px] text-gray-600">Pack Date: {selectedBatch.pack_date}</div>
+                      <div className="text-[8px] text-text-muted">Pack Date: {selectedBatch.pack_date}</div>
                     </div>
                     {includeQr && qrDataUrl && (
                       <img src={qrDataUrl} alt="QR Code" className="w-14 h-14 object-contain" />
@@ -515,8 +515,8 @@ export const PrepackLabelStudioPage: React.FC = () => {
 
               {/* Sheet A4 24 */}
               {format === 'sheet_a4_24' && (
-                <div className="w-[340px] bg-white text-black p-3.5 rounded-lg shadow-xl border border-gray-400 font-sans space-y-2">
-                  <div className="text-[10px] font-bold text-gray-500 uppercase text-center border-b pb-1">
+                <div className="w-[340px] bg-surface text-black p-3.5 rounded-lg shadow-xl border border-gray-400 font-sans space-y-2">
+                  <div className="text-[10px] font-bold text-text-muted uppercase text-center border-b pb-1">
                     A4 Sticker Sheet Preview (24 Labels/Sheet)
                   </div>
                   <div className="grid grid-cols-2 gap-2 opacity-90">
@@ -528,7 +528,7 @@ export const PrepackLabelStudioPage: React.FC = () => {
                       </div>
                     ))}
                   </div>
-                  <div className="text-[9px] text-center text-gray-500 italic">
+                  <div className="text-[9px] text-center text-text-muted italic">
                     3 columns x 8 rows grid format on A4 label paper
                   </div>
                 </div>

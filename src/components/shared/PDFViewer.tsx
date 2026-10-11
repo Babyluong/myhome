@@ -62,9 +62,9 @@ export function PDFViewer({ url, title }: PDFViewerProps) {
 
   if (loading) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-12 bg-slate-50/50 rounded-xl border border-slate-200/50">
+      <div className="flex-1 flex flex-col items-center justify-center p-12 bg-subtle/50 rounded-xl border border-border-default">
         <Loader2 className="w-10 h-10 text-indigo-600 animate-spin mb-4" />
-        <p className="text-sm font-bold text-slate-700">Loading document preview...</p>
+        <p className="text-sm font-bold text-text-secondary">Loading document preview...</p>
         <p className="text-xs text-slate-400 mt-1">Rendering high quality pages</p>
       </div>
     )
@@ -72,14 +72,14 @@ export function PDFViewer({ url, title }: PDFViewerProps) {
 
   if (error) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-12 bg-rose-50/50 rounded-xl border border-rose-200/60 text-center">
+      <div className="flex-1 flex flex-col items-center justify-center p-12 bg-rose-500/10 rounded-xl border border-rose-500/20 text-center">
         <AlertCircle className="w-12 h-12 text-rose-500 mb-3" />
-        <p className="text-sm font-bold text-rose-800">{error}</p>
+        <p className="text-sm font-bold text-rose-400">{error}</p>
         <a 
           href={url} 
           target="_blank" 
           rel="noopener noreferrer" 
-          className="mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition-all uppercase tracking-wider"
+          className="mt-4 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl shadow-md transition-[transform,opacity,box-shadow,border-color] uppercase tracking-wider"
         >
           Open PDF in New Tab
         </a>
@@ -88,11 +88,11 @@ export function PDFViewer({ url, title }: PDFViewerProps) {
   }
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-slate-150 rounded-2xl overflow-hidden border border-slate-200/80 shadow-inner">
+    <div className="flex-1 flex flex-col h-full bg-slate-150 rounded-2xl overflow-hidden border border-border-default shadow-inner">
       {/* Control Bar */}
-      <div className="flex items-center justify-between px-6 py-3 bg-white border-b border-slate-200 shadow-sm z-10">
+      <div className="flex items-center justify-between px-6 py-3 bg-surface border-b border-border-default shadow-sm z-10">
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest bg-slate-100 px-2.5 py-1 rounded-lg">
+          <span className="text-[10px] font-black text-text-muted uppercase tracking-widest bg-subtle px-2.5 py-1 rounded-lg">
             Pages: {pdf?.numPages || 0}
           </span>
           {title && (
@@ -107,18 +107,18 @@ export function PDFViewer({ url, title }: PDFViewerProps) {
           <button
             onClick={handleZoomOut}
             disabled={scale <= 0.5}
-            className="p-1.5 hover:bg-slate-100 disabled:opacity-40 text-slate-600 disabled:hover:bg-transparent rounded-lg transition-colors"
+            className="p-1.5 hover:bg-subtle disabled:opacity-40 text-text-secondary disabled:hover:bg-transparent rounded-lg transition-colors"
             title="Zoom Out"
           >
             <ZoomOut className="w-4.5 h-4.5" />
           </button>
-          <span className="text-xs font-extrabold text-slate-700 min-w-[3.5rem] text-center bg-slate-50 border border-slate-150 py-1 px-2.5 rounded-lg select-none">
+          <span className="text-xs font-extrabold text-text-secondary min-w-[3.5rem] text-center bg-subtle/50 border border-slate-150 py-1 px-2.5 rounded-lg select-none">
             {Math.round(scale * 100)}%
           </span>
           <button
             onClick={handleZoomIn}
             disabled={scale >= 2.5}
-            className="p-1.5 hover:bg-slate-100 disabled:opacity-40 text-slate-600 disabled:hover:bg-transparent rounded-lg transition-colors"
+            className="p-1.5 hover:bg-subtle disabled:opacity-40 text-text-secondary disabled:hover:bg-transparent rounded-lg transition-colors"
             title="Zoom In"
           >
             <ZoomIn className="w-4.5 h-4.5" />
@@ -129,7 +129,7 @@ export function PDFViewer({ url, title }: PDFViewerProps) {
       {/* Pages Container */}
       <div
         ref={containerRef}
-        className="flex-1 overflow-auto p-6 bg-slate-100/50 flex flex-col items-center gap-8 scroll-smooth"
+        className="flex-1 overflow-auto p-6 bg-subtle flex flex-col items-center gap-8 scroll-smooth"
       >
         {Array.from({ length: pdf?.numPages || 0 }).map((_, index) => (
           <PDFPage key={index + 1} pdf={pdf} pageNum={index + 1} scale={scale} />
@@ -225,7 +225,7 @@ function PDFPage({ pdf, pageNum, scale }: PDFPageProps) {
 
   return (
     <div 
-      className="relative bg-white rounded-xl shadow-lg border border-slate-200/85 transition-shadow hover:shadow-xl overflow-hidden shrink-0"
+      className="relative bg-surface rounded-xl shadow-lg border border-border-default transition-shadow hover:shadow-xl overflow-hidden shrink-0"
       style={{
         width: dimensions ? `${dimensions.width}px` : '100%',
         maxWidth: '100%',
@@ -242,7 +242,7 @@ function PDFPage({ pdf, pageNum, scale }: PDFPageProps) {
         }}
       />
       {(rendering || !dimensions) && (
-        <div className="absolute inset-0 bg-white/80 backdrop-blur-[1px] flex items-center justify-center rounded-xl">
+        <div className="absolute inset-0 bg-surface backdrop-blur-[1px] flex items-center justify-center rounded-xl">
           <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
         </div>
       )}

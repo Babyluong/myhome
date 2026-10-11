@@ -86,22 +86,22 @@ export const SlideOver: React.FC<SlideOverProps> = ({
             exit={{ x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
             className={cn(
-              'relative w-full h-full bg-white shadow-[-20px_0_50px_-12px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col',
+              'relative w-full h-full bg-surface shadow-[-20px_0_50px_-12px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col',
               sizes[size],
               className
             )}
           >
             {/* Header */}
             {(title || showCloseButton) && (
-              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-white/80 backdrop-blur-md sticky top-0 z-20">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-white/80 backdrop-blur-md sticky top-0 z-20">
                 <div className="flex-1">
                   {title && (
-                    <h2 className="text-lg font-black text-slate-900 tracking-tight leading-none">
+                    <h2 className="text-lg font-black text-text-primary tracking-tight leading-none">
                       {title}
                     </h2>
                   )}
                   {description && (
-                    <p className="mt-1 text-xs font-bold text-slate-400 uppercase tracking-wider">{description}</p>
+                    <p className="mt-1 text-xs font-bold text-text-secondary font-bold uppercase tracking-wider">{description}</p>
                   )}
                 </div>
                 
@@ -109,7 +109,7 @@ export const SlideOver: React.FC<SlideOverProps> = ({
                     {showCloseButton && (
                     <button
                         onClick={onClose}
-                        className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all group active:scale-95"
+                        className="p-2 text-slate-400 hover:text-text-primary hover:bg-subtle rounded-xl transition-colors group active:scale-95"
                     >
                         <X className="w-5 h-5 group-hover:rotate-90 transition-transform duration-300" />
                     </button>

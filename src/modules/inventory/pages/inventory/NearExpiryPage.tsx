@@ -367,7 +367,7 @@ export const NearExpiryPage: React.FC = () => {
   const renderExpiryPill = (daysToExpiry: number, status: string) => {
     if (status === 'expired' || daysToExpiry <= 0) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-100 text-rose-800 border border-rose-200 shadow-sm animate-pulse">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-100 text-rose-400 border border-rose-500/20 shadow-sm animate-pulse">
           <span className="w-1.5 h-1.5 rounded-full bg-rose-600"></span>
           Telah Luput ({Math.abs(daysToExpiry)} hari)
         </span>
@@ -375,7 +375,7 @@ export const NearExpiryPage: React.FC = () => {
     }
     if (daysToExpiry <= 7) {
       return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-900 border border-amber-300 shadow-sm">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-400 dark:text-amber-300 font-bold border border-amber-300 shadow-sm">
           <span className="w-1.5 h-1.5 rounded-full bg-amber-600"></span>
           {daysToExpiry} Hari Lagi (Kritikal)
         </span>
@@ -390,7 +390,7 @@ export const NearExpiryPage: React.FC = () => {
       )
     }
     return (
-      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
         {daysToExpiry} Hari Lagi
       </span>
@@ -398,7 +398,7 @@ export const NearExpiryPage: React.FC = () => {
   }
 
   return (
-    <div className="w-full p-4 sm:p-6 lg:p-8 space-y-6 text-slate-800">
+    <div className="w-full p-4 sm:p-6 lg:p-8 space-y-6 text-text-primary">
       {/* Toast Alert */}
       {toast && (
         <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-900 text-white shadow-2xl border border-slate-700/60 backdrop-blur-md animate-in fade-in slide-in-from-bottom-4 duration-200">
@@ -410,9 +410,11 @@ export const NearExpiryPage: React.FC = () => {
       )}
 
       {/* Header Banner */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 p-6 sm:p-8 text-white shadow-xl border border-slate-800/80">
-        <div className="absolute -right-12 -top-12 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -left-12 -bottom-12 w-64 h-64 bg-rose-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative rounded-2xl bg-surface border border-border-default p-6 sm:p-8 text-white shadow-xl border border-slate-800/80">
+        <div className="absolute inset-0 overflow-hidden rounded-2xl pointer-events-none">
+          <div className="absolute -right-12 -top-12 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl" />
+          <div className="absolute -left-12 -bottom-12 w-64 h-64 bg-rose-500/10 rounded-full blur-3xl" />
+        </div>
 
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2">
@@ -434,14 +436,14 @@ export const NearExpiryPage: React.FC = () => {
             <StoreLocationSelector />
             <button
               onClick={() => void loadData()}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-sm font-medium border border-slate-700 transition-all shadow-sm active:scale-95"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-sm font-medium border border-slate-700 transition-colors shadow-sm active:scale-95"
             >
               <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
               Muat Semula
             </button>
             <button
               onClick={handleExportCSV}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium shadow-md shadow-indigo-900/30 transition-all active:scale-95 border border-indigo-400/30"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium shadow-md shadow-indigo-900/30 transition-colors active:scale-95 border border-indigo-400/30"
             >
               <Download className="w-4 h-4" />
               Eksport Laporan CSV
@@ -455,10 +457,10 @@ export const NearExpiryPage: React.FC = () => {
         {/* Stat 1: Expired */}
         <div
           onClick={() => setStatusFilter(statusFilter === 'expired' ? 'all' : 'expired')}
-          className={`cursor-pointer group relative overflow-hidden rounded-2xl p-5 border transition-all duration-200 shadow-sm ${
+          className={`cursor-pointer group relative overflow-hidden rounded-2xl p-5 border transition-colors duration-150 shadow-sm ${
             statusFilter === 'expired'
-              ? 'bg-rose-50 border-rose-400 ring-2 ring-rose-400/40 shadow-md'
-              : 'bg-white hover:bg-rose-50/50 border-slate-200/80 hover:border-rose-300 hover:shadow-md'
+              ? 'bg-rose-500/10 border-rose-400 ring-2 ring-rose-400/40 shadow-md'
+              : 'bg-surface hover:bg-rose-500/10 border-border-default hover:border-rose-300 hover:shadow-md'
           }`}
         >
           <div className="flex items-center justify-between">
@@ -470,30 +472,30 @@ export const NearExpiryPage: React.FC = () => {
             </div>
           </div>
           <div className="mt-4 flex items-baseline justify-between">
-            <span className="text-3xl font-extrabold text-slate-900 font-mono tracking-tight">
+            <span className="text-3xl font-extrabold text-text-primary font-mono tracking-tight">
               {stats.expiredCount}
             </span>
             <span className="text-xs font-semibold text-rose-600">
               {stats.expiredCount > 0 ? 'Tindakan Segera Required' : 'Stok Bekerja Good'}
             </span>
           </div>
-          <p className="text-xs text-slate-500 mt-2 flex items-center justify-between border-t border-slate-100 pt-2">
+          <p className="text-xs text-text-muted mt-2 flex items-center justify-between border-t border-border-subtle pt-2">
             <span>Anggaran Kerugian:</span>
-            <span className="font-semibold font-mono text-slate-700">RM {stats.totalExpiredValue.toFixed(2)}</span>
+            <span className="font-semibold font-mono text-text-secondary">RM {stats.totalExpiredValue.toFixed(2)}</span>
           </p>
         </div>
 
         {/* Stat 2: Critical (<= 7 Days) */}
         <div
           onClick={() => setStatusFilter(statusFilter === 'critical' ? 'all' : 'critical')}
-          className={`cursor-pointer group relative overflow-hidden rounded-2xl p-5 border transition-all duration-200 shadow-sm ${
+          className={`cursor-pointer group relative overflow-hidden rounded-2xl p-5 border transition-colors duration-150 shadow-sm ${
             statusFilter === 'critical'
-              ? 'bg-amber-50 border-amber-400 ring-2 ring-amber-400/40 shadow-md'
-              : 'bg-white hover:bg-amber-50/50 border-slate-200/80 hover:border-amber-300 hover:shadow-md'
+              ? 'bg-amber-500/10 border-amber-400 ring-2 ring-amber-400/40 shadow-md'
+              : 'bg-surface hover:bg-amber-500/10 border-border-default hover:border-amber-300 hover:shadow-md'
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-amber-800 bg-amber-100 px-2.5 py-1 rounded-md">
+            <span className="text-xs font-bold uppercase tracking-wider text-amber-400 bg-amber-100 px-2.5 py-1 rounded-md">
               &le; 7 Hari (Kritikal)
             </span>
             <div className="p-2 rounded-xl bg-amber-100 text-amber-700 group-hover:scale-110 transition-transform">
@@ -501,24 +503,24 @@ export const NearExpiryPage: React.FC = () => {
             </div>
           </div>
           <div className="mt-4 flex items-baseline justify-between">
-            <span className="text-3xl font-extrabold text-slate-900 font-mono tracking-tight">
+            <span className="text-3xl font-extrabold text-text-primary font-mono tracking-tight">
               {stats.criticalCount}
             </span>
             <span className="text-xs font-semibold text-amber-700">Agihan Keutamaan Tinggi</span>
           </div>
-          <p className="text-xs text-slate-500 mt-2 flex items-center justify-between border-t border-slate-100 pt-2">
+          <p className="text-xs text-text-muted mt-2 flex items-center justify-between border-t border-border-subtle pt-2">
             <span>Nilai Stok Terlibat:</span>
-            <span className="font-semibold font-mono text-slate-700">RM {stats.totalCriticalValue.toFixed(2)}</span>
+            <span className="font-semibold font-mono text-text-secondary">RM {stats.totalCriticalValue.toFixed(2)}</span>
           </p>
         </div>
 
         {/* Stat 3: Warning (8 - 30 Days) */}
         <div
           onClick={() => setStatusFilter(statusFilter === 'warning' ? 'all' : 'warning')}
-          className={`cursor-pointer group relative overflow-hidden rounded-2xl p-5 border transition-all duration-200 shadow-sm ${
+          className={`cursor-pointer group relative overflow-hidden rounded-2xl p-5 border transition-colors duration-150 shadow-sm ${
             statusFilter === 'warning'
               ? 'bg-yellow-50 border-yellow-400 ring-2 ring-yellow-400/40 shadow-md'
-              : 'bg-white hover:bg-yellow-50/50 border-slate-200/80 hover:border-yellow-300 hover:shadow-md'
+              : 'bg-surface hover:bg-yellow-50/50 border-border-default hover:border-yellow-300 hover:shadow-md'
           }`}
         >
           <div className="flex items-center justify-between">
@@ -530,12 +532,12 @@ export const NearExpiryPage: React.FC = () => {
             </div>
           </div>
           <div className="mt-4 flex items-baseline justify-between">
-            <span className="text-3xl font-extrabold text-slate-900 font-mono tracking-tight">
+            <span className="text-3xl font-extrabold text-text-primary font-mono tracking-tight">
               {stats.warningCount}
             </span>
             <span className="text-xs font-medium text-yellow-800">Amaran Luput</span>
           </div>
-          <p className="text-xs text-slate-500 mt-2 border-t border-slate-100 pt-2">
+          <p className="text-xs text-text-muted mt-2 border-t border-border-subtle pt-2">
             Sedia untuk FEFO (First Expired, First Out)
           </p>
         </div>
@@ -543,14 +545,14 @@ export const NearExpiryPage: React.FC = () => {
         {/* Stat 4: Safe (> 30 Days) */}
         <div
           onClick={() => setStatusFilter(statusFilter === 'safe' ? 'all' : 'safe')}
-          className={`cursor-pointer group relative overflow-hidden rounded-2xl p-5 border transition-all duration-200 shadow-sm ${
+          className={`cursor-pointer group relative overflow-hidden rounded-2xl p-5 border transition-colors duration-150 shadow-sm ${
             statusFilter === 'safe'
-              ? 'bg-blue-50 border-blue-400 ring-2 ring-blue-400/40 shadow-md'
-              : 'bg-white hover:bg-blue-50/50 border-slate-200/80 hover:border-blue-300 hover:shadow-md'
+              ? 'bg-blue-500/10 border-blue-400 ring-2 ring-blue-400/40 shadow-md'
+              : 'bg-surface hover:bg-blue-500/10 border-border-default hover:border-blue-300 hover:shadow-md'
           }`}
         >
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold uppercase tracking-wider text-blue-800 bg-blue-100 px-2.5 py-1 rounded-md">
+            <span className="text-xs font-bold uppercase tracking-wider text-blue-400 bg-blue-100 px-2.5 py-1 rounded-md">
               31+ Hari
             </span>
             <div className="p-2 rounded-xl bg-blue-100 text-blue-700 group-hover:scale-110 transition-transform">
@@ -558,19 +560,19 @@ export const NearExpiryPage: React.FC = () => {
             </div>
           </div>
           <div className="mt-4 flex items-baseline justify-between">
-            <span className="text-3xl font-extrabold text-slate-900 font-mono tracking-tight">
+            <span className="text-3xl font-extrabold text-text-primary font-mono tracking-tight">
               {stats.safeCount}
             </span>
             <span className="text-xs font-medium text-blue-700">Status Selamat</span>
           </div>
-          <p className="text-xs text-slate-500 mt-2 border-t border-slate-100 pt-2">
+          <p className="text-xs text-text-muted mt-2 border-t border-border-subtle pt-2">
             Tempoh hayat mencukupi
           </p>
         </div>
       </div>
 
       {/* Control & Filter Toolbar */}
-      <div className="bg-white border border-slate-200/90 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
+      <div className="bg-surface border border-border-default rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
         <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
           {/* Search Box */}
           <div className="relative flex-1 min-w-[280px]">
@@ -580,12 +582,12 @@ export const NearExpiryPage: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Cari mengikut kod item, nama ubat, no. batch atau lokasi..."
-              className="w-full pl-10 pr-9 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+              className="w-full pl-10 pr-9 py-2.5 bg-subtle/50 border border-border-default rounded-xl text-sm text-text-primary placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors"
             />
             {searchQuery && (
               <button
                 onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-text-muted"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -595,8 +597,8 @@ export const NearExpiryPage: React.FC = () => {
           {/* Filter Controls */}
           <div className="flex flex-wrap items-center gap-3">
             {/* Threshold Selector */}
-            <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
-              <span className="text-xs font-semibold text-slate-600 flex items-center gap-1.5">
+            <div className="flex items-center gap-2 bg-subtle/50 px-3 py-1.5 rounded-xl border border-border-default">
+              <span className="text-xs font-semibold text-text-muted flex items-center gap-1.5">
                 <SlidersHorizontal className="w-3.5 h-3.5 text-indigo-600" />
                 Tempoh Luput:
               </span>
@@ -617,33 +619,33 @@ export const NearExpiryPage: React.FC = () => {
             </div>
 
             {/* Item Type Pill Selector */}
-            <div className="flex bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-semibold">
+            <div className="flex bg-subtle p-1 rounded-xl border border-border-default text-xs font-semibold">
               <button
                 onClick={() => setSelectedType('all')}
-                className={`px-3 py-1.5 rounded-lg transition-all ${
+                className={`px-3 py-1.5 rounded-lg transition-colors ${
                   selectedType === 'all'
-                    ? 'bg-white text-indigo-700 shadow-sm font-bold'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-surface text-indigo-700 shadow-sm font-bold'
+                    : 'text-text-muted hover:text-text-primary'
                 }`}
               >
                 Semua
               </button>
               <button
                 onClick={() => setSelectedType('drug')}
-                className={`px-3 py-1.5 rounded-lg transition-all ${
+                className={`px-3 py-1.5 rounded-lg transition-colors ${
                   selectedType === 'drug'
-                    ? 'bg-white text-indigo-700 shadow-sm font-bold'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-surface text-indigo-700 shadow-sm font-bold'
+                    : 'text-text-muted hover:text-text-primary'
                 }`}
               >
                 Ubat
               </button>
               <button
                 onClick={() => setSelectedType('non_drug')}
-                className={`px-3 py-1.5 rounded-lg transition-all ${
+                className={`px-3 py-1.5 rounded-lg transition-colors ${
                   selectedType === 'non_drug'
-                    ? 'bg-white text-indigo-700 shadow-sm font-bold'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-surface text-indigo-700 shadow-sm font-bold'
+                    : 'text-text-muted hover:text-text-primary'
                 }`}
               >
                 Bukan Ubat
@@ -654,7 +656,7 @@ export const NearExpiryPage: React.FC = () => {
             <select
               value={selectedLocation}
               onChange={(e) => setSelectedLocation(e.target.value)}
-              className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+              className="px-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-xs font-medium text-text-secondary focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
             >
               <option value="all">Semua Lokasi ({uniqueLocations.length})</option>
               {uniqueLocations.map((loc) => (
@@ -665,13 +667,13 @@ export const NearExpiryPage: React.FC = () => {
             </select>
 
             {/* View Mode Toggle */}
-            <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-semibold">
+            <div className="flex items-center bg-subtle p-1 rounded-xl border border-border-default text-xs font-semibold">
               <button
                 onClick={() => setViewMode('grouped')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors ${
                   viewMode === 'grouped'
-                    ? 'bg-white text-indigo-700 shadow-sm font-bold'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-surface text-indigo-700 shadow-sm font-bold'
+                    : 'text-text-muted hover:text-text-primary'
                 }`}
                 title="Kelompokkan mengikut item dengan pecahan batch"
               >
@@ -680,14 +682,14 @@ export const NearExpiryPage: React.FC = () => {
               </button>
               <button
                 onClick={() => setViewMode('flat')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors ${
                   viewMode === 'flat'
-                    ? 'bg-white text-indigo-700 shadow-sm font-bold'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-surface text-indigo-700 shadow-sm font-bold'
+                    : 'text-text-muted hover:text-text-primary'
                 }`}
                 title="Papar semua batch secara berasingan"
               >
-                <LayoutList className="w-3.5 h-3.5 text-slate-500" />
+                <LayoutList className="w-3.5 h-3.5 text-text-muted" />
                 <span>Semua Batch ({filteredItems.length})</span>
               </button>
             </div>
@@ -701,7 +703,7 @@ export const NearExpiryPage: React.FC = () => {
                   setSelectedLocation('all')
                   setSearchQuery('')
                 }}
-                className="px-3 py-2 text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-xl transition-all"
+                className="px-3 py-2 text-xs font-semibold text-rose-600 hover:text-rose-700 bg-rose-500/10 hover:bg-rose-100 border border-rose-500/20 rounded-xl transition-colors"
               >
                 Set Semula Penapis
               </button>
@@ -710,41 +712,41 @@ export const NearExpiryPage: React.FC = () => {
         </div>
 
         {/* Status Filter Tab Pills */}
-        <div className="flex items-center gap-2 border-t border-slate-100 pt-3 flex-wrap">
+        <div className="flex items-center gap-2 border-t border-border-subtle pt-3 flex-wrap">
           <span className="text-xs font-medium text-slate-400 mr-1 flex-shrink-0">Status Penapis:</span>
           <button
             onClick={() => setStatusFilter('all')}
-            className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+            className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
               statusFilter === 'all'
                 ? 'bg-slate-900 text-white shadow-sm'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                : 'bg-subtle text-text-muted hover:bg-subtle'
             }`}
           >
             Semua Rekod ({stats.totalCount})
           </button>
           <button
             onClick={() => setStatusFilter('expired')}
-            className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+            className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
               statusFilter === 'expired'
                 ? 'bg-rose-600 text-white shadow-sm'
-                : 'bg-rose-50 text-rose-700 border border-rose-200 hover:bg-rose-100'
+                : 'bg-rose-500/10 text-rose-700 border border-rose-500/20 hover:bg-rose-100'
             }`}
           >
             Telah Luput ({stats.expiredCount})
           </button>
           <button
             onClick={() => setStatusFilter('critical')}
-            className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+            className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
               statusFilter === 'critical'
                 ? 'bg-amber-600 text-white shadow-sm'
-                : 'bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-100'
+                : 'bg-amber-500/10 text-amber-400 border border-amber-500/20 hover:bg-amber-100'
             }`}
           >
             &le; 7 Hari ({stats.criticalCount})
           </button>
           <button
             onClick={() => setStatusFilter('warning')}
-            className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+            className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
               statusFilter === 'warning'
                 ? 'bg-yellow-500 text-white shadow-sm'
                 : 'bg-yellow-50 text-yellow-800 border border-yellow-200 hover:bg-yellow-100'
@@ -754,10 +756,10 @@ export const NearExpiryPage: React.FC = () => {
           </button>
           <button
             onClick={() => setStatusFilter('safe')}
-            className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
+            className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-colors ${
               statusFilter === 'safe'
                 ? 'bg-blue-600 text-white shadow-sm'
-                : 'bg-blue-50 text-blue-800 border border-blue-200 hover:bg-blue-100'
+                : 'bg-blue-500/10 text-blue-400 border border-blue-500/20 hover:bg-blue-100'
             }`}
           >
             31+ Hari ({stats.safeCount})
@@ -781,7 +783,7 @@ export const NearExpiryPage: React.FC = () => {
                 const first = rawItems.find((i) => selectedItemIds.includes(i.batch_id))
                 if (first) setTransferModalItem(first)
               }}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white text-indigo-900 hover:bg-indigo-50 text-xs font-bold transition-all shadow-sm"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-surface text-indigo-400 dark:text-indigo-300 font-bold hover:bg-indigo-500/10 text-xs font-bold transition-colors shadow-sm"
             >
               <ArrowRightLeft className="w-3.5 h-3.5" />
               Mohon Pemindahan Stok
@@ -791,7 +793,7 @@ export const NearExpiryPage: React.FC = () => {
                 const first = rawItems.find((i) => selectedItemIds.includes(i.batch_id))
                 if (first) setDisposalModalItem(first)
               }}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition-all shadow-sm"
+              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-bold transition-colors shadow-sm"
             >
               <Trash2 className="w-3.5 h-3.5" />
               Rekod Pelupusan (KEW.PS)
@@ -807,19 +809,19 @@ export const NearExpiryPage: React.FC = () => {
       )}
 
       {/* Main Data Table */}
-      <div className="bg-white border border-slate-200/90 rounded-2xl shadow-sm overflow-hidden">
+      <div className="bg-surface border border-border-default rounded-2xl shadow-sm overflow-hidden">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 space-y-3">
             <Spinner size="lg" className="text-indigo-600" />
-            <p className="text-sm text-slate-500 font-medium">Memuatkan data stok hampir luput...</p>
+            <p className="text-sm text-text-muted font-medium">Memuatkan data stok hampir luput...</p>
           </div>
         ) : error ? (
           <div className="p-8 text-center space-y-3">
             <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
               <AlertCircle className="w-6 h-6" />
             </div>
-            <p className="text-base font-bold text-slate-800">Gagal Memuatkan Rekod</p>
-            <p className="text-sm text-slate-500 max-w-md mx-auto">{error}</p>
+            <p className="text-base font-bold text-text-primary">Gagal Memuatkan Rekod</p>
+            <p className="text-sm text-text-muted max-w-md mx-auto">{error}</p>
             <button
               onClick={() => void loadData()}
               className="px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-semibold shadow-sm hover:bg-indigo-500"
@@ -833,7 +835,7 @@ export const NearExpiryPage: React.FC = () => {
               /* GROUPED VIEW TABLE */
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-50/80 border-b border-slate-200/80 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  <tr className="bg-subtle/50 border-b border-border-default text-xs font-bold text-text-muted uppercase tracking-wider">
                     <th className="py-3.5 px-3 w-10 text-center">
                       <input
                         type="checkbox"
@@ -842,14 +844,14 @@ export const NearExpiryPage: React.FC = () => {
                           filteredItems.every((i) => selectedItemIds.includes(i.batch_id))
                         }
                         onChange={handleSelectAll}
-                        className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500/20 cursor-pointer"
+                        className="rounded border-border-default text-indigo-600 focus:ring-indigo-500/20 cursor-pointer"
                         title="Pilih Semua Item"
                       />
                     </th>
                     <th className="py-3.5 px-2 w-8 text-center">
                       <button
                         onClick={toggleExpandAll}
-                        className="p-1 rounded-md text-slate-400 hover:text-indigo-600 hover:bg-slate-200/60 transition-colors"
+                        className="p-1 rounded-md text-slate-400 hover:text-indigo-600 hover:bg-subtle transition-colors"
                         title="Buka / Tutup Semua Pecahan Batch"
                       >
                         <ChevronsUpDown className="w-4 h-4" />
@@ -866,18 +868,18 @@ export const NearExpiryPage: React.FC = () => {
                   </tr>
                 </thead>
 
-                <tbody className="divide-y divide-slate-100 text-sm">
+                <tbody className="divide-y divide-border-subtle text-sm">
                   {groupedItems.length === 0 ? (
                     <tr>
                       <td colSpan={10} className="py-16 px-4 text-center">
                         <div className="max-w-md mx-auto space-y-3">
-                          <div className="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
+                          <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
                             <ShieldCheck className="w-8 h-8" />
                           </div>
-                          <h3 className="text-base font-bold text-slate-800">
+                          <h3 className="text-base font-bold text-text-primary">
                             Tiada Item Hampir Luput Dikesan
                           </h3>
-                          <p className="text-xs text-slate-500 leading-relaxed">
+                          <p className="text-xs text-text-muted leading-relaxed">
                             Tiada rekod item luput atau mendekati tarikh luput dalam tempoh {daysThreshold} hari mengikut kriteria penapis anda.
                           </p>
                           {(statusFilter !== 'all' || selectedType !== 'all' || selectedLocation !== 'all' || searchQuery) && (
@@ -888,7 +890,7 @@ export const NearExpiryPage: React.FC = () => {
                                 setSelectedLocation('all')
                                 setSearchQuery('')
                               }}
-                              className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-all"
+                              className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-subtle hover:bg-subtle text-text-secondary text-xs font-semibold transition-colors"
                             >
                               Kosongkan Penapis
                             </button>
@@ -910,12 +912,12 @@ export const NearExpiryPage: React.FC = () => {
                           <tr
                             className={`transition-colors duration-150 ${
                               isAllGroupSelected
-                                ? 'bg-indigo-50/70'
+                                ? 'bg-indigo-500/10'
                                 : isExpired
-                                ? 'bg-rose-50/40 hover:bg-rose-50/70'
+                                ? 'bg-rose-500/10 hover:bg-rose-500/10'
                                 : isExpanded
-                                ? 'bg-slate-50/80 hover:bg-slate-50'
-                                : 'hover:bg-slate-50/60'
+                                ? 'bg-subtle/50 hover:bg-subtle/50'
+                                : 'hover:bg-subtle/50'
                             }`}
                           >
                             {/* Checkbox */}
@@ -927,7 +929,7 @@ export const NearExpiryPage: React.FC = () => {
                                   if (el) el.indeterminate = isSomeGroupSelected
                                 }}
                                 onChange={() => handleToggleSelectGroup(group)}
-                                className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500/20 cursor-pointer"
+                                className="rounded border-border-default text-indigo-600 focus:ring-indigo-500/20 cursor-pointer"
                               />
                             </td>
 
@@ -935,8 +937,8 @@ export const NearExpiryPage: React.FC = () => {
                             <td className="py-3.5 px-2 text-center">
                               <button
                                 onClick={() => toggleExpand(group.item_id)}
-                                className={`p-1.5 rounded-lg text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 transition-all ${
-                                  isExpanded ? 'bg-indigo-50 text-indigo-600' : ''
+                                className={`p-1.5 rounded-lg text-text-muted hover:text-indigo-600 hover:bg-indigo-500/10 transition-colors ${
+                                  isExpanded ? 'bg-indigo-500/10 text-indigo-600' : ''
                                 }`}
                                 title={isExpanded ? 'Tutup Pecahan Batch' : 'Buka Pecahan Batch'}
                               >
@@ -951,11 +953,11 @@ export const NearExpiryPage: React.FC = () => {
                             {/* Item Code & Name */}
                             <td className="py-3.5 px-4">
                               <div className="flex flex-col">
-                                <span className="font-bold text-slate-900 text-sm hover:text-indigo-600 transition-colors">
+                                <span className="font-bold text-text-primary text-sm hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
                                   {group.item_name}
                                 </span>
                                 <div className="flex items-center gap-2 mt-0.5">
-                                  <span className="font-mono text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200/80 font-medium">
+                                  <span className="font-mono text-xs px-2 py-0.5 rounded bg-subtle text-text-secondary border border-border-default font-medium">
                                     {group.item_code}
                                   </span>
                                 </div>
@@ -965,11 +967,11 @@ export const NearExpiryPage: React.FC = () => {
                             {/* Type */}
                             <td className="py-3.5 px-4">
                               {group.item_type === 'drug' ? (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-700 border border-blue-500/20">
                                   Ubat
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200">
+                                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/10 text-purple-700 border border-indigo-500/20">
                                   Bukan Ubat
                                 </span>
                               )}
@@ -977,14 +979,14 @@ export const NearExpiryPage: React.FC = () => {
 
                             {/* Packaging */}
                             <td className="py-3.5 px-4">
-                              <span className="text-xs font-semibold text-slate-700 bg-slate-100/90 px-2.5 py-1 rounded-md border border-slate-200/80">
+                              <span className="text-xs font-semibold text-text-secondary bg-subtle px-2.5 py-1 rounded-md border border-border-default">
                                 {group.packaging || '-'}
                               </span>
                             </td>
 
                             {/* Location */}
                             <td className="py-3.5 px-4">
-                              <div className="flex items-center gap-1.5 text-xs text-slate-700 font-medium max-w-xs">
+                              <div className="flex items-center gap-1.5 text-xs text-text-secondary font-medium max-w-xs">
                                 <MapPin className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
                                 <span className="truncate" title={group.location_name}>{group.location_name}</span>
                               </div>
@@ -993,10 +995,10 @@ export const NearExpiryPage: React.FC = () => {
                             {/* Total Quantity */}
                             <td className="py-3.5 px-4 text-right">
                               <div className="flex flex-col items-end">
-                                <span className="font-mono font-extrabold text-slate-900 text-sm">
+                                <span className="font-mono font-extrabold text-text-primary text-sm">
                                   {group.total_quantity.toLocaleString('ms-MY')}
                                 </span>
-                                <span className="text-[10px] text-slate-500 font-medium">
+                                <span className="text-[10px] text-text-muted font-medium">
                                   {group.batch_count} Batch
                                 </span>
                               </div>
@@ -1005,13 +1007,13 @@ export const NearExpiryPage: React.FC = () => {
                             {/* Batch Pill Count */}
                             <td className="py-3.5 px-4 text-center">
                               {group.batch_count === 1 ? (
-                                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono font-semibold bg-slate-100 text-slate-800 border border-slate-200">
+                                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-mono font-semibold bg-subtle text-text-primary border border-border-default">
                                   <span>{group.batches[0].batch_number}</span>
                                 </div>
                               ) : (
                                 <button
                                   onClick={() => toggleExpand(group.item_id)}
-                                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200 transition-all shadow-xs"
+                                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-indigo-500/10 text-indigo-700 hover:bg-indigo-100 border border-indigo-500/20 transition-colors shadow-xs"
                                 >
                                   <Layers className="w-3.5 h-3.5 text-indigo-600" />
                                   <span>{group.batch_count} Batch</span>
@@ -1023,7 +1025,7 @@ export const NearExpiryPage: React.FC = () => {
                             {/* Earliest Expiry (FEFO) */}
                             <td className="py-3.5 px-4">
                               <div className="flex flex-col gap-1">
-                                <span className="text-xs font-semibold text-slate-800">
+                                <span className="text-xs font-semibold text-text-primary">
                                   {formatDate(group.earliest_expiry_date)}
                                 </span>
                                 <div>
@@ -1037,14 +1039,14 @@ export const NearExpiryPage: React.FC = () => {
                               <div className="flex items-center justify-center gap-1">
                                 <button
                                   onClick={() => setActiveModalItem(earliestBatch)}
-                                  className="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                                  className="p-1.5 text-text-muted hover:text-indigo-600 hover:bg-indigo-500/10 rounded-lg transition-colors"
                                   title="Lihat Perincian Item"
                                 >
                                   <Eye className="w-4 h-4" />
                                 </button>
                                 <button
                                   onClick={() => setTransferModalItem(earliestBatch)}
-                                  className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
+                                  className="p-1.5 text-text-muted hover:text-amber-600 hover:bg-amber-500/10 rounded-lg transition-colors"
                                   title="Mohon Pemindahan Stok (FEFO Prioriti)"
                                 >
                                   <ArrowRightLeft className="w-4 h-4" />
@@ -1052,7 +1054,7 @@ export const NearExpiryPage: React.FC = () => {
                                 {isExpired && (
                                   <button
                                     onClick={() => setDisposalModalItem(earliestBatch)}
-                                    className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors"
+                                    className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-500/10 rounded-lg transition-colors"
                                     title="Rekod Pelupusan KEW.PS-11"
                                   >
                                     <Trash2 className="w-4 h-4" />
@@ -1064,17 +1066,17 @@ export const NearExpiryPage: React.FC = () => {
 
                           {/* Expanded Nested Batch Drawer */}
                           {isExpanded && (
-                            <tr className="bg-slate-50/90 border-b border-slate-200/80">
+                            <tr className="bg-subtle/50 border-b border-border-default">
                               <td colSpan={10} className="p-3 sm:p-4">
-                                <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden ml-4 sm:ml-8">
-                                  <div className="bg-slate-100/80 px-4 py-2.5 border-b border-slate-200 flex items-center justify-between">
+                                <div className="bg-surface rounded-xl border border-border-default shadow-sm overflow-hidden ml-4 sm:ml-8">
+                                  <div className="bg-subtle px-4 py-2.5 border-b border-border-default flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                       <Layers className="w-4 h-4 text-indigo-600" />
-                                      <span className="text-xs font-bold text-slate-800 uppercase tracking-wide">
+                                      <span className="text-xs font-bold text-text-primary uppercase tracking-wide">
                                         Pecahan Batch & Giliran Pengagihan (FEFO - First Expired, First Out)
                                       </span>
                                     </div>
-                                    <span className="text-[11px] font-semibold text-slate-500">
+                                    <span className="text-[11px] font-semibold text-text-muted">
                                       {group.batches.length} Batch Aktif
                                     </span>
                                   </div>
@@ -1082,7 +1084,7 @@ export const NearExpiryPage: React.FC = () => {
                                   <div className="overflow-x-auto">
                                     <table className="w-full text-left text-xs border-collapse">
                                       <thead>
-                                        <tr className="bg-slate-50 text-[11px] font-bold text-slate-500 uppercase border-b border-slate-200">
+                                        <tr className="bg-subtle/50 text-[11px] font-bold text-text-muted uppercase border-b border-border-default">
                                           <th className="py-2.5 px-3 w-8 text-center">Pilih</th>
                                           <th className="py-2.5 px-3">Keutamaan FEFO</th>
                                           <th className="py-2.5 px-3">No. Batch</th>
@@ -1093,7 +1095,7 @@ export const NearExpiryPage: React.FC = () => {
                                           <th className="py-2.5 px-3 text-center">Tindakan Batch</th>
                                         </tr>
                                       </thead>
-                                      <tbody className="divide-y divide-slate-100">
+                                      <tbody className="divide-y divide-border-subtle">
                                         {group.batches.map((batch, idx) => {
                                           const isBatchSelected = selectedItemIds.includes(batch.batch_id)
                                           const isBatchExpired = batch.status === 'expired' || batch.days_to_expiry <= 0
@@ -1103,10 +1105,10 @@ export const NearExpiryPage: React.FC = () => {
                                               key={batch.batch_id}
                                               className={`transition-colors ${
                                                 isBatchSelected
-                                                  ? 'bg-indigo-50/80'
+                                                  ? 'bg-indigo-500/10'
                                                   : idx === 0
-                                                  ? 'bg-amber-50/30 hover:bg-amber-50/60'
-                                                  : 'hover:bg-slate-50/80'
+                                                  ? 'bg-amber-500/10 hover:bg-amber-500/10'
+                                                  : 'hover:bg-subtle/50'
                                               }`}
                                             >
                                               {/* Batch Select Checkbox */}
@@ -1115,18 +1117,18 @@ export const NearExpiryPage: React.FC = () => {
                                                   type="checkbox"
                                                   checked={isBatchSelected}
                                                   onChange={() => handleToggleSelect(batch.batch_id)}
-                                                  className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500/20 cursor-pointer"
+                                                  className="rounded border-border-default text-indigo-600 focus:ring-indigo-500/20 cursor-pointer"
                                                 />
                                               </td>
 
                                               {/* Priority Tag */}
                                               <td className="py-2.5 px-3">
                                                 {idx === 0 ? (
-                                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-900 border border-amber-300 shadow-xs">
+                                                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-400 dark:text-amber-300 font-bold border border-amber-300 shadow-xs">
                                                     #1 Terawal Luput (FEFO)
                                                   </span>
                                                 ) : (
-                                                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+                                                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-subtle text-text-muted border border-border-default">
                                                     #{idx + 1} Seterusnya
                                                   </span>
                                                 )}
@@ -1135,12 +1137,12 @@ export const NearExpiryPage: React.FC = () => {
                                               {/* Batch Number */}
                                               <td className="py-2.5 px-3">
                                                 <div className="flex items-center gap-1.5">
-                                                  <span className="font-mono font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                                                  <span className="font-mono font-bold text-text-primary bg-subtle px-2 py-0.5 rounded border border-border-default">
                                                     {batch.batch_number}
                                                   </span>
                                                   <button
                                                     onClick={() => handleCopyBatch(batch.batch_number, batch.batch_id)}
-                                                    className="text-slate-400 hover:text-indigo-600 p-0.5 rounded hover:bg-slate-200 transition-colors"
+                                                    className="text-slate-400 hover:text-indigo-600 p-0.5 rounded hover:bg-subtle transition-colors"
                                                     title="Salin No Batch"
                                                   >
                                                     {copiedBatchId === batch.batch_id ? (
@@ -1154,21 +1156,21 @@ export const NearExpiryPage: React.FC = () => {
 
                                               {/* Batch Location */}
                                               <td className="py-2.5 px-3">
-                                                <span className="text-slate-600 font-medium">
+                                                <span className="text-text-muted font-medium">
                                                   {batch.location_name}
                                                 </span>
                                               </td>
 
                                               {/* Batch Quantity */}
                                               <td className="py-2.5 px-3 text-right">
-                                                <span className="font-mono font-bold text-slate-900">
+                                                <span className="font-mono font-bold text-text-primary">
                                                   {batch.quantity.toLocaleString('ms-MY')} Unit
                                                 </span>
                                               </td>
 
                                               {/* Batch Expiry Date */}
                                               <td className="py-2.5 px-3">
-                                                <span className="font-semibold text-slate-800">
+                                                <span className="font-semibold text-text-primary">
                                                   {formatDate(batch.expiry_date)}
                                                 </span>
                                               </td>
@@ -1183,14 +1185,14 @@ export const NearExpiryPage: React.FC = () => {
                                                 <div className="flex items-center justify-center gap-1">
                                                   <button
                                                     onClick={() => setActiveModalItem(batch)}
-                                                    className="p-1 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded"
+                                                    className="p-1 text-text-muted hover:text-indigo-600 hover:bg-indigo-500/10 rounded"
                                                     title="Lihat Perincian Batch Ini"
                                                   >
                                                     <Eye className="w-3.5 h-3.5" />
                                                   </button>
                                                   <button
                                                     onClick={() => setTransferModalItem(batch)}
-                                                    className="p-1 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded"
+                                                    className="p-1 text-text-muted hover:text-amber-600 hover:bg-amber-500/10 rounded"
                                                     title="Pindah / Agih Batch Ini"
                                                   >
                                                     <ArrowRightLeft className="w-3.5 h-3.5" />
@@ -1198,7 +1200,7 @@ export const NearExpiryPage: React.FC = () => {
                                                   {isBatchExpired && (
                                                     <button
                                                       onClick={() => setDisposalModalItem(batch)}
-                                                      className="p-1 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded"
+                                                      className="p-1 text-rose-500 hover:text-rose-700 hover:bg-rose-500/10 rounded"
                                                       title="Pelupusan Batch Ini"
                                                     >
                                                       <Trash2 className="w-3.5 h-3.5" />
@@ -1226,7 +1228,7 @@ export const NearExpiryPage: React.FC = () => {
               /* FLAT LIST TABLE VIEW */
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-50/80 border-b border-slate-200/80 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  <tr className="bg-subtle/50 border-b border-border-default text-xs font-bold text-text-muted uppercase tracking-wider">
                     <th className="py-3.5 px-4 w-10 text-center">
                       <input
                         type="checkbox"
@@ -1235,7 +1237,7 @@ export const NearExpiryPage: React.FC = () => {
                           filteredItems.every((i) => selectedItemIds.includes(i.batch_id))
                         }
                         onChange={handleSelectAll}
-                        className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500/20 cursor-pointer"
+                        className="rounded border-border-default text-indigo-600 focus:ring-indigo-500/20 cursor-pointer"
                       />
                     </th>
                     <th className="py-3.5 px-4">Item & Spesifikasi</th>
@@ -1250,18 +1252,18 @@ export const NearExpiryPage: React.FC = () => {
                   </tr>
                 </thead>
 
-                <tbody className="divide-y divide-slate-100 text-sm">
+                <tbody className="divide-y divide-border-subtle text-sm">
                   {filteredItems.length === 0 ? (
                     <tr>
                       <td colSpan={10} className="py-16 px-4 text-center">
                         <div className="max-w-md mx-auto space-y-3">
-                          <div className="w-14 h-14 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
+                          <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
                             <ShieldCheck className="w-8 h-8" />
                           </div>
-                          <h3 className="text-base font-bold text-slate-800">
+                          <h3 className="text-base font-bold text-text-primary">
                             Tiada Item Hampir Luput Dikesan
                           </h3>
-                          <p className="text-xs text-slate-500 leading-relaxed">
+                          <p className="text-xs text-text-muted leading-relaxed">
                             Tiada rekod item luput atau mendekati tarikh luput dalam tempoh {daysThreshold} hari mengikut kriteria penapis anda.
                           </p>
                           {(statusFilter !== 'all' || selectedType !== 'all' || selectedLocation !== 'all' || searchQuery) && (
@@ -1272,7 +1274,7 @@ export const NearExpiryPage: React.FC = () => {
                                 setSelectedLocation('all')
                                 setSearchQuery('')
                               }}
-                              className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition-all"
+                              className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-subtle hover:bg-subtle text-text-secondary text-xs font-semibold transition-colors"
                             >
                               Kosongkan Penapis
                             </button>
@@ -1290,10 +1292,10 @@ export const NearExpiryPage: React.FC = () => {
                           key={item.batch_id}
                           className={`transition-colors duration-150 ${
                             isSelected
-                              ? 'bg-indigo-50/60'
+                              ? 'bg-indigo-500/10'
                               : isExpired
-                              ? 'bg-rose-50/40 hover:bg-rose-50/80'
-                              : 'hover:bg-slate-50/80'
+                              ? 'bg-rose-500/10 hover:bg-rose-500/10'
+                              : 'hover:bg-subtle/50'
                           }`}
                         >
                           {/* Checkbox */}
@@ -1302,18 +1304,18 @@ export const NearExpiryPage: React.FC = () => {
                               type="checkbox"
                               checked={isSelected}
                               onChange={() => handleToggleSelect(item.batch_id)}
-                              className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500/20 cursor-pointer"
+                              className="rounded border-border-default text-indigo-600 focus:ring-indigo-500/20 cursor-pointer"
                             />
                           </td>
 
                           {/* Item Code & Name */}
                           <td className="py-3.5 px-4">
                             <div className="flex flex-col">
-                              <span className="font-bold text-slate-900 text-sm">
+                              <span className="font-bold text-text-primary text-sm">
                                 {item.item_name}
                               </span>
                               <div className="flex items-center gap-2 mt-0.5">
-                                <span className="font-mono text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200/80">
+                                <span className="font-mono text-xs px-2 py-0.5 rounded bg-subtle text-text-secondary border border-border-default">
                                   {item.item_code}
                                 </span>
                               </div>
@@ -1323,11 +1325,11 @@ export const NearExpiryPage: React.FC = () => {
                           {/* Type */}
                           <td className="py-3.5 px-4">
                             {item.item_type === 'drug' ? (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-700 border border-blue-500/20">
                                 Ubat
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200">
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/10 text-purple-700 border border-indigo-500/20">
                                 Bukan Ubat
                               </span>
                             )}
@@ -1335,7 +1337,7 @@ export const NearExpiryPage: React.FC = () => {
 
                           {/* Packaging */}
                           <td className="py-3.5 px-4">
-                            <span className="text-xs font-semibold text-slate-700 bg-slate-100/90 px-2.5 py-1 rounded-md border border-slate-200/80">
+                            <span className="text-xs font-semibold text-text-secondary bg-subtle px-2.5 py-1 rounded-md border border-border-default">
                               {item.packaging || '-'}
                             </span>
                           </td>
@@ -1343,12 +1345,12 @@ export const NearExpiryPage: React.FC = () => {
                           {/* Batch Number */}
                           <td className="py-3.5 px-4">
                             <div className="flex items-center gap-1.5">
-                              <span className="font-mono text-xs font-semibold text-slate-800 bg-slate-50 px-2 py-1 rounded border border-slate-200">
+                              <span className="font-mono text-xs font-semibold text-text-primary bg-subtle/50 px-2 py-1 rounded border border-border-default">
                                 {item.batch_number}
                               </span>
                               <button
                                 onClick={() => handleCopyBatch(item.batch_number, item.batch_id)}
-                                className="text-slate-400 hover:text-indigo-600 transition-colors p-1 rounded hover:bg-slate-100"
+                                className="text-slate-400 hover:text-indigo-600 transition-colors p-1 rounded hover:bg-subtle"
                                 title="Salin No Batch"
                               >
                                 {copiedBatchId === item.batch_id ? (
@@ -1362,7 +1364,7 @@ export const NearExpiryPage: React.FC = () => {
 
                           {/* Location */}
                           <td className="py-3.5 px-4">
-                            <div className="flex items-center gap-1.5 text-xs text-slate-700 font-medium">
+                            <div className="flex items-center gap-1.5 text-xs text-text-secondary font-medium">
                               <MapPin className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
                               <span>{item.location_name}</span>
                             </div>
@@ -1370,7 +1372,7 @@ export const NearExpiryPage: React.FC = () => {
 
                           {/* Quantity */}
                           <td className="py-3.5 px-4 text-right">
-                            <span className="font-mono font-bold text-slate-900 text-sm">
+                            <span className="font-mono font-bold text-text-primary text-sm">
                               {item.quantity.toLocaleString('ms-MY')}
                             </span>
                           </td>
@@ -1378,7 +1380,7 @@ export const NearExpiryPage: React.FC = () => {
                           {/* Expiry Date */}
                           <td className="py-3.5 px-4">
                             <div className="flex flex-col">
-                              <span className="text-xs font-semibold text-slate-800">
+                              <span className="text-xs font-semibold text-text-primary">
                                 {formatDate(item.expiry_date)}
                               </span>
                             </div>
@@ -1394,14 +1396,14 @@ export const NearExpiryPage: React.FC = () => {
                             <div className="flex items-center justify-center gap-1">
                               <button
                                 onClick={() => setActiveModalItem(item)}
-                                className="p-1.5 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                                className="p-1.5 text-text-muted hover:text-indigo-600 hover:bg-indigo-500/10 rounded-lg transition-colors"
                                 title="Lihat Perincian"
                               >
                                 <Eye className="w-4 h-4" />
                               </button>
                               <button
                                 onClick={() => setTransferModalItem(item)}
-                                className="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
+                                className="p-1.5 text-text-muted hover:text-amber-600 hover:bg-amber-500/10 rounded-lg transition-colors"
                                 title="Mohon Pemindahan"
                               >
                                 <ArrowRightLeft className="w-4 h-4" />
@@ -1409,7 +1411,7 @@ export const NearExpiryPage: React.FC = () => {
                               {isExpired && (
                                 <button
                                   onClick={() => setDisposalModalItem(item)}
-                                  className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-colors"
+                                  className="p-1.5 text-rose-500 hover:text-rose-700 hover:bg-rose-500/10 rounded-lg transition-colors"
                                   title="Rekod Pelupusan"
                                 >
                                   <Trash2 className="w-4 h-4" />
@@ -1431,7 +1433,7 @@ export const NearExpiryPage: React.FC = () => {
       {/* Detail Modal */}
       {activeModalItem && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200 space-y-0">
+          <div className="bg-surface rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-border-default space-y-0">
             {/* Header */}
             <div className="bg-slate-900 text-white p-5 flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -1452,49 +1454,49 @@ export const NearExpiryPage: React.FC = () => {
             </div>
 
             {/* Content Body */}
-            <div className="p-6 space-y-4 text-sm text-slate-700">
-              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-2">
-                <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Nama Item</div>
-                <div className="font-bold text-slate-900 text-base">{activeModalItem.item_name}</div>
+            <div className="p-6 space-y-4 text-sm text-text-secondary">
+              <div className="p-4 rounded-xl bg-subtle/50 border border-border-default space-y-2">
+                <div className="text-xs font-semibold text-text-secondary font-bold uppercase tracking-wider">Nama Item</div>
+                <div className="font-bold text-text-primary text-base">{activeModalItem.item_name}</div>
                 <div className="flex items-center gap-2 pt-1">
-                  <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded bg-white border border-slate-300 text-indigo-700">
+                  <span className="font-mono text-xs font-bold px-2.5 py-0.5 rounded bg-surface border border-border-default text-indigo-700">
                     {activeModalItem.item_code}
                   </span>
-                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-700 font-semibold">
+                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-subtle text-text-secondary font-semibold">
                     {activeModalItem.item_type === 'drug' ? 'Ubat Farmasi' : 'Item Bukan Ubat'}
                   </span>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-3.5 rounded-xl border border-slate-200 bg-white">
+                <div className="p-3.5 rounded-xl border border-border-default bg-surface">
                   <div className="text-xs text-slate-400">No. Batch</div>
-                  <div className="font-mono font-bold text-slate-800 mt-1">{activeModalItem.batch_number}</div>
+                  <div className="font-mono font-bold text-text-primary mt-1">{activeModalItem.batch_number}</div>
                 </div>
-                <div className="p-3.5 rounded-xl border border-slate-200 bg-white">
+                <div className="p-3.5 rounded-xl border border-border-default bg-surface">
                   <div className="text-xs text-slate-400">Baki Kuantiti</div>
-                  <div className="font-mono font-extrabold text-slate-900 mt-1">
+                  <div className="font-mono font-extrabold text-text-primary mt-1">
                     {activeModalItem.quantity.toLocaleString('ms-MY')} unit
                   </div>
                 </div>
-                <div className="p-3.5 rounded-xl border border-slate-200 bg-white">
+                <div className="p-3.5 rounded-xl border border-border-default bg-surface">
                   <div className="text-xs text-slate-400">Expiry Date</div>
-                  <div className="font-bold text-slate-800 mt-1">{formatDate(activeModalItem.expiry_date)}</div>
+                  <div className="font-bold text-text-primary mt-1">{formatDate(activeModalItem.expiry_date)}</div>
                 </div>
-                <div className="p-3.5 rounded-xl border border-slate-200 bg-white">
+                <div className="p-3.5 rounded-xl border border-border-default bg-surface">
                   <div className="text-xs text-slate-400">Baki Tempoh</div>
                   <div className="mt-1">{renderExpiryPill(activeModalItem.days_to_expiry, activeModalItem.status)}</div>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="p-3.5 rounded-xl border border-slate-200 bg-white">
+                <div className="p-3.5 rounded-xl border border-border-default bg-surface">
                   <div className="text-xs text-slate-400">Pembungkusan (Packaging)</div>
-                  <div className="font-semibold text-slate-800 mt-1">{activeModalItem.packaging || '-'}</div>
+                  <div className="font-semibold text-text-primary mt-1">{activeModalItem.packaging || '-'}</div>
                 </div>
-                <div className="p-3.5 rounded-xl border border-slate-200 bg-white">
+                <div className="p-3.5 rounded-xl border border-border-default bg-surface">
                   <div className="text-xs text-slate-400">Lokasi Simpanan / Depo</div>
-                  <div className="font-semibold text-slate-800 mt-1 flex items-center gap-1.5">
+                  <div className="font-semibold text-text-primary mt-1 flex items-center gap-1.5">
                     <MapPin className="w-4 h-4 text-indigo-600" />
                     <span className="truncate">{activeModalItem.location_name}</span>
                   </div>
@@ -1503,7 +1505,7 @@ export const NearExpiryPage: React.FC = () => {
             </div>
 
             {/* Footer */}
-            <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-3">
+            <div className="p-4 bg-subtle/50 border-t border-border-default flex items-center justify-end gap-3">
               <button
                 onClick={() => {
                   const item = activeModalItem
@@ -1516,7 +1518,7 @@ export const NearExpiryPage: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveModalItem(null)}
-                className="px-4 py-2 rounded-xl bg-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-300"
+                className="px-4 py-2 rounded-xl bg-subtle text-text-secondary text-xs font-semibold hover:bg-slate-300"
               >
                 Tutup
               </button>
@@ -1528,7 +1530,7 @@ export const NearExpiryPage: React.FC = () => {
       {/* Stock Transfer Modal */}
       {transferModalItem && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-200 space-y-0">
+          <div className="bg-surface rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-border-default space-y-0">
             <div className="bg-indigo-950 text-white p-5 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <ArrowRightLeft className="w-5 h-5 text-indigo-400" />
@@ -1539,23 +1541,23 @@ export const NearExpiryPage: React.FC = () => {
               </button>
             </div>
 
-            <div className="p-6 space-y-4 text-sm text-slate-700">
-              <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800">
+            <div className="p-6 space-y-4 text-sm text-text-secondary">
+              <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-xs text-amber-400">
                 Memindahkan item hampir luput ke wad/kaunter berkesusah tinggi mempercepatkan penggunaan stok sebelum luput.
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Item & Batch</label>
-                <div className="font-semibold text-slate-900">{transferModalItem.item_name}</div>
-                <div className="text-xs text-slate-500 font-mono">Batch: {transferModalItem.batch_number} (Baki: {transferModalItem.quantity})</div>
+                <label className="block text-xs font-bold text-text-muted uppercase mb-1">Item & Batch</label>
+                <div className="font-semibold text-text-primary">{transferModalItem.item_name}</div>
+                <div className="text-xs text-text-muted font-mono">Batch: {transferModalItem.batch_number} (Baki: {transferModalItem.quantity})</div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Lokasi Sasaran Pemindahan</label>
+                <label className="block text-xs font-bold text-text-muted uppercase mb-1">Lokasi Sasaran Pemindahan</label>
                 <select
                   value={targetLocation}
                   onChange={(e) => setTargetLocation(e.target.value)}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:ring-2 focus:ring-indigo-500/20"
+                  className="w-full p-2.5 bg-subtle/50 border border-border-default rounded-xl text-sm font-semibold text-text-primary focus:ring-2 focus:ring-indigo-500/20"
                 >
                   {uniqueLocations.map((loc) => (
                     <option key={loc} value={loc}>
@@ -1573,19 +1575,19 @@ export const NearExpiryPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Kuantiti Dipindahkan</label>
+                <label className="block text-xs font-bold text-text-muted uppercase mb-1">Kuantiti Dipindahkan</label>
                 <input
                   type="number"
                   min={1}
                   max={transferModalItem.quantity}
                   value={transferQty}
                   onChange={(e) => setTransferQty(Number(e.target.value))}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:ring-2 focus:ring-indigo-500/20"
+                  className="w-full p-2.5 bg-subtle/50 border border-border-default rounded-xl text-sm font-bold text-text-primary focus:ring-2 focus:ring-indigo-500/20"
                 />
               </div>
             </div>
 
-            <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-3">
+            <div className="p-4 bg-subtle/50 border-t border-border-default flex items-center justify-end gap-3">
               <button
                 onClick={() => {
                   setTransferModalItem(null)
@@ -1597,7 +1599,7 @@ export const NearExpiryPage: React.FC = () => {
               </button>
               <button
                 onClick={() => setTransferModalItem(null)}
-                className="px-4 py-2 rounded-xl bg-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-300"
+                className="px-4 py-2 rounded-xl bg-subtle text-text-secondary text-xs font-semibold hover:bg-slate-300"
               >
                 Batal
               </button>
@@ -1609,7 +1611,7 @@ export const NearExpiryPage: React.FC = () => {
       {/* Disposal Modal */}
       {disposalModalItem && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-200 space-y-0">
+          <div className="bg-surface rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-border-default space-y-0">
             <div className="bg-rose-900 text-white p-5 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Trash2 className="w-5 h-5 text-rose-300" />
@@ -1620,23 +1622,23 @@ export const NearExpiryPage: React.FC = () => {
               </button>
             </div>
 
-            <div className="p-6 space-y-4 text-sm text-slate-700">
-              <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800">
+            <div className="p-6 space-y-4 text-sm text-text-secondary">
+              <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-400">
                 Peringatan: Item yang telah luput mesti dilupuskan mengikut Tatacara Pengurusan Stor Kerajaan.
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Item Dipilih</label>
-                <div className="font-bold text-slate-900">{disposalModalItem.item_name}</div>
-                <div className="text-xs text-slate-500 font-mono">No Batch: {disposalModalItem.batch_number}</div>
+                <label className="block text-xs font-bold text-text-muted uppercase mb-1">Item Dipilih</label>
+                <div className="font-bold text-text-primary">{disposalModalItem.item_name}</div>
+                <div className="text-xs text-text-muted font-mono">No Batch: {disposalModalItem.batch_number}</div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Sebab Pelupusan</label>
+                <label className="block text-xs font-bold text-text-muted uppercase mb-1">Sebab Pelupusan</label>
                 <select
                   value={disposalReason}
                   onChange={(e) => setDisposalReason(e.target.value)}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800"
+                  className="w-full p-2.5 bg-subtle/50 border border-border-default rounded-xl text-sm font-semibold text-text-primary"
                 >
                   <option value="Expired">Expired</option>
                   <option value="Rosak / Kontaminasi">Rosak / Kontaminasi</option>
@@ -1645,18 +1647,18 @@ export const NearExpiryPage: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-600 uppercase mb-1">No. Rujukan Borang KEW.PS-11</label>
+                <label className="block text-xs font-bold text-text-muted uppercase mb-1">No. Rujukan Borang KEW.PS-11</label>
                 <input
                   type="text"
                   placeholder="Cth: KEW.PS11-2025-0041"
                   value={disposalRefNo}
                   onChange={(e) => setDisposalRefNo(e.target.value)}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-mono text-slate-900"
+                  className="w-full p-2.5 bg-subtle/50 border border-border-default rounded-xl text-sm font-mono text-text-primary"
                 />
               </div>
             </div>
 
-            <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-3">
+            <div className="p-4 bg-subtle/50 border-t border-border-default flex items-center justify-end gap-3">
               <button
                 onClick={() => {
                   setDisposalModalItem(null)
@@ -1668,7 +1670,7 @@ export const NearExpiryPage: React.FC = () => {
               </button>
               <button
                 onClick={() => setDisposalModalItem(null)}
-                className="px-4 py-2 rounded-xl bg-slate-200 text-slate-700 text-xs font-semibold hover:bg-slate-300"
+                className="px-4 py-2 rounded-xl bg-subtle text-text-secondary text-xs font-semibold hover:bg-slate-300"
               >
                 Batal
               </button>

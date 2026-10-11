@@ -1,3 +1,4 @@
+import { offlineAdapter } from '@/services/offlineAdapter'
 // src/modules/myprepacking/services/prepackService.ts
 import { supabase } from '@/services/supabase'
 import type { 
@@ -719,18 +720,40 @@ export const createPrepackBatch = async (batchData: {
       status: 'active'
     }
 
-    const { data, error } = await supabase
-      .from('prepack_batches')
-      .insert(payload)
-      .select(`
-        *,
-        prepack_item:prepack_items (
-          id, item_code, item_name, pack_type, dosage_form, strength, package_type, units_per_pack
-        )
-      `)
-      .single()
+    let data: any = null;
+    let error: any = null;
 
-    if (error) throw error
+    try {
+      const res = await supabase
+        .from('prepack_batches')
+        .insert(payload)
+        .select(`
+          *,
+          prepack_item:prepack_items (
+            id, item_code, item_name, pack_type, dosage_form, strength, package_type, units_per_pack
+          )
+        `)
+        .single();
+      data = res.data;
+      error = res.error;
+    } catch (networkErr) {
+      error = networkErr;
+    }
+
+    // Offline fallback: enqueue mutation and update local optimistic cache
+    if (error) {
+      const offlineRes = await offlineAdapter.executeMutation<PrepackBatch>({
+        module: 'myprepacking',
+        table: 'prepack_batches',
+        action: 'INSERT',
+        payload: { ...payload, id: `prepack_batch_${Date.now()}` } as any,
+        conflictPolicy: 'server-wins'
+      });
+      if (offlineRes.data) {
+        return { data: offlineRes.data, error: null };
+      }
+      throw error;
+    }
 
     if (data) {
       try {

@@ -52,19 +52,19 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 
     // Default to styled native select
     const selectClasses = cn(
-      "min-h-[2.75rem] w-full rounded-xl border bg-white px-4 py-2 text-sm text-slate-900 leading-normal transition-all duration-200",
+      "min-h-[2.75rem] w-full rounded-xl border bg-surface px-4 py-2 text-sm text-text-primary leading-normal transition-colors duration-150",
       "focus:outline-none focus:ring-2 focus:ring-offset-1",
-      "disabled:bg-slate-50 disabled:text-slate-500 disabled:cursor-not-allowed",
+      "disabled:bg-subtle/50 disabled:text-text-muted disabled:cursor-not-allowed",
       error 
         ? "border-red-300 focus:border-red-500 focus:ring-red-500/20" 
-        : "border-slate-300 focus:border-blue-500 focus:ring-blue-500/20 hover:border-slate-400",
+        : "border-border-default focus:border-blue-500 focus:ring-blue-500/20 hover:border-slate-400",
       className
     );
 
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-semibold text-slate-700 mb-2">
+          <label className="block text-sm font-semibold text-text-secondary mb-2">
             {label}
           </label>
         )}
@@ -92,7 +92,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             : children}
         </select>
         {helperText && !error && (
-          <p className="mt-1.5 text-sm text-slate-500">
+          <p className="mt-1.5 text-sm text-text-muted">
             {helperText}
           </p>
         )}
@@ -108,7 +108,7 @@ export function SelectTrigger({ children, className = "" }: any) {
     <button 
       type="button" 
       className={cn(
-        "h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-left text-sm flex items-center justify-between",
+        "h-10 w-full rounded-xl border border-border-default bg-surface px-3 text-left text-sm flex items-center justify-between",
         className
       )}
     >
@@ -118,7 +118,7 @@ export function SelectTrigger({ children, className = "" }: any) {
 }
 
 export function SelectValue({ placeholder }: any) { 
-  return <span className="text-slate-600">{placeholder}</span>; 
+  return <span className="text-text-muted">{placeholder}</span>; 
 }
 
 export function SelectContent({ children }: any) { 
@@ -135,7 +135,7 @@ export function SelectItem({ value, children, selectValue, onChange }: any) {
         "w-full text-left px-3 py-2 rounded-lg border transition-colors",
         active 
           ? "bg-blue-50 border-blue-200 text-blue-700 font-medium" 
-          : "border-slate-200 hover:bg-slate-50 text-slate-700"
+          : "border-border-default hover:bg-subtle/50 text-text-secondary"
       )}
     >
       {children}

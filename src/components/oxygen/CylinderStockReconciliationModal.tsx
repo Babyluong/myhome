@@ -385,10 +385,10 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
       onClose={onClose}
       size="5xl"
       showCloseButton={false}
-      className="w-full max-w-6xl p-0 overflow-hidden border border-slate-200 dark:border-slate-800 shadow-2xl rounded-2xl bg-white dark:bg-slate-950"
+      className="w-full max-w-6xl p-0 overflow-hidden border border-border-default dark:border-slate-800 shadow-2xl rounded-2xl bg-surface dark:bg-slate-950"
       contentClassName="p-0 overflow-y-auto max-h-[90vh]"
     >
-      <div className="flex flex-col text-slate-800 dark:text-slate-100 font-sans">
+      <div className="flex flex-col text-text-primary dark:text-slate-100 font-sans">
         
         {/* ========================================================= */}
         {/* 1. MALAYSIAN GOVERNMENT STATUTORY DOCUMENT HEADER */}
@@ -409,7 +409,7 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
                 <span className="text-[10px] uppercase font-black tracking-widest text-emerald-400">
                   KEMENTERIAN KESIHATAN MALAYSIA
                 </span>
-                <span className="text-slate-500">•</span>
+                <span className="text-text-muted">•</span>
                 <span className="text-[10px] font-semibold text-slate-300">
                   HOSPITAL LAWAS, SARAWAK
                 </span>
@@ -435,7 +435,7 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
 
             <button
               onClick={onClose}
-              className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-white/10 transition-colors"
+              className="p-1.5 text-slate-400 hover:text-white rounded-lg hover:bg-surface/10 transition-colors"
               title="Close Form"
             >
               <X className="w-5 h-5" />
@@ -446,25 +446,25 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
         {/* ========================================================= */}
         {/* 2. SPECIFICATION STRIP & STATUTORY TELEMETRY CARDS */}
         {/* ========================================================= */}
-        <div className="bg-slate-50 dark:bg-slate-900/50 p-6 border-b border-slate-200 dark:border-slate-800 space-y-4">
+        <div className="bg-subtle/50 dark:bg-slate-900/50 p-6 border-b border-border-default dark:border-slate-800 space-y-4">
           
           {/* Cylinder Master Spec Row */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white dark:bg-slate-800/80 p-4 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-sm">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface dark:bg-slate-800/80 p-4 rounded-xl border border-border-default dark:border-slate-700/60 shadow-sm">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-teal-50 dark:bg-teal-950/50 border border-teal-200 dark:border-teal-800 flex items-center justify-center text-teal-700 dark:text-teal-400 shrink-0">
+              <div className="w-10 h-10 rounded-lg bg-accent-base/10 dark:bg-teal-950/50 border border-accent-base/20 dark:border-teal-800 flex items-center justify-center text-teal-700 dark:text-teal-400 shrink-0">
                 <Boxes className="w-5 h-5" />
               </div>
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h2 className="text-base font-extrabold text-slate-900 dark:text-white tracking-tight">
+                  <h2 className="text-base font-extrabold text-text-primary dark:text-white tracking-tight">
                     {combo.display_name}
                   </h2>
                   <span className="bg-teal-100 dark:bg-teal-900/60 text-teal-800 dark:text-teal-300 text-[10px] font-bold px-2 py-0.5 rounded-full border border-teal-300 dark:border-teal-700">
                     Aset Gas Perubatan
                   </span>
                 </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                  Fasiliti: Stor Pusat Farmasi Bekalan • Kuota Berdaftar: <strong className="font-mono text-slate-700 dark:text-slate-300">{stats.total} Tabung</strong>
+                <p className="text-xs text-text-muted dark:text-slate-400 mt-0.5">
+                  Fasiliti: Stor Pusat Farmasi Bekalan • Kuota Berdaftar: <strong className="font-mono text-text-secondary dark:text-slate-300">{stats.total} Tabung</strong>
                 </p>
               </div>
             </div>
@@ -477,7 +477,7 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
                   onClose();
                   navigate('/pharmacy/oxygen/reconciliation');
                 }}
-                className="text-xs font-bold border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center gap-1.5 py-1.5 px-3 rounded-lg"
+                className="text-xs font-bold border-border-default dark:border-slate-600 hover:bg-subtle dark:hover:bg-slate-700 text-text-secondary dark:text-slate-200 flex items-center gap-1.5 py-1.5 px-3 rounded-lg"
               >
                 <Camera className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                 <span>Pengimbas Kamera Penuh</span>
@@ -489,8 +489,8 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
           {/* 4 Clean Statutory Metric Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {/* 1. Store Expected Balance */}
-            <div className="bg-white dark:bg-slate-800/80 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
-              <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs">
+            <div className="bg-surface dark:bg-slate-800/80 p-3.5 rounded-xl border border-border-default dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
+              <div className="flex items-center justify-between text-text-muted dark:text-slate-400 text-xs">
                 <span className="font-semibold">Baki Rekod Stor</span>
                 <Warehouse className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
               </div>
@@ -498,14 +498,14 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
                 <span className="text-2xl font-black font-mono text-emerald-700 dark:text-emerald-400">
                   {stats.storeTotal}
                 </span>
-                <span className="text-xs font-semibold text-slate-500">Tabung</span>
+                <span className="text-xs font-semibold text-text-muted">Tabung</span>
               </div>
               <p className="text-[10px] text-slate-400 mt-1">Stok penuh sedia di stor</p>
             </div>
 
             {/* 2. Store Physically Verified */}
-            <div className="bg-white dark:bg-slate-800/80 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
-              <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs">
+            <div className="bg-surface dark:bg-slate-800/80 p-3.5 rounded-xl border border-border-default dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
+              <div className="flex items-center justify-between text-text-muted dark:text-slate-400 text-xs">
                 <span className="font-semibold">Disahkan Fizikal</span>
                 <CheckCircle2 className="w-4 h-4 text-teal-600 dark:text-teal-400" />
               </div>
@@ -513,7 +513,7 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
                 <span className="text-2xl font-black font-mono text-teal-700 dark:text-teal-400">
                   {stats.storeVerified}
                 </span>
-                <span className="text-xs font-semibold text-slate-500">/ {stats.storeTotal}</span>
+                <span className="text-xs font-semibold text-text-muted">/ {stats.storeTotal}</span>
               </div>
               <div className="mt-1">
                 {stats.isStoreComplete ? (
@@ -530,8 +530,8 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
             </div>
 
             {/* 3. In Clinical Wards */}
-            <div className="bg-white dark:bg-slate-800/80 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
-              <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs">
+            <div className="bg-surface dark:bg-slate-800/80 p-3.5 rounded-xl border border-border-default dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
+              <div className="flex items-center justify-between text-text-muted dark:text-slate-400 text-xs">
                 <span className="font-semibold">Di Wad / Unit</span>
                 <Building2 className="w-4 h-4 text-blue-600 dark:text-blue-400" />
               </div>
@@ -539,14 +539,14 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
                 <span className="text-2xl font-black font-mono text-blue-700 dark:text-blue-400">
                   {stats.wardTotal}
                 </span>
-                <span className="text-xs font-semibold text-slate-500">Tabung</span>
+                <span className="text-xs font-semibold text-text-muted">Tabung</span>
               </div>
               <p className="text-[10px] text-slate-400 mt-1">Kegunaan klinikal pesakit</p>
             </div>
 
             {/* 4. With Supplier */}
-            <div className="bg-white dark:bg-slate-800/80 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
-              <div className="flex items-center justify-between text-slate-500 dark:text-slate-400 text-xs">
+            <div className="bg-surface dark:bg-slate-800/80 p-3.5 rounded-xl border border-border-default dark:border-slate-700/60 shadow-sm flex flex-col justify-between">
+              <div className="flex items-center justify-between text-text-muted dark:text-slate-400 text-xs">
                 <span className="font-semibold">Di Pembekal</span>
                 <Truck className="w-4 h-4 text-purple-600 dark:text-purple-400" />
               </div>
@@ -554,7 +554,7 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
                 <span className="text-2xl font-black font-mono text-purple-700 dark:text-purple-400">
                   {stats.supplierTotal}
                 </span>
-                <span className="text-xs font-semibold text-slate-500">Tabung</span>
+                <span className="text-xs font-semibold text-text-muted">Tabung</span>
               </div>
               <p className="text-[10px] text-slate-400 mt-1">Proses pengisian semula Linde</p>
             </div>
@@ -562,15 +562,15 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
 
           {/* Progress Bar */}
           <div className="space-y-1">
-            <div className="flex justify-between text-[11px] font-semibold text-slate-600 dark:text-slate-300">
+            <div className="flex justify-between text-[11px] font-semibold text-text-secondary dark:text-slate-300">
               <span>Kemajuan Pemeriksaan Fizikal Stor:</span>
               <span className="font-mono">
                 {stats.storeTotal > 0 ? Math.round((stats.storeVerified / stats.storeTotal) * 100) : 0}% Selesai
               </span>
             </div>
-            <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 overflow-hidden">
+            <div className="w-full bg-subtle dark:bg-slate-700 rounded-full h-2 overflow-hidden">
               <div
-                className="bg-gradient-to-r from-teal-500 to-emerald-500 h-full transition-all duration-300 rounded-full"
+                className="bg-gradient-to-r from-teal-500 to-emerald-500 h-full transition-[transform,opacity,box-shadow,border-color] duration-300 rounded-full"
                 style={{
                   width: `${stats.storeTotal > 0 ? Math.round((stats.storeVerified / stats.storeTotal) * 100) : 0}%`,
                 }}
@@ -586,8 +586,8 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
           <div
             className={`mx-6 mt-4 p-3 rounded-xl text-xs font-semibold flex items-center justify-between gap-3 ${
               feedback.type === 'success'
-                ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-200 border border-emerald-200 dark:border-emerald-800'
-                : 'bg-rose-50 dark:bg-rose-950/40 text-rose-800 dark:text-rose-200 border border-rose-200 dark:border-rose-800'
+                ? 'bg-emerald-500/10 dark:bg-emerald-950/40 text-emerald-400 dark:text-emerald-200 border border-emerald-500/20 dark:border-emerald-800'
+                : 'bg-rose-500/10 dark:bg-rose-950/40 text-rose-400 dark:text-rose-200 border border-rose-500/20 dark:border-rose-800'
             }`}
           >
             <div className="flex items-center gap-2">
@@ -600,7 +600,7 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
             </div>
             <button 
               onClick={() => setFeedback(null)} 
-              className="text-slate-400 hover:text-slate-600 text-xs font-bold"
+              className="text-slate-400 hover:text-text-secondary text-xs font-bold"
             >
               ✕
             </button>
@@ -609,12 +609,12 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
 
         {/* UNMATCHED SCAN PROMPT: REGISTER NEW CYLINDER TO STORE IN 1-CLICK */}
         {unmatchedSerial && (
-          <div className="mx-6 mt-3 p-3.5 bg-amber-50/90 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-700 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm animate-in fade-in duration-200">
-            <div className="flex items-center gap-2.5 text-amber-900 dark:text-amber-200 text-xs">
+          <div className="mx-6 mt-3 p-3.5 bg-amber-500/10 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-700 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm animate-in fade-in duration-200">
+            <div className="flex items-center gap-2.5 text-amber-400 dark:text-amber-300 font-bold dark:text-amber-200 text-xs">
               <AlertCircle className="w-5 h-5 shrink-0 text-amber-600 dark:text-amber-400" />
               <div>
                 <p className="font-extrabold text-sm">
-                  Silinder fizikal <span className="font-mono bg-white dark:bg-slate-800 px-2 py-0.5 rounded border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300">{unmatchedSerial}</span> belum berdaftar dalam sistem!
+                  Silinder fizikal <span className="font-mono bg-surface dark:bg-slate-800 px-2 py-0.5 rounded border border-amber-500/20 dark:border-amber-800 text-amber-400 dark:text-amber-300">{unmatchedSerial}</span> belum berdaftar dalam sistem!
                 </p>
                 <p className="text-[11px] text-amber-700 dark:text-amber-300 mt-0.5 font-medium">
                   Adakah anda ingin mendaftarkan silinder ini ke Stor Pusat dan mengesahkannya dalam rekonsiliasi ini?
@@ -626,7 +626,7 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
                 type="button"
                 disabled={isRegisteringUnmatched}
                 onClick={() => handleRegisterCylinder(unmatchedSerial)}
-                className="w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold text-xs py-2 px-4 rounded-xl shadow-md flex items-center justify-center gap-1.5 transition-all active:scale-95"
+                className="w-full sm:w-auto bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold text-xs py-2 px-4 rounded-xl shadow-md flex items-center justify-center gap-1.5 transition-[transform,opacity,box-shadow,border-color] active:scale-95"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>{isRegisteringUnmatched ? 'Mendaftarkan...' : '+ Daftar & Sahkan ke Stor'}</span>
@@ -634,7 +634,7 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
               <button
                 type="button"
                 onClick={() => setUnmatchedSerial(null)}
-                className="text-slate-400 hover:text-slate-600 text-xs font-bold px-2 py-1"
+                className="text-slate-400 hover:text-text-secondary text-xs font-bold px-2 py-1"
               >
                 Batal
               </button>
@@ -651,14 +651,14 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
           <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
             
             {/* Segmented Location Tabs */}
-            <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-800 text-xs overflow-x-auto">
+            <div className="flex items-center gap-1 bg-subtle dark:bg-slate-900 p-1 rounded-xl border border-border-default dark:border-slate-800 text-xs overflow-x-auto">
               <button
                 type="button"
                 onClick={() => setLocationFilter('store')}
-                className={`px-3 py-1.5 rounded-lg font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded-lg font-bold transition-[transform,opacity,box-shadow,border-color] whitespace-nowrap flex items-center gap-1.5 ${
                   locationFilter === 'store'
-                    ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm border border-slate-200 dark:border-slate-700'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-surface dark:bg-slate-800 text-text-primary dark:text-white shadow-sm border border-border-default dark:border-slate-700'
+                    : 'text-text-secondary dark:text-slate-400 hover:text-text-primary dark:hover:text-white'
                 }`}
               >
                 <Warehouse className="w-3.5 h-3.5 text-emerald-600" />
@@ -668,23 +668,23 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
               <button
                 type="button"
                 onClick={() => setLocationFilter('all')}
-                className={`px-3 py-1.5 rounded-lg font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded-lg font-bold transition-[transform,opacity,box-shadow,border-color] whitespace-nowrap flex items-center gap-1.5 ${
                   locationFilter === 'all'
-                    ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm border border-slate-200 dark:border-slate-700'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-surface dark:bg-slate-800 text-text-primary dark:text-white shadow-sm border border-border-default dark:border-slate-700'
+                    : 'text-text-secondary dark:text-slate-400 hover:text-text-primary dark:hover:text-white'
                 }`}
               >
-                <Layers className="w-3.5 h-3.5 text-slate-600" />
+                <Layers className="w-3.5 h-3.5 text-text-secondary" />
                 <span>Semua Lokasi ({stats.total})</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => setLocationFilter('ward')}
-                className={`px-3 py-1.5 rounded-lg font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded-lg font-bold transition-[transform,opacity,box-shadow,border-color] whitespace-nowrap flex items-center gap-1.5 ${
                   locationFilter === 'ward'
-                    ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm border border-slate-200 dark:border-slate-700'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-surface dark:bg-slate-800 text-text-primary dark:text-white shadow-sm border border-border-default dark:border-slate-700'
+                    : 'text-text-secondary dark:text-slate-400 hover:text-text-primary dark:hover:text-white'
                 }`}
               >
                 <Building2 className="w-3.5 h-3.5 text-blue-600" />
@@ -694,10 +694,10 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
               <button
                 type="button"
                 onClick={() => setLocationFilter('supplier')}
-                className={`px-3 py-1.5 rounded-lg font-bold transition-all whitespace-nowrap flex items-center gap-1.5 ${
+                className={`px-3 py-1.5 rounded-lg font-bold transition-[transform,opacity,box-shadow,border-color] whitespace-nowrap flex items-center gap-1.5 ${
                   locationFilter === 'supplier'
-                    ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white shadow-sm border border-slate-200 dark:border-slate-700'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-surface dark:bg-slate-800 text-text-primary dark:text-white shadow-sm border border-border-default dark:border-slate-700'
+                    : 'text-text-secondary dark:text-slate-400 hover:text-text-primary dark:hover:text-white'
                 }`}
               >
                 <Truck className="w-3.5 h-3.5 text-purple-600" />
@@ -710,7 +710,7 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
               <Button
                 type="button"
                 onClick={() => setIsAddCylinderOpen(!isAddCylinderOpen)}
-                className="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-xs font-bold py-1.5 px-3 rounded-xl shadow-sm flex items-center gap-1.5 active:scale-95 transition-all"
+                className="bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white text-xs font-bold py-1.5 px-3 rounded-xl shadow-sm flex items-center gap-1.5 active:scale-95 transition-[transform,opacity,box-shadow,border-color]"
                 title="Daftar silinder baharu dengan No. Siri & QR ke Stor"
               >
                 <Plus className="w-3.5 h-3.5" />
@@ -720,7 +720,7 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
               <Button
                 type="button"
                 onClick={handleVerifyAllInStore}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-1.5 px-3.5 rounded-xl shadow-sm flex items-center gap-1.5 active:scale-95 transition-all"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-1.5 px-3.5 rounded-xl shadow-sm flex items-center gap-1.5 active:scale-95 transition-[transform,opacity,box-shadow,border-color]"
                 title="Sahkan semua silinder di rak stor sekaligus"
               >
                 <CheckCheck className="w-4 h-4" />
@@ -731,7 +731,7 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
 
           {/* Quick Cylinder Registration Drawer / Card */}
           {isAddCylinderOpen && (
-            <div className="p-4 bg-teal-50/70 dark:bg-teal-950/30 border border-teal-200 dark:border-teal-800 rounded-xl space-y-3 animate-in fade-in duration-200 shadow-sm">
+            <div className="p-4 bg-accent-base/10 dark:bg-teal-950/30 border border-accent-base/20 dark:border-teal-800 rounded-xl space-y-3 animate-in fade-in duration-200 shadow-sm">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded-lg bg-teal-600 text-white flex items-center justify-center text-xs">
@@ -749,7 +749,7 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
                 <button
                   type="button"
                   onClick={() => setIsAddCylinderOpen(false)}
-                  className="text-slate-400 hover:text-slate-600 text-xs font-bold p-1"
+                  className="text-slate-400 hover:text-text-secondary text-xs font-bold p-1"
                 >
                   ✕
                 </button>
@@ -766,34 +766,34 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
                 className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-end pt-1"
               >
                 <div className="sm:col-span-5">
-                  <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
+                  <label className="block text-[10px] font-black uppercase tracking-wider text-text-muted dark:text-slate-400 mb-1">
                     No. Siri Silinder (Fizikal) <span className="text-rose-500">*</span>
                   </label>
                   <Input
                     value={manualSerialInput}
                     onChange={(e) => setManualSerialInput(e.target.value)}
                     placeholder="cth: SABOXY-004200"
-                    className="bg-white dark:bg-slate-800 text-xs font-mono py-1.5 border-slate-300 dark:border-slate-700 rounded-lg w-full uppercase"
+                    className="bg-surface dark:bg-slate-800 text-xs font-mono py-1.5 border-border-default dark:border-slate-700 rounded-lg w-full uppercase"
                     required
                     autoFocus
                   />
                 </div>
                 <div className="sm:col-span-4">
-                  <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
+                  <label className="block text-[10px] font-black uppercase tracking-wider text-text-muted dark:text-slate-400 mb-1">
                     Kod QR / Kod Bar (Pilihan)
                   </label>
                   <Input
                     value={manualQrInput}
                     onChange={(e) => setManualQrInput(e.target.value)}
                     placeholder="Sama dengan No. Siri jika kosong"
-                    className="bg-white dark:bg-slate-800 text-xs font-mono py-1.5 border-slate-300 dark:border-slate-700 rounded-lg w-full uppercase"
+                    className="bg-surface dark:bg-slate-800 text-xs font-mono py-1.5 border-border-default dark:border-slate-700 rounded-lg w-full uppercase"
                   />
                 </div>
                 <div className="sm:col-span-3">
                   <Button
                     type="submit"
                     disabled={isManualSubmitting || !manualSerialInput.trim()}
-                    className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 shadow-sm transition-all"
+                    className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 shadow-sm transition-[transform,opacity,box-shadow,border-color]"
                   >
                     <CheckCircle2 className="w-3.5 h-3.5" />
                     <span>{isManualSubmitting ? 'Mendaftar...' : 'Daftar & Sahkan'}</span>
@@ -804,7 +804,7 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
           )}
 
           {/* Search and Barcode Input Row */}
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-3 bg-slate-50 dark:bg-slate-900/40 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-3 bg-subtle/50 dark:bg-slate-900/40 p-3 rounded-xl border border-border-default dark:border-slate-800">
             
             {/* Barcode / QR Gun Scanner Input (7 cols) */}
             <form onSubmit={handleScanSubmit} className="md:col-span-7 flex items-center gap-2">
@@ -815,7 +815,7 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
                   value={scanInput}
                   onChange={(e) => setScanInput(e.target.value)}
                   placeholder="Imbas Kod Bar / Taip No. Siri Silinder (cth: SABOXY-001001)..."
-                  className="pl-9 pr-3 py-1.5 text-xs font-mono bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 rounded-lg w-full"
+                  className="pl-9 pr-3 py-1.5 text-xs font-mono bg-surface dark:bg-slate-800 border-border-default dark:border-slate-700 rounded-lg w-full"
                 />
               </div>
               <Button 
@@ -833,13 +833,13 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Filter serial / location list..."
-                className="pl-9 pr-8 py-1.5 text-xs bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 rounded-lg w-full"
+                className="pl-9 pr-8 py-1.5 text-xs bg-surface dark:bg-slate-800 border-border-default dark:border-slate-700 rounded-lg w-full"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs font-bold"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-text-secondary text-xs font-bold"
                 >
                   ✕
                 </button>
@@ -852,16 +852,16 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
         {/* 5. STATUTORY REGISTER TABLE (KEW.PS-14 STYLE) */}
         {/* ========================================================= */}
         <div className="px-6 py-2">
-          <div className="border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm bg-white dark:bg-slate-900">
+          <div className="border border-border-default dark:border-slate-800 rounded-xl overflow-hidden shadow-sm bg-surface dark:bg-slate-900">
             {isLoading ? (
-              <div className="py-14 text-center text-slate-500 space-y-2">
+              <div className="py-14 text-center text-text-muted space-y-2">
                 <RefreshCw className="w-7 h-7 animate-spin mx-auto text-teal-600" />
                 <p className="text-xs font-bold">Memuatkan daftar silinder fizikal dari pangkalan data...</p>
               </div>
             ) : filteredCylinders.length === 0 ? (
               <div className="py-12 text-center text-slate-400 space-y-1">
-                <AlertCircle className="w-7 h-7 mx-auto text-slate-300 dark:text-slate-600" />
-                <p className="text-xs font-bold text-slate-600 dark:text-slate-400">
+                <AlertCircle className="w-7 h-7 mx-auto text-slate-300 dark:text-text-secondary" />
+                <p className="text-xs font-bold text-text-secondary dark:text-slate-400">
                   Tiada rekod silinder sepadan dengan kriteria tapisan ini.
                 </p>
                 <p className="text-[11px] text-slate-400">
@@ -869,9 +869,9 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
                 </p>
               </div>
             ) : (
-              <div className="max-h-72 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
+              <div className="max-h-72 overflow-y-auto divide-y divide-border-subtle dark:divide-slate-800">
                 <table className="w-full text-left border-collapse">
-                  <thead className="bg-slate-50 dark:bg-slate-800/90 sticky top-0 text-[11px] font-bold uppercase tracking-wider text-slate-600 dark:text-slate-300 border-b border-slate-200 dark:border-slate-700 z-10">
+                  <thead className="bg-subtle/50 dark:bg-slate-800/90 sticky top-0 text-[11px] font-bold uppercase tracking-wider text-text-secondary dark:text-slate-300 border-b border-border-default dark:border-slate-700 z-10">
                     <tr>
                       <th className="py-3 px-4 w-12 text-center">Bil.</th>
                       <th className="py-3 px-4 min-w-[200px]">No. Siri Silinder (Aset)</th>
@@ -881,7 +881,7 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
                       <th className="py-3 px-4 text-center min-w-[120px]">Tindakan</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 text-xs">
+                  <tbody className="divide-y divide-border-subtle dark:divide-slate-800/60 text-xs">
                     {filteredCylinders.map((cyl, idx) => {
                       const isVerified = verifiedIds.has(cyl.id);
                       const loc = ((typeof cyl.current_location === 'object' ? cyl.current_location?.location_name : cyl.current_location) || '').toLowerCase();
@@ -892,8 +892,8 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
                           key={cyl.id}
                           className={`transition-colors ${
                             isVerified 
-                              ? 'bg-emerald-50/40 dark:bg-emerald-950/20 hover:bg-emerald-50/70 dark:hover:bg-emerald-950/30' 
-                              : 'hover:bg-slate-50/80 dark:hover:bg-slate-800/50'
+                              ? 'bg-emerald-500/10 dark:bg-emerald-950/20 hover:bg-emerald-500/10 dark:hover:bg-emerald-950/30' 
+                              : 'hover:bg-subtle/50 dark:hover:bg-slate-800/50'
                           }`}
                         >
                           {/* 1. Index */}
@@ -902,7 +902,7 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
                           </td>
 
                           {/* 2. Serial Number */}
-                          <td className="py-2.5 px-4 font-mono font-bold text-slate-900 dark:text-white whitespace-nowrap">
+                          <td className="py-2.5 px-4 font-mono font-bold text-text-primary dark:text-white whitespace-nowrap">
                             <div className="flex items-center gap-2">
                               <span>{cyl.serial_number}</span>
                               {isVerified && (
@@ -923,8 +923,8 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
                           <td className="py-2.5 px-4 whitespace-nowrap">
                             <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-semibold ${
                               isStore 
-                                ? 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800' 
-                                : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700'
+                                ? 'bg-emerald-500/10 dark:bg-emerald-950/40 text-emerald-400 dark:text-emerald-300 border border-emerald-500/20 dark:border-emerald-800' 
+                                : 'bg-subtle dark:bg-slate-800 text-text-secondary dark:text-slate-300 border border-border-default dark:border-slate-700'
                             }`}>
                               <Building2 className="w-3 h-3 text-slate-400 shrink-0" />
                               <span>{(typeof cyl.current_location === 'object' ? cyl.current_location?.location_name : cyl.current_location) || 'Pharmacy Store'}</span>
@@ -935,12 +935,12 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
                           <td className="py-2.5 px-4 whitespace-nowrap">
                             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase inline-block ${
                               cyl.status === 'available' || cyl.status === 'full'
-                                ? 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300'
+                                ? 'bg-emerald-100 dark:bg-emerald-900/60 text-emerald-400 dark:text-emerald-300'
                                 : cyl.status === 'empty'
-                                ? 'bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-300'
+                                ? 'bg-amber-100 dark:bg-amber-900/60 text-amber-400 dark:text-amber-300'
                                 : cyl.status === 'returned_to_supplier'
-                                ? 'bg-purple-100 dark:bg-purple-900/60 text-purple-800 dark:text-purple-300'
-                                : 'bg-blue-100 dark:bg-blue-900/60 text-blue-800 dark:text-blue-300'
+                                ? 'bg-purple-100 dark:bg-purple-900/60 text-indigo-400 dark:text-purple-300'
+                                : 'bg-blue-100 dark:bg-blue-900/60 text-blue-400 dark:text-blue-300'
                             }`}>
                               {cyl.status === 'available' ? 'Penuh / Sedia' : cyl.status}
                             </span>
@@ -949,12 +949,12 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
                           {/* 5. Verification Status */}
                           <td className="py-2.5 px-4 text-center whitespace-nowrap">
                             {isVerified ? (
-                              <span className="bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700 px-2.5 py-1 rounded-lg text-[10px] font-extrabold inline-flex items-center gap-1 shadow-sm">
+                              <span className="bg-emerald-500/10 dark:bg-emerald-950/60 text-emerald-400 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700 px-2.5 py-1 rounded-lg text-[10px] font-extrabold inline-flex items-center gap-1 shadow-sm">
                                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                                 <span>Disahkan Fizikal</span>
                               </span>
                             ) : (
-                              <span className="bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-2.5 py-1 rounded-lg text-[10px] font-semibold inline-block">
+                              <span className="bg-subtle dark:bg-slate-800 text-text-muted dark:text-slate-400 px-2.5 py-1 rounded-lg text-[10px] font-semibold inline-block">
                                 Belum Disahkan
                               </span>
                             )}
@@ -968,7 +968,7 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
                               onClick={() => handleToggleVerify(cyl.id)}
                               className={`text-[11px] font-bold py-1 px-3 rounded-lg shadow-sm ${
                                 isVerified
-                                  ? 'border-rose-300 text-rose-700 hover:bg-rose-50 dark:hover:bg-rose-950/30'
+                                  ? 'border-rose-300 text-rose-700 hover:bg-rose-500/10 dark:hover:bg-rose-950/30'
                                   : 'bg-teal-600 hover:bg-teal-700 text-white'
                               }`}
                             >
@@ -988,10 +988,10 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
         {/* ========================================================= */}
         {/* 6. OFFICIAL STATUTORY SIGN-OFF & DECLARATION */}
         {/* ========================================================= */}
-        <div className="mx-6 my-3 p-4 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 space-y-3">
-          <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
+        <div className="mx-6 my-3 p-4 rounded-xl bg-subtle/50 dark:bg-slate-900/50 border border-border-default dark:border-slate-800 space-y-3">
+          <div className="flex items-center gap-2 border-b border-border-default dark:border-slate-800 pb-2">
             <UserCheck className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-text-primary dark:text-slate-200">
               Perakuan Pegawai Pemeriksa (KEW.PS-14)
             </h3>
             <span className="text-[10px] text-slate-400 italic ml-auto">
@@ -1002,39 +1002,39 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
             {/* Auditor Name */}
             <div>
-              <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block font-bold text-text-secondary dark:text-slate-300 mb-1">
                 Nama Pegawai Pemeriksa *
               </label>
               <Input
                 required
                 value={officerName}
                 onChange={(e) => setOfficerName(e.target.value)}
-                className="text-xs py-1.5 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 rounded-lg"
+                className="text-xs py-1.5 bg-surface dark:bg-slate-800 border-border-default dark:border-slate-700 rounded-lg"
               />
             </div>
 
             {/* Officer Designation */}
             <div>
-              <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block font-bold text-text-secondary dark:text-slate-300 mb-1">
                 Jawatan & Unit Bertanggungjawab
               </label>
               <Input
                 value={officerPost}
                 onChange={(e) => setOfficerPost(e.target.value)}
-                className="text-xs py-1.5 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 rounded-lg"
+                className="text-xs py-1.5 bg-surface dark:bg-slate-800 border-border-default dark:border-slate-700 rounded-lg"
               />
             </div>
 
             {/* Audit Remarks */}
             <div>
-              <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+              <label className="block font-bold text-text-secondary dark:text-slate-300 mb-1">
                 Catatan / Ulasan Pemeriksaan
               </label>
               <Input
                 value={remarks}
                 onChange={(e) => setRemarks(e.target.value)}
                 placeholder="Contoh: Kiraan fizikal di stor sepadan dengan sistem..."
-                className="text-xs py-1.5 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 rounded-lg"
+                className="text-xs py-1.5 bg-surface dark:bg-slate-800 border-border-default dark:border-slate-700 rounded-lg"
               />
             </div>
           </div>
@@ -1043,7 +1043,7 @@ export const CylinderStockReconciliationModal: React.FC<CylinderStockReconciliat
         {/* ========================================================= */}
         {/* 7. MODAL FOOTER ACTIONS */}
         {/* ========================================================= */}
-        <div className="px-6 py-4 bg-slate-100 dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="px-6 py-4 bg-subtle dark:bg-slate-900 border-t border-border-default dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
           <button
             type="button"
             onClick={() => {

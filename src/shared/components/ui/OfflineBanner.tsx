@@ -81,7 +81,7 @@ export const OfflineBanner: React.FC<OfflineBannerProps> = ({ onOpenDrawer }) =>
                 <button
                   onClick={() => void syncNow()}
                   disabled={isSyncing}
-                  className="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-teal-600 hover:bg-teal-500 text-white transition-all active:scale-95 disabled:opacity-50 flex items-center gap-1"
+                  className="px-2.5 py-1 rounded-md text-[11px] font-semibold bg-teal-600 hover:bg-teal-500 text-white transition-colors active:scale-95 disabled:opacity-50 flex items-center gap-1"
                 >
                   <RefreshCw className={`w-3 h-3 ${isSyncing ? 'animate-spin' : ''}`} />
                   {isSyncing ? 'Menyegerak' : 'Sync Sekarang'}

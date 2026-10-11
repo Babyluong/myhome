@@ -1,3 +1,10 @@
-// @ts-nocheck
-export * from '../../shared/components/ui'
-
+export * from '../../shared/components/ui';
+export { Surface } from './surface';
+export type { SurfaceProps } from './surface';
+export { DataTable as DepthDataTable } from './data-table';
+export type { DataTableProps, Column } from './data-table';
+export { PageHeader } from './page-header';
+export type { PageHeaderProps } from './page-header';
+export { AppShell } from './app-shell';
+export type { AppShellProps } from './app-shell';
+export { ThemeToggle } from './theme-toggle';

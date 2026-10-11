@@ -76,7 +76,7 @@ export const InstallPrompt: React.FC = () => {
           <div className="mt-3.5 pt-3 border-t border-slate-800/80 flex items-center gap-2">
             <button
               onClick={handleInstallClick}
-              className="flex-1 py-2 px-3 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-400 hover:to-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-teal-900/30 transition-all active:scale-95"
+              className="flex-1 py-2 px-3 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-600 hover:from-teal-400 hover:to-emerald-500 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-teal-900/30 transition-colors active:scale-95"
             >
               {isIOS ? (
                 <>

@@ -32,7 +32,7 @@ const statusConfig: Record<SensitiveDataRequestStatus, { color: string; bgColor:
   pending: { color: 'text-amber-600', bgColor: 'bg-amber-100', icon: Clock, label: 'Pending Review' },
   approved: { color: 'text-green-600', bgColor: 'bg-green-100', icon: CheckCircle, label: 'Approved' },
   denied: { color: 'text-red-600', bgColor: 'bg-red-100', icon: XCircle, label: 'Denied' },
-  expired: { color: 'text-gray-500', bgColor: 'bg-gray-100', icon: Clock, label: 'Expired' },
+  expired: { color: 'text-text-muted', bgColor: 'bg-subtle', icon: Clock, label: 'Expired' },
   revoked: { color: 'text-red-500', bgColor: 'bg-red-50', icon: Ban, label: 'Revoked' },
 }
 
@@ -44,7 +44,7 @@ const categoryLabels: Record<SensitiveDataCategory, { label: string; description
 }
 
 const urgencyLabels = {
-  routine: { label: 'Routine', color: 'text-gray-600', bgColor: 'bg-gray-100' },
+  routine: { label: 'Routine', color: 'text-text-muted', bgColor: 'bg-subtle' },
   urgent: { label: 'Urgent', color: 'text-amber-600', bgColor: 'bg-amber-100' },
   emergency: { label: 'Emergency', color: 'text-red-600', bgColor: 'bg-red-100' },
 }
@@ -149,7 +149,7 @@ export const SensitiveDataRequestDetailPage: React.FC = () => {
   if (!request) {
     return (
       <div className="text-center py-12">
-        <h2 className="text-xl font-semibold text-gray-900">Request not found</h2>
+        <h2 className="text-xl font-semibold text-text-primary">Request not found</h2>
         <Button variant="ghost" onClick={() => navigate(ROUTES.ADMIN_SENSITIVE_DATA_REQUESTS)} className="mt-4">
           Back to list
         </Button>
@@ -187,7 +187,7 @@ export const SensitiveDataRequestDetailPage: React.FC = () => {
               <StatusIcon className={cn('w-6 h-6', statusConf.color)} />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Access Request Review</h1>
+              <h1 className="text-2xl font-bold text-text-primary">Access Request Review</h1>
               <Badge variant={
                 request.status === 'pending' ? 'warning' :
                 request.status === 'approved' ? 'success' :
@@ -239,7 +239,7 @@ export const SensitiveDataRequestDetailPage: React.FC = () => {
           transition={{ delay: 0.1 }}
           className={cn(
             'rounded-xl p-4 border',
-            request.urgency === 'emergency' ? 'bg-red-50 border-red-200' : 'bg-amber-50 border-amber-200'
+            request.urgency === 'emergency' ? 'bg-red-50 border-red-200' : 'bg-amber-500/10 border-amber-500/20'
           )}
         >
           <div className="flex items-center gap-3">
@@ -249,7 +249,7 @@ export const SensitiveDataRequestDetailPage: React.FC = () => {
             )} />
             <p className={cn(
               'font-medium',
-              request.urgency === 'emergency' ? 'text-red-900' : 'text-amber-900'
+              request.urgency === 'emergency' ? 'text-red-900' : 'text-amber-400 dark:text-amber-300 font-bold'
             )}>
               {request.urgency === 'emergency' 
                 ? 'EMERGENCY REQUEST - Requires immediate attention'
@@ -268,20 +268,20 @@ export const SensitiveDataRequestDetailPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className="bg-white rounded-xl border border-gray-200 p-6"
+            className="bg-surface rounded-xl border border-border-default p-6"
           >
-            <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <User className="w-5 h-5 text-gray-500" />
+            <h3 className="font-semibold text-text-primary mb-4 flex items-center gap-2">
+              <User className="w-5 h-5 text-text-muted" />
               Patient Information
             </h3>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm text-gray-500">Patient Name</p>
-                <p className="font-medium text-gray-900">{request.patient_name}</p>
+                <p className="text-sm text-text-muted">Patient Name</p>
+                <p className="font-medium text-text-primary">{request.patient_name}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">IC Number</p>
-                <p className="font-medium text-gray-900">{request.patient_ic}</p>
+                <p className="text-sm text-text-muted">IC Number</p>
+                <p className="font-medium text-text-primary">{request.patient_ic}</p>
               </div>
             </div>
           </motion.div>
@@ -291,18 +291,18 @@ export const SensitiveDataRequestDetailPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white rounded-xl border border-gray-200 p-6"
+            className="bg-surface rounded-xl border border-border-default p-6"
           >
-            <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <Shield className="w-5 h-5 text-gray-500" />
+            <h3 className="font-semibold text-text-primary mb-4 flex items-center gap-2">
+              <Shield className="w-5 h-5 text-text-muted" />
               Data Category Requested
             </h3>
             <div className={cn(
               'p-4 rounded-lg',
-              request.data_category === 'all' ? 'bg-red-50 border border-red-200' : 'bg-gray-50'
+              request.data_category === 'all' ? 'bg-red-50 border border-red-200' : 'bg-subtle/50'
             )}>
-              <p className="font-medium text-gray-900">{categoryInfo.label}</p>
-              <p className="text-sm text-gray-600 mt-1">{categoryInfo.description}</p>
+              <p className="font-medium text-text-primary">{categoryInfo.label}</p>
+              <p className="text-sm text-text-muted mt-1">{categoryInfo.description}</p>
             </div>
             {request.data_category === 'all' && (
               <div className="flex items-center gap-2 mt-3 text-amber-600">
@@ -317,13 +317,13 @@ export const SensitiveDataRequestDetailPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25 }}
-            className="bg-white rounded-xl border border-gray-200 p-6"
+            className="bg-surface rounded-xl border border-border-default p-6"
           >
-            <h3 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
-              <FileText className="w-5 h-5 text-gray-500" />
+            <h3 className="font-semibold text-text-primary mb-4 flex items-center gap-2">
+              <FileText className="w-5 h-5 text-text-muted" />
               Justification
             </h3>
-            <p className="text-gray-700 whitespace-pre-wrap">{request.justification}</p>
+            <p className="text-text-secondary whitespace-pre-wrap">{request.justification}</p>
           </motion.div>
 
           {/* Denial Reason (if denied) */}
@@ -350,12 +350,12 @@ export const SensitiveDataRequestDetailPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className="bg-white rounded-xl border border-gray-200 p-6"
+            className="bg-surface rounded-xl border border-border-default p-6"
           >
-            <h3 className="font-semibold text-gray-900 mb-4">Request Details</h3>
+            <h3 className="font-semibold text-text-primary mb-4">Request Details</h3>
             <div className="space-y-4">
               <div>
-                <p className="text-sm text-gray-500">Urgency</p>
+                <p className="text-sm text-text-muted">Urgency</p>
                 <span className={cn(
                   'inline-flex items-center px-2.5 py-0.5 rounded-full text-sm font-medium mt-1',
                   urgencyInfo.bgColor, urgencyInfo.color
@@ -364,12 +364,12 @@ export const SensitiveDataRequestDetailPage: React.FC = () => {
                 </span>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Requested Duration</p>
-                <p className="font-medium text-gray-900">{request.access_duration_hours} hour(s)</p>
+                <p className="text-sm text-text-muted">Requested Duration</p>
+                <p className="font-medium text-text-primary">{request.access_duration_hours} hour(s)</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500">Request Date</p>
-                <p className="font-medium text-gray-900">
+                <p className="text-sm text-text-muted">Request Date</p>
+                <p className="font-medium text-text-primary">
                   {formatDate(request.created_at, {
                     year: 'numeric',
                     month: 'short',
@@ -381,8 +381,8 @@ export const SensitiveDataRequestDetailPage: React.FC = () => {
               </div>
               {request.approved_at && (
                 <div>
-                  <p className="text-sm text-gray-500">Reviewed Date</p>
-                  <p className="font-medium text-gray-900">
+                  <p className="text-sm text-text-muted">Reviewed Date</p>
+                  <p className="font-medium text-text-primary">
                     {formatDate(request.approved_at, {
                       year: 'numeric',
                       month: 'short',
@@ -395,10 +395,10 @@ export const SensitiveDataRequestDetailPage: React.FC = () => {
               )}
               {request.access_expires_at && (
                 <div>
-                  <p className="text-sm text-gray-500">Access Expires</p>
+                  <p className="text-sm text-text-muted">Access Expires</p>
                   <p className={cn(
                     'font-medium',
-                    new Date(request.access_expires_at) > new Date() ? 'text-green-600' : 'text-gray-500'
+                    new Date(request.access_expires_at) > new Date() ? 'text-green-600' : 'text-text-muted'
                   )}>
                     {formatDate(request.access_expires_at, {
                       year: 'numeric',
@@ -418,17 +418,17 @@ export const SensitiveDataRequestDetailPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white rounded-xl border border-gray-200 p-6"
+            className="bg-surface rounded-xl border border-border-default p-6"
           >
-            <h3 className="font-semibold text-gray-900 mb-4">Requested By</h3>
+            <h3 className="font-semibold text-text-primary mb-4">Requested By</h3>
             {request.requestor ? (
               <div className="space-y-2">
-                <p className="font-medium text-gray-900">{request.requestor.full_name}</p>
-                <p className="text-sm text-gray-500">{request.requestor.email}</p>
-                <p className="text-sm text-gray-500">{request.requestor.jawatan}</p>
+                <p className="font-medium text-text-primary">{request.requestor.full_name}</p>
+                <p className="text-sm text-text-muted">{request.requestor.email}</p>
+                <p className="text-sm text-text-muted">{request.requestor.jawatan}</p>
               </div>
             ) : (
-              <p className="text-gray-500">Unknown</p>
+              <p className="text-text-muted">Unknown</p>
             )}
           </motion.div>
 
@@ -438,12 +438,12 @@ export const SensitiveDataRequestDetailPage: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25 }}
-              className="bg-white rounded-xl border border-gray-200 p-6"
+              className="bg-surface rounded-xl border border-border-default p-6"
             >
-              <h3 className="font-semibold text-gray-900 mb-4">Reviewed By</h3>
+              <h3 className="font-semibold text-text-primary mb-4">Reviewed By</h3>
               <div className="space-y-2">
-                <p className="font-medium text-gray-900">{request.approved_by_user.full_name}</p>
-                <p className="text-sm text-gray-500">{request.approved_by_user.email}</p>
+                <p className="font-medium text-text-primary">{request.approved_by_user.full_name}</p>
+                <p className="text-sm text-text-muted">{request.approved_by_user.email}</p>
               </div>
             </motion.div>
           )}
@@ -457,12 +457,12 @@ export const SensitiveDataRequestDetailPage: React.FC = () => {
         title="Approve Access Request"
       >
         <div className="space-y-4">
-          <p className="text-gray-600">
+          <p className="text-text-muted">
             You are about to approve access to <strong>{categoryInfo.label}</strong> for patient <strong>{request.patient_name}</strong>.
           </p>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-text-secondary mb-1">
               Access Duration (hours)
             </label>
             <Select
@@ -500,7 +500,7 @@ export const SensitiveDataRequestDetailPage: React.FC = () => {
         title="Deny Access Request"
       >
         <div className="space-y-4">
-          <p className="text-gray-600">
+          <p className="text-text-muted">
             Please provide a reason for denying this request.
           </p>
           
@@ -537,7 +537,7 @@ export const SensitiveDataRequestDetailPage: React.FC = () => {
         title="Revoke Access"
       >
         <div className="space-y-4">
-          <p className="text-gray-600">
+          <p className="text-text-muted">
             Are you sure you want to revoke access for this request? This action cannot be undone.
           </p>
 
@@ -569,7 +569,7 @@ const Select: React.FC<{
   <select
     value={value}
     onChange={onChange}
-    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+    className="w-full px-3 py-2 border border-border-default rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
   >
     {children}
   </select>

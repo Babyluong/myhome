@@ -124,28 +124,28 @@ export const PatientQuotaDrawer: React.FC<PatientQuotaDrawerProps> = ({
     switch (status) {
       case 'TELAH_DIISI':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
             <span>Telah Diisi</span>
           </span>
         )
       case 'BELUM_DIISI':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-semibold bg-amber-50 text-amber-800 border border-amber-200">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
             <Clock className="w-3.5 h-3.5 text-amber-600" />
             <span>Menunggu Refill</span>
           </span>
         )
       case 'TERLEPAS_TEMUJANJI':
         return (
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-semibold bg-rose-50 text-rose-800 border border-rose-200">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">
             <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />
             <span>Terlepas Janji Temu</span>
           </span>
         )
       default:
         return (
-          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-100 text-slate-700 border border-slate-200">
+          <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-medium bg-subtle text-text-secondary border border-border-default">
             {status}
           </span>
         )
@@ -162,7 +162,7 @@ export const PatientQuotaDrawer: React.FC<PatientQuotaDrawerProps> = ({
 
       {/* Slide-over Right Drawer Container */}
       <div className="fixed inset-y-0 right-0 max-w-full flex pl-6 sm:pl-10">
-        <div className="w-screen max-w-4xl bg-white shadow-2xl flex flex-col border-l border-slate-200 animate-in slide-in-from-right duration-300 ease-out">
+        <div className="w-screen max-w-4xl bg-surface shadow-2xl flex flex-col border-l border-border-default animate-in slide-in-from-right duration-300 ease-out">
           
           {/* Toast Notification */}
           {actionToast && (
@@ -194,7 +194,7 @@ export const PatientQuotaDrawer: React.FC<PatientQuotaDrawerProps> = ({
             <div className="flex items-center gap-2.5">
               <button
                 onClick={() => setIsAddPatientOpen(true)}
-                className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-medium rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer shadow-elevation-1"
               >
                 <UserPlus className="w-3.5 h-3.5" />
                 <span>+ Daftar Pesakit Baru</span>
@@ -210,101 +210,101 @@ export const PatientQuotaDrawer: React.FC<PatientQuotaDrawerProps> = ({
           </div>
 
           {/* Hospital Quota & Physical Stock Comparison Bar */}
-          <div className="px-6 py-3 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="px-6 py-3 bg-subtle/50 border-b border-border-default flex flex-wrap items-center justify-between gap-3 text-xs">
             <div className="flex flex-wrap items-center gap-3">
-              <div className="flex items-center gap-1.5 bg-white px-2.5 py-1 rounded-md border border-slate-200 text-slate-700">
-                <Package className="w-3.5 h-3.5 text-slate-500" />
-                <span>Siling Kuota: <strong className="text-slate-900 font-semibold">{quotaItem.monthlyQuota.toLocaleString()} {quotaItem.unit}</strong></span>
+              <div className="flex items-center gap-1.5 bg-surface px-2.5 py-1 rounded-md border border-border-default text-text-secondary">
+                <Package className="w-3.5 h-3.5 text-text-muted" />
+                <span>Siling Kuota: <strong className="text-text-primary font-semibold">{quotaItem.monthlyQuota.toLocaleString()} {quotaItem.unit}</strong></span>
               </div>
 
-              <div className="flex items-center gap-1.5 bg-white px-2.5 py-1 rounded-md border border-slate-200 text-slate-700">
-                <Building2 className="w-3.5 h-3.5 text-slate-500" />
-                <span>Stok Fizikal MyInventory: <strong className="text-slate-900 font-semibold">{(quotaItem.physicalStockOnHand ?? quotaItem.quotaRemaining).toLocaleString()} {quotaItem.unit}</strong></span>
-                {quotaItem.storeLocation && <span className="text-[11px] text-slate-500 font-mono">({quotaItem.storeLocation})</span>}
+              <div className="flex items-center gap-1.5 bg-surface px-2.5 py-1 rounded-md border border-border-default text-text-secondary">
+                <Building2 className="w-3.5 h-3.5 text-text-muted" />
+                <span>Stok Fizikal MyInventory: <strong className="text-text-primary font-semibold">{(quotaItem.physicalStockOnHand ?? quotaItem.quotaRemaining).toLocaleString()} {quotaItem.unit}</strong></span>
+                {quotaItem.storeLocation && <span className="text-[11px] text-text-muted font-mono">({quotaItem.storeLocation})</span>}
               </div>
 
-              <div className="flex items-center gap-1.5 bg-white px-2.5 py-1 rounded-md border border-slate-200 text-slate-700">
-                <FileCheck className="w-3.5 h-3.5 text-slate-500" />
-                <span>Komitmen Bulanan: <strong className="text-slate-900 font-semibold">{stats?.totalMonthlyCommittedDose.toLocaleString()} {quotaItem.unit}/bln</strong></span>
+              <div className="flex items-center gap-1.5 bg-surface px-2.5 py-1 rounded-md border border-border-default text-text-secondary">
+                <FileCheck className="w-3.5 h-3.5 text-text-muted" />
+                <span>Komitmen Bulanan: <strong className="text-text-primary font-semibold">{stats?.totalMonthlyCommittedDose.toLocaleString()} {quotaItem.unit}/bln</strong></span>
               </div>
             </div>
 
-            <div className="text-[11px] text-slate-500">
-              Kitaran: <span className="font-medium text-slate-800">{quotaItem.allocationPeriod}</span>
+            <div className="text-[11px] text-text-muted">
+              Kitaran: <span className="font-medium text-text-primary">{quotaItem.allocationPeriod}</span>
             </div>
           </div>
 
           {/* 4-Stat Metric Summary Strip */}
-          <div className="px-6 py-4 grid grid-cols-2 sm:grid-cols-4 gap-3 bg-white border-b border-slate-200">
+          <div className="px-6 py-4 grid grid-cols-2 sm:grid-cols-4 gap-3 bg-surface border-b border-border-default">
             {/* Card 1: Telah Diisi */}
-            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-              <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
+            <div className="p-3 bg-subtle/50 rounded-xl border border-border-default space-y-1">
+              <div className="flex items-center justify-between text-xs text-text-muted font-medium">
                 <span>Telah Diisi</span>
-                <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
+                <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-500/10 px-1.5 py-0.2 rounded border border-emerald-500/20">
                   {stats?.fillPercentage}%
                 </span>
               </div>
-              <div className="text-xl font-bold text-slate-900 font-mono tabular-nums">
-                {stats?.filledCount} <span className="text-xs font-normal text-slate-500">Pesakit</span>
+              <div className="text-xl font-bold text-text-primary font-mono tabular-nums">
+                {stats?.filledCount} <span className="text-xs font-normal text-text-muted">Pesakit</span>
               </div>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-text-muted">
                 {stats?.totalFilledDoseThisMonth.toLocaleString()} {quotaItem.unit} dibekalkan
               </p>
             </div>
 
             {/* Card 2: Menunggu Refill */}
-            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-              <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
+            <div className="p-3 bg-subtle/50 rounded-xl border border-border-default space-y-1">
+              <div className="flex items-center justify-between text-xs text-text-muted font-medium">
                 <span>Menunggu Refill</span>
-                <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 px-1.5 py-0.2 rounded border border-amber-200">
+                <span className="text-[11px] font-semibold text-amber-700 bg-amber-500/10 px-1.5 py-0.2 rounded border border-amber-500/20">
                   Janji Temu
                 </span>
               </div>
-              <div className="text-xl font-bold text-slate-900 font-mono tabular-nums">
-                {stats?.pendingCount} <span className="text-xs font-normal text-slate-500">Pesakit</span>
+              <div className="text-xl font-bold text-text-primary font-mono tabular-nums">
+                {stats?.pendingCount} <span className="text-xs font-normal text-text-muted">Pesakit</span>
               </div>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-text-muted">
                 {stats?.totalPendingDoseThisMonth.toLocaleString()} {quotaItem.unit} belum dituntut
               </p>
             </div>
 
             {/* Card 3: Terlepas Janji Temu */}
-            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-              <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
+            <div className="p-3 bg-subtle/50 rounded-xl border border-border-default space-y-1">
+              <div className="flex items-center justify-between text-xs text-text-muted font-medium">
                 <span>Terlepas Janji Temu</span>
-                <span className="text-[11px] font-semibold text-rose-700 bg-rose-50 px-1.5 py-0.2 rounded border border-rose-200">
+                <span className="text-[11px] font-semibold text-rose-700 bg-rose-500/10 px-1.5 py-0.2 rounded border border-rose-500/20">
                   Defaulter
                 </span>
               </div>
-              <div className="text-xl font-bold text-slate-900 font-mono tabular-nums">
-                {stats?.defaulterCount} <span className="text-xs font-normal text-slate-500">Pesakit</span>
+              <div className="text-xl font-bold text-text-primary font-mono tabular-nums">
+                {stats?.defaulterCount} <span className="text-xs font-normal text-text-muted">Pesakit</span>
               </div>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-text-muted">
                 Tindakan susulan farmasi
               </p>
             </div>
 
             {/* Card 4: Jumlah Pendaftaran */}
-            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
-              <div className="flex items-center justify-between text-xs text-slate-500 font-medium">
+            <div className="p-3 bg-subtle/50 rounded-xl border border-border-default space-y-1">
+              <div className="flex items-center justify-between text-xs text-text-muted font-medium">
                 <span>Jumlah Pendaftaran</span>
-                <span className="text-[11px] font-medium text-slate-600 bg-slate-200/70 px-1.5 py-0.2 rounded">
+                <span className="text-[11px] font-medium text-text-muted bg-slate-200/70 px-1.5 py-0.2 rounded">
                   Aktif
                 </span>
               </div>
-              <div className="text-xl font-bold text-slate-900 font-mono tabular-nums">
-                {stats?.totalPatients} <span className="text-xs font-normal text-slate-500">Pesakit</span>
+              <div className="text-xl font-bold text-text-primary font-mono tabular-nums">
+                {stats?.totalPatients} <span className="text-xs font-normal text-text-muted">Pesakit</span>
               </div>
-              <p className="text-[11px] text-slate-500">
+              <p className="text-[11px] text-text-muted">
                 Penggunaan: {stats?.totalMonthlyCommittedDose.toLocaleString()} {quotaItem.unit}/bln
               </p>
             </div>
           </div>
 
           {/* Filter Bar & Search Input */}
-          <div className="px-6 py-3 bg-white border-b border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="px-6 py-3 bg-surface border-b border-border-default flex flex-col sm:flex-row items-center justify-between gap-3">
             {/* Segmented Filter Control */}
-            <div className="flex items-center p-1 bg-slate-100 rounded-lg border border-slate-200 w-full sm:w-auto overflow-x-auto">
+            <div className="flex items-center p-1 bg-subtle rounded-lg border border-border-default w-full sm:w-auto overflow-x-auto">
               {[
                 { key: 'ALL', label: 'Semua', count: patients.length },
                 { key: 'TELAH_DIISI', label: 'Telah Diisi', count: stats?.filledCount || 0 },
@@ -315,15 +315,15 @@ export const PatientQuotaDrawer: React.FC<PatientQuotaDrawerProps> = ({
                   key={tab.key}
                   type="button"
                   onClick={() => setStatusFilter(tab.key as any)}
-                  className={`px-3 py-1 rounded-md text-xs font-medium whitespace-nowrap transition-all cursor-pointer flex items-center gap-1.5 ${
+                  className={`px-3 py-1 rounded-md text-xs font-medium whitespace-nowrap transition-colors cursor-pointer flex items-center gap-1.5 ${
                     statusFilter === tab.key
-                      ? 'bg-white text-slate-900 shadow-2xs font-semibold'
-                      : 'text-slate-600 hover:text-slate-900'
+                      ? 'bg-surface text-text-primary shadow-elevation-1 font-semibold'
+                      : 'text-text-muted hover:text-text-primary'
                   }`}
                 >
                   <span>{tab.label}</span>
                   <span className={`px-1.5 py-0.2 rounded text-[10px] font-mono ${
-                    statusFilter === tab.key ? 'bg-slate-100 text-slate-800 font-bold' : 'bg-slate-200/60 text-slate-600'
+                    statusFilter === tab.key ? 'bg-subtle text-text-primary font-bold' : 'bg-slate-200/60 text-text-muted'
                   }`}>
                     {tab.count}
                   </span>
@@ -339,17 +339,17 @@ export const PatientQuotaDrawer: React.FC<PatientQuotaDrawerProps> = ({
                 placeholder="Cari pesakit, No. RN, MyKad, pakar..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-hidden focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-all"
+                className="w-full pl-8 pr-3 py-1.5 bg-subtle/50 border border-border-default rounded-lg text-xs text-text-primary placeholder:text-text-muted focus:bg-surface focus:outline-hidden focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-colors"
               />
             </div>
           </div>
 
           {/* Patients Registry List */}
-          <div className="flex-1 overflow-y-auto px-6 py-4 space-y-3 bg-slate-50/50">
+          <div className="flex-1 overflow-y-auto px-6 py-4 space-y-3 bg-subtle/50">
             {filteredPatients.length === 0 ? (
               <div className="p-12 text-center text-slate-400 space-y-2">
                 <Users className="w-10 h-10 mx-auto text-slate-300 stroke-1" />
-                <p className="text-xs font-semibold text-slate-700">Tiada rekod pesakit yang sepadan.</p>
+                <p className="text-xs font-semibold text-text-secondary">Tiada rekod pesakit yang sepadan.</p>
                 <p className="text-[11px] text-slate-400">
                   Gunakan butang "+ Daftar Pesakit Baru" untuk mendaftar pesakit kuota kelulusan khas.
                 </p>
@@ -359,53 +359,53 @@ export const PatientQuotaDrawer: React.FC<PatientQuotaDrawerProps> = ({
                 {filteredPatients.map(patient => (
                   <div
                     key={patient.id}
-                    className="p-4 bg-white rounded-xl border border-slate-200 hover:border-slate-300 transition-all shadow-2xs space-y-3"
+                    className="p-4 bg-surface rounded-xl border border-border-default hover:border-border-default transition-colors shadow-elevation-1 space-y-3"
                   >
                     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                       {/* Left: Patient Primary Details */}
                       <div className="space-y-1">
                         <div className="flex flex-wrap items-center gap-2">
                           {getStatusBadge(patient.currentMonthStatus)}
-                          <span className="px-2 py-0.5 bg-slate-100 text-slate-800 font-mono font-bold text-xs rounded border border-slate-200">
+                          <span className="px-2 py-0.5 bg-subtle text-text-primary font-mono font-bold text-xs rounded border border-border-default">
                             RN: {patient.patientRn}
                           </span>
-                          <span className="px-2 py-0.5 bg-slate-100 text-slate-600 font-mono text-xs rounded">
+                          <span className="px-2 py-0.5 bg-subtle text-text-muted font-mono text-xs rounded">
                             IC: {patient.patientMyKad}
                           </span>
-                          <span className="text-xs text-slate-500">
+                          <span className="text-xs text-text-muted">
                             ({patient.age} Thn • {patient.gender})
                           </span>
                         </div>
 
-                        <h4 className="text-sm font-bold text-slate-900">
+                        <h4 className="text-sm font-bold text-text-primary">
                           {patient.patientName}
                         </h4>
 
-                        <div className="flex flex-wrap items-center gap-2.5 text-xs text-slate-600">
+                        <div className="flex flex-wrap items-center gap-2.5 text-xs text-text-muted">
                           <span className="flex items-center gap-1">
                             <Stethoscope className="w-3.5 h-3.5 text-slate-400" />
-                            <span>Pakar: <strong className="text-slate-800">{patient.prescriberName}</strong> ({patient.clinicDepartment})</span>
+                            <span>Pakar: <strong className="text-text-primary">{patient.prescriberName}</strong> ({patient.clinicDepartment})</span>
                           </span>
                           <span>•</span>
                           <span className="flex items-center gap-1">
                             <FileCheck className="w-3.5 h-3.5 text-slate-400" />
-                            <span>Kelulusan: <strong className="font-mono text-slate-800">{patient.approvalRef}</strong></span>
+                            <span>Kelulusan: <strong className="font-mono text-text-primary">{patient.approvalRef}</strong></span>
                           </span>
                         </div>
                       </div>
 
                       {/* Right: Dosage, DNS Date & Actions */}
-                      <div className="flex flex-row sm:flex-row sm:items-center justify-between sm:justify-end gap-4 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
+                      <div className="flex flex-row sm:flex-row sm:items-center justify-between sm:justify-end gap-4 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-border-subtle">
                         <div className="text-left sm:text-right space-y-0.5">
                           <div className="text-[10px] text-slate-400 uppercase font-semibold">
                             Dos Bulanan
                           </div>
-                          <div className="text-sm font-bold text-slate-900 font-mono">
+                          <div className="text-sm font-bold text-text-primary font-mono">
                             {patient.monthlyDoseUnits} {quotaItem.unit} / Bulan
                           </div>
-                          <div className="text-[11px] text-slate-500 flex items-center sm:justify-end gap-1">
+                          <div className="text-[11px] text-text-muted flex items-center sm:justify-end gap-1">
                             <Calendar className="w-3 h-3 text-slate-400" />
-                            <span>DNS: <strong className="text-slate-800">{patient.nextRefillDueDate}</strong></span>
+                            <span>DNS: <strong className="text-text-primary">{patient.nextRefillDueDate}</strong></span>
                           </div>
                         </div>
 
@@ -417,13 +417,13 @@ export const PatientQuotaDrawer: React.FC<PatientQuotaDrawerProps> = ({
                                 setRefillConfirmPatient(patient)
                                 setDispenseQtyInput(patient.monthlyDoseUnits || 30)
                               }}
-                              className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold rounded-lg shadow-2xs flex items-center gap-1.5 cursor-pointer transition-colors"
+                              className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-semibold rounded-lg shadow-elevation-1 flex items-center gap-1.5 cursor-pointer transition-colors"
                             >
                               <Check className="w-3.5 h-3.5" />
                               <span>Isi Refill</span>
                             </button>
                           ) : (
-                            <span className="px-2.5 py-1.5 bg-slate-50 text-slate-600 border border-slate-200 rounded-lg text-xs font-medium flex items-center gap-1">
+                            <span className="px-2.5 py-1.5 bg-subtle/50 text-text-muted border border-border-default rounded-lg text-xs font-medium flex items-center gap-1">
                               <Check className="w-3.5 h-3.5 text-emerald-600" />
                               <span>Selesai</span>
                             </span>
@@ -432,7 +432,7 @@ export const PatientQuotaDrawer: React.FC<PatientQuotaDrawerProps> = ({
                           <button
                             onClick={() => setHistoryViewPatient(patient)}
                             title="Sejarah Refill Pesakit"
-                            className="p-1.5 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg border border-slate-200 cursor-pointer transition-colors"
+                            className="p-1.5 bg-subtle/50 hover:bg-subtle text-text-muted rounded-lg border border-border-default cursor-pointer transition-colors"
                           >
                             <History className="w-3.5 h-3.5" />
                           </button>
@@ -440,7 +440,7 @@ export const PatientQuotaDrawer: React.FC<PatientQuotaDrawerProps> = ({
                           <button
                             onClick={() => handleDeletePatient(patient.id, patient.patientName)}
                             title="Padam Rekod Pesakit"
-                            className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg border border-rose-200 cursor-pointer transition-colors"
+                            className="p-1.5 bg-rose-500/10 hover:bg-rose-100 text-rose-700 rounded-lg border border-rose-500/20 cursor-pointer transition-colors"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -449,13 +449,13 @@ export const PatientQuotaDrawer: React.FC<PatientQuotaDrawerProps> = ({
                     </div>
 
                     {/* Indication Summary */}
-                    <div className="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-600">
+                    <div className="pt-2 border-t border-border-subtle flex flex-wrap items-center justify-between gap-2 text-[11px] text-text-muted">
                       <div>
-                        <span className="font-semibold text-slate-700">Indikasi: </span>
+                        <span className="font-semibold text-text-secondary">Indikasi: </span>
                         <span>{patient.clinicalIndication}</span>
                       </div>
                       {patient.remarks && (
-                        <div className="text-slate-500 bg-slate-50 px-2 py-0.5 rounded border border-slate-200">
+                        <div className="text-text-muted bg-subtle/50 px-2 py-0.5 rounded border border-border-default">
                           {patient.remarks}
                         </div>
                       )}
@@ -467,13 +467,13 @@ export const PatientQuotaDrawer: React.FC<PatientQuotaDrawerProps> = ({
           </div>
 
           {/* Footer */}
-          <div className="px-6 py-3.5 bg-white border-t border-slate-200 flex items-center justify-between text-xs text-slate-500 shrink-0">
+          <div className="px-6 py-3.5 bg-surface border-t border-border-default flex items-center justify-between text-xs text-text-muted shrink-0">
             <span>
-              Memaparkan <strong className="text-slate-900 font-semibold">{filteredPatients.length}</strong> daripada <strong className="text-slate-900 font-semibold">{patients.length}</strong> pesakit berdaftar
+              Memaparkan <strong className="text-text-primary font-semibold">{filteredPatients.length}</strong> daripada <strong className="text-text-primary font-semibold">{patients.length}</strong> pesakit berdaftar
             </span>
             <button
               onClick={onClose}
-              className="px-4 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg font-medium cursor-pointer transition-colors text-xs"
+              className="px-4 py-1.5 bg-subtle hover:bg-subtle text-text-primary rounded-lg font-medium cursor-pointer transition-colors text-xs"
             >
               Tutup Laci
             </button>
@@ -498,34 +498,34 @@ export const PatientQuotaDrawer: React.FC<PatientQuotaDrawerProps> = ({
       {/* Refill Confirmation Dialog */}
       {refillConfirmPatient && (
         <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 max-w-md w-full shadow-2xl space-y-4 animate-in zoom-in-95 duration-150">
+          <div className="bg-surface rounded-2xl border border-border-default p-6 max-w-md w-full shadow-2xl space-y-4 animate-in zoom-in-95 duration-150">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-emerald-50 text-emerald-700 rounded-xl border border-emerald-200">
+              <div className="p-2.5 bg-emerald-500/10 text-emerald-700 rounded-xl border border-emerald-500/20">
                 <CheckCircle2 className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-slate-900">Sahkan Pengeluaran Refill Kuota</h3>
-                <p className="text-xs text-slate-500">{refillConfirmPatient.patientName} (RN: {refillConfirmPatient.patientRn})</p>
+                <h3 className="text-sm font-bold text-text-primary">Sahkan Pengeluaran Refill Kuota</h3>
+                <p className="text-xs text-text-muted">{refillConfirmPatient.patientName} (RN: {refillConfirmPatient.patientRn})</p>
               </div>
             </div>
 
-            <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5 text-xs">
+            <div className="p-3 bg-subtle/50 rounded-xl border border-border-default space-y-1.5 text-xs">
               <div className="flex justify-between">
-                <span className="text-slate-500">Ubat:</span>
-                <strong className="text-slate-900 font-semibold">{quotaItem.genericName}</strong>
+                <span className="text-text-muted">Ubat:</span>
+                <strong className="text-text-primary font-semibold">{quotaItem.genericName}</strong>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Klinik:</span>
-                <strong className="text-slate-900 font-medium">{refillConfirmPatient.clinicDepartment}</strong>
+                <span className="text-text-muted">Klinik:</span>
+                <strong className="text-text-primary font-medium">{refillConfirmPatient.clinicDepartment}</strong>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Pakar:</span>
-                <strong className="text-slate-900 font-medium">{refillConfirmPatient.prescriberName}</strong>
+                <span className="text-text-muted">Pakar:</span>
+                <strong className="text-text-primary font-medium">{refillConfirmPatient.prescriberName}</strong>
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-semibold text-slate-700 block">
+              <label className="text-xs font-semibold text-text-secondary block">
                 Kuantiti Dikeluarkan ({quotaItem.unit}) *
               </label>
               <input
@@ -534,9 +534,9 @@ export const PatientQuotaDrawer: React.FC<PatientQuotaDrawerProps> = ({
                 required
                 value={dispenseQtyInput}
                 onChange={e => setDispenseQtyInput(Number(e.target.value))}
-                className="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-sm font-bold text-slate-900 text-right focus:border-indigo-600 focus:outline-hidden"
+                className="w-full px-3 py-2 bg-surface border border-border-default rounded-lg text-sm font-bold text-text-primary text-right focus:border-indigo-600 focus:outline-hidden"
               />
-              <span className="text-[11px] text-slate-500 block">
+              <span className="text-[11px] text-text-muted block">
                 Status akan dikemaskini kepada <strong>Telah Diisi</strong> dan tarikh bekalan seterusnya (DNS) dijana secara automatik (+30 hari).
               </span>
             </div>
@@ -545,7 +545,7 @@ export const PatientQuotaDrawer: React.FC<PatientQuotaDrawerProps> = ({
               <button
                 type="button"
                 onClick={() => setRefillConfirmPatient(null)}
-                className="px-3.5 py-1.5 bg-white border border-slate-300 text-slate-700 hover:bg-slate-50 rounded-lg text-xs font-medium cursor-pointer"
+                className="px-3.5 py-1.5 bg-surface border border-border-default text-text-secondary hover:bg-subtle/50 rounded-lg text-xs font-medium cursor-pointer"
               >
                 Batal
               </button>
@@ -564,20 +564,20 @@ export const PatientQuotaDrawer: React.FC<PatientQuotaDrawerProps> = ({
       {/* Patient History Modal */}
       {historyViewPatient && (
         <div className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 max-w-lg w-full shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+          <div className="bg-surface rounded-2xl border border-border-default p-6 max-w-lg w-full shadow-2xl space-y-4 max-h-[85vh] flex flex-col">
+            <div className="flex items-center justify-between border-b border-border-subtle pb-3">
               <div className="flex items-center gap-2">
-                <History className="w-4 h-4 text-slate-600" />
-                <h3 className="text-sm font-bold text-slate-900">Sejarah Refill Pesakit</h3>
+                <History className="w-4 h-4 text-text-muted" />
+                <h3 className="text-sm font-bold text-text-primary">Sejarah Refill Pesakit</h3>
               </div>
-              <button onClick={() => setHistoryViewPatient(null)} className="p-1 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-700 cursor-pointer">
+              <button onClick={() => setHistoryViewPatient(null)} className="p-1 hover:bg-subtle rounded-lg text-slate-400 hover:text-text-secondary cursor-pointer">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="text-xs text-slate-600 space-y-0.5">
-              <p>Pesakit: <strong className="text-slate-900">{historyViewPatient.patientName}</strong> (RN: {historyViewPatient.patientRn})</p>
-              <p>Indikasi: <span className="text-slate-700">{historyViewPatient.clinicalIndication}</span></p>
+            <div className="text-xs text-text-muted space-y-0.5">
+              <p>Pesakit: <strong className="text-text-primary">{historyViewPatient.patientName}</strong> (RN: {historyViewPatient.patientRn})</p>
+              <p>Indikasi: <span className="text-text-secondary">{historyViewPatient.clinicalIndication}</span></p>
             </div>
 
             <div className="flex-1 overflow-y-auto space-y-2 pr-1">
@@ -587,20 +587,20 @@ export const PatientQuotaDrawer: React.FC<PatientQuotaDrawerProps> = ({
                 </div>
               ) : (
                 historyViewPatient.refillHistory.map((item, idx) => (
-                  <div key={item.id || idx} className="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs space-y-1">
-                    <div className="flex justify-between font-semibold text-slate-900">
+                  <div key={item.id || idx} className="p-3 bg-subtle/50 rounded-lg border border-border-default text-xs space-y-1">
+                    <div className="flex justify-between font-semibold text-text-primary">
                       <span>Tarikh: {item.date} {item.timestamp && `(${item.timestamp})`}</span>
                       <span className="text-emerald-700">+{item.quantity} {quotaItem.unit}</span>
                     </div>
-                    <p className="text-[11px] text-slate-500">Dikeluarkan oleh: {item.dispensedBy}</p>
-                    <p className="text-[11px] text-slate-700 font-mono">Tarikh DNS: {item.nextDueDate}</p>
-                    {item.remarks && <p className="text-[11px] text-slate-500 italic">{item.remarks}</p>}
+                    <p className="text-[11px] text-text-muted">Dikeluarkan oleh: {item.dispensedBy}</p>
+                    <p className="text-[11px] text-text-secondary font-mono">Tarikh DNS: {item.nextDueDate}</p>
+                    {item.remarks && <p className="text-[11px] text-text-muted italic">{item.remarks}</p>}
                   </div>
                 ))
               )}
             </div>
 
-            <div className="flex justify-end pt-2 border-t border-slate-100">
+            <div className="flex justify-end pt-2 border-t border-border-subtle">
               <button
                 onClick={() => setHistoryViewPatient(null)}
                 className="px-3.5 py-1.5 bg-slate-800 hover:bg-slate-900 text-white rounded-lg text-xs font-medium cursor-pointer"

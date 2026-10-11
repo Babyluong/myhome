@@ -47,13 +47,13 @@ import { normalizeRealMdcCode, resolveGenuineItemCode, isSyntheticMockCode } fro
 
 const getStatusColor = (status: string) => {
   switch (status || '') {
-    case 'completed': return 'bg-emerald-50 border-emerald-200 text-emerald-700'
+    case 'completed': return 'bg-emerald-500/10 border-emerald-500/20 text-emerald-700'
     case 'pending_approval':
-    case 'draft': return 'bg-amber-50 border-amber-200 text-amber-700'
-    case 'cancelled': return 'bg-rose-50 border-rose-200 text-rose-700'
+    case 'draft': return 'bg-amber-500/10 border-amber-500/20 text-amber-700'
+    case 'cancelled': return 'bg-rose-500/10 border-rose-500/20 text-rose-700'
     case 'approved':
-    case 'sent': return 'bg-blue-50 border-blue-200 text-blue-700'
-    default: return 'bg-slate-50 border-slate-200 text-slate-700'
+    case 'sent': return 'bg-blue-500/10 border-blue-500/20 text-blue-700'
+    default: return 'bg-subtle/50 border-border-default text-text-secondary'
   }
 }
 
@@ -968,11 +968,11 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
   )
 
   const renderPage1Content = (pageItems: typeof items, isLastPage: boolean, pageNum: number = 1) => (
-    <div className="po-print-page bg-white text-gray-900 border border-gray-800 flex flex-col relative" data-page-num={pageNum} style={{ fontFamily: "'Times New Roman', serif", minHeight: '268mm' }}>
+    <div className="po-print-page bg-surface text-text-primary border border-gray-800 flex flex-col relative" data-page-num={pageNum} style={{ fontFamily: "'Times New Roman', serif", minHeight: '268mm' }}>
       {renderWatermark()}
 
       {/* Government Document Header */}
-      <div className="border-b border-gray-800 bg-white py-2 px-6">
+      <div className="border-b border-gray-800 bg-surface py-2 px-6">
         <div className="flex items-center justify-between gap-4 mb-1">
           <div className="flex-shrink-0">
             <img
@@ -985,16 +985,16 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
           <div className="w-1 h-16 bg-gray-800 flex-shrink-0"></div>
 
           <div className="flex-1 text-center flex flex-col justify-center py-0.5">
-            <h1 className="text-[16pt] font-bold text-gray-900 uppercase m-0 p-0 leading-tight tracking-tight">
+            <h1 className="text-[16pt] font-bold text-text-primary uppercase m-0 p-0 leading-tight tracking-tight">
               KEMENTERIAN KESIHATAN
             </h1>
-            <h2 className="text-[14pt] font-bold text-gray-800 uppercase m-0 p-0 leading-tight tracking-tight">
+            <h2 className="text-[14pt] font-bold text-text-primary uppercase m-0 p-0 leading-tight tracking-tight">
               MINISTRY OF HEALTH
             </h2>
-            <h2 className="text-[14pt] font-bold text-gray-800 uppercase m-0 p-0 leading-tight tracking-tight">
+            <h2 className="text-[14pt] font-bold text-text-primary uppercase m-0 p-0 leading-tight tracking-tight">
               MALAYSIA
             </h2>
-            <p className="text-[11pt] font-bold text-gray-700 m-0 p-0 leading-normal mt-1">
+            <p className="text-[11pt] font-bold text-text-secondary m-0 p-0 leading-normal mt-1">
               Hospital Daerah Lawas
             </p>
           </div>
@@ -1002,10 +1002,10 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
           <div className="w-1 h-16 bg-gray-800 flex-shrink-0"></div>
         </div>
         <div className="text-center border-t-2 border-gray-800 pt-1 pb-1">
-          <h3 className="text-[13.5pt] font-bold text-gray-900 uppercase tracking-wide">
+          <h3 className="text-[13.5pt] font-bold text-text-primary uppercase tracking-wide">
             {order?.po_type === 'sq' ? 'Pelawaan Sebut Harga' : 'Borang Permohonan Untuk Pengeluaran Pesanan Kerajaan'}
           </h3>
-          <p className="text-[11pt] font-semibold text-gray-700 mt-0.5 italic">
+          <p className="text-[11pt] font-semibold text-text-secondary mt-0.5 italic">
             {order?.po_type === 'sq' ? 'Invite Quotation' : 'Application Form for Government Purchase Order'}
           </p>
         </div>
@@ -1018,25 +1018,25 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
             <tr>
               <td className="w-1/2 align-top pr-4">
                 <div className="space-y-0.5">
-                  <div className="border-b border-gray-300 pb-0.5">
-                    <label className="text-[8pt] font-bold text-gray-600 uppercase block">No. Pesanan / PO Number</label>
-                    <p className="text-[10.5pt] font-bold text-gray-900">
+                  <div className="border-b border-border-default pb-0.5">
+                    <label className="text-[8pt] font-bold text-text-muted uppercase block">No. Pesanan / PO Number</label>
+                    <p className="text-[10.5pt] font-bold text-text-primary">
                       {order?.po_type === 'sq' ? '-' : order?.po_number}
                     </p>
                   </div>
-                  <div className="border-b border-gray-300 pb-0.5">
-                    <label className="text-[8pt] font-bold text-gray-600 uppercase block">Kod Undi / Vote Code</label>
-                    <p className="text-[10.5pt] font-bold text-gray-900">{order?.vote_code === 'other' ? order.manual_vote_code : (order?.vote_code || '-')}</p>
+                  <div className="border-b border-border-default pb-0.5">
+                    <label className="text-[8pt] font-bold text-text-muted uppercase block">Kod Undi / Vote Code</label>
+                    <p className="text-[10.5pt] font-bold text-text-primary">{order?.vote_code === 'other' ? order.manual_vote_code : (order?.vote_code || '-')}</p>
                   </div>
-                  <div className="border-b border-gray-300 pb-0.5">
-                    <label className="text-[8pt] font-bold text-gray-600 uppercase block">Aktiviti Undi / Vote Activity</label>
-                    <p className="text-[10.5pt] font-bold text-gray-900">{order?.vote_activity === 'other' ? order.manual_vote_activity : (order?.vote_activity || '-')}</p>
+                  <div className="border-b border-border-default pb-0.5">
+                    <label className="text-[8pt] font-bold text-text-muted uppercase block">Aktiviti Undi / Vote Activity</label>
+                    <p className="text-[10.5pt] font-bold text-text-primary">{order?.vote_activity === 'other' ? order.manual_vote_activity : (order?.vote_activity || '-')}</p>
                   </div>
-                  <div className="border-b border-gray-300 pb-0.5">
-                    <label className="text-[8pt] font-bold text-gray-600 uppercase block">
+                  <div className="border-b border-border-default pb-0.5">
+                    <label className="text-[8pt] font-bold text-text-muted uppercase block">
                       {order?.po_type === 'sq' ? 'INV SQ No.' : 'No. Kontrak / Contract No.'}
                     </label>
-                    <p className="text-[10.5pt] font-bold text-gray-900">
+                    <p className="text-[10.5pt] font-bold text-text-primary">
                       {order?.po_type === 'sq'
                         ? (order?.inv_sq_number || '-')
                         : (isApplOrder(order) || order?.po_type === 'manual'
@@ -1051,32 +1051,32 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                     </p>
                   </div>
                   {order?.inv_sq_number && order?.po_type !== 'sq' && (
-                    <div className="border-b border-gray-300 pb-0.5">
-                      <label className="text-[8pt] font-bold text-gray-600 uppercase block">Inv / SQ Number</label>
-                      <p className="text-[10.5pt] font-bold text-gray-900">{order.inv_sq_number}</p>
+                    <div className="border-b border-border-default pb-0.5">
+                      <label className="text-[8pt] font-bold text-text-muted uppercase block">Inv / SQ Number</label>
+                      <p className="text-[10.5pt] font-bold text-text-primary">{order.inv_sq_number}</p>
                     </div>
                   )}
                   {order?.program_name && (
-                    <div className="border-b border-gray-300 pb-0.5">
-                      <label className="text-[8.5pt] font-bold text-gray-600 uppercase block">Program</label>
-                      <p className="text-[11.5pt] font-bold text-gray-900 uppercase">{order.program_name}</p>
+                    <div className="border-b border-border-default pb-0.5">
+                      <label className="text-[8.5pt] font-bold text-text-muted uppercase block">Program</label>
+                      <p className="text-[11.5pt] font-bold text-text-primary uppercase">{order.program_name}</p>
                     </div>
                   )}
                 </div>
               </td>
               <td className="w-1/2 align-top pl-4">
                 <div className="space-y-0.5">
-                  <div className="border-b border-gray-300 pb-0.5">
-                    <label className="text-[8pt] font-bold text-gray-600 uppercase block">Jabatan / Department</label>
-                    <p className="text-[10.5pt] font-bold text-gray-900 uppercase">{order?.department === 'other' ? order.manual_department : (order?.department || '-')}</p>
+                  <div className="border-b border-border-default pb-0.5">
+                    <label className="text-[8pt] font-bold text-text-muted uppercase block">Jabatan / Department</label>
+                    <p className="text-[10.5pt] font-bold text-text-primary uppercase">{order?.department === 'other' ? order.manual_department : (order?.department || '-')}</p>
                   </div>
-                  <div className="border-b border-gray-300 pb-0.5">
-                    <label className="text-[8pt] font-bold text-gray-600 uppercase block">Tarikh Pesanan / Order Date</label>
-                    <p className="text-[10.5pt] font-bold text-gray-900">{order?.order_date ? formatDate(order.order_date) : '-'}</p>
+                  <div className="border-b border-border-default pb-0.5">
+                    <label className="text-[8pt] font-bold text-text-muted uppercase block">Tarikh Pesanan / Order Date</label>
+                    <p className="text-[10.5pt] font-bold text-text-primary">{order?.order_date ? formatDate(order.order_date) : '-'}</p>
                   </div>
-                  <div className="border-b border-gray-300 pb-0.5">
-                    <label className="text-[8pt] font-bold text-gray-600 uppercase block">Kategori / Category</label>
-                    <p className="text-[10.5pt] font-bold text-gray-900 uppercase">{order?.category === 'other' ? order.manual_category : (order?.category?.replace('_', ' ') || '-')}</p>
+                  <div className="border-b border-border-default pb-0.5">
+                    <label className="text-[8pt] font-bold text-text-muted uppercase block">Kategori / Category</label>
+                    <p className="text-[10.5pt] font-bold text-text-primary uppercase">{order?.category === 'other' ? order.manual_category : (order?.category?.replace('_', ' ') || '-')}</p>
                   </div>
                 </div>
               </td>
@@ -1087,17 +1087,17 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
 
       {/* Supplier Section */}
       <div className="px-8 py-1 border-b-2 border-gray-800">
-        <h4 className="text-[9pt] font-bold text-gray-900 uppercase mb-1.5">Maklumat Pembekal / Supplier Information</h4>
+        <h4 className="text-[9pt] font-bold text-text-primary uppercase mb-1.5">Maklumat Pembekal / Supplier Information</h4>
         <div className="grid grid-cols-1 gap-2">
           {order?.po_type === 'sq' ? (
-            <div className="border border-gray-500 p-3 bg-white">
-              <label className="text-[8pt] font-bold text-gray-600 uppercase block mb-1.5 border-b border-gray-100 pb-1">Senarai Pembekal Yang Dipelawa / List of Invited Suppliers</label>
+            <div className="border border-gray-500 p-3 bg-surface">
+              <label className="text-[8pt] font-bold text-text-muted uppercase block mb-1.5 border-b border-border-subtle pb-1">Senarai Pembekal Yang Dipelawa / List of Invited Suppliers</label>
               {invitedSuppliers.length > 0 ? (
                 <div className="grid grid-cols-1 gap-1.5">
                   {invitedSuppliers.map((name, idx) => (
                     <div key={idx} className="flex items-center gap-3">
                       <span className="w-5 h-5 flex items-center justify-center text-[9pt] font-black bg-gray-800 text-white rounded-sm">{idx + 1}</span>
-                      <p className="text-[11.5pt] font-bold text-gray-900 uppercase leading-none">{name}</p>
+                      <p className="text-[11.5pt] font-bold text-text-primary uppercase leading-none">{name}</p>
                     </div>
                   ))}
                 </div>
@@ -1110,13 +1110,13 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
             </div>
           ) : (
             <>
-              <div className="border border-gray-500 p-2 bg-white">
-                <label className="text-[8pt] font-bold text-gray-600 uppercase block mb-0.5">Nama Syarikat / Company Name</label>
-                <p className="text-[12pt] font-bold text-gray-900 uppercase">{order?.manual_supplier_name || order?.supplier?.company_name || '-'}</p>
+              <div className="border border-gray-500 p-2 bg-surface">
+                <label className="text-[8pt] font-bold text-text-muted uppercase block mb-0.5">Nama Syarikat / Company Name</label>
+                <p className="text-[12pt] font-bold text-text-primary uppercase">{order?.manual_supplier_name || order?.supplier?.company_name || '-'}</p>
               </div>
-              <div className="border border-gray-500 p-2 bg-white min-h-[60px]">
-                <label className="text-[8pt] font-bold text-gray-600 uppercase block mb-0.5">Alamat / Address</label>
-                <p className="text-[10pt] text-gray-900 whitespace-pre-line leading-tight">{order?.manual_supplier_address || order?.supplier?.address || '-'}</p>
+              <div className="border border-gray-500 p-2 bg-surface min-h-[60px]">
+                <label className="text-[8pt] font-bold text-text-muted uppercase block mb-0.5">Alamat / Address</label>
+                <p className="text-[10pt] text-text-primary whitespace-pre-line leading-tight">{order?.manual_supplier_address || order?.supplier?.address || '-'}</p>
               </div>
             </>
           )}
@@ -1124,21 +1124,21 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
       </div>
 
       {/* Items Table */}
-      <div className="px-4 py-1.5 flex-1 overflow-hidden text-gray-900">
-        <h4 className="text-[11pt] font-bold text-gray-900 uppercase mb-1.5">Butir-butir Barang / Items Purchased {!isLastPage && '(Sambungan)'}</h4>
-        <table className="w-full border-collapse border-2 border-gray-800 text-gray-900">
+      <div className="px-4 py-1.5 flex-1 overflow-hidden text-text-primary">
+        <h4 className="text-[11pt] font-bold text-text-primary uppercase mb-1.5">Butir-butir Barang / Items Purchased {!isLastPage && '(Sambungan)'}</h4>
+        <table className="w-full border-collapse border-2 border-gray-800 text-text-primary">
           <thead>
-            <tr className="bg-gray-100 text-gray-900">
-              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[4%] text-gray-900">Bil</th>
-              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[37%] text-gray-900">Nama Item / Item Name</th>
-              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[12%] text-gray-900">Kod Item / Item Code</th>
-              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[9%] text-gray-900">Kuantiti / Quantity</th>
-              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[11%] text-gray-900">Harga Unit / Unit Price</th>
-              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[16%] text-gray-900">Pembungkusan / Packaging</th>
-              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[11%] text-gray-900">Jumlah / Total</th>
+            <tr className="bg-subtle text-text-primary">
+              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[4%] text-text-primary">Bil</th>
+              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[37%] text-text-primary">Nama Item / Item Name</th>
+              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[12%] text-text-primary">Kod Item / Item Code</th>
+              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[9%] text-text-primary">Kuantiti / Quantity</th>
+              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[11%] text-text-primary">Harga Unit / Unit Price</th>
+              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[16%] text-text-primary">Pembungkusan / Packaging</th>
+              <th className="border border-gray-800 px-2 py-1.5 text-[9pt] font-bold uppercase text-center w-[11%] text-text-primary">Jumlah / Total</th>
             </tr>
           </thead>
-          <tbody className="text-gray-900">
+          <tbody className="text-text-primary">
             {pageItems.map((item, index) => {
               const contractNo = (item as any).contract_number || order?.kkm_contract_number || order?.supplier?.contract_number;
               const rawDeliveryPeriod = (item as any).delivery_period || order?.supplier?.delivery_period;
@@ -1148,45 +1148,45 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
               const purchasedUnderSQ = !!(order?.inv_sq_number && order?.po_type !== 'sq');
               const contractIsExpired = purchasedUnderSQ || isContractExpired(item, refD);
               return (
-                <tr key={item.id} className="align-top text-gray-900">
-                  <td className="border border-gray-800 px-1 py-1 text-center font-bold text-[9pt] text-gray-900">{index + 1}</td>
-                  <td className="border border-gray-800 px-2 py-1 text-gray-900">
-                    <div className="font-bold text-[9.5pt] mb-0.5 text-gray-900">{item.item_name}</div>
+                <tr key={item.id} className="align-top text-text-primary">
+                  <td className="border border-gray-800 px-1 py-1 text-center font-bold text-[9pt] text-text-primary">{index + 1}</td>
+                  <td className="border border-gray-800 px-2 py-1 text-text-primary">
+                    <div className="font-bold text-[9.5pt] mb-0.5 text-text-primary">{item.item_name}</div>
                     {!isApplOrder(order) && order?.po_type !== 'manual' && order?.po_type !== 'sq' && contractNo && !contractIsExpired && (
-                      <div className="space-y-0 text-[7.5pt] leading-tight text-gray-700 italic">
-                        <p><span className="font-bold not-italic text-gray-900">No. Kontrak:</span> {contractNo}</p>
-                        <p><span className="font-bold not-italic text-gray-900">Tempoh Serahan:</span> {deliveryPeriod}</p>
-                        <p><span className="font-bold not-italic text-gray-900">Tamat Kontrak:</span> {contractEndDate ? formatDate(contractEndDate) : '-'}</p>
+                      <div className="space-y-0 text-[7.5pt] leading-tight text-text-secondary italic">
+                        <p><span className="font-bold not-italic text-text-primary">No. Kontrak:</span> {contractNo}</p>
+                        <p><span className="font-bold not-italic text-text-primary">Tempoh Serahan:</span> {deliveryPeriod}</p>
+                        <p><span className="font-bold not-italic text-text-primary">Tamat Kontrak:</span> {contractEndDate ? formatDate(contractEndDate) : '-'}</p>
                       </div>
                     )}
                   </td>
-                <td className="border border-gray-800 px-2 py-1 text-center text-[8.5pt] font-medium text-gray-900">
+                <td className="border border-gray-800 px-2 py-1 text-center text-[8.5pt] font-medium text-text-primary">
                   {(() => {
                     const cleanCode = normalizeRealMdcCode(item.item_code, item.item_name);
                     const finalCode = cleanCode || (!isSyntheticMockCode(item.item_code) ? item.item_code : '');
                     return (!finalCode || isSyntheticMockCode(finalCode) || finalCode === contractNo || finalCode === order?.kkm_contract_number || finalCode === order?.supplier?.contract_number) ? '-' : finalCode;
                   })()}
                 </td>
-                <td className="border border-gray-800 px-2 py-1 text-center font-bold text-[9.5pt] text-gray-900">{item.quantity_ordered}</td>
-                <td className="border border-gray-800 px-2 py-1 text-right font-medium text-[9pt] text-gray-900">{formatCurrency(item.unit_price)}</td>
-                <td className="border border-gray-800 px-2 py-1 text-center text-[8.5pt] text-gray-900">{item.packaging_description}</td>
-                <td className="border border-gray-800 px-2 py-1 text-right font-bold text-[9.5pt] text-gray-900">{formatCurrency(item.quantity_ordered * item.unit_price)}</td>
+                <td className="border border-gray-800 px-2 py-1 text-center font-bold text-[9.5pt] text-text-primary">{item.quantity_ordered}</td>
+                <td className="border border-gray-800 px-2 py-1 text-right font-medium text-[9pt] text-text-primary">{formatCurrency(item.unit_price)}</td>
+                <td className="border border-gray-800 px-2 py-1 text-center text-[8.5pt] text-text-primary">{item.packaging_description}</td>
+                <td className="border border-gray-800 px-2 py-1 text-right font-bold text-[9.5pt] text-text-primary">{formatCurrency(item.quantity_ordered * item.unit_price)}</td>
                 </tr>
               );
             })}
             {isLastPage && (
-              <tr className="bg-gray-100 font-bold border-t-2 border-gray-800 text-gray-900">
-                <td colSpan={6} className="border border-gray-800 px-2 py-1 text-[9.5pt] uppercase text-right text-gray-900">
+              <tr className="bg-subtle font-bold border-t-2 border-gray-800 text-text-primary">
+                <td colSpan={6} className="border border-gray-800 px-2 py-1 text-[9.5pt] uppercase text-right text-text-primary">
                   JUMLAH KESELURUHAN / TOTAL AMOUNT:
                 </td>
-                <td className="border border-gray-800 px-2 py-1 text-[10.5pt] text-right text-gray-900">
+                <td className="border border-gray-800 px-2 py-1 text-[10.5pt] text-right text-text-primary">
                   {formatCurrency(items.reduce((sum, item) => sum + (item.quantity_ordered * item.unit_price), 0))}
                 </td>
               </tr>
             )}
             {!isLastPage && (
-              <tr className="text-gray-900">
-                <td colSpan={7} className="border border-gray-800 px-4 py-2 text-[10pt] italic text-center bg-gray-50 font-bold text-gray-900">
+              <tr className="text-text-primary">
+                <td colSpan={7} className="border border-gray-800 px-4 py-2 text-[10pt] italic text-center bg-subtle/50 font-bold text-text-primary">
                   *** Bersambung ke halaman sebelah / Continued on next page ***
                 </td>
               </tr>
@@ -1196,37 +1196,37 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
       </div>
 
       {/* Footer Area - Anchored to bottom */}
-      <div className="mt-auto text-gray-900">
+      <div className="mt-auto text-text-primary">
         {/* Financial Summary and Signature - Only on last page */}
         {isLastPage && (
-          <div className="px-6 py-2 bg-white border-t border-gray-800 w-full mb-0 break-inside-avoid text-gray-900">
-            <div className="flex gap-6 items-end text-gray-900">
-              <div className="w-[55%] flex flex-col justify-end items-center pb-2 text-gray-900">
-                <div className="text-center w-full text-gray-900">
+          <div className="px-6 py-2 bg-surface border-t border-gray-800 w-full mb-0 break-inside-avoid text-text-primary">
+            <div className="flex gap-6 items-end text-text-primary">
+              <div className="w-[55%] flex flex-col justify-end items-center pb-2 text-text-primary">
+                <div className="text-center w-full text-text-primary">
                   <div className="border-b-2 border-gray-800 w-[80%] mx-auto mb-2"></div>
-                  <p className="text-[11pt] font-bold text-gray-900 mb-1 leading-tight">(Tandatangan)</p>
-                  <p className="text-[10pt] font-bold text-gray-800 mb-1 leading-tight">Pegawai Yang Mengesahkan Peruntukan</p>
-                  <p className="text-[10pt] font-bold text-gray-800 leading-tight">Pengarah Hospital Lawas</p>
+                  <p className="text-[11pt] font-bold text-text-primary mb-1 leading-tight">(Tandatangan)</p>
+                  <p className="text-[10pt] font-bold text-text-primary mb-1 leading-tight">Pegawai Yang Mengesahkan Peruntukan</p>
+                  <p className="text-[10pt] font-bold text-text-primary leading-tight">Pengarah Hospital Lawas</p>
                 </div>
               </div>
-              <div className="w-[45%] flex flex-col justify-end text-gray-900">
-                <table className="w-full border-collapse border border-gray-800 bg-white text-gray-900" style={{ tableLayout: 'fixed' }}>
-                  <tbody className="text-gray-900">
-                    <tr className="border-b border-gray-800 text-gray-900">
-                      <td className="px-2 py-1.5 text-[9pt] font-bold uppercase border-r border-gray-800 leading-tight text-gray-900">BAKI SEBELUM /<br />BALANCE BEFORE:</td>
-                      <td className="px-2 py-1.5 text-[10.5pt] font-bold text-right text-gray-900">
+              <div className="w-[45%] flex flex-col justify-end text-text-primary">
+                <table className="w-full border-collapse border border-gray-800 bg-surface text-text-primary" style={{ tableLayout: 'fixed' }}>
+                  <tbody className="text-text-primary">
+                    <tr className="border-b border-gray-800 text-text-primary">
+                      <td className="px-2 py-1.5 text-[9pt] font-bold uppercase border-r border-gray-800 leading-tight text-text-primary">BAKI SEBELUM /<br />BALANCE BEFORE:</td>
+                      <td className="px-2 py-1.5 text-[10.5pt] font-bold text-right text-text-primary">
                         {balance !== null ? `RM ${balance.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}` : '-'}
                       </td>
                     </tr>
-                    <tr className="border-b border-gray-800 bg-gray-50 text-gray-900">
-                      <td className="px-2 py-1.5 text-[9pt] font-bold uppercase border-r border-gray-800 leading-tight text-gray-900">JUMLAH /<br />TOTAL AMOUNT:</td>
-                      <td className="px-2 py-1.5 text-[11.5pt] font-black text-right text-gray-900">
+                    <tr className="border-b border-gray-800 bg-subtle/50 text-text-primary">
+                      <td className="px-2 py-1.5 text-[9pt] font-bold uppercase border-r border-gray-800 leading-tight text-text-primary">JUMLAH /<br />TOTAL AMOUNT:</td>
+                      <td className="px-2 py-1.5 text-[11.5pt] font-black text-right text-text-primary">
                         {formatCurrency(items.reduce((sum, item) => sum + (item.quantity_ordered * item.unit_price), 0))}
                       </td>
                     </tr>
-                    <tr className="text-gray-900">
-                      <td className="px-2 py-1.5 text-[9pt] font-bold uppercase border-r border-gray-800 leading-tight text-gray-900">BAKI SELEPAS /<br />BALANCE AFTER:</td>
-                      <td className="px-2 py-1.5 text-[11.5pt] font-black text-right text-gray-900">
+                    <tr className="text-text-primary">
+                      <td className="px-2 py-1.5 text-[9pt] font-bold uppercase border-r border-gray-800 leading-tight text-text-primary">BAKI SELEPAS /<br />BALANCE AFTER:</td>
+                      <td className="px-2 py-1.5 text-[11.5pt] font-black text-right text-text-primary">
                         {balance !== null ? `RM ${(balance - items.reduce((sum, item) => sum + (item.quantity_ordered * item.unit_price), 0)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}` : '-'}
                       </td>
                     </tr>
@@ -1238,11 +1238,11 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
         )}
 
         {/* Official Footer */}
-        <div className="px-8 py-1 w-full text-center border-t border-gray-800 text-gray-900">
-          <p className="text-[8pt] font-bold text-gray-800 uppercase tracking-tight">
+        <div className="px-8 py-1 w-full text-center border-t border-gray-800 text-text-primary">
+          <p className="text-[8pt] font-bold text-text-primary uppercase tracking-tight">
             Dokumen Rasmi Kerajaan Malaysia / Official Government Document of Malaysia
           </p>
-          <p className="text-[7pt] text-gray-600 italic mt-0.5">
+          <p className="text-[7pt] text-text-muted italic mt-0.5">
             Dikeluarkan oleh Sistem Pengurusan Operasi Hospital / Issued by Hospital Operation Management System
           </p>
         </div>
@@ -1251,49 +1251,49 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
   )
 
   const renderContinuationPage = (pageItems: typeof items, pageNum: number, isLastPage: boolean) => (
-    <div className="po-print-page bg-white text-gray-900 border border-gray-800 flex flex-col relative" data-page-num={pageNum} style={{ fontFamily: "'Times New Roman', serif", minHeight: '268mm' }}>
+    <div className="po-print-page bg-surface text-text-primary border border-gray-800 flex flex-col relative" data-page-num={pageNum} style={{ fontFamily: "'Times New Roman', serif", minHeight: '268mm' }}>
       {renderWatermark()}
       {/* Header Section */}
-      <div className="border-b border-gray-800 border bg-white pt-1 pb-1 px-4 flex justify-between items-center text-gray-900">
+      <div className="border-b border-gray-800 border bg-surface pt-1 pb-1 px-4 flex justify-between items-center text-text-primary">
         <div className="flex items-center gap-4">
           <img
             src="/512px-Jata_MalaysiaV2.svg.png"
             alt="Jata Negara"
             className="w-[40px] h-[40px] object-contain"
           />
-          <h1 className="text-[12pt] font-bold text-gray-900 uppercase">KEMENTERIAN KESIHATAN MALAYSIA</h1>
+          <h1 className="text-[12pt] font-bold text-text-primary uppercase">KEMENTERIAN KESIHATAN MALAYSIA</h1>
         </div>
-        <div className="text-right text-gray-900">
-          <p className="text-[10pt] font-bold text-gray-900">No. Pesanan: {order?.po_number}</p>
-          <p className="text-[9pt] font-bold italic text-gray-600">Halaman {pageNum} (Sambungan)</p>
+        <div className="text-right text-text-primary">
+          <p className="text-[10pt] font-bold text-text-primary">No. Pesanan: {order?.po_number}</p>
+          <p className="text-[9pt] font-bold italic text-text-muted">Halaman {pageNum} (Sambungan)</p>
         </div>
       </div>
 
       {/* Items Table Section */}
-      <div className="px-6 py-2 flex-1 overflow-hidden text-gray-900">
-        <table className="w-full border-collapse border border-gray-800 text-gray-900">
+      <div className="px-6 py-2 flex-1 overflow-hidden text-text-primary">
+        <table className="w-full border-collapse border border-gray-800 text-text-primary">
           <thead>
-            <tr className="bg-gray-50 text-gray-900">
-              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[4%] text-gray-900">BIL</th>
-              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[38%] text-gray-900">NAMA ITEM / ITEM NAME</th>
-              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[12%] text-gray-900">KOD ITEM / ITEM CODE</th>
-              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[8%] text-gray-900">KUANTITI / QUANTITY</th>
-              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[12%] text-gray-900">HARGA UNIT / UNIT PRICE</th>
-              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[13%] text-gray-900">JUMLAH / TOTAL</th>
-              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[13%] text-gray-900">PEMBUNGKUSAN / PACKAGING</th>
+            <tr className="bg-subtle/50 text-text-primary">
+              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[4%] text-text-primary">BIL</th>
+              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[38%] text-text-primary">NAMA ITEM / ITEM NAME</th>
+              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[12%] text-text-primary">KOD ITEM / ITEM CODE</th>
+              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[8%] text-text-primary">KUANTITI / QUANTITY</th>
+              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[12%] text-text-primary">HARGA UNIT / UNIT PRICE</th>
+              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[13%] text-text-primary">JUMLAH / TOTAL</th>
+              <th className="border border-gray-800 px-1 py-1 text-[8pt] font-bold uppercase text-center w-[13%] text-text-primary">PEMBUNGKUSAN / PACKAGING</th>
             </tr>
           </thead>
-          <tbody className="text-gray-900">
+          <tbody className="text-text-primary">
             {pageItems.map((item, index) => {
               // Calculate global index
               const globalIdx = ITEMS_PER_PAGE_1 + (pageNum - 2) * ITEMS_PER_PAGE_CONT + index;
               return (
-                <tr key={item.id} className="align-top text-gray-900">
-                  <td className="border border-gray-800 px-1 py-1 text-center font-bold text-[9pt] text-gray-900">{globalIdx + 1}</td>
-                  <td className="border border-gray-800 px-2 py-1 text-gray-900">
-                    <div className="font-bold text-[9.5pt] mb-1 text-gray-900">{item.item_name}</div>
+                <tr key={item.id} className="align-top text-text-primary">
+                  <td className="border border-gray-800 px-1 py-1 text-center font-bold text-[9pt] text-text-primary">{globalIdx + 1}</td>
+                  <td className="border border-gray-800 px-2 py-1 text-text-primary">
+                    <div className="font-bold text-[9.5pt] mb-1 text-text-primary">{item.item_name}</div>
                   </td>
-                  <td className="border border-gray-800 px-2 py-1 text-center text-[8.5pt] font-medium text-gray-900">
+                  <td className="border border-gray-800 px-2 py-1 text-center text-[8.5pt] font-medium text-text-primary">
                     {(() => {
                       const cleanCode = normalizeRealMdcCode(item.item_code, item.item_name);
                       const finalCode = cleanCode || (!isSyntheticMockCode(item.item_code) ? item.item_code : '');
@@ -1304,27 +1304,27 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                         finalCode === order?.supplier?.contract_number) ? '-' : finalCode;
                     })()}
                   </td>
-                  <td className="border border-gray-800 px-2 py-1 text-center font-bold text-[9.5pt] text-gray-900">{item.quantity_ordered}</td>
-                  <td className="border border-gray-800 px-2 py-1 text-right font-medium text-[9pt] text-gray-900">{formatCurrency(item.unit_price)}</td>
-                  <td className="border border-gray-800 px-2 py-1 text-right font-bold text-[9.5pt] text-gray-900">{formatCurrency(item.quantity_ordered * item.unit_price)}</td>
-                  <td className="border border-gray-800 px-2 py-1 text-center text-[8.5pt] text-gray-900">{item.packaging_description}</td>
+                  <td className="border border-gray-800 px-2 py-1 text-center font-bold text-[9.5pt] text-text-primary">{item.quantity_ordered}</td>
+                  <td className="border border-gray-800 px-2 py-1 text-right font-medium text-[9pt] text-text-primary">{formatCurrency(item.unit_price)}</td>
+                  <td className="border border-gray-800 px-2 py-1 text-right font-bold text-[9.5pt] text-text-primary">{formatCurrency(item.quantity_ordered * item.unit_price)}</td>
+                  <td className="border border-gray-800 px-2 py-1 text-center text-[8.5pt] text-text-primary">{item.packaging_description}</td>
                 </tr>
               )
             })}
             {isLastPage && (
-              <tr className="bg-gray-100 font-bold border-t-2 border-gray-800 text-gray-900">
-                <td colSpan={5} className="border border-gray-800 px-2 py-2 text-[10pt] uppercase text-right text-gray-900">
+              <tr className="bg-subtle font-bold border-t-2 border-gray-800 text-text-primary">
+                <td colSpan={5} className="border border-gray-800 px-2 py-2 text-[10pt] uppercase text-right text-text-primary">
                   JUMLAH KESELURUHAN / TOTAL AMOUNT:
                 </td>
-                <td className="border border-gray-800 px-2 py-2 text-[11pt] text-right text-gray-900">
+                <td className="border border-gray-800 px-2 py-2 text-[11pt] text-right text-text-primary">
                   {formatCurrency(items.reduce((sum, item) => sum + (item.quantity_ordered * item.unit_price), 0))}
                 </td>
                 <td className="border border-gray-800"></td>
               </tr>
             )}
             {!isLastPage && (
-              <tr className="text-gray-900">
-                <td colSpan={7} className="border border-gray-800 px-4 py-2 text-[10pt] italic text-center bg-gray-50 font-bold text-gray-900">
+              <tr className="text-text-primary">
+                <td colSpan={7} className="border border-gray-800 px-4 py-2 text-[10pt] italic text-center bg-subtle/50 font-bold text-text-primary">
                   *** Bersambung ke halaman sebelah / Continued on next page ***
                 </td>
               </tr>
@@ -1334,37 +1334,37 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
       </div>
 
       {/* Footer Area - Anchored to bottom */}
-      <div className="mt-auto text-gray-900">
+      <div className="mt-auto text-text-primary">
         {/* Financial Summary and Signature - Positioned at bottom of LAST Page of items */}
         {isLastPage && (
-          <div className="px-8 py-2 bg-white border-t-2 border-gray-800 w-full mb-1 break-inside-avoid text-gray-900">
-            <div className="flex gap-6 items-end text-gray-900">
-              <div className="w-[55%] flex flex-col justify-end items-center pb-2 text-gray-900">
-                <div className="text-center w-full text-gray-900">
+          <div className="px-8 py-2 bg-surface border-t-2 border-gray-800 w-full mb-1 break-inside-avoid text-text-primary">
+            <div className="flex gap-6 items-end text-text-primary">
+              <div className="w-[55%] flex flex-col justify-end items-center pb-2 text-text-primary">
+                <div className="text-center w-full text-text-primary">
                   <div className="border-b-2 border-gray-800 w-[80%] mx-auto mb-2"></div>
-                  <p className="text-[11pt] font-bold text-gray-900 mb-1 leading-tight">(Tandatangan)</p>
-                  <p className="text-[10pt] font-bold text-gray-800 mb-1 leading-tight">Pegawai Yang Mengesahkan Peruntukan</p>
-                  <p className="text-[10pt] font-bold text-gray-800 leading-tight">Pengarah Hospital Lawas</p>
+                  <p className="text-[11pt] font-bold text-text-primary mb-1 leading-tight">(Tandatangan)</p>
+                  <p className="text-[10pt] font-bold text-text-primary mb-1 leading-tight">Pegawai Yang Mengesahkan Peruntukan</p>
+                  <p className="text-[10pt] font-bold text-text-primary leading-tight">Pengarah Hospital Lawas</p>
                 </div>
               </div>
-              <div className="w-[45%] flex flex-col justify-end text-gray-900">
-                <table className="w-full border-collapse border-2 border-gray-800 bg-white text-gray-900" style={{ tableLayout: 'fixed' }}>
-                  <tbody className="text-gray-900">
-                    <tr className="border-b border-gray-800 text-gray-900">
-                      <td className="px-2 py-1.5 text-[9pt] font-bold uppercase border-r border-gray-800 leading-tight text-gray-900">BAKI SEBELUM /<br />BALANCE BEFORE:</td>
-                      <td className="px-2 py-1.5 text-[10.5pt] font-bold text-right text-gray-900">
+              <div className="w-[45%] flex flex-col justify-end text-text-primary">
+                <table className="w-full border-collapse border-2 border-gray-800 bg-surface text-text-primary" style={{ tableLayout: 'fixed' }}>
+                  <tbody className="text-text-primary">
+                    <tr className="border-b border-gray-800 text-text-primary">
+                      <td className="px-2 py-1.5 text-[9pt] font-bold uppercase border-r border-gray-800 leading-tight text-text-primary">BAKI SEBELUM /<br />BALANCE BEFORE:</td>
+                      <td className="px-2 py-1.5 text-[10.5pt] font-bold text-right text-text-primary">
                         {balance !== null ? `RM ${balance.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}` : '-'}
                       </td>
                     </tr>
-                    <tr className="border-b border-gray-800 bg-gray-50 text-gray-900">
-                      <td className="px-2 py-1.5 text-[9pt] font-bold uppercase border-r border-gray-800 leading-tight text-gray-900">JUMLAH /<br />TOTAL AMOUNT:</td>
-                      <td className="px-2 py-1.5 text-[11.5pt] font-black text-right text-gray-900">
+                    <tr className="border-b border-gray-800 bg-subtle/50 text-text-primary">
+                      <td className="px-2 py-1.5 text-[9pt] font-bold uppercase border-r border-gray-800 leading-tight text-text-primary">JUMLAH /<br />TOTAL AMOUNT:</td>
+                      <td className="px-2 py-1.5 text-[11.5pt] font-black text-right text-text-primary">
                         {formatCurrency(items.reduce((sum, item) => sum + (item.quantity_ordered * item.unit_price), 0))}
                       </td>
                     </tr>
-                    <tr className="text-gray-900">
-                      <td className="px-2 py-1.5 text-[9pt] font-bold uppercase border-r border-gray-800 leading-tight text-gray-900">BAKI SELEPAS /<br />BALANCE AFTER:</td>
-                      <td className="px-2 py-1.5 text-[11.5pt] font-black text-right text-gray-900">
+                    <tr className="text-text-primary">
+                      <td className="px-2 py-1.5 text-[9pt] font-bold uppercase border-r border-gray-800 leading-tight text-text-primary">BAKI SELEPAS /<br />BALANCE AFTER:</td>
+                      <td className="px-2 py-1.5 text-[11.5pt] font-black text-right text-text-primary">
                         {balance !== null ? `RM ${(balance - items.reduce((sum, item) => sum + (item.quantity_ordered * item.unit_price), 0)).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}` : '-'}
                       </td>
                     </tr>
@@ -1376,11 +1376,11 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
         )}
 
         {/* Official Footer */}
-        <div className="px-8 py-1 w-full text-center border-t border-gray-800 text-gray-900">
-          <p className="text-[8pt] font-bold text-gray-800 uppercase tracking-tight">
+        <div className="px-8 py-1 w-full text-center border-t border-gray-800 text-text-primary">
+          <p className="text-[8pt] font-bold text-text-primary uppercase tracking-tight">
             Dokumen Rasmi Kerajaan Malaysia / Official Government Document of Malaysia
           </p>
-          <p className="text-[7pt] text-gray-600 italic mt-0.5">
+          <p className="text-[7pt] text-text-muted italic mt-0.5">
             Dikeluarkan oleh Sistem Pengurusan Operasi Hospital / Issued by Hospital Operation Management System
           </p>
         </div>
@@ -1389,21 +1389,21 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
   )
 
   const renderPage2Content = (pageNum: number) => (
-    <div className="po-print-page bg-white text-gray-900 border-2 border-gray-800 flex flex-col relative" data-page-num={pageNum} style={{ fontFamily: "'Times New Roman', serif" }}>
+    <div className="po-print-page bg-surface text-text-primary border-2 border-gray-800 flex flex-col relative" data-page-num={pageNum} style={{ fontFamily: "'Times New Roman', serif" }}>
       {renderWatermark()}
       {/* Section 3: Supplier Details */}
-      <div className="px-8 pt-8 pb-4 border-b-2 border-gray-800 text-gray-900">
-        <h4 className="text-[11pt] font-bold text-gray-900 uppercase mb-4 text-center underline">MAKLUMAT PEMBEKAL (SAMBUNGAN)</h4>
+      <div className="px-8 pt-8 pb-4 border-b-2 border-gray-800 text-text-primary">
+        <h4 className="text-[11pt] font-bold text-text-primary uppercase mb-4 text-center underline">MAKLUMAT PEMBEKAL (SAMBUNGAN)</h4>
         <div className="flex justify-center">
-          <table className="w-full max-w-2xl border-collapse border-2 border-gray-800 text-gray-900">
-            <tbody className="text-gray-900">
-              <tr className="text-gray-900">
-                <td className="border border-gray-800 px-4 py-3 font-bold bg-gray-100 text-[10pt] w-[30%] text-gray-900">Nama Pembekal :</td>
-                <td className="border border-gray-800 px-4 py-3 font-bold text-[11pt] uppercase text-gray-900">
+          <table className="w-full max-w-2xl border-collapse border-2 border-gray-800 text-text-primary">
+            <tbody className="text-text-primary">
+              <tr className="text-text-primary">
+                <td className="border border-gray-800 px-4 py-3 font-bold bg-subtle text-[10pt] w-[30%] text-text-primary">Nama Pembekal :</td>
+                <td className="border border-gray-800 px-4 py-3 font-bold text-[11pt] uppercase text-text-primary">
                   {order?.po_type === 'sq' ? (
-                    <div className="space-y-1 text-gray-900">
+                    <div className="space-y-1 text-text-primary">
                       {invitedSuppliers.map((s, i) => (
-                        <div key={i} className="flex gap-2 text-gray-900">
+                        <div key={i} className="flex gap-2 text-text-primary">
                           <span>{i + 1}.</span>
                           <span>{s}</span>
                         </div>
@@ -1411,16 +1411,16 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                     </div>
                   ) : (
                     <>
-                      <span className="text-gray-900">{order?.manual_supplier_name || order?.supplier?.company_name}</span>
+                      <span className="text-text-primary">{order?.manual_supplier_name || order?.supplier?.company_name}</span>
                       <br />
-                      <span className="font-normal text-[9pt] normal-case text-gray-700">{order?.manual_supplier_address || order?.supplier?.address}</span>
+                      <span className="font-normal text-[9pt] normal-case text-text-secondary">{order?.manual_supplier_address || order?.supplier?.address}</span>
                     </>
                   )}
                 </td>
               </tr>
-              <tr className="text-gray-900">
-                <td className="border border-gray-800 px-4 py-3 font-bold bg-gray-100 text-[10pt] text-gray-900">No. Telefon :</td>
-                <td className="border border-gray-800 px-4 py-3 font-bold text-[11pt] text-gray-900">{order?.supplier?.phone || '-'}</td>
+              <tr className="text-text-primary">
+                <td className="border border-gray-800 px-4 py-3 font-bold bg-subtle text-[10pt] text-text-primary">No. Telefon :</td>
+                <td className="border border-gray-800 px-4 py-3 font-bold text-[11pt] text-text-primary">{order?.supplier?.phone || '-'}</td>
               </tr>
             </tbody>
           </table>
@@ -1428,32 +1428,32 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
       </div>
 
       {/* Federal Treasury Registration */}
-      <div className="px-8 py-4 border-b-2 border-gray-800 text-gray-900">
-        <p className="text-[11pt] mb-3 text-gray-900">Berdaftar dengan Pejabat Kewangan Persekutuan Sarawak ( Ya / Tidak )</p>
+      <div className="px-8 py-4 border-b-2 border-gray-800 text-text-primary">
+        <p className="text-[11pt] mb-3 text-text-primary">Berdaftar dengan Pejabat Kewangan Persekutuan Sarawak ( Ya / Tidak )</p>
         <div className="border-b border-black w-full h-4 mb-4"></div>
-        <p className="text-[11pt] mb-3 text-gray-900">No. Rujukan Pendaftaran :</p>
+        <p className="text-[11pt] mb-3 text-text-primary">No. Rujukan Pendaftaran :</p>
         <div className="border-b border-black w-full h-4"></div>
       </div>
 
       {/* Section 4: Purchase Order Details */}
-      <div className="px-8 py-4 border-b-2 border-gray-800 text-gray-900">
-        <p className="text-[11pt] font-bold text-gray-900 mb-4">Bersama-sama ini dinyatakan (Penuhkan mana yang sesuai).</p>
-        <div className="ml-6 space-y-4 text-gray-900">
+      <div className="px-8 py-4 border-b-2 border-gray-800 text-text-primary">
+        <p className="text-[11pt] font-bold text-text-primary mb-4">Bersama-sama ini dinyatakan (Penuhkan mana yang sesuai).</p>
+        <div className="ml-6 space-y-4 text-text-primary">
           <div className="flex items-baseline gap-4">
-            <span className="text-[11pt] w-8 text-gray-900">(i)</span>
-            <div className="flex-1 text-[11pt] text-gray-900">
+            <span className="text-[11pt] w-8 text-text-primary">(i)</span>
+            <div className="flex-1 text-[11pt] text-text-primary">
               No. rujukan surat mampu : <span className="border-b border-dotted border-black px-12 ml-2"></span>
             </div>
           </div>
           <div className="flex items-baseline gap-4">
-            <span className="text-[11pt] w-8 text-gray-900">(ii)</span>
-            <div className="flex-1 text-[11pt] text-gray-900">
-              No. rujukan kontrak : <span className="font-bold underline decoration-dotted underline-offset-4 ml-2 text-gray-900">{order?.kkm_contract_number || '...................................................'}</span>
+            <span className="text-[11pt] w-8 text-text-primary">(ii)</span>
+            <div className="flex-1 text-[11pt] text-text-primary">
+              No. rujukan kontrak : <span className="font-bold underline decoration-dotted underline-offset-4 ml-2 text-text-primary">{order?.kkm_contract_number || '...................................................'}</span>
             </div>
           </div>
           <div className="flex items-baseline gap-4">
-            <span className="text-[11pt] w-8 text-gray-900">(iii)</span>
-            <div className="flex-1 text-[11pt] text-gray-900">
+            <span className="text-[11pt] w-8 text-text-primary">(iii)</span>
+            <div className="flex-1 text-[11pt] text-text-primary">
               Salinan surat kelulusan Pejabat Kewangan Persekutuan Bil.: <span className="border-b border-dotted border-black px-20 ml-2"></span>
             </div>
           </div>
@@ -1461,109 +1461,109 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
       </div>
 
       {/* Section 4 Signature */}
-      <div className="px-8 py-4 border-b-2 border-gray-800 text-gray-900">
-        <div className="flex justify-between items-end text-gray-900">
-          <div className="pb-2 text-gray-900">
-            <p className="text-[11pt] font-bold text-gray-900">Tarikh : <span className="font-serif ml-2 underline decoration-dotted text-gray-900">{order?.order_date ? formatDate(order.order_date) : '-'}</span></p>
+      <div className="px-8 py-4 border-b-2 border-gray-800 text-text-primary">
+        <div className="flex justify-between items-end text-text-primary">
+          <div className="pb-2 text-text-primary">
+            <p className="text-[11pt] font-bold text-text-primary">Tarikh : <span className="font-serif ml-2 underline decoration-dotted text-text-primary">{order?.order_date ? formatDate(order.order_date) : '-'}</span></p>
           </div>
-          <div className="text-center text-gray-900">
+          <div className="text-center text-text-primary">
             <div className="w-64 border-b border-dotted border-black mb-2 mx-auto"></div>
-            <p className="text-[10pt] font-bold mb-1 text-gray-900">(Tandatangan Pegawai yang Memohon)</p>
-            <div className="text-left space-y-0.5 text-gray-900">
-              <p className="text-[10pt] font-bold text-gray-900">Nama : {signatures.applicantName}</p>
-              <p className="text-[10pt] font-bold text-gray-900">Jawatan : {signatures.applicantPosition}</p>
+            <p className="text-[10pt] font-bold mb-1 text-text-primary">(Tandatangan Pegawai yang Memohon)</p>
+            <div className="text-left space-y-0.5 text-text-primary">
+              <p className="text-[10pt] font-bold text-text-primary">Nama : {signatures.applicantName}</p>
+              <p className="text-[10pt] font-bold text-text-primary">Jawatan : {signatures.applicantPosition}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Section 5: Approval */}
-      <div className="px-8 py-4 border-b-2 border-gray-800 text-gray-900">
-        <h4 className="text-[11pt] font-bold mb-2 uppercase text-gray-900">5. Akaun Ketua Bahagian.</h4>
-        <div className="ml-6 space-y-1 mb-4 text-gray-900">
+      <div className="px-8 py-4 border-b-2 border-gray-800 text-text-primary">
+        <h4 className="text-[11pt] font-bold mb-2 uppercase text-text-primary">5. Akaun Ketua Bahagian.</h4>
+        <div className="ml-6 space-y-1 mb-4 text-text-primary">
           <div className="flex gap-4">
-            <span className="text-[11pt] text-gray-900">(i)</span>
-            <p className="text-[11pt] text-gray-900">Adalah disahkan pembelian ini telah dimasukkan dalam cadangan anggaran Belanjawan tahunan.</p>
+            <span className="text-[11pt] text-text-primary">(i)</span>
+            <p className="text-[11pt] text-text-primary">Adalah disahkan pembelian ini telah dimasukkan dalam cadangan anggaran Belanjawan tahunan.</p>
           </div>
           <div className="flex gap-4">
-            <span className="text-[11pt] text-gray-900">(ii)</span>
-            <p className="text-[11pt] text-gray-900">Pembelian ini adalah diperlukan.</p>
+            <span className="text-[11pt] text-text-primary">(ii)</span>
+            <p className="text-[11pt] text-text-primary">Pembelian ini adalah diperlukan.</p>
           </div>
         </div>
         
-        <div className="flex justify-between items-end mb-4 text-gray-900">
-          <div className="pb-2 text-gray-900">
-            <p className="text-[11pt] font-bold text-gray-900">Tarikh : <span className="font-serif ml-2 underline decoration-dotted text-gray-900">{order?.order_date ? formatDate(order.order_date) : '-'}</span></p>
+        <div className="flex justify-between items-end mb-4 text-text-primary">
+          <div className="pb-2 text-text-primary">
+            <p className="text-[11pt] font-bold text-text-primary">Tarikh : <span className="font-serif ml-2 underline decoration-dotted text-text-primary">{order?.order_date ? formatDate(order.order_date) : '-'}</span></p>
           </div>
-          <div className="text-center text-gray-900">
+          <div className="text-center text-text-primary">
             <div className="w-72 border-b border-dotted border-black mb-2 mx-auto"></div>
-            <p className="text-[10pt] font-bold mb-1 text-gray-900">(Tandatangan Ketua Bahagian)</p>
-            <p className="text-[10pt] font-bold uppercase text-gray-900">{signatures.headName}</p>
-            <p className="text-[10pt] font-bold uppercase text-gray-900">{signatures.headPosition}</p>
+            <p className="text-[10pt] font-bold mb-1 text-text-primary">(Tandatangan Ketua Bahagian)</p>
+            <p className="text-[10pt] font-bold uppercase text-text-primary">{signatures.headName}</p>
+            <p className="text-[10pt] font-bold uppercase text-text-primary">{signatures.headPosition}</p>
           </div>
         </div>
 
-        <div className="text-center mb-4 text-gray-900">
-          <p className="text-[11pt] font-bold uppercase text-gray-900">Permohonan diluluskan/tidak diluluskan</p>
+        <div className="text-center mb-4 text-text-primary">
+          <p className="text-[11pt] font-bold uppercase text-text-primary">Permohonan diluluskan/tidak diluluskan</p>
         </div>
 
-        <div className="flex justify-between items-end text-gray-900">
-          <div className="pb-2 text-gray-900">
-            <p className="text-[11pt] font-bold text-gray-900">Tarikh : <span className="border-b border-dotted border-black px-24 ml-2"></span></p>
+        <div className="flex justify-between items-end text-text-primary">
+          <div className="pb-2 text-text-primary">
+            <p className="text-[11pt] font-bold text-text-primary">Tarikh : <span className="border-b border-dotted border-black px-24 ml-2"></span></p>
           </div>
-          <div className="text-center text-gray-900">
+          <div className="text-center text-text-primary">
             <div className="w-72 border-b border-dotted border-black mb-2 mx-auto"></div>
-            <p className="text-[10pt] font-bold mb-1 text-gray-900">(Tandatangan Pegawai Yang Meluluskan)</p>
-            <p className="text-[10pt] font-bold text-gray-900">Pengarah Hospital Daerah, Lawas.</p>
+            <p className="text-[10pt] font-bold mb-1 text-text-primary">(Tandatangan Pegawai Yang Meluluskan)</p>
+            <p className="text-[10pt] font-bold text-text-primary">Pengarah Hospital Daerah, Lawas.</p>
           </div>
         </div>
       </div>
 
       {/* Section 6: Financial Department Use */}
-      <div className="px-8 py-2 text-gray-900">
-        <h4 className="text-[11pt] font-bold mb-2 text-center uppercase text-gray-900">UNTUK KEGUNAAN BAHAGIAN KEWANGAN</h4>
+      <div className="px-8 py-2 text-text-primary">
+        <h4 className="text-[11pt] font-bold mb-2 text-center uppercase text-text-primary">UNTUK KEGUNAAN BAHAGIAN KEWANGAN</h4>
         
-        <div className="flex justify-between items-start mb-4 text-gray-900">
-          <div className="space-y-1 flex-1 text-gray-900">
-            <h5 className="text-[11pt] font-bold text-gray-900">6. Kerani Kewangan</h5>
-            <div className="ml-6 space-y-1 text-gray-900">
-              <p className="text-[10pt] text-gray-900">(iii) Sila Keluarkan Pesanan Kerajaan</p>
-              <p className="text-[10pt] text-gray-900">(iv) Sila dapatkan Sebut harga.</p>
+        <div className="flex justify-between items-start mb-4 text-text-primary">
+          <div className="space-y-1 flex-1 text-text-primary">
+            <h5 className="text-[11pt] font-bold text-text-primary">6. Kerani Kewangan</h5>
+            <div className="ml-6 space-y-1 text-text-primary">
+              <p className="text-[10pt] text-text-primary">(iii) Sila Keluarkan Pesanan Kerajaan</p>
+              <p className="text-[10pt] text-text-primary">(iv) Sila dapatkan Sebut harga.</p>
             </div>
           </div>
           
-          <div className="text-center shrink-0 pt-4 text-gray-900">
+          <div className="text-center shrink-0 pt-4 text-text-primary">
             <div className="w-72 border-b border-dotted border-black mb-2 mx-auto"></div>
-            <p className="text-[10pt] font-bold mb-1 text-gray-900">(Bahagian Kewangan)</p>
-            <p className="text-[10pt] font-bold text-gray-900">B.P. Pengarah Hospital Daerah, Lawas.</p>
+            <p className="text-[10pt] font-bold mb-1 text-text-primary">(Bahagian Kewangan)</p>
+            <p className="text-[10pt] font-bold text-text-primary">B.P. Pengarah Hospital Daerah, Lawas.</p>
           </div>
         </div>
 
-        <div className="space-y-4 max-w-xl mt-4 text-gray-900">
-          <div className="flex items-baseline gap-2 text-gray-900">
-            <span className="text-[11pt] font-bold whitespace-nowrap text-gray-900">Catatan :</span>
+        <div className="space-y-4 max-w-xl mt-4 text-text-primary">
+          <div className="flex items-baseline gap-2 text-text-primary">
+            <span className="text-[11pt] font-bold whitespace-nowrap text-text-primary">Catatan :</span>
             <div className="flex-1 border-b border-dotted border-black h-4"></div>
           </div>
           
-          <div className="flex items-baseline gap-2 text-gray-900">
-            <span className="text-[11pt] font-bold whitespace-nowrap text-gray-900">No. Rujukan Pesanan Kerajaan:</span>
+          <div className="flex items-baseline gap-2 text-text-primary">
+            <span className="text-[11pt] font-bold whitespace-nowrap text-text-primary">No. Rujukan Pesanan Kerajaan:</span>
             <div className="flex-1 border-b border-dotted border-black h-4"></div>
           </div>
 
-          <div className="flex items-baseline gap-2 text-gray-900">
-            <span className="text-[11pt] font-bold whitespace-nowrap text-gray-900">Tarikh:</span>
+          <div className="flex items-baseline gap-2 text-text-primary">
+            <span className="text-[11pt] font-bold whitespace-nowrap text-text-primary">Tarikh:</span>
             <div className="flex-1 border-b border-dotted border-black h-4 w-48"></div>
           </div>
         </div>
       </div>
 
       {/* Footer */}
-      <div className="mt-auto px-8 py-4 bg-slate-50 border-t-2 border-slate-900 w-full text-gray-900">
-        <div className="text-center text-gray-900">
-          <p className="text-[9pt] font-bold text-slate-800">
+      <div className="mt-auto px-8 py-4 bg-subtle/50 border-t-2 border-slate-900 w-full text-text-primary">
+        <div className="text-center text-text-primary">
+          <p className="text-[9pt] font-bold text-text-primary">
             Dokumen Rasmi Kerajaan Malaysia / Official Government Document of Malaysia
           </p>
-          <p className="text-[9pt] text-slate-700 mt-0.5">
+          <p className="text-[9pt] text-text-secondary mt-0.5">
             Dikeluarkan oleh Sistem Pengurusan Operasi Hospital / Issued by Hospital Operation Management System
           </p>
         </div>
@@ -1576,7 +1576,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
       <div className="flex items-center justify-center py-20">
         <div className="flex flex-col items-center gap-3">
           <Spinner size="lg" />
-          <p className="text-sm font-medium text-slate-500 animate-pulse">Loading Procurement Data...</p>
+          <p className="text-sm font-medium text-text-muted animate-pulse">Loading Procurement Data...</p>
         </div>
       </div>
     )
@@ -1585,8 +1585,8 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
   if (!order) {
     return (
       <div className="p-10 text-center">
-        <div className="bg-white border border-slate-200 rounded-xl p-8 shadow-sm max-w-md mx-auto">
-          <p className="text-slate-500 font-medium text-sm">Purchase order not found</p>
+        <div className="bg-surface border border-border-default rounded-xl p-8 shadow-sm max-w-md mx-auto">
+          <p className="text-text-muted font-medium text-sm">Purchase order not found</p>
           <Button onClick={() => isSlideOver ? onClose?.() : navigate(ROUTES.PHARMACY_PO)} className="mt-4 rounded-lg font-semibold text-xs px-4">
             {isSlideOver ? 'Close Panel' : 'Back to List'}
           </Button>
@@ -1647,23 +1647,23 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
         }
       `}</style>
       {/* Header Controls - Hidden during print */}
-      <div className="bg-white/80 backdrop-blur-md border-b border-slate-200/80 px-6 py-4 flex items-center justify-between sticky top-0 z-50 no-print shadow-[0_1px_3px_rgba(0,0,0,0.01)]">
+      <div className="bg-surface backdrop-blur-md border-b border-border-default px-6 py-4 flex items-center justify-between sticky top-0 z-50 no-print shadow-[0_1px_3px_rgba(0,0,0,0.01)]">
         <div className="flex items-center gap-3">
           <button 
             onClick={onClose}
-            className="p-2 hover:bg-slate-100/80 rounded-xl transition-all text-slate-500 hover:text-slate-900 active:scale-90"
+            className="p-2 hover:bg-subtle rounded-xl transition-colors text-text-muted hover:text-text-primary active:scale-90"
           >
             <IconX className="h-4.5 w-4.5" />
           </button>
           <div className="flex items-center gap-3">
-            <h1 className="text-base font-bold text-slate-900 flex items-center gap-2">
+            <h1 className="text-base font-bold text-text-primary flex items-center gap-2">
               <span className="bg-gradient-to-r from-slate-905 to-slate-800 bg-clip-text">Purchase Order</span>
               <span className={cn(
-                "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border border-slate-200/40 flex items-center gap-1",
-                order.status === 'completed' ? "bg-emerald-50 text-emerald-700 border-emerald-100" :
-                order.status === 'pending_approval' || order.status === 'draft' ? "bg-amber-50 text-amber-700 border-amber-100" :
-                order.status === 'cancelled' ? "bg-rose-50 text-rose-700 border-rose-100" :
-                "bg-blue-50 text-blue-700 border-blue-100"
+                "px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border border-border-default flex items-center gap-1",
+                order.status === 'completed' ? "bg-emerald-500/10 text-emerald-700 border-emerald-100" :
+                order.status === 'pending_approval' || order.status === 'draft' ? "bg-amber-500/10 text-amber-700 border-amber-100" :
+                order.status === 'cancelled' ? "bg-rose-500/10 text-rose-700 border-rose-100" :
+                "bg-blue-500/10 text-blue-700 border-blue-100"
               )}>
                 {order.status.replace('_', ' ')}
               </span>
@@ -1680,7 +1680,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
               {order.status === 'draft' && (
                 <Button 
                   onClick={handleApprove} 
-                  className="bg-slate-900 hover:bg-black text-white font-semibold text-xs h-9 px-4 rounded-lg flex items-center gap-1.5 shadow-sm transition-all active:scale-95 no-print"
+                  className="bg-slate-900 hover:bg-black text-white font-semibold text-xs h-9 px-4 rounded-lg flex items-center gap-1.5 shadow-sm transition-colors active:scale-95 no-print"
                   disabled={isApproving}
                 >
                   {isApproving ? <Spinner size="sm" /> : <IconCheckCircle className="w-4 h-4" />}
@@ -1690,7 +1690,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
               {/* Settings Button */}
               <button 
                 onClick={() => setShowSettings(true)}
-                className="w-9 h-9 bg-white border border-slate-200 rounded-lg flex items-center justify-center hover:bg-slate-50 transition-all active:scale-95 shadow-sm group no-print"
+                className="w-9 h-9 bg-surface border border-border-default rounded-lg flex items-center justify-center hover:bg-subtle/50 transition-colors active:scale-95 shadow-sm group no-print"
                 title="Signature Configuration"
               >
                 <IconSettings className="w-4.5 h-4.5 text-slate-400 group-hover:text-indigo-600 transition-colors" />
@@ -1701,7 +1701,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                 <Button 
                   onClick={handlePrint} 
                   variant="outline" 
-                  className="bg-white border-slate-200 text-slate-700 font-semibold text-xs h-9 px-4 rounded-lg flex items-center gap-1.5 hover:bg-slate-50 shadow-sm transition-all active:scale-95 no-print" 
+                  className="bg-surface border-border-default text-text-secondary font-semibold text-xs h-9 px-4 rounded-lg flex items-center gap-1.5 hover:bg-subtle/50 shadow-sm transition-colors active:scale-95 no-print" 
                   disabled={isPrinting}
                 >
                   {isPrinting ? <Spinner size="sm" /> : <IconPrinter className="w-4 h-4 opacity-70" />}
@@ -1720,7 +1720,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                     setIsUploadLpoModalOpen(true)
                   }} 
                   variant="outline" 
-                  className="bg-blue-50 border-blue-200 text-blue-700 font-semibold text-xs h-9 px-4 rounded-lg flex items-center gap-1.5 hover:bg-blue-100 shadow-sm transition-all active:scale-95 no-print"
+                  className="bg-blue-500/10 border-blue-500/20 text-blue-700 font-semibold text-xs h-9 px-4 rounded-lg flex items-center gap-1.5 hover:bg-blue-100 shadow-sm transition-colors active:scale-95 no-print"
                 >
                   <IconUpload className="w-4 h-4 opacity-80" /> Change / Upload LPO
                 </Button>
@@ -1730,7 +1730,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
               <Button 
                 onClick={handleEdit} 
                 variant="outline" 
-                className="bg-white border-slate-200 text-slate-700 font-semibold text-xs h-9 px-4 rounded-lg flex items-center gap-1.5 hover:bg-slate-50 shadow-sm transition-all active:scale-95 no-print"
+                className="bg-surface border-border-default text-text-secondary font-semibold text-xs h-9 px-4 rounded-lg flex items-center gap-1.5 hover:bg-subtle/50 shadow-sm transition-colors active:scale-95 no-print"
               >
                 <IconEdit className="w-4 h-4 opacity-70" /> Modify
               </Button>
@@ -1739,7 +1739,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
               <Button 
                 onClick={handleCancel} 
                 variant="outline" 
-                className="bg-white border-rose-100 text-rose-600 font-semibold text-xs h-9 px-4 rounded-lg flex items-center gap-1.5 hover:bg-rose-50 transition-all active:scale-95 no-print"
+                className="bg-surface border-rose-100 text-rose-600 font-semibold text-xs h-9 px-4 rounded-lg flex items-center gap-1.5 hover:bg-rose-500/10 transition-colors active:scale-95 no-print"
               >
                 <IconX className="w-4 h-4" /> Revoke
               </Button>
@@ -1750,20 +1750,20 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
 
       <div className="flex-1 overflow-y-auto p-4 md:p-8 scrollbar-hide bg-[#f8fafc]">
         {order?.status === 'cancelled' && order.notes && (
-          <div className="bg-rose-50 border border-rose-100 rounded-xl p-5 flex items-start gap-4 no-print animate-in fade-in slide-in-from-top-4 duration-300 shadow-sm mb-6 max-w-[210mm] mx-auto">
-            <div className="w-10 h-10 bg-white rounded-lg border border-rose-100 flex items-center justify-center shrink-0 shadow-sm">
+          <div className="bg-rose-500/10 border border-rose-100 rounded-xl p-5 flex items-start gap-4 no-print animate-in fade-in slide-in-from-top-4 duration-300 shadow-sm mb-6 max-w-[210mm] mx-auto">
+            <div className="w-10 h-10 bg-surface rounded-lg border border-rose-100 flex items-center justify-center shrink-0 shadow-sm">
               <IconAlertCircle className="w-5 h-5 text-rose-500" />
             </div>
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <p className="text-rose-950 font-bold text-xs uppercase tracking-wide">Revocation Log</p>
+                <p className="text-rose-400 dark:text-rose-300 font-bold font-bold text-xs uppercase tracking-wide">Revocation Log</p>
                 <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
               </div>
               <p className="text-rose-700 text-sm font-medium leading-relaxed mb-2">
                 {order.notes.replace(/^(Cancelled|Rejected):\s*/i, '') || 'No reason provided'}
               </p>
               <div className="flex items-center gap-2 mt-2 pt-2 border-t border-rose-100/50">
-                <p className="text-rose-900/60 font-semibold text-[10px] uppercase tracking-wide">Cancelled By:</p>
+                <p className="text-rose-400 dark:text-rose-300 font-bold/60 font-semibold text-[10px] uppercase tracking-wide">Cancelled By:</p>
                 <p className="text-rose-700 text-xs font-semibold">{(order as any).cancelled_by_name || 'Pegawai Bertanggungjawab'}</p>
                 {(order as any).cancelled_at && (
                   <span className="text-rose-400 text-xs font-normal ml-1">â€¢ {formatDateTime((order as any).cancelled_at)}</span>
@@ -1775,26 +1775,26 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
         
         {/* Modification Log Section */}
         {latestMod && (
-          <div className="bg-amber-50 border border-amber-100 rounded-xl p-5 flex items-start gap-4 no-print animate-in fade-in slide-in-from-top-4 duration-300 shadow-sm mb-6 max-w-[210mm] mx-auto">
-            <div className="w-10 h-10 bg-white rounded-lg border border-amber-100 flex items-center justify-center shrink-0 shadow-sm">
+          <div className="bg-amber-500/10 border border-amber-100 rounded-xl p-5 flex items-start gap-4 no-print animate-in fade-in slide-in-from-top-4 duration-300 shadow-sm mb-6 max-w-[210mm] mx-auto">
+            <div className="w-10 h-10 bg-surface rounded-lg border border-amber-100 flex items-center justify-center shrink-0 shadow-sm">
               <IconFilePen className="w-5 h-5 text-amber-500" />
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
-                <p className="text-amber-950 font-bold text-xs uppercase tracking-wide">Modification History</p>
+                <p className="text-amber-400 dark:text-amber-300 font-bold font-bold text-xs uppercase tracking-wide">Modification History</p>
                 <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
               </div>
-              <p className="text-amber-800 text-sm font-medium leading-relaxed mb-3">
+              <p className="text-amber-400 text-sm font-medium leading-relaxed mb-3">
                 {latestMod.notes?.replace(/^Edit Requested:\s*/i, '') || 'PO details were modified.'}
               </p>
               <div className="flex items-center gap-4 pt-2.5 border-t border-amber-100/50">
                 <div className="flex items-center gap-1.5">
-                  <p className="text-amber-900/60 font-semibold text-[10px] uppercase tracking-wide">Modified By:</p>
-                  <p className="text-amber-800 text-xs font-semibold">{latestMod.approver?.full_name || 'Authorized Officer'}</p>
+                  <p className="text-amber-400 dark:text-amber-300 font-bold/60 font-semibold text-[10px] uppercase tracking-wide">Modified By:</p>
+                  <p className="text-amber-400 text-xs font-semibold">{latestMod.approver?.full_name || 'Authorized Officer'}</p>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <p className="text-amber-900/60 font-semibold text-[10px] uppercase tracking-wide">Date:</p>
-                  <p className="text-amber-800 text-xs font-semibold">{formatDateTime(latestMod.created_at)}</p>
+                  <p className="text-amber-400 dark:text-amber-300 font-bold/60 font-semibold text-[10px] uppercase tracking-wide">Date:</p>
+                  <p className="text-amber-400 text-xs font-semibold">{formatDateTime(latestMod.created_at)}</p>
                 </div>
               </div>
             </div>
@@ -1841,14 +1841,14 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
       {/* Activity History - Screen Only */}
       {logs.length > 0 && (
         <div className="max-w-[210mm] mx-auto w-full no-print mt-6">
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-            <div className="p-5 border-b border-slate-100 flex items-center justify-between">
+          <div className="bg-surface rounded-xl border border-border-default shadow-sm overflow-hidden">
+            <div className="p-5 border-b border-border-subtle flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-indigo-50 rounded-lg flex items-center justify-center border border-indigo-100">
+                <div className="w-10 h-10 bg-indigo-500/10 rounded-lg flex items-center justify-center border border-indigo-100">
                   <IconHistory className="w-5 h-5 text-indigo-600" />
                 </div>
                 <div>
-                  <h3 className="text-base font-bold text-slate-900 tracking-tight">Activity History</h3>
+                  <h3 className="text-base font-bold text-text-primary tracking-tight">Activity History</h3>
                   <p className="text-xs text-slate-400 font-medium mt-0.5">Audit trail for this procurement record</p>
                 </div>
               </div>
@@ -1858,8 +1858,8 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                 <div 
                   key={log.id} 
                   className={cn(
-                    "p-5 flex items-start gap-4 transition-colors hover:bg-slate-50/30",
-                    idx !== displayLogs.length - 1 && "border-b border-slate-100"
+                    "p-5 flex items-start gap-4 transition-colors hover:bg-subtle/50",
+                    idx !== displayLogs.length - 1 && "border-b border-border-subtle"
                   )}
                 >
                   <div className="flex flex-col items-center gap-2 mt-1.5">
@@ -1868,25 +1868,25 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                       log.action === 'modified' ? "bg-amber-500" : 
                       log.action === 'approved' ? "bg-emerald-500" : "bg-slate-300"
                     )}></div>
-                    {idx !== displayLogs.length - 1 && <div className="w-px h-full min-h-[36px] bg-slate-200"></div>}
+                    {idx !== displayLogs.length - 1 && <div className="w-px h-full min-h-[36px] bg-subtle"></div>}
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center justify-between gap-4 mb-1.5">
                       <div className="flex items-center gap-2.5">
                         <span className={cn(
                           "px-2 py-0.5 rounded text-[10px] font-semibold uppercase border",
-                          log.action === 'modified' ? "bg-amber-50 border-amber-100 text-amber-600" : 
-                          log.action === 'approved' ? "bg-emerald-50 border-emerald-100 text-emerald-600" : "bg-slate-50 border-slate-200 text-slate-500"
+                          log.action === 'modified' ? "bg-amber-500/10 border-amber-100 text-amber-600" : 
+                          log.action === 'approved' ? "bg-emerald-500/10 border-emerald-100 text-emerald-600" : "bg-subtle/50 border-border-default text-text-muted"
                         )}>
                           {log.action}
                         </span>
-                        <p className="text-sm font-medium text-slate-800">{log.approver?.full_name || 'System User'}</p>
+                        <p className="text-sm font-medium text-text-primary">{log.approver?.full_name || 'System User'}</p>
                       </div>
                       <time className="text-xs font-normal text-slate-400 tabular-nums">{formatDateTime(log.created_at)}</time>
                     </div>
                     {log.notes && (
-                      <div className="bg-slate-50 rounded-lg p-3 border border-slate-200/60 mt-1">
-                        <p className="text-xs font-normal text-slate-600 leading-relaxed italic">{log.notes}</p>
+                      <div className="bg-subtle/50 rounded-lg p-3 border border-border-default mt-1">
+                        <p className="text-xs font-normal text-text-muted leading-relaxed italic">{log.notes}</p>
                       </div>
                     )}
                   </div>
@@ -1906,19 +1906,19 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
         size="md"
       >
         <div className="p-5 space-y-5">
-          <div className="p-4 bg-amber-50 border border-amber-100 rounded-xl flex items-start gap-3">
+          <div className="p-4 bg-amber-500/10 border border-amber-100 rounded-xl flex items-start gap-3">
             <IconAlertCircle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
-            <p className="text-xs font-medium text-amber-800 leading-relaxed">
+            <p className="text-xs font-medium text-amber-400 leading-relaxed">
               Modifying an active PO requires an audit trail entry. Please state the reason for this change.
             </p>
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-500 ml-0.5">Modification Reason</label>
+            <label className="text-xs font-semibold text-text-muted ml-0.5">Modification Reason</label>
             <textarea
               value={editReason}
               onChange={(e) => setEditReason(e.target.value)}
               placeholder="e.g., Update item quantities based on revised budget..."
-              className="w-full h-28 p-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-100 outline-none transition-all resize-none"
+              className="w-full h-28 p-3 bg-subtle/50 border border-border-default rounded-lg text-sm font-medium text-text-primary placeholder:text-text-muted focus:border-indigo-500 focus:ring-1 focus:ring-indigo-100 outline-none transition-colors resize-none"
             />
           </div>
           <div className="flex justify-end gap-2.5 pt-2">
@@ -1926,7 +1926,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
             <Button 
               onClick={handleConfirmEdit} 
               disabled={!editReason.trim() || isSavingEditReason}
-              className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold text-xs px-5 h-9 shadow-sm transition-all active:scale-95"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold text-xs px-5 h-9 shadow-sm transition-colors active:scale-95"
             >
               {isSavingEditReason ? <Spinner size="sm" /> : 'Continue to Edit'}
             </Button>
@@ -1941,19 +1941,19 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
         size="md"
       >
         <div className="p-5 space-y-5">
-          <div className="p-4 bg-rose-50 border border-rose-100 rounded-xl flex items-start gap-3">
+          <div className="p-4 bg-rose-500/10 border border-rose-100 rounded-xl flex items-start gap-3">
             <IconAlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
-            <p className="text-xs font-medium text-rose-800 leading-relaxed">
+            <p className="text-xs font-medium text-rose-400 leading-relaxed">
               This action will permanently invalidate this PO. This cannot be undone.
             </p>
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs font-semibold text-slate-500 ml-0.5">Reason for Revocation</label>
+            <label className="text-xs font-semibold text-text-muted ml-0.5">Reason for Revocation</label>
             <textarea
               value={cancelReason}
               onChange={(e) => setCancelReason(e.target.value)}
               placeholder="e.g., Duplicated order or supplier stock unavailability..."
-              className="w-full h-28 p-3 bg-slate-50 border border-slate-200 rounded-lg text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:border-rose-500 focus:ring-1 focus:ring-rose-100 outline-none transition-all resize-none"
+              className="w-full h-28 p-3 bg-subtle/50 border border-border-default rounded-lg text-sm font-medium text-text-primary placeholder:text-text-muted focus:border-rose-500 focus:ring-1 focus:ring-rose-100 outline-none transition-colors resize-none"
             />
           </div>
           <div className="flex justify-end gap-2.5 pt-2">
@@ -1961,7 +1961,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
             <Button 
               onClick={handleConfirmCancel} 
               disabled={!cancelReason.trim() || isCancelling}
-              className="bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-semibold text-xs px-5 h-9 shadow-sm transition-all active:scale-95"
+              className="bg-rose-600 hover:bg-rose-700 text-white rounded-lg font-semibold text-xs px-5 h-9 shadow-sm transition-colors active:scale-95"
             >
               {isCancelling ? <Spinner size="sm" /> : 'Confirm Revocation'}
             </Button>
@@ -1978,7 +1978,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
         <div className="p-5 space-y-6">
           <div className="space-y-5">
             <div className="space-y-3">
-              <p className="text-[11px] font-semibold text-indigo-700 bg-indigo-50/50 border border-indigo-100 px-2.5 py-0.5 rounded w-fit">Applying Officer</p>
+              <p className="text-[11px] font-semibold text-indigo-700 bg-indigo-500/10 border border-indigo-100 px-2.5 py-0.5 rounded w-fit">Applying Officer</p>
               <div className="space-y-3 px-1">
                 <Select
                   label="Name"
@@ -2017,10 +2017,10 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
               </div>
             </div>
 
-            <div className="h-px bg-slate-100"></div>
+            <div className="h-px bg-subtle"></div>
 
             <div className="space-y-3">
-              <p className="text-[11px] font-semibold text-indigo-700 bg-indigo-50/50 border border-indigo-100 px-2.5 py-0.5 rounded w-fit">Approving Officer</p>
+              <p className="text-[11px] font-semibold text-indigo-700 bg-indigo-500/10 border border-indigo-100 px-2.5 py-0.5 rounded w-fit">Approving Officer</p>
               <div className="space-y-3 px-1">
                 <Select
                   label="Name"
@@ -2060,11 +2060,11 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
             </div>
           </div>
 
-          <div className="flex justify-end gap-2.5 pt-4 border-t border-slate-100">
+          <div className="flex justify-end gap-2.5 pt-4 border-t border-border-subtle">
             <Button variant="outline" onClick={() => setShowSettings(false)} className="rounded-lg font-semibold text-xs px-4 h-9">Cancel</Button>
             <Button 
               onClick={handleSaveSignatures} 
-              className="bg-slate-900 hover:bg-black text-white rounded-lg font-semibold text-xs px-5 h-9 shadow-sm transition-all active:scale-95 flex items-center gap-1.5"
+              className="bg-slate-900 hover:bg-black text-white rounded-lg font-semibold text-xs px-5 h-9 shadow-sm transition-colors active:scale-95 flex items-center gap-1.5"
             >
               <IconSave className="w-4 h-4" /> Save Configuration
             </Button>
@@ -2077,12 +2077,12 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
           <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onClick={() => setIsUploadLpoModalOpen(false)}></div>
           
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-md relative z-10 overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
-              <h3 className="text-lg font-semibold text-slate-900">Upload / Change LPO Document</h3>
+          <div className="bg-surface rounded-2xl shadow-xl border border-border-default w-full max-w-md relative z-10 overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-subtle/50">
+              <h3 className="text-lg font-semibold text-text-primary">Upload / Change LPO Document</h3>
               <button 
                 onClick={() => setIsUploadLpoModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 transition-colors p-1"
+                className="text-slate-400 hover:text-text-muted transition-colors p-1"
               >
                 <IconX className="w-5 h-5" />
               </button>
@@ -2090,7 +2090,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
             
             <form onSubmit={handleLpoUploadSubmit} className="p-6 space-y-5">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-text-secondary mb-1.5">
                   LPO Number <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -2099,12 +2099,12 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                   value={lpoUploadData.lpo_number}
                   onChange={(e) => setLpoUploadData({ ...lpoUploadData, lpo_number: e.target.value })}
                   placeholder="e.g. C0260000000140103"
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                  className="w-full px-3 py-2 bg-surface border border-border-default rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-colors"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-text-secondary mb-1.5">
                   Document Date <span className="text-red-500">*</span>
                 </label>
                 <input
@@ -2112,33 +2112,33 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                   required
                   value={lpoUploadData.document_date}
                   onChange={(e) => setLpoUploadData({ ...lpoUploadData, document_date: e.target.value })}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                  className="w-full px-3 py-2 bg-surface border border-border-default rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-colors"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-text-secondary mb-1.5">
                   Expected Delivery Date (ETA) <span className="text-slate-400 font-normal">(Optional)</span>
                 </label>
                 <input
                   type="date"
                   value={lpoUploadData.expected_delivery_date || ''}
                   onChange={(e) => setLpoUploadData({ ...lpoUploadData, expected_delivery_date: e.target.value || undefined })}
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                  className="w-full px-3 py-2 bg-surface border border-border-default rounded-xl text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-colors"
                 />
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-text-secondary mb-1.5">
                   LPO Document PDF <span className="text-red-500">*</span>
                 </label>
                 <div 
-                  className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-300 border-dashed rounded-xl hover:border-blue-400 hover:bg-blue-50/50 transition-colors cursor-pointer"
+                  className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-border-default border-dashed rounded-xl hover:border-blue-400 hover:bg-blue-500/10 transition-colors cursor-pointer"
                   onClick={() => lpoFileInputRef.current?.click()}
                 >
                   <div className="space-y-1 text-center">
                     <IconUpload className="mx-auto h-8 w-8 text-slate-400" />
-                    <div className="flex text-sm text-slate-600 justify-center">
+                    <div className="flex text-sm text-text-muted justify-center">
                       <label className="relative cursor-pointer bg-transparent rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none">
                         <span>Upload a PDF file</span>
                         <input 
@@ -2152,7 +2152,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                       </label>
                       <p className="pl-1">or drag and drop</p>
                     </div>
-                    <p className="mt-2 text-xs text-slate-500">
+                    <p className="mt-2 text-xs text-text-muted">
                       Strictly PDF format only.
                     </p>
                     <p className="text-xs font-semibold text-blue-600">
@@ -2162,11 +2162,11 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                 </div>
               </div>
 
-              <div className="pt-4 flex gap-3 justify-end border-t border-slate-100 mt-6">
+              <div className="pt-4 flex gap-3 justify-end border-t border-border-subtle mt-6">
                 <button
                   type="button"
                   onClick={() => setIsUploadLpoModalOpen(false)}
-                  className="px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-text-secondary bg-surface border border-border-default rounded-xl hover:bg-subtle/50 transition-colors"
                 >
                   Cancel
                 </button>

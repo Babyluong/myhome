@@ -16,63 +16,63 @@
     --header-compact-height: 3.25rem;
     --header-compact-total: calc(3.25rem + env(safe-area-inset-top, 0px));
 
-    /* Light Theme — warm ivory (Claude-style) */
-    --bg-canvas: #faf9f5;
+    /* Light Theme — Apple Cupertino Classic */
+    --bg-canvas: #f5f5f7;
     --bg-surface: #ffffff;
-    --bg-subtle: #f0eee6;
-    --bg-muted: #e8e6dc;
-    --bg-inset: #f5f4ee;
-    --bg-hover: #f5f4ee;
+    --bg-subtle: #f0f0f2;
+    --bg-muted: #e5e5ea;
+    --bg-inset: #f2f2f7;
+    --bg-hover: #ebebed;
 
-    --border-default: #e8e5da;
-    --border-subtle: #dedacc;
-    --border-strong: #c2bdae;
+    --border-default: rgba(0, 0, 0, 0.08);
+    --border-subtle: rgba(0, 0, 0, 0.04);
+    --border-strong: rgba(0, 0, 0, 0.16);
 
-    --text-primary: #1f1e1d;
-    --text-secondary: #3d3a35;
-    --text-muted: #73706a;
-    --text-disabled: #a8a49a;
+    --text-primary: #1d1d1f;
+    --text-secondary: #424245;
+    --text-muted: #86868b;
+    --text-disabled: #aeaeb2;
 
-    --accent-base: #0d9488;
-    --accent-hover: #0f766e;
-    --accent-active: #115e59;
-    --accent-subtle: #ccfbf1;
+    --accent-base: #0071e3;
+    --accent-hover: #0077ed;
+    --accent-active: #0062c4;
+    --accent-subtle: rgba(0, 113, 227, 0.08);
     --accent-foreground: #ffffff;
-    --accent-decor: #14b8a6;
+    --accent-decor: #2997ff;
 
-    --ink-button: #1f1e1d;
-    --ink-button-hover: #3d3a35;
-    --ink-button-text: #faf9f5;
+    --ink-button: #1d1d1f;
+    --ink-button-hover: #333336;
+    --ink-button-text: #ffffff;
   }
 
   .dark {
-    /* Dark Theme — warm charcoal */
-    --bg-canvas: #18191b;
-    --bg-surface: #222326;
-    --bg-subtle: #2b2c31;
-    --bg-muted: #36383e;
-    --bg-inset: #131416;
-    --bg-hover: #2e3036;
+    /* Dark Theme — Apple Dark Mode (macOS / iOS) */
+    --bg-canvas: #000000;
+    --bg-surface: #1c1c1e;
+    --bg-subtle: #2c2c2e;
+    --bg-muted: #3a3a3c;
+    --bg-inset: #161618;
+    --bg-hover: #2c2c2e;
 
-    --border-default: #31333a;
-    --border-subtle: #3d4048;
-    --border-strong: #555964;
+    --border-default: rgba(255, 255, 255, 0.12);
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --border-strong: rgba(255, 255, 255, 0.2);
 
-    --text-primary: #f3f4f6;
-    --text-secondary: #d1d5db;
-    --text-muted: #9ca3af;
-    --text-disabled: #6b7280;
+    --text-primary: #f5f5f7;
+    --text-secondary: #a1a1a6;
+    --text-muted: #86868b;
+    --text-disabled: #636366;
 
-    --accent-base: #14b8a6;
-    --accent-hover: #2dd4bf;
-    --accent-active: #0d9488;
-    --accent-subtle: rgba(20, 184, 166, 0.16);
-    --accent-foreground: #042f2e;
-    --accent-decor: #2dd4bf;
+    --accent-base: #2997ff;
+    --accent-hover: #40a9ff;
+    --accent-active: #0071e3;
+    --accent-subtle: rgba(41, 151, 255, 0.16);
+    --accent-foreground: #ffffff;
+    --accent-decor: #2997ff;
 
-    --ink-button: #f3f4f6;
+    --ink-button: #f5f5f7;
     --ink-button-hover: #ffffff;
-    --ink-button-text: #131416;
+    --ink-button-text: #1c1c1e;
   }
 
   @media (min-width: 640px) {
@@ -99,7 +99,7 @@
   }
 
   body {
-    @apply font-sans antialiased bg-canvas;
+    @apply font-sans antialiased bg-canvas text-text-primary;
     color: var(--text-primary);
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     overflow-x: clip;
@@ -437,6 +437,29 @@
 
   .touch-press:active {
     transform: scale(0.97);
+  }
+
+  
+  /* Modern 21st.dev / Linear Minimalist Utilities */
+  .bento-highlight {
+    position: relative;
+    overflow: hidden;
+  }
+  .bento-highlight::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 113, 227, 0.4), transparent);
+  }
+  .card-glow {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  .card-glow:hover {
+    border-color: var(--border-strong);
+    box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.05);
   }
 
   .tabular-nums {

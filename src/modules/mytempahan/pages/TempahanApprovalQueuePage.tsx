@@ -173,34 +173,34 @@ export const TempahanApprovalQueuePage: React.FC = () => {
   }
 
   return (
-    <div className="w-full p-4 sm:p-6 lg:p-8 space-y-6 text-slate-900 dark:text-slate-100">
+    <div className="w-full p-4 sm:p-6 lg:p-8 space-y-6 text-text-primary dark:text-slate-100">
       {/* 1. Official Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-5 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-800 rounded-2xl p-5 shadow-xs">
         <div className="flex items-center gap-3.5">
           <button
             onClick={() => navigate(ROUTES.TEMPAHAN)}
-            className="p-2.5 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors shrink-0"
+            className="p-2.5 text-text-muted hover:text-text-primary dark:hover:text-white hover:bg-subtle dark:hover:bg-slate-800 rounded-xl transition-colors shrink-0"
             title="Back to Dashboard"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
 
-          <div className="w-10 h-10 rounded-xl bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800/80 flex items-center justify-center text-teal-700 dark:text-teal-300 shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-accent-base/10 dark:bg-teal-950/60 border border-accent-base/20 dark:border-teal-800/80 flex items-center justify-center text-teal-700 dark:text-teal-300 shrink-0">
             <ShieldCheck className="w-5 h-5" />
           </div>
 
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
+              <h1 className="text-lg sm:text-xl font-bold text-text-primary dark:text-white">
                 Facility Booking Review & Approval Queue
               </h1>
               {pendingCount > 0 && (
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800 animate-pulse">
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/10 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-500/20 dark:border-amber-800 animate-pulse">
                   {pendingCount} Pending Action
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-text-muted dark:text-slate-400 mt-0.5">
               Control panel for Facility Administrators & Custodians to verify and approve hospital venue requests.
             </p>
           </div>
@@ -208,7 +208,7 @@ export const TempahanApprovalQueuePage: React.FC = () => {
       </div>
 
       {/* 2. Filter Tabs & Search */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-800 shadow-xs">
         <div className="flex items-center gap-1.5 flex-wrap max-w-full">
           {[
             { id: 'pending', label: `Pending (${pendingCount})` },
@@ -220,10 +220,10 @@ export const TempahanApprovalQueuePage: React.FC = () => {
               key={tab.id}
               onClick={() => setFilterType(tab.id)}
               className={cn(
-                'px-4 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all',
+                'px-4 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors',
                 filterType === tab.id
-                  ? 'bg-slate-900 dark:bg-teal-700 text-white shadow-2xs'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                  ? 'bg-slate-900 dark:bg-teal-700 text-white shadow-elevation-1'
+                  : 'bg-subtle dark:bg-slate-800 text-text-muted dark:text-slate-400 hover:bg-subtle dark:hover:bg-slate-700'
               )}
             >
               {tab.label}
@@ -238,17 +238,17 @@ export const TempahanApprovalQueuePage: React.FC = () => {
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="Search applicant, department, reference no..."
-            className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-medium focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
+            className="w-full pl-9 pr-4 py-2 rounded-xl border border-border-default dark:border-slate-700 bg-surface dark:bg-slate-800 text-text-primary dark:text-white text-xs font-medium focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
           />
         </div>
       </div>
 
       {/* 3. Queue List */}
       {queueBookings.length === 0 ? (
-        <div className="p-12 text-center rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-3">
+        <div className="p-12 text-center rounded-2xl bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-800 shadow-xs space-y-3">
           <ShieldCheck className="w-12 h-12 text-emerald-500 mx-auto stroke-1" />
-          <h3 className="font-bold text-slate-800 dark:text-slate-200 text-sm">No Pending Applications</h3>
-          <p className="text-xs text-slate-400 dark:text-slate-500 max-w-sm mx-auto">
+          <h3 className="font-bold text-text-primary dark:text-slate-200 text-sm">No Pending Applications</h3>
+          <p className="text-xs text-slate-400 dark:text-text-muted max-w-sm mx-auto">
             All facility booking requests have been reviewed and acted upon.
           </p>
         </div>
@@ -268,49 +268,49 @@ export const TempahanApprovalQueuePage: React.FC = () => {
                   setDrawerOpen(true)
                 }}
                 className={cn(
-                  'p-5 rounded-2xl bg-white dark:bg-slate-900 border transition-all hover:shadow-md cursor-pointer flex flex-col lg:flex-row lg:items-center justify-between gap-4 group',
+                  'p-5 rounded-2xl bg-surface dark:bg-slate-900 border transition-colors hover:shadow-md cursor-pointer flex flex-col lg:flex-row lg:items-center justify-between gap-4 group',
                   isPending
-                    ? 'border-amber-200/90 dark:border-amber-800/80 bg-amber-50/10 dark:bg-amber-950/10'
-                    : 'border-slate-200/90 dark:border-slate-800'
+                    ? 'border-amber-500/20 dark:border-amber-800/80 bg-amber-500/10 dark:bg-amber-950/10'
+                    : 'border-border-default dark:border-slate-800'
                 )}
               >
                 {/* Left Info */}
                 <div className="space-y-2 flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-bold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md border border-slate-200 dark:border-slate-700">
+                    <span className="font-mono text-xs font-bold text-text-secondary dark:text-slate-300 bg-subtle dark:bg-slate-800 px-2 py-0.5 rounded-md border border-border-default dark:border-slate-700">
                       {b.booking_number}
                     </span>
 
                     <span
                       className={cn(
                         'px-2.5 py-0.5 rounded-full text-[10px] font-bold border',
-                        isPending && 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',
-                        isApproved && 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
-                        b.status === 'rejected' && 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800'
+                        isPending && 'bg-amber-500/10 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-500/20 dark:border-amber-800',
+                        isApproved && 'bg-emerald-500/10 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-500/20 dark:border-emerald-800',
+                        b.status === 'rejected' && 'bg-rose-500/10 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-500/20 dark:border-rose-800'
                       )}
                     >
                       {isPending ? 'PENDING APPROVAL' : isApproved ? 'APPROVED' : b.status.toUpperCase()}
                     </span>
 
                     {b.tetamu_vip?.ada_vip && (
-                      <span className="px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/40 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800 text-[10px] font-bold flex items-center gap-1">
+                      <span className="px-2 py-0.5 rounded-md bg-amber-500/10 dark:bg-amber-950/40 text-amber-400 dark:text-amber-300 border border-amber-500/20 dark:border-amber-800 text-[10px] font-bold flex items-center gap-1">
                         <Crown className="w-3 h-3 text-amber-600" /> VIP
                       </span>
                     )}
 
                     {b.priority === 'urgent' && (
-                      <span className="px-2 py-0.5 rounded-md bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800 text-[10px] font-bold">
+                      <span className="px-2 py-0.5 rounded-md bg-rose-500/10 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border border-rose-500/20 dark:border-rose-800 text-[10px] font-bold">
                         URGENT
                       </span>
                     )}
                   </div>
 
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-teal-700 dark:group-hover:text-teal-400 transition-colors">
+                  <h3 className="text-base font-bold text-text-primary dark:text-white group-hover:text-teal-700 dark:group-hover:text-teal-400 transition-colors">
                     {b.purpose}
                   </h3>
 
-                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
-                    <span className="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-1">
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-text-muted dark:text-slate-400">
+                    <span className="font-semibold text-text-primary dark:text-slate-200 flex items-center gap-1">
                       <MapPin className="w-3.5 h-3.5 text-slate-400" />
                       {b.room?.name}
                     </span>
@@ -330,10 +330,10 @@ export const TempahanApprovalQueuePage: React.FC = () => {
                 </div>
 
                 {/* Center: Organizer Info */}
-                <div className="lg:border-l lg:border-r border-slate-100 dark:border-slate-800 lg:px-6 py-1 text-xs text-slate-600 dark:text-slate-400 space-y-1 shrink-0">
-                  <div className="font-bold text-slate-900 dark:text-white">{b.pemohon_name}</div>
-                  <div className="text-slate-500 dark:text-slate-400 text-[11px]">{b.pemohon_jawatan}</div>
-                  <div className="text-slate-500 dark:text-slate-400 text-[11px] font-medium">{b.pemohon_department}</div>
+                <div className="lg:border-l lg:border-r border-border-subtle dark:border-slate-800 lg:px-6 py-1 text-xs text-text-muted dark:text-slate-400 space-y-1 shrink-0">
+                  <div className="font-bold text-text-primary dark:text-white">{b.pemohon_name}</div>
+                  <div className="text-text-muted dark:text-slate-400 text-[11px]">{b.pemohon_jawatan}</div>
+                  <div className="text-text-muted dark:text-slate-400 text-[11px] font-medium">{b.pemohon_department}</div>
                 </div>
 
                 {/* Right: Actions */}
@@ -342,7 +342,7 @@ export const TempahanApprovalQueuePage: React.FC = () => {
                     <>
                       <button
                         onClick={e => handleOpenActionModal(b, 'reject', e)}
-                        className="px-4 py-2 rounded-xl bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 dark:hover:bg-rose-900 border border-rose-200 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs font-bold transition-colors"
+                        className="px-4 py-2 rounded-xl bg-rose-500/10 dark:bg-rose-950/50 hover:bg-rose-100 dark:hover:bg-rose-900 border border-rose-500/20 dark:border-rose-800 text-rose-700 dark:text-rose-300 text-xs font-bold transition-colors"
                       >
                         Reject
                       </button>
@@ -359,7 +359,7 @@ export const TempahanApprovalQueuePage: React.FC = () => {
                         setSelectedBooking(b)
                         setDrawerOpen(true)
                       }}
-                      className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-colors"
+                      className="px-4 py-2 rounded-xl bg-subtle dark:bg-slate-800 hover:bg-subtle dark:hover:bg-slate-700 text-text-secondary dark:text-slate-300 text-xs font-semibold transition-colors"
                     >
                       View Details
                     </button>
@@ -379,16 +379,16 @@ export const TempahanApprovalQueuePage: React.FC = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-7 space-y-5 shadow-2xl border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 text-left"
+              className="w-full max-w-lg bg-surface dark:bg-slate-900 rounded-3xl p-6 sm:p-7 space-y-5 shadow-2xl border border-border-default dark:border-slate-800 text-text-primary dark:text-slate-100 text-left"
             >
               <div className="space-y-1">
                 <span className="font-mono text-xs font-bold text-teal-700 dark:text-teal-400">
                   {actionModalBooking.booking_number}
                 </span>
-                <h3 className="font-bold text-slate-900 dark:text-white text-lg">
+                <h3 className="font-bold text-text-primary dark:text-white text-lg">
                   {actionType === 'approve' ? 'Approve Booking Application' : 'Reject Booking Application'}
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
+                <p className="text-xs text-text-muted dark:text-slate-400">
                   {actionModalBooking.purpose} • {actionModalBooking.room?.name}
                 </p>
               </div>
@@ -396,7 +396,7 @@ export const TempahanApprovalQueuePage: React.FC = () => {
               {actionType === 'approve' ? (
                 <div className="space-y-4 text-xs">
                   {/* Readiness Checklist */}
-                  <div className="p-4 rounded-xl bg-teal-50/60 dark:bg-teal-950/40 border border-teal-200 dark:border-teal-800 space-y-2.5">
+                  <div className="p-4 rounded-xl bg-accent-base/10 dark:bg-teal-950/40 border border-accent-base/20 dark:border-teal-800 space-y-2.5">
                     <span className="font-bold text-teal-950 dark:text-teal-200 block">Facility Readiness Checklist:</span>
                     <label className="flex items-center gap-2 cursor-pointer text-teal-900 dark:text-teal-300">
                       <input
@@ -419,31 +419,31 @@ export const TempahanApprovalQueuePage: React.FC = () => {
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Approval Notes (To Applicant)</label>
+                    <label className="text-xs font-bold text-text-secondary dark:text-slate-300 block">Approval Notes (To Applicant)</label>
                     <textarea
                       rows={3}
                       value={approvalNotes}
                       onChange={e => setApprovalNotes(e.target.value)}
-                      className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-medium focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
+                      className="w-full p-2.5 rounded-xl border border-border-default dark:border-slate-700 bg-surface dark:bg-slate-800 text-text-primary dark:text-white text-xs font-medium focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
                     />
                   </div>
                 </div>
               ) : (
                 <div className="space-y-3 text-xs">
-                  <div className="p-3.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900 text-rose-900 dark:text-rose-300">
+                  <div className="p-3.5 rounded-xl bg-rose-500/10 dark:bg-rose-950/40 border border-rose-500/20 dark:border-rose-900 text-rose-400 dark:text-rose-300 font-bold dark:text-rose-300">
                     <p className="font-semibold">
                       Please provide a clear reason for rejection so the applicant can reschedule or choose an alternative facility.
                     </p>
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-700 dark:text-slate-300 block">Rejection Reason *</label>
+                    <label className="text-xs font-bold text-text-secondary dark:text-slate-300 block">Rejection Reason *</label>
                     <textarea
                       rows={3}
                       value={rejectionReason}
                       onChange={e => setRejectionReason(e.target.value)}
                       placeholder="e.g. This facility is reserved for an unshiftable MOH Director Briefing..."
-                      className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-medium focus:ring-2 focus:ring-rose-500 focus:outline-hidden"
+                      className="w-full p-2.5 rounded-xl border border-border-default dark:border-slate-700 bg-surface dark:bg-slate-800 text-text-primary dark:text-white text-xs font-medium focus:ring-2 focus:ring-rose-500 focus:outline-hidden"
                     />
                   </div>
                 </div>
@@ -454,7 +454,7 @@ export const TempahanApprovalQueuePage: React.FC = () => {
                   type="button"
                   onClick={() => setActionModalBooking(null)}
                   disabled={processing}
-                  className="py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-xs font-bold"
+                  className="py-2.5 rounded-xl border border-border-default dark:border-slate-700 hover:bg-subtle/50 dark:hover:bg-slate-800 text-text-secondary dark:text-slate-300 text-xs font-bold"
                 >
                   Cancel
                 </button>
@@ -464,7 +464,7 @@ export const TempahanApprovalQueuePage: React.FC = () => {
                   onClick={handleExecuteAction}
                   disabled={processing}
                   className={cn(
-                    'py-2.5 rounded-xl text-white text-xs font-bold shadow-xs transition-all',
+                    'py-2.5 rounded-xl text-white text-xs font-bold shadow-xs transition-colors',
                     actionType === 'approve'
                       ? 'bg-teal-700 hover:bg-teal-800'
                       : 'bg-rose-600 hover:bg-rose-700'

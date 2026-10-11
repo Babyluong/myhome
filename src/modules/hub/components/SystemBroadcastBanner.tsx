@@ -41,7 +41,7 @@ export const SystemBroadcastBanner: React.FC<SystemBroadcastBannerProps> = ({
   // If there are no notices and not loading
   if (!isLoading && activeNotices.length === 0) {
     return (
-      <div className="w-full bg-surface border border-border-default rounded-xl px-4 py-2.5 flex items-center justify-between gap-3 text-xs shadow-2xs transition-all">
+      <div className="w-full bg-surface border border-border-default rounded-xl px-4 py-2.5 flex items-center justify-between gap-3 text-xs shadow-elevation-1 transition-colors">
         <div className="flex items-center gap-2.5 text-text-secondary">
           <div className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
           <span className="font-semibold text-text-primary">
@@ -81,7 +81,7 @@ export const SystemBroadcastBanner: React.FC<SystemBroadcastBannerProps> = ({
         badgeText: 'System Maintenance',
         containerBorder: 'border-amber-500/25 dark:border-amber-500/30',
         containerBg: 'bg-amber-500/5 dark:bg-amber-500/10',
-        badgeBg: 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border-amber-500/30',
+        badgeBg: 'bg-amber-500/15 text-amber-400 dark:text-amber-300 border-amber-500/30',
         iconColor: 'text-amber-600 dark:text-amber-400',
       }
     }
@@ -101,7 +101,7 @@ export const SystemBroadcastBanner: React.FC<SystemBroadcastBannerProps> = ({
         badgeText: 'Critical Advisory',
         containerBorder: 'border-rose-500/25 dark:border-rose-500/30',
         containerBg: 'bg-rose-500/5 dark:bg-rose-500/10',
-        badgeBg: 'bg-rose-500/15 text-rose-800 dark:text-rose-300 border-rose-500/30',
+        badgeBg: 'bg-rose-500/15 text-rose-400 dark:text-rose-300 border-rose-500/30',
         iconColor: 'text-rose-600 dark:text-rose-400',
       }
     }
@@ -119,13 +119,13 @@ export const SystemBroadcastBanner: React.FC<SystemBroadcastBannerProps> = ({
   const CurrentIcon = currentStyle.icon
 
   return (
-    <div className={`w-full ${currentStyle.containerBg} border ${currentStyle.containerBorder} rounded-xl p-3 sm:p-4 shadow-2xs transition-all duration-150`}>
+    <div className={`w-full ${currentStyle.containerBg} border ${currentStyle.containerBorder} rounded-xl p-3 sm:p-4 shadow-elevation-1 transition-colors duration-150`}>
       <div 
         onClick={() => setIsExpanded(!isExpanded)}
         className="flex items-center justify-between cursor-pointer select-none gap-3"
       >
         <div className="flex items-center gap-3 min-w-0 flex-1">
-          <div className="p-1.5 rounded-lg bg-surface border border-border-default shrink-0 shadow-2xs">
+          <div className="p-1.5 rounded-lg bg-surface border border-border-default shrink-0 shadow-elevation-1">
             <CurrentIcon className={`w-4 h-4 ${currentStyle.iconColor}`} />
           </div>
 
@@ -181,7 +181,7 @@ export const SystemBroadcastBanner: React.FC<SystemBroadcastBannerProps> = ({
               return (
                 <div 
                   key={notice.id}
-                  className="p-3 rounded-lg bg-surface border border-border-default flex flex-col gap-2 shadow-2xs"
+                  className="p-3 rounded-lg bg-surface border border-border-default flex flex-col gap-2 shadow-elevation-1"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-2">

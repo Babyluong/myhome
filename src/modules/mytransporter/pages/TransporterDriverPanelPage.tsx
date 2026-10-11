@@ -430,7 +430,7 @@ const TransporterDriverPanelPage: React.FC = () => {
       {/* Back button */}
       <button 
         onClick={() => navigate('/transporter/dashboard')}
-        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold mb-4 cursor-pointer"
+        className="flex items-center gap-2 text-text-muted hover:text-text-primary transition-colors text-sm font-semibold mb-4 cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>{isEn ? 'Back to Dashboard' : 'Kembali ke Papan Pemuka'}</span>
@@ -438,11 +438,11 @@ const TransporterDriverPanelPage: React.FC = () => {
 
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+        <h1 className="text-2xl font-black text-text-primary tracking-tight flex items-center gap-2">
           <Ambulance className="w-8 h-8 text-emerald-600 animate-pulse" />
           {isEn ? 'Driver Operations & Dispatch Panel' : 'Panel Tugasan Pemandu'}
         </h1>
-        <p className="text-slate-500 text-sm">
+        <p className="text-text-muted text-sm">
           {isEn 
             ? 'Review, accept patient/staff transport assignments, and complete hospital vehicle safety checks.'
             : 'Semak, terima tugasan perjalanan pesakit/staf, dan lengkapkan semakan keselamatan kenderaan hospital.'}
@@ -450,33 +450,33 @@ const TransporterDriverPanelPage: React.FC = () => {
       </div>
 
       {/* Tab controls */}
-      <div className="flex border-b border-slate-200 gap-6">
+      <div className="flex border-b border-border-default gap-6">
         <button
           onClick={() => setActiveTab('incoming')}
-          className={`py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
+          className={`py-3 text-sm font-bold border-b-2 transition-colors cursor-pointer ${
             activeTab === 'incoming' 
               ? 'border-emerald-600 text-emerald-700' 
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              : 'border-transparent text-text-muted hover:text-text-primary'
           }`}
         >
           {isEn ? 'Incoming Dispatch Queue' : 'Tugasan Menunggu Pemandu'} ({incomingRequests.length})
         </button>
         <button
           onClick={() => setActiveTab('active')}
-          className={`py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
+          className={`py-3 text-sm font-bold border-b-2 transition-colors cursor-pointer ${
             activeTab === 'active' 
               ? 'border-emerald-600 text-emerald-700' 
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              : 'border-transparent text-text-muted hover:text-text-primary'
           }`}
         >
           {isEn ? 'My Active Trips' : 'Trip Aktif Saya'} ({myActiveTrips.length})
         </button>
         <button
           onClick={() => setActiveTab('history')}
-          className={`py-3 text-sm font-bold border-b-2 transition-all cursor-pointer ${
+          className={`py-3 text-sm font-bold border-b-2 transition-colors cursor-pointer ${
             activeTab === 'history' 
               ? 'border-emerald-600 text-emerald-700' 
-              : 'border-transparent text-slate-500 hover:text-slate-800'
+              : 'border-transparent text-text-muted hover:text-text-primary'
           }`}
         >
           {isEn ? 'Assignment History' : 'Sejarah Tugasan'} ({myHistoryTrips.length})
@@ -485,7 +485,7 @@ const TransporterDriverPanelPage: React.FC = () => {
 
       {/* Content based on tab */}
       {loading ? (
-        <div className="p-12 text-center text-slate-500 font-medium animate-pulse">
+        <div className="p-12 text-center text-text-muted font-medium animate-pulse">
           {isEn ? 'Processing dispatch assignments...' : 'Memproses maklumat tugasan...'}
         </div>
       ) : (
@@ -495,17 +495,17 @@ const TransporterDriverPanelPage: React.FC = () => {
           {activeTab === 'incoming' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {incomingRequests.length === 0 ? (
-                <div className="md:col-span-2 p-12 text-center text-slate-500 bg-slate-50 border border-slate-200/60 rounded-2xl">
+                <div className="md:col-span-2 p-12 text-center text-text-muted bg-subtle/50 border border-border-default rounded-2xl">
                   {isEn ? 'No new transport dispatches available at the moment.' : 'Tiada tugasan pengangkutan baru buat masa ini.'}
                 </div>
               ) : (
                 incomingRequests.map((req) => (
-                  <Card key={req.id} className="border border-slate-200 hover:border-slate-300 shadow-sm flex flex-col justify-between overflow-hidden">
+                  <Card key={req.id} className="border border-border-default hover:border-border-default shadow-sm flex flex-col justify-between overflow-hidden">
                     <div 
                       onClick={() => handleOpenDetails(req)} 
-                      className="cursor-pointer flex-1 flex flex-col hover:bg-slate-50/20 transition-colors"
+                      className="cursor-pointer flex-1 flex flex-col hover:bg-subtle/50 transition-colors"
                     >
-                      <CardHeader className="pb-3 bg-slate-50/50 border-b border-slate-100">
+                      <CardHeader className="pb-3 bg-subtle/50 border-b border-border-subtle">
                         <div className="flex justify-between items-center">
                           <span className="font-mono font-bold text-xs text-blue-600">{req.no_rujukan}</span>
                           {req.jenis_permohonan === 'ambulance' ? (
@@ -522,29 +522,29 @@ const TransporterDriverPanelPage: React.FC = () => {
                           <div className="flex items-start gap-2">
                             <MapPin className="w-4 h-4 text-slate-400 mt-0.5" />
                             <div>
-                              <span className="font-bold text-slate-800">{req.destinasi}</span>
-                              <p className="text-xs text-slate-500">{req.tujuan_permohonan}</p>
+                              <span className="font-bold text-text-primary">{req.destinasi}</span>
+                              <p className="text-xs text-text-muted">{req.tujuan_permohonan}</p>
                             </div>
                           </div>
 
                           <div className="flex items-center gap-2">
                             <Clock className="w-4 h-4 text-slate-400" />
-                            <span className="font-semibold text-slate-700">
+                            <span className="font-semibold text-text-secondary">
                               {new Date(req.tarikh_masa_diperlukan).toLocaleString(isEn ? 'en-US' : 'ms-MY')}
                             </span>
                           </div>
 
                           {(req.jenis_permohonan === 'ambulance' || req.bawa_pesakit) && req.nama_pesakit && (
                             <div className="space-y-1.5 pt-1">
-                              <div className="flex items-center gap-2 p-2 bg-rose-50 text-rose-800 rounded-lg text-xs font-bold">
+                              <div className="flex items-center gap-2 p-2 bg-rose-500/10 text-rose-400 rounded-lg text-xs font-bold">
                                 <User className="w-3.5 h-3.5" />
                                 <span>{isEn ? 'Patient:' : 'Pesakit:'} {req.nama_pesakit} ({req.rn_pesakit})</span>
                               </div>
                               {req.patient_mobility && (
                                 <div className={`flex items-center gap-2 p-2 rounded-lg text-xs font-bold border ${
-                                  req.patient_mobility === 'stretcher' ? 'bg-amber-50 text-amber-900 border-amber-200' : 'bg-slate-50 text-slate-700 border-slate-200'
+                                  req.patient_mobility === 'stretcher' ? 'bg-amber-500/10 text-amber-400 dark:text-amber-300 font-bold border-amber-500/20' : 'bg-subtle/50 text-text-secondary border-border-default'
                                 }`}>
-                                  <Info className="w-3.5 h-3.5 text-slate-500" />
+                                  <Info className="w-3.5 h-3.5 text-text-muted" />
                                   <span>
                                     {isEn ? 'Mobility:' : 'Mobiliti:'}{' '}
                                     <span className="capitalize">
@@ -560,7 +560,7 @@ const TransporterDriverPanelPage: React.FC = () => {
                         </div>
                       </CardContent>
                     </div>
-                    <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex gap-3">
+                    <div className="px-6 py-4 bg-subtle/50 border-t border-border-subtle flex gap-3">
                       <Button 
                         onClick={() => handleOpenInspection(req, 'pre_trip')}
                         className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs cursor-pointer"
@@ -570,7 +570,7 @@ const TransporterDriverPanelPage: React.FC = () => {
                       <Button 
                         variant="outline"
                         onClick={() => handleOpenDirectReject(req.id)}
-                        className="text-xs border-slate-200 text-rose-600 hover:bg-rose-50/50 cursor-pointer"
+                        className="text-xs border-border-default text-rose-600 hover:bg-rose-500/10 cursor-pointer"
                       >
                         {isEn ? 'Decline' : 'Tolak'}
                       </Button>
@@ -585,19 +585,19 @@ const TransporterDriverPanelPage: React.FC = () => {
           {activeTab === 'active' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {myActiveTrips.length === 0 ? (
-                <div className="md:col-span-2 p-12 text-center text-slate-500 bg-slate-50 border border-slate-200/60 rounded-2xl">
+                <div className="md:col-span-2 p-12 text-center text-text-muted bg-subtle/50 border border-border-default rounded-2xl">
                   {isEn ? 'No active transport trips currently assigned to you.' : 'Tiada trip pengangkutan aktif yang didaftarkan di bawah anda.'}
                 </div>
               ) : (
                 myActiveTrips.map((req) => (
-                  <Card key={req.id} className="border border-slate-200 shadow-sm flex flex-col justify-between overflow-hidden">
+                  <Card key={req.id} className="border border-border-default shadow-sm flex flex-col justify-between overflow-hidden">
                     <div 
                       onClick={() => handleOpenDetails(req)}
-                      className="cursor-pointer flex-1 flex flex-col hover:bg-slate-50/20 transition-colors"
+                      className="cursor-pointer flex-1 flex flex-col hover:bg-subtle/50 transition-colors"
                     >
-                      <CardHeader className="pb-3 bg-slate-50/50 border-b border-slate-100 flex flex-row justify-between items-center">
+                      <CardHeader className="pb-3 bg-subtle/50 border-b border-border-subtle flex flex-row justify-between items-center">
                         <span className="font-mono font-bold text-xs text-blue-600">{req.no_rujukan}</span>
-                        <span className="text-xs font-bold text-indigo-700 bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded">
+                        <span className="text-xs font-bold text-indigo-700 bg-indigo-500/10 border border-indigo-100 px-2 py-0.5 rounded">
                           {req.status_semasa === 'driver_accepted' && (isEn ? 'Pending Admin Approval' : 'Menunggu Kelulusan Admin')}
                           {req.status_semasa === 'approved' && (isEn ? 'Approved (Ready to Depart)' : 'Diluluskan (Sedia Jalan)')}
                           {req.status_semasa === 'in_transit' && (isEn ? 'In Transit' : 'Dalam Transit')}
@@ -605,11 +605,11 @@ const TransporterDriverPanelPage: React.FC = () => {
                       </CardHeader>
                       <CardContent className="p-6 space-y-4 flex-1">
                         <div className="space-y-2 text-sm">
-                          <div className="font-bold text-slate-800 flex items-center gap-1">
+                          <div className="font-bold text-text-primary flex items-center gap-1">
                             <MapPin className="w-4 h-4 text-emerald-600" />
                             {req.destinasi}
                           </div>
-                          <p className="text-xs text-slate-500">{req.tujuan_permohonan}</p>
+                          <p className="text-xs text-text-muted">{req.tujuan_permohonan}</p>
 
                           <div className="pt-2 grid grid-cols-2 gap-2 text-xs">
                             <div>
@@ -624,15 +624,15 @@ const TransporterDriverPanelPage: React.FC = () => {
 
                           {(req.jenis_permohonan === 'ambulance' || req.bawa_pesakit) && req.nama_pesakit && (
                             <div className="space-y-1.5 pt-2">
-                              <div className="flex items-center gap-2 p-2 bg-rose-50 text-rose-800 rounded-lg text-xs font-bold">
+                              <div className="flex items-center gap-2 p-2 bg-rose-500/10 text-rose-400 rounded-lg text-xs font-bold">
                                 <User className="w-3.5 h-3.5" />
                                 <span>{isEn ? 'Patient:' : 'Pesakit:'} {req.nama_pesakit} ({req.rn_pesakit})</span>
                               </div>
                               {req.patient_mobility && (
                                 <div className={`flex items-center gap-2 p-2 rounded-lg text-xs font-bold border ${
-                                  req.patient_mobility === 'stretcher' ? 'bg-amber-50 text-amber-900 border-amber-200' : 'bg-slate-50 text-slate-700 border-slate-200'
+                                  req.patient_mobility === 'stretcher' ? 'bg-amber-500/10 text-amber-400 dark:text-amber-300 font-bold border-amber-500/20' : 'bg-subtle/50 text-text-secondary border-border-default'
                                 }`}>
-                                  <Info className="w-3.5 h-3.5 text-slate-500" />
+                                  <Info className="w-3.5 h-3.5 text-text-muted" />
                                   <span>
                                     {isEn ? 'Mobility:' : 'Mobiliti:'}{' '}
                                     <span className="capitalize">
@@ -647,7 +647,7 @@ const TransporterDriverPanelPage: React.FC = () => {
                           )}
 
                           {req.status_semasa === 'driver_accepted' && (
-                            <div className="p-3 bg-amber-50 border border-amber-100 rounded-xl text-xs text-amber-800 flex items-start gap-2 mt-2">
+                            <div className="p-3 bg-amber-500/10 border border-amber-100 rounded-xl text-xs text-amber-400 flex items-start gap-2 mt-2">
                               <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
                               <p>
                                 {isEn 
@@ -660,15 +660,15 @@ const TransporterDriverPanelPage: React.FC = () => {
                       </CardContent>
                     </div>
                     
-                    <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex flex-col gap-2">
+                    <div className="px-6 py-4 bg-subtle/50 border-t border-border-subtle flex flex-col gap-2">
                       {req.status_semasa === 'approved' && (
                         <>
                           <Button 
                             onClick={() => handleStartTrip(req.id)}
                             disabled={!isTripToday(req.tarikh_masa_diperlukan)}
-                            className={`w-full font-bold flex items-center justify-center gap-2 transition-all cursor-pointer ${
+                            className={`w-full font-bold flex items-center justify-center gap-2 transition-colors cursor-pointer ${
                               !isTripToday(req.tarikh_masa_diperlukan)
-                                ? 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed shadow-none hover:bg-slate-100'
+                                ? 'bg-subtle text-slate-400 border border-border-default cursor-not-allowed shadow-none hover:bg-subtle'
                                 : 'bg-blue-600 hover:bg-blue-700 text-white'
                             }`}
                           >
@@ -700,7 +700,7 @@ const TransporterDriverPanelPage: React.FC = () => {
                       {req.status_semasa === 'driver_accepted' && (
                         <Button 
                           disabled
-                          className="w-full bg-slate-200 text-slate-500 cursor-not-allowed font-bold"
+                          className="w-full bg-subtle text-text-muted cursor-not-allowed font-bold"
                         >
                           {isEn ? 'Pending Administrator Approval' : 'Menunggu Kelulusan Admin'}
                         </Button>
@@ -714,17 +714,17 @@ const TransporterDriverPanelPage: React.FC = () => {
 
           {/* TAB 3: TRIP HISTORY */}
           {activeTab === 'history' && (
-            <Card className="border border-slate-200 shadow-sm overflow-hidden">
+            <Card className="border border-border-default shadow-sm overflow-hidden">
               <CardContent className="p-0">
                 {myHistoryTrips.length === 0 ? (
-                  <div className="p-12 text-center text-slate-500">
+                  <div className="p-12 text-center text-text-muted">
                     {isEn ? 'No past assignment history records found.' : 'Tiada sejarah tugasan lampau ditemui.'}
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                       <thead>
-                        <tr className="bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                        <tr className="bg-subtle/50 border-b border-border-subtle text-xs font-semibold text-text-muted uppercase tracking-wider">
                           <th className="px-6 py-4">{isEn ? 'Reference No.' : 'No. Rujukan'}</th>
                           <th className="px-6 py-4">{isEn ? 'Type' : 'Jenis'}</th>
                           <th className="px-6 py-4">{isEn ? 'Destination' : 'Destinasi'}</th>
@@ -733,14 +733,14 @@ const TransporterDriverPanelPage: React.FC = () => {
                           <th className="px-6 py-4">{isEn ? 'Status' : 'Status'}</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
+                      <tbody className="divide-y divide-border-subtle text-sm text-text-secondary">
                         {myHistoryTrips.map((req) => (
                           <tr 
                             key={req.id}
                             onClick={() => handleOpenDetails(req)}
-                            className="cursor-pointer hover:bg-slate-50/80 transition-colors"
+                            className="cursor-pointer hover:bg-subtle/50 transition-colors"
                           >
-                            <td className="px-6 py-4 font-mono font-bold text-slate-600">{req.no_rujukan}</td>
+                            <td className="px-6 py-4 font-mono font-bold text-text-muted">{req.no_rujukan}</td>
                             <td className="px-6 py-4 capitalize font-semibold">
                               {req.jenis_permohonan === 'sg' 
                                 ? (isEn ? 'Official Car (SG)' : 'Kereta Jabatan (SG)') 
@@ -778,11 +778,11 @@ const TransporterDriverPanelPage: React.FC = () => {
       {/* 1. INSPECTION MODAL (Pre-Trip / Post-Trip) */}
       {isInspModalOpen && selectedReq && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs overflow-y-auto">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 max-w-4xl w-full mx-4 my-8 overflow-hidden flex flex-col max-h-[90vh] animate-scaleIn">
+          <div className="bg-surface rounded-2xl shadow-xl border border-border-default max-w-4xl w-full mx-4 my-8 overflow-hidden flex flex-col max-h-[90vh] animate-scaleIn">
             
-            <div className="bg-slate-50 border-b border-slate-100 px-6 py-4 flex justify-between items-center">
+            <div className="bg-subtle/50 border-b border-border-subtle px-6 py-4 flex justify-between items-center">
               <div>
-                <h3 className="text-lg font-bold text-slate-800">
+                <h3 className="text-lg font-bold text-text-primary">
                   {inspType === 'pre_trip' 
                     ? (isEn ? 'Vehicle Safety Inspection (Pre-Trip)' : 'Pemeriksaan Keselamatan Kenderaan (Pre-Trip)') 
                     : (isEn ? 'Vehicle Inspection Report (Post-Trip)' : 'Laporan Pemeriksaan Kenderaan (Post-Trip)')}
@@ -798,14 +798,14 @@ const TransporterDriverPanelPage: React.FC = () => {
               
               {/* Vehicle Selection */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                <label className="text-xs font-bold text-text-muted uppercase tracking-wider">
                   {isEn ? 'Hospital Fleet Vehicle' : 'Kenderaan Hospital'}
                 </label>
                 {inspType === 'pre_trip' ? (
                   <select
                     value={selectedVehicleId}
                     onChange={(e) => setSelectedVehicleId(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
+                    className="w-full bg-subtle/50 border border-border-default hover:border-border-default rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
                     required
                   >
                     <option value="">{isEn ? 'Please Select Vehicle' : 'Sila Select Vehicle'}</option>
@@ -821,20 +821,20 @@ const TransporterDriverPanelPage: React.FC = () => {
                   <Input 
                     value={selectedReq.kenderaan?.no_kenderaan || ''} 
                     disabled 
-                    className="bg-slate-100 font-bold"
+                    className="bg-subtle font-bold"
                   />
                 )}
               </div>
               {/* 4 MANDATORY INSPECTION CHECKLIST ITEMS */}
               <div className="space-y-4">
-                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b pb-1">
+                <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider border-b pb-1">
                   {isEn ? 'Inspection Checklist & Photo Evidence' : 'Senarai Semak & Bukti Foto'}
                 </h4>
                 
                 {/* Tyre */}
-                <div className="p-4 border border-slate-100 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:border-slate-200 transition-colors">
+                <div className="p-4 border border-border-subtle rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:border-border-default transition-colors">
                   <div className="space-y-1">
-                    <span className="font-bold text-sm text-slate-700">
+                    <span className="font-bold text-sm text-text-secondary">
                       {isEn ? '1. Tyres & Rims Condition' : '1. Keadaan Tayar & Rim'}
                     </span>
                     <p className="text-xs text-slate-400">
@@ -845,14 +845,14 @@ const TransporterDriverPanelPage: React.FC = () => {
                     <select 
                       value={tyreStatus} 
                       onChange={(e) => setTyreStatus(e.target.value as any)}
-                      className="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-semibold outline-none cursor-pointer"
+                      className="bg-subtle/50 border border-border-default rounded-lg px-2 py-1.5 text-xs font-semibold outline-none cursor-pointer"
                     >
                       <option value="good">{isEn ? 'Good' : 'Baik (Good)'}</option>
                       <option value="issue">{isEn ? 'Issue / Defect' : 'Rosak / Masalah (Issue)'}</option>
                     </select>
                     
                     {tyrePhoto && (tyrePhoto.startsWith('data:') || tyrePhoto.startsWith('http') || tyrePhoto.startsWith('/')) && (
-                      <div className="w-8 h-8 rounded-lg overflow-hidden border border-slate-200">
+                      <div className="w-8 h-8 rounded-lg overflow-hidden border border-border-default">
                         <img src={tyrePhoto} className="w-full h-full object-cover" alt="tayar" />
                       </div>
                     )}
@@ -860,10 +860,10 @@ const TransporterDriverPanelPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handlePhotoCapture('tyre')}
-                      className={`px-3 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                      className={`px-3 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
                         tyrePhoto 
-                          ? 'border-emerald-200 bg-emerald-50 text-emerald-700' 
-                          : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                          ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-700' 
+                          : 'border-border-default hover:bg-subtle/50 text-text-secondary'
                       }`}
                     >
                       <Camera className="w-3.5 h-3.5" />
@@ -873,9 +873,9 @@ const TransporterDriverPanelPage: React.FC = () => {
                 </div>
 
                 {/* Gas */}
-                <div className="p-4 border border-slate-100 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:border-slate-200 transition-colors">
+                <div className="p-4 border border-border-subtle rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:border-border-default transition-colors">
                   <div className="space-y-1">
-                    <span className="font-bold text-sm text-slate-700">
+                    <span className="font-bold text-sm text-text-secondary">
                       {isEn ? '2. Fuel / Petrol Level' : '2. Paras Gas / Minyak Petrol'}
                     </span>
                     <p className="text-xs text-slate-400">
@@ -886,14 +886,14 @@ const TransporterDriverPanelPage: React.FC = () => {
                     <select 
                       value={gasStatus} 
                       onChange={(e) => setGasStatus(e.target.value as any)}
-                      className="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-semibold outline-none cursor-pointer"
+                      className="bg-subtle/50 border border-border-default rounded-lg px-2 py-1.5 text-xs font-semibold outline-none cursor-pointer"
                     >
                       <option value="good">{isEn ? 'Good' : 'Mencukupi (Good)'}</option>
                       <option value="issue">{isEn ? 'Critical / Refuel Required' : 'Kritis / Isi Semula (Issue)'}</option>
                     </select>
                     
                     {gasPhoto && (gasPhoto.startsWith('data:') || gasPhoto.startsWith('http') || gasPhoto.startsWith('/')) && (
-                      <div className="w-8 h-8 rounded-lg overflow-hidden border border-slate-200">
+                      <div className="w-8 h-8 rounded-lg overflow-hidden border border-border-default">
                         <img src={gasPhoto} className="w-full h-full object-cover" alt="gas" />
                       </div>
                     )}
@@ -901,10 +901,10 @@ const TransporterDriverPanelPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handlePhotoCapture('gas')}
-                      className={`px-3 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                      className={`px-3 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
                         gasPhoto 
-                          ? 'border-emerald-200 bg-emerald-50 text-emerald-700' 
-                          : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                          ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-700' 
+                          : 'border-border-default hover:bg-subtle/50 text-text-secondary'
                       }`}
                     >
                       <Camera className="w-3.5 h-3.5" />
@@ -914,9 +914,9 @@ const TransporterDriverPanelPage: React.FC = () => {
                 </div>
 
                 {/* Oil */}
-                <div className="p-4 border border-slate-100 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:border-slate-200 transition-colors">
+                <div className="p-4 border border-border-subtle rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:border-border-default transition-colors">
                   <div className="space-y-1">
-                    <span className="font-bold text-sm text-slate-700">
+                    <span className="font-bold text-sm text-text-secondary">
                       {isEn ? '3. Engine Oil Level' : '3. Minyak Hitam / Enjin'}
                     </span>
                     <p className="text-xs text-slate-400">
@@ -927,14 +927,14 @@ const TransporterDriverPanelPage: React.FC = () => {
                     <select 
                       value={oilStatus} 
                       onChange={(e) => setOilStatus(e.target.value as any)}
-                      className="bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-semibold outline-none cursor-pointer"
+                      className="bg-subtle/50 border border-border-default rounded-lg px-2 py-1.5 text-xs font-semibold outline-none cursor-pointer"
                     >
                       <option value="good">{isEn ? 'Good' : 'Mencukupi (Good)'}</option>
                       <option value="issue">{isEn ? 'Top-Up / Service Required' : 'Perlu Tambah / Servis (Issue)'}</option>
                     </select>
                     
                     {oilPhoto && (oilPhoto.startsWith('data:') || oilPhoto.startsWith('http') || oilPhoto.startsWith('/')) && (
-                      <div className="w-8 h-8 rounded-lg overflow-hidden border border-slate-200">
+                      <div className="w-8 h-8 rounded-lg overflow-hidden border border-border-default">
                         <img src={oilPhoto} className="w-full h-full object-cover" alt="minyak" />
                       </div>
                     )}
@@ -942,10 +942,10 @@ const TransporterDriverPanelPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handlePhotoCapture('oil')}
-                      className={`px-3 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                      className={`px-3 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
                         oilPhoto 
-                          ? 'border-emerald-200 bg-emerald-50 text-emerald-700' 
-                          : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                          ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-700' 
+                          : 'border-border-default hover:bg-subtle/50 text-text-secondary'
                       }`}
                     >
                       <Camera className="w-3.5 h-3.5" />
@@ -955,17 +955,17 @@ const TransporterDriverPanelPage: React.FC = () => {
                 </div>
 
                 {/* Odometer Photo */}
-                <div className="p-4 border border-slate-100 rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:border-slate-200 transition-colors">
+                <div className="p-4 border border-border-subtle rounded-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:border-border-default transition-colors">
                   <div className="space-y-1 flex-1">
-                    <span className="font-bold text-sm text-slate-700">
+                    <span className="font-bold text-sm text-text-secondary">
                       {isEn ? '4. Odometer Reading & Photo' : '4. Bacaan & Foto Odometer Kenderaan'}
                     </span>
                     <p className="text-xs text-slate-400">
                       {isEn ? 'Enter current odometer reading (km) and optional photo proof.' : 'Masukkan bacaan odometer (km) terkini (wajib) dan ambil foto sebagai bukti (pilihan).'}
                     </p>
                     {inspType === 'post_trip' && preTripOdo !== null && (
-                      <div className="mt-2 text-xs font-semibold text-slate-600 bg-slate-100 px-2 py-1 rounded w-fit">
-                        {isEn ? 'Start Odometer:' : 'Odometer Mula:'} <span className="font-bold font-mono text-slate-800">{preTripOdo.toLocaleString(isEn ? 'en-US' : 'ms-MY')} km</span>
+                      <div className="mt-2 text-xs font-semibold text-text-muted bg-subtle px-2 py-1 rounded w-fit">
+                        {isEn ? 'Start Odometer:' : 'Odometer Mula:'} <span className="font-bold font-mono text-text-primary">{preTripOdo.toLocaleString(isEn ? 'en-US' : 'ms-MY')} km</span>
                       </div>
                     )}
                     <div className="mt-3 max-w-xs">
@@ -975,13 +975,13 @@ const TransporterDriverPanelPage: React.FC = () => {
                         value={odoReading}
                         onChange={(e) => setOdoReading(e.target.value)}
                         required
-                        className="bg-slate-50 border border-slate-200"
+                        className="bg-subtle/50 border border-border-default"
                       />
                     </div>
                   </div>
                   <div className="flex items-center gap-3 self-end md:self-center">
                     {odoPhoto && (odoPhoto.startsWith('data:') || odoPhoto.startsWith('http') || odoPhoto.startsWith('/')) && (
-                      <div className="w-8 h-8 rounded-lg overflow-hidden border border-slate-200">
+                      <div className="w-8 h-8 rounded-lg overflow-hidden border border-border-default">
                         <img src={odoPhoto} className="w-full h-full object-cover" alt="odometer" />
                       </div>
                     )}
@@ -989,10 +989,10 @@ const TransporterDriverPanelPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handlePhotoCapture('odo')}
-                      className={`px-3 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                      className={`px-3 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
                         odoPhoto 
-                          ? 'border-emerald-200 bg-emerald-50 text-emerald-700' 
-                          : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                          ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-700' 
+                          : 'border-border-default hover:bg-subtle/50 text-text-secondary'
                       }`}
                     >
                       <Camera className="w-3.5 h-3.5" />
@@ -1004,18 +1004,18 @@ const TransporterDriverPanelPage: React.FC = () => {
 
               {/* pre-trip decision toggle */}
               {inspType === 'pre_trip' && (
-                <div className="space-y-4 pt-4 border-t border-slate-100">
-                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                <div className="space-y-4 pt-4 border-t border-border-subtle">
+                  <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider">
                     {isEn ? 'Driver Inspection Decision' : 'Keputusan Pemeriksaan Pemandu'}
                   </h4>
                   <div className="grid grid-cols-2 gap-4">
                     <button
                       type="button"
                       onClick={() => setDecision('cleared')}
-                      className={`p-4 rounded-xl border-2 flex flex-col items-center gap-1 transition-all cursor-pointer ${
+                      className={`p-4 rounded-xl border-2 flex flex-col items-center gap-1 transition-colors cursor-pointer ${
                         decision === 'cleared'
-                          ? 'border-emerald-600 bg-emerald-50/50 text-emerald-800'
-                          : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                          ? 'border-emerald-600 bg-emerald-500/10 text-emerald-400'
+                          : 'border-border-default text-text-muted hover:border-border-default'
                       }`}
                     >
                       <CheckCircle className="w-6 h-6 text-emerald-600" />
@@ -1026,10 +1026,10 @@ const TransporterDriverPanelPage: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => setDecision('rejected')}
-                      className={`p-4 rounded-xl border-2 flex flex-col items-center gap-1 transition-all cursor-pointer ${
+                      className={`p-4 rounded-xl border-2 flex flex-col items-center gap-1 transition-colors cursor-pointer ${
                         decision === 'rejected'
-                          ? 'border-rose-600 bg-rose-50/50 text-rose-800'
-                          : 'border-slate-200 text-slate-600 hover:border-slate-300'
+                          ? 'border-rose-600 bg-rose-500/10 text-rose-400'
+                          : 'border-border-default text-text-muted hover:border-border-default'
                       }`}
                     >
                       <AlertTriangle className="w-6 h-6 text-rose-600" />
@@ -1043,7 +1043,7 @@ const TransporterDriverPanelPage: React.FC = () => {
               {/* Remarks explanation (Mandatory if rejected) */}
               {(decision === 'rejected' || tyreStatus === 'issue' || gasStatus === 'issue' || oilStatus === 'issue') && (
                 <div className="space-y-1.5 animate-fadeIn">
-                  <label className="text-xs font-bold text-rose-800 uppercase tracking-wider">
+                  <label className="text-xs font-bold text-rose-400 uppercase tracking-wider">
                     {isEn ? 'Defect & Issue Remarks (Mandatory)' : 'Catatan Kerosakan & Isu (Mandatori)'}
                   </label>
                   <textarea
@@ -1051,7 +1051,7 @@ const TransporterDriverPanelPage: React.FC = () => {
                     placeholder={isEn ? 'Please detail the vehicle defect/issue for workshop reference...' : 'Sila jelaskan kerosakan/isu kenderaan secara terperinci untuk rujukan penyelenggaraan...'}
                     value={remarks}
                     onChange={(e) => setRemarks(e.target.value)}
-                    className="w-full bg-slate-50 border border-rose-200 hover:border-rose-300 rounded-xl p-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-rose-500 focus:bg-white transition-colors font-medium shadow-xs"
+                    className="w-full bg-subtle/50 border border-rose-500/20 hover:border-rose-300 rounded-xl p-3 text-sm text-text-primary placeholder:text-text-muted outline-none focus:border-rose-500 focus:bg-surface transition-colors font-medium shadow-xs"
                     required
                   />
                 </div>
@@ -1059,11 +1059,11 @@ const TransporterDriverPanelPage: React.FC = () => {
 
             </form>
 
-            <div className="bg-slate-50 border-t border-slate-100 px-6 py-4 flex justify-end gap-3">
+            <div className="bg-subtle/50 border-t border-border-subtle px-6 py-4 flex justify-end gap-3">
               <Button 
                 variant="outline" 
                 onClick={() => setIsInspModalOpen(false)}
-                className="border-slate-200 text-slate-700 cursor-pointer"
+                className="border-border-default text-text-secondary cursor-pointer"
               >
                 {isEn ? 'Close' : 'Tutup'}
               </Button>
@@ -1082,13 +1082,13 @@ const TransporterDriverPanelPage: React.FC = () => {
       {/* 3. TRIP CANCELLATION MODAL */}
       {isCancelOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 max-w-md w-full mx-4 space-y-4 animate-fadeIn">
-            <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+          <div className="bg-surface rounded-2xl shadow-xl border border-border-default p-6 max-w-md w-full mx-4 space-y-4 animate-fadeIn">
+            <h3 className="text-lg font-bold text-text-primary flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-red-600" />
               {isEn ? 'Cancel Transport Trip' : 'Batalkan Trip Pengangkutan'}
             </h3>
             
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-text-muted">
               {isEn 
                 ? 'Please state why this transport trip is being cancelled. This will release the assigned vehicle.'
                 : 'Sila nyatakan sebab pembatalan trip perjalanan ini. Tindakan ini akan membatalkan tempahan kenderaan ini.'}
@@ -1099,7 +1099,7 @@ const TransporterDriverPanelPage: React.FC = () => {
               placeholder={isEn ? 'State cancellation reason (e.g. Meeting cancelled, vehicle breakdown)...' : 'Sila nyatakan sebab pembatalan (contoh: Mesyuarat ditangguhkan, kereta rosak, dll)...'}
               value={cancelReason}
               onChange={(e) => setCancelReason(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-red-500 focus:bg-white transition-colors font-medium shadow-xs"
+              className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-text-primary placeholder:text-text-muted outline-none focus:border-red-500 focus:bg-surface transition-colors font-medium shadow-xs"
               required
             />
 
@@ -1107,7 +1107,7 @@ const TransporterDriverPanelPage: React.FC = () => {
               <Button 
                 variant="outline" 
                 onClick={() => setIsCancelOpen(false)}
-                className="border-slate-200 text-slate-700 cursor-pointer"
+                className="border-border-default text-text-secondary cursor-pointer"
               >
                 {isEn ? 'Cancel' : 'Batal'}
               </Button>
@@ -1125,13 +1125,13 @@ const TransporterDriverPanelPage: React.FC = () => {
       {/* 2. DIRECT REJECT REASON MODAL (No inspection) */}
       {isRejectOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 max-w-md w-full mx-4 space-y-4">
-            <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+          <div className="bg-surface rounded-2xl shadow-xl border border-border-default p-6 max-w-md w-full mx-4 space-y-4">
+            <h3 className="text-lg font-bold text-text-primary flex items-center gap-2">
               <AlertTriangle className="w-5 h-5 text-rose-600" />
               {isEn ? 'Decline Transport Assignment' : 'Tolak Tugasan Pengangkutan'}
             </h3>
             
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-text-muted">
               {isEn 
                 ? 'Please state why you are declining this assignment. The request will return to the pool for another driver.'
                 : 'Sila nyatakan sebab penolakan tugasan ini. Tugasan akan dikembalikan ke senarai utama untuk pemandu lain bertugas.'}
@@ -1142,7 +1142,7 @@ const TransporterDriverPanelPage: React.FC = () => {
               placeholder={isEn ? 'E.g., Engaged with another urgent trip / out of coverage...' : 'Contoh: Terlibat dengan permohonan lain / luar kawasan...'}
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-rose-500 focus:bg-white transition-colors font-medium shadow-xs"
+              className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-text-primary placeholder:text-text-muted outline-none focus:border-rose-500 focus:bg-surface transition-colors font-medium shadow-xs"
               required
             />
 
@@ -1150,7 +1150,7 @@ const TransporterDriverPanelPage: React.FC = () => {
               <Button 
                 variant="outline" 
                 onClick={() => setIsRejectOpen(false)}
-                className="border-slate-200 text-slate-700 cursor-pointer"
+                className="border-border-default text-text-secondary cursor-pointer"
               >
                 {isEn ? 'Back' : 'Batal'}
               </Button>
@@ -1176,22 +1176,22 @@ const TransporterDriverPanelPage: React.FC = () => {
           <div className="p-6 space-y-6">
             
             {/* Overview Section */}
-            <div className="bg-slate-50 border border-slate-200/60 p-4 rounded-xl space-y-3">
+            <div className="bg-subtle/50 border border-border-default p-4 rounded-xl space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                <span className="text-xs font-bold text-text-secondary font-bold uppercase tracking-wider">
                   {isEn ? 'Current Status' : 'Status Semasa'}
                 </span>
                 {getStatusBadge(selectedReq.status_semasa)}
               </div>
               <div className="text-sm">
-                <div className="font-bold text-slate-800">{selectedReq.destinasi}</div>
-                <div className="text-xs text-slate-500 mt-0.5">{selectedReq.tujuan_permohonan}</div>
+                <div className="font-bold text-text-primary">{selectedReq.destinasi}</div>
+                <div className="text-xs text-text-muted mt-0.5">{selectedReq.tujuan_permohonan}</div>
               </div>
             </div>
 
             {/* Basic Info Table */}
             <div className="space-y-3">
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b pb-1">
+              <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider border-b pb-1">
                 {isEn ? 'Trip Details' : 'Maklumat Perjalanan'}
               </h4>
               <div className="grid grid-cols-2 gap-y-3 text-sm">
@@ -1199,7 +1199,7 @@ const TransporterDriverPanelPage: React.FC = () => {
                   <span className="block text-xs font-bold text-slate-400">
                     {isEn ? 'Service Type' : 'Jenis Perkhidmatan'}
                   </span>
-                  <span className="font-semibold text-slate-800 capitalize">
+                  <span className="font-semibold text-text-primary capitalize">
                     {selectedReq.jenis_permohonan === 'sg' 
                       ? (isEn ? 'Official Car (SG)' : 'Kereta Jabatan (SG)') 
                       : selectedReq.jenis_permohonan === 'van_jenazah' 
@@ -1211,21 +1211,21 @@ const TransporterDriverPanelPage: React.FC = () => {
                   <span className="block text-xs font-bold text-slate-400">
                     {isEn ? 'Requesting Unit' : 'Unit Pemohon'}
                   </span>
-                  <span className="font-semibold text-slate-800">{selectedReq.unit_pemohon}</span>
+                  <span className="font-semibold text-text-primary">{selectedReq.unit_pemohon}</span>
                 </div>
                 {selectedReq.nama_pemohon && (
                   <div>
                     <span className="block text-xs font-bold text-slate-400">
                       {isEn ? 'Applicant Name' : 'Nama Pemohon'}
                     </span>
-                    <span className="font-semibold text-slate-800">{selectedReq.nama_pemohon}</span>
+                    <span className="font-semibold text-text-primary">{selectedReq.nama_pemohon}</span>
                   </div>
                 )}
                  <div>
                   <span className="block text-xs font-bold text-slate-400">
                     {isEn ? 'Date & Time' : 'Tarikh & Masa'}
                   </span>
-                  <span className="font-bold text-slate-800">
+                  <span className="font-bold text-text-primary">
                     {new Date(selectedReq.tarikh_masa_diperlukan).toLocaleString(isEn ? 'en-US' : 'ms-MY')}
                     {selectedReq.tarikh_masa_sehingga && (
                       <>
@@ -1239,12 +1239,12 @@ const TransporterDriverPanelPage: React.FC = () => {
                   <span className="block text-xs font-bold text-slate-400">
                     {isEn ? 'Escort Personnel' : 'Kakitangan Pengiring'}
                   </span>
-                  <span className="font-semibold text-slate-800 capitalize">
+                  <span className="font-semibold text-text-primary capitalize">
                     {selectedReq.pengiring_list && selectedReq.pengiring_list.length > 0 ? (
                       <span className="block space-y-0.5 mt-1">
                         {selectedReq.pengiring_list.map((escort, idx) => (
                           <span key={idx} className="block text-xs font-medium normal-case">
-                            • <span className="capitalize text-slate-500">{escort.job.replace(/_/g, ' ')}</span>: {escort.name}
+                            • <span className="capitalize text-text-muted">{escort.job.replace(/_/g, ' ')}</span>: {escort.name}
                           </span>
                         ))}
                       </span>
@@ -1259,18 +1259,18 @@ const TransporterDriverPanelPage: React.FC = () => {
                       <span className="block text-xs font-bold text-slate-400">
                         {isEn ? 'Service Requirement' : 'Keperluan Perkhidmatan'}
                       </span>
-                      <span className="font-semibold text-slate-800">
+                      <span className="font-semibold text-text-primary">
                         {selectedReq.pemandu_diperlukan 
                           ? (isEn ? 'Vehicle & Driver' : 'Pemandu & Kereta') 
                           : (isEn ? 'Vehicle Only (Self-Drive)' : 'Kereta Sahaja (Tanpa Pemandu)')}
                       </span>
                     </div>
                     {selectedReq.senarai_penumpang && selectedReq.senarai_penumpang.length > 0 && (
-                      <div className="col-span-2 mt-2 pt-2 border-t border-slate-100/60">
+                      <div className="col-span-2 mt-2 pt-2 border-t border-border-subtle">
                         <span className="block text-xs font-bold text-slate-400">
                           {isEn ? 'Passenger Roster (Staff/Accompanying)' : 'Senarai Penumpang (Staf/Pengikut)'}
                         </span>
-                        <div className="text-xs font-medium text-slate-800 space-y-0.5 mt-1">
+                        <div className="text-xs font-medium text-text-primary space-y-0.5 mt-1">
                           {selectedReq.senarai_penumpang.map((passenger, idx) => (
                             <div key={idx}>• {passenger.name}</div>
                           ))}
@@ -1280,11 +1280,11 @@ const TransporterDriverPanelPage: React.FC = () => {
                   </>
                 )}
                 {selectedReq.medical_officer_referring && (
-                  <div className="col-span-2 mt-2 pt-2 border-t border-slate-100/60">
+                  <div className="col-span-2 mt-2 pt-2 border-t border-border-subtle">
                     <span className="block text-xs font-bold text-slate-400">
                       {isEn ? 'Referring Medical Officer' : 'Pegawai Perubatan Merujuk (Referring MO)'}
                     </span>
-                    <span className="font-semibold text-slate-800 text-xs">
+                    <span className="font-semibold text-text-primary text-xs">
                       Dr. {selectedReq.medical_officer_referring.name} | {isEn ? 'Department' : 'Jabatan'}: {selectedReq.medical_officer_referring.department}
                     </span>
                   </div>
@@ -1294,43 +1294,43 @@ const TransporterDriverPanelPage: React.FC = () => {
 
             {/* Patient details (Conditional) */}
             {(selectedReq.jenis_permohonan === 'ambulance' || selectedReq.bawa_pesakit) && (
-              <div className="space-y-3 pt-4 border-t border-slate-100">
+              <div className="space-y-3 pt-4 border-t border-border-subtle">
                 <h4 className="text-xs font-bold uppercase tracking-wider border-b pb-1 text-rose-700">
                   {isEn ? 'Patient Clinical Details' : 'Maklumat Pesakit'}
                 </h4>
-                <div className="grid grid-cols-2 gap-y-3 text-sm bg-rose-50/20 p-4 rounded-xl border border-rose-100">
+                <div className="grid grid-cols-2 gap-y-3 text-sm bg-rose-500/10 p-4 rounded-xl border border-rose-100">
                   <div className="col-span-2">
-                    <span className="block text-xs font-bold text-rose-800/60">
+                    <span className="block text-xs font-bold text-rose-400/60">
                       {isEn ? 'Full Name' : 'Nama Penuh'}
                     </span>
-                    <span className="font-bold text-slate-800">{selectedReq.nama_pesakit || '-'}</span>
+                    <span className="font-bold text-text-primary">{selectedReq.nama_pesakit || '-'}</span>
                   </div>
                   <div>
-                    <span className="block text-xs font-bold text-rose-800/60">
+                    <span className="block text-xs font-bold text-rose-400/60">
                       {isEn ? 'Patient RN' : 'No RN Pesakit'}
                     </span>
-                    <span className="font-semibold font-mono text-slate-800">{selectedReq.rn_pesakit || '-'}</span>
+                    <span className="font-semibold font-mono text-text-primary">{selectedReq.rn_pesakit || '-'}</span>
                   </div>
                   <div>
-                    <span className="block text-xs font-bold text-rose-800/60">
+                    <span className="block text-xs font-bold text-rose-400/60">
                       {isEn ? 'Gender' : 'Jantina'}
                     </span>
-                    <span className="font-semibold text-slate-800">{selectedReq.jantina_pesakit || '-'}</span>
+                    <span className="font-semibold text-text-primary">{selectedReq.jantina_pesakit || '-'}</span>
                   </div>
                   <div className="col-span-2">
-                    <span className="block text-xs font-bold text-rose-800/60">
+                    <span className="block text-xs font-bold text-rose-400/60">
                       {isEn ? 'Clinical Diagnosis' : 'Diagnosis Pesakit'}
                     </span>
-                    <span className="font-semibold text-slate-800">{selectedReq.diagnosis_pesakit || '-'}</span>
+                    <span className="font-semibold text-text-primary">{selectedReq.diagnosis_pesakit || '-'}</span>
                   </div>
                   {selectedReq.patient_mobility && (
                     <div className={`col-span-2 p-2.5 rounded-lg text-xs font-bold flex flex-col gap-1 border ${
                       selectedReq.patient_mobility === 'stretcher'
-                        ? 'bg-amber-50 border-amber-200 text-amber-950'
-                        : 'bg-slate-50 border-slate-200 text-slate-900'
+                        ? 'bg-amber-500/10 border-amber-500/20 text-amber-400 dark:text-amber-300 font-bold'
+                        : 'bg-subtle/50 border-border-default text-text-primary'
                     }`}>
                       <div className="flex items-center gap-2">
-                        <Info className={`w-3.5 h-3.5 ${selectedReq.patient_mobility === 'stretcher' ? 'text-amber-600' : 'text-slate-500'}`} />
+                        <Info className={`w-3.5 h-3.5 ${selectedReq.patient_mobility === 'stretcher' ? 'text-amber-600' : 'text-text-muted'}`} />
                         <span>
                           {isEn ? 'Patient Mobility:' : 'Mobiliti Pesakit:'}{' '}
                           <span className="capitalize">
@@ -1341,31 +1341,31 @@ const TransporterDriverPanelPage: React.FC = () => {
                         </span>
                       </div>
                       {selectedReq.patient_mobility === 'stretcher' && (
-                        <p className="text-[10px] text-amber-800 font-medium leading-normal mt-0.5 pl-5">
+                        <p className="text-[10px] text-amber-400 font-medium leading-normal mt-0.5 pl-5">
                           {isEn ? '⚠️ Driver MANDATED to assist ward transfer with stretcher.' : '⚠️ Pemandu WAJIB naik ke wad untuk mengambil pesakit.'}
                         </p>
                       )}
                     </div>
                   )}
                   {selectedReq.oksigen_diperlukan && (
-                    <div className="col-span-2 p-2.5 bg-rose-50 border border-rose-200 rounded-lg text-xs font-bold text-rose-950 flex flex-col gap-1">
+                    <div className="col-span-2 p-2.5 bg-rose-500/10 border border-rose-500/20 rounded-lg text-xs font-bold text-rose-400 dark:text-rose-300 font-bold flex flex-col gap-1">
                       <div className="flex items-center gap-2">
                         <Shield className="w-3.5 h-3.5 text-rose-600" />
                         <span>{isEn ? 'Continuous Oxygen Support Required' : 'Sokongan Oksigen Berterusan Diperlukan'}</span>
                       </div>
                       {selectedReq.jenis_oksigen && (
-                        <div className="text-xxs text-rose-800 font-medium pl-5">
-                          {isEn ? 'Oxygen Device:' : 'Alat Oksigen:'} <span className="text-rose-900 font-semibold">{selectedReq.jenis_oksigen}</span>
+                        <div className="text-xxs text-rose-400 font-medium pl-5">
+                          {isEn ? 'Oxygen Device:' : 'Alat Oksigen:'} <span className="text-rose-400 dark:text-rose-300 font-bold font-semibold">{selectedReq.jenis_oksigen}</span>
                         </div>
                       )}
                     </div>
                   )}
                   {selectedReq.mesin_diperlukan && selectedReq.mesin_diperlukan.length > 0 && (
                     <div className="col-span-2 pt-2">
-                      <span className="block text-xs font-bold text-rose-800/60">
+                      <span className="block text-xs font-bold text-rose-400/60">
                         {isEn ? 'Medical Devices / Machines Required' : 'Peralatan / Mesin Diperlukan'}
                       </span>
-                      <span className="text-xs font-semibold text-slate-800">
+                      <span className="text-xs font-semibold text-text-primary">
                         {selectedReq.mesin_diperlukan.join(', ')}
                       </span>
                     </div>
@@ -1376,8 +1376,8 @@ const TransporterDriverPanelPage: React.FC = () => {
 
             {/* Vehicle & Driver Details */}
             {selectedReq.kenderaan && (
-              <div className="space-y-3 pt-4 border-t border-slate-100">
-                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b pb-1">
+              <div className="space-y-3 pt-4 border-t border-border-subtle">
+                <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider border-b pb-1">
                   {isEn ? 'Assigned Vehicle & Duty Driver' : 'Kenderaan & On-Duty Driver'}
                 </h4>
                 <div className="grid grid-cols-2 gap-y-3 text-sm">
@@ -1385,7 +1385,7 @@ const TransporterDriverPanelPage: React.FC = () => {
                     <span className="block text-xs font-bold text-slate-400">
                       {isEn ? 'Driver Name' : 'Pemandu'}
                     </span>
-                    <span className="font-bold text-slate-800">{selectedReq.pemandu?.full_name || 'Ali bin Ahmad'}</span>
+                    <span className="font-bold text-text-primary">{selectedReq.pemandu?.full_name || 'Ali bin Ahmad'}</span>
                   </div>
                   <div>
                     <span className="block text-xs font-bold text-slate-400">
@@ -1397,7 +1397,7 @@ const TransporterDriverPanelPage: React.FC = () => {
                     <span className="block text-xs font-bold text-slate-400">
                       {isEn ? 'Vehicle Model' : 'Model Kenderaan'}
                     </span>
-                    <span className="font-semibold text-slate-800">{selectedReq.kenderaan.model}</span>
+                    <span className="font-semibold text-text-primary">{selectedReq.kenderaan.model}</span>
                   </div>
                 </div>
               </div>
@@ -1405,8 +1405,8 @@ const TransporterDriverPanelPage: React.FC = () => {
 
             {/* Rejection / Cancellation note */}
             {selectedReq.sebab_tolak && (
-              <div className="p-4 bg-rose-50 border border-rose-200 text-rose-950 rounded-xl space-y-1">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-rose-800">
+              <div className="p-4 bg-rose-500/10 border border-rose-500/20 text-rose-400 dark:text-rose-300 font-bold rounded-xl space-y-1">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-rose-400">
                   {isEn ? 'Rejection / Cancellation Remarks' : 'Catatan Sebab Penolakan / Pembatalan'}
                 </h4>
                 <p className="text-sm font-semibold italic">"{selectedReq.sebab_tolak}"</p>
@@ -1414,12 +1414,12 @@ const TransporterDriverPanelPage: React.FC = () => {
             )}
 
             {/* Audit Logs Trail */}
-            <div className="space-y-3 pt-4 border-t border-slate-100">
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b pb-1">
+            <div className="space-y-3 pt-4 border-t border-border-subtle">
+              <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider border-b pb-1">
                 {isEn ? 'Approval Audit Trail' : 'Jejak Audit Kelulusan'}
               </h4>
               {loadingLogs ? (
-                <div className="text-xs text-slate-500">
+                <div className="text-xs text-text-muted">
                   {isEn ? 'Loading audit trail...' : 'Memuatkan log audit...'}
                 </div>
               ) : logs.length === 0 ? (
@@ -1427,12 +1427,12 @@ const TransporterDriverPanelPage: React.FC = () => {
                   {isEn ? 'No logs recorded.' : 'Tiada log direkodkan.'}
                 </div>
               ) : (
-                <div className="relative border-l border-slate-200 pl-4 space-y-4">
+                <div className="relative border-l border-border-default pl-4 space-y-4">
                   {logs.map((log) => (
                     <div key={log.id} className="relative text-xs">
                       {/* Circle indicator */}
                       <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 bg-slate-300 rounded-full border border-white" />
-                      <div className="flex justify-between items-center font-bold text-slate-800">
+                      <div className="flex justify-between items-center font-bold text-text-primary">
                         <span>{log.tindakan}</span>
                         <span className="text-slate-400 font-medium">
                           {new Date(log.created_at).toLocaleString(isEn ? 'en-US' : 'ms-MY', {
@@ -1441,7 +1441,7 @@ const TransporterDriverPanelPage: React.FC = () => {
                           })}
                         </span>
                       </div>
-                      <div className="text-slate-500 mt-0.5">{log.catatan}</div>
+                      <div className="text-text-muted mt-0.5">{log.catatan}</div>
                       <div className="text-slate-400 mt-0.5">
                         {isEn ? 'By:' : 'Oleh:'} {log.performer?.full_name || (isEn ? 'Staff' : 'Kakitangan')}
                       </div>

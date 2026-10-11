@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate, Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Mail, FileText, Sun, Moon, ShieldCheck, Building2, Users, LayoutGrid } from 'lucide-react'
+import { Mail, FileText, Sun, Moon, ShieldCheck } from 'lucide-react'
 import { Modal } from '@/components/ui'
 import { LoginForm, ResetPasswordForm, AccessRequestForm } from '@/components/forms'
 import { ContactModal } from '@/components/shared'
@@ -9,7 +9,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { useUIStore } from '@/stores/uiStore'
 import { COPYRIGHT_TEXT, ROUTES } from '@/lib/constants'
 import { supabase } from '@/services/supabase'
-import { MedicalMesh3D } from '../components/MedicalMesh3D'
+import { LazyHero3D } from '@/components/three/LazyHero3D'
 
 type View = 'login' | 'reset' | 'access-request'
 
@@ -94,12 +94,18 @@ export const LoginPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen flex bg-canvas text-primary relative selection:bg-accent-subtle selection:text-accent-base transition-colors duration-150">
+    <div className="min-h-screen flex bg-canvas text-primary relative selection:bg-accent-subtle selection:text-accent-base transition-colors duration-150 overflow-hidden">
+      {/* Ambient Clinical Lighting Backdrop */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
+        <div className="absolute -top-[15%] -left-[10%] w-[55%] h-[55%] rounded-full bg-accent-base/10 blur-[130px]" />
+        <div className="absolute -bottom-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-accent-decor/8 blur-[140px]" />
+        <div className="absolute top-[35%] left-[35%] w-[35%] h-[35%] rounded-full bg-accent-subtle blur-[160px]" />
+      </div>
       {/* Theme Switcher in Top Right */}
       <div className="absolute top-4 right-4 z-50">
         <button
           onClick={toggleTheme}
-          className="w-10 h-10 flex items-center justify-center rounded-lg bg-surface border border-border-default text-text-muted hover:text-text-primary hover:border-border-strong transition-all duration-150 shadow-2xs"
+          className="w-10 h-10 flex items-center justify-center rounded-lg bg-surface border border-border-default text-text-muted hover:text-text-primary hover:border-border-strong transition-colors duration-150 shadow-elevation-1"
           title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           aria-label="Toggle theme"
         >
@@ -114,8 +120,8 @@ export const LoginPage: React.FC = () => {
       {/* Left Panel - Claude Editorial Identity & 3D Interactive Accent */}
       <div className="hidden lg:flex lg:w-[54%] xl:w-[58%] relative overflow-hidden bg-subtle/50 border-r border-border-default flex-col justify-between p-12 xl:p-16 select-none">
         {/* Subtle Canvas 3D Medical Lattice */}
-        <div className="absolute inset-0 opacity-40 dark:opacity-60 pointer-events-none">
-          <MedicalMesh3D />
+        <div className="absolute inset-0 opacity-20 dark:opacity-30 pointer-events-none">
+          <LazyHero3D />
         </div>
 
         {/* Top: Official Government Branding */}
@@ -137,13 +143,14 @@ export const LoginPage: React.FC = () => {
 
         {/* Center: System Architecture Title (Claude Editorial Style) */}
         <div className="relative z-10 space-y-6 max-w-xl my-auto py-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md text-xs font-medium bg-accent-subtle text-accent-base border border-accent-base/20">
-            <ShieldCheck className="w-3.5 h-3.5" />
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 shadow-xs">
+            <ShieldCheck className="w-4 h-4 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
             <span>Integrated Healthcare Operating System</span>
           </div>
 
-          <h2 className="font-serif text-4xl xl:text-5xl 2xl:text-6xl font-normal tracking-tight text-text-primary leading-[1.14]">
-            Welcome back to <span className="italic font-normal">MyHome</span> Ecosystem.
+          <h2 className="font-sans text-4xl xl:text-5xl 2xl:text-6xl font-bold tracking-tight text-text-primary leading-[1.12]">
+            Welcome back to <br className="hidden sm:inline" />
+            <span className="italic">MyHome</span> Ecosystem.
           </h2>
 
           <p className="text-base text-text-secondary leading-relaxed font-normal">
@@ -154,11 +161,11 @@ export const LoginPage: React.FC = () => {
           {/* Operational Guarantees */}
           <div className="grid grid-cols-2 gap-4 pt-2 text-xs text-text-secondary">
             <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent-base" />
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" />
               <span>Real-Time Forensic Audit Logging</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-accent-base" />
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400" />
               <span>Offline-First Sync Engine (PWA)</span>
             </div>
           </div>
@@ -166,35 +173,26 @@ export const LoginPage: React.FC = () => {
 
         {/* Bottom: Real Database Statistics (Strict Zero-Mock Mandate) */}
         <div className="relative z-10 pt-8 border-t border-border-default">
-          <div className="grid grid-cols-3 gap-8">
+          <div className="grid grid-cols-3 gap-6 xl:gap-8">
             <div>
-              <div className="flex items-center gap-2 text-xs font-medium text-text-muted mb-1">
-                <Building2 className="w-3.5 h-3.5" />
-                <span>Hospital Facility</span>
-              </div>
-              <p className="text-2xl xl:text-3xl font-bold font-mono tracking-tight text-text-primary">
+              <p className="text-xs font-medium text-text-muted mb-1">Facilities</p>
+              <p className="text-2xl xl:text-3xl font-bold font-sans tabular-nums tracking-tight text-text-primary">
                 {stats.isLoading ? '...' : (stats.facilitiesCount ?? '—')}
               </p>
               <span className="text-[11px] text-text-muted">Official Registry</span>
             </div>
 
             <div>
-              <div className="flex items-center gap-2 text-xs font-medium text-text-muted mb-1">
-                <Users className="w-3.5 h-3.5" />
-                <span>Registered Staff</span>
-              </div>
-              <p className="text-2xl xl:text-3xl font-bold font-mono tracking-tight text-text-primary">
+              <p className="text-xs font-medium text-text-muted mb-1">Registered Staff</p>
+              <p className="text-2xl xl:text-3xl font-bold font-sans tabular-nums tracking-tight text-text-primary">
                 {stats.isLoading ? '...' : (stats.staffCount ?? '—')}
               </p>
               <span className="text-[11px] text-text-muted">Active Accounts</span>
             </div>
 
             <div>
-              <div className="flex items-center gap-2 text-xs font-medium text-text-muted mb-1">
-                <LayoutGrid className="w-3.5 h-3.5" />
-                <span>Core Modules</span>
-              </div>
-              <p className="text-2xl xl:text-3xl font-bold font-mono tracking-tight text-text-primary">
+              <p className="text-xs font-medium text-text-muted mb-1">Core Modules</p>
+              <p className="text-2xl xl:text-3xl font-bold font-sans tabular-nums tracking-tight text-text-primary">
                 {stats.isLoading ? '...' : (stats.modulesCount ?? '—')}
               </p>
               <span className="text-[11px] text-text-muted">Integrated Services</span>
@@ -206,7 +204,10 @@ export const LoginPage: React.FC = () => {
       {/* Right Panel - Login Card Container */}
       <div className="w-full lg:w-[46%] xl:w-[42%] flex flex-col min-h-screen bg-canvas relative overflow-y-auto justify-between">
         {/* Mobile Official Government Header */}
-        <div className="lg:hidden pt-8 pb-4 px-6 text-center header-safe-pt">
+        <div
+          className="lg:hidden pb-4 px-6 text-center"
+          style={{ paddingTop: 'calc(env(safe-area-inset-top, 0px) + 2.75rem)' }}
+        >
           <div className="flex flex-col items-center">
             <img
               src="/512px-Jata_MalaysiaV2.svg.png"
@@ -216,8 +217,8 @@ export const LoginPage: React.FC = () => {
             <p className="text-[11px] font-bold tracking-widest text-accent-base uppercase">
               Ministry of Health Malaysia
             </p>
-            <h1 className="font-serif text-lg font-normal text-text-primary tracking-tight mt-0.5">
-              Hospital Operation Management Ecosystem
+            <h1 className="font-sans text-lg font-bold text-text-primary tracking-tight mt-0.5">
+              H.O.M.E. Ecosystem
             </h1>
             <div className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-0.5 rounded-md bg-subtle border border-border-default">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-base" />
@@ -229,8 +230,11 @@ export const LoginPage: React.FC = () => {
         </div>
 
         {/* Center: Clean Form Card */}
-        <div className="flex-1 flex flex-col justify-center px-4 sm:px-8 xl:px-12 py-8 max-w-[460px] w-full mx-auto">
-          <div className="bg-surface border border-border-default rounded-xl p-6 sm:p-8 shadow-xs">
+        <div className="flex-1 flex flex-col justify-center px-4 sm:px-8 xl:px-12 py-8 max-w-[460px] w-full mx-auto relative">
+          {/* Subtle Ambient Radial Highlight behind card */}
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[380px] h-[380px] bg-accent-base/10 rounded-full blur-[90px] pointer-events-none" />
+
+          <div className="relative z-10 bg-surface/90 dark:bg-surface/80 backdrop-blur-xl border border-border-default rounded-2xl p-6 sm:p-8 shadow-elevation-2 relative overflow-hidden before:absolute before:inset-x-0 before:top-0 before:h-[2px] before:bg-gradient-to-r before:from-transparent before:via-accent-base/60 before:to-transparent">
             {/* Form Header */}
             <div className="mb-6">
               <div className="hidden lg:flex items-center gap-2 mb-2.5">
@@ -260,6 +264,12 @@ export const LoginPage: React.FC = () => {
               {currentView === 'reset' && (
                 <ResetPasswordForm onBack={() => setCurrentView('login')} />
               )}
+            </div>
+
+            {/* Institutional Trust Footnote */}
+            <div className="mt-4 pt-3 border-t border-border-default/60 flex items-center justify-center gap-1.5 text-[11px] text-text-muted">
+              <ShieldCheck className="w-3.5 h-3.5 text-accent-base flex-shrink-0" />
+              <span>Protected by MOH Single Sign-On Security Gateway</span>
             </div>
 
             {/* Bottom Actions - Request System Access */}

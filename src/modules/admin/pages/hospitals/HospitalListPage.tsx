@@ -133,7 +133,7 @@ export const HospitalListPage: React.FC = () => {
       render: (_: unknown, row: HospitalWithAdmin) => (
         <div className="flex items-center gap-2">
           <Building2 className="w-5 h-5 text-teal-600" />
-          <span className="font-mono font-semibold text-slate-900">{row.hospital_code}</span>
+          <span className="font-mono font-semibold text-text-primary">{row.hospital_code}</span>
         </div>
       ),
     },
@@ -143,8 +143,8 @@ export const HospitalListPage: React.FC = () => {
       sortable: true,
       render: (_: unknown, row: HospitalWithAdmin) => (
         <div>
-          <div className="font-medium text-slate-900">{row.hospital_name}</div>
-          {row.address && <div className="text-sm text-slate-500">{row.address}</div>}
+          <div className="font-medium text-text-primary">{row.hospital_name}</div>
+          {row.address && <div className="text-sm text-text-muted">{row.address}</div>}
         </div>
       ),
     },
@@ -152,28 +152,28 @@ export const HospitalListPage: React.FC = () => {
       key: 'state',
       label: 'State',
       render: (_: unknown, row: HospitalWithAdmin) => (
-        <span className="text-sm text-slate-700">{row.state || 'N/A'}</span>
+        <span className="text-sm text-text-secondary">{row.state || 'N/A'}</span>
       ),
     },
     {
       key: 'phone',
       label: 'Phone',
       render: (_: unknown, row: HospitalWithAdmin) => (
-        <span className="text-sm text-slate-700">{row.phone || 'N/A'}</span>
+        <span className="text-sm text-text-secondary">{row.phone || 'N/A'}</span>
       ),
     },
     {
       key: 'email',
       label: 'Email',
       render: (_: unknown, row: HospitalWithAdmin) => (
-        <span className="text-sm text-slate-700">{row.email || 'N/A'}</span>
+        <span className="text-sm text-text-secondary">{row.email || 'N/A'}</span>
       ),
     },
     {
       key: 'admin',
       label: 'Admin',
       render: (_: unknown, row: HospitalWithAdmin) => {
-        if (!isSystemAdmin) return <span className="text-sm text-slate-500">-</span>
+        if (!isSystemAdmin) return <span className="text-sm text-text-muted">-</span>
         if (!row.admin) {
           return (
             <div className="flex items-center gap-2">
@@ -185,7 +185,7 @@ export const HospitalListPage: React.FC = () => {
         return (
           <div className="flex items-center gap-2">
             <User className="w-4 h-4 text-success-500" />
-            <span className="text-sm text-slate-700">{row.admin.full_name}</span>
+            <span className="text-sm text-text-secondary">{row.admin.full_name}</span>
           </div>
         )
       },
@@ -198,7 +198,7 @@ export const HospitalListPage: React.FC = () => {
             render: (_: unknown, row: HospitalWithAdmin) => (
               <div className="flex items-center gap-2">
                 <Settings className="w-4 h-4 text-slate-400" />
-                <span className="text-sm text-slate-700">
+                <span className="text-sm text-text-secondary">
                   {row.enabled_modules_count || 0} / {row.modules?.length || 0}
                 </span>
               </div>
@@ -210,7 +210,7 @@ export const HospitalListPage: React.FC = () => {
             render: (_: unknown, row: HospitalWithAdmin) => (
               <div className="flex items-center gap-2">
                 <User className="w-4 h-4 text-slate-400" />
-                <span className="text-sm text-slate-700">
+                <span className="text-sm text-text-secondary">
                   {row.active_user_count || 0} / {row.user_count || 0}
                 </span>
               </div>
@@ -236,7 +236,7 @@ export const HospitalListPage: React.FC = () => {
       label: 'Created',
       sortable: true,
       render: (_: unknown, row: HospitalWithAdmin) => (
-        <span className="text-sm text-slate-500">{formatDate(row.created_at)}</span>
+        <span className="text-sm text-text-muted">{formatDate(row.created_at)}</span>
       ),
     },
     {
@@ -249,7 +249,7 @@ export const HospitalListPage: React.FC = () => {
               e.stopPropagation()
               navigate(`${baseRoute}/${row.id}`)
             }}
-            className="p-1.5 text-slate-600 hover:text-teal-600 hover:bg-teal-50 rounded transition-colors"
+            className="p-1.5 text-text-muted hover:text-teal-600 hover:bg-accent-base/10 rounded transition-colors"
             title="Edit"
           >
             <Edit className="w-4 h-4" />
@@ -260,7 +260,7 @@ export const HospitalListPage: React.FC = () => {
               setHospitalToDelete(row)
               setShowDeleteModal(true)
             }}
-            className="p-1.5 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+            className="p-1.5 text-text-muted hover:text-red-600 hover:bg-red-50 rounded transition-colors"
             title="Delete"
           >
             <Trash2 className="w-4 h-4" />
@@ -287,10 +287,10 @@ export const HospitalListPage: React.FC = () => {
                   <Building2 className="w-7 h-7 text-white" />
                 </div>
                 <div>
-                  <h1 className="text-3xl font-bold text-slate-900 mb-1.5">
+                  <h1 className="text-3xl font-bold text-text-primary mb-1.5">
                     {facilityTypePluralCapital} Management
                   </h1>
-                  <p className="text-slate-600 text-base">
+                  <p className="text-text-muted text-base">
                     Manage and monitor all {facilityTypePlural} in the system
                   </p>
                 </div>
@@ -299,7 +299,7 @@ export const HospitalListPage: React.FC = () => {
                 variant="primary"
                 onClick={() => navigate(`${baseRoute}/new`)}
                 leftIcon={<Plus className="w-5 h-5" />}
-                className="shadow-lg shadow-teal-500/20 hover:shadow-xl hover:shadow-teal-500/30 transition-all"
+                className="shadow-lg shadow-teal-500/20 hover:shadow-xl hover:shadow-teal-500/30 transition-colors"
               >
                 Add New {facilityTypeCapital}
               </Button>
@@ -349,7 +349,7 @@ export const HospitalListPage: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 mb-6"
+              className="bg-surface rounded-2xl border border-border-default shadow-sm p-5 mb-6"
             >
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
                 <div className="flex-1 relative">
@@ -361,7 +361,7 @@ export const HospitalListPage: React.FC = () => {
                       setSearch(e.target.value)
                       setCurrentPage(1)
                     }}
-                    className="pl-12 h-11 border-slate-200 focus:border-teal-500 focus:ring-teal-500/20"
+                    className="pl-12 h-11 border-border-default focus:border-teal-500 focus:ring-teal-500/20"
                   />
                 </div>
                 <div className="flex items-center gap-3">
@@ -373,7 +373,7 @@ export const HospitalListPage: React.FC = () => {
                         setStatusFilter(e.target.value)
                         setCurrentPage(1)
                       }}
-                      className="w-40 pl-10 h-11 border-slate-200 focus:border-teal-500 focus:ring-teal-500/20 appearance-none"
+                      className="w-40 pl-10 h-11 border-border-default focus:border-teal-500 focus:ring-teal-500/20 appearance-none"
                     >
                       <option value="all">All Status</option>
                       <option value="active">Active</option>
@@ -387,7 +387,7 @@ export const HospitalListPage: React.FC = () => {
                       fetchStatistics()
                     }}
                     leftIcon={<RefreshCw className="w-4 h-4" />}
-                    className="h-11 border-slate-200 hover:bg-slate-50"
+                    className="h-11 border-border-default hover:bg-subtle/50"
                   >
                     Refresh
                   </Button>
@@ -401,7 +401,7 @@ export const HospitalListPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden"
+            className="bg-surface rounded-2xl border border-border-default shadow-sm overflow-hidden"
           >
             <Table
               data={hospitals}
@@ -421,7 +421,7 @@ export const HospitalListPage: React.FC = () => {
               emptyMessage={`No ${facilityTypePlural} found`}
               onRowClick={(row) => navigate(`${baseRoute}/${row.id}`)}
             />
-            <div className="border-t border-slate-200 bg-slate-50/50 px-6 py-4">
+            <div className="border-t border-border-default bg-subtle/50 px-6 py-4">
               <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
@@ -449,7 +449,7 @@ export const HospitalListPage: React.FC = () => {
         title="Delete Hospital"
       >
         <div className="space-y-4">
-          <p className="text-slate-700">
+          <p className="text-text-secondary">
             Are you sure you want to delete <strong>{hospitalToDelete?.hospital_name}</strong>? This action cannot be
             undone.
           </p>

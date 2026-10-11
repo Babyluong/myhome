@@ -56,10 +56,15 @@ export const PrepackItemListPage: React.FC<PrepackItemListPageProps> = ({ mode: 
     if (urlCategory && ['all', 'uod', 'prepack', 'internal', 'external'].includes(urlCategory)) {
       return urlCategory as CatalogCategoryFilter
     }
-    if (propMode === 'uod' || location.pathname.includes('/uod')) return 'uod'
-    if (propMode === 'prepack' || location.pathname.includes('/prepack')) return 'prepack'
-    if (propMode === 'internal' || location.pathname.includes('/internal')) return 'internal'
-    if (propMode === 'external' || location.pathname.includes('/external')) return 'external'
+    if (propMode) return propMode
+
+    const path = location.pathname.replace(/\/+$/, '')
+    if (path.endsWith('/catalog') || /(?:^|\/)catalog(?:\/|$)/.test(path)) return 'all'
+    if (path.endsWith('/uod') || /(?:^|\/)uod(?:\/|$)/.test(path)) return 'uod'
+    if (path.endsWith('/internal') || /(?:^|\/)internal(?:\/|$)/.test(path)) return 'internal'
+    if (path.endsWith('/external') || /(?:^|\/)external(?:\/|$)/.test(path)) return 'external'
+    if (path.endsWith('/prepack') || /(?:^|\/)prepack(?:\/|$)/.test(path)) return 'prepack'
+
     return 'all'
   }, [searchParams, propMode, location.pathname])
 
@@ -117,23 +122,14 @@ export const PrepackItemListPage: React.FC<PrepackItemListPageProps> = ({ mode: 
     loadItems()
   }, [])
 
-  // Switch category tab & synchronize with URL query params
+  // Switch category tab & synchronize route
   const handleSelectCategory = (cat: CatalogCategoryFilter) => {
-    const newParams = new URLSearchParams(searchParams)
-    if (cat === 'all') {
-      newParams.delete('category')
-      newParams.delete('tab')
-    } else {
-      newParams.set('category', cat)
-      newParams.delete('tab')
-    }
     setSelectedPackType('all')
     setSelectedDosageForm('all')
-
-    // For persediaan dalaman and luaran, default to showing all formulations (active sorted to top)
     setStatusFilter('all')
 
-    setSearchParams(newParams, { replace: true })
+    const targetPath = cat === 'all' ? '/prepacking/catalog' : `/prepacking/${cat}`
+    navigate(targetPath)
   }
 
   // When loading into internal or external categories initially, maintain URL status or default to all
@@ -168,7 +164,8 @@ export const PrepackItemListPage: React.FC<PrepackItemListPageProps> = ({ mode: 
     if (activeCategory === 'external') {
       return items.filter(i => i.pack_type === 'external')
     }
-    return items
+    // 'all' category: strictly active formulations only as mandated
+    return items.filter(i => i.status === 'active')
   }, [items, activeCategory])
 
   // Count summaries per category for tab pills & alerts
@@ -184,11 +181,14 @@ export const PrepackItemListPage: React.FC<PrepackItemListPageProps> = ({ mode: 
     const internalItems = items.filter(i => i.pack_type === 'internal')
     const externalItems = items.filter(i => i.pack_type === 'external')
 
+    const allActive = items.filter(i => i.status === 'active').length
+
     const scopeActive = categoryScopedItems.filter(i => i.status === 'active').length
     const scopeInactive = categoryScopedItems.filter(i => i.status === 'inactive').length
 
     return {
-      all: items.length,
+      all: allActive,
+      allTotal: items.length,
       uod: uodItems.length,
       prepack: prepackItems.length,
       internal: internalItems.length,
@@ -393,12 +393,12 @@ export const PrepackItemListPage: React.FC<PrepackItemListPageProps> = ({ mode: 
       default:
         return {
           title: 'Central Pharmacy Formulation Catalog',
-          subtitle: 'Centralized repository of UOD, Bulk Prepack, Internal (Oral), and External (Topical) preparations.',
+          subtitle: 'Active formulations authorized for facility compounding and dispensing across all preparation domains.',
           createLabel: 'Register New Formulation',
           icon: Boxes,
-          searchPlaceholder: 'Search all medication formulations, item codes, generic active ingredients...',
-          emptyTitle: 'No Formulations Found',
-          emptyDesc: 'No formulations registered in this facility database yet.'
+          searchPlaceholder: 'Search active medication formulations, item codes, generic active ingredients...',
+          emptyTitle: 'No Active Formulations Found',
+          emptyDesc: 'No active formulations currently registered or enabled in this facility.'
         }
     }
   }, [activeCategory])
@@ -476,7 +476,7 @@ export const PrepackItemListPage: React.FC<PrepackItemListPageProps> = ({ mode: 
                 setItemToEdit(null)
                 setItemModalOpen(true)
               }}
-              className="min-h-[36px] px-3.5 py-1.5 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/40"
+              className="min-h-[36px] px-3.5 py-1.5 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-500/40"
             >
               <Plus className="w-4 h-4" />
               <span>{categoryMeta.createLabel}</span>
@@ -486,7 +486,7 @@ export const PrepackItemListPage: React.FC<PrepackItemListPageProps> = ({ mode: 
               onClick={() => loadItems()}
               disabled={loading || syncingCatalog}
               title="Reload catalog list"
-              className="min-h-[36px] min-w-[36px] p-2 bg-surface hover:bg-subtle active:scale-[0.98] text-text-muted hover:text-text-primary rounded-lg border border-border-default hover:border-border-strong transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-xs flex items-center justify-center"
+              className="min-h-[36px] min-w-[36px] p-2 bg-surface hover:bg-subtle active:scale-[0.98] text-text-muted hover:text-text-primary rounded-lg border border-border-default hover:border-border-strong transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-xs flex items-center justify-center"
             >
               <RefreshCw className={`w-4 h-4 ${loading || syncingCatalog ? 'animate-spin' : ''}`} />
             </button>
@@ -527,7 +527,7 @@ export const PrepackItemListPage: React.FC<PrepackItemListPageProps> = ({ mode: 
               onClick={() => handleBulkStatusChange(activeCategory, 'active')}
               disabled={loading}
               title="Activate all formulations in this tab for facility use"
-              className="px-3 py-1.5 bg-surface hover:bg-subtle active:scale-[0.98] text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 hover:border-emerald-500/50 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+              className="px-3 py-1.5 bg-surface hover:bg-subtle active:scale-[0.98] text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 hover:border-emerald-500/50 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
             >
               <Check className="w-3.5 h-3.5" />
               <span>Activate All</span>
@@ -537,7 +537,7 @@ export const PrepackItemListPage: React.FC<PrepackItemListPageProps> = ({ mode: 
               onClick={() => handleBulkStatusChange(activeCategory, 'inactive')}
               disabled={loading}
               title="Deactivate all formulations in this tab"
-              className="px-3 py-1.5 bg-surface hover:bg-subtle active:scale-[0.98] text-text-secondary border border-border-default hover:border-border-strong rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+              className="px-3 py-1.5 bg-surface hover:bg-subtle active:scale-[0.98] text-text-secondary border border-border-default hover:border-border-strong rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
             >
               <Power className="w-3.5 h-3.5" />
               <span>Deactivate All</span>
@@ -547,7 +547,7 @@ export const PrepackItemListPage: React.FC<PrepackItemListPageProps> = ({ mode: 
               onClick={handleSyncCatalog}
               disabled={syncingCatalog || loading}
               title="Resynchronize with MOH standards database"
-              className="px-3 py-1.5 bg-teal-500/10 hover:bg-teal-500/20 active:scale-[0.98] text-teal-700 dark:text-teal-300 border border-teal-500/30 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
+              className="px-3 py-1.5 bg-teal-500/10 hover:bg-teal-500/20 active:scale-[0.98] text-teal-700 dark:text-teal-300 border border-teal-500/30 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-xs"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${syncingCatalog ? 'animate-spin' : ''}`} />
               <span>Sync MOH Catalog</span>
@@ -583,7 +583,7 @@ export const PrepackItemListPage: React.FC<PrepackItemListPageProps> = ({ mode: 
             <button
               key={tab.id}
               onClick={() => handleSelectCategory(tab.id as CatalogCategoryFilter)}
-              className={`flex-1 min-w-[135px] sm:min-w-[155px] px-2.5 sm:px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer active:scale-[0.98] ${
+              className={`flex-1 min-w-[135px] sm:min-w-[155px] px-2.5 sm:px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-colors cursor-pointer active:scale-[0.98] ${
                 isActive
                   ? 'bg-surface text-teal-700 dark:text-teal-300 shadow-xs border border-border-default'
                   : 'text-text-muted hover:text-text-primary hover:bg-subtle border border-transparent'
@@ -613,49 +613,56 @@ export const PrepackItemListPage: React.FC<PrepackItemListPageProps> = ({ mode: 
             placeholder={categoryMeta.searchPlaceholder}
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 text-xs bg-subtle/70 hover:bg-subtle border border-border-default hover:border-border-strong focus:border-border-strong rounded-lg text-text-primary placeholder:text-text-muted outline-none transition-all"
+            className="w-full pl-9 pr-3 py-1.5 text-xs bg-subtle/70 hover:bg-subtle border border-border-default hover:border-border-strong focus:border-border-strong rounded-lg text-text-primary placeholder:text-text-muted outline-none transition-colors"
           />
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           {/* Facility Status Filter Pills */}
-          <div className="flex items-center p-0.5 bg-subtle rounded-lg border border-border-subtle">
-            <button
-              type="button"
-              onClick={() => setStatusFilter('all')}
-              className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer ${
-                statusFilter === 'all'
-                  ? 'bg-surface text-text-primary shadow-xs'
-                  : 'text-text-muted hover:text-text-primary'
-              }`}
-            >
-              All ({counts.scopeTotal})
-            </button>
-            <button
-              type="button"
-              onClick={() => setStatusFilter('active')}
-              className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer flex items-center gap-1.5 ${
-                statusFilter === 'active'
-                  ? 'bg-surface text-teal-700 dark:text-teal-300 shadow-xs'
-                  : 'text-text-muted hover:text-teal-600 dark:hover:text-teal-400'
-              }`}
-            >
+          {activeCategory === 'all' ? (
+            <div className="flex items-center px-2.5 py-1 text-xs font-semibold rounded-lg bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/20 gap-1.5 shadow-xs">
               <span className="w-1.5 h-1.5 rounded-full bg-teal-500" />
-              <span>Active ({counts.scopeActive})</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setStatusFilter('inactive')}
-              className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-all cursor-pointer flex items-center gap-1.5 ${
-                statusFilter === 'inactive'
-                  ? 'bg-surface text-text-secondary shadow-xs'
-                  : 'text-text-muted hover:text-text-secondary'
-              }`}
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-border-strong" />
-              <span>Inactive ({counts.scopeInactive})</span>
-            </button>
-          </div>
+              <span>Active Formulations ({counts.all})</span>
+            </div>
+          ) : (
+            <div className="flex items-center p-0.5 bg-subtle rounded-lg border border-border-subtle">
+              <button
+                type="button"
+                onClick={() => setStatusFilter('all')}
+                className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-colors cursor-pointer ${
+                  statusFilter === 'all'
+                    ? 'bg-surface text-text-primary shadow-xs'
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+              >
+                All ({counts.scopeTotal})
+              </button>
+              <button
+                type="button"
+                onClick={() => setStatusFilter('active')}
+                className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-colors cursor-pointer flex items-center gap-1.5 ${
+                  statusFilter === 'active'
+                    ? 'bg-surface text-teal-700 dark:text-teal-300 shadow-xs'
+                    : 'text-text-muted hover:text-teal-600 dark:hover:text-teal-400'
+                }`}
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-teal-500" />
+                <span>Active ({counts.scopeActive})</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setStatusFilter('inactive')}
+                className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-colors cursor-pointer flex items-center gap-1.5 ${
+                  statusFilter === 'inactive'
+                    ? 'bg-surface text-text-secondary shadow-xs'
+                    : 'text-text-muted hover:text-text-secondary'
+                }`}
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-border-strong" />
+                <span>Inactive ({counts.scopeInactive})</span>
+              </button>
+            </div>
+          )}
 
           {/* Dynamic Dosage Form / Sub-domain Select */}
           {activeCategory === 'all' ? (
@@ -664,11 +671,11 @@ export const PrepackItemListPage: React.FC<PrepackItemListPageProps> = ({ mode: 
               onChange={e => setSelectedPackType(e.target.value)}
               className="px-2.5 py-1.5 text-xs bg-subtle/70 hover:bg-subtle border border-border-default hover:border-border-strong rounded-lg text-text-secondary font-medium outline-none cursor-pointer"
             >
-              <option value="all">All Domains</option>
-              <option value="uod">Unit of Dose (UOD)</option>
-              <option value="prepack">Bulk Prepack</option>
-              <option value="internal">Internal Preparations (Oral)</option>
-              <option value="external">External Preparations (Topical)</option>
+              <option value="all">All Domains ({counts.all})</option>
+              <option value="uod">Unit of Dose ({counts.uod})</option>
+              <option value="prepack">Bulk Prepack ({counts.prepack})</option>
+              <option value="internal">Internal Preparations ({counts.internalActive})</option>
+              <option value="external">External Preparations ({counts.externalActive})</option>
             </select>
           ) : activeCategory === 'prepack' ? (
             <select
@@ -723,7 +730,7 @@ export const PrepackItemListPage: React.FC<PrepackItemListPageProps> = ({ mode: 
           {/* Low Stock Filter */}
           <button
             onClick={() => setShowOnlyRepackNeeded(!showOnlyRepackNeeded)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all border cursor-pointer active:scale-[0.98] ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors border cursor-pointer active:scale-[0.98] ${
               showOnlyRepackNeeded
                 ? 'bg-rose-500/15 border-rose-500/30 text-rose-600 dark:text-rose-400'
                 : 'bg-surface hover:bg-subtle border-border-default hover:border-border-strong text-text-muted hover:text-text-primary'
@@ -755,7 +762,7 @@ export const PrepackItemListPage: React.FC<PrepackItemListPageProps> = ({ mode: 
                 <button
                   type="button"
                   onClick={() => setStatusFilter('all')}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-teal-700 dark:text-teal-300 bg-teal-500/10 border border-teal-500/20 rounded-lg hover:bg-teal-500/20 active:scale-[0.98] transition-all cursor-pointer shadow-xs"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-teal-700 dark:text-teal-300 bg-teal-500/10 border border-teal-500/20 rounded-lg hover:bg-teal-500/20 active:scale-[0.98] transition-colors cursor-pointer shadow-xs"
                 >
                   View All ({counts.scopeTotal}) Monographs to Activate
                 </button>
@@ -828,7 +835,7 @@ export const PrepackItemListPage: React.FC<PrepackItemListPageProps> = ({ mode: 
                             {item.item_name}
                           </span>
                           {item.pack_type === 'internal' || item.pack_type === 'external' ? (
-                            <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800 px-1.5 py-0.2 rounded shrink-0 opacity-80 group-hover:opacity-100 transition-opacity">
+                            <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-teal-600 dark:text-teal-400 bg-accent-base/10 dark:bg-teal-950/60 border border-accent-base/20 dark:border-teal-800 px-1.5 py-0.2 rounded shrink-0 opacity-80 group-hover:opacity-100 transition-opacity">
                               <BookOpen className="w-2.5 h-2.5" />
                               <span>SOP</span>
                             </span>
@@ -922,7 +929,7 @@ export const PrepackItemListPage: React.FC<PrepackItemListPageProps> = ({ mode: 
                             } ${isToggling ? 'opacity-50 cursor-wait' : ''}`}
                           >
                             <span
-                              className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out ${
+                              className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-surface shadow-xs ring-0 transition duration-200 ease-in-out ${
                                 isActive ? 'translate-x-4' : 'translate-x-0'
                               }`}
                             />

@@ -163,7 +163,7 @@ export const PorterManagerDispatchPage: React.FC = () => {
 
             <div className="space-y-3 flex-1 overflow-y-auto max-h-[600px] pr-1">
               {poolJobs.length === 0 ? (
-                <div className="p-8 text-center text-slate-600 text-xs">No requests in pool</div>
+                <div className="p-8 text-center text-text-muted text-xs">No requests in pool</div>
               ) : (
                 poolJobs.map((job) => (
                   <div key={job.id} className="p-4 bg-slate-950 border border-slate-800 hover:border-sky-500/50 rounded-2xl space-y-3 shadow-md">
@@ -203,7 +203,7 @@ export const PorterManagerDispatchPage: React.FC = () => {
 
             <div className="space-y-3 flex-1 overflow-y-auto max-h-[600px] pr-1">
               {inProgressJobs.length === 0 ? (
-                <div className="p-8 text-center text-slate-600 text-xs">No active transit</div>
+                <div className="p-8 text-center text-text-muted text-xs">No active transit</div>
               ) : (
                 inProgressJobs.map((job) => (
                   <div key={job.id} className="p-4 bg-slate-950 border border-slate-800 rounded-2xl space-y-2.5 shadow-md">
@@ -214,7 +214,7 @@ export const PorterManagerDispatchPage: React.FC = () => {
                     <div>
                       <h4 className="text-xs font-extrabold text-white">{job.sub_category || job.category}</h4>
                       <p className="text-[11px] text-slate-400 mt-0.5">Porter: <strong className="text-slate-200">{job.assigned_porter_name}</strong></p>
-                      <p className="text-[10px] text-slate-500">Route: {job.origin_department_name} ➔ {job.destination_department_name}</p>
+                      <p className="text-[10px] text-text-muted">Route: {job.origin_department_name} ➔ {job.destination_department_name}</p>
                     </div>
                   </div>
                 ))
@@ -233,7 +233,7 @@ export const PorterManagerDispatchPage: React.FC = () => {
 
             <div className="space-y-3 flex-1 overflow-y-auto max-h-[600px] pr-1">
               {pendingConfirmationJobs.length === 0 ? (
-                <div className="p-8 text-center text-slate-600 text-xs">No pending verifications</div>
+                <div className="p-8 text-center text-text-muted text-xs">No pending verifications</div>
               ) : (
                 pendingConfirmationJobs.map((job) => (
                   <div key={job.id} className="p-4 bg-slate-950 border border-amber-500/30 rounded-2xl space-y-2 shadow-md">
@@ -245,7 +245,7 @@ export const PorterManagerDispatchPage: React.FC = () => {
                     </div>
                     <h4 className="text-xs font-extrabold text-white">{job.sub_category || job.category}</h4>
                     <p className="text-[11px] text-slate-400">Destination: <strong className="text-white">{job.destination_department_name}</strong></p>
-                    <p className="text-[10px] text-slate-500">Porter: {job.assigned_porter_name}</p>
+                    <p className="text-[10px] text-text-muted">Porter: {job.assigned_porter_name}</p>
                   </div>
                 ))
               )}
@@ -269,7 +269,7 @@ export const PorterManagerDispatchPage: React.FC = () => {
                     <span className="text-emerald-400 font-bold">✓ {job.actual_tat_minutes || 15}m TAT</span>
                   </div>
                   <p className="text-xs font-bold text-slate-300 truncate">{job.sub_category || job.category}</p>
-                  <p className="text-[10px] text-slate-500">{job.assigned_porter_name}</p>
+                  <p className="text-[10px] text-text-muted">{job.assigned_porter_name}</p>
                 </div>
               ))}
             </div>
@@ -301,7 +301,7 @@ export const PorterManagerDispatchPage: React.FC = () => {
                         <span className="font-mono text-[10px] text-slate-400">{p.staff_no} ({p.gred})</span>
                       </div>
                       <p className="text-slate-400">{p.assigned_zone} • {p.phone_number}</p>
-                      <p className="text-slate-500 text-[10px]">Current Location: {p.current_location}</p>
+                      <p className="text-text-muted text-[10px]">Current Location: {p.current_location}</p>
                     </div>
                   </div>
 

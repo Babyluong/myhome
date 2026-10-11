@@ -63,7 +63,7 @@ export const FormulationIngredientsTab: React.FC<FormulationIngredientsTabProps>
           value={ingredientsFormula}
           onChange={(e) => onChangeFormula(e.target.value)}
           placeholder="e.g. Etanol 95% / IMS 737 ml diluted with Purified Water up to 1000 ml"
-          className="w-full px-3 py-2 text-xs bg-surface border border-border-default rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition-colors font-medium shadow-2xs resize-none"
+          className="w-full px-3 py-2 text-xs bg-surface border border-border-default rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition-colors font-medium shadow-elevation-1 resize-none"
         />
       </div>
 
@@ -78,7 +78,7 @@ export const FormulationIngredientsTab: React.FC<FormulationIngredientsTabProps>
           value={indications}
           onChange={(e) => onChangeIndications(e.target.value)}
           placeholder="e.g. Antisepsis kulit umum, disinfeksi permukaan & swab suntikan"
-          className="w-full px-3 py-2 text-xs bg-surface border border-border-default rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition-colors shadow-2xs"
+          className="w-full px-3 py-2 text-xs bg-surface border border-border-default rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 transition-colors shadow-elevation-1"
         />
       </div>
 
@@ -108,7 +108,7 @@ export const FormulationIngredientsTab: React.FC<FormulationIngredientsTabProps>
         </div>
 
         {/* Ingredients Table */}
-        <div className="overflow-x-auto rounded-lg border border-border-default bg-surface shadow-2xs">
+        <div className="overflow-x-auto rounded-lg border border-border-default bg-surface shadow-elevation-1">
           <table className="w-full text-left text-xs">
             <thead className="bg-subtle text-text-muted uppercase text-[10px] font-semibold tracking-wider border-b border-border-default">
               <tr>
@@ -203,7 +203,7 @@ export const FormulationIngredientsTab: React.FC<FormulationIngredientsTabProps>
             type="button"
             onClick={handleAddIngredient}
             disabled={!newIngredient.name.trim()}
-            className="w-full sm:w-auto px-3 py-1.5 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] disabled:opacity-40 text-white rounded-md text-xs font-semibold flex items-center justify-center gap-1 shrink-0 cursor-pointer shadow-2xs"
+            className="w-full sm:w-auto px-3 py-1.5 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] disabled:opacity-40 text-white rounded-md text-xs font-semibold flex items-center justify-center gap-1 shrink-0 cursor-pointer shadow-elevation-1"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add</span>

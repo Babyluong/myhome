@@ -178,15 +178,15 @@ const TransporterAvailabilityPage: React.FC = () => {
   const getStatusColorClass = (status: string) => {
     switch (status) {
       case 'approved':
-        return 'bg-emerald-50 text-emerald-700 border-emerald-150'
+        return 'bg-emerald-500/10 text-emerald-700 border-emerald-150'
       case 'submitted':
-        return 'bg-amber-50 text-amber-700 border-amber-150'
+        return 'bg-amber-500/10 text-amber-700 border-amber-150'
       case 'driver_accepted':
-        return 'bg-blue-50 text-blue-700 border-blue-150'
+        return 'bg-blue-500/10 text-blue-700 border-blue-150'
       case 'in_transit':
-        return 'bg-indigo-50 text-indigo-700 border-indigo-150'
+        return 'bg-indigo-500/10 text-indigo-700 border-indigo-150'
       default:
-        return 'bg-slate-50 text-slate-650 border-slate-150'
+        return 'bg-subtle/50 text-slate-650 border-slate-150'
     }
   }
 
@@ -201,20 +201,20 @@ const TransporterAvailabilityPage: React.FC = () => {
       {/* Back button */}
       <button 
         onClick={() => navigate('/transporter/dashboard')}
-        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold mb-4 cursor-pointer"
+        className="flex items-center gap-2 text-text-muted hover:text-text-primary transition-colors text-sm font-semibold mb-4 cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>{isEn ? 'Back to Dashboard' : 'Kembali ke Papan Pemuka'}</span>
       </button>
 
       {/* Header & Controls */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-slate-100 pb-5">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-border-subtle pb-5">
         <div className="space-y-1">
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+          <h1 className="text-2xl font-black text-text-primary tracking-tight flex items-center gap-2.5">
             <CalendarIcon className="w-7 h-7 text-blue-600 animate-pulse" />
             <span>{isEn ? 'Official Vehicle (SG) Availability Calendar' : 'Ketersediaan Kereta Jabatan (SG)'}</span>
           </h1>
-          <p className="text-slate-500 text-sm">
+          <p className="text-text-muted text-sm">
             {isEn 
               ? 'Check schedule slots and vehicle availability for official hospital transit reservations.'
               : 'Semak slot kosong dan ketersediaan kereta jabatan untuk tempahan trip rasmi.'}
@@ -222,14 +222,14 @@ const TransporterAvailabilityPage: React.FC = () => {
         </div>
 
         {/* Filters */}
-        <div className="flex items-center gap-3 bg-white p-2 border border-slate-200 shadow-sm rounded-xl w-full sm:w-auto">
-          <span className="text-xs font-bold text-slate-400 uppercase tracking-wider whitespace-nowrap pl-2">
+        <div className="flex items-center gap-3 bg-surface p-2 border border-border-default shadow-sm rounded-xl w-full sm:w-auto">
+          <span className="text-xs font-bold text-text-secondary font-bold uppercase tracking-wider whitespace-nowrap pl-2">
             {isEn ? 'Filter Vehicle:' : 'Tapis Kereta:'}
           </span>
           <select
             value={selectedVehicleFilter}
             onChange={(e) => setSelectedVehicleFilter(e.target.value)}
-            className="bg-transparent text-xs font-extrabold text-slate-800 outline-none border-none cursor-pointer pr-3"
+            className="bg-transparent text-xs font-extrabold text-text-primary outline-none border-none cursor-pointer pr-3"
           >
             <option value="all">{isEn ? 'All SG Vehicles' : 'Semua Kereta SG'}</option>
             {vehicles.map(v => (
@@ -242,7 +242,7 @@ const TransporterAvailabilityPage: React.FC = () => {
       {loading ? (
         <div className="py-24 flex flex-col items-center justify-center gap-3">
           <div className="w-8 h-8 border-3 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-          <span className="text-xs font-semibold text-slate-500">
+          <span className="text-xs font-semibold text-text-muted">
             {isEn ? 'Loading availability calendar...' : 'Memuatkan kalendar ketersediaan...'}
           </span>
         </div>
@@ -250,16 +250,16 @@ const TransporterAvailabilityPage: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
           
           {/* LEFT/MID: CALENDAR MONTH GRID */}
-          <div className="lg:col-span-2 bg-white border border-slate-200/80 rounded-2xl shadow-sm overflow-hidden">
+          <div className="lg:col-span-2 bg-surface border border-border-default rounded-2xl shadow-sm overflow-hidden">
             {/* Calendar Month Header */}
-            <div className="flex items-center justify-between p-4 bg-slate-50 border-b border-slate-100">
-              <h2 className="text-base font-black text-slate-800 tracking-tight font-mono">
+            <div className="flex items-center justify-between p-4 bg-subtle/50 border-b border-border-subtle">
+              <h2 className="text-base font-black text-text-primary tracking-tight font-mono">
                 {monthNames[currentMonth]} {currentYear}
               </h2>
-              <div className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-xl p-1 shadow-xs">
+              <div className="flex items-center gap-1.5 bg-surface border border-border-default rounded-xl p-1 shadow-xs">
                 <button 
                   onClick={handlePrevMonth}
-                  className="p-1 hover:bg-slate-50 rounded-lg text-slate-650 transition-colors cursor-pointer"
+                  className="p-1 hover:bg-subtle/50 rounded-lg text-slate-650 transition-colors cursor-pointer"
                   title={isEn ? 'Previous Month' : 'Bulan Lepas'}
                 >
                   <ChevronLeft className="w-4 h-4" />
@@ -271,13 +271,13 @@ const TransporterAvailabilityPage: React.FC = () => {
                     setCurrentMonth(todayDate.getMonth())
                     setSelectedDate({ day: todayDate.getDate(), month: todayDate.getMonth(), year: todayDate.getFullYear() })
                   }}
-                  className="text-xxs font-extrabold px-2.5 py-1 text-blue-650 hover:bg-slate-50 rounded-md transition-colors cursor-pointer"
+                  className="text-xxs font-extrabold px-2.5 py-1 text-blue-650 hover:bg-subtle/50 rounded-md transition-colors cursor-pointer"
                 >
                   {isEn ? 'Today' : 'Hari Ini'}
                 </button>
                 <button 
                   onClick={handleNextMonth}
-                  className="p-1 hover:bg-slate-50 rounded-lg text-slate-650 transition-colors cursor-pointer"
+                  className="p-1 hover:bg-subtle/50 rounded-lg text-slate-650 transition-colors cursor-pointer"
                   title={isEn ? 'Next Month' : 'Bulan Depan'}
                 >
                   <ChevronRight className="w-4 h-4" />
@@ -286,14 +286,14 @@ const TransporterAvailabilityPage: React.FC = () => {
             </div>
 
             {/* Weekdays row */}
-            <div className="grid grid-cols-7 border-b border-slate-100 bg-slate-50/20 text-center py-2.5 text-[10px] font-black text-slate-400 uppercase tracking-wider">
+            <div className="grid grid-cols-7 border-b border-border-subtle bg-subtle/50 text-center py-2.5 text-[10px] font-black text-text-secondary font-bold uppercase tracking-wider">
               {weekdays.map((day) => (
                 <div key={day}>{day}</div>
               ))}
             </div>
 
             {/* Days Grid */}
-            <div className="grid grid-cols-7 divide-x divide-y divide-slate-150/70 bg-slate-100/10">
+            <div className="grid grid-cols-7 divide-x divide-y divide-slate-150/70 bg-subtle">
               {daysGrid.map((cell, idx) => {
                 const cellBookings = getBookingsForDate(cell.day, cell.month, cell.year)
                 const isSelected = selectedDate.day === cell.day && selectedDate.month === cell.month && selectedDate.year === cell.year
@@ -303,10 +303,10 @@ const TransporterAvailabilityPage: React.FC = () => {
                   <div
                     key={idx}
                     onClick={() => setSelectedDate({ day: cell.day, month: cell.month, year: cell.year })}
-                    className={`min-h-[105px] p-2 bg-white flex flex-col justify-between hover:bg-blue-50/20 cursor-pointer transition-all duration-150 relative ${
-                      !cell.isCurrentMonth ? 'text-slate-300 bg-slate-50/10' : 'text-slate-800'
+                    className={`min-h-[105px] p-2 bg-surface flex flex-col justify-between hover:bg-blue-500/10 cursor-pointer transition-colors duration-150 relative ${
+                      !cell.isCurrentMonth ? 'text-slate-300 bg-subtle/50' : 'text-text-primary'
                     } ${
-                      isSelected ? 'bg-blue-50/30 ring-2 ring-blue-500 ring-inset' : ''
+                      isSelected ? 'bg-blue-500/10 ring-2 ring-blue-500 ring-inset' : ''
                     }`}
                   >
                     {/* Day Number Header */}
@@ -352,13 +352,13 @@ const TransporterAvailabilityPage: React.FC = () => {
 
           {/* RIGHT: SELECTED DATE DETAIL PANEL */}
           <div className="space-y-4">
-            <Card className="border border-slate-200 shadow-sm overflow-hidden bg-white">
-              <CardHeader className="bg-slate-50/50 border-b border-slate-100 p-4">
-                <CardTitle className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+            <Card className="border border-border-default shadow-sm overflow-hidden bg-surface">
+              <CardHeader className="bg-subtle/50 border-b border-border-subtle p-4">
+                <CardTitle className="text-xs font-black text-text-primary uppercase tracking-wider flex items-center gap-1.5">
                   <Clock className="w-4 h-4 text-blue-600" />
                   <span>{isEn ? 'Schedule Details' : 'Butiran Jadual'}</span>
                 </CardTitle>
-                <p className="text-xs font-bold text-slate-900 mt-1 font-sans">
+                <p className="text-xs font-bold text-text-primary mt-1 font-sans">
                   {weekdays[new Date(selectedDate.year, selectedDate.month, selectedDate.day).getDay()]},{' '}
                   {selectedDate.day} {monthNames[selectedDate.month]} {selectedDate.year}
                 </p>
@@ -370,14 +370,14 @@ const TransporterAvailabilityPage: React.FC = () => {
                     const vehicleBookings = selectedDayBookings.filter(b => b.kenderaan_id === vehicle.id)
                     
                     return (
-                      <div key={vehicle.id} className="border border-slate-200/80 rounded-2xl p-4 space-y-3.5 bg-white shadow-xs">
-                        <div className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
+                      <div key={vehicle.id} className="border border-border-default rounded-2xl p-4 space-y-3.5 bg-surface shadow-xs">
+                        <div className="flex items-center justify-between gap-3 border-b border-border-subtle pb-3">
                           <div className="flex items-center gap-2.5">
-                            <div className="p-2 bg-blue-50 text-blue-600 rounded-xl">
+                            <div className="p-2 bg-blue-500/10 text-blue-600 rounded-xl">
                               <Car className="w-4 h-4" />
                             </div>
                             <div>
-                              <span className="font-mono font-bold text-sm text-slate-900 block leading-tight">{vehicle.no_kenderaan}</span>
+                              <span className="font-mono font-bold text-sm text-text-primary block leading-tight">{vehicle.no_kenderaan}</span>
                               <span className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wide">{vehicle.model}</span>
                             </div>
                           </div>
@@ -394,9 +394,9 @@ const TransporterAvailabilityPage: React.FC = () => {
                               })
                             }}
                             disabled={vehicleBookings.length > 0}
-                            className={`text-xxs h-8 px-3 rounded-xl shadow-sm font-bold flex items-center gap-1 transition-all cursor-pointer ${
+                            className={`text-xxs h-8 px-3 rounded-xl shadow-sm font-bold flex items-center gap-1 transition-colors cursor-pointer ${
                               vehicleBookings.length > 0
-                                ? 'bg-slate-100 text-slate-400 border border-slate-200 cursor-not-allowed hover:bg-slate-100 shadow-none'
+                                ? 'bg-subtle text-slate-400 border border-border-default cursor-not-allowed hover:bg-subtle shadow-none'
                                 : 'bg-blue-600 hover:bg-blue-700 text-white'
                             }`}
                           >
@@ -413,20 +413,20 @@ const TransporterAvailabilityPage: React.FC = () => {
 
                         {/* List Bookings for this vehicle */}
                         {vehicleBookings.length === 0 ? (
-                          <div className="text-[10px] text-emerald-800 font-bold bg-emerald-50/50 p-2.5 rounded-xl border border-emerald-100 flex items-center gap-2">
+                          <div className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 p-2.5 rounded-xl border border-emerald-100 flex items-center gap-2">
                             <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
                             <span>{isEn ? 'Available for booking all day' : 'Sedia ditempah sepanjang hari'}</span>
                           </div>
                         ) : (
                           <div className="space-y-2.5">
                             {vehicleBookings.map(b => (
-                              <div key={b.id} className="p-3 bg-slate-50/50 border border-slate-200/50 rounded-xl text-xxs font-medium text-slate-650 space-y-1.5">
-                                <div className="flex items-center justify-between gap-2 border-b border-slate-100/60 pb-1.5">
-                                  <span className="font-bold text-slate-900 font-mono text-xs">
+                              <div key={b.id} className="p-3 bg-subtle/50 border border-border-default rounded-xl text-xxs font-medium text-slate-650 space-y-1.5">
+                                <div className="flex items-center justify-between gap-2 border-b border-border-subtle pb-1.5">
+                                  <span className="font-bold text-text-primary font-mono text-xs">
                                     {formatTimeRange(b.tarikh_masa_diperlukan, b.tarikh_masa_sehingga)}
                                   </span>
                                   <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase ${
-                                    b.status_semasa === 'approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'
+                                    b.status_semasa === 'approved' ? 'bg-emerald-100 text-emerald-400' : 'bg-amber-100 text-amber-400'
                                   }`}>
                                     {b.status_semasa === 'approved' 
                                       ? (isEn ? 'Approved' : 'Dilulus') 
@@ -437,15 +437,15 @@ const TransporterAvailabilityPage: React.FC = () => {
                                 <div className="space-y-1 font-semibold">
                                   <div className="flex items-start gap-1.5">
                                     <MapPin className="w-3.5 h-3.5 text-slate-400 flex-shrink-0 mt-0.5" />
-                                    <span className="text-slate-800 line-clamp-1">{b.destinasi}</span>
+                                    <span className="text-text-primary line-clamp-1">{b.destinasi}</span>
                                   </div>
                                   
                                   <div className="flex items-start gap-1.5">
                                     <FileText className="w-3.5 h-3.5 text-slate-400 flex-shrink-0 mt-0.5" />
-                                    <span className="text-slate-600 line-clamp-1 font-medium italic">"{b.tujuan_permohonan}"</span>
+                                    <span className="text-text-muted line-clamp-1 font-medium italic">"{b.tujuan_permohonan}"</span>
                                   </div>
                                   
-                                  <div className="flex items-center gap-1.5 text-slate-500 font-medium">
+                                  <div className="flex items-center gap-1.5 text-text-muted font-medium">
                                     <User className="w-3.5 h-3.5 text-slate-400" />
                                     <span>
                                       {b.nama_pemohon || (isEn ? 'Staff' : 'Staf')} • {b.pemandu_diperlukan 

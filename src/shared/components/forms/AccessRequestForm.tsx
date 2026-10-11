@@ -210,19 +210,19 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({
               <div
                 className={cn(
                   'w-16 h-0.5 mx-2',
-                  isCompleted ? 'bg-primary-500' : 'bg-gray-200'
+                  isCompleted ? 'bg-primary-500' : 'bg-subtle'
                 )}
               />
             )}
             <div className="flex flex-col items-center">
               <div
                 className={cn(
-                  'w-10 h-10 rounded-full flex items-center justify-center transition-all',
+                  'w-10 h-10 rounded-full flex items-center justify-center transition-colors',
                   isActive
                     ? 'bg-primary-600 text-white shadow-lg shadow-primary-500/30'
                     : isCompleted
                     ? 'bg-primary-500 text-white'
-                    : 'bg-gray-100 text-gray-400'
+                    : 'bg-subtle text-gray-400'
                 )}
               >
                 {isCompleted ? (
@@ -234,7 +234,7 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({
               <span
                 className={cn(
                   'mt-2 text-xs font-medium',
-                  isActive ? 'text-primary-600' : 'text-gray-500'
+                  isActive ? 'text-primary-600' : 'text-text-muted'
                 )}
               >
                 {step.title}
@@ -337,7 +337,7 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({
       />
 
       {/* Password Fields */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-gray-200">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-border-default">
         <Input
           {...register('password')}
           type="password"
@@ -496,13 +496,13 @@ export const AccessRequestForm: React.FC<AccessRequestFormProps> = ({
         <button
           type="button"
           onClick={onBack}
-          className="p-2 -ml-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+          className="p-2 -ml-2 text-gray-400 hover:text-text-muted hover:bg-subtle rounded-lg transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">Request Access</h2>
-          <p className="text-sm text-gray-500">
+          <h2 className="text-xl font-semibold text-text-primary">Request Access</h2>
+          <p className="text-sm text-text-muted">
             Fill in your details to request system access
           </p>
         </div>

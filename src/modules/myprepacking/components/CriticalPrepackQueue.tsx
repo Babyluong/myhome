@@ -108,7 +108,7 @@ export const CriticalPrepackQueue: React.FC<CriticalPrepackQueueProps> = ({
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="Search medication or code..."
-            className="w-full pl-8 pr-3 py-1.5 text-xs bg-subtle border border-border-default rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-1 focus:ring-teal-500/50 transition-all"
+            className="w-full pl-8 pr-3 py-1.5 text-xs bg-subtle border border-border-default rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-1 focus:ring-teal-500/50 transition-colors"
           />
           {searchQuery && (
             <button
@@ -131,7 +131,7 @@ export const CriticalPrepackQueue: React.FC<CriticalPrepackQueueProps> = ({
             <button
               key={tab.id}
               onClick={() => setCategoryFilter(tab.id)}
-              className={`px-2.5 py-1 text-[11px] font-medium rounded-lg transition-all shrink-0 cursor-pointer ${
+              className={`px-2.5 py-1 text-[11px] font-medium rounded-lg transition-colors shrink-0 cursor-pointer ${
                 categoryFilter === tab.id
                   ? 'bg-teal-700 text-white shadow-xs'
                   : 'bg-subtle text-text-secondary hover:text-text-primary border border-border-subtle'
@@ -256,7 +256,7 @@ export const CriticalPrepackQueue: React.FC<CriticalPrepackQueueProps> = ({
                     {/* Progress Bar */}
                     <div className="w-full bg-subtle h-1.5 rounded-full overflow-hidden mt-1 border border-border-subtle">
                       <div
-                        className={`h-full rounded-full transition-all ${
+                        className={`h-full rounded-full transition-colors ${
                           isStockout
                             ? 'bg-rose-500'
                             : percentMet < 50
@@ -274,7 +274,7 @@ export const CriticalPrepackQueue: React.FC<CriticalPrepackQueueProps> = ({
                   {/* Pack Now CTA */}
                   <button
                     onClick={() => onPackNow(item.id)}
-                    className="min-h-[34px] px-3 py-1.5 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] text-white text-xs font-semibold rounded-lg shadow-xs flex items-center gap-1.5 transition-all cursor-pointer shrink-0 focus-visible:ring-2 focus-visible:ring-teal-500/40"
+                    className="min-h-[34px] px-3 py-1.5 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] text-white text-xs font-semibold rounded-lg shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 focus-visible:ring-2 focus-visible:ring-teal-500/40"
                   >
                     <Plus className="w-3.5 h-3.5" />
                     <span>Pack Now</span>

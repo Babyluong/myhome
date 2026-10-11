@@ -406,6 +406,7 @@ export const OxygenDashboardPage: React.FC = () => {
   const [systemSettings, setSystemSettings] = useState<OxygenSystemSettings | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [ledgerViewMode, setLedgerViewMode] = useState<'detailed' | 'monthly'>('detailed')
+  const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(true)
   const [monthlyCurrentPage, setMonthlyCurrentPage] = useState(1)
   const [entriesPerPage, setEntriesPerPage] = useState<number>(10)
   const [isMonthlyModalOpen, setIsMonthlyModalOpen] = useState(false)
@@ -1438,24 +1439,24 @@ export const OxygenDashboardPage: React.FC = () => {
     {
       key: 'serial_number',
       label: 'Serial Number',
-      className: 'font-mono text-xs text-gray-700 font-bold',
+      className: 'font-mono text-xs text-text-secondary font-bold',
     },
     {
       key: 'type_info',
       label: 'Cylinder Size & Type',
-      className: 'text-sm text-gray-900',
+      className: 'text-sm text-text-primary',
       render: (_, row) => row.type_info?.type_name || 'Standard Cylinder',
     },
     {
       key: 'current_location',
       label: 'Storage Location',
-      className: 'text-sm text-gray-600',
+      className: 'text-sm text-text-muted',
       render: (_, row) => typeof row.current_location === 'object' ? (row.current_location?.location_name || 'Central Pharmacy Store') : (row.current_location || 'Central Pharmacy Store'),
     },
     {
       key: 'assigned_ward',
       label: 'Assigned Department',
-      className: 'text-sm text-gray-600',
+      className: 'text-sm text-text-muted',
       render: (_, row) => row.assigned_ward?.department_name || '-',
     },
     {
@@ -1471,31 +1472,31 @@ export const OxygenDashboardPage: React.FC = () => {
     {
       key: 'consumption_date',
       label: 'Date',
-      className: 'text-sm text-gray-900',
+      className: 'text-sm text-text-primary',
       render: (value) => value ? new Date(String(value)).toLocaleDateString() : '-',
     },
     {
       key: 'cylinder',
       label: 'Cylinder Serial',
-      className: 'font-mono text-xs text-gray-700 font-bold',
+      className: 'font-mono text-xs text-text-secondary font-bold',
       render: (_, row) => row.cylinder?.serial_number || 'BULK DISPATCH',
     },
     {
       key: 'department',
       label: 'Requesting Unit',
-      className: 'text-sm text-gray-600',
+      className: 'text-sm text-text-muted',
       render: (_, row) => row.department?.department_name || 'Emergency Trauma Unit',
     },
     {
       key: 'quantity_used',
       label: 'Quantity Refilled',
-      className: 'text-sm text-gray-900 font-semibold',
+      className: 'text-sm text-text-primary font-semibold',
       render: (val, row) => `${val} ${row.unit || 'liters'}`,
     },
     {
       key: 'notes',
       label: 'Remarks / Notes',
-      className: 'text-sm text-gray-500 italic',
+      className: 'text-sm text-text-muted italic',
       render: (val) => val || 'Scheduled ward refill',
     }
   ]
@@ -2653,7 +2654,7 @@ export const OxygenDashboardPage: React.FC = () => {
           {/* Executive Segmented Navigation Bar & Operational Controls */}
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5">
             {/* Primary Segmented Tab Navigation: 2x2 Grid on Mobile (Zero Cutoff), Flex on Desktop */}
-            <div className="grid grid-cols-2 sm:flex sm:items-center gap-1.5 bg-white border border-slate-200/90 p-1.5 rounded-2xl shadow-xs w-full sm:w-auto">
+            <div className="grid grid-cols-2 sm:flex sm:items-center gap-1.5 bg-surface border border-border-default p-1.5 rounded-2xl shadow-xs w-full sm:w-auto">
               {[
                 { 
                   id: 'overview', 
@@ -2687,20 +2688,20 @@ export const OxygenDashboardPage: React.FC = () => {
                   <button
                     key={tab.id}
                     onClick={() => setCylinderActiveTab(tab.id as any)}
-                    className={`w-full sm:w-auto px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs font-semibold transition-all duration-150 flex items-center justify-center gap-2 cursor-pointer ${
+                    className={`w-full sm:w-auto px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs font-semibold transition-colors duration-150 flex items-center justify-center gap-2 cursor-pointer ${
                       isActive
-                        ? 'bg-[#008f76] text-white shadow-xs font-bold'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 active:scale-[0.98]'
+                        ? 'bg-accent-base text-white shadow-xs font-bold'
+                        : 'text-text-muted hover:text-text-primary hover:bg-subtle active:scale-[0.98]'
                     }`}
                   >
-                    <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-500'}`} />
+                    <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-text-muted'}`} />
                     <span className="sm:hidden text-center truncate">{tab.label}</span>
                     <span className="hidden sm:inline">{tab.fullLabel || tab.label}</span>
                     {tab.count !== undefined && (
                       <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold shrink-0 ${
                         isActive
                           ? 'bg-white/20 text-white'
-                          : 'bg-slate-100 text-slate-600 border border-slate-200'
+                          : 'bg-subtle text-text-muted border border-border-default'
                       }`}>
                         {tab.count}
                       </span>
@@ -2714,7 +2715,7 @@ export const OxygenDashboardPage: React.FC = () => {
             <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
               <button
                 onClick={handleOpenClearModal}
-                className="px-3 py-1.5 sm:py-2 bg-white hover:bg-rose-50 text-slate-500 hover:text-rose-600 border border-slate-200/80 hover:border-rose-200/80 rounded-xl text-xs font-semibold transition-all flex items-center gap-1.5 shadow-2xs hover:shadow-xs active:scale-95 shrink-0 cursor-pointer"
+                className="px-3 py-1.5 sm:py-2 bg-surface hover:bg-rose-500/10 text-text-muted hover:text-rose-600 border border-border-default hover:border-rose-500/20 rounded-xl text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-elevation-1 hover:shadow-xs active:scale-95 shrink-0 cursor-pointer"
                 title={language === 'ms' ? 'Pilihan Pentadbir: Kosongkan data stok (Memerlukan kata laluan)' : 'Admin: Clear stock data (Password protected)'}
               >
                 <Lock className="w-3.5 h-3.5 text-slate-400" />
@@ -2724,7 +2725,7 @@ export const OxygenDashboardPage: React.FC = () => {
           </div>
  
           {/* Tab Content */}
-          <div className="transition-all duration-500">
+          <div className="transition-colors duration-500">
             {cylinderActiveTab === 'overview' && (
               <StoreBalanceGrid
                 data={cylinderAggregates}
@@ -3259,18 +3260,18 @@ export const OxygenDashboardPage: React.FC = () => {
           {qrActiveTab === 'generate' ? (
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
               {/* Left Column: Generator Form (4 cols) */}
-              <div className="lg:col-span-5 bg-white border border-slate-100 rounded-3xl p-6 shadow-xl flex flex-col gap-6 relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-teal-400 via-[#00a68a] to-emerald-500" />
+              <div className="lg:col-span-5 bg-surface border border-border-subtle rounded-3xl p-6 shadow-xl flex flex-col gap-6 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1.5 bg-accent-base" />
                 
                 <div>
-                  <h3 className="text-base font-extrabold text-slate-800">{language === 'ms' ? 'Pendaftaran Label QR Baharu' : 'New QR Label Registration'}</h3>
+                  <h3 className="text-base font-extrabold text-text-primary">{language === 'ms' ? 'Pendaftaran Label QR Baharu' : 'New QR Label Registration'}</h3>
                   <p className="text-[11px] text-slate-400 mt-0.5">{language === 'ms' ? 'Select cylinder type and quantity to generate new inventory.' : 'Choose cylinder type and quantity to generate new assets.'}</p>
                 </div>
 
                 <div className="space-y-4">
                   {/* Cylinder Type Selection */}
                   <div>
-                    <label className="text-[10px] font-black text-slate-500 uppercase tracking-wide block mb-2">
+                    <label className="text-[10px] font-black text-text-muted uppercase tracking-wide block mb-2">
                       {language === 'ms' ? 'Select Cylinder Type' : 'Select Cylinder Type'}
                     </label>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -3280,21 +3281,21 @@ export const OxygenDashboardPage: React.FC = () => {
                           <div
                             key={type.id}
                             onClick={() => setSelectedTypeId(type.id)}
-                            className={`cursor-pointer p-4 rounded-2xl border-2 transition-all flex flex-col gap-1 relative overflow-hidden active:scale-95 ${
+                            className={`cursor-pointer p-4 rounded-2xl border-2 transition-colors flex flex-col gap-1 relative overflow-hidden active:scale-95 ${
                               isSelected 
                                 ? 'border-[#00a68a] bg-gradient-to-br from-teal-50/40 to-teal-50/10 shadow-md ring-2 ring-[#00a68a]/10'
-                                : 'border-slate-100 bg-white hover:border-slate-200 hover:bg-slate-50/30'
+                                : 'border-border-subtle bg-surface hover:border-border-default hover:bg-subtle/50'
                             }`}
                           >
                             <div className="flex justify-between items-center">
                               <span className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-md ${
-                                isSelected ? 'bg-[#00a68a] text-white' : 'bg-slate-100 text-slate-500'
+                                isSelected ? 'bg-[#00a68a] text-white' : 'bg-subtle text-text-muted'
                               }`}>
                                 {language === 'ms' ? 'Saiz' : 'Size'} {type.type_code}
                               </span>
-                              <span className="text-[10px] font-extrabold text-slate-600">{type.capacity_liters}L</span>
+                              <span className="text-[10px] font-extrabold text-text-muted">{type.capacity_liters}L</span>
                             </div>
-                            <h4 className="text-xs font-bold text-slate-800 mt-2">{type.type_name}</h4>
+                            <h4 className="text-xs font-bold text-text-primary mt-2">{type.type_name}</h4>
                             <p className="text-[9px] text-slate-400 mt-0.5 line-clamp-1">{type.description || 'Medical Oxygen'}</p>
                             
                             {isSelected && (
@@ -3311,12 +3312,12 @@ export const OxygenDashboardPage: React.FC = () => {
                   {!isLoanSelected ? (
                     <>
                       {/* Quantity Slider */}
-                      <div className="bg-slate-50 border border-slate-100/50 rounded-2xl p-4 flex flex-col gap-3 transition-all">
+                      <div className="bg-subtle/50 border border-border-subtle rounded-2xl p-4 flex flex-col gap-3 transition-colors">
                         <div className="flex justify-between items-center">
-                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-wide">
+                          <label className="text-[10px] font-black text-text-muted uppercase tracking-wide">
                             {language === 'ms' ? 'Kuantiti Untuk Didaftar' : 'Quantity to Register'}
                           </label>
-                          <span className="text-xs font-black px-2.5 py-1 rounded-lg border text-[#00a68a] bg-teal-50 border-teal-100">
+                          <span className="text-xs font-black px-2.5 py-1 rounded-lg border text-[#00a68a] bg-accent-base/10 border-teal-100">
                             {generateQuantity} {generateQuantity === 1 ? (language === 'ms' ? 'Silinder' : 'Cylinder') : (language === 'ms' ? 'Silinder' : 'Cylinders')}
                           </span>
                         </div>
@@ -3325,7 +3326,7 @@ export const OxygenDashboardPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => setGenerateQuantity(prev => Math.max(1, prev - 1))}
-                            className="w-8 h-8 bg-white border border-slate-200 hover:border-slate-300 text-slate-600 font-bold rounded-xl transition-all shadow-sm flex items-center justify-center text-sm active:scale-95"
+                            className="w-8 h-8 bg-surface border border-border-default hover:border-border-default text-text-muted font-bold rounded-xl transition-colors shadow-sm flex items-center justify-center text-sm active:scale-95"
                           >
                             -
                           </button>
@@ -3335,12 +3336,12 @@ export const OxygenDashboardPage: React.FC = () => {
                             max="50"
                             value={generateQuantity}
                             onChange={(e) => setGenerateQuantity(Number(e.target.value))}
-                            className="flex-1 accent-[#00a68a] h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer"
+                            className="flex-1 accent-[#00a68a] h-1.5 bg-subtle rounded-lg appearance-none cursor-pointer"
                           />
                           <button
                             type="button"
                             onClick={() => setGenerateQuantity(prev => Math.min(50, prev + 1))}
-                            className="w-8 h-8 bg-white border border-slate-200 hover:border-slate-300 text-slate-600 font-bold rounded-xl transition-all shadow-sm flex items-center justify-center text-sm active:scale-95"
+                            className="w-8 h-8 bg-surface border border-border-default hover:border-border-default text-text-muted font-bold rounded-xl transition-colors shadow-sm flex items-center justify-center text-sm active:scale-95"
                           >
                             +
                           </button>
@@ -3352,10 +3353,10 @@ export const OxygenDashboardPage: React.FC = () => {
                               key={num}
                               type="button"
                               onClick={() => setGenerateQuantity(num)}
-                              className={`flex-1 py-1 rounded-lg text-[9px] font-bold border transition-all ${
+                              className={`flex-1 py-1 rounded-lg text-[9px] font-bold border transition-colors ${
                                 generateQuantity === num
                                   ? 'bg-[#00a68a] border-[#00a68a] text-white shadow-sm'
-                                  : 'bg-white border-slate-200 text-slate-500 hover:border-slate-300'
+                                  : 'bg-surface border-border-default text-text-muted hover:border-border-default'
                               }`}
                             >
                               {num}
@@ -3367,7 +3368,7 @@ export const OxygenDashboardPage: React.FC = () => {
                       <button 
                         onClick={handleGenerateBatchQr}
                         disabled={!selectedTypeId || isAssigningTag}
-                        className="w-full py-4 bg-gradient-to-r from-[#00a68a] to-emerald-600 hover:from-[#008f76] hover:to-emerald-700 disabled:opacity-50 text-white rounded-2xl text-xs font-black shadow-lg shadow-teal-500/10 hover:shadow-teal-500/20 hover:shadow-xl transition-all flex items-center justify-center gap-2"
+                        className="w-full py-4 bg-gradient-to-r from-[#00a68a] to-emerald-600 hover:from-[#008f76] hover:to-emerald-700 disabled:opacity-50 text-white rounded-2xl text-xs font-black shadow-lg shadow-teal-500/10 hover:shadow-teal-500/20 hover:shadow-xl transition-colors flex items-center justify-center gap-2"
                       >
                         <QrCode className="w-4 h-4 animate-pulse" />
                         {isAssigningTag ? (language === 'ms' ? 'Mendaftar...' : 'Registering Cylinders...') : (language === 'ms' ? 'Daftar & Jana QR' : 'Register & Generate QR Codes')}
@@ -3377,9 +3378,9 @@ export const OxygenDashboardPage: React.FC = () => {
                     <>
                       {/* Document Upload + OCR Panel */}
                       {isOcrEligible && (
-                        <div className="bg-white border border-slate-200/60 rounded-2xl p-5 flex flex-col gap-4 shadow-sm">
+                        <div className="bg-surface border border-border-default rounded-2xl p-5 flex flex-col gap-4 shadow-sm">
                           <div>
-                            <label className="text-[10px] font-black text-slate-500 uppercase tracking-wide block mb-1">
+                            <label className="text-[10px] font-black text-text-muted uppercase tracking-wide block mb-1">
                               {language === 'ms' ? 'Ekstrak Automatik No. Siri' : 'Auto-Extract Serials from Delivery Order'}
                             </label>
                             <p className="text-[10px] text-slate-400">
@@ -3387,7 +3388,7 @@ export const OxygenDashboardPage: React.FC = () => {
                             </p>
                           </div>
                           
-                          <div className="border-2 border-dashed border-slate-200 hover:border-[#00a68a]/50 rounded-xl p-5 text-center cursor-pointer transition-all bg-slate-50/30 hover:bg-teal-50/10 flex flex-col items-center justify-center gap-2 relative">
+                          <div className="border-2 border-dashed border-border-default hover:border-[#00a68a]/50 rounded-xl p-5 text-center cursor-pointer transition-colors bg-subtle/50 hover:bg-accent-base/10 flex flex-col items-center justify-center gap-2 relative">
                             <input
                               type="file"
                               multiple
@@ -3395,31 +3396,31 @@ export const OxygenDashboardPage: React.FC = () => {
                               onChange={handleFileChange}
                               className="absolute inset-0 opacity-0 cursor-pointer"
                             />
-                            <div className="p-2.5 bg-teal-50 text-[#00a68a] rounded-full">
+                            <div className="p-2.5 bg-accent-base/10 text-[#00a68a] rounded-full">
                               <FileText className="w-5 h-5" />
                             </div>
                             {deliveryDocFiles.length > 0 ? (
-                              <div className="text-xs font-semibold text-slate-700 truncate max-w-full px-2">
+                              <div className="text-xs font-semibold text-text-secondary truncate max-w-full px-2">
                                 {deliveryDocFiles.length === 1
                                   ? `${deliveryDocFiles[0].name} (${(deliveryDocFiles[0].size / 1024).toFixed(1)} KB)`
                                   : `${deliveryDocFiles.length} files selected (${deliveryDocFiles.map(f => f.name).join(', ')})`}
                               </div>
                             ) : (
-                              <div className="text-[11px] text-slate-500">
+                              <div className="text-[11px] text-text-muted">
                                 {language === 'ms' ? 'Klik atau tarik PDF / Imej ke sini (boleh pilih lebih daripada 1 imej)' : 'Click or drag & drop PDF / Images here (can select multiple pages)'}
                               </div>
                             )}
                           </div>
 
                           {ocrError && (
-                            <div className="text-[10px] text-rose-600 bg-rose-50/50 border border-rose-100 p-2.5 rounded-xl flex items-center gap-2">
+                            <div className="text-[10px] text-rose-600 bg-rose-500/10 border border-rose-100 p-2.5 rounded-xl flex items-center gap-2">
                               <AlertCircle className="w-4 h-4 text-rose-500 shrink-0" />
                               <span>{ocrError}</span>
                             </div>
                           )}
 
                           {isOcrProcessing ? (
-                            <div className="py-4 flex flex-col items-center justify-center gap-2 text-xs font-semibold text-slate-600 bg-slate-50 rounded-xl">
+                            <div className="py-4 flex flex-col items-center justify-center gap-2 text-xs font-semibold text-text-muted bg-subtle/50 rounded-xl">
                               <Spinner className="w-5 h-5 text-[#00a68a]" />
                               <span>{language === 'ms' ? 'Sedang memproses OCR...' : 'Processing OCR & extracting serials...'}</span>
                             </div>
@@ -3428,7 +3429,7 @@ export const OxygenDashboardPage: React.FC = () => {
                               type="button"
                               onClick={handleRunOcr}
                               disabled={deliveryDocFiles.length === 0}
-                              className="w-full py-2.5 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 disabled:opacity-50 disabled:from-slate-200 disabled:to-slate-200 disabled:text-slate-400 text-white rounded-xl text-xs font-black shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center justify-center gap-1.5"
+                              className="w-full py-2.5 bg-gradient-to-r from-teal-500 to-teal-600 hover:from-teal-600 hover:to-teal-700 disabled:opacity-50 disabled:from-slate-200 disabled:to-slate-200 disabled:text-slate-400 text-white rounded-xl text-xs font-black shadow-md hover:shadow-lg transition-colors active:scale-95 flex items-center justify-center gap-1.5"
                             >
                               <RefreshCw className="w-3.5 h-3.5" />
                               {language === 'ms' ? 'Jalankan Ekstraksi OCR' : 'Run OCR Extraction'}
@@ -3436,9 +3437,9 @@ export const OxygenDashboardPage: React.FC = () => {
                           )}
 
                           {showOcrReview && (
-                            <div className="border border-slate-100 rounded-xl p-4 bg-slate-50/50 flex flex-col gap-3">
+                            <div className="border border-border-subtle rounded-xl p-4 bg-subtle/50 flex flex-col gap-3">
                               <div className="flex justify-between items-center">
-                                <span className="text-[10px] font-bold text-slate-600">
+                                <span className="text-[10px] font-bold text-text-muted">
                                   {language === 'ms' ? 'No. Siri Ditemui' : 'Extracted Serials'} ({ocrExtractedTags.length})
                                 </span>
                                 <button
@@ -3462,10 +3463,10 @@ export const OxygenDashboardPage: React.FC = () => {
                                   {ocrExtractedTags.map((tag, idx) => (
                                     <label
                                       key={idx}
-                                      className={`flex items-center gap-2 p-2 rounded-lg border cursor-pointer transition-all text-[11px] font-mono select-none ${
+                                      className={`flex items-center gap-2 p-2 rounded-lg border cursor-pointer transition-colors text-[11px] font-mono select-none ${
                                         tag.selected
-                                          ? 'bg-teal-50/50 border-teal-200 text-[#00a68a] font-bold'
-                                          : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
+                                          ? 'bg-accent-base/10 border-accent-base/20 text-[#00a68a] font-bold'
+                                          : 'bg-surface border-border-default text-text-muted hover:border-border-default'
                                       }`}
                                     >
                                       <input
@@ -3476,7 +3477,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                           newTags[idx].selected = !newTags[idx].selected;
                                           setOcrExtractedTags(newTags);
                                         }}
-                                        className="rounded border-slate-300 text-[#00a68a] focus:ring-[#00a68a] w-3.5 h-3.5"
+                                        className="rounded border-border-default text-[#00a68a] focus:ring-[#00a68a] w-3.5 h-3.5"
                                       />
                                       <span className="truncate">{tag.serial}</span>
                                     </label>
@@ -3488,7 +3489,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={() => setShowOcrReview(false)}
-                                  className="flex-1 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-lg text-[10px] font-bold transition-all"
+                                  className="flex-1 py-2 bg-surface border border-border-default hover:bg-subtle/50 text-text-muted rounded-lg text-[10px] font-bold transition-colors"
                                 >
                                   {language === 'ms' ? 'Batal' : 'Cancel'}
                                 </button>
@@ -3496,7 +3497,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                   type="button"
                                   onClick={handleApplyExtractedTags}
                                   disabled={ocrExtractedTags.filter(t => t.selected).length === 0}
-                                  className="flex-[2] py-2 bg-[#00a68a] hover:bg-[#008f76] disabled:opacity-50 text-white rounded-lg text-[10px] font-bold transition-all shadow-sm"
+                                  className="flex-[2] py-2 bg-[#00a68a] hover:bg-[#008f76] disabled:opacity-50 text-white rounded-lg text-[10px] font-bold transition-colors shadow-sm"
                                 >
                                   {language === 'ms' ? 'Guna' : 'Apply'} {ocrExtractedTags.filter(t => t.selected).length} {language === 'ms' ? 'Tag' : 'Tags'}
                                 </button>
@@ -3507,9 +3508,9 @@ export const OxygenDashboardPage: React.FC = () => {
                       )}
 
                       {/* Supplier Tag Manual Entry Panel */}
-                      <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 border border-slate-200/60 rounded-2xl p-5 flex flex-col gap-4 shadow-inner">
+                      <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 border border-border-default rounded-2xl p-5 flex flex-col gap-4 shadow-inner">
                         <div>
-                          <label className="text-[10px] font-black text-slate-500 uppercase tracking-wide block mb-1">
+                          <label className="text-[10px] font-black text-text-muted uppercase tracking-wide block mb-1">
                             {language === 'ms' ? 'Kemasukan Tag Pembekal Manual' : 'Manual Supplier Tag Entry'}
                           </label>
                           <p className="text-[10px] text-slate-400">
@@ -3530,7 +3531,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                   newRows[index] = e.target.value
                                   setSupplierTagRows(newRows)
                                 }}
-                                className="flex-1 border border-slate-200 rounded-xl p-3 text-xs outline-none focus:ring-2 focus:ring-[#00a68a]/20 focus:border-[#00a68a] transition-all font-mono uppercase bg-white"
+                                className="flex-1 border border-border-default rounded-xl p-3 text-xs outline-none focus:ring-2 focus:ring-[#00a68a]/20 focus:border-[#00a68a] transition-colors font-mono uppercase bg-surface"
                               />
                               {supplierTagRows.length > 1 && (
                                 <button
@@ -3538,7 +3539,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                   onClick={() => {
                                     setSupplierTagRows(supplierTagRows.filter((_, i) => i !== index))
                                   }}
-                                  className="p-3 bg-rose-50 hover:bg-rose-100 hover:text-rose-600 text-rose-500 rounded-xl transition-all"
+                                  className="p-3 bg-rose-500/10 hover:bg-rose-100 hover:text-rose-600 text-rose-500 rounded-xl transition-colors"
                                   title="Remove Row"
                                 >
                                   <X className="w-4 h-4" />
@@ -3551,13 +3552,13 @@ export const OxygenDashboardPage: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => setSupplierTagRows([...supplierTagRows, ''])}
-                          className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-black transition-all active:scale-95 flex items-center justify-center gap-1.5 border border-slate-200"
+                          className="w-full py-2.5 bg-subtle hover:bg-subtle text-text-secondary rounded-xl text-xs font-black transition-colors active:scale-95 flex items-center justify-center gap-1.5 border border-border-default"
                         >
                           <Plus className="w-3.5 h-3.5" />
                           {language === 'ms' ? 'Tambah Baris Tag' : 'Add Tag Row'}
                         </button>
                         
-                        <div className="text-[10px] text-amber-800 bg-amber-50/60 border border-amber-200/60 p-3 rounded-xl flex items-start gap-2 animate-[fadeIn_200ms_ease-out]">
+                        <div className="text-[10px] text-amber-400 bg-amber-500/10 border border-amber-500/20 p-3 rounded-xl flex items-start gap-2 animate-[fadeIn_200ms_ease-out]">
                           <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                           <span className="leading-normal font-semibold">
                             {language === 'ms' 
@@ -3570,7 +3571,7 @@ export const OxygenDashboardPage: React.FC = () => {
                       <button 
                         onClick={handleRegisterSupplierTags}
                         disabled={supplierTagRows.filter(t => t.trim()).length === 0 || isAssigningTag}
-                        className="w-full py-4 bg-gradient-to-r from-[#00a68a] to-emerald-600 hover:from-[#008f76] hover:to-emerald-700 disabled:opacity-50 text-white rounded-2xl text-xs font-black shadow-lg shadow-teal-500/10 hover:shadow-teal-500/20 hover:shadow-xl transition-all flex items-center justify-center gap-2"
+                        className="w-full py-4 bg-gradient-to-r from-[#00a68a] to-emerald-600 hover:from-[#008f76] hover:to-emerald-700 disabled:opacity-50 text-white rounded-2xl text-xs font-black shadow-lg shadow-teal-500/10 hover:shadow-teal-500/20 hover:shadow-xl transition-colors flex items-center justify-center gap-2"
                       >
                         <CheckCircle className="w-4 h-4" />
                         {isAssigningTag ? (language === 'ms' ? 'Mendaftar...' : 'Registering Supplier Tags...') : `${language === 'ms' ? 'Daftar' : 'Register'} ${supplierTagRows.filter(t => t.trim()).length || ''} ${language === 'ms' ? 'Tag Pembekal' : 'Supplier Tags'}`}
@@ -3581,17 +3582,17 @@ export const OxygenDashboardPage: React.FC = () => {
               </div>
 
               {/* Right Column: Generated Stickers (7 cols) */}
-              <div className="lg:col-span-7 bg-white border border-slate-100 rounded-3xl p-6 shadow-xl min-h-[400px] flex flex-col">
+              <div className="lg:col-span-7 bg-surface border border-border-subtle rounded-3xl p-6 shadow-xl min-h-[400px] flex flex-col">
                 {generatedLabels.length > 0 ? (
                   <div className="flex flex-col h-full gap-4">
-                    <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                    <div className="flex items-center justify-between border-b border-border-subtle pb-4">
                       <div>
-                        <h3 className="text-sm font-black text-slate-800">{language === 'ms' ? 'Label QR Dijana' : 'Generated QR Labels'} ({generatedLabels.length})</h3>
+                        <h3 className="text-sm font-black text-text-primary">{language === 'ms' ? 'Label QR Dijana' : 'Generated QR Labels'} ({generatedLabels.length})</h3>
                         <p className="text-[10px] text-slate-400">{language === 'ms' ? 'Sedia untuk dicetak.' : 'Ready to print for new cylinders.'}</p>
                       </div>
                       <button 
                         onClick={() => window.print()}
-                        className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-extrabold transition-all shadow-md flex items-center gap-1.5"
+                        className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-extrabold transition-colors shadow-md flex items-center gap-1.5"
                       >
                         <Printer className="w-3.5 h-3.5" />
                         {language === 'ms' ? 'Cetak Semua' : 'Print All Labels'}
@@ -3603,7 +3604,7 @@ export const OxygenDashboardPage: React.FC = () => {
                       {generatedLabels.map((label) => (
                         <div 
                           key={label.id}
-                          className="p-3 bg-slate-50/70 border border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md hover:bg-white transition-all flex justify-center items-center"
+                          className="p-3 bg-subtle/50 border border-border-default rounded-2xl shadow-sm hover:shadow-md hover:bg-surface transition-colors flex justify-center items-center"
                         >
                           <CylinderQrTag
                             cylinder={label}
@@ -3617,10 +3618,10 @@ export const OxygenDashboardPage: React.FC = () => {
                   </div>
                 ) : (
                   <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
-                    <div className="w-16 h-16 rounded-2xl bg-teal-50 flex items-center justify-center mb-4">
+                    <div className="w-16 h-16 rounded-2xl bg-accent-base/10 flex items-center justify-center mb-4">
                       <QrCode className="w-8 h-8 text-[#00a68a]" />
                     </div>
-                    <h4 className="text-sm font-extrabold text-slate-800">{language === 'ms' ? 'Tiada Label Dijana' : 'No Labels Generated Yet'}</h4>
+                    <h4 className="text-sm font-extrabold text-text-primary">{language === 'ms' ? 'Tiada Label Dijana' : 'No Labels Generated Yet'}</h4>
                     <p className="text-xs text-slate-400 mt-1 max-w-xs">
                       {language === 'ms' ? 'Pilih jenis silinder di sebelah kiri untuk bermula.' : 'Select a cylinder type and input quantity on the left, then trigger the generator to initialize new codes.'}
                     </p>
@@ -3630,7 +3631,7 @@ export const OxygenDashboardPage: React.FC = () => {
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row gap-3 bg-white border border-gray-200 p-4 rounded-2xl shadow-sm items-center justify-between">
+              <div className="flex flex-col sm:flex-row gap-3 bg-surface border border-border-default p-4 rounded-2xl shadow-sm items-center justify-between">
                 <div className="w-full sm:max-w-xs relative">
                   <input
                     type="text"
@@ -3640,7 +3641,7 @@ export const OxygenDashboardPage: React.FC = () => {
                       setQrSearchTerm(e.target.value)
                       setQrPage(1)
                     }}
-                    className="w-full border border-gray-200 rounded-xl p-2.5 pl-3 text-xs outline-none focus:ring-2 focus:ring-[#00a68a]/20 focus:border-[#00a68a] transition-all font-mono"
+                    className="w-full border border-border-default rounded-xl p-2.5 pl-3 text-xs outline-none focus:ring-2 focus:ring-[#00a68a]/20 focus:border-[#00a68a] transition-colors font-mono"
                   />
                 </div>
                 <div className="flex flex-1 gap-3 w-full sm:justify-end">
@@ -3652,7 +3653,7 @@ export const OxygenDashboardPage: React.FC = () => {
                         setQrSizeFilter(e.target.value)
                         setQrPage(1)
                       }}
-                      className="w-full border border-gray-200 rounded-xl p-2.5 text-xs outline-none bg-white text-gray-700 focus:ring-2 focus:ring-[#00a68a]/20 focus:border-[#00a68a] transition-all font-semibold text-[11px]"
+                      className="w-full border border-border-default rounded-xl p-2.5 text-xs outline-none bg-surface text-text-secondary focus:ring-2 focus:ring-[#00a68a]/20 focus:border-[#00a68a] transition-colors font-semibold text-[11px]"
                     >
                       <option value="">{language === 'ms' ? 'Semua Saiz' : 'All Sizes'}</option>
                       {Array.from(new Set(cylinderTypes.map(t => t.type_code).filter(Boolean))).map(sizeCode => (
@@ -3669,7 +3670,7 @@ export const OxygenDashboardPage: React.FC = () => {
                         setQrTypeFilter(e.target.value)
                         setQrPage(1)
                       }}
-                      className="w-full border border-gray-200 rounded-xl p-2.5 text-xs outline-none bg-white text-gray-700 focus:ring-2 focus:ring-[#00a68a]/20 focus:border-[#00a68a] transition-all font-semibold text-[11px]"
+                      className="w-full border border-border-default rounded-xl p-2.5 text-xs outline-none bg-surface text-text-secondary focus:ring-2 focus:ring-[#00a68a]/20 focus:border-[#00a68a] transition-colors font-semibold text-[11px]"
                     >
                       <option value="">{language === 'ms' ? 'Semua Jenis' : 'All Types'}</option>
                       <option value="BN">{language === 'ms' ? 'Bullnose (BN)' : 'Bullnose (BN)'}</option>
@@ -3683,7 +3684,7 @@ export const OxygenDashboardPage: React.FC = () => {
                         setQrPageSize(Number(e.target.value))
                         setQrPage(1)
                       }}
-                      className="w-full border border-gray-200 rounded-xl p-2.5 text-xs outline-none bg-white text-gray-700 focus:ring-2 focus:ring-[#00a68a]/20 focus:border-[#00a68a] transition-all"
+                      className="w-full border border-border-default rounded-xl p-2.5 text-xs outline-none bg-surface text-text-secondary focus:ring-2 focus:ring-[#00a68a]/20 focus:border-[#00a68a] transition-colors"
                     >
                       <option value={10}>{language === 'ms' ? 'Papar 10' : 'Show 10'}</option>
                       <option value={25}>{language === 'ms' ? 'Papar 25' : 'Show 25'}</option>
@@ -3694,11 +3695,11 @@ export const OxygenDashboardPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+              <div className="bg-surface border border-border-default rounded-2xl shadow-sm overflow-hidden">
                 {/* Desktop View: Full Table */}
                 <div className="hidden md:block overflow-x-auto">
-                  <table className="w-full border-collapse text-left text-xs text-gray-500">
-                    <thead className="bg-slate-50 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                  <table className="w-full border-collapse text-left text-xs text-text-muted">
+                    <thead className="bg-subtle/50 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                       <tr>
                         <th className="px-6 py-3 font-semibold">{language === 'ms' ? 'Siri Silinder' : 'Cylinder Serial'}</th>
                         <th className="px-6 py-3 font-semibold">{language === 'ms' ? 'Saiz & Jenis' : 'Size & Type'}</th>
@@ -3707,7 +3708,7 @@ export const OxygenDashboardPage: React.FC = () => {
                         <th className="px-6 py-3 font-semibold text-right">{language === 'ms' ? 'Tindakan' : 'Actions'}</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-gray-100 border-t border-gray-100">
+                    <tbody className="divide-y divide-border-subtle border-t border-border-subtle">
                       {paginatedTaggedCylinders.length === 0 ? (
                         <tr>
                           <td colSpan={5} className="px-6 py-10 text-center text-gray-400 font-medium italic">
@@ -3722,32 +3723,32 @@ export const OxygenDashboardPage: React.FC = () => {
                             <tr 
                               key={cyl.id} 
                               className={isDeactivated 
-                                ? "bg-slate-100/70 opacity-60 hover:bg-slate-100/90 transition-colors select-none text-slate-400" 
-                                : "hover:bg-slate-50/50 transition-colors"
+                                ? "bg-subtle opacity-60 hover:bg-subtle transition-colors select-none text-slate-400" 
+                                : "hover:bg-subtle/50 transition-colors"
                               }
                             >
                               <td className="px-6 py-4 font-mono font-bold">
                                 <div className="flex items-center gap-2">
-                                  <span className={isDeactivated ? "line-through text-slate-400" : "text-gray-900"}>
+                                  <span className={isDeactivated ? "line-through text-slate-400" : "text-text-primary"}>
                                     {cyl.serial_number}
                                   </span>
                                   {isDeactivated && (
-                                    <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-200 text-slate-600 border border-slate-300 flex items-center gap-1">
+                                    <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-subtle text-text-muted border border-border-default flex items-center gap-1">
                                       <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
                                       {language === 'ms' ? 'Dinyahaktif' : 'Deactivated'}
                                     </span>
                                   )}
                                 </div>
                               </td>
-                              <td className={`px-6 py-4 font-medium ${isDeactivated ? 'text-slate-400' : 'text-gray-600'}`}>
+                              <td className={`px-6 py-4 font-medium ${isDeactivated ? 'text-slate-400' : 'text-text-muted'}`}>
                                 {cyl.type_info?.type_name || 'Standard Cylinder'}
                               </td>
-                              <td className={`px-6 py-4 font-mono font-semibold select-all ${isDeactivated ? 'text-slate-400 italic' : 'text-gray-500'}`}>
+                              <td className={`px-6 py-4 font-mono font-semibold select-all ${isDeactivated ? 'text-slate-400 italic' : 'text-text-muted'}`}>
                                 {isDeactivated 
                                   ? (cyl.qr_code_value ? <span className="line-through">{cyl.qr_code_value}</span> : (language === 'ms' ? '(Dinyahaktif)' : '(Deactivated)'))
                                   : (cyl.qr_code_value || '-')}
                               </td>
-                              <td className={`px-6 py-4 font-semibold ${isDeactivated ? 'text-slate-400' : 'text-gray-600'}`}>
+                              <td className={`px-6 py-4 font-semibold ${isDeactivated ? 'text-slate-400' : 'text-text-muted'}`}>
                                 {cyl.qr_tagged_at || cyl.created_at ? new Date(cyl.qr_tagged_at || cyl.created_at).toLocaleString('ms-MY', { day: '2-digit', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' }) : '-'}
                               </td>
                               <td className="px-6 py-4 text-right">
@@ -3755,7 +3756,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                   {isDeactivated ? (
                                     <button
                                       onClick={() => handleReactivateCylinder(cyl.id)}
-                                      className="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-bold border border-emerald-200 transition-all flex items-center gap-1 active:scale-95 shadow-sm"
+                                      className="px-2.5 py-1.5 bg-emerald-500/10 hover:bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-bold border border-emerald-500/20 transition-colors flex items-center gap-1 active:scale-95 shadow-sm"
                                       title={language === 'ms' ? 'Aktifkan Semula Silinder' : 'Reactivate Cylinder'}
                                     >
                                       <RotateCcw className="w-3 h-3 text-emerald-600" />
@@ -3769,15 +3770,15 @@ export const OxygenDashboardPage: React.FC = () => {
                                           setQrActiveTab('generate')
                                           setSelectedTypeId(cyl.type_id || '')
                                         }}
-                                        className="px-2.5 py-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700 rounded-lg text-[10px] font-bold border border-slate-200 transition-all flex items-center gap-1 active:scale-95"
+                                        className="px-2.5 py-1.5 bg-subtle/50 hover:bg-subtle text-text-secondary rounded-lg text-[10px] font-bold border border-border-default transition-colors flex items-center gap-1 active:scale-95"
                                         title={language === 'ms' ? 'Cetak Semula' : 'Reprint Tag'}
                                       >
-                                        <Printer className="w-3 h-3 text-slate-500" />
+                                        <Printer className="w-3 h-3 text-text-muted" />
                                         {language === 'ms' ? 'Cetak' : 'Reprint'}
                                       </button>
                                       <button
                                         onClick={() => handleDeactivateQrTag(cyl.id)}
-                                        className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-[10px] font-bold border border-rose-100 transition-all flex items-center gap-1 active:scale-95"
+                                        className="px-2.5 py-1.5 bg-rose-500/10 hover:bg-rose-100 text-rose-700 rounded-lg text-[10px] font-bold border border-rose-100 transition-colors flex items-center gap-1 active:scale-95"
                                         title={language === 'ms' ? 'Nyahaktifkan' : 'Deactivate QR Tag'}
                                       >
                                         <Trash2 className="w-3 h-3 text-rose-500" />
@@ -3796,7 +3797,7 @@ export const OxygenDashboardPage: React.FC = () => {
                 </div>
 
                 {/* Mobile View: High-End Native Cards (Zero Horizontal Scroll!) */}
-                <div className="md:hidden divide-y divide-slate-100">
+                <div className="md:hidden divide-y divide-border-subtle">
                   {paginatedTaggedCylinders.length === 0 ? (
                     <div className="p-8 text-center text-slate-400 text-xs font-semibold italic">
                       {language === 'ms' ? 'Tiada kod QR dijumpai.' : 'No active QR codes found matching criteria.'}
@@ -3810,21 +3811,21 @@ export const OxygenDashboardPage: React.FC = () => {
                           key={cyl.id} 
                           className={`p-4 space-y-3 transition-colors ${
                             isDeactivated 
-                              ? 'bg-slate-100/70 opacity-60 border-l-4 border-slate-300 select-none' 
-                              : 'hover:bg-slate-50/50'
+                              ? 'bg-subtle opacity-60 border-l-4 border-border-default select-none' 
+                              : 'hover:bg-subtle/50'
                           }`}
                         >
                           <div className="flex items-start justify-between gap-2">
                             <div>
-                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                              <span className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                                 {language === 'ms' ? 'No. Siri Silinder' : 'Cylinder Serial'}
                               </span>
                               <div className="flex items-center gap-2">
-                                <span className={`font-mono font-bold text-sm ${isDeactivated ? 'line-through text-slate-500' : 'text-slate-900'}`}>
+                                <span className={`font-mono font-bold text-sm ${isDeactivated ? 'line-through text-text-muted' : 'text-text-primary'}`}>
                                   {cyl.serial_number}
                                 </span>
                                 {isDeactivated && (
-                                  <span className="px-2 py-0.5 rounded-md text-[9px] font-bold bg-slate-200 text-slate-600 border border-slate-300">
+                                  <span className="px-2 py-0.5 rounded-md text-[9px] font-bold bg-subtle text-text-muted border border-border-default">
                                     {language === 'ms' ? 'Dinyahaktif' : 'Deactivated'}
                                   </span>
                                 )}
@@ -3832,8 +3833,8 @@ export const OxygenDashboardPage: React.FC = () => {
                             </div>
                             <span className={`px-2.5 py-1 rounded-lg text-[11px] font-bold border text-right ${
                               isDeactivated 
-                                ? 'bg-slate-200/60 text-slate-500 border-slate-300' 
-                                : 'bg-slate-100 text-slate-700 border-slate-200'
+                                ? 'bg-slate-200/60 text-text-muted border-border-default' 
+                                : 'bg-subtle text-text-secondary border-border-default'
                             }`}>
                               {cyl.type_info?.type_name || 'Standard Cylinder'}
                             </span>
@@ -3841,10 +3842,10 @@ export const OxygenDashboardPage: React.FC = () => {
 
                           <div className={`border rounded-xl p-2.5 space-y-1 ${
                             isDeactivated 
-                              ? 'bg-slate-200/40 border-slate-300/80' 
-                              : 'bg-slate-50 border-slate-200/80'
+                              ? 'bg-slate-200/40 border-border-default' 
+                              : 'bg-subtle/50 border-border-default'
                           }`}>
-                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                            <span className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                               {language === 'ms' ? 'Nilai Tag QR' : 'Active QR Tag Value'}
                             </span>
                             <span className={`font-mono text-xs font-bold select-all break-all block ${
@@ -3857,9 +3858,9 @@ export const OxygenDashboardPage: React.FC = () => {
                           </div>
 
                           <div className="flex items-center justify-between gap-2 pt-1">
-                            <div className="text-[11px] text-slate-500">
+                            <div className="text-[11px] text-text-muted">
                               <span className="text-slate-400 font-semibold">{language === 'ms' ? 'Didaftar: ' : 'Tagged: '}</span>
-                              <span className={`font-semibold ${isDeactivated ? 'text-slate-400' : 'text-slate-700'}`}>
+                              <span className={`font-semibold ${isDeactivated ? 'text-slate-400' : 'text-text-secondary'}`}>
                                 {cyl.qr_tagged_at || cyl.created_at ? new Date(cyl.qr_tagged_at || cyl.created_at).toLocaleDateString('ms-MY', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}
                               </span>
                             </div>
@@ -3868,7 +3869,7 @@ export const OxygenDashboardPage: React.FC = () => {
                               {isDeactivated ? (
                                 <button
                                   onClick={() => handleReactivateCylinder(cyl.id)}
-                                  className="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-bold border border-emerald-200 transition-all flex items-center gap-1 active:scale-95 shadow-sm"
+                                  className="px-2.5 py-1.5 bg-emerald-500/10 hover:bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-bold border border-emerald-500/20 transition-colors flex items-center gap-1 active:scale-95 shadow-sm"
                                   title={language === 'ms' ? 'Aktifkan Semula Silinder' : 'Reactivate Cylinder'}
                                 >
                                   <RotateCcw className="w-3 h-3 text-emerald-600" />
@@ -3882,14 +3883,14 @@ export const OxygenDashboardPage: React.FC = () => {
                                       setQrActiveTab('generate')
                                       setSelectedTypeId(cyl.type_id || '')
                                     }}
-                                    className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-[10px] font-bold border border-slate-200 transition-all flex items-center gap-1 active:scale-95"
+                                    className="px-2.5 py-1.5 bg-subtle hover:bg-subtle text-text-secondary rounded-lg text-[10px] font-bold border border-border-default transition-colors flex items-center gap-1 active:scale-95"
                                   >
-                                    <Printer className="w-3 h-3 text-slate-500" />
+                                    <Printer className="w-3 h-3 text-text-muted" />
                                     {language === 'ms' ? 'Cetak' : 'Reprint'}
                                   </button>
                                   <button
                                     onClick={() => handleDeactivateQrTag(cyl.id)}
-                                    className="px-2.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-[10px] font-bold border border-rose-200 transition-all flex items-center gap-1 active:scale-95"
+                                    className="px-2.5 py-1.5 bg-rose-500/10 hover:bg-rose-100 text-rose-700 rounded-lg text-[10px] font-bold border border-rose-500/20 transition-colors flex items-center gap-1 active:scale-95"
                                   >
                                     <Trash2 className="w-3 h-3 text-rose-500" />
                                     {language === 'ms' ? 'Nyahaktif' : 'Deactivate'}
@@ -3906,15 +3907,15 @@ export const OxygenDashboardPage: React.FC = () => {
 
                 {/* Pagination Controls */}
                 {taggedCylinders.length > 0 && (
-                  <div className="px-6 py-4 border-t border-slate-100 bg-slate-50/30 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                  <div className="px-6 py-4 border-t border-border-subtle bg-subtle/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
                     <span className="text-slate-400 font-bold text-center sm:text-left">
-                      {language === 'ms' ? 'Menunjukkan' : 'Showing'} <span className="text-slate-700 font-black">{((qrPage - 1) * qrPageSize) + 1}</span> {language === 'ms' ? 'hingga' : 'to'} <span className="text-slate-700 font-black">{Math.min(qrPage * qrPageSize, taggedCylinders.length)}</span> {language === 'ms' ? 'daripada' : 'of'} <span className="text-slate-700 font-black">{taggedCylinders.length}</span> {language === 'ms' ? 'entri' : 'entries'}
+                      {language === 'ms' ? 'Menunjukkan' : 'Showing'} <span className="text-text-secondary font-black">{((qrPage - 1) * qrPageSize) + 1}</span> {language === 'ms' ? 'hingga' : 'to'} <span className="text-text-secondary font-black">{Math.min(qrPage * qrPageSize, taggedCylinders.length)}</span> {language === 'ms' ? 'daripada' : 'of'} <span className="text-text-secondary font-black">{taggedCylinders.length}</span> {language === 'ms' ? 'entri' : 'entries'}
                     </span>
                     <div className="flex items-center gap-1.5 flex-wrap justify-center">
                       <button 
                         disabled={qrPage === 1}
                         onClick={() => setQrPage(prev => Math.max(1, prev - 1))}
-                        className="px-3 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 disabled:opacity-50 text-slate-600 rounded-xl font-bold tracking-wider uppercase text-[10px] transition-all"
+                        className="px-3 py-1.5 border border-border-default bg-surface hover:bg-subtle/50 active:scale-95 disabled:opacity-50 text-text-muted rounded-xl font-bold tracking-wider uppercase text-[10px] transition-colors"
                       >
                         {language === 'ms' ? 'SEBELUM' : 'PREV'}
                       </button>
@@ -3950,10 +3951,10 @@ export const OxygenDashboardPage: React.FC = () => {
                             <button
                               key={pageNum}
                               onClick={() => setQrPage(pageNum)}
-                              className={`w-7 h-7 flex items-center justify-center rounded-lg text-[10px] font-black transition-all ${
+                              className={`w-7 h-7 flex items-center justify-center rounded-lg text-[10px] font-black transition-colors ${
                                 qrPage === pageNum
                                   ? 'bg-[#00a68a] text-white shadow-sm'
-                                  : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'
+                                  : 'bg-surface border border-border-default text-text-muted hover:bg-subtle/50'
                               }`}
                             >
                               {pageNum}
@@ -3965,7 +3966,7 @@ export const OxygenDashboardPage: React.FC = () => {
                       <button 
                         disabled={qrPage * qrPageSize >= taggedCylinders.length}
                         onClick={() => setQrPage(prev => prev + 1)}
-                        className="px-3 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 disabled:opacity-50 text-slate-600 rounded-xl font-bold tracking-wider uppercase text-[10px] transition-all"
+                        className="px-3 py-1.5 border border-border-default bg-surface hover:bg-subtle/50 active:scale-95 disabled:opacity-50 text-text-muted rounded-xl font-bold tracking-wider uppercase text-[10px] transition-colors"
                       >
                         {language === 'ms' ? 'SETERUS' : 'NEXT'}
                       </button>
@@ -4356,7 +4357,7 @@ export const OxygenDashboardPage: React.FC = () => {
       return (
         <div className="space-y-8">
           {auditSuccessMsg && (
-            <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-xs text-emerald-800 font-bold">
+            <div className="flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-xs text-emerald-400 font-bold">
               <CheckCircle className="w-4 h-4 flex-shrink-0 text-emerald-600" />
               {auditSuccessMsg}
             </div>
@@ -4365,7 +4366,7 @@ export const OxygenDashboardPage: React.FC = () => {
           {/* Sidebar separation and main table grid */}
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
             {/* Left Sidebar: Type / Size Selector */}
-            <div className="lg:col-span-1 bg-white border border-gray-200 rounded-2xl p-4 shadow-sm">
+            <div className="lg:col-span-1 bg-surface border border-border-default rounded-2xl p-4 shadow-sm">
               <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 flex items-center gap-1.5">
                 <Layers className="w-3.5 h-3.5 text-slate-400" />
                 {language === 'ms' ? 'Jenis & Saiz' : 'Cylinder Types & Sizes'}
@@ -4376,15 +4377,15 @@ export const OxygenDashboardPage: React.FC = () => {
                 <div className="space-y-1">
                   <button
                     onClick={() => handleGroupSelect('__ALL__')}
-                    className={`w-full flex items-center justify-between p-3 rounded-xl text-left text-xs font-bold transition-all border ${
+                    className={`w-full flex items-center justify-between p-3 rounded-xl text-left text-xs font-bold transition-colors border ${
                       activeGroup === '__ALL__'
                         ? 'bg-[#00a68a]/10 text-[#00a68a] border-[#00a68a]/20 shadow-sm shadow-[#00a68a]/5'
-                        : 'text-gray-600 hover:bg-slate-50 border-transparent hover:text-gray-900'
+                        : 'text-text-muted hover:bg-subtle/50 border-transparent hover:text-text-primary'
                     }`}
                   >
                     <span className="truncate pr-2">{language === 'ms' ? 'Semua Silinder' : 'All Cylinders'}</span>
                     <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
-                      activeGroup === '__ALL__' ? 'bg-[#00a68a] text-white' : 'bg-slate-100 text-slate-500'
+                      activeGroup === '__ALL__' ? 'bg-[#00a68a] text-white' : 'bg-subtle text-text-muted'
                     }`}>
                       {cylinders.length}
                     </span>
@@ -4396,15 +4397,15 @@ export const OxygenDashboardPage: React.FC = () => {
                       <button
                         key={name}
                         onClick={() => handleGroupSelect(name)}
-                        className={`w-full flex items-center justify-between p-3 rounded-xl text-left text-xs font-bold transition-all border ${
+                        className={`w-full flex items-center justify-between p-3 rounded-xl text-left text-xs font-bold transition-colors border ${
                           isActive
                             ? 'bg-[#00a68a]/10 text-[#00a68a] border-[#00a68a]/20 shadow-sm shadow-[#00a68a]/5'
-                            : 'text-gray-600 hover:bg-slate-50 border-transparent hover:text-gray-900'
+                            : 'text-text-muted hover:bg-subtle/50 border-transparent hover:text-text-primary'
                         }`}
                       >
                         <span className="truncate pr-2">{name}</span>
                         <span className={`px-2 py-0.5 rounded-full text-[9px] font-black ${
-                          isActive ? 'bg-[#00a68a] text-white' : 'bg-slate-100 text-slate-500'
+                          isActive ? 'bg-[#00a68a] text-white' : 'bg-subtle text-text-muted'
                         }`}>
                           {count}
                         </span>
@@ -4418,11 +4419,11 @@ export const OxygenDashboardPage: React.FC = () => {
             {/* Right Side: Reconciled Table list */}
             <div className="lg:col-span-3 space-y-6">
               {activeGroup ? (
-                <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-                  <div className="px-4 py-3.5 border-b border-gray-100 bg-slate-50/50 flex flex-wrap items-center justify-between gap-3">
+                <div className="bg-surface border border-border-default rounded-2xl shadow-sm overflow-hidden">
+                  <div className="px-4 py-3.5 border-b border-border-subtle bg-subtle/50 flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-2">
                       <Layers className="w-4 h-4 text-[#00a68a]" />
-                      <h3 className="text-xs font-black text-gray-800 uppercase tracking-wider">
+                      <h3 className="text-xs font-black text-text-primary uppercase tracking-wider">
                         {activeGroup === '__ALL__' ? (language === 'ms' ? 'SEMUA SILINDER (KESELURUHAN)' : 'ALL CYLINDERS (TOTAL)') : activeGroup}
                       </h3>
                     </div>
@@ -4432,16 +4433,16 @@ export const OxygenDashboardPage: React.FC = () => {
                       <div className="flex items-center gap-1 bg-slate-200/70 p-1 rounded-xl">
                         <button
                           onClick={() => { setReconciliationTab('system'); setReconciliationPage(1); }}
-                          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-colors ${
                             reconciliationTab === 'system'
-                              ? 'bg-white text-[#00a68a] shadow-sm font-black'
-                              : 'text-slate-600 hover:text-slate-900'
+                              ? 'bg-surface text-[#00a68a] shadow-sm font-black'
+                              : 'text-text-muted hover:text-text-primary'
                           }`}
                         >
                           <Database className="w-3.5 h-3.5" />
                           <span>{language === 'ms' ? 'Dalam Sistem' : 'System Inventory'}</span>
                           <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-black ${
-                            reconciliationTab === 'system' ? 'bg-[#00a68a]/15 text-[#00a68a]' : 'bg-slate-300/60 text-slate-600'
+                            reconciliationTab === 'system' ? 'bg-[#00a68a]/15 text-[#00a68a]' : 'bg-slate-300/60 text-text-muted'
                           }`}>
                             {systemCylinders.length}
                           </span>
@@ -4449,16 +4450,16 @@ export const OxygenDashboardPage: React.FC = () => {
 
                         <button
                           onClick={() => { setReconciliationTab('scanned'); setReconciliationPage(1); }}
-                          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold transition-colors ${
                             reconciliationTab === 'scanned'
-                              ? 'bg-white text-emerald-700 shadow-sm font-black'
-                              : 'text-slate-600 hover:text-slate-900'
+                              ? 'bg-surface text-emerald-700 shadow-sm font-black'
+                              : 'text-text-muted hover:text-text-primary'
                           }`}
                         >
                           <QrCode className="w-3.5 h-3.5 text-emerald-600" />
                           <span>{language === 'ms' ? 'Sudah Di-Imbas' : 'Already Scanned'}</span>
                           <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-black ${
-                            reconciliationTab === 'scanned' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-300/60 text-slate-600'
+                            reconciliationTab === 'scanned' ? 'bg-emerald-100 text-emerald-400' : 'bg-slate-300/60 text-text-muted'
                           }`}>
                             {scannedCylinders.length}
                           </span>
@@ -4468,7 +4469,7 @@ export const OxygenDashboardPage: React.FC = () => {
                       {reconciliationTab === 'scanned' && scannedCylinders.length > 0 && (
                         <button
                           onClick={() => handleVerifyAllScanned(scannedCylinders)}
-                          className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-black text-xs rounded-xl shadow-sm flex items-center gap-1.5 transition-all cursor-pointer"
+                          className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-black text-xs rounded-xl shadow-sm flex items-center gap-1.5 transition-colors cursor-pointer"
                         >
                           <CheckCheck className="w-4 h-4" />
                           <span>{language === 'ms' ? `Sahkan Semua (${scannedCylinders.length})` : `Verify All (${scannedCylinders.length})`}</span>
@@ -4476,13 +4477,13 @@ export const OxygenDashboardPage: React.FC = () => {
                       )}
                     </div>
 
-                    <span className="px-2.5 py-0.5 bg-slate-100 border border-slate-200/50 text-slate-500 rounded-full text-[10px] font-bold">
+                    <span className="px-2.5 py-0.5 bg-subtle border border-border-default text-text-muted rounded-full text-[10px] font-bold">
                       {language === 'ms' ? 'Menunjukkan' : 'Showing'} {paginatedCylinders.length} {language === 'ms' ? 'daripada' : 'of'} {totalCylindersInTab}
                     </span>
                   </div>
 
                   {/* Search / Scan Bar & Quick Actions */}
-                  <div className="p-3.5 border-b border-gray-100 bg-white flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+                  <div className="p-3.5 border-b border-border-subtle bg-surface flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
                     <div className="relative flex-1">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
                         <Search className="w-4 h-4 text-slate-400" />
@@ -4500,7 +4501,7 @@ export const OxygenDashboardPage: React.FC = () => {
                             ? 'Imbas kod bar/QR atau taip No. Siri silinder (cth: saboxy-00211)...' 
                             : 'Scan barcode/QR or type cylinder serial (e.g. saboxy-00211)...'
                         }
-                        className="w-full pl-9 pr-24 py-2 border border-gray-200 rounded-xl text-xs font-medium text-gray-800 placeholder-gray-400 focus:outline-none focus:border-[#00a68a] focus:ring-1 focus:ring-[#00a68a] transition-all bg-slate-50/50 hover:bg-white focus:bg-white"
+                        className="w-full pl-9 pr-24 py-2 border border-border-default rounded-xl text-xs font-medium text-text-primary placeholder-gray-400 focus:outline-none focus:border-[#00a68a] focus:ring-1 focus:ring-[#00a68a] transition-colors bg-subtle/50 hover:bg-surface focus:bg-surface"
                       />
                       <div className="absolute inset-y-0 right-0 pr-1.5 flex items-center gap-1">
                         {reconciliationSearch && (
@@ -4510,7 +4511,7 @@ export const OxygenDashboardPage: React.FC = () => {
                               setReconciliationSearch('');
                               setReconciliationPage(1);
                             }}
-                            className="p-1 hover:bg-gray-100 text-gray-400 hover:text-gray-600 rounded-lg transition-colors cursor-pointer"
+                            className="p-1 hover:bg-subtle text-gray-400 hover:text-text-muted rounded-lg transition-colors cursor-pointer"
                             title={language === 'ms' ? 'Kosongkan carian' : 'Clear search'}
                           >
                             <X className="w-3.5 h-3.5" />
@@ -4519,7 +4520,7 @@ export const OxygenDashboardPage: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => setIsAuditScanOpen(true)}
-                          className="px-2 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200/60 rounded-lg text-[10px] font-bold flex items-center gap-1 transition-all cursor-pointer shadow-xs active:scale-95"
+                          className="px-2 py-1 bg-emerald-500/10 hover:bg-emerald-100 text-emerald-700 border border-emerald-500/20 rounded-lg text-[10px] font-bold flex items-center gap-1 transition-colors cursor-pointer shadow-xs active:scale-95"
                           title={language === 'ms' ? 'Imbas Kod QR Kamera' : 'Scan QR Camera'}
                         >
                           <Camera className="w-3 h-3 text-emerald-600" />
@@ -4529,7 +4530,7 @@ export const OxygenDashboardPage: React.FC = () => {
                     </div>
 
                     {reconciliationSearch && (
-                      <div className="text-[11px] text-gray-500 font-bold shrink-0 flex items-center gap-1.5">
+                      <div className="text-[11px] text-text-muted font-bold shrink-0 flex items-center gap-1.5">
                         <span className="px-2.5 py-1 rounded-lg bg-[#00a68a]/10 text-[#00a68a] border border-[#00a68a]/20">
                           {filteredCylinders.length} {language === 'ms' ? 'dijumpai' : 'found'}
                         </span>
@@ -4539,7 +4540,7 @@ export const OxygenDashboardPage: React.FC = () => {
 
                   {/* Cross-Group Discovery Alert */}
                   {otherGroupMatches.length > 0 && (
-                    <div className="px-4 py-2.5 bg-amber-50/90 border-b border-amber-200/80 flex flex-wrap items-center justify-between gap-2 text-xs text-amber-900">
+                    <div className="px-4 py-2.5 bg-amber-500/10 border-b border-amber-500/20 flex flex-wrap items-center justify-between gap-2 text-xs text-amber-400 dark:text-amber-300 font-bold">
                       <div className="flex items-center gap-2">
                         <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
                         <span>
@@ -4558,7 +4559,7 @@ export const OxygenDashboardPage: React.FC = () => {
                           setSelectedReconciliationGroup(targetGrp);
                           setReconciliationPage(1);
                         }}
-                        className="px-3 py-1 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-bold rounded-lg text-[11px] transition-all cursor-pointer shadow-xs"
+                        className="px-3 py-1 bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-bold rounded-lg text-[11px] transition-colors cursor-pointer shadow-xs"
                       >
                         {language === 'ms' ? 'Tukar ke Kumpulan Ini' : 'Switch to Group'}
                       </button>
@@ -4567,7 +4568,7 @@ export const OxygenDashboardPage: React.FC = () => {
 
                   {/* Bulk Action Toolbar */}
                   {selectedReconciliationIds.size > 0 && (
-                    <div className="p-3 bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-b border-emerald-200 flex flex-wrap items-center justify-between gap-3 animate-in fade-in duration-200">
+                    <div className="p-3 bg-gradient-to-r from-emerald-50 via-teal-50 to-emerald-50 border-b border-emerald-500/20 flex flex-wrap items-center justify-between gap-3 animate-in fade-in duration-200">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="px-2.5 py-1 bg-emerald-600 text-white rounded-lg text-xs font-black flex items-center gap-1.5 shadow-xs">
                           <CheckSquare className="w-3.5 h-3.5" />
@@ -4589,15 +4590,15 @@ export const OxygenDashboardPage: React.FC = () => {
 
                       {/* Bulk Status Action Controls */}
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted">
                           {language === 'ms' ? 'Tukar Status Pukal:' : 'Bulk Status:'}
                         </span>
 
-                        <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-gray-200 shadow-xs">
+                        <div className="flex items-center gap-1 bg-surface p-1 rounded-xl border border-border-default shadow-xs">
                           <select
                             value={bulkStatus}
                             onChange={(e) => setBulkStatus(e.target.value)}
-                            className="text-xs font-bold text-gray-700 bg-transparent py-1 px-2 outline-none border-r border-gray-100 cursor-pointer"
+                            className="text-xs font-bold text-text-secondary bg-transparent py-1 px-2 outline-none border-r border-border-subtle cursor-pointer"
                           >
                             <option value="available">📦 {language === 'ms' ? 'Tersedia (Stor)' : 'Available (Store)'}</option>
                             <option value="used">🏥 {language === 'ms' ? 'Digunakan (Wad)' : 'In Use / Used (Ward)'}</option>
@@ -4608,7 +4609,7 @@ export const OxygenDashboardPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => handleApplyBulkStatus(bulkStatus)}
-                            className="px-3 py-1 bg-[#00a68a] hover:bg-[#008f76] active:scale-95 text-white font-black text-xs rounded-lg transition-all cursor-pointer shadow-xs"
+                            className="px-3 py-1 bg-[#00a68a] hover:bg-[#008f76] active:scale-95 text-white font-black text-xs rounded-lg transition-colors cursor-pointer shadow-xs"
                           >
                             {language === 'ms' ? 'Terapkan' : 'Apply'}
                           </button>
@@ -4619,7 +4620,7 @@ export const OxygenDashboardPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => handleApplyBulkStatus('available')}
-                            className="px-2 py-1 bg-white hover:bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-[10px] font-bold transition-all cursor-pointer"
+                            className="px-2 py-1 bg-surface hover:bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 rounded-lg text-[10px] font-bold transition-colors cursor-pointer"
                             title="Set to Available (Store)"
                           >
                             📦 {language === 'ms' ? 'Tersedia' : 'Available'}
@@ -4627,7 +4628,7 @@ export const OxygenDashboardPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => handleApplyBulkStatus('used')}
-                            className="px-2 py-1 bg-white hover:bg-blue-50 text-blue-700 border border-blue-200 rounded-lg text-[10px] font-bold transition-all cursor-pointer"
+                            className="px-2 py-1 bg-surface hover:bg-blue-500/10 text-blue-700 border border-blue-500/20 rounded-lg text-[10px] font-bold transition-colors cursor-pointer"
                             title="Set to In Use (Ward)"
                           >
                             🏥 {language === 'ms' ? 'Digunakan' : 'In Use'}
@@ -4635,7 +4636,7 @@ export const OxygenDashboardPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => handleApplyBulkStatus('return')}
-                            className="px-2 py-1 bg-white hover:bg-amber-50 text-amber-700 border border-amber-200 rounded-lg text-[10px] font-bold transition-all cursor-pointer"
+                            className="px-2 py-1 bg-surface hover:bg-amber-500/10 text-amber-700 border border-amber-500/20 rounded-lg text-[10px] font-bold transition-colors cursor-pointer"
                             title="Set to Return (Supplier)"
                           >
                             🔄 {language === 'ms' ? 'Pulang' : 'Return'}
@@ -4643,7 +4644,7 @@ export const OxygenDashboardPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => handleApplyBulkStatus('empty')}
-                            className="px-2 py-1 bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 rounded-lg text-[10px] font-bold transition-all cursor-pointer"
+                            className="px-2 py-1 bg-surface hover:bg-subtle text-text-secondary border border-border-default rounded-lg text-[10px] font-bold transition-colors cursor-pointer"
                             title="Set to Empty (Store)"
                           >
                             ⭕ {language === 'ms' ? 'Kosong' : 'Empty'}
@@ -4654,7 +4655,7 @@ export const OxygenDashboardPage: React.FC = () => {
                         <button
                           type="button"
                           onClick={handleBulkVerifySelected}
-                          className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-black text-xs rounded-xl shadow-xs flex items-center gap-1 transition-all cursor-pointer"
+                          className="px-3 py-1 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-black text-xs rounded-xl shadow-xs flex items-center gap-1 transition-colors cursor-pointer"
                           title={language === 'ms' ? 'Sahkan semua silinder dipilih' : 'Verify all selected cylinders'}
                         >
                           <CheckCheck className="w-3.5 h-3.5" />
@@ -4670,7 +4671,7 @@ export const OxygenDashboardPage: React.FC = () => {
                               setDeleteCylinderTarget(selectedList);
                             }
                           }}
-                          className="px-3 py-1 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-black text-xs rounded-xl shadow-xs flex items-center gap-1 transition-all cursor-pointer"
+                          className="px-3 py-1 bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-black text-xs rounded-xl shadow-xs flex items-center gap-1 transition-colors cursor-pointer"
                           title={language === 'ms' ? 'Padam semua silinder dipilih secara kekal' : 'Permanently delete all selected cylinders'}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -4681,7 +4682,7 @@ export const OxygenDashboardPage: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => setSelectedReconciliationIds(new Set())}
-                          className="p-1 hover:bg-slate-200/60 text-slate-500 rounded-lg transition-colors cursor-pointer"
+                          className="p-1 hover:bg-subtle text-text-muted rounded-lg transition-colors cursor-pointer"
                           title={language === 'ms' ? 'Nyahpilih Semua' : 'Deselect All'}
                         >
                           <X className="w-4 h-4" />
@@ -4691,7 +4692,7 @@ export const OxygenDashboardPage: React.FC = () => {
                   )}
 
                   {/* Mobile View: Cards Layout */}
-                  <div className="block md:hidden divide-y divide-gray-100">
+                  <div className="block md:hidden divide-y divide-border-subtle">
                     {paginatedCylinders.length === 0 ? (
                       <div className="py-8 text-center text-gray-400 font-bold">
                         {language === 'ms' ? 'Tiada silinder ditemui.' : 'No cylinders found.'}
@@ -4714,9 +4715,9 @@ export const OxygenDashboardPage: React.FC = () => {
                           <div 
                             key={cyl.id} 
                             className={`p-4 space-y-3 transition-colors ${
-                              isSelected ? 'bg-emerald-50/50' : ''
+                              isSelected ? 'bg-emerald-500/10' : ''
                             } ${
-                              isHighlighted ? 'ring-2 ring-[#00a68a] bg-emerald-50/80 animate-pulse' : ''
+                              isHighlighted ? 'ring-2 ring-[#00a68a] bg-emerald-500/10 animate-pulse' : ''
                             }`}
                           >
                             <div className="flex items-center justify-between">
@@ -4725,19 +4726,19 @@ export const OxygenDashboardPage: React.FC = () => {
                                   type="checkbox"
                                   checked={isSelected}
                                   onChange={() => handleToggleSelectRow(cyl.id)}
-                                  className="w-4 h-4 rounded text-[#00a68a] focus:ring-[#00a68a] border-gray-300 cursor-pointer"
+                                  className="w-4 h-4 rounded text-[#00a68a] focus:ring-[#00a68a] border-border-default cursor-pointer"
                                 />
-                                <span className="font-mono font-bold text-gray-900 text-sm">{cyl.serial_number}</span>
+                                <span className="font-mono font-bold text-text-primary text-sm">{cyl.serial_number}</span>
                                 <button
                                   type="button"
                                   onClick={() => handleOpenEditModal(cyl)}
-                                  className="p-1 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-all cursor-pointer"
+                                  className="p-1 text-slate-400 hover:text-teal-600 hover:bg-accent-base/10 rounded-lg transition-colors cursor-pointer"
                                   title={language === 'ms' ? 'Kemaskini No. Siri & Saiz Silinder' : 'Edit Serial & Size'}
                                 >
                                   <Pencil className="w-3.5 h-3.5" />
                                 </button>
                                 {isScanned && (
-                                  <span className="px-1.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200/60 rounded text-[9px] font-bold inline-flex items-center gap-1">
+                                  <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 rounded text-[9px] font-bold inline-flex items-center gap-1">
                                     <CheckCircle className="w-2.5 h-2.5 text-emerald-600" />
                                     {language === 'ms' ? 'Di-Imbas' : 'Scanned'}
                                   </span>
@@ -4752,11 +4753,11 @@ export const OxygenDashboardPage: React.FC = () => {
                                       type="button"
                                       onClick={(e) => handleToggleCylinderValveType(e, cyl)}
                                       title={isBN ? (language === 'ms' ? 'Klik untuk tukar ke Pin Index (PI)' : 'Click to switch to Pin Index (PI)') : isPI ? (language === 'ms' ? 'Klik untuk tukar ke Bullnose (BN)' : 'Click to switch to Bullnose (BN)') : (language === 'ms' ? 'Klik untuk tetapkan injap ke Bullnose (BN)' : 'Click to assign valve (BN)')}
-                                      className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-black border transition-all cursor-pointer active:scale-95 shadow-2xs ${
+                                      className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-black border transition-colors cursor-pointer active:scale-95 shadow-elevation-1 ${
                                         isBN
-                                          ? 'bg-amber-50 text-amber-800 border-amber-200 hover:bg-amber-100'
+                                          ? 'bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-100'
                                           : isPI
-                                          ? 'bg-purple-50 text-purple-800 border-purple-200 hover:bg-purple-100'
+                                          ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20 hover:bg-purple-100'
                                           : 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100 animate-pulse'
                                       }`}
                                     >
@@ -4768,11 +4769,11 @@ export const OxygenDashboardPage: React.FC = () => {
                                 })()}
                               </div>
                               {isMatched ? (
-                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-md">
+                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-500/10 border border-emerald-100 px-2 py-0.5 rounded-md">
                                   <CheckCircle className="w-3 h-3" /> {language === 'ms' ? 'Padan' : 'Matched'}
                                 </span>
                               ) : (
-                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-600 bg-rose-50 border border-rose-100 px-2 py-0.5 rounded-md">
+                                <span className="inline-flex items-center gap-1 text-[10px] font-bold text-rose-600 bg-rose-500/10 border border-rose-100 px-2 py-0.5 rounded-md">
                                   <AlertCircle className="w-3 h-3" /> {language === 'ms' ? 'Tidak Padan' : 'Mismatch'}
                                 </span>
                               )}
@@ -4781,26 +4782,26 @@ export const OxygenDashboardPage: React.FC = () => {
                               {activeGroup === '__ALL__' && (
                                 <div className="space-y-0.5 col-span-2">
                                   <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block">{language === 'ms' ? 'Jenis Silinder' : 'Cylinder Type'}</span>
-                                  <span className="px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md border border-slate-200 text-[10px] font-bold inline-block">
+                                  <span className="px-2 py-0.5 bg-subtle text-text-secondary rounded-md border border-border-default text-[10px] font-bold inline-block">
                                     {cyl.type_info?.type_name || 'Standard'}
                                   </span>
                                 </div>
                               )}
                               <div className="space-y-0.5">
                                 <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block">{language === 'ms' ? 'Lokasi Silinder' : 'Location / Ward'}</span>
-                                <span className="px-2 py-0.5 bg-teal-50 text-teal-700 rounded-md border border-teal-100 text-[10px] font-bold inline-block">
+                                <span className="px-2 py-0.5 bg-accent-base/10 text-teal-700 rounded-md border border-teal-100 text-[10px] font-bold inline-block">
                                   {locationLabel}
                                 </span>
                               </div>
                               <div className="space-y-0.5">
                                 <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block">{language === 'ms' ? 'Diimbas Oleh' : 'Scanned By'}</span>
-                                <span className="text-[10px] font-bold text-slate-800 block truncate">
+                                <span className="text-[10px] font-bold text-text-primary block truncate">
                                   {isScanned && scannedUser ? scannedUser : <span className="text-gray-400 italic text-[9px]">{language === 'ms' ? 'Belum Diimbas' : 'Not Scanned'}</span>}
                                 </span>
                               </div>
                               <div className="space-y-0.5 col-span-2">
                                 <span className="text-[9px] font-bold text-gray-400 uppercase tracking-wider block">{language === 'ms' ? 'Status Jangkaan' : 'Expected State'}</span>
-                                <span className="px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md border border-slate-200 text-[10px] font-bold inline-block uppercase">
+                                <span className="px-2 py-0.5 bg-subtle text-text-secondary rounded-md border border-border-default text-[10px] font-bold inline-block uppercase">
                                   {getStatusLabel(expectedNorm)}
                                 </span>
                               </div>
@@ -4825,7 +4826,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                     }
                                   }));
                                 }}
-                                className="w-full border border-gray-200 rounded-lg p-2 bg-white font-bold text-gray-800 text-xs outline-none transition-all focus:border-teal-500 focus:ring-1 focus:ring-teal-500 cursor-pointer"
+                                className="w-full border border-border-default rounded-lg p-2 bg-surface font-bold text-text-primary text-xs outline-none transition-colors focus:border-teal-500 focus:ring-1 focus:ring-teal-500 cursor-pointer"
                               >
                                 <option value="available">{language === 'ms' ? 'Tersedia (Stor)' : 'Available (Store)'}</option>
                                 <option value="used">{language === 'ms' ? 'Digunakan (Wad)' : 'Used / In Use (Ward)'}</option>
@@ -4837,7 +4838,7 @@ export const OxygenDashboardPage: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() => handleOpenEditModal(cyl)}
-                                className="py-2 px-3 border border-slate-200 hover:bg-slate-50 text-slate-700 active:scale-95 font-bold text-xs rounded-xl flex items-center justify-center gap-1 transition-all cursor-pointer shrink-0 shadow-xs"
+                                className="py-2 px-3 border border-border-default hover:bg-subtle/50 text-text-secondary active:scale-95 font-bold text-xs rounded-xl flex items-center justify-center gap-1 transition-colors cursor-pointer shrink-0 shadow-xs"
                                 title={language === 'ms' ? `Update Cylinder ${cyl.serial_number}` : `Edit Cylinder ${cyl.serial_number}`}
                               >
                                 <Pencil className="w-3.5 h-3.5 text-teal-600" />
@@ -4847,13 +4848,13 @@ export const OxygenDashboardPage: React.FC = () => {
                                 <button
                                   type="button"
                                   onClick={() => handleVerifyCylinder(cyl.id)}
-                                  className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-all shadow-xs cursor-pointer"
+                                  className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition-colors shadow-xs cursor-pointer"
                                 >
                                   <CheckCircle className="w-4 h-4" />
                                   <span>{language === 'ms' ? 'Sahkan Silinder' : 'Verify Cylinder'}</span>
                                 </button>
                               ) : (
-                                <div className="flex-1 inline-flex items-center justify-center gap-1 py-1.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl text-xs font-bold">
+                                <div className="flex-1 inline-flex items-center justify-center gap-1 py-1.5 bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 rounded-xl text-xs font-bold">
                                   <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
                                   <span>{language === 'ms' ? 'Disahkan' : 'Verified'}</span>
                                 </div>
@@ -4861,7 +4862,7 @@ export const OxygenDashboardPage: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() => setDeleteCylinderTarget([cyl])}
-                                className="py-2 px-3 border border-rose-200 hover:bg-rose-50 text-rose-600 active:scale-95 font-bold text-xs rounded-xl flex items-center justify-center gap-1 transition-all cursor-pointer shrink-0 shadow-xs"
+                                className="py-2 px-3 border border-rose-500/20 hover:bg-rose-500/10 text-rose-600 active:scale-95 font-bold text-xs rounded-xl flex items-center justify-center gap-1 transition-colors cursor-pointer shrink-0 shadow-xs"
                                 title={language === 'ms' ? `Padam Silinder ${cyl.serial_number}` : `Delete Cylinder ${cyl.serial_number}`}
                               >
                                 <Trash2 className="w-4 h-4" />
@@ -4876,8 +4877,8 @@ export const OxygenDashboardPage: React.FC = () => {
 
                   {/* Desktop View: Standard Table */}
                   <div className="hidden md:block overflow-x-auto">
-                    <table className="w-full border-collapse text-left text-xs text-gray-500">
-                      <thead className="bg-slate-50 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+                    <table className="w-full border-collapse text-left text-xs text-text-muted">
+                      <thead className="bg-subtle/50 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
                         <tr>
                           <th scope="col" className="w-10 px-4 py-3 text-center">
                             <input
@@ -4887,7 +4888,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                 if (el) el.indeterminate = isSomeVisibleSelected;
                               }}
                               onChange={handleToggleSelectAllVisible}
-                              className="w-4 h-4 rounded text-[#00a68a] focus:ring-[#00a68a] border-gray-300 cursor-pointer"
+                              className="w-4 h-4 rounded text-[#00a68a] focus:ring-[#00a68a] border-border-default cursor-pointer"
                               title={language === 'ms' ? 'Pilih semua di halaman ini' : 'Select all on this page'}
                             />
                           </th>
@@ -4903,7 +4904,7 @@ export const OxygenDashboardPage: React.FC = () => {
                           <th scope="col" className="px-4 py-3 font-semibold text-right">{language === 'ms' ? 'Tindakan' : 'Action'}</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-gray-100 border-t border-gray-100">
+                      <tbody className="divide-y divide-border-subtle border-t border-border-subtle">
                         {paginatedCylinders.length === 0 ? (
                           <tr>
                             <td colSpan={activeGroup === '__ALL__' ? 9 : 8} className="py-8 text-center text-gray-400 font-bold">
@@ -4929,9 +4930,9 @@ export const OxygenDashboardPage: React.FC = () => {
                               <tr 
                                 key={cyl.id} 
                                 className={`transition-colors ${
-                                  isSelected ? 'bg-emerald-50/50' : 'hover:bg-slate-50/50'
+                                  isSelected ? 'bg-emerald-500/10' : 'hover:bg-subtle/50'
                                 } ${
-                                  isHighlighted ? 'ring-2 ring-[#00a68a] bg-emerald-50/80 animate-pulse' : ''
+                                  isHighlighted ? 'ring-2 ring-[#00a68a] bg-emerald-500/10 animate-pulse' : ''
                                 }`}
                               >
                                 <td className="w-10 px-4 py-4 text-center">
@@ -4939,23 +4940,23 @@ export const OxygenDashboardPage: React.FC = () => {
                                     type="checkbox"
                                     checked={isSelected}
                                     onChange={() => handleToggleSelectRow(cyl.id)}
-                                    className="w-4 h-4 rounded text-[#00a68a] focus:ring-[#00a68a] border-gray-300 cursor-pointer"
+                                    className="w-4 h-4 rounded text-[#00a68a] focus:ring-[#00a68a] border-border-default cursor-pointer"
                                   />
                                 </td>
-                                <td className="px-4 py-4 font-mono font-bold text-gray-900">
+                                <td className="px-4 py-4 font-mono font-bold text-text-primary">
                                   <div className="flex flex-col gap-1 items-start">
                                     <div className="flex items-center gap-2">
-                                      <span className="text-sm font-black text-slate-800">{cyl.serial_number}</span>
+                                      <span className="text-sm font-black text-text-primary">{cyl.serial_number}</span>
                                       <button
                                         type="button"
                                         onClick={() => handleOpenEditModal(cyl)}
-                                        className="p-1 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-all cursor-pointer"
+                                        className="p-1 text-slate-400 hover:text-teal-600 hover:bg-accent-base/10 rounded-lg transition-colors cursor-pointer"
                                         title={language === 'ms' ? 'Kemaskini No. Siri & Saiz Silinder' : 'Edit Serial & Size'}
                                       >
                                         <Pencil className="w-3.5 h-3.5" />
                                       </button>
                                       {isScanned && (
-                                        <span className="px-1.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200/60 rounded text-[9px] font-bold inline-flex items-center gap-1">
+                                        <span className="px-1.5 py-0.5 bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 rounded text-[9px] font-bold inline-flex items-center gap-1">
                                           <CheckCircle className="w-2.5 h-2.5 text-emerald-600" />
                                           {language === 'ms' ? 'Di-Imbas' : 'Scanned'}
                                         </span>
@@ -4971,11 +4972,11 @@ export const OxygenDashboardPage: React.FC = () => {
                                           type="button"
                                           onClick={(e) => handleToggleCylinderValveType(e, cyl)}
                                           title={isBN ? (language === 'ms' ? 'Klik untuk tukar ke Pin Index (PI)' : 'Click to switch to Pin Index (PI)') : isPI ? (language === 'ms' ? 'Klik untuk tukar ke Bullnose (BN)' : 'Click to switch to Bullnose (BN)') : (language === 'ms' ? 'Klik untuk tetapkan injap ke Bullnose (BN)' : 'Click to assign valve (BN)')}
-                                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black border transition-all cursor-pointer active:scale-95 shadow-2xs ${
+                                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-black border transition-colors cursor-pointer active:scale-95 shadow-elevation-1 ${
                                             isBN
-                                              ? 'bg-amber-50 text-amber-800 border-amber-200 hover:bg-amber-100 hover:border-amber-300'
+                                              ? 'bg-amber-500/10 text-amber-400 border-amber-500/20 hover:bg-amber-100 hover:border-amber-300'
                                               : isPI
-                                              ? 'bg-purple-50 text-purple-800 border-purple-200 hover:bg-purple-100 hover:border-purple-300'
+                                              ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20 hover:bg-purple-100 hover:border-purple-300'
                                               : 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100 animate-pulse'
                                           }`}
                                         >
@@ -4988,26 +4989,26 @@ export const OxygenDashboardPage: React.FC = () => {
                                   </div>
                                 </td>
                                 {activeGroup === '__ALL__' && (
-                                  <td className="px-4 py-4 font-semibold text-gray-600">
-                                    <span className="px-2 py-0.5 bg-slate-100 text-slate-700 rounded text-[10px] font-bold">
+                                  <td className="px-4 py-4 font-semibold text-text-muted">
+                                    <span className="px-2 py-0.5 bg-subtle text-text-secondary rounded text-[10px] font-bold">
                                       {cyl.type_info?.type_name || 'Standard'}
                                     </span>
                                   </td>
                                 )}
-                                <td className="px-4 py-4 font-semibold text-gray-600">
-                                  <span className="px-2.5 py-1 bg-teal-50 text-teal-700 rounded-lg border border-teal-100 text-[10px] font-bold inline-flex items-center gap-1">
+                                <td className="px-4 py-4 font-semibold text-text-muted">
+                                  <span className="px-2.5 py-1 bg-accent-base/10 text-teal-700 rounded-lg border border-teal-100 text-[10px] font-bold inline-flex items-center gap-1">
                                     <Building2 className="w-3 h-3 text-teal-600" />
                                     {locationLabel}
                                   </span>
                                 </td>
-                                <td className="px-4 py-4 font-semibold text-gray-700">
+                                <td className="px-4 py-4 font-semibold text-text-secondary">
                                   {isScanned && scannedUser ? (
                                     <div className="flex items-center gap-1.5">
                                       <div className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-700 font-black flex items-center justify-center text-[9px] shrink-0">
                                         {scannedUser.charAt(0).toUpperCase()}
                                       </div>
                                       <div>
-                                        <span className="text-[11px] font-bold text-slate-800 block">
+                                        <span className="text-[11px] font-bold text-text-primary block">
                                           {scannedUser}
                                         </span>
                                         {scannedTime && (
@@ -5021,8 +5022,8 @@ export const OxygenDashboardPage: React.FC = () => {
                                     </span>
                                   )}
                                 </td>
-                                <td className="px-4 py-4 font-semibold text-gray-600 uppercase">
-                                  <span className="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg border border-slate-200 text-[10px] font-bold">
+                                <td className="px-4 py-4 font-semibold text-text-muted uppercase">
+                                  <span className="px-2.5 py-1 bg-subtle text-text-secondary rounded-lg border border-border-default text-[10px] font-bold">
                                     {getStatusLabel(expectedNorm)}
                                   </span>
                                 </td>
@@ -5045,7 +5046,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                         }
                                       }));
                                     }}
-                                    className="border border-gray-200 rounded-lg p-1.5 bg-white font-bold text-gray-800 text-[11px] outline-none transition-all focus:border-teal-500 focus:ring-1 focus:ring-teal-500 cursor-pointer"
+                                    className="border border-border-default rounded-lg p-1.5 bg-surface font-bold text-text-primary text-[11px] outline-none transition-colors focus:border-teal-500 focus:ring-1 focus:ring-teal-500 cursor-pointer"
                                   >
                                     <option value="available">{language === 'ms' ? 'Tersedia (Stor)' : 'Available (Store)'}</option>
                                     <option value="used">{language === 'ms' ? 'Digunakan (Wad)' : 'Used / In Use (Ward)'}</option>
@@ -5055,7 +5056,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                 </td>
                                 <td className="px-4 py-4">
                                   <span className={`px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider 
-                                    ${isMatched ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-red-100 text-red-700 border border-red-200'}`}
+                                    ${isMatched ? 'bg-emerald-100 text-emerald-700 border border-emerald-500/20' : 'bg-red-100 text-red-700 border border-red-200'}`}
                                   >
                                     {isMatched ? (language === 'ms' ? 'Padan' : 'Matched') : (language === 'ms' ? 'Tidak Padan' : 'Mismatch')}
                                   </span>
@@ -5065,7 +5066,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                     <button
                                       type="button"
                                       onClick={() => handleOpenEditModal(cyl)}
-                                      className="p-1.5 text-slate-400 hover:text-teal-600 hover:bg-teal-50 rounded-lg transition-all cursor-pointer border border-transparent hover:border-teal-200 active:scale-90"
+                                      className="p-1.5 text-slate-400 hover:text-teal-600 hover:bg-accent-base/10 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-accent-base/20 active:scale-90"
                                       title={language === 'ms' ? `Update Cylinder ${cyl.serial_number}` : `Edit Cylinder ${cyl.serial_number}`}
                                     >
                                       <Pencil className="w-4 h-4" />
@@ -5074,13 +5075,13 @@ export const OxygenDashboardPage: React.FC = () => {
                                       <button
                                         type="button"
                                         onClick={() => handleVerifyCylinder(cyl.id)}
-                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-black shadow-sm transition-all cursor-pointer"
+                                        className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white rounded-xl text-xs font-black shadow-sm transition-colors cursor-pointer"
                                       >
                                         <CheckCircle className="w-3.5 h-3.5" />
                                         {language === 'ms' ? 'Sahkan' : 'Verify'}
                                       </button>
                                     ) : (
-                                      <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-lg text-[10px] font-bold">
+                                      <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 rounded-lg text-[10px] font-bold">
                                         <CheckCircle className="w-3 h-3 text-emerald-600" />
                                         {language === 'ms' ? 'Disahkan' : 'Verified'}
                                       </span>
@@ -5088,7 +5089,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                     <button
                                       type="button"
                                       onClick={() => setDeleteCylinderTarget([cyl])}
-                                      className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-all cursor-pointer border border-transparent hover:border-rose-200 active:scale-90"
+                                      className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer border border-transparent hover:border-rose-500/20 active:scale-90"
                                       title={language === 'ms' ? `Padam Silinder ${cyl.serial_number}` : `Delete Cylinder ${cyl.serial_number}`}
                                     >
                                       <Trash2 className="w-4 h-4" />
@@ -5105,21 +5106,21 @@ export const OxygenDashboardPage: React.FC = () => {
 
                   {/* Pagination Control Bar */}
                   {totalPages > 1 && (
-                    <div className="px-6 py-4 border-t border-gray-100 bg-slate-50/50 flex items-center justify-between">
+                    <div className="px-6 py-4 border-t border-border-subtle bg-subtle/50 flex items-center justify-between">
                       <button
                         disabled={reconciliationPage === 1}
                         onClick={() => setReconciliationPage(prev => Math.max(1, prev - 1))}
-                        className="px-3 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 disabled:opacity-50 text-slate-600 rounded-xl font-bold tracking-wider uppercase text-[10px] transition-all"
+                        className="px-3 py-1.5 border border-border-default bg-surface hover:bg-subtle/50 active:scale-95 disabled:opacity-50 text-text-muted rounded-xl font-bold tracking-wider uppercase text-[10px] transition-colors"
                       >
                         {language === 'ms' ? 'SEBELUM' : 'PREV'}
                       </button>
-                      <span className="text-[11px] text-slate-500 font-bold">
+                      <span className="text-[11px] text-text-muted font-bold">
                         {language === 'ms' ? 'Halaman' : 'Page'} {reconciliationPage} {language === 'ms' ? 'daripada' : 'of'} {totalPages}
                       </span>
                       <button
                         disabled={reconciliationPage >= totalPages}
                         onClick={() => setReconciliationPage(prev => Math.min(totalPages, prev + 1))}
-                        className="px-3 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 disabled:opacity-50 text-slate-600 rounded-xl font-bold tracking-wider uppercase text-[10px] transition-all"
+                        className="px-3 py-1.5 border border-border-default bg-surface hover:bg-subtle/50 active:scale-95 disabled:opacity-50 text-text-muted rounded-xl font-bold tracking-wider uppercase text-[10px] transition-colors"
                       >
                         {language === 'ms' ? 'SETERUS' : 'NEXT'}
                       </button>
@@ -5127,7 +5128,7 @@ export const OxygenDashboardPage: React.FC = () => {
                   )}
                 </div>
               ) : (
-                <div className="bg-white border border-gray-200 rounded-2xl p-8 text-center text-gray-500 text-sm">
+                <div className="bg-surface border border-border-default rounded-2xl p-8 text-center text-text-muted text-sm">
                   {language === 'ms' ? 'Tiada kumpulan dipilih.' : 'No group selected or no cylinders available.'}
                 </div>
               )}
@@ -5135,14 +5136,14 @@ export const OxygenDashboardPage: React.FC = () => {
           </div>
 
           {/* Audit Logs Section */}
-          <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-            <div className="px-4 py-3.5 border-b border-gray-100 bg-slate-50/50 flex items-center gap-2">
+          <div className="bg-surface border border-border-default rounded-2xl shadow-sm overflow-hidden">
+            <div className="px-4 py-3.5 border-b border-border-subtle bg-subtle/50 flex items-center gap-2">
               <ClipboardList className="w-4 h-4 text-slate-400" />
-              <h3 className="text-xs font-black text-gray-800 uppercase tracking-wider">{language === 'ms' ? 'Log Aktiviti Audit' : 'Recent Reconciliation Audit Activity Logs'}</h3>
+              <h3 className="text-xs font-black text-text-primary uppercase tracking-wider">{language === 'ms' ? 'Log Aktiviti Audit' : 'Recent Reconciliation Audit Activity Logs'}</h3>
             </div>
-              <div className="divide-y divide-gray-100">
+              <div className="divide-y divide-border-subtle">
                 {reconciliationLogs.length === 0 ? (
-                  <div className="p-6 text-center text-gray-500 text-xs">
+                  <div className="p-6 text-center text-text-muted text-xs">
                     {language === 'ms' ? 'Tiada log aktiviti.' : 'No reconciliation activity logs recorded yet.'}
                   </div>
                 ) : (
@@ -5152,21 +5153,21 @@ export const OxygenDashboardPage: React.FC = () => {
                     const isDeleteAction = log.action === 'DELETE_OXYGEN_CYLINDER' || log.action === 'BULK_DELETE_OXYGEN_CYLINDERS';
 
                     return (
-                      <div key={log.id} className="p-4 hover:bg-slate-50/50 transition-colors text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div key={log.id} className="p-4 hover:bg-subtle/50 transition-colors text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <div className="space-y-1">
                           <div className="flex items-center gap-2">
-                            <span className="font-bold text-gray-900">{auditorTitle}</span>
+                            <span className="font-bold text-text-primary">{auditorTitle}</span>
                             <span className="text-gray-400">|</span>
-                            <span className="text-gray-500 font-medium">{log.user?.jawatan || 'Pegawai Farmasi'}</span>
+                            <span className="text-text-muted font-medium">{log.user?.jawatan || 'Pegawai Farmasi'}</span>
                           </div>
                           {isVerificationAction ? (
-                            <p className="text-gray-600 font-medium flex items-center flex-wrap gap-1">
-                              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded text-[9px] font-bold mr-1">
+                            <p className="text-text-muted font-medium flex items-center flex-wrap gap-1">
+                              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 rounded text-[9px] font-bold mr-1">
                                 <CheckCircle className="w-2.5 h-2.5 text-emerald-600" />
                                 {language === 'ms' ? 'Disahkan' : 'Verified'}
                               </span>
                               <span>{language === 'ms' ? 'Silinder' : 'Cylinder'}</span>
-                              <span className="font-mono font-bold text-gray-900">{log.new_values?.serial_number || 'N/A'}</span>
+                              <span className="font-mono font-bold text-text-primary">{log.new_values?.serial_number || 'N/A'}</span>
                               <span>{language === 'ms' ? 'telah disahkan & dimasukkan ke' : 'verified & placed in'}</span>
                               <span className="text-teal-600 font-bold">{log.new_values?.location || 'Store'}</span>
                               <span>({language === 'ms' ? 'Status' : 'Status'}:</span>
@@ -5174,8 +5175,8 @@ export const OxygenDashboardPage: React.FC = () => {
                               <span>)</span>
                             </p>
                           ) : isDeleteAction ? (
-                            <p className="text-gray-600 font-medium flex items-center flex-wrap gap-1">
-                              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 rounded text-[9px] font-bold mr-1">
+                            <p className="text-text-muted font-medium flex items-center flex-wrap gap-1">
+                              <span className="inline-flex items-center gap-1 px-1.5 py-0.5 bg-rose-500/10 text-rose-700 border border-rose-500/20 rounded text-[9px] font-bold mr-1">
                                 <Trash2 className="w-2.5 h-2.5 text-rose-600" />
                                 {language === 'ms' ? 'Dipadam' : 'Deleted'}
                               </span>
@@ -5185,18 +5186,18 @@ export const OxygenDashboardPage: React.FC = () => {
                                 </span>
                               ) : (
                                 <span>
-                                  {language === 'ms' ? 'Silinder' : 'Cylinder'} <span className="font-mono font-bold text-gray-900">{log.new_values?.serial_number || log.old_values?.serial_number || 'N/A'}</span> {language === 'ms' ? 'telah dipadam secara kekal dari inventori.' : 'was deleted permanently from inventory.'}
+                                  {language === 'ms' ? 'Silinder' : 'Cylinder'} <span className="font-mono font-bold text-text-primary">{log.new_values?.serial_number || log.old_values?.serial_number || 'N/A'}</span> {language === 'ms' ? 'telah dipadam secara kekal dari inventori.' : 'was deleted permanently from inventory.'}
                                 </span>
                               )}
                               {log.new_values?.reason && (
-                                <span className="text-slate-500 italic text-[11px]">
+                                <span className="text-text-muted italic text-[11px]">
                                   ({log.new_values.reason})
                                 </span>
                               )}
                             </p>
                           ) : (
-                            <p className="text-gray-600 font-medium">
-                              {language === 'ms' ? 'Status silinder diselaraskan' : 'Reconciled status of cylinder'} <span className="font-mono font-bold text-gray-900">{log.new_values?.serial_number || 'N/A'}</span> {language === 'ms' ? 'daripada' : 'from'} {' '}
+                            <p className="text-text-muted font-medium">
+                              {language === 'ms' ? 'Status silinder diselaraskan' : 'Reconciled status of cylinder'} <span className="font-mono font-bold text-text-primary">{log.new_values?.serial_number || 'N/A'}</span> {language === 'ms' ? 'daripada' : 'from'} {' '}
                               <span className="font-bold text-rose-600 uppercase">{log.old_values?.status || 'N/A'}</span> {language === 'ms' ? 'kepada' : 'to'} {' '}
                               <span className="font-bold text-emerald-600 uppercase">{log.new_values?.status || 'N/A'}</span> {' '}
                               ({language === 'ms' ? 'kini di' : 'now belongs to'} <span className="text-teal-600 font-semibold">{log.new_values?.location || 'Store'}</span>)
@@ -5320,18 +5321,18 @@ export const OxygenDashboardPage: React.FC = () => {
         {/* ========================================================
             VOTE CODE SELECTOR / FILTER BAR & SEGREGATED FINANCIAL METRICS
            ======================================================== */}
-        <div className="bg-white border border-slate-200/90 rounded-xl p-3 sm:p-4 shadow-2xs">
+        <div className="bg-surface border border-border-default rounded-xl p-3 sm:p-4 shadow-elevation-1">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
             {/* Left Header info */}
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-teal-50 border border-teal-100 flex items-center justify-center text-teal-700 shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-accent-base/10 border border-accent-base/20 flex items-center justify-center text-accent-base shrink-0">
                 <Database className="w-4 h-4" />
               </div>
               <div className="min-w-0">
-                <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+                <div className="text-[10px] font-bold uppercase tracking-wider text-text-muted">
                   {language === 'ms' ? 'SUMBER PERUNTUKAN (KOD UNDI)' : 'BUDGET ALLOCATION (VOTE CODE)'}
                 </div>
-                <div className="text-xs sm:text-sm font-bold text-slate-900 truncate">
+                <div className="text-xs sm:text-sm font-bold text-text-primary truncate">
                   {dashboardVoteFilter === 'all' 
                     ? (language === 'ms' ? 'Semua Vot Digabungkan (Konsolidasi)' : 'All Registered Votes Combined')
                     : `Kod Vot ${dashboardVoteFilter} ${dashboardVoteFilter === '080702' ? '(Kontrak Pusat / CC)' : dashboardVoteFilter === '080600' ? '(Duit Khas / Khas)' : ''}`}
@@ -5340,7 +5341,7 @@ export const OxygenDashboardPage: React.FC = () => {
             </div>
 
             {/* Right: Segmented Filter Chips (Clean wrap, zero horizontal scrollbar) */}
-            <div className="flex flex-wrap items-center gap-1.5 pt-2 md:pt-0 border-t md:border-t-0 border-slate-100">
+            <div className="flex flex-wrap items-center gap-1.5 pt-2 md:pt-0 border-t md:border-t-0 border-border-subtle">
               <button
                 type="button"
                 onClick={() => {
@@ -5348,10 +5349,10 @@ export const OxygenDashboardPage: React.FC = () => {
                   setCurrentPage(1)
                   setMonthlyCurrentPage(1)
                 }}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
                   dashboardVoteFilter === 'all'
-                    ? 'bg-[#008f76] text-white shadow-2xs font-bold'
-                    : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/80 active:scale-95'
+                    ? 'bg-accent-base text-white shadow-elevation-1 font-bold'
+                    : 'bg-subtle/50 hover:bg-subtle text-text-secondary border border-border-default active:scale-95'
                 }`}
               >
                 {language === 'ms' ? 'Semua Vot' : 'All Votes'}
@@ -5370,10 +5371,10 @@ export const OxygenDashboardPage: React.FC = () => {
                       setCurrentPage(1)
                       setMonthlyCurrentPage(1)
                     }}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-all cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-lg text-xs font-mono font-semibold transition-colors cursor-pointer ${
                       isActive
-                        ? 'bg-[#008f76] text-white shadow-2xs font-bold'
-                        : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200/80 active:scale-95'
+                        ? 'bg-accent-base text-white shadow-elevation-1 font-bold'
+                        : 'bg-subtle/50 hover:bg-subtle text-text-secondary border border-border-default active:scale-95'
                     }`}
                   >
                     {label}
@@ -5405,52 +5406,112 @@ export const OxygenDashboardPage: React.FC = () => {
 
           return (
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-2.5 sm:gap-3.5">
-              {/* Card 4 on Mobile (Order First as Full-Width Hero) / Card 4 on Desktop */}
-              <div className={`col-span-2 order-first lg:order-4 lg:col-span-1 border rounded-xl p-3.5 sm:p-4 shadow-2xs transition-all ${
-                isOverBudget
-                  ? 'bg-rose-50/60 border-rose-200'
-                  : 'bg-emerald-50/40 border-emerald-200/90'
+              {/* Card 1: Total Allocation */}
+              <div className="col-span-1 order-2 lg:order-1 bg-surface border border-border-default rounded-xl p-3.5 sm:p-4 shadow-elevation-1 hover:border-border-default/80 transition-colors">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted block truncate">
+                      {language === 'ms' ? 'JUMLAH PERUNTUKAN' : 'TOTAL ALLOCATION'}
+                    </span>
+                    <h4 className="text-base sm:text-lg lg:text-xl font-bold font-mono tabular-nums text-text-primary tracking-tight mt-1 truncate">
+                      {fmt(displayAllocation)}
+                    </h4>
+                  </div>
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-accent-base/10 border border-accent-base/20 rounded-lg flex items-center justify-center text-accent-base shrink-0">
+                    <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  </div>
+                </div>
+                <div className="mt-2.5 pt-2 border-t border-border-subtle flex items-center gap-1.5 text-[10px] font-semibold text-text-muted truncate">
+                  <Database className="w-3 h-3 text-accent-base shrink-0" />
+                  <span className="truncate">{displayVoteBadge}</span>
+                </div>
+              </div>
+
+              {/* Card 2: Total Expenses */}
+              <div className="col-span-1 order-3 lg:order-2 bg-surface border border-border-default rounded-xl p-3.5 sm:p-4 shadow-elevation-1 hover:border-border-default/80 transition-colors">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted block truncate">
+                      {language === 'ms' ? 'PERBELANJAAN SEBENAR' : 'ACTUAL EXPENSES'}
+                    </span>
+                    <h4 className="text-base sm:text-lg lg:text-xl font-bold font-mono tabular-nums text-text-primary tracking-tight mt-1 truncate">
+                      {fmt(displayExpenses)}
+                    </h4>
+                  </div>
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-rose-500/10 border border-rose-500/20 rounded-lg flex items-center justify-center text-rose-400 shrink-0">
+                    <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  </div>
+                </div>
+                <div className="mt-2.5 pt-2 border-t border-border-subtle flex items-center gap-1 text-[10px] font-semibold text-rose-400 truncate">
+                  <TrendingUp className="w-3 h-3 shrink-0" />
+                  <span className="truncate">{language === 'ms' ? 'Isian Semula Gas' : 'Gas Refills'}</span>
+                </div>
+              </div>
+
+              {/* Card 3: Liabilities */}
+              <div className="col-span-1 order-4 lg:order-3 bg-surface border border-border-default rounded-xl p-3.5 sm:p-4 shadow-elevation-1 hover:border-border-default/80 transition-colors">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted block truncate">
+                      {language === 'ms' ? 'TANGGUNGAN PO/SO' : 'LIABILITIES'}
+                    </span>
+                    <h4 className="text-base sm:text-lg lg:text-xl font-bold font-mono tabular-nums text-text-primary tracking-tight mt-1 truncate">
+                      {fmt(displayLiabilities)}
+                    </h4>
+                  </div>
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-sky-500/10 border border-sky-500/20 rounded-lg flex items-center justify-center text-sky-400 shrink-0">
+                    <Layers className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  </div>
+                </div>
+                <div className="mt-2.5 pt-2 border-t border-border-subtle text-[10px] font-semibold text-text-muted truncate">
+                  {language === 'ms' ? 'Pesanan Belum Selesai' : 'Committed PO / SO'}
+                </div>
+              </div>
+
+              {/* Card 4 on Mobile (Order First) / Card 4 on Desktop (Net Current Balance) */}
+              <div className={`col-span-2 order-first lg:order-4 lg:col-span-1 bg-surface border rounded-xl p-3.5 sm:p-4 shadow-elevation-1 transition-colors ${
+                isOverBudget ? 'border-rose-500/50' : 'border-border-default'
               }`}>
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-600 block">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted block">
                       {language === 'ms' ? 'CURRENT BALANCE BERSIH' : 'NET CURRENT BALANCE'}
                     </span>
                     <h4 className={`text-xl sm:text-2xl font-bold font-mono tabular-nums tracking-tight mt-1 ${
-                      isOverBudget ? 'text-rose-700' : 'text-slate-900'
+                      isOverBudget ? 'text-rose-400' : 'text-text-primary'
                     }`}>
                       {fmt(displayBalance)}
                     </h4>
                   </div>
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border ${
-                    isOverBudget ? 'bg-rose-100/80 border-rose-200 text-rose-700' : 'bg-emerald-100/80 border-emerald-200 text-emerald-700'
+                    isOverBudget ? 'bg-rose-500/10 border-rose-500/20 text-rose-400' : 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
                   }`}>
                     <ArrowUpRight className="w-4 h-4" />
                   </div>
                 </div>
 
                 {/* Health Badge & Utilization Progress */}
-                <div className="mt-2.5 pt-2 border-t border-slate-200/60 space-y-1.5">
+                <div className="mt-2.5 pt-2 border-t border-border-subtle space-y-1.5">
                   <div className="flex items-center justify-between gap-1 text-[10px]">
-                    <span className={`inline-flex items-center gap-1 font-bold ${
-                      isOverBudget ? 'text-rose-700' : 'text-emerald-700'
+                    <span className={`inline-flex items-center gap-1 font-semibold ${
+                      isOverBudget ? 'text-rose-400' : 'text-emerald-400'
                     }`}>
                       <span className={`w-1.5 h-1.5 rounded-full ${isOverBudget ? 'bg-rose-500' : 'bg-emerald-500'}`}></span>
                       {isOverBudget ? (language === 'ms' ? 'Defisit Melebihi Had' : 'Deficit Overdraft') : (language === 'ms' ? 'Peruntukan Sihat' : 'Healthy Allocation')}
                     </span>
-                    <span className="font-mono font-semibold text-slate-500">
+                    <span className="font-mono font-semibold text-text-muted">
                       {utilizationPct}% {language === 'ms' ? 'digunakan' : 'used'}
                     </span>
                   </div>
                   {/* Utilization Progress Bar */}
-                  <div className="h-1.5 w-full bg-slate-200/70 rounded-full overflow-hidden flex">
+                  <div className="h-1.5 w-full bg-subtle rounded-full overflow-hidden flex border border-border-default/50">
                     <div 
-                      className="bg-[#008f76] h-full transition-all" 
+                      className="bg-accent-base h-full transition-colors" 
                       style={{ width: `${Math.min(100, displayAllocation > 0 ? (displayExpenses / displayAllocation) * 100 : 0)}%` }} 
                       title={`Belanja: ${fmt(displayExpenses)}`}
                     />
                     <div 
-                      className="bg-sky-500 h-full transition-all" 
+                      className="bg-sky-400 h-full transition-colors" 
                       style={{ width: `${Math.min(100 - (displayAllocation > 0 ? (displayExpenses / displayAllocation) * 100 : 0), displayAllocation > 0 ? (displayLiabilities / displayAllocation) * 100 : 0)}%` }} 
                       title={`Tanggungan: ${fmt(displayLiabilities)}`}
                     />
@@ -5458,95 +5519,25 @@ export const OxygenDashboardPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Card 1: Total Allocation */}
-              <div className="col-span-1 order-2 lg:order-1 bg-white border border-slate-200/90 rounded-xl p-3.5 sm:p-4 shadow-2xs">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block truncate">
-                      {language === 'ms' ? 'JUMLAH PERUNTUKAN' : 'TOTAL ALLOCATION'}
-                    </span>
-                    <h4 className="text-base sm:text-lg lg:text-xl font-bold font-mono tabular-nums text-slate-900 tracking-tight mt-1 truncate">
-                      {fmt(displayAllocation)}
-                    </h4>
-                  </div>
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-teal-50 border border-teal-100 rounded-lg flex items-center justify-center text-teal-700 shrink-0">
-                    <DollarSign className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  </div>
-                </div>
-                <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center gap-1.5 text-[10px] font-semibold text-slate-600 truncate">
-                  <Database className="w-3 h-3 text-teal-600 shrink-0" />
-                  <span className="truncate">{displayVoteBadge}</span>
-                </div>
-              </div>
-
-              {/* Card 2: Total Expenses */}
-              <div className="col-span-1 order-3 lg:order-2 bg-white border border-slate-200/90 rounded-xl p-3.5 sm:p-4 shadow-2xs">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block truncate">
-                      {language === 'ms' ? 'PERBELANJAAN SEBENAR' : 'ACTUAL EXPENSES'}
-                    </span>
-                    <h4 className="text-base sm:text-lg lg:text-xl font-bold font-mono tabular-nums text-slate-900 tracking-tight mt-1 truncate">
-                      {fmt(displayExpenses)}
-                    </h4>
-                  </div>
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-rose-50 border border-rose-100 rounded-lg flex items-center justify-center text-rose-700 shrink-0">
-                    <TrendingUp className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  </div>
-                </div>
-                <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center gap-1 text-[10px] font-semibold text-rose-700 truncate">
-                  <TrendingUp className="w-3 h-3 shrink-0" />
-                  <span className="truncate">{language === 'ms' ? 'Isian Semula Gas' : 'Gas Refills'}</span>
-                </div>
-              </div>
-
-              {/* Card 3: Liabilities */}
-              <div className="col-span-1 order-4 lg:order-3 bg-white border border-slate-200/90 rounded-xl p-3.5 sm:p-4 shadow-2xs">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="min-w-0">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block truncate">
-                      {language === 'ms' ? 'TANGGUNGAN PO/SO' : 'LIABILITIES'}
-                    </span>
-                    <h4 className="text-base sm:text-lg lg:text-xl font-bold font-mono tabular-nums text-slate-900 tracking-tight mt-1 truncate">
-                      {fmt(displayLiabilities)}
-                    </h4>
-                  </div>
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-sky-50 border border-sky-100 rounded-lg flex items-center justify-center text-sky-700 shrink-0">
-                    <Layers className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  </div>
-                </div>
-                <div className="mt-2.5 pt-2 border-t border-slate-100 text-[10px] font-semibold text-slate-500 truncate">
-                  {language === 'ms' ? 'Pesanan Belum Selesai' : 'Committed PO / SO'}
-                </div>
-              </div>
-
               {/* Card 5: Loan Charges */}
-              <div className="col-span-1 order-5 lg:order-5 bg-white border border-slate-200/90 rounded-xl p-3.5 sm:p-4 shadow-2xs">
+              <div className="col-span-1 order-5 lg:order-5 bg-surface border border-border-default rounded-xl p-3.5 sm:p-4 shadow-elevation-1 hover:border-border-default/80 transition-colors">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 block truncate">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-text-muted block truncate">
                       {language === 'ms' ? 'CAJ PINJAMAN' : 'LOAN CHARGES'}
                     </span>
-                    <h4 className="text-base sm:text-lg lg:text-xl font-bold font-mono tabular-nums text-slate-900 tracking-tight mt-1 truncate">
+                    <h4 className="text-base sm:text-lg lg:text-xl font-bold font-mono tabular-nums text-text-primary tracking-tight mt-1 truncate">
                       {fmt(displayLoanCharges)}
                     </h4>
                   </div>
-                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-purple-50 border border-purple-100 rounded-lg flex items-center justify-center text-purple-700 shrink-0">
+                  <div className="w-7 h-7 sm:w-8 sm:h-8 bg-amber-500/10 border border-amber-500/20 rounded-lg flex items-center justify-center text-amber-400 shrink-0">
                     <Percent className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                   </div>
                 </div>
-                <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between gap-1 flex-wrap">
-                  <span className="text-[10px] font-mono text-purple-700 font-semibold truncate">
+                <div className="mt-2.5 pt-2 border-t border-border-subtle flex items-center justify-between gap-1 flex-wrap">
+                  <span className="text-[10px] font-mono text-text-muted font-semibold truncate">
                     {fmt(systemSettings?.loan_cylinder_rate || 18.36)}/sil
                   </span>
-                  <button
-                    type="button"
-                    onClick={() => handleOpenPayLoanModal()}
-                    className="text-[9px] font-bold uppercase tracking-wider text-purple-700 hover:text-white bg-purple-50 hover:bg-purple-700 px-1.5 py-0.5 rounded border border-purple-200 transition-colors cursor-pointer"
-                    title={language === 'ms' ? 'Bayar caj pinjaman silinder' : 'Pay cylinder loan charges'}
-                  >
-                    {language === 'ms' ? '+ Bayar' : '+ Pay'}
-                  </button>
                 </div>
               </div>
             </div>
@@ -5556,13 +5547,13 @@ export const OxygenDashboardPage: React.FC = () => {
         {/* ========================================================
             MODERN ACTION BAR
            ======================================================== */}
-        <div className="bg-white border border-slate-200/90 p-4 sm:p-5 rounded-xl shadow-2xs">
+        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-elevation-1">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
-              <h3 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">
+              <h3 className="text-sm sm:text-base font-bold text-text-primary tracking-tight">
                 {language === 'ms' ? 'Operasi Oksigen Perubatan' : 'Medical Oxygen Operations'}
               </h3>
-              <p className="text-xs text-slate-500 font-medium mt-0.5 flex flex-wrap items-center gap-2">
+              <p className="text-xs text-text-muted font-medium mt-0.5 flex flex-wrap items-center gap-2">
                 <span>
                   {language === 'ms'
                     ? 'Pantau agihan silinder masa-nyata, daftarkan penerimaan, dan uruskan waran kerajaan.'
@@ -5579,7 +5570,7 @@ export const OxygenDashboardPage: React.FC = () => {
               <button 
                 type="button"
                 onClick={() => setIsReceiveModalOpen(true)}
-                className="px-4 py-2.5 bg-[#008f76] hover:bg-[#007a65] active:bg-[#006e5b] text-white rounded-xl text-xs font-semibold shadow-2xs active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="px-4 py-2.5 bg-accent-base hover:bg-accent-hover text-white rounded-xl text-xs font-semibold shadow-elevation-1 active:scale-[0.98] transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
                 <span>{language === 'ms' ? 'Daftar Penerimaan Oksigen' : 'Key In Received Oxygen'}</span>
@@ -5587,18 +5578,18 @@ export const OxygenDashboardPage: React.FC = () => {
               <button 
                 type="button"
                 onClick={() => navigate(ROUTES.PHARMACY_OXYGEN_LEDGER)}
-                className="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 active:bg-slate-950 text-white rounded-xl text-xs font-semibold shadow-2xs active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="px-4 py-2.5 bg-surface hover:bg-subtle text-text-primary border border-border-default rounded-xl text-xs font-semibold shadow-elevation-1 active:scale-[0.98] transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
-                <ScrollText className="w-4 h-4 text-teal-400" />
+                <ScrollText className="w-4 h-4 text-accent-base" />
                 <span>{language === 'ms' ? 'Buka Lejar KEW.PS-4' : 'Open KEW.PS-4 Ledger'}</span>
               </button>
               <button 
                 type="button"
                 onClick={() => handleOpenPayLoanModal()}
-                className="px-4 py-2.5 bg-purple-50 hover:bg-purple-100 active:bg-purple-200 text-purple-700 border border-purple-200/80 rounded-xl text-xs font-semibold transition-all flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer"
+                className="px-4 py-2.5 bg-subtle hover:bg-subtle/80 text-text-secondary border border-border-default rounded-xl text-xs font-semibold transition-colors flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer"
                 title={language === 'ms' ? 'Bayar caj pinjaman silinder sahaja tanpa penerimaan bekalan gas' : 'Pay cylinder loan charges only without gas delivery'}
               >
-                <Receipt className="w-4 h-4 text-purple-600" />
+                <Receipt className="w-4 h-4 text-accent-base" />
                 <span>{language === 'ms' ? 'Bayar Caj Pinjaman Silinder' : 'Pay Loan Charges Only'}</span>
               </button>
             </div>
@@ -5611,18 +5602,18 @@ export const OxygenDashboardPage: React.FC = () => {
         <div className="flex flex-col lg:flex-row gap-6 items-start">
           
           {/* LEFT SIDE: TRANSACTION LEDGER TABLE (Expands to fill available space) */}
-          <div className="flex-1 min-w-0 bg-white border border-slate-200/90 rounded-xl shadow-2xs overflow-hidden">
-            <div className="px-4 sm:px-6 py-4 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/80">
+          <div className="flex-1 min-w-0 bg-surface border border-border-default rounded-xl shadow-elevation-1 overflow-hidden">
+            <div className="px-4 sm:px-6 py-4 border-b border-border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-subtle/50">
               <div>
                 <div className="flex items-center gap-2">
-                  <h2 className="text-sm font-bold text-slate-900">
+                  <h2 className="text-sm font-bold text-text-primary">
                     {language === 'ms' ? 'Log Penerimaan Oksigen' : 'Recent Oxygen Deliveries (Received Log)'}
                   </h2>
-                  <span className="px-2 py-0.5 bg-teal-50 text-teal-700 border border-teal-100 rounded-full text-[9px] font-bold uppercase tracking-wider">
+                  <span className="px-2 py-0.5 bg-accent-base/10 text-teal-700 border border-teal-100 rounded-full text-[9px] font-bold uppercase tracking-wider">
                     KKM Audit Ledger
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-500 font-medium mt-0.5">
+                <p className="text-[11px] text-text-muted font-medium mt-0.5">
                   {language === 'ms'
                     ? 'Transaksi rasmi direkodkan di bawah peruntukan bajet kerajaan.'
                     : 'Official transactions recorded under governmental budget allocation.'}
@@ -5631,20 +5622,20 @@ export const OxygenDashboardPage: React.FC = () => {
 
               {/* View Switcher Controls & Quick Monthly Action */}
               <div className="flex items-center gap-2 flex-wrap">
-                <div className="flex items-center bg-slate-100 p-0.5 rounded-lg border border-slate-200/80">
+                <div className="flex items-center bg-subtle p-0.5 rounded-lg border border-border-default">
                   <button
                     type="button"
                     onClick={() => {
                       setLedgerViewMode('detailed')
                       setCurrentPage(1)
                     }}
-                    className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                    className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer ${
                       ledgerViewMode === 'detailed'
-                        ? 'bg-white text-slate-900 shadow-2xs font-bold'
-                        : 'text-slate-600 hover:text-slate-900'
+                        ? 'bg-surface text-text-primary shadow-elevation-1 font-bold'
+                        : 'text-text-muted hover:text-text-primary'
                     }`}
                   >
-                    <List className="w-3.5 h-3.5 text-slate-500" />
+                    <List className="w-3.5 h-3.5 text-text-muted" />
                     <span>{language === 'ms' ? 'Semua Entri' : 'All Entries'}</span>
                   </button>
                   <button
@@ -5653,10 +5644,10 @@ export const OxygenDashboardPage: React.FC = () => {
                       setLedgerViewMode('monthly')
                       setMonthlyCurrentPage(1)
                     }}
-                    className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                    className={`px-2.5 py-1 rounded-md text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer ${
                       ledgerViewMode === 'monthly'
-                        ? 'bg-[#008f76] text-white shadow-2xs font-bold'
-                        : 'text-slate-600 hover:text-slate-900'
+                        ? 'bg-accent-base text-white shadow-elevation-1 font-bold'
+                        : 'text-text-muted hover:text-text-primary'
                     }`}
                   >
                     <Layers className="w-3.5 h-3.5" />
@@ -5673,11 +5664,26 @@ export const OxygenDashboardPage: React.FC = () => {
                     }
                     setIsMonthlyModalOpen(true)
                   }}
-                  className="px-3 py-1.5 bg-[#008f76] hover:bg-[#007a65] text-white rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 shadow-2xs active:scale-95 cursor-pointer"
+                  className="px-3 py-1.5 bg-accent-base hover:bg-accent-hover text-white rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 shadow-elevation-1 active:scale-95 cursor-pointer"
                   title={language === 'ms' ? 'Gabung Semua Silinder Mengikut Bulan' : 'Consolidate Cylinders by Month'}
                 >
                   <Sparkles className="w-3.5 h-3.5 text-teal-200" />
                   <span>{language === 'ms' ? 'Gabung Bulan' : 'Combine Month'}</span>
+                </button>
+
+                {/* Collapsible Panel Toggle Button */}
+                <button
+                  type="button"
+                  onClick={() => setIsRightSidebarOpen(!isRightSidebarOpen)}
+                  className={`px-2.5 py-1.5 rounded-lg text-xs font-semibold transition-colors flex items-center gap-1.5 border active:scale-95 cursor-pointer ${
+                    isRightSidebarOpen
+                      ? 'bg-subtle text-text-primary border-border-default hover:bg-subtle/80'
+                      : 'bg-surface text-text-muted border-border-default hover:text-text-primary'
+                  }`}
+                  title={isRightSidebarOpen ? (language === 'ms' ? 'Sembunyi Panel Pembekal' : 'Hide Supplier Panel') : (language === 'ms' ? 'Papar Panel Pembekal' : 'Show Supplier Panel')}
+                >
+                  <LayoutGrid className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">{isRightSidebarOpen ? (language === 'ms' ? 'Sembunyi Sisi' : 'Hide Sidebar') : (language === 'ms' ? 'Papar Sisi' : 'Show Sidebar')}</span>
                 </button>
               </div>
             </div>
@@ -5687,8 +5693,8 @@ export const OxygenDashboardPage: React.FC = () => {
               <>
                 {/* Desktop View: Full Table */}
                 <div className="hidden md:block overflow-x-auto">
-                  <table className="w-full border-collapse text-left text-xs text-gray-700">
-                    <thead className="bg-slate-100 text-[10px] font-black text-slate-700 uppercase tracking-widest border-b border-slate-200">
+                  <table className="w-full border-collapse text-left text-xs text-text-secondary">
+                    <thead className="bg-subtle text-[10px] font-black text-text-secondary uppercase tracking-widest border-b border-border-default">
                       <tr>
                         <th className="px-3.5 py-3.5 whitespace-nowrap">{language === 'ms' ? 'TARIKH TERIMA' : 'RECEPTION DATE'}</th>
                         <th className="px-3.5 py-3.5 whitespace-nowrap">{language === 'ms' ? 'PESANAN PENGHANTARAN' : 'DELIVERY ORDER'}</th>
@@ -5700,7 +5706,7 @@ export const OxygenDashboardPage: React.FC = () => {
                         <th className="px-3.5 py-3.5 text-right whitespace-nowrap">{language === 'ms' ? 'DOKUMEN' : 'DOCUMENTS'}</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody className="divide-y divide-border-subtle">
                       {(() => {
                         const filteredReceptions = dashboardVoteFilter === 'all' 
                           ? receptionsList 
@@ -5709,7 +5715,7 @@ export const OxygenDashboardPage: React.FC = () => {
                         if (filteredReceptions.length === 0) {
                           return (
                             <tr>
-                              <td colSpan={8} className="px-4 py-8 text-center text-slate-600 font-semibold italic">
+                              <td colSpan={8} className="px-4 py-8 text-center text-text-muted font-semibold italic">
                                 {language === 'ms' 
                                   ? (dashboardVoteFilter !== 'all' ? `Tiada penghantaran di bawah Kod Vot ${dashboardVoteFilter}.` : 'Tiada penghantaran log.') 
                                   : (dashboardVoteFilter !== 'all' ? `No deliveries under Vote Code ${dashboardVoteFilter}.` : 'No oxygen deliveries logged yet.')}
@@ -5727,25 +5733,25 @@ export const OxygenDashboardPage: React.FC = () => {
                                             String(rec.delivery_order_no).toUpperCase().startsWith('PENDING')
 
                           return (
-                          <tr key={rec.id} className="hover:bg-slate-50 transition-colors">
-                            <td className="px-3.5 py-3 text-slate-900 font-semibold whitespace-nowrap">
+                          <tr key={rec.id} className="hover:bg-subtle/50 transition-colors">
+                            <td className="px-3.5 py-3 text-text-primary font-semibold whitespace-nowrap">
                               {new Date(rec.reception_date).toLocaleDateString('ms-MY', { day: '2-digit', month: 'short', year: 'numeric' })}
                             </td>
                             <td className="px-3.5 py-3 font-mono font-bold">
                               {(() => {
                                 const isLoanOnly = Number(rec.refill_amount || 0) === 0 && Number(rec.loan_amount || 0) > 0
                                 return (
-                                  <div className="flex flex-col gap-0.5 max-w-[160px]">
+                                  <div className="flex flex-col gap-0.5 min-w-[160px] max-w-[260px]">
                                     {isPending ? (
-                                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 w-max">
+                                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-500/10 text-amber-700 border border-amber-500/20 w-max">
                                         <Clock className="w-2.5 h-2.5 text-amber-600" />
                                         {language === 'ms' ? 'Menunggu DO' : 'Pending DO'}
                                       </span>
                                     ) : (
-                                      <span className={`truncate block ${isLoanOnly ? "text-purple-700" : "text-teal-600"}`} title={rec.delivery_order_no}>{rec.delivery_order_no}</span>
+                                      <span className={`truncate block font-mono font-bold ${isLoanOnly ? "text-amber-400" : "text-accent-base"}`} title={rec.delivery_order_no}>{rec.delivery_order_no}</span>
                                     )}
                                     {isLoanOnly && (
-                                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200 text-[8.5px] font-black tracking-wider uppercase w-max">
+                                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/25 text-[8.5px] font-bold tracking-wider uppercase w-max">
                                         {language === 'ms' ? 'Caj Pinjaman' : 'Loan Only'}
                                       </span>
                                     )}
@@ -5757,10 +5763,10 @@ export const OxygenDashboardPage: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() => handleOpenVoteOverrideModal(rec)}
-                                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg border text-[10px] font-mono font-bold transition-all hover:scale-105 active:scale-95 shadow-2xs ${
+                                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg border text-[10px] font-mono font-bold transition-colors hover:scale-105 active:scale-95 shadow-elevation-1 ${
                                   (rec.vote_code || '080702').startsWith('080600')
-                                    ? 'bg-purple-50 text-purple-700 border-purple-200 hover:bg-purple-100 hover:border-purple-300'
-                                    : 'bg-teal-50 text-teal-700 border-teal-200 hover:bg-teal-100 hover:border-teal-300'
+                                    ? 'bg-indigo-500/10 text-purple-700 border-indigo-500/20 hover:bg-purple-100 hover:border-purple-300'
+                                    : 'bg-accent-base/10 text-teal-700 border-accent-base/20 hover:bg-teal-100 hover:border-teal-300'
                                 }`}
                                 title={language === 'ms' ? 'Kod Vot Terkunci (Read-Only). Klik untuk kebenaran pertukaran luar jangka' : 'Locked Vote Code (Read-Only). Click for override authorization'}
                               >
@@ -5768,16 +5774,16 @@ export const OxygenDashboardPage: React.FC = () => {
                                 <span>{rec.vote_code || '080702'}</span>
                               </button>
                             </td>
-                            <td className="px-3 py-3 text-slate-800 font-semibold whitespace-nowrap text-xs">{fmt(rec.refill_amount)}</td>
-                            <td className="px-3 py-3 text-purple-700 font-semibold whitespace-nowrap text-xs">{fmt(rec.loan_amount)}</td>
-                            <td className="px-3 py-3 text-slate-950 font-black whitespace-nowrap text-xs">{fmt(rec.total_amount)}</td>
+                            <td className="px-3 py-3 text-text-primary font-semibold whitespace-nowrap text-xs">{fmt(rec.refill_amount)}</td>
+                            <td className="px-3 py-3 text-text-muted font-mono tabular-nums whitespace-nowrap text-xs">{fmt(rec.loan_amount)}</td>
+                            <td className="px-3 py-3 text-text-primary font-mono tabular-nums font-bold whitespace-nowrap text-xs">{fmt(rec.total_amount)}</td>
                             <td className="px-2.5 py-3 text-center whitespace-nowrap">
                               <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border
                                 ${isPending 
-                                  ? 'bg-amber-50 text-amber-800 border-amber-300' 
+                                  ? 'bg-amber-500/10 text-amber-400 border border-amber-500/25' 
                                   : rec.status === 'completed' 
-                                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
-                                    : 'bg-amber-50 text-amber-700 border-amber-200'}`}
+                                    ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/25' 
+                                    : 'bg-amber-500/10 text-amber-400 border border-amber-500/25'}`}
                               >
                                 {isPending ? (language === 'ms' ? 'Menunggu DO' : 'Pending Delivery') : rec.status.replace('_', ' ')}
                               </span>
@@ -5787,7 +5793,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                 {isPending && (
                                   <button 
                                     onClick={() => handleOpenArrivalModal(rec)}
-                                    className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-[9px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1 active:scale-95 shadow-xs"
+                                    className="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-[9px] uppercase tracking-wider transition-colors duration-150 flex items-center gap-1 active:scale-95 shadow-xs"
                                     title={language === 'ms' ? 'Daftar No. DO dan Tarikh Ketibaan' : 'Key in DO Number and Arrival Date'}
                                   >
                                     <CheckCircle className="w-3 h-3 text-emerald-200" />
@@ -5796,15 +5802,15 @@ export const OxygenDashboardPage: React.FC = () => {
                                 )}
                                 <button 
                                   onClick={() => handleOpenPoPreview(rec)}
-                                  className="px-2 py-1 hover:bg-slate-100 text-slate-700 hover:text-slate-900 rounded-xl font-black text-[9px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1 active:scale-95 border border-slate-200"
+                                  className="px-2 py-1 hover:bg-subtle text-text-secondary hover:text-text-primary rounded-xl font-black text-[9px] uppercase tracking-wider transition-colors duration-150 flex items-center gap-1 active:scale-95 border border-border-default"
                                   title="Generate KKM PO PDF"
                                 >
-                                  <FileText className="w-3 h-3 text-slate-500" />
+                                  <FileText className="w-3 h-3 text-text-muted" />
                                   PO
                                 </button>
                                 {Number(rec.refill_amount || 0) === 0 && Number(rec.loan_amount || 0) > 0 ? (
                                   <span 
-                                    className="px-2 py-1 bg-slate-50 text-slate-400 rounded-xl font-black text-[9px] uppercase tracking-wider flex items-center gap-1 border border-slate-200 cursor-not-allowed opacity-60"
+                                    className="px-2 py-1 bg-subtle/50 text-slate-400 rounded-xl font-black text-[9px] uppercase tracking-wider flex items-center gap-1 border border-border-default cursor-not-allowed opacity-60"
                                     title={language === 'ms' ? 'Tiada KEW.PS-3 bagi bayaran caj pinjaman tanpa penerimaan fizikal' : 'KEW.PS-3 not applicable for loan fees without physical delivery'}
                                   >
                                     N/A
@@ -5812,7 +5818,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                 ) : isPending ? (
                                   <button 
                                     disabled
-                                    className="px-2 py-1 bg-slate-50 text-slate-400 rounded-xl font-black text-[9px] uppercase tracking-wider flex items-center gap-1 border border-slate-200 cursor-not-allowed opacity-50"
+                                    className="px-2 py-1 bg-subtle/50 text-slate-400 rounded-xl font-black text-[9px] uppercase tracking-wider flex items-center gap-1 border border-border-default cursor-not-allowed opacity-50"
                                     title={language === 'ms' ? 'Laporan Penerimaan (KEW.PS-3) dikunci sehingga No. DO didaftarkan' : 'Report locked until DO is registered'}
                                   >
                                     <Lock className="w-3 h-3 text-slate-400" />
@@ -5821,10 +5827,10 @@ export const OxygenDashboardPage: React.FC = () => {
                                 ) : (
                                   <button 
                                     onClick={() => handleDownloadReport(rec)}
-                                    className="px-2 py-1 hover:bg-teal-50 text-slate-700 hover:text-teal-700 rounded-xl font-black text-[9px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1 active:scale-95 border border-slate-200"
+                                    className="px-2 py-1 hover:bg-accent-base/10 text-text-secondary hover:text-teal-700 rounded-xl font-black text-[9px] uppercase tracking-wider transition-colors duration-150 flex items-center gap-1 active:scale-95 border border-border-default"
                                     title="Generate Reception Report PDF"
                                   >
-                                    <Download className="w-3 h-3 text-slate-500" />
+                                    <Download className="w-3 h-3 text-text-muted" />
                                     {language === 'ms' ? 'Laporan' : 'Report'}
                                   </button>
                                 )}
@@ -5839,7 +5845,7 @@ export const OxygenDashboardPage: React.FC = () => {
                 </div>
 
                 {/* Mobile View: High-End Native Cards (Zero Horizontal Scroll!) */}
-                <div className="md:hidden space-y-3 p-3 bg-slate-50/50">
+                <div className="md:hidden space-y-3 p-3 bg-subtle/50">
                   {(() => {
                     const filteredReceptions = dashboardVoteFilter === 'all' 
                       ? receptionsList 
@@ -5847,7 +5853,7 @@ export const OxygenDashboardPage: React.FC = () => {
                     
                     if (filteredReceptions.length === 0) {
                       return (
-                        <div className="p-8 text-center text-slate-500 text-xs font-semibold italic bg-white rounded-2xl border border-slate-200">
+                        <div className="p-8 text-center text-text-muted text-xs font-semibold italic bg-surface rounded-2xl border border-border-default">
                           {language === 'ms' 
                             ? (dashboardVoteFilter !== 'all' ? `Tiada penghantaran di bawah Kod Vot ${dashboardVoteFilter}.` : 'Tiada penghantaran log.') 
                             : (dashboardVoteFilter !== 'all' ? `No deliveries under Vote Code ${dashboardVoteFilter}.` : 'No oxygen deliveries logged yet.')}
@@ -5864,31 +5870,31 @@ export const OxygenDashboardPage: React.FC = () => {
                                         String(rec.delivery_order_no).toUpperCase().startsWith('PENDING')
 
                       return (
-                        <div key={rec.id} className="bg-white border border-slate-200/80 rounded-2xl p-4 space-y-3 shadow-xs">
+                        <div key={rec.id} className="bg-surface border border-border-default rounded-2xl p-4 space-y-3 shadow-xs">
                           {/* Header: Date + Status Badge */}
                           <div className="flex items-center justify-between gap-2">
-                            <span className="text-slate-900 font-extrabold text-sm">
+                            <span className="text-text-primary font-extrabold text-sm">
                               {new Date(rec.reception_date).toLocaleDateString('ms-MY', { day: '2-digit', month: 'short', year: 'numeric' })}
                             </span>
                             <span className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border
                               ${isPending 
-                                ? 'bg-amber-50 text-amber-800 border-amber-300' 
+                                ? 'bg-amber-500/10 text-amber-400 border border-amber-500/25' 
                                 : rec.status === 'completed' 
-                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
-                                  : 'bg-amber-50 text-amber-700 border-amber-200'}`}
+                                  ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/25' 
+                                  : 'bg-amber-500/10 text-amber-400 border border-amber-500/25'}`}
                             >
                               {isPending ? (language === 'ms' ? 'Menunggu DO' : 'Pending Delivery') : rec.status.replace('_', ' ')}
                             </span>
                           </div>
 
                           {/* DO and Vote Code */}
-                          <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+                          <div className="flex items-center justify-between gap-2 pt-1 border-t border-border-subtle">
                             <div>
-                              <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">
+                              <span className="text-[9px] text-text-secondary font-bold font-bold uppercase tracking-wider block">
                                 {language === 'ms' ? 'Pesanan Penghantaran / Invois' : 'Delivery Order / Invoice'}
                               </span>
                               {isPending ? (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 mt-0.5">
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-500/10 text-amber-700 border border-amber-500/20 mt-0.5">
                                   <Clock className="w-2.5 h-2.5 text-amber-600" />
                                   {language === 'ms' ? 'Menunggu DO' : 'Pending DO'}
                                 </span>
@@ -5898,7 +5904,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                     {rec.delivery_order_no}
                                   </span>
                                   {Number(rec.refill_amount || 0) === 0 && Number(rec.loan_amount || 0) > 0 && (
-                                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200 text-[9px] font-black tracking-wider uppercase w-max">
+                                    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-indigo-500/10 text-purple-700 border border-indigo-500/20 text-[9px] font-black tracking-wider uppercase w-max">
                                       {language === 'ms' ? 'Caj Pinjaman Sahaja' : 'Loan Only'}
                                     </span>
                                   )}
@@ -5909,10 +5915,10 @@ export const OxygenDashboardPage: React.FC = () => {
                             <button
                               type="button"
                               onClick={() => handleOpenVoteOverrideModal(rec)}
-                              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border text-[10px] font-mono font-bold transition-all active:scale-95 ${
+                              className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border text-[10px] font-mono font-bold transition-colors active:scale-95 ${
                                 (rec.vote_code || '080702').startsWith('080600')
-                                  ? 'bg-purple-50 text-purple-700 border-purple-200'
-                                  : 'bg-teal-50 text-teal-700 border-teal-200'
+                                  ? 'bg-indigo-500/10 text-purple-700 border-indigo-500/20'
+                                  : 'bg-accent-base/10 text-teal-700 border-accent-base/20'
                               }`}
                               title={language === 'ms' ? 'Kod Vot. Klik untuk tukar' : 'Vote Code. Click to override'}
                             >
@@ -5922,17 +5928,17 @@ export const OxygenDashboardPage: React.FC = () => {
                           </div>
 
                           {/* Financial 3-Col Chip Grid */}
-                          <div className="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-center">
+                          <div className="grid grid-cols-3 gap-2 bg-subtle/50 p-2.5 rounded-xl border border-border-subtle text-center">
                             <div>
-                              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                              <span className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                                 {language === 'ms' ? 'Isian Semula' : 'Refill'}
                               </span>
-                              <span className="font-semibold text-xs text-slate-800">
+                              <span className="font-semibold text-xs text-text-primary">
                                 {fmt(rec.refill_amount)}
                               </span>
                             </div>
                             <div>
-                              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                              <span className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                                 {language === 'ms' ? 'Pinjaman' : 'Loan'}
                               </span>
                               <span className="font-semibold text-xs text-purple-700">
@@ -5940,7 +5946,7 @@ export const OxygenDashboardPage: React.FC = () => {
                               </span>
                             </div>
                             <div>
-                              <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                              <span className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                                 {language === 'ms' ? 'Jumlah Kos' : 'Total'}
                               </span>
                               <span className="font-black text-xs text-slate-950">
@@ -5950,11 +5956,11 @@ export const OxygenDashboardPage: React.FC = () => {
                           </div>
 
                           {/* Actions Button Bar */}
-                          <div className="flex items-center justify-end gap-2 pt-1 border-t border-slate-100">
+                          <div className="flex items-center justify-end gap-2 pt-1 border-t border-border-subtle">
                             {isPending && (
                               <button 
                                 onClick={() => handleOpenArrivalModal(rec)}
-                                className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-1 active:scale-95 shadow-xs"
+                                className="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-[10px] uppercase tracking-wider transition-colors flex items-center justify-center gap-1 active:scale-95 shadow-xs"
                               >
                                 <CheckCircle className="w-3 h-3 text-emerald-200" />
                                 {language === 'ms' ? 'Kemas Kini DO' : 'Key In DO'}
@@ -5962,14 +5968,14 @@ export const OxygenDashboardPage: React.FC = () => {
                             )}
                             <button 
                               onClick={() => handleOpenPoPreview(rec)}
-                              className="px-3 py-2 hover:bg-slate-100 text-slate-700 rounded-xl font-black text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-1 active:scale-95 border border-slate-200"
+                              className="px-3 py-2 hover:bg-subtle text-text-secondary rounded-xl font-black text-[10px] uppercase tracking-wider transition-colors flex items-center justify-center gap-1 active:scale-95 border border-border-default"
                             >
-                              <FileText className="w-3.5 h-3.5 text-slate-500" />
+                              <FileText className="w-3.5 h-3.5 text-text-muted" />
                               PO
                             </button>
                             {Number(rec.refill_amount || 0) === 0 && Number(rec.loan_amount || 0) > 0 ? (
                               <span 
-                                className="px-3 py-2 bg-slate-50 text-slate-400 rounded-xl font-black text-[10px] uppercase tracking-wider flex items-center justify-center gap-1 border border-slate-200 opacity-60 cursor-not-allowed"
+                                className="px-3 py-2 bg-subtle/50 text-slate-400 rounded-xl font-black text-[10px] uppercase tracking-wider flex items-center justify-center gap-1 border border-border-default opacity-60 cursor-not-allowed"
                                 title={language === 'ms' ? 'Tiada KEW.PS-3 bagi bayaran caj pinjaman tanpa penerimaan fizikal' : 'KEW.PS-3 not applicable for loan fees without physical delivery'}
                               >
                                 N/A
@@ -5977,7 +5983,7 @@ export const OxygenDashboardPage: React.FC = () => {
                             ) : isPending ? (
                               <button 
                                 disabled
-                                className="px-3 py-2 bg-slate-50 text-slate-400 rounded-xl font-black text-[10px] uppercase tracking-wider flex items-center justify-center gap-1 border border-slate-200 opacity-50 cursor-not-allowed"
+                                className="px-3 py-2 bg-subtle/50 text-slate-400 rounded-xl font-black text-[10px] uppercase tracking-wider flex items-center justify-center gap-1 border border-border-default opacity-50 cursor-not-allowed"
                               >
                                 <Lock className="w-3.5 h-3.5 text-slate-400" />
                                 {language === 'ms' ? 'Laporan' : 'Report'}
@@ -5985,7 +5991,7 @@ export const OxygenDashboardPage: React.FC = () => {
                             ) : (
                               <button 
                                 onClick={() => handleDownloadReport(rec)}
-                                className="px-3 py-2 bg-teal-50 hover:bg-teal-100 text-teal-800 rounded-xl font-black text-[10px] uppercase tracking-wider transition-all flex items-center justify-center gap-1 active:scale-95 border border-teal-200"
+                                className="px-3 py-2 bg-accent-base/10 hover:bg-teal-100 text-teal-800 rounded-xl font-black text-[10px] uppercase tracking-wider transition-colors flex items-center justify-center gap-1 active:scale-95 border border-accent-base/20"
                               >
                                 <Download className="w-3.5 h-3.5 text-teal-600" />
                                 {language === 'ms' ? 'Laporan' : 'Report'}
@@ -6003,8 +6009,8 @@ export const OxygenDashboardPage: React.FC = () => {
               <>
                 {/* Desktop View: Full Table */}
                 <div className="hidden md:block overflow-x-auto">
-                  <table className="w-full border-collapse text-left text-xs text-gray-700">
-                    <thead className="bg-teal-50/70 text-[10px] font-black text-teal-900 uppercase tracking-widest border-b border-teal-100">
+                  <table className="w-full border-collapse text-left text-xs text-text-secondary">
+                    <thead className="bg-subtle text-[10px] font-black text-text-secondary uppercase tracking-widest border-b border-border-default">
                       <tr>
                         <th className="px-3.5 py-3.5 whitespace-nowrap">{language === 'ms' ? 'BULAN & REKOD' : 'MONTH & ENTRIES'}</th>
                         <th className="px-3.5 py-3.5 whitespace-nowrap">{language === 'ms' ? 'PESANAN GABUNGAN' : 'CONSOLIDATED DOs'}</th>
@@ -6016,13 +6022,13 @@ export const OxygenDashboardPage: React.FC = () => {
                         <th className="px-3.5 py-3.5 text-right whitespace-nowrap">{language === 'ms' ? 'DOKUMEN GABUNGAN' : 'CONSOLIDATED DOCS'}</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-100">
+                    <tbody className="divide-y divide-border-subtle">
                       {(() => {
                         const monthlyList = getMonthlyConsolidatedReceptions(receptionsList)
                         if (monthlyList.length === 0) {
                           return (
                             <tr>
-                              <td colSpan={8} className="px-4 py-8 text-center text-slate-600 font-semibold italic">
+                              <td colSpan={8} className="px-4 py-8 text-center text-text-muted font-semibold italic">
                                 {language === 'ms' ? 'Tiada rekod bulanan dijumpai.' : 'No monthly records found.'}
                               </td>
                             </tr>
@@ -6031,27 +6037,27 @@ export const OxygenDashboardPage: React.FC = () => {
                         const itemsPerPage = entriesPerPage
                         const paginatedMonthly = monthlyList.slice((monthlyCurrentPage - 1) * itemsPerPage, monthlyCurrentPage * itemsPerPage)
                         return paginatedMonthly.map((mRec) => (
-                          <tr key={mRec.id} className="hover:bg-teal-50/30 transition-colors">
+                          <tr key={mRec.id} className="hover:bg-subtle/50 transition-colors">
                             <td className="px-3.5 py-3 whitespace-nowrap">
                               <div className="flex flex-col gap-1">
-                                <span className="text-slate-900 font-extrabold text-sm capitalize">
+                                <span className="text-text-primary font-extrabold text-sm capitalize">
                                   {mRec.monthLabel}
                                 </span>
-                                <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-teal-50 text-teal-700 border border-teal-200/80">
+                                <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-accent-base/10 text-accent-base border border-accent-base/20">
                                   <Layers className="w-2.5 h-2.5" />
                                   {mRec.entryCount} {mRec.entryCount === 1 ? (language === 'ms' ? 'Entri' : 'Delivery') : (language === 'ms' ? 'Entri Digabung' : 'Combined Deliveries')}
                                 </span>
                                 {/* Supply-type badge: VIE Tank vs Loan Only vs Cylinder */}
                                 {mRec.is_vie_tank ? (
-                                  <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-blue-50 text-blue-700 border border-blue-200/80">
+                                  <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-sky-500/10 text-sky-400 border border-sky-500/20">
                                     💧 {language === 'ms' ? 'Tangki VIE (Cecair)' : 'VIE Bulk Liquid'}
                                   </span>
                                 ) : (Number(mRec.refill_amount || 0) === 0 && Number(mRec.loan_amount || 0) > 0) ? (
-                                  <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-purple-50 text-purple-700 border border-purple-200/80">
+                                  <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-amber-500/10 text-amber-400 border border-amber-500/20">
                                     🟣 {language === 'ms' ? 'Caj Pinjaman Sahaja' : 'Loan Charges Only'}
                                   </span>
                                 ) : (
-                                  <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-slate-50 text-slate-600 border border-slate-200/80">
+                                  <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-subtle/50 text-text-muted border border-border-default">
                                     🔵 {language === 'ms' ? 'Silinder' : 'Cylinder'}
                                   </span>
                                 )}
@@ -6063,7 +6069,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                 <span className={`font-mono font-bold text-xs truncate ${Number(mRec.refill_amount || 0) === 0 && Number(mRec.loan_amount || 0) > 0 ? 'text-purple-700' : 'text-teal-700'}`} title={mRec.delivery_order_no}>
                                   {mRec.delivery_order_no}
                                 </span>
-                                <span className="text-[10px] text-slate-500 font-semibold truncate" title={language === 'ms' ? `Menggabungkan ${mRec.entryCount} nota serahan / tuntutan` : `Aggregates ${mRec.entryCount} delivery orders / claims`}>
+                                <span className="text-[10px] text-text-muted font-semibold truncate" title={language === 'ms' ? `Menggabungkan ${mRec.entryCount} nota serahan / tuntutan` : `Aggregates ${mRec.entryCount} delivery orders / claims`}>
                                   {language === 'ms' ? `Menggabungkan ${mRec.entryCount} nota serahan / tuntutan` : `Aggregates ${mRec.entryCount} delivery orders / claims`}
                                 </span>
                               </div>
@@ -6071,17 +6077,17 @@ export const OxygenDashboardPage: React.FC = () => {
                             <td className="px-2.5 py-3 text-center whitespace-nowrap">
                               <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-black uppercase tracking-wider border ${
                                 (mRec.vote_code || '080702').startsWith('080600')
-                                  ? 'bg-purple-50 text-purple-700 border-purple-200'
-                                  : 'bg-teal-50 text-teal-700 border-teal-200'
+                                  ? 'bg-indigo-500/10 text-purple-700 border-indigo-500/20'
+                                  : 'bg-accent-base/10 text-teal-700 border-accent-base/20'
                               }`}>
                                 Vot {mRec.vote_code || '080702'}
                               </span>
                             </td>
-                            <td className="px-3 py-3 text-slate-800 font-semibold whitespace-nowrap text-xs">{fmt(mRec.refill_amount)}</td>
+                            <td className="px-3 py-3 text-text-primary font-semibold whitespace-nowrap text-xs">{fmt(mRec.refill_amount)}</td>
                             <td className="px-3 py-3 text-purple-700 font-semibold whitespace-nowrap text-xs">{fmt(mRec.loan_amount)}</td>
-                            <td className="px-3 py-3 text-slate-950 font-black text-sm whitespace-nowrap">{fmt(mRec.total_amount)}</td>
+                            <td className="px-3 py-3 text-text-primary font-mono tabular-nums font-bold text-xs whitespace-nowrap">{fmt(mRec.total_amount)}</td>
                             <td className="px-2.5 py-3 text-center whitespace-nowrap">
-                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border bg-emerald-50 text-emerald-700 border-emerald-200">
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border bg-emerald-500/10 text-emerald-400 border border-emerald-500/25">
                                 {language === 'ms' ? 'DIKONSOLIDASI' : 'CONSOLIDATED'}
                               </span>
                             </td>
@@ -6089,7 +6095,7 @@ export const OxygenDashboardPage: React.FC = () => {
                               <div className="flex items-center justify-end gap-1.5">
                                 <button 
                                   onClick={() => handleOpenPoPreview(mRec as any)}
-                                  className="px-2 py-1 bg-white hover:bg-teal-600 hover:text-white text-teal-800 rounded-xl font-black text-[9px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1 active:scale-95 border border-teal-300 shadow-sm"
+                                  className="px-2 py-1 bg-surface hover:bg-teal-600 hover:text-white text-teal-800 rounded-xl font-black text-[9px] uppercase tracking-wider transition-colors duration-150 flex items-center gap-1 active:scale-95 border border-teal-300 shadow-sm"
                                   title={language === 'ms' ? 'Jana PO Gabungan Bulanan' : 'Generate Consolidated Monthly PO PDF'}
                                 >
                                   <FileText className="w-3 h-3" />
@@ -6097,7 +6103,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                 </button>
                                 {(Number(mRec.refill_amount || 0) === 0 && Number(mRec.loan_amount || 0) > 0) ? (
                                   <span 
-                                    className="px-2 py-1 bg-slate-50 text-slate-400 rounded-xl font-black text-[9px] uppercase tracking-wider flex items-center gap-1 border border-slate-200 cursor-not-allowed opacity-60"
+                                    className="px-2 py-1 bg-subtle/50 text-slate-400 rounded-xl font-black text-[9px] uppercase tracking-wider flex items-center gap-1 border border-border-default cursor-not-allowed opacity-60"
                                     title={language === 'ms' ? 'Tiada KEW.PS-3 bagi bayaran caj pinjaman tanpa penerimaan fizikal' : 'KEW.PS-3 not applicable for loan fees without physical delivery'}
                                   >
                                     N/A
@@ -6105,7 +6111,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                 ) : (
                                   <button 
                                     onClick={() => handleDownloadReport(mRec as any)}
-                                    className="px-2 py-1 bg-teal-50 hover:bg-teal-700 hover:text-white text-teal-800 rounded-xl font-black text-[9px] uppercase tracking-wider transition-all duration-200 flex items-center gap-1 active:scale-95 border border-teal-200 shadow-sm"
+                                    className="px-2 py-1 bg-accent-base/10 hover:bg-teal-700 hover:text-white text-teal-800 rounded-xl font-black text-[9px] uppercase tracking-wider transition-colors duration-150 flex items-center gap-1 active:scale-95 border border-accent-base/20 shadow-sm"
                                     title={language === 'ms' ? 'Jana Laporan Pemeriksaan Bulanan (KEW.PS-3)' : 'Generate Consolidated Monthly Inspection Report'}
                                   >
                                     <Download className="w-3 h-3" />
@@ -6117,7 +6123,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                     setSelectedConsolidateMonthKey(mRec.monthKey)
                                     setIsMonthlyModalOpen(true)
                                   }}
-                                  className="p-1 hover:bg-slate-100 text-slate-500 hover:text-slate-800 rounded-xl transition-all border border-slate-200"
+                                  className="p-1 hover:bg-subtle text-text-muted hover:text-text-primary rounded-xl transition-colors border border-border-default"
                                   title={language === 'ms' ? 'Lihat Perincian Entri' : 'View Delivery Breakdown'}
                                 >
                                   <Eye className="w-3.5 h-3.5" />
@@ -6132,12 +6138,12 @@ export const OxygenDashboardPage: React.FC = () => {
                 </div>
 
                 {/* Mobile View: High-End Native Cards (Zero Horizontal Scroll!) */}
-                <div className="md:hidden space-y-3 p-3 bg-teal-50/20">
+                <div className="md:hidden space-y-3 p-3 bg-accent-base/10">
                   {(() => {
                     const monthlyList = getMonthlyConsolidatedReceptions(receptionsList)
                     if (monthlyList.length === 0) {
                       return (
-                        <div className="p-8 text-center text-slate-500 text-xs font-semibold italic bg-white rounded-2xl border border-slate-200">
+                        <div className="p-8 text-center text-text-muted text-xs font-semibold italic bg-surface rounded-2xl border border-border-default">
                           {language === 'ms' ? 'Tiada rekod bulanan dijumpai.' : 'No monthly records found.'}
                         </div>
                       )
@@ -6145,36 +6151,36 @@ export const OxygenDashboardPage: React.FC = () => {
                     const itemsPerPage = entriesPerPage
                     const paginatedMonthly = monthlyList.slice((monthlyCurrentPage - 1) * itemsPerPage, monthlyCurrentPage * itemsPerPage)
                     return paginatedMonthly.map((mRec) => (
-                      <div key={mRec.id} className="bg-white border border-teal-200/80 rounded-2xl p-4 space-y-3 shadow-xs">
+                      <div key={mRec.id} className="bg-surface border border-accent-base/20 rounded-2xl p-4 space-y-3 shadow-xs">
                         <div className="flex items-start justify-between gap-2">
                           <div className="flex flex-col gap-1">
-                            <span className="text-slate-900 font-extrabold text-sm capitalize">
+                            <span className="text-text-primary font-extrabold text-sm capitalize">
                               {mRec.monthLabel}
                             </span>
                             {/* Supply-type badge: VIE Tank vs Loan Only vs Cylinder */}
                             {(Number(mRec.refill_amount || 0) === 0 && Number(mRec.loan_amount || 0) > 0) ? (
-                              <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-purple-50 text-purple-700 border border-purple-200/80">
+                              <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-amber-500/10 text-amber-400 border border-amber-500/20">
                                 🟣 {language === 'ms' ? 'Caj Pinjaman Sahaja' : 'Loan Charges Only'}
                               </span>
                             ) : mRec.is_vie_tank ? (
-                              <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-blue-50 text-blue-700 border border-blue-200/80">
+                              <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-sky-500/10 text-sky-400 border border-sky-500/20">
                                 💧 {language === 'ms' ? 'Tangki VIE (Cecair)' : 'VIE Bulk Liquid'}
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-slate-50 text-slate-600 border border-slate-200/80">
+                              <span className="inline-flex items-center gap-1 w-max px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-subtle/50 text-text-muted border border-border-default">
                                 🔵 {language === 'ms' ? 'Silinder' : 'Cylinder'}
                               </span>
                             )}
                           </div>
-                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-extrabold bg-teal-50 text-teal-700 border border-teal-200">
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-extrabold bg-accent-base/10 text-teal-700 border border-accent-base/20">
                             <Layers className="w-2.5 h-2.5" />
                             {mRec.entryCount} {mRec.entryCount === 1 ? (language === 'ms' ? 'Entri' : 'Delivery') : (language === 'ms' ? 'Entri Digabung' : 'Combined')}
                           </span>
                         </div>
 
-                        <div className="flex items-center justify-between gap-2 pt-1 border-t border-slate-100">
+                        <div className="flex items-center justify-between gap-2 pt-1 border-t border-border-subtle">
                           <div className="min-w-0 flex-1">
-                            <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">
+                            <span className="text-[9px] text-text-secondary font-bold font-bold uppercase tracking-wider block">
                               {language === 'ms' ? 'DO Gabungan' : 'Consolidated DO'}
                             </span>
                             <span className="font-mono font-bold text-teal-700 text-xs truncate block" title={mRec.delivery_order_no}>
@@ -6184,24 +6190,24 @@ export const OxygenDashboardPage: React.FC = () => {
 
                           <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-mono font-black uppercase tracking-wider border flex-shrink-0 ${
                             (mRec.vote_code || '080702').startsWith('080600')
-                              ? 'bg-purple-50 text-purple-700 border-purple-200'
-                              : 'bg-teal-50 text-teal-700 border-teal-200'
+                              ? 'bg-indigo-500/10 text-purple-700 border-indigo-500/20'
+                              : 'bg-accent-base/10 text-teal-700 border-accent-base/20'
                           }`}>
                             Vot {mRec.vote_code || '080702'}
                           </span>
                         </div>
 
-                        <div className="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-center">
+                        <div className="grid grid-cols-3 gap-2 bg-subtle/50 p-2.5 rounded-xl border border-border-subtle text-center">
                           <div>
-                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                            <span className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                               {language === 'ms' ? 'Isian' : 'Refill'}
                             </span>
-                            <span className="font-semibold text-xs text-slate-800">
+                            <span className="font-semibold text-xs text-text-primary">
                               {fmt(mRec.refill_amount)}
                             </span>
                           </div>
                           <div>
-                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                            <span className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                               {language === 'ms' ? 'Pinjaman' : 'Loan'}
                             </span>
                             <span className="font-semibold text-xs text-purple-700">
@@ -6209,7 +6215,7 @@ export const OxygenDashboardPage: React.FC = () => {
                             </span>
                           </div>
                           <div>
-                            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                            <span className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                               {language === 'ms' ? 'Jumlah Kos' : 'Total'}
                             </span>
                             <span className="font-black text-xs text-slate-950">
@@ -6218,17 +6224,17 @@ export const OxygenDashboardPage: React.FC = () => {
                           </div>
                         </div>
 
-                        <div className="flex items-center justify-end gap-2 pt-1 border-t border-slate-100">
+                        <div className="flex items-center justify-end gap-2 pt-1 border-t border-border-subtle">
                           <button 
                             onClick={() => handleOpenPoPreview(mRec as any)}
-                            className="px-3 py-2 bg-white hover:bg-teal-600 hover:text-white text-teal-800 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center gap-1 active:scale-95 border border-teal-300 shadow-xs"
+                            className="px-3 py-2 bg-surface hover:bg-teal-600 hover:text-white text-teal-800 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-colors flex items-center gap-1 active:scale-95 border border-teal-300 shadow-xs"
                           >
                             <FileText className="w-3.5 h-3.5" />
                             {language === 'ms' ? 'PO Bulan' : 'Monthly PO'}
                           </button>
                           {(Number(mRec.refill_amount || 0) === 0 && Number(mRec.loan_amount || 0) > 0) ? (
                             <span 
-                              className="px-3 py-2 bg-slate-50 text-slate-400 rounded-xl font-bold text-[10px] uppercase tracking-wider flex items-center gap-1 border border-slate-200 cursor-not-allowed opacity-60"
+                              className="px-3 py-2 bg-subtle/50 text-slate-400 rounded-xl font-bold text-[10px] uppercase tracking-wider flex items-center gap-1 border border-border-default cursor-not-allowed opacity-60"
                               title={language === 'ms' ? 'Tiada KEW.PS-3 bagi bayaran caj pinjaman tanpa penerimaan fizikal' : 'KEW.PS-3 not applicable for loan fees without physical delivery'}
                             >
                               N/A
@@ -6236,7 +6242,7 @@ export const OxygenDashboardPage: React.FC = () => {
                           ) : (
                             <button 
                               onClick={() => handleDownloadReport(mRec as any)}
-                              className="px-3 py-2 bg-teal-50 hover:bg-teal-700 hover:text-white text-teal-800 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-all flex items-center gap-1 active:scale-95 border border-teal-200"
+                              className="px-3 py-2 bg-accent-base/10 hover:bg-teal-700 hover:text-white text-teal-800 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-colors flex items-center gap-1 active:scale-95 border border-accent-base/20"
                             >
                               <Download className="w-3.5 h-3.5" />
                               {language === 'ms' ? 'Laporan' : 'Report'}
@@ -6247,7 +6253,7 @@ export const OxygenDashboardPage: React.FC = () => {
                               setSelectedConsolidateMonthKey(mRec.monthKey)
                               setIsMonthlyModalOpen(true)
                             }}
-                            className="p-2 hover:bg-slate-100 text-slate-500 rounded-xl transition-all border border-slate-200"
+                            className="p-2 hover:bg-subtle text-text-muted rounded-xl transition-colors border border-border-default"
                             title={language === 'ms' ? 'Lihat Perincian' : 'View Details'}
                           >
                             <Eye className="w-4 h-4" />
@@ -6268,24 +6274,24 @@ export const OxygenDashboardPage: React.FC = () => {
                   : receptionsList.filter(r => (r.vote_code || '080702').startsWith(dashboardVoteFilter))
                 const totalPages = Math.ceil(filteredReceptions.length / entriesPerPage) || 1
                 return filteredReceptions.length > 0 && (
-                  <div className="px-5 py-3.5 border-t border-slate-100 bg-slate-50/90 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                  <div className="px-5 py-3.5 border-t border-border-subtle bg-subtle/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
                     {/* Left: Entries Info & Show [10, 20, 50] Selector */}
                     <div className="flex items-center gap-3 sm:gap-4 flex-wrap justify-center sm:justify-start">
-                      <span className="text-slate-600 font-bold">
+                      <span className="text-text-muted font-bold">
                         {language === 'ms' ? 'Menunjukkan' : 'Showing'}{' '}
-                        <span className="text-slate-900 font-black">{((currentPage - 1) * entriesPerPage) + 1}</span>{' '}
+                        <span className="text-text-primary font-black">{((currentPage - 1) * entriesPerPage) + 1}</span>{' '}
                         {language === 'ms' ? 'hingga' : 'to'}{' '}
-                        <span className="text-slate-900 font-black">{Math.min(currentPage * entriesPerPage, filteredReceptions.length)}</span>{' '}
+                        <span className="text-text-primary font-black">{Math.min(currentPage * entriesPerPage, filteredReceptions.length)}</span>{' '}
                         {language === 'ms' ? 'daripada' : 'of'}{' '}
-                        <span className="text-slate-900 font-black">{filteredReceptions.length}</span>{' '}
+                        <span className="text-text-primary font-black">{filteredReceptions.length}</span>{' '}
                         {language === 'ms' ? 'entri' : 'entries'}
                       </span>
 
-                      <div className="flex items-center gap-1.5 pl-2 sm:border-l sm:border-slate-200">
-                        <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                      <div className="flex items-center gap-1.5 pl-2 sm:border-l sm:border-border-default">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-text-muted">
                           {language === 'ms' ? 'Papar:' : 'Show:'}
                         </span>
-                        <div className="flex items-center bg-slate-200/70 p-0.5 rounded-lg border border-slate-300/50">
+                        <div className="flex items-center bg-slate-200/70 p-0.5 rounded-lg border border-border-default">
                           {[10, 20, 50].map((size) => (
                             <button
                               key={size}
@@ -6294,17 +6300,17 @@ export const OxygenDashboardPage: React.FC = () => {
                                 setEntriesPerPage(size)
                                 setCurrentPage(1)
                               }}
-                              className={`px-2 py-0.5 rounded-md text-[10px] font-black transition-all ${
+                              className={`px-2 py-0.5 rounded-md text-[10px] font-black transition-colors ${
                                 entriesPerPage === size
-                                  ? 'bg-white text-teal-800 shadow-xs'
-                                  : 'text-slate-600 hover:text-slate-900'
+                                  ? 'bg-surface text-teal-800 shadow-xs'
+                                  : 'text-text-muted hover:text-text-primary'
                               }`}
                             >
                               {size}
                             </button>
                           ))}
                         </div>
-                        <span className="text-[10px] font-semibold text-slate-500">
+                        <span className="text-[10px] font-semibold text-text-muted">
                           {language === 'ms' ? '/ hlm' : '/ page'}
                         </span>
                       </div>
@@ -6312,20 +6318,20 @@ export const OxygenDashboardPage: React.FC = () => {
 
                     {/* Right: Page Indicator & Prev/Next Buttons */}
                     <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-bold text-slate-500 mr-1">
-                        {language === 'ms' ? 'Hlm' : 'Page'} <span className="text-slate-900 font-black">{currentPage}</span> / <span className="text-slate-900 font-black">{totalPages}</span>
+                      <span className="text-[11px] font-bold text-text-muted mr-1">
+                        {language === 'ms' ? 'Hlm' : 'Page'} <span className="text-text-primary font-black">{currentPage}</span> / <span className="text-text-primary font-black">{totalPages}</span>
                       </span>
                       <button 
                         disabled={currentPage === 1}
                         onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-                        className="px-3 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed text-slate-700 rounded-xl font-bold tracking-wider uppercase text-[10px] transition-all"
+                        className="px-3 py-1.5 border border-border-default bg-surface hover:bg-subtle/50 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed text-text-secondary rounded-xl font-bold tracking-wider uppercase text-[10px] transition-colors"
                       >
                         {language === 'ms' ? 'SEBELUM' : 'PREV'}
                       </button>
                       <button 
                         disabled={currentPage * entriesPerPage >= filteredReceptions.length}
                         onClick={() => setCurrentPage(prev => prev + 1)}
-                        className="px-3 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed text-slate-700 rounded-xl font-bold tracking-wider uppercase text-[10px] transition-all"
+                        className="px-3 py-1.5 border border-border-default bg-surface hover:bg-subtle/50 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed text-text-secondary rounded-xl font-bold tracking-wider uppercase text-[10px] transition-colors"
                       >
                         {language === 'ms' ? 'SETERUS' : 'NEXT'}
                       </button>
@@ -6338,24 +6344,24 @@ export const OxygenDashboardPage: React.FC = () => {
                 const monthlyList = getMonthlyConsolidatedReceptions(receptionsList)
                 const totalPages = Math.ceil(monthlyList.length / entriesPerPage) || 1
                 return monthlyList.length > 0 && (
-                  <div className="px-5 py-3.5 border-t border-slate-100 bg-slate-50/90 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                  <div className="px-5 py-3.5 border-t border-border-subtle bg-subtle/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
                     {/* Left: Entries Info & Show [10, 20, 50] Selector */}
                     <div className="flex items-center gap-3 sm:gap-4 flex-wrap justify-center sm:justify-start">
-                      <span className="text-slate-600 font-bold">
+                      <span className="text-text-muted font-bold">
                         {language === 'ms' ? 'Menunjukkan' : 'Showing'}{' '}
-                        <span className="text-slate-900 font-black">{((monthlyCurrentPage - 1) * entriesPerPage) + 1}</span>{' '}
+                        <span className="text-text-primary font-black">{((monthlyCurrentPage - 1) * entriesPerPage) + 1}</span>{' '}
                         {language === 'ms' ? 'hingga' : 'to'}{' '}
-                        <span className="text-slate-900 font-black">{Math.min(monthlyCurrentPage * entriesPerPage, monthlyList.length)}</span>{' '}
+                        <span className="text-text-primary font-black">{Math.min(monthlyCurrentPage * entriesPerPage, monthlyList.length)}</span>{' '}
                         {language === 'ms' ? 'daripada' : 'of'}{' '}
-                        <span className="text-slate-900 font-black">{monthlyList.length}</span>{' '}
+                        <span className="text-text-primary font-black">{monthlyList.length}</span>{' '}
                         {language === 'ms' ? 'bulan' : 'months'}
                       </span>
 
-                      <div className="flex items-center gap-1.5 pl-2 sm:border-l sm:border-slate-200">
-                        <span className="text-[10px] font-black uppercase tracking-wider text-slate-500">
+                      <div className="flex items-center gap-1.5 pl-2 sm:border-l sm:border-border-default">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-text-muted">
                           {language === 'ms' ? 'Papar:' : 'Show:'}
                         </span>
-                        <div className="flex items-center bg-slate-200/70 p-0.5 rounded-lg border border-slate-300/50">
+                        <div className="flex items-center bg-slate-200/70 p-0.5 rounded-lg border border-border-default">
                           {[10, 20, 50].map((size) => (
                             <button
                               key={size}
@@ -6364,17 +6370,17 @@ export const OxygenDashboardPage: React.FC = () => {
                                 setEntriesPerPage(size)
                                 setMonthlyCurrentPage(1)
                               }}
-                              className={`px-2 py-0.5 rounded-md text-[10px] font-black transition-all ${
+                              className={`px-2 py-0.5 rounded-md text-[10px] font-black transition-colors ${
                                 entriesPerPage === size
-                                  ? 'bg-white text-teal-800 shadow-xs'
-                                  : 'text-slate-600 hover:text-slate-900'
+                                  ? 'bg-surface text-teal-800 shadow-xs'
+                                  : 'text-text-muted hover:text-text-primary'
                               }`}
                             >
                               {size}
                             </button>
                           ))}
                         </div>
-                        <span className="text-[10px] font-semibold text-slate-500">
+                        <span className="text-[10px] font-semibold text-text-muted">
                           {language === 'ms' ? '/ hlm' : '/ page'}
                         </span>
                       </div>
@@ -6382,20 +6388,20 @@ export const OxygenDashboardPage: React.FC = () => {
 
                     {/* Right: Page Indicator & Prev/Next Buttons */}
                     <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-bold text-slate-500 mr-1">
-                        {language === 'ms' ? 'Hlm' : 'Page'} <span className="text-slate-900 font-black">{monthlyCurrentPage}</span> / <span className="text-slate-900 font-black">{totalPages}</span>
+                      <span className="text-[11px] font-bold text-text-muted mr-1">
+                        {language === 'ms' ? 'Hlm' : 'Page'} <span className="text-text-primary font-black">{monthlyCurrentPage}</span> / <span className="text-text-primary font-black">{totalPages}</span>
                       </span>
                       <button 
                         disabled={monthlyCurrentPage === 1}
                         onClick={() => setMonthlyCurrentPage(prev => Math.max(1, prev - 1))}
-                        className="px-3 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed text-slate-700 rounded-xl font-bold tracking-wider uppercase text-[10px] transition-all"
+                        className="px-3 py-1.5 border border-border-default bg-surface hover:bg-subtle/50 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed text-text-secondary rounded-xl font-bold tracking-wider uppercase text-[10px] transition-colors"
                       >
                         {language === 'ms' ? 'SEBELUM' : 'PREV'}
                       </button>
                       <button 
                         disabled={monthlyCurrentPage * entriesPerPage >= monthlyList.length}
                         onClick={() => setMonthlyCurrentPage(prev => prev + 1)}
-                        className="px-3 py-1.5 border border-slate-200 bg-white hover:bg-slate-50 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed text-slate-700 rounded-xl font-bold tracking-wider uppercase text-[10px] transition-all"
+                        className="px-3 py-1.5 border border-border-default bg-surface hover:bg-subtle/50 active:scale-95 disabled:opacity-40 disabled:cursor-not-allowed text-text-secondary rounded-xl font-bold tracking-wider uppercase text-[10px] transition-colors"
                       >
                         {language === 'ms' ? 'SETERUS' : 'NEXT'}
                       </button>
@@ -6406,19 +6412,20 @@ export const OxygenDashboardPage: React.FC = () => {
             )}
           </div>
 
-          {/* RIGHT SIDE: SIDEBAR WIDGETS (Compact width so table doesn't need horizontal scroll) */}
-          <div className="w-full lg:w-[260px] xl:w-[280px] shrink-0 space-y-6">
+          {/* RIGHT SIDE: SIDEBAR WIDGETS (Collapsible Drawer with Modern Depth standard) */}
+          {isRightSidebarOpen && (
+          <div className="w-full lg:w-[280px] xl:w-[300px] shrink-0 space-y-5 transition-[transform,opacity] duration-200">
             
             {/* Widget A: Active Pricing Matrix config list */}
-            <div className="bg-white border border-slate-200/90 rounded-xl p-4 sm:p-5 shadow-2xs">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-3.5 gap-2">
+            <div className="bg-surface border border-border-default rounded-xl p-4 sm:p-5 shadow-elevation-1">
+              <div className="flex items-center justify-between border-b border-border-subtle pb-3 mb-3.5 gap-2">
                 <div className="min-w-0 flex-1">
-                  <h4 className="text-xs font-bold text-slate-900 uppercase tracking-wider truncate">{language === 'ms' ? 'Harga Silinder' : 'Active Cylinder Prices'}</h4>
-                  <p className="text-[10px] text-slate-500 font-medium truncate">{language === 'ms' ? 'Kos isian standard' : 'Standard refill costs'}</p>
+                  <h4 className="text-xs font-bold text-text-primary uppercase tracking-wider truncate">{language === 'ms' ? 'Harga Silinder' : 'Active Cylinder Prices'}</h4>
+                  <p className="text-[10px] text-text-muted font-medium truncate">{language === 'ms' ? 'Kos isian standard' : 'Standard refill costs'}</p>
                 </div>
                 <button 
                   onClick={() => setIsPricingModalOpen(true)}
-                  className="px-2.5 py-1 bg-sky-50 hover:bg-sky-100 text-[#0284c7] rounded-lg text-[10px] font-bold tracking-wider transition-all flex items-center gap-1 active:scale-95 border border-sky-100 shrink-0 cursor-pointer"
+                  className="px-2.5 py-1 bg-accent-base/10 hover:bg-accent-base/20 text-accent-base rounded-lg text-[10px] font-bold tracking-wider transition-colors flex items-center gap-1 active:scale-95 border border-accent-base/20 shrink-0 cursor-pointer"
                 >
                   <DollarSign className="w-3.5 h-3.5" />
                   {language === 'ms' ? 'LARAS' : 'ADJUST'}
@@ -6430,7 +6437,7 @@ export const OxygenDashboardPage: React.FC = () => {
                 <select
                   value={selectedPricingSupplier}
                   onChange={(e) => setSelectedPricingSupplier(e.target.value)}
-                  className="w-full text-[11px] font-semibold bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-slate-700 outline-none focus:border-sky-500 transition-all cursor-pointer"
+                  className="w-full text-[11px] font-semibold bg-subtle/50 border border-border-default rounded-lg px-2 py-1.5 text-text-secondary outline-none focus:border-sky-500 transition-colors cursor-pointer"
                 >
                   <option value="All Suppliers">{language === 'ms' ? 'Semua Pembekal' : 'All Suppliers'}</option>
                   {realSupplierOptions.map((sup) => (
@@ -6457,19 +6464,19 @@ export const OxygenDashboardPage: React.FC = () => {
                                     config.cylinder_size_code.toLowerCase().includes('m3') ||
                                     config.cylinder_size_code.toLowerCase().includes('m³')
                     return (
-                      <div key={config.id} className="flex items-center justify-between py-2 border-b border-slate-100 hover:bg-slate-50 px-2 rounded-lg transition-colors gap-2">
+                      <div key={config.id} className="flex items-center justify-between py-2 border-b border-border-subtle hover:bg-subtle/50 px-2 rounded-lg transition-colors gap-2">
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-1.5 flex-wrap">
-                            <span className="text-xs font-bold text-slate-800 tracking-tight block">{config.cylinder_size_code}</span>
+                            <span className="text-xs font-bold text-text-primary tracking-tight block">{config.cylinder_size_code}</span>
                             {isPerM3 && (
-                              <span className="px-1.5 py-0.5 bg-teal-50 border border-teal-200 text-teal-700 text-[8px] font-black rounded uppercase">
+                              <span className="px-1.5 py-0.5 bg-accent-base/10 border border-accent-base/20 text-teal-700 text-[8px] font-black rounded uppercase">
                                 VIE Tank
                               </span>
                             )}
                           </div>
-                          <span className="text-[9px] text-slate-500 font-bold truncate block" title={config.supplier_name || lindeDisplayName}>{config.supplier_name || lindeDisplayName}</span>
+                          <span className="text-[9px] text-text-muted font-bold truncate block" title={config.supplier_name || lindeDisplayName}>{config.supplier_name || lindeDisplayName}</span>
                         </div>
-                        <span className="font-mono text-xs font-extrabold text-slate-900 shrink-0 whitespace-nowrap">
+                        <span className="font-mono text-xs font-extrabold text-text-primary shrink-0 whitespace-nowrap">
                           RM {config.refill_price.toFixed(2)}{isPerM3 ? ' / m³' : ''}
                         </span>
                       </div>
@@ -6483,9 +6490,9 @@ export const OxygenDashboardPage: React.FC = () => {
 
                   if (loanConfigs.length > 0) {
                     return loanConfigs.map((config) => (
-                      <div key={`loan-${config.id}`} className="flex items-center justify-between py-2 border-t border-purple-100 hover:bg-purple-50 px-2 rounded-lg transition-colors mt-1 bg-purple-50/60 gap-2">
-                        <span className="text-[11px] font-black text-purple-700 tracking-tight uppercase truncate">{config.cylinder_size_code} {language === 'ms' ? 'Kadar Pinjam' : 'Loan Rate'}</span>
-                        <span className="font-mono text-xs font-black text-purple-700 shrink-0 whitespace-nowrap">
+                      <div key={`loan-${config.id}`} className="flex items-center justify-between py-2 border-t border-border-subtle hover:bg-subtle/50 px-2 rounded-lg transition-colors mt-1 bg-subtle/40 gap-2">
+                        <span className="text-[11px] font-bold text-text-secondary tracking-tight uppercase truncate">{config.cylinder_size_code} {language === 'ms' ? 'Kadar Pinjam' : 'Loan Rate'}</span>
+                        <span className="font-mono text-xs font-bold text-text-primary shrink-0 whitespace-nowrap">
                           RM {Number(config.loan_rate).toFixed(2)}
                         </span>
                       </div>
@@ -6493,7 +6500,7 @@ export const OxygenDashboardPage: React.FC = () => {
                   }
 
                   return (
-                    <div className="flex items-center justify-between py-2 border-t border-slate-100 hover:bg-slate-50 px-2 rounded-lg transition-colors mt-1 bg-slate-50 gap-2">
+                    <div className="flex items-center justify-between py-2 border-t border-border-subtle hover:bg-subtle/50 px-2 rounded-lg transition-colors mt-1 bg-subtle/50 gap-2">
                       <span className="text-[11px] font-black text-purple-700 tracking-tight uppercase truncate">{language === 'ms' ? 'Kadar Pinjam Silinder' : 'Cylinder Loan Rate'}</span>
                       <span className="font-mono text-xs font-black text-purple-700 shrink-0 whitespace-nowrap">
                         RM {(systemSettings?.loan_cylinder_rate || 18.36).toFixed(2)}
@@ -6514,13 +6521,9 @@ export const OxygenDashboardPage: React.FC = () => {
               const isOverBudget = totalSpending > allocation
 
               return (
-                <div className={`border rounded-xl p-4 sm:p-5 shadow-2xs relative overflow-hidden transition-all duration-300
-                  ${isOverBudget 
-                    ? 'bg-rose-50/60 border-rose-200' 
-                    : 'bg-emerald-50/50 border-emerald-200/90'}`}
+                <div className="bg-surface border border-border-default rounded-xl p-4 sm:p-5 shadow-elevation-1 relative overflow-hidden transition-colors duration-150"
                 >
-                  <div className={`flex items-center gap-2 font-bold text-xs uppercase tracking-wider mb-2.5
-                    ${isOverBudget ? 'text-rose-700' : 'text-emerald-700'}`}
+                  <div className={`flex items-center gap-2 font-bold text-xs uppercase tracking-wider mb-2.5 ${isOverBudget ? 'text-rose-400' : 'text-emerald-400'}`}
                   >
                     {isOverBudget ? (
                       <>
@@ -6529,12 +6532,12 @@ export const OxygenDashboardPage: React.FC = () => {
                       </>
                     ) : (
                       <>
-                        <CheckCircle className="w-4 h-4 text-emerald-500 animate-pulse" />
+                        <CheckCircle className="w-4 h-4 text-emerald-400" />
                         <span>{language === 'ms' ? 'Waran Kerajaan Sihat' : 'Government Warrant Healthy'}</span>
                       </>
                     )}
                   </div>
-                  <p className={`text-[10.5px] font-semibold leading-relaxed ${isOverBudget ? 'text-rose-700' : 'text-emerald-800'}`}>
+                  <p className="text-[11px] font-medium leading-relaxed text-text-secondary">
                     {isOverBudget ? (
                       <>
                         {language === 'ms' 
@@ -6556,9 +6559,9 @@ export const OxygenDashboardPage: React.FC = () => {
                       <span>{isOverBudget ? (language === 'ms' ? 'HAD WARAN MELEBIHI' : 'WARRANT CAP EXCEEDED') : (language === 'ms' ? 'PENGGUNAAN BAJET SELAMAT' : 'SAFE BUDGET UTILIZATION')}</span>
                       <span>{percentage.toFixed(1)}%</span>
                     </div>
-                    <div className={`w-full rounded-full h-2 overflow-hidden shadow-inner ${isOverBudget ? 'bg-rose-100' : 'bg-emerald-100'}`}>
+                    <div className="w-full rounded-full h-1.5 overflow-hidden bg-subtle border border-border-default/50">
                       <div 
-                        className={`h-full rounded-full transition-all duration-500 ${isOverBudget ? 'bg-rose-500 animate-pulse' : 'bg-emerald-500'}`} 
+                        className={`h-full rounded-full transition-colors duration-500 ${isOverBudget ? 'bg-rose-500 animate-pulse' : 'bg-emerald-500'}`} 
                         style={{ width: `${Math.min(percentage, 100)}%` }}
                       ></div>
                     </div>
@@ -6570,16 +6573,17 @@ export const OxygenDashboardPage: React.FC = () => {
             {/* Sidebar content end */}
             
           </div>
+          )}
         </div>
 
         {/* Real Cylinder Live List Table (Audited mini list) */}
-        <div className="bg-white border border-slate-200/90 rounded-xl shadow-2xs overflow-hidden mt-6">
-          <div className="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+        <div className="bg-surface border border-border-default rounded-xl shadow-elevation-1 overflow-hidden mt-6">
+          <div className="px-6 py-5 border-b border-border-subtle flex items-center justify-between bg-subtle/50">
             <div>
-              <h2 className="text-sm font-bold text-slate-900">{language === 'ms' ? 'Daftar Silinder' : 'Cylinder Registry (Top 10 Live Inventory)'}</h2>
-              <p className="text-[11px] text-slate-600 font-semibold mt-0.5">{language === 'ms' ? 'Katalog terperinci semua silinder oksigen perubatan aktif daripada Supabase.' : 'Detailed catalog of all active medical oxygen cylinders from Supabase.'}</p>
+              <h2 className="text-sm font-bold text-text-primary">{language === 'ms' ? 'Daftar Silinder' : 'Cylinder Registry (Top 10 Live Inventory)'}</h2>
+              <p className="text-[11px] text-text-muted font-semibold mt-0.5">{language === 'ms' ? 'Katalog terperinci semua silinder oksigen perubatan aktif daripada Supabase.' : 'Detailed catalog of all active medical oxygen cylinders from Supabase.'}</p>
             </div>
-            <span className="px-3 py-1 bg-slate-100 text-slate-700 border border-slate-200 rounded-full text-[9px] font-black tracking-wider uppercase">Live Database</span>
+            <span className="px-3 py-1 bg-subtle text-text-secondary border border-border-default rounded-full text-[9px] font-black tracking-wider uppercase">Live Database</span>
           </div>
           <Table
             data={cylinders.slice(0, 10)}
@@ -6607,7 +6611,7 @@ export const OxygenDashboardPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleRefreshInventoryData}
-                className="sm:hidden px-2.5 py-1.5 text-xs font-semibold bg-surface border border-border-default text-text-primary rounded-lg hover:bg-subtle transition-all flex items-center gap-1.5 shadow-sm shrink-0"
+                className="sm:hidden px-2.5 py-1.5 text-xs font-semibold bg-surface border border-border-default text-text-primary rounded-lg hover:bg-subtle transition-colors flex items-center gap-1.5 shadow-sm shrink-0"
                 title={language === 'ms' ? 'Segar Semula' : 'Refresh'}
               >
                 <RefreshCw className="w-3.5 h-3.5 text-text-muted" />
@@ -6630,7 +6634,7 @@ export const OxygenDashboardPage: React.FC = () => {
                 setUnitModalLockMode(true)
                 setIsUnitModalOpen(true)
               }}
-              className="px-4 py-2.5 text-xs sm:text-sm font-bold bg-[#00a68a] hover:bg-[#008f76] text-white rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20 focus:outline-none cursor-pointer"
+              className="px-4 py-2.5 text-xs sm:text-sm font-bold bg-[#00a68a] hover:bg-accent-base text-white rounded-xl transition-colors flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20 focus:outline-none cursor-pointer"
             >
               <Plus className="w-4 h-4" />
               {language === 'ms' ? 'Mohon Silinder (Intra-Facility)' : 'Request Cylinders (Intra-Facility)'}
@@ -6648,7 +6652,7 @@ export const OxygenDashboardPage: React.FC = () => {
                   setIsIntraFacilityDropdownOpen(!isIntraFacilityDropdownOpen)
                   setIsInterFacilityDropdownOpen(false)
                 }}
-                className="px-4 py-2.5 text-xs sm:text-sm font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20 focus:outline-none cursor-pointer"
+                className="px-4 py-2.5 text-xs sm:text-sm font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-colors flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20 focus:outline-none cursor-pointer"
               >
                 <Building2 className="w-4 h-4" />
                 <span>{language === 'ms' ? 'Intra-Facility' : 'Intra-Facility'}</span>
@@ -6662,14 +6666,14 @@ export const OxygenDashboardPage: React.FC = () => {
                     onClick={() => setIsIntraFacilityDropdownOpen(false)}
                   />
                   <div 
-                    className="absolute right-0 sm:left-0 sm:right-auto mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200 py-1.5 z-40 animate-fade-in divide-y divide-slate-100"
+                    className="absolute right-0 sm:left-0 sm:right-auto mt-2 w-72 bg-surface rounded-2xl shadow-2xl border border-border-default py-1.5 z-40 animate-fade-in divide-y divide-border-subtle"
                     onClick={() => setIsIntraFacilityDropdownOpen(false)}
                   >
-                    <div className="px-4 py-2.5 bg-slate-50/80">
-                      <div className="text-[10px] font-black uppercase tracking-wider text-emerald-800">
+                    <div className="px-4 py-2.5 bg-subtle/50">
+                      <div className="text-[10px] font-black uppercase tracking-wider text-emerald-400">
                         {language === 'ms' ? 'Operasi Intra-Facility (Dalaman)' : 'Intra-Facility Operations'}
                       </div>
-                      <div className="text-[11px] text-slate-500 font-medium mt-0.5">
+                      <div className="text-[11px] text-text-muted font-medium mt-0.5">
                         {language === 'ms' ? 'Pergerakan silinder dalam fasiliti / wad' : 'Internal hospital & ward movements'}
                       </div>
                     </div>
@@ -6682,17 +6686,17 @@ export const OxygenDashboardPage: React.FC = () => {
                           setUnitModalLockMode(false)
                           setIsUnitModalOpen(true)
                         }}
-                        className="w-full px-3.5 py-2.5 text-left text-xs font-bold text-slate-800 hover:bg-emerald-50 rounded-xl flex items-center gap-3 transition-colors cursor-pointer group"
+                        className="w-full px-3.5 py-2.5 text-left text-xs font-bold text-text-primary hover:bg-emerald-500/10 rounded-xl flex items-center gap-3 transition-colors cursor-pointer group"
                       >
                         <div className="p-2 bg-emerald-100 text-emerald-700 rounded-lg group-hover:bg-emerald-600 group-hover:text-white transition-colors">
                           <FileText className="w-4 h-4" />
                         </div>
                         <div className="flex-1">
-                          <div className="font-extrabold text-slate-900 flex items-center gap-1.5">
+                          <div className="font-extrabold text-text-primary flex items-center gap-1.5">
                             {language === 'ms' ? 'Mohon Silinder' : 'Request Cylinders'}
                             <span className="text-[10px] font-bold bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded">Request</span>
                           </div>
-                          <div className="text-[10px] text-slate-500 font-medium mt-0.5">
+                          <div className="text-[10px] text-text-muted font-medium mt-0.5">
                             {language === 'ms' ? 'Borang pesanan silinder wad / unit' : 'Internal ward & unit order form'}
                           </div>
                         </div>
@@ -6702,17 +6706,17 @@ export const OxygenDashboardPage: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => setIsManualModalOpen(true)}
-                          className="w-full px-3.5 py-2.5 text-left text-xs font-bold text-slate-800 hover:bg-teal-50 rounded-xl flex items-center gap-3 transition-colors cursor-pointer group"
+                          className="w-full px-3.5 py-2.5 text-left text-xs font-bold text-text-primary hover:bg-accent-base/10 rounded-xl flex items-center gap-3 transition-colors cursor-pointer group"
                         >
                           <div className="p-2 bg-teal-100 text-teal-700 rounded-lg group-hover:bg-teal-600 group-hover:text-white transition-colors">
                             <Plus className="w-4 h-4" />
                           </div>
                           <div className="flex-1">
-                            <div className="font-extrabold text-slate-900 flex items-center gap-1.5">
+                            <div className="font-extrabold text-text-primary flex items-center gap-1.5">
                               Manual Dispatch
                               <span className="text-[10px] font-bold bg-teal-100 text-teal-700 px-1.5 py-0.5 rounded">Dispatch</span>
                             </div>
-                            <div className="text-[10px] text-slate-500 font-medium mt-0.5">
+                            <div className="text-[10px] text-text-muted font-medium mt-0.5">
                               {language === 'ms' ? 'Keluarkan silinder secara terus ke wad' : 'Direct manual issue of cylinders to unit'}
                             </div>
                           </div>
@@ -6732,7 +6736,7 @@ export const OxygenDashboardPage: React.FC = () => {
                   setIsInterFacilityDropdownOpen(!isInterFacilityDropdownOpen)
                   setIsIntraFacilityDropdownOpen(false)
                 }}
-                className="px-4 py-2.5 text-xs sm:text-sm font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl transition-all flex items-center justify-center gap-2 shadow-md shadow-indigo-600/20 focus:outline-none cursor-pointer"
+                className="px-4 py-2.5 text-xs sm:text-sm font-bold bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl transition-colors flex items-center justify-center gap-2 shadow-md shadow-indigo-600/20 focus:outline-none cursor-pointer"
               >
                 <Share2 className="w-4 h-4" />
                 <span>{language === 'ms' ? 'Inter-Facility' : 'Inter-Facility'}</span>
@@ -6746,14 +6750,14 @@ export const OxygenDashboardPage: React.FC = () => {
                     onClick={() => setIsInterFacilityDropdownOpen(false)}
                   />
                   <div 
-                    className="absolute right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl border border-slate-200 py-1.5 z-40 animate-fade-in divide-y divide-slate-100"
+                    className="absolute right-0 mt-2 w-72 bg-surface rounded-2xl shadow-2xl border border-border-default py-1.5 z-40 animate-fade-in divide-y divide-border-subtle"
                     onClick={() => setIsInterFacilityDropdownOpen(false)}
                   >
-                    <div className="px-4 py-2.5 bg-slate-50/80">
-                      <div className="text-[10px] font-black uppercase tracking-wider text-indigo-800">
+                    <div className="px-4 py-2.5 bg-subtle/50">
+                      <div className="text-[10px] font-black uppercase tracking-wider text-indigo-400">
                         {language === 'ms' ? 'Operasi Inter-Facility (Fasiliti Luar)' : 'Inter-Facility Operations'}
                       </div>
-                      <div className="text-[11px] text-slate-500 font-medium mt-0.5">
+                      <div className="text-[11px] text-text-muted font-medium mt-0.5">
                         {language === 'ms' ? 'Pindahan silinder antara KK / hospital luar' : 'Transfers with external clinics & hospitals'}
                       </div>
                     </div>
@@ -6767,17 +6771,17 @@ export const OxygenDashboardPage: React.FC = () => {
                           setUnitModalLockMode(false)
                           setIsUnitModalOpen(true)
                         }}
-                        className="w-full px-3.5 py-2.5 text-left text-xs font-bold text-slate-800 hover:bg-blue-50 rounded-xl flex items-center gap-3 transition-colors cursor-pointer group"
+                        className="w-full px-3.5 py-2.5 text-left text-xs font-bold text-text-primary hover:bg-blue-500/10 rounded-xl flex items-center gap-3 transition-colors cursor-pointer group"
                       >
                         <div className="p-2 bg-blue-100 text-blue-700 rounded-lg group-hover:bg-blue-600 group-hover:text-white transition-colors">
                           <FileText className="w-4 h-4" />
                         </div>
                         <div className="flex-1">
-                          <div className="font-extrabold text-slate-900 flex items-center gap-1.5">
+                          <div className="font-extrabold text-text-primary flex items-center gap-1.5">
                             {language === 'ms' ? 'Mohon Silinder' : 'Request Cylinders'}
                             <span className="text-[10px] font-bold bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">Request</span>
                           </div>
-                          <div className="text-[10px] text-slate-500 font-medium mt-0.5">
+                          <div className="text-[10px] text-text-muted font-medium mt-0.5">
                             {language === 'ms' ? 'Pesanan silinder ke fasiliti luar' : 'Create indent to external facility'}
                           </div>
                         </div>
@@ -6787,17 +6791,17 @@ export const OxygenDashboardPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setIsReceiveInterFacilityModalOpen(true)}
-                        className="w-full px-3.5 py-2.5 text-left text-xs font-bold text-slate-800 hover:bg-indigo-50 rounded-xl flex items-center gap-3 transition-colors cursor-pointer group"
+                        className="w-full px-3.5 py-2.5 text-left text-xs font-bold text-text-primary hover:bg-indigo-500/10 rounded-xl flex items-center gap-3 transition-colors cursor-pointer group"
                       >
                         <div className="p-2 bg-indigo-100 text-indigo-700 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-colors">
                           <ArrowDownToLine className="w-4 h-4" />
                         </div>
                         <div className="flex-1">
-                          <div className="font-extrabold text-slate-900 flex items-center gap-1.5">
+                          <div className="font-extrabold text-text-primary flex items-center gap-1.5">
                             {language === 'ms' ? 'Terima Silinder' : 'Receive Cylinders'}
                             <span className="text-[10px] font-bold bg-indigo-100 text-indigo-700 px-1.5 py-0.5 rounded">Receive</span>
                           </div>
-                          <div className="text-[10px] text-slate-500 font-medium mt-0.5">
+                          <div className="text-[10px] text-text-muted font-medium mt-0.5">
                             {language === 'ms' ? 'Rekod penerimaan silinder masuk' : 'Record incoming transfer receipt'}
                           </div>
                         </div>
@@ -6807,17 +6811,17 @@ export const OxygenDashboardPage: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => setIsReturnInterFacilityModalOpen(true)}
-                        className="w-full px-3.5 py-2.5 text-left text-xs font-bold text-slate-800 hover:bg-purple-50 rounded-xl flex items-center gap-3 transition-colors cursor-pointer group"
+                        className="w-full px-3.5 py-2.5 text-left text-xs font-bold text-text-primary hover:bg-indigo-500/10 rounded-xl flex items-center gap-3 transition-colors cursor-pointer group"
                       >
                         <div className="p-2 bg-purple-100 text-purple-700 rounded-lg group-hover:bg-purple-600 group-hover:text-white transition-colors">
                           <ArrowUpFromLine className="w-4 h-4" />
                         </div>
                         <div className="flex-1">
-                          <div className="font-extrabold text-slate-900 flex items-center gap-1.5">
+                          <div className="font-extrabold text-text-primary flex items-center gap-1.5">
                             {language === 'ms' ? 'Pulang Silinder' : 'Return Cylinders'}
                             <span className="text-[10px] font-bold bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded">Return</span>
                           </div>
-                          <div className="text-[10px] text-slate-500 font-medium mt-0.5">
+                          <div className="text-[10px] text-text-muted font-medium mt-0.5">
                             {language === 'ms' ? 'Pulang silinder kosong / pinjaman' : 'Return empty or loaned cylinders'}
                           </div>
                         </div>
@@ -6833,7 +6837,7 @@ export const OxygenDashboardPage: React.FC = () => {
         {currentPath === '/pharmacy/oxygen/cylinders' && (
           <button
             onClick={handleRefreshInventoryData}
-            className="hidden sm:flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs sm:text-sm font-semibold bg-surface border border-border-default text-text-primary rounded-lg hover:bg-subtle transition-all shadow-sm focus:outline-none shrink-0 cursor-pointer"
+            className="hidden sm:flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs sm:text-sm font-semibold bg-surface border border-border-default text-text-primary rounded-lg hover:bg-subtle transition-colors shadow-sm focus:outline-none shrink-0 cursor-pointer"
           >
             <RefreshCw className="w-4 h-4 text-text-muted" />
             <span>{language === 'ms' ? 'Segar Semula' : 'Refresh'}</span>
@@ -6844,7 +6848,7 @@ export const OxygenDashboardPage: React.FC = () => {
           <div className="flex bg-subtle p-1 rounded-xl border border-border-default shadow-xs">
             <button
               onClick={() => setQrActiveTab('generate')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
                 qrActiveTab === 'generate'
                   ? 'bg-surface text-text-primary shadow-sm'
                   : 'text-text-muted hover:text-text-primary'
@@ -6854,7 +6858,7 @@ export const OxygenDashboardPage: React.FC = () => {
             </button>
             <button
               onClick={() => setQrActiveTab('monitor')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
                 qrActiveTab === 'monitor'
                   ? 'bg-surface text-text-primary shadow-sm'
                   : 'text-text-muted hover:text-text-primary'
@@ -6869,7 +6873,7 @@ export const OxygenDashboardPage: React.FC = () => {
           <div className="flex gap-2">
             <button 
               onClick={() => setIsAuditScanOpen(true)}
-              className="px-3.5 py-2 bg-surface hover:bg-subtle border border-border-default text-text-primary rounded-lg text-xs font-semibold transition-all shadow-sm flex items-center gap-1.5 focus:outline-none"
+              className="px-3.5 py-2 bg-surface hover:bg-subtle border border-border-default text-text-primary rounded-lg text-xs font-semibold transition-colors shadow-sm flex items-center gap-1.5 focus:outline-none"
             >
               <QrCode className="w-4 h-4 text-text-muted" />
               Scan QR Code
@@ -6877,7 +6881,7 @@ export const OxygenDashboardPage: React.FC = () => {
             <button 
               onClick={handleOpenAuditReview}
               disabled={isSavingReconciliation}
-              className="px-3.5 py-2 bg-accent-base hover:bg-accent-hover disabled:bg-subtle text-white disabled:text-text-muted rounded-lg text-xs font-semibold transition-all shadow-sm flex items-center gap-1.5 focus:outline-none cursor-pointer"
+              className="px-3.5 py-2 bg-accent-base hover:bg-accent-hover disabled:bg-subtle text-white disabled:text-text-muted rounded-lg text-xs font-semibold transition-colors shadow-sm flex items-center gap-1.5 focus:outline-none cursor-pointer"
             >
               <RefreshCw className={`w-4 h-4 ${isSavingReconciliation ? 'animate-spin' : ''}`} />
               {isSavingReconciliation ? 'Saving Audit...' : 'Save Reconciliation Audit'}
@@ -6894,7 +6898,7 @@ export const OxygenDashboardPage: React.FC = () => {
           <Spinner size="lg" />
         </div>
       ) : (error && (typeof navigator === 'undefined' || navigator.onLine)) ? (
-        <div className="flex items-start gap-3 rounded-2xl border border-rose-200 bg-rose-50 p-5 text-sm text-rose-700 shadow-sm">
+        <div className="flex items-start gap-3 rounded-2xl border border-rose-500/20 bg-rose-500/10 p-5 text-sm text-rose-700 shadow-sm">
           <AlertTriangle className="w-5 h-5 flex-shrink-0 text-rose-500" />
           <div>
             <p className="font-bold">Failed to load oxygen data</p>
@@ -6910,7 +6914,7 @@ export const OxygenDashboardPage: React.FC = () => {
          ======================================================== */}
       {isPricingModalOpen && (
         <div 
-          className="fixed inset-0 z-50 flex justify-end bg-slate-900/50 backdrop-blur-xs transition-all duration-300"
+          className="fixed inset-0 z-50 flex justify-end bg-slate-900/50 backdrop-blur-xs transition-colors duration-150"
           onClick={() => setIsPricingModalOpen(false)}
         >
           {/* Injected style tag for premium slide-in animation */}
@@ -6922,19 +6926,19 @@ export const OxygenDashboardPage: React.FC = () => {
           `}</style>
           
           <div 
-            className="bg-white text-slate-800 w-full max-w-5xl md:max-w-5xl lg:max-w-6xl xl:max-w-7xl h-full shadow-2xl border-l border-slate-200 flex flex-col p-6 md:p-8 overflow-hidden relative"
+            className="bg-surface text-text-primary w-full max-w-5xl md:max-w-5xl lg:max-w-6xl xl:max-w-7xl h-full shadow-2xl border-l border-border-default flex flex-col p-6 md:p-8 overflow-hidden relative"
             style={{ animation: 'slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-5 flex-shrink-0">
+            <div className="flex items-center justify-between border-b border-border-subtle pb-4 mb-5 flex-shrink-0">
               <div>
                 <span className="text-[10px] font-black text-teal-700 uppercase tracking-widest block mb-0.5">Bahagian Perolehan & Logistik</span>
-                <h3 className="text-base font-extrabold text-slate-900 tracking-tight">Set Cylinder Refill Prices</h3>
-                <p className="text-xs text-slate-500 mt-0.5">Configure official standard warrant refill rates per cylinder capacity index.</p>
+                <h3 className="text-base font-extrabold text-text-primary tracking-tight">Set Cylinder Refill Prices</h3>
+                <p className="text-xs text-text-muted mt-0.5">Configure official standard warrant refill rates per cylinder capacity index.</p>
               </div>
               <button 
                 onClick={() => setIsPricingModalOpen(false)}
-                className="p-1.5 hover:bg-slate-100 text-slate-400 hover:text-slate-700 rounded-lg transition-all"
+                className="p-1.5 hover:bg-subtle text-slate-400 hover:text-text-secondary rounded-lg transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -6962,9 +6966,9 @@ export const OxygenDashboardPage: React.FC = () => {
                       return (
                         <div 
                           key={sizeCode} 
-                          className={`flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-slate-50/50 border border-slate-200/80 hover:bg-white hover:border-slate-350 rounded-xl hover:shadow-sm transition-all duration-200 gap-4 ${
-                            isLoanCyl ? 'xl:col-span-2 bg-purple-50/20 border-purple-200/60 hover:border-l-4 hover:border-l-purple-500' : 
-                            isPerM3 ? 'xl:col-span-2 bg-teal-50/20 border-teal-200/60 hover:border-l-4 hover:border-l-teal-500' :
+                          className={`flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-subtle/50 border border-border-default hover:bg-surface hover:border-slate-350 rounded-xl hover:shadow-sm transition-colors duration-150 gap-4 ${
+                            isLoanCyl ? 'xl:col-span-2 bg-indigo-500/10 border-indigo-500/20 hover:border-l-4 hover:border-l-purple-500' : 
+                            isPerM3 ? 'xl:col-span-2 bg-accent-base/10 border-accent-base/20 hover:border-l-4 hover:border-l-teal-500' :
                             'hover:border-l-4 hover:border-l-sky-500'
                           }`}
                         >
@@ -6974,17 +6978,17 @@ export const OxygenDashboardPage: React.FC = () => {
                                 {sizeCode}
                               </span>
                               {isLoanCyl && (
-                                <span className="px-2.5 py-0.5 border border-purple-200 bg-purple-100/70 text-purple-800 rounded-md font-extrabold text-[9px] uppercase tracking-wider">
+                                <span className="px-2.5 py-0.5 border border-indigo-500/20 bg-purple-100/70 text-indigo-400 rounded-md font-extrabold text-[9px] uppercase tracking-wider">
                                   LOAN CYLINDER
                                 </span>
                               )}
                               {isPerM3 && (
-                                <span className="px-2.5 py-0.5 border border-teal-200 bg-teal-100/70 text-teal-800 rounded-md font-extrabold text-[9px] uppercase tracking-wider">
+                                <span className="px-2.5 py-0.5 border border-accent-base/20 bg-teal-100/70 text-teal-800 rounded-md font-extrabold text-[9px] uppercase tracking-wider">
                                   BULK VIE TANK
                                 </span>
                               )}
                             </div>
-                            <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider block">
+                            <span className="text-[10px] text-text-secondary font-bold font-semibold uppercase tracking-wider block">
                               {isLoanCyl ? 'Refill & Cylinder Rental Loan Rates' : isPerM3 ? 'Bulk Liquid Rate (Per m³)' : 'Standard Refill Rate'}
                             </span>
                           </div>
@@ -6992,10 +6996,10 @@ export const OxygenDashboardPage: React.FC = () => {
                           <div className="flex flex-wrap items-center gap-3">
                             {/* Refill Rate Input */}
                             <div className="flex items-center gap-1.5">
-                              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-tight">
+                              <span className="text-[10px] font-bold text-text-muted uppercase tracking-tight">
                                 {isPerM3 ? 'Rate / m³' : 'Refill'}
                               </span>
-                              <div className="relative w-32 flex items-center border border-slate-250 rounded-lg bg-white overflow-hidden shadow-xs h-9.5 focus-within:border-sky-600 focus-within:ring-2 focus-within:ring-sky-600/10 transition-all">
+                              <div className="relative w-32 flex items-center border border-slate-250 rounded-lg bg-surface overflow-hidden shadow-xs h-9.5 focus-within:border-sky-600 focus-within:ring-2 focus-within:ring-sky-600/10 transition-colors">
                                 <span className="pl-3 text-[10px] font-bold text-slate-400">RM</span>
                                 <input 
                                   type="number" 
@@ -7003,7 +7007,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                   value={editedPrices[sizeCode] || ''}
                                   onChange={(e) => setEditedPrices(prev => ({ ...prev, [sizeCode]: e.target.value }))}
                                   required
-                                  className="w-full pr-3 py-2 bg-transparent text-xs font-mono font-bold outline-none border-0 text-right text-slate-800 focus:ring-0"
+                                  className="w-full pr-3 py-2 bg-transparent text-xs font-mono font-bold outline-none border-0 text-right text-text-primary focus:ring-0"
                                 />
                               </div>
                             </div>
@@ -7012,7 +7016,7 @@ export const OxygenDashboardPage: React.FC = () => {
                             {isLoanCyl && (
                               <div className="flex items-center gap-1.5">
                                 <span className="text-[10px] font-extrabold text-purple-700 uppercase tracking-tight">Loan Rate</span>
-                                <div className="relative w-32 flex items-center border border-purple-200 rounded-lg bg-white overflow-hidden shadow-xs h-9.5 focus-within:border-purple-600 focus-within:ring-2 focus-within:ring-purple-600/10 transition-all">
+                                <div className="relative w-32 flex items-center border border-indigo-500/20 rounded-lg bg-surface overflow-hidden shadow-xs h-9.5 focus-within:border-purple-600 focus-within:ring-2 focus-within:ring-purple-600/10 transition-colors">
                                   <span className="pl-3 text-[10px] font-bold text-purple-600">RM</span>
                                   <input 
                                     type="number" 
@@ -7020,7 +7024,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                     value={editedLoanRates[sizeCode] !== undefined ? editedLoanRates[sizeCode] : (systemSettings?.loan_cylinder_rate || 18.36).toString()}
                                     onChange={(e) => setEditedLoanRates(prev => ({ ...prev, [sizeCode]: e.target.value }))}
                                     required
-                                    className="w-full pr-3 py-2 bg-transparent text-xs font-mono font-black outline-none border-0 text-right text-purple-950 focus:ring-0"
+                                    className="w-full pr-3 py-2 bg-transparent text-xs font-mono font-black outline-none border-0 text-right text-indigo-400 dark:text-indigo-300 font-bold focus:ring-0"
                                   />
                                 </div>
                               </div>
@@ -7032,9 +7036,9 @@ export const OxygenDashboardPage: React.FC = () => {
                   </div>
 
                   {/* Elegant Divider */}
-                  <div className="pt-6 border-t border-slate-100 flex flex-col gap-1">
+                  <div className="pt-6 border-t border-border-subtle flex flex-col gap-1">
                     <span className="text-[10px] font-black text-sky-700 uppercase tracking-widest block">Audit Trail & Revision Logs</span>
-                    <h4 className="text-sm font-bold text-slate-800 tracking-tight">Pricing Update History</h4>
+                    <h4 className="text-sm font-bold text-text-primary tracking-tight">Pricing Update History</h4>
                     <p className="text-[11px] text-slate-400 font-medium">Tracks who, when, and what changed in previous official price revisions.</p>
                   </div>
 
@@ -7080,7 +7084,7 @@ export const OxygenDashboardPage: React.FC = () => {
 
                       if (groupedLogs.length === 0) {
                         return (
-                          <div className="p-6 bg-slate-50 rounded-2xl text-center text-xs text-slate-400 font-semibold italic">
+                          <div className="p-6 bg-subtle/50 rounded-2xl text-center text-xs text-slate-400 font-semibold italic">
                             No pricing revision logs recorded.
                           </div>
                         )
@@ -7089,16 +7093,16 @@ export const OxygenDashboardPage: React.FC = () => {
                       return groupedLogs.map((group, idx) => (
                         <div 
                           key={idx} 
-                          className="bg-white border border-slate-250 p-4.5 rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.02)] hover:border-slate-350 transition-all duration-200"
+                          className="bg-surface border border-slate-250 p-4.5 rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.01)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.02)] hover:border-slate-350 transition-colors duration-150"
                         >
-                          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 border-b border-slate-100 pb-3">
+                          <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 border-b border-border-subtle pb-3">
                             <div className="flex items-start gap-2.5">
                               {/* Avatar monolith circle */}
-                              <div className="w-9 h-9 bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center text-slate-600 font-extrabold text-xs flex-shrink-0">
+                              <div className="w-9 h-9 bg-subtle border border-border-default rounded-xl flex items-center justify-center text-text-muted font-extrabold text-xs flex-shrink-0">
                                 {(group.creator?.full_name || 'System').split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase()}
                               </div>
                               <div>
-                                <h5 className="text-xs font-extrabold text-slate-800">
+                                <h5 className="text-xs font-extrabold text-text-primary">
                                   {group.creator?.full_name || 'System Administrator'}
                                 </h5>
                                 <span className="text-[10px] text-slate-400 font-bold block mt-0.5 leading-tight">
@@ -7108,7 +7112,7 @@ export const OxygenDashboardPage: React.FC = () => {
                             </div>
                             
                             <div className="text-left sm:text-right flex flex-col sm:items-end gap-1 flex-shrink-0">
-                              <span className="text-[9px] font-black px-2 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-100 rounded-md block w-max shadow-xxs">
+                              <span className="text-[9px] font-black px-2 py-0.5 bg-emerald-500/10 text-emerald-700 border border-emerald-100 rounded-md block w-max shadow-xxs">
                                 EFFECTIVE: {new Date(group.effective_from).toLocaleDateString('ms-MY', { day: '2-digit', month: 'short', year: 'numeric' })}
                               </span>
                               <span className="text-[9px] text-slate-400 font-bold">
@@ -7126,8 +7130,8 @@ export const OxygenDashboardPage: React.FC = () => {
                                                 chg.cylinder_size_code.toLowerCase().includes('m3') ||
                                                 chg.cylinder_size_code.toLowerCase().includes('m³')
                                 return (
-                                  <div key={cIdx} className="px-3 py-1.5 bg-slate-50 border border-slate-200/80 rounded-xl flex items-center gap-2 shadow-xxs">
-                                    <span className="font-mono text-[10px] font-black text-slate-700">{chg.cylinder_size_code}</span>
+                                  <div key={cIdx} className="px-3 py-1.5 bg-subtle/50 border border-border-default rounded-xl flex items-center gap-2 shadow-xxs">
+                                    <span className="font-mono text-[10px] font-black text-text-secondary">{chg.cylinder_size_code}</span>
                                     <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
                                     <span className="font-mono text-xs font-black text-[#0284c7]">RM {chg.refill_price.toFixed(2)}{isPerM3 ? ' / m³' : ''}</span>
                                   </div>
@@ -7142,11 +7146,11 @@ export const OxygenDashboardPage: React.FC = () => {
                 </div>
 
                 {/* Right Side: Form inputs */}
-                <div className="w-full md:w-[320px] flex flex-col justify-between border-t md:border-t-0 md:border-l border-slate-100 pt-5 md:pt-0 md:pl-5 flex-shrink-0">
+                <div className="w-full md:w-[320px] flex flex-col justify-between border-t md:border-t-0 md:border-l border-border-subtle pt-5 md:pt-0 md:pl-5 flex-shrink-0">
                   <div className="space-y-5">
                     {/* Supplier Selector */}
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Target Supplier</label>
+                      <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">Target Supplier</label>
                       <select 
                         value={isAddingNewSupplier ? 'CUSTOM_NEW' : selectedModalSupplier}
                         onChange={(e) => {
@@ -7157,7 +7161,7 @@ export const OxygenDashboardPage: React.FC = () => {
                             setSelectedModalSupplier(e.target.value)
                           }
                         }}
-                        className="w-full px-3.5 py-2.5 border border-slate-250 focus:border-sky-600 focus:ring-2 focus:ring-sky-600/10 transition-all text-xs font-semibold text-slate-800 rounded-lg outline-none bg-white shadow-xs"
+                        className="w-full px-3.5 py-2.5 border border-slate-250 focus:border-sky-600 focus:ring-2 focus:ring-sky-600/10 transition-colors text-xs font-semibold text-text-primary rounded-lg outline-none bg-surface shadow-xs"
                       >
                         {realSupplierOptions.map((sup) => (
                           <option key={sup} value={sup}>{sup}</option>
@@ -7173,14 +7177,14 @@ export const OxygenDashboardPage: React.FC = () => {
                             value={customSupplierInput}
                             onChange={(e) => setCustomSupplierInput(e.target.value)}
                             required
-                            className="w-full px-3.5 py-2 border border-sky-300 focus:border-sky-600 focus:ring-2 focus:ring-sky-600/10 transition-all text-xs font-medium text-slate-800 rounded-lg outline-none bg-sky-50/30"
+                            className="w-full px-3.5 py-2 border border-sky-300 focus:border-sky-600 focus:ring-2 focus:ring-sky-600/10 transition-colors text-xs font-medium text-text-primary rounded-lg outline-none bg-sky-50/30"
                           />
                         </div>
                       )}
                     </div>
 
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block">Effective Start Date</label>
+                      <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">Effective Start Date</label>
                       <div className="relative">
                         <Calendar className="absolute left-3.5 top-2.5 w-4 h-4 text-slate-400" />
                         <input 
@@ -7188,7 +7192,7 @@ export const OxygenDashboardPage: React.FC = () => {
                           value={effectiveFrom}
                           onChange={(e) => setEffectiveFrom(e.target.value)}
                           required
-                          className="w-full pl-10 pr-3.5 py-2.5 border border-slate-250 focus:border-sky-600 focus:ring-2 focus:ring-sky-600/10 transition-all text-xs font-semibold text-slate-800 rounded-lg outline-none bg-white shadow-xs"
+                          className="w-full pl-10 pr-3.5 py-2.5 border border-slate-250 focus:border-sky-600 focus:ring-2 focus:ring-sky-600/10 transition-colors text-xs font-semibold text-text-primary rounded-lg outline-none bg-surface shadow-xs"
                         />
                       </div>
                     </div>
@@ -7206,14 +7210,14 @@ export const OxygenDashboardPage: React.FC = () => {
                     <button 
                       type="button" 
                       onClick={() => setIsPricingModalOpen(false)}
-                      className="flex-1 py-3 border border-slate-200 hover:bg-slate-50 text-slate-650 hover:text-slate-800 rounded-lg text-xs font-bold transition-all active:scale-98"
+                      className="flex-1 py-3 border border-border-default hover:bg-subtle/50 text-slate-650 hover:text-text-primary rounded-lg text-xs font-bold transition-colors active:scale-98"
                     >
                       Cancel
                     </button>
                     <button 
                       type="submit"
                       disabled={isSavingPrices}
-                      className="flex-1 py-3 bg-sky-600 hover:bg-sky-700 disabled:opacity-50 text-white rounded-lg text-xs font-extrabold shadow-sm transition-all active:scale-98 flex items-center justify-center gap-1.5"
+                      className="flex-1 py-3 bg-sky-600 hover:bg-sky-700 disabled:opacity-50 text-white rounded-lg text-xs font-extrabold shadow-sm transition-colors active:scale-98 flex items-center justify-center gap-1.5"
                     >
                       {isSavingPrices ? <Spinner size="sm" /> : <CheckCircle className="w-3.5 h-3.5" />}
                       Save Prices
@@ -7231,7 +7235,7 @@ export const OxygenDashboardPage: React.FC = () => {
          ======================================================== */}
       {isReceiveModalOpen && (
         <div 
-          className="fixed inset-0 z-50 flex justify-end bg-slate-900/50 backdrop-blur-xs transition-all duration-300"
+          className="fixed inset-0 z-50 flex justify-end bg-slate-900/50 backdrop-blur-xs transition-colors duration-150"
           onClick={() => setIsReceiveModalOpen(false)}
         >
           {/* Injected style tag for premium slide-in animation */}
@@ -7243,19 +7247,19 @@ export const OxygenDashboardPage: React.FC = () => {
           `}</style>
           
           <div 
-            className="bg-white text-slate-800 w-full max-w-4xl lg:max-w-5xl h-full shadow-2xl border-l border-slate-200 flex flex-col p-6 overflow-hidden relative"
+            className="bg-surface text-text-primary w-full max-w-4xl lg:max-w-5xl h-full shadow-2xl border-l border-border-default flex flex-col p-6 overflow-hidden relative"
             style={{ animation: 'slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4 flex-shrink-0">
+            <div className="flex items-center justify-between border-b border-border-subtle pb-4 mb-4 flex-shrink-0">
               <div>
                 <span className="text-[10px] font-black text-teal-700 uppercase tracking-widest block mb-0.5">Kementerian Kesihatan Malaysia (KKM)</span>
-                <h3 className="text-base font-extrabold text-slate-900 tracking-tight">Key In Received Oxygen Delivery</h3>
-                <p className="text-xs text-slate-500 mt-0.5">Record incoming batches to update official government warrant allocations.</p>
+                <h3 className="text-base font-extrabold text-text-primary tracking-tight">Key In Received Oxygen Delivery</h3>
+                <p className="text-xs text-text-muted mt-0.5">Record incoming batches to update official government warrant allocations.</p>
               </div>
               <button 
                 onClick={() => setIsReceiveModalOpen(false)}
-                className="p-1.5 hover:bg-slate-100 text-slate-400 hover:text-slate-700 rounded-lg transition-all"
+                className="p-1.5 hover:bg-subtle text-slate-400 hover:text-text-secondary rounded-lg transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -7270,13 +7274,13 @@ export const OxygenDashboardPage: React.FC = () => {
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                       {receiveSupplyMode === 'vie' ? 'VIE BULK LIQUID CATALOG' : 'CYLINDERS RECEIVED CATALOG'}
                     </span>
-                    <span className="flex items-center gap-1 text-[9px] text-teal-700 font-extrabold bg-teal-50 px-2 py-0.5 border border-teal-200 rounded-md">
+                    <span className="flex items-center gap-1 text-[9px] text-teal-700 font-extrabold bg-accent-base/10 px-2 py-0.5 border border-accent-base/20 rounded-md">
                       Live Warrant Rates
                     </span>
                   </div>
 
                   {/* Mode Selector Tab: Compressed Gas Cylinders vs VIE Bulk Liquid */}
-                  <div className="flex items-center gap-2 p-1 bg-slate-100/80 rounded-xl border border-slate-200">
+                  <div className="flex items-center gap-2 p-1 bg-subtle rounded-xl border border-border-default">
                     <button
                       type="button"
                       onClick={() => {
@@ -7289,10 +7293,10 @@ export const OxygenDashboardPage: React.FC = () => {
                           return next
                         })
                       }}
-                      className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                      className={`flex-1 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5 ${
                         receiveSupplyMode === 'cyl'
-                          ? 'bg-white text-teal-800 shadow-xs border border-slate-200'
-                          : 'text-slate-500 hover:text-slate-800'
+                          ? 'bg-surface text-teal-800 shadow-xs border border-border-default'
+                          : 'text-text-muted hover:text-text-primary'
                       }`}
                     >
                       🔵 {language === 'ms' ? 'Silinder Gas Termampat' : 'Compressed Gas Cylinders'}
@@ -7310,10 +7314,10 @@ export const OxygenDashboardPage: React.FC = () => {
                         })
                         setReceiveLoans({})
                       }}
-                      className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                      className={`flex-1 py-2 rounded-lg text-xs font-bold transition-colors flex items-center justify-center gap-1.5 ${
                         receiveSupplyMode === 'vie'
-                          ? 'bg-white text-blue-800 shadow-xs border border-slate-200'
-                          : 'text-slate-500 hover:text-slate-800'
+                          ? 'bg-surface text-blue-400 shadow-xs border border-border-default'
+                          : 'text-text-muted hover:text-text-primary'
                       }`}
                     >
                       💧 {language === 'ms' ? 'Tangki VIE (Cecair Pukal)' : 'VIE Tank (Bulk Liquid)'}
@@ -7346,23 +7350,23 @@ export const OxygenDashboardPage: React.FC = () => {
                         return (
                           <div 
                             key={config.id} 
-                            className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4.5 bg-slate-50/50 border border-slate-200/60 hover:bg-white hover:border-slate-350 hover:border-l-4 hover:border-l-teal-600 rounded-xl hover:shadow-sm transition-all duration-200 group"
+                            className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4.5 bg-subtle/50 border border-border-default hover:bg-surface hover:border-slate-350 hover:border-l-4 hover:border-l-teal-600 rounded-xl hover:shadow-sm transition-colors duration-150 group"
                           >
                             {/* Size Info with capsule styling */}
                             <div className="flex items-center gap-3.5">
                               <div className="w-1.5 h-1.5 rounded-full bg-teal-500 shadow-[0_0_4px_rgba(20,184,166,0.4)]" />
                               <div>
                                 <div className="flex items-center gap-1.5">
-                                  <span className="font-mono text-sm font-extrabold text-slate-800 block group-hover:text-teal-700 transition-colors">
+                                  <span className="font-mono text-sm font-extrabold text-text-primary block group-hover:text-teal-700 transition-colors">
                                     {config.cylinder_size_code}
                                   </span>
                                   {isPerM3 && (
-                                    <span className="px-1.5 py-0.5 bg-teal-50 border border-teal-200 text-teal-700 text-[8.5px] font-black rounded uppercase">
+                                    <span className="px-1.5 py-0.5 bg-accent-base/10 border border-accent-base/20 text-teal-700 text-[8.5px] font-black rounded uppercase">
                                       VIE Tank
                                     </span>
                                   )}
                                 </div>
-                                <span className="text-[9px] text-slate-400 uppercase tracking-wider block mt-0.5 font-bold">
+                                <span className="text-[9px] text-text-secondary font-bold uppercase tracking-wider block mt-0.5 font-bold">
                                   {isPerM3 ? 'Bulk Liquid Volume' : 'Standard Capacity'}
                                 </span>
                               </div>
@@ -7382,11 +7386,11 @@ export const OxygenDashboardPage: React.FC = () => {
                                   <span className="text-[9px] text-slate-400 uppercase tracking-widest font-bold mb-1.5">
                                     {isPerM3 ? 'Volume (m³)' : 'Refilled'}
                                   </span>
-                                  <div className={`inline-flex items-center border border-slate-250 bg-white rounded-lg overflow-hidden h-9 shadow-xxs ${isPerM3 ? 'w-28' : ''}`}>
+                                  <div className={`inline-flex items-center border border-slate-250 bg-surface rounded-lg overflow-hidden h-9 shadow-xxs ${isPerM3 ? 'w-28' : ''}`}>
                                     <button 
                                       type="button"
                                       onClick={() => setReceiveQuantities(prev => ({ ...prev, [config.cylinder_size_code]: Math.max(0, (prev[config.cylinder_size_code] || 0) - (isPerM3 ? 100 : 1)) }))}
-                                      className="px-2.5 h-full text-slate-455 hover:bg-slate-100 hover:text-slate-800 transition-all text-xs font-semibold"
+                                      className="px-2.5 h-full text-slate-455 hover:bg-subtle hover:text-text-primary transition-colors text-xs font-semibold"
                                     >
                                       -
                                     </button>
@@ -7401,7 +7405,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                     <button 
                                       type="button"
                                       onClick={() => setReceiveQuantities(prev => ({ ...prev, [config.cylinder_size_code]: (prev[config.cylinder_size_code] || 0) + (isPerM3 ? 100 : 1) }))}
-                                      className="px-2.5 h-full text-slate-455 hover:bg-slate-100 hover:text-slate-800 transition-all text-xs font-semibold"
+                                      className="px-2.5 h-full text-slate-455 hover:bg-subtle hover:text-text-primary transition-colors text-xs font-semibold"
                                     >
                                       +
                                     </button>
@@ -7412,19 +7416,19 @@ export const OxygenDashboardPage: React.FC = () => {
                                 <div className="flex flex-col items-center">
                                   <span className="text-[9px] text-slate-400 uppercase tracking-widest font-bold mb-1.5">Loaned</span>
                                   {isPerM3 ? (
-                                    <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider px-3 bg-slate-100 border border-slate-200 rounded-md shadow-xxs h-9 flex items-center justify-center">
+                                    <span className="text-[9px] text-text-secondary font-bold font-bold uppercase tracking-wider px-3 bg-subtle border border-border-default rounded-md shadow-xxs h-9 flex items-center justify-center">
                                       N/A (Bulk VIE)
                                     </span>
                                   ) : isLoanSize ? (
-                                    <span className="text-[9px] text-teal-800 font-extrabold uppercase tracking-wider px-3 bg-teal-50 border border-teal-200 rounded-md shadow-xxs h-9 flex items-center justify-center">
+                                    <span className="text-[9px] text-teal-800 font-extrabold uppercase tracking-wider px-3 bg-accent-base/10 border border-accent-base/20 rounded-md shadow-xxs h-9 flex items-center justify-center">
                                       Self Loaned
                                     </span>
                                   ) : (
-                                    <div className="inline-flex items-center border border-slate-250 bg-white rounded-lg overflow-hidden h-9 shadow-xxs">
+                                    <div className="inline-flex items-center border border-slate-250 bg-surface rounded-lg overflow-hidden h-9 shadow-xxs">
                                       <button 
                                         type="button" 
                                         onClick={() => setReceiveLoans(prev => ({ ...prev, [config.cylinder_size_code]: Math.max(0, (prev[config.cylinder_size_code] || 0) - 1) }))}
-                                        className="px-3 h-full text-slate-455 hover:bg-slate-100 hover:text-slate-800 transition-all text-xs font-semibold"
+                                        className="px-3 h-full text-slate-455 hover:bg-subtle hover:text-text-primary transition-colors text-xs font-semibold"
                                       >
                                         -
                                       </button>
@@ -7438,7 +7442,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                       <button 
                                         type="button" 
                                         onClick={() => setReceiveLoans(prev => ({ ...prev, [config.cylinder_size_code]: (prev[config.cylinder_size_code] || 0) + 1 }))}
-                                        className="px-3 h-full text-slate-455 hover:bg-slate-100 hover:text-slate-800 transition-all text-xs font-semibold"
+                                        className="px-3 h-full text-slate-455 hover:bg-subtle hover:text-text-primary transition-colors text-xs font-semibold"
                                       >
                                         +
                                       </button>
@@ -7450,7 +7454,7 @@ export const OxygenDashboardPage: React.FC = () => {
                             {/* Subtotal calculation column */}
                             <div className="text-right sm:w-28 flex flex-col justify-end items-end">
                               <span className="text-[9px] text-slate-455 uppercase tracking-widest font-bold">Subtotal</span>
-                              <span className="font-mono text-sm font-black text-slate-800 group-hover:text-teal-700 transition-colors mt-0.5">
+                              <span className="font-mono text-sm font-black text-text-primary group-hover:text-teal-700 transition-colors mt-0.5">
                                 RM {sub.toFixed(2)}
                               </span>
                             </div>
@@ -7466,15 +7470,15 @@ export const OxygenDashboardPage: React.FC = () => {
                   
                   <div className="space-y-5">
                     {/* Section 1: Delivery & Warrant Information */}
-                    <div className="bg-slate-50/70 border border-slate-200/80 p-5 rounded-xl space-y-4 shadow-xxs">
-                      <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block border-b border-slate-200/80 pb-2">Delivery & Warrant Info</span>
+                    <div className="bg-subtle/50 border border-border-default p-5 rounded-xl space-y-4 shadow-xxs">
+                      <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest block border-b border-border-default pb-2">Delivery & Warrant Info</span>
                       
                       <div className="space-y-1.5">
                         <label className="text-[9px] font-extrabold text-teal-800 uppercase tracking-wider block">Target Supplier</label>
                         <select 
                           value={selectedReceiveSupplier}
                           onChange={(e) => setSelectedReceiveSupplier(e.target.value)}
-                          className="w-full px-3 py-2 border border-teal-300 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 transition-all text-xs font-bold text-slate-800 rounded-lg outline-none bg-white shadow-xxs"
+                          className="w-full px-3 py-2 border border-teal-300 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 transition-colors text-xs font-bold text-text-primary rounded-lg outline-none bg-surface shadow-xxs"
                         >
                           {realSupplierOptions.map((sup) => (
                             <option key={sup} value={sup}>{sup}</option>
@@ -7487,7 +7491,7 @@ export const OxygenDashboardPage: React.FC = () => {
                         return (
                           <div className="grid grid-cols-2 gap-3.5">
                             <div className="space-y-1.5">
-                              <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">
+                              <label className="text-[9px] font-bold text-text-muted uppercase tracking-wider block">
                                 DO No. {isLiquidOrder && <span className="text-amber-600 font-normal">(Auto PENDING jika permohonan)</span>}
                               </label>
                               <input 
@@ -7496,11 +7500,11 @@ export const OxygenDashboardPage: React.FC = () => {
                                 value={doNumber}
                                 onChange={(e) => setDoNumber(e.target.value)}
                                 required={!isLiquidOrder}
-                                className="bg-white border border-slate-250 text-slate-800 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-all text-xs font-mono font-bold rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
+                                className="bg-surface border border-slate-250 text-text-primary focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-colors text-xs font-mono font-bold rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
                               />
                             </div>
                             <div className="space-y-1.5">
-                              <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">
+                              <label className="text-[9px] font-bold text-text-muted uppercase tracking-wider block">
                                 SO No. {isLiquidOrder && <span className="text-slate-400 font-normal">(Pilihan)</span>}
                               </label>
                               <input 
@@ -7509,7 +7513,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                 value={soNumber}
                                 onChange={(e) => setSoNumber(e.target.value)}
                                 required={!isLiquidOrder}
-                                className="bg-white border border-slate-250 text-slate-800 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-all text-xs font-mono font-bold rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
+                                className="bg-surface border border-slate-250 text-text-primary focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-colors text-xs font-mono font-bold rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
                               />
                             </div>
                           </div>
@@ -7517,19 +7521,19 @@ export const OxygenDashboardPage: React.FC = () => {
                       })()}
 
                       <div className="space-y-1.5">
-                        <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Date Received / Request</label>
+                        <label className="text-[9px] font-bold text-text-muted uppercase tracking-wider block">Date Received / Request</label>
                         <input 
                           type="date" 
                           value={receptionDate}
                           onChange={(e) => setReceptionDate(e.target.value)}
                           required
-                          className="bg-white border border-slate-250 text-slate-800 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 transition-all text-xs font-medium rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
+                          className="bg-surface border border-slate-250 text-text-primary focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 transition-colors text-xs font-medium rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
                         />
                       </div>
 
                       <div className="grid grid-cols-2 gap-3.5">
                         <div className="space-y-1.5">
-                          <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Vote Code</label>
+                          <label className="text-[9px] font-bold text-text-muted uppercase tracking-wider block">Vote Code</label>
                           <select 
                             value={voteCode}
                             onChange={(e) => {
@@ -7539,7 +7543,7 @@ export const OxygenDashboardPage: React.FC = () => {
                               setVoteActivity(act)
                             }}
                             required
-                            className="bg-white border border-slate-250 text-slate-800 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 transition-all text-xs font-mono font-bold rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
+                            className="bg-surface border border-slate-250 text-text-primary focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 transition-colors text-xs font-mono font-bold rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
                           >
                             {availableVoteCodes.map(code => {
                               return (
@@ -7557,14 +7561,14 @@ export const OxygenDashboardPage: React.FC = () => {
                             value={voteActivity}
                             onChange={(e) => setVoteActivity(e.target.value)}
                             required
-                            className="bg-white border border-slate-255 text-slate-800 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-all text-xs font-mono font-bold rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
+                            className="bg-surface border border-slate-255 text-text-primary focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-colors text-xs font-mono font-bold rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
                           />
                         </div>
                       </div>
 
                       {/* Remaining Balance Indicator */}
-                      <div className="bg-slate-100/80 border border-slate-200/80 rounded-lg px-3 py-2 flex items-center justify-between text-[11px]">
-                        <span className="text-slate-500 font-semibold">Baki Peruntukan Vot {voteCode}:</span>
+                      <div className="bg-subtle border border-border-default rounded-lg px-3 py-2 flex items-center justify-between text-[11px]">
+                        <span className="text-text-muted font-semibold">Baki Peruntukan Vot {voteCode}:</span>
                         <span className={`font-mono font-bold ${(financials?.by_vote_code?.[voteCode]?.current_balance ?? 0) < 0 ? 'text-rose-600' : 'text-teal-700'}`}>
                           {fmt(financials?.by_vote_code?.[voteCode]?.current_balance ?? (voteCode === '080702' ? (financials?.current_balance ?? 0) : 0))}
                         </span>
@@ -7575,7 +7579,7 @@ export const OxygenDashboardPage: React.FC = () => {
                         <select 
                           value={receptionStatus}
                           onChange={(e) => setReceptionStatus(e.target.value as any)}
-                          className="bg-white border border-slate-250 text-slate-800 focus:ring-2 focus:ring-teal-600/10 focus:border-teal-500 transition-all cursor-pointer shadow-xxs text-xs font-semibold rounded-lg w-full p-2.5"
+                          className="bg-surface border border-slate-250 text-text-primary focus:ring-2 focus:ring-teal-600/10 focus:border-teal-500 transition-colors cursor-pointer shadow-xxs text-xs font-semibold rounded-lg w-full p-2.5"
                         >
                           <option value="completed">Completed</option>
                           <option value="pending_invoice">Pending Invoice</option>
@@ -7585,8 +7589,8 @@ export const OxygenDashboardPage: React.FC = () => {
                     </div>
 
                     {/* Section 2: Premium Warrant Receipt Summary Card (expanded) */}
-                    <div className="bg-teal-50/70 border border-teal-150 p-5 rounded-xl flex flex-col gap-3.5 shadow-xxs">
-                      <span className="text-[10px] font-bold text-teal-800 uppercase tracking-widest block border-b border-teal-200 pb-2">Warrant Receipt Summary</span>
+                    <div className="bg-accent-base/10 border border-teal-150 p-5 rounded-xl flex flex-col gap-3.5 shadow-xxs">
+                      <span className="text-[10px] font-bold text-teal-800 uppercase tracking-widest block border-b border-accent-base/20 pb-2">Warrant Receipt Summary</span>
                       
                       <div className="space-y-3">
                         <div className="flex justify-between text-xs text-teal-850 font-semibold">
@@ -7615,7 +7619,7 @@ export const OxygenDashboardPage: React.FC = () => {
                       const isPendingOrder = isLiquidOrder && (!doNumber || !doNumber.trim() || doNumber.trim().toUpperCase() === 'PENDING')
                       if (!isPendingOrder) return null
                       return (
-                        <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl text-[11px] text-amber-900 font-medium leading-relaxed flex items-start gap-2.5">
+                        <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-[11px] text-amber-400 dark:text-amber-300 font-bold font-medium leading-relaxed flex items-start gap-2.5">
                           <Clock className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
                           <span>
                             Pesanan Oksigen Cecair (VIE Tank) didaftarkan sebagai <strong>Menunggu Penghantaran (Pending Delivery)</strong> untuk menjana PO dahulu. No. DO dan Tarikh Ketibaan akan dikemas kini semasa lori tangki tiba bagi mengaktifkan Laporan Penerimaan (KEW.PS-3).
@@ -7629,7 +7633,7 @@ export const OxygenDashboardPage: React.FC = () => {
                     <button 
                       type="button" 
                       onClick={() => setIsReceiveModalOpen(false)}
-                      className="w-full py-3 border border-slate-200 hover:bg-slate-50 text-slate-650 hover:text-slate-800 rounded-lg text-xs font-bold transition-all active:scale-98"
+                      className="w-full py-3 border border-border-default hover:bg-subtle/50 text-slate-650 hover:text-text-primary rounded-lg text-xs font-bold transition-colors active:scale-98"
                     >
                       Cancel
                     </button>
@@ -7641,7 +7645,7 @@ export const OxygenDashboardPage: React.FC = () => {
                         <button 
                           type="submit"
                           disabled={isSubmittingReception}
-                          className={`w-full py-3 disabled:opacity-50 text-white rounded-lg text-xs font-extrabold shadow-sm transition-all active:scale-98 flex items-center justify-center gap-1.5 ${
+                          className={`w-full py-3 disabled:opacity-50 text-white rounded-lg text-xs font-extrabold shadow-sm transition-colors active:scale-98 flex items-center justify-center gap-1.5 ${
                             isPendingOrder 
                               ? 'bg-amber-600 hover:bg-amber-700' 
                               : 'bg-teal-600 hover:bg-teal-700'
@@ -7673,7 +7677,7 @@ export const OxygenDashboardPage: React.FC = () => {
          ======================================================== */}
       {isPayLoanModalOpen && (
         <div 
-          className="fixed inset-0 z-50 flex justify-end bg-slate-900/50 backdrop-blur-xs transition-all duration-300"
+          className="fixed inset-0 z-50 flex justify-end bg-slate-900/50 backdrop-blur-xs transition-colors duration-150"
           onClick={() => setIsPayLoanModalOpen(false)}
         >
           <style>{`
@@ -7684,26 +7688,26 @@ export const OxygenDashboardPage: React.FC = () => {
           `}</style>
           
           <div 
-            className="bg-white text-slate-800 w-full max-w-4xl lg:max-w-5xl h-full shadow-2xl border-l border-slate-200 flex flex-col p-6 overflow-hidden relative"
+            className="bg-surface text-text-primary w-full max-w-4xl lg:max-w-5xl h-full shadow-2xl border-l border-border-default flex flex-col p-6 overflow-hidden relative"
             style={{ animation: 'slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-4 flex-shrink-0">
+            <div className="flex items-center justify-between border-b border-border-subtle pb-4 mb-4 flex-shrink-0">
               <div>
                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                   <span className="text-[10px] font-black text-purple-700 uppercase tracking-widest block">
                     {language === 'ms' ? 'Kementerian Kesihatan Malaysia (KKM) • Unit Pentadbiran / Bahagian Pengurusan' : 'Ministry of Health Malaysia • Hospital Administration Division'}
                   </span>
-                  <span className="text-[9px] font-black bg-purple-100 text-purple-800 border border-purple-200 px-2 py-0.5 rounded-full uppercase tracking-wider">
+                  <span className="text-[9px] font-black bg-purple-100 text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded-full uppercase tracking-wider">
                     {language === 'ms' ? 'Akaun Pentadbiran (Bukan Bajet Farmasi)' : 'Admin Account (Not Pharmacy Budget)'}
                   </span>
                 </div>
-                <h3 className="text-base font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+                <h3 className="text-base font-extrabold text-text-primary tracking-tight flex items-center gap-2">
                   <Receipt className="w-5 h-5 text-purple-600" />
                   {language === 'ms' ? 'Bayar Caj Pinjaman Silinder Sahaja (Tanpa Penghantaran)' : 'Pay Standalone Cylinder Loan Charges (No Gas Delivery)'}
                 </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-text-muted mt-0.5">
                   {language === 'ms' 
                     ? 'Bayaran sewaan bulanan silinder pembekal yang masih berada dalam simpanan fasiliti. Dibayar melalui Peruntukan Akaun Pentadbiran Hospital (Program 020200 / Objek 24000) tanpa menjejaskan peruntukan Unit Farmasi mahupun lejar KEW.PS-4.' 
                     : 'Monthly cylinder loan rental fee for cylinders held in hospital custody. Funded under Hospital Administration Budget (Program 020200 / Object 24000) without deducting Pharmacy funds or affecting KEW.PS-4 store ledger.'}
@@ -7712,7 +7716,7 @@ export const OxygenDashboardPage: React.FC = () => {
               <button 
                 type="button"
                 onClick={() => setIsPayLoanModalOpen(false)}
-                className="p-1.5 hover:bg-slate-100 text-slate-400 hover:text-slate-700 rounded-lg transition-all cursor-pointer"
+                className="p-1.5 hover:bg-subtle text-slate-400 hover:text-text-secondary rounded-lg transition-colors cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -7724,12 +7728,12 @@ export const OxygenDashboardPage: React.FC = () => {
                 {/* LEFT COLUMN: ACTIVE CUSTODY BREAKDOWN */}
                 <div className="flex-1 overflow-y-auto pr-2 space-y-4">
                   {/* Custody Info Banner */}
-                  <div className="bg-purple-50/70 border border-purple-200/80 rounded-2xl p-4 flex items-start gap-3 shadow-2xs">
+                  <div className="bg-indigo-500/10 border border-indigo-500/20 rounded-2xl p-4 flex items-start gap-3 shadow-elevation-1">
                     <div className="p-2 bg-purple-100 text-purple-700 rounded-xl mt-0.5">
                       <Wind className="w-5 h-5" />
                     </div>
                     <div>
-                      <h4 className="text-xs font-black uppercase tracking-wider text-purple-900">
+                      <h4 className="text-xs font-black uppercase tracking-wider text-indigo-400 dark:text-indigo-300 font-bold">
                         {language === 'ms' ? 'Status Kustodi Silinder Aktif (Akaun Pentadbiran)' : 'Active Cylinder Custody Status (Admin Account)'}
                       </h4>
                       <p className="text-[11px] text-purple-700/90 font-medium mt-1 leading-relaxed">
@@ -7744,18 +7748,18 @@ export const OxygenDashboardPage: React.FC = () => {
                     <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                       {language === 'ms' ? 'PERINCIAN SILINDER PINJAMAN' : 'LOAN CYLINDER BILLING BREAKDOWN'}
                     </span>
-                    <span className="text-[10px] font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-100">
+                    <span className="text-[10px] font-bold text-purple-700 bg-indigo-500/10 px-2 py-0.5 rounded-full border border-purple-100">
                       {activeLoanCustody.length} {language === 'ms' ? 'Kategori Saiz' : 'Size Categories'}
                     </span>
                   </div>
 
                   {isLoadingCustody ? (
-                    <div className="p-8 text-center bg-slate-50 rounded-2xl border border-slate-200 flex flex-col items-center justify-center gap-2">
+                    <div className="p-8 text-center bg-subtle/50 rounded-2xl border border-border-default flex flex-col items-center justify-center gap-2">
                       <Spinner size="md" />
-                      <span className="text-xs text-slate-500 font-bold">{language === 'ms' ? 'Mengimbas rekod kustodi silinder...' : 'Scanning cylinder custody records...'}</span>
+                      <span className="text-xs text-text-muted font-bold">{language === 'ms' ? 'Mengimbas rekod kustodi silinder...' : 'Scanning cylinder custody records...'}</span>
                     </div>
                   ) : activeLoanCustody.length === 0 ? (
-                    <div className="p-6 text-center bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-500 font-semibold italic">
+                    <div className="p-6 text-center bg-subtle/50 rounded-2xl border border-border-default text-xs text-text-muted font-semibold italic">
                       {language === 'ms' ? 'Tiada silinder pinjaman dijumpai dalam inventori aktif.' : 'No loan cylinders found in active inventory.'}
                     </div>
                   ) : (
@@ -7768,28 +7772,28 @@ export const OxygenDashboardPage: React.FC = () => {
                         return (
                           <div 
                             key={c.sizeCode}
-                            className="bg-white border border-slate-200/90 hover:border-purple-300 rounded-2xl p-4 transition-all shadow-2xs space-y-3"
+                            className="bg-surface border border-border-default hover:border-purple-300 rounded-2xl p-4 transition-colors shadow-elevation-1 space-y-3"
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2">
-                                <span className="font-mono font-black text-sm text-slate-900 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">
+                                <span className="font-mono font-black text-sm text-text-primary bg-subtle px-2.5 py-1 rounded-lg border border-border-default">
                                   {c.sizeCode}
                                 </span>
-                                <span className="text-[11px] font-bold text-slate-600">
+                                <span className="text-[11px] font-bold text-text-muted">
                                   {c.sizeCode.includes('101-F') 
                                     ? (language === 'ms' ? 'Silinder Sederhana (1.4m³)' : 'Medium Cylinder (1.4m³)')
                                     : (language === 'ms' ? 'Silinder Besar (8.0m³)' : 'Large Cylinder (8.0m³)')}
                                 </span>
                               </div>
-                              <span className="text-[10px] font-bold text-emerald-800 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                              <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-full">
                                 {c.activeCount} {language === 'ms' ? 'dalam simpanan' : 'in custody'}
                               </span>
                             </div>
 
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 border-t border-slate-100 items-end">
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 border-t border-border-subtle items-end">
                               {/* Billed Quantity */}
                               <div>
-                                <label className="text-[10px] font-black uppercase text-slate-700 tracking-wider block mb-1">
+                                <label className="text-[10px] font-black uppercase text-text-secondary tracking-wider block mb-1">
                                   {language === 'ms' ? 'Kuantiti Dibilkan' : 'Billed Qty'}
                                 </label>
                                 <input 
@@ -7800,13 +7804,13 @@ export const OxygenDashboardPage: React.FC = () => {
                                     const val = Math.max(0, parseInt(e.target.value, 10) || 0)
                                     setLoanItemQuantities(prev => ({ ...prev, [c.sizeCode]: val }))
                                   }}
-                                  className="w-full px-3 py-2 text-xs font-black text-slate-950 bg-white border-2 border-slate-300 focus:border-purple-600 focus:ring-2 focus:ring-purple-200 rounded-xl outline-none shadow-xs"
+                                  className="w-full px-3 py-2 text-xs font-black text-slate-950 bg-surface border-2 border-border-default focus:border-purple-600 focus:ring-2 focus:ring-purple-200 rounded-xl outline-none shadow-xs"
                                 />
                               </div>
 
                               {/* Rate per Cylinder */}
                               <div>
-                                <label className="text-[10px] font-black uppercase text-slate-700 tracking-wider block mb-1">
+                                <label className="text-[10px] font-black uppercase text-text-secondary tracking-wider block mb-1">
                                   {language === 'ms' ? 'Kadar (RM / cyl)' : 'Rate (RM / cyl)'}
                                 </label>
                                 <input 
@@ -7818,7 +7822,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                     const val = Math.max(0, parseFloat(e.target.value) || 0)
                                     setLoanCustomRates(prev => ({ ...prev, [c.sizeCode]: val }))
                                   }}
-                                  className="w-full px-3 py-2 text-xs font-black text-slate-950 bg-white border-2 border-slate-300 focus:border-purple-600 focus:ring-2 focus:ring-purple-200 rounded-xl outline-none shadow-xs"
+                                  className="w-full px-3 py-2 text-xs font-black text-slate-950 bg-surface border-2 border-border-default focus:border-purple-600 focus:ring-2 focus:ring-purple-200 rounded-xl outline-none shadow-xs"
                                 />
                               </div>
 
@@ -7851,11 +7855,11 @@ export const OxygenDashboardPage: React.FC = () => {
                     }, 0)
 
                     return (
-                      <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 flex items-center justify-between text-xs">
-                        <span className="font-bold text-slate-600">
-                          {language === 'ms' ? 'Jumlah Silinder Dibilkan:' : 'Total Billed Cylinders:'} <strong className="text-slate-900 font-extrabold">{totalQty} silinder</strong>
+                      <div className="bg-subtle/50 border border-border-default rounded-2xl p-3.5 flex items-center justify-between text-xs">
+                        <span className="font-bold text-text-muted">
+                          {language === 'ms' ? 'Jumlah Silinder Dibilkan:' : 'Total Billed Cylinders:'} <strong className="text-text-primary font-extrabold">{totalQty} silinder</strong>
                         </span>
-                        <span className="font-black text-purple-900 text-sm">
+                        <span className="font-black text-indigo-400 dark:text-indigo-300 font-bold text-sm">
                           {fmt(totalCost)}
                         </span>
                       </div>
@@ -7864,17 +7868,17 @@ export const OxygenDashboardPage: React.FC = () => {
                 </div>
 
                 {/* RIGHT COLUMN: SUPPLIER, INVOICE & VOTE CODE CONFIG */}
-                <div className="w-full md:w-80 lg:w-96 flex flex-col justify-between border-t md:border-t-0 md:border-l border-slate-200 pt-4 md:pt-0 md:pl-6 space-y-4 overflow-y-auto">
+                <div className="w-full md:w-80 lg:w-96 flex flex-col justify-between border-t md:border-t-0 md:border-l border-border-default pt-4 md:pt-0 md:pl-6 space-y-4 overflow-y-auto">
                   <div className="space-y-3.5">
                     {/* Supplier Selector */}
                     <div>
-                      <label className="text-[10px] font-black uppercase text-slate-700 tracking-wider block mb-1">
+                      <label className="text-[10px] font-black uppercase text-text-secondary tracking-wider block mb-1">
                         {language === 'ms' ? 'Pembekal Gas / Silinder' : 'Supplier'}
                       </label>
                       <select 
                         value={loanSupplier}
                         onChange={(e) => handleLoanSupplierChange(e.target.value)}
-                        className="w-full px-3 py-2.5 text-xs font-bold text-slate-900 border border-slate-300 focus:border-purple-500 rounded-xl bg-white shadow-2xs outline-none cursor-pointer"
+                        className="w-full px-3 py-2.5 text-xs font-bold text-text-primary border border-border-default focus:border-purple-500 rounded-xl bg-surface shadow-elevation-1 outline-none cursor-pointer"
                       >
                         {realSupplierOptions.map(s => (
                           <option key={s} value={s}>{s}</option>
@@ -7884,7 +7888,7 @@ export const OxygenDashboardPage: React.FC = () => {
 
                     {/* Invoice / Claim Reference */}
                     <div>
-                      <label className="text-[10px] font-black uppercase text-slate-700 tracking-wider block mb-1">
+                      <label className="text-[10px] font-black uppercase text-text-secondary tracking-wider block mb-1">
                         {language === 'ms' ? 'No. Invois / Tuntutan Bayaran *' : 'Invoice / Claim Reference *'}
                       </label>
                       <input 
@@ -7893,13 +7897,13 @@ export const OxygenDashboardPage: React.FC = () => {
                         placeholder="e.g. INV-2026/09-LOAN"
                         value={loanInvoiceNo}
                         onChange={(e) => setLoanInvoiceNo(e.target.value)}
-                        className="w-full px-3 py-2.5 text-xs font-bold text-slate-900 border border-slate-300 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl bg-white shadow-2xs outline-none uppercase font-mono"
+                        className="w-full px-3 py-2.5 text-xs font-bold text-text-primary border border-border-default focus:border-purple-500 focus:ring-1 focus:ring-purple-500 rounded-xl bg-surface shadow-elevation-1 outline-none uppercase font-mono"
                       />
                     </div>
 
                     {/* Sales Order / Billing Ref */}
                     <div>
-                      <label className="text-[10px] font-black uppercase text-slate-700 tracking-wider block mb-1">
+                      <label className="text-[10px] font-black uppercase text-text-secondary tracking-wider block mb-1">
                         {language === 'ms' ? 'No. Rujukan Bil / SO Pembekal (Pilihan)' : 'Supplier SO / Billing Ref (Optional)'}
                       </label>
                       <input 
@@ -7907,13 +7911,13 @@ export const OxygenDashboardPage: React.FC = () => {
                         placeholder="e.g. 011045"
                         value={loanBillingRef}
                         onChange={(e) => setLoanBillingRef(e.target.value)}
-                        className="w-full px-3 py-2 text-xs font-medium text-slate-900 border border-slate-300 focus:border-purple-500 rounded-xl bg-white outline-none font-mono"
+                        className="w-full px-3 py-2 text-xs font-medium text-text-primary border border-border-default focus:border-purple-500 rounded-xl bg-surface outline-none font-mono"
                       />
                     </div>
 
                     {/* Billing Date */}
                     <div>
-                      <label className="text-[10px] font-black uppercase text-slate-700 tracking-wider block mb-1">
+                      <label className="text-[10px] font-black uppercase text-text-secondary tracking-wider block mb-1">
                         {language === 'ms' ? 'Tarikh Invois / Bil' : 'Billing / Invoice Date'}
                       </label>
                       <input 
@@ -7921,23 +7925,23 @@ export const OxygenDashboardPage: React.FC = () => {
                         required
                         value={loanBillingDate}
                         onChange={(e) => setLoanBillingDate(e.target.value)}
-                        className="w-full px-3 py-2 text-xs font-bold text-slate-900 border border-slate-300 focus:border-purple-500 rounded-xl bg-white outline-none"
+                        className="w-full px-3 py-2 text-xs font-bold text-text-primary border border-border-default focus:border-purple-500 rounded-xl bg-surface outline-none"
                       />
                     </div>
 
                     {/* Vote Code & Activity Selection (Admin Account Budget) */}
-                    <div className="space-y-2 p-3 bg-purple-50/50 border border-purple-150 rounded-2xl">
+                    <div className="space-y-2 p-3 bg-indigo-500/10 border border-purple-150 rounded-2xl">
                       <div className="flex items-center justify-between">
-                        <label className="text-[10px] font-black uppercase text-purple-900 tracking-wider">
+                        <label className="text-[10px] font-black uppercase text-indigo-400 dark:text-indigo-300 font-bold tracking-wider">
                           {language === 'ms' ? 'Kod Vot Pentadbiran (Bukan Farmasi)' : 'Admin Vote Code (Not Pharmacy)'}
                         </label>
-                        <span className="text-[8.5px] font-black uppercase text-purple-700 bg-purple-100 px-1.5 py-0.5 rounded border border-purple-200">
+                        <span className="text-[8.5px] font-black uppercase text-purple-700 bg-purple-100 px-1.5 py-0.5 rounded border border-indigo-500/20">
                           {language === 'ms' ? 'Akaun Pentadbiran' : 'Admin Account'}
                         </span>
                       </div>
                       <div className="grid grid-cols-2 gap-2.5">
                         <div>
-                          <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                          <label className="text-[9px] font-bold text-text-muted uppercase tracking-wider block mb-1">
                             {language === 'ms' ? 'Pilihan Vot' : 'Vote Code'}
                           </label>
                           <select 
@@ -7951,7 +7955,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                 setLoanVoteActivity('020200')
                               }
                             }}
-                            className="w-full px-3 py-2 text-xs font-bold text-slate-900 border border-slate-300 focus:border-purple-500 rounded-xl bg-white outline-none cursor-pointer"
+                            className="w-full px-3 py-2 text-xs font-bold text-text-primary border border-border-default focus:border-purple-500 rounded-xl bg-surface outline-none cursor-pointer"
                           >
                             <option value="24000">24000 (Sewaan - Pentadbiran)</option>
                             <option value="24999">24999 (Sewaan Gas - Pentadbiran)</option>
@@ -7965,13 +7969,13 @@ export const OxygenDashboardPage: React.FC = () => {
                               placeholder="e.g. 24000"
                               value={loanVoteCode}
                               onChange={(e) => setLoanVoteCode(e.target.value.trim())}
-                              className="mt-1.5 w-full px-2.5 py-1.5 text-xs font-mono font-bold text-slate-900 border border-purple-300 focus:border-purple-500 rounded-xl bg-white outline-none"
+                              className="mt-1.5 w-full px-2.5 py-1.5 text-xs font-mono font-bold text-text-primary border border-purple-300 focus:border-purple-500 rounded-xl bg-surface outline-none"
                             />
                           )}
                         </div>
 
                         <div>
-                          <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block mb-1">
+                          <label className="text-[9px] font-bold text-text-muted uppercase tracking-wider block mb-1">
                             {language === 'ms' ? 'Aktiviti / Program' : 'Activity / Program'}
                           </label>
                           <input 
@@ -7980,7 +7984,7 @@ export const OxygenDashboardPage: React.FC = () => {
                             placeholder="020200"
                             value={loanVoteActivity}
                             onChange={(e) => setLoanVoteActivity(e.target.value.trim())}
-                            className="w-full px-3 py-2 text-xs font-bold text-slate-900 border border-slate-300 focus:border-purple-500 rounded-xl bg-white outline-none font-mono"
+                            className="w-full px-3 py-2 text-xs font-bold text-text-primary border border-border-default focus:border-purple-500 rounded-xl bg-surface outline-none font-mono"
                           />
                           <span className="text-[8px] text-purple-700 block mt-0.5 font-bold">
                             {language === 'ms' ? '020200 Pengurusan Hospital' : '020200 Hospital Management'}
@@ -7991,13 +7995,13 @@ export const OxygenDashboardPage: React.FC = () => {
 
                     {/* Status */}
                     <div>
-                      <label className="text-[10px] font-black uppercase text-slate-700 tracking-wider block mb-1">
+                      <label className="text-[10px] font-black uppercase text-text-secondary tracking-wider block mb-1">
                         {language === 'ms' ? 'Status Bayaran / PO' : 'Payment / PO Status'}
                       </label>
                       <select 
                         value={loanStatus}
                         onChange={(e) => setLoanStatus(e.target.value as any)}
-                        className="w-full px-3 py-2 text-xs font-bold text-slate-900 border border-slate-300 focus:border-purple-500 rounded-xl bg-white outline-none cursor-pointer"
+                        className="w-full px-3 py-2 text-xs font-bold text-text-primary border border-border-default focus:border-purple-500 rounded-xl bg-surface outline-none cursor-pointer"
                       >
                         <option value="completed">{language === 'ms' ? 'Diluluskan / Selesai (Completed)' : 'Completed / Approved'}</option>
                         <option value="outstanding_po">{language === 'ms' ? 'PO Komited (Outstanding PO)' : 'Committed PO (Outstanding)'}</option>
@@ -8007,7 +8011,7 @@ export const OxygenDashboardPage: React.FC = () => {
 
                     {/* Remarks */}
                     <div>
-                      <label className="text-[10px] font-black uppercase text-slate-700 tracking-wider block mb-1">
+                      <label className="text-[10px] font-black uppercase text-text-secondary tracking-wider block mb-1">
                         {language === 'ms' ? 'Catatan / Justifikasi' : 'Remarks / Justification'}
                       </label>
                       <textarea 
@@ -8015,13 +8019,13 @@ export const OxygenDashboardPage: React.FC = () => {
                         placeholder={language === 'ms' ? 'Contoh: Bayaran sewaan silinder pinjaman bagi bulan semasa tanpa bekalan gas.' : 'E.g. Monthly rental fee for active cylinders.'}
                         value={loanRemarks}
                         onChange={(e) => setLoanRemarks(e.target.value)}
-                        className="w-full px-3 py-2 text-xs font-medium text-slate-900 border border-slate-300 focus:border-purple-500 rounded-xl bg-white outline-none resize-none"
+                        className="w-full px-3 py-2 text-xs font-medium text-text-primary border border-border-default focus:border-purple-500 rounded-xl bg-surface outline-none resize-none"
                       />
                     </div>
                   </div>
 
                   {/* Bottom: Grand Total & Submit Actions */}
-                  <div className="pt-3 border-t border-slate-100 space-y-3">
+                  <div className="pt-3 border-t border-border-subtle space-y-3">
                     {(() => {
                       const totalCost = activeLoanCustody.reduce((sum, c) => {
                         const q = loanItemQuantities[c.sizeCode] !== undefined ? loanItemQuantities[c.sizeCode] : c.activeCount
@@ -8058,14 +8062,14 @@ export const OxygenDashboardPage: React.FC = () => {
                       <button 
                         type="button"
                         onClick={() => setIsPayLoanModalOpen(false)}
-                        className="w-1/3 py-3 border border-slate-200 hover:bg-slate-50 text-slate-650 hover:text-slate-800 rounded-xl text-xs font-bold transition-all active:scale-98 cursor-pointer"
+                        className="w-1/3 py-3 border border-border-default hover:bg-subtle/50 text-slate-650 hover:text-text-primary rounded-xl text-xs font-bold transition-colors active:scale-98 cursor-pointer"
                       >
                         {language === 'ms' ? 'Batal' : 'Cancel'}
                       </button>
                       <button 
                         type="submit"
                         disabled={isSubmittingLoanPayment}
-                        className="w-2/3 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-xl text-xs font-black tracking-wider uppercase shadow-md shadow-purple-500/20 transition-all active:scale-98 flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
+                        className="w-2/3 py-3 bg-accent-base hover:bg-accent-hover text-white rounded-xl text-xs font-black tracking-wider uppercase shadow-md shadow-purple-500/20 transition-colors active:scale-98 flex items-center justify-center gap-1.5 cursor-pointer disabled:opacity-50"
                       >
                         {isSubmittingLoanPayment ? (
                           <Spinner size="sm" />
@@ -8097,15 +8101,15 @@ export const OxygenDashboardPage: React.FC = () => {
 
         return (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-            <div className="bg-white rounded-[28px] w-full max-w-md p-6 shadow-2xl text-center relative border border-slate-200/50 animate-bounce-short">
+            <div className="bg-surface rounded-[28px] w-full max-w-md p-6 shadow-2xl text-center relative border border-border-default animate-bounce-short">
               <button 
                 onClick={() => setPdfSuccessModalOpen(false)}
-                className="absolute right-5 top-5 p-2 text-slate-400 hover:text-slate-600 rounded-xl hover:bg-slate-50 transition-all active:scale-95"
+                className="absolute right-5 top-5 p-2 text-slate-400 hover:text-text-muted rounded-xl hover:bg-subtle/50 transition-colors active:scale-95"
               >
                 <X className="w-4 h-4" />
               </button>
 
-              <div className={`w-16 h-16 ${isPending ? 'bg-amber-50 border-amber-200' : 'bg-emerald-50 border-emerald-100'} border rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm`}>
+              <div className={`w-16 h-16 ${isPending ? 'bg-amber-500/10 border-amber-500/20' : 'bg-emerald-500/10 border-emerald-100'} border rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm`}>
                 {isPending ? (
                   <FileText className="w-8 h-8 text-amber-600" />
                 ) : (
@@ -8113,12 +8117,12 @@ export const OxygenDashboardPage: React.FC = () => {
                 )}
               </div>
 
-              <h3 className="text-lg font-black text-slate-800">
+              <h3 className="text-lg font-black text-text-primary">
                 {isPending 
                   ? 'Liquid Oxygen Request Registered (PO Ready)!' 
                   : 'Oxygen Received Successfully!'}
               </h3>
-              <p className="text-xs text-slate-500 mt-2 px-4 leading-relaxed">
+              <p className="text-xs text-text-muted mt-2 px-4 leading-relaxed">
                 {isPending 
                   ? 'Permohonan pesanan gas oksigen cecair berjaya didaftarkan. Anda boleh menjana Pesanan Kerajaan (PO) sekarang. Laporan Penerimaan (KEW.PS-3) akan diaktifkan sebaik sahaja lori tangki tiba dan No. DO dikemas kini.' 
                   : 'The oxygen delivery was successfully recorded into Supabase. You can now download the KKM-compliant documents.'}
@@ -8130,20 +8134,20 @@ export const OxygenDashboardPage: React.FC = () => {
                     setPdfSuccessModalOpen(false)
                     handleOpenPoPreview(justCreatedReception)
                   }}
-                  className="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 active:scale-95"
+                  className="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-sm transition-colors flex items-center justify-center gap-2 active:scale-95"
                 >
                   <Printer className="w-4 h-4 text-slate-300" />
                   Print Purchase Order (PO) PDF
                 </button>
                 {isPending ? (
-                  <div className="p-3 bg-amber-50/80 border border-amber-200/80 rounded-xl text-[11px] text-amber-800 font-medium flex items-center gap-2 text-left">
+                  <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-[11px] text-amber-400 font-medium flex items-center gap-2 text-left">
                     <Lock className="w-4 h-4 text-amber-600 flex-shrink-0" />
                     <span>Laporan Penerimaan (KEW.PS-3) dikunci sementara sehingga No. DO dimasukkan semasa ketibaan.</span>
                   </div>
                 ) : (
                   <button 
                     onClick={() => handleDownloadReport(justCreatedReception)}
-                    className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-sm transition-all flex items-center justify-center gap-2 active:scale-95"
+                    className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-wider shadow-sm transition-colors flex items-center justify-center gap-2 active:scale-95"
                   >
                     <Download className="w-4 h-4 text-white" />
                     Download Reception Report
@@ -8164,16 +8168,16 @@ export const OxygenDashboardPage: React.FC = () => {
           onClick={() => setIsArrivalModalOpen(false)}
         >
           <div 
-            className="bg-white rounded-[24px] w-full max-w-lg p-6 shadow-2xl border border-slate-200 relative overflow-hidden"
+            className="bg-surface rounded-[24px] w-full max-w-lg p-6 shadow-2xl border border-border-default relative overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3.5 mb-4">
+            <div className="flex items-center justify-between border-b border-border-subtle pb-3.5 mb-4">
               <div>
                 <span className="text-[10px] font-black text-teal-700 uppercase tracking-widest block mb-0.5">Kementerian Kesihatan Malaysia (KKM)</span>
-                <h3 className="text-base font-extrabold text-slate-900 tracking-tight">
+                <h3 className="text-base font-extrabold text-text-primary tracking-tight">
                   {language === 'ms' ? 'Kemas Kini Ketibaan Penghantaran Oksigen (Key In DO)' : 'Confirm Oxygen Arrival (Key In DO)'}
                 </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
+                <p className="text-xs text-text-muted mt-0.5">
                   {language === 'ms' 
                     ? 'Sahkan ketibaan lori tangki / bekalan oksigen dan daftarkan Nombor Nota Serahan (DO).' 
                     : 'Confirm tanker arrival and register Delivery Order (DO) number.'}
@@ -8181,7 +8185,7 @@ export const OxygenDashboardPage: React.FC = () => {
               </div>
               <button 
                 onClick={() => setIsArrivalModalOpen(false)}
-                className="p-1.5 hover:bg-slate-100 text-slate-400 hover:text-slate-700 rounded-lg transition-all"
+                className="p-1.5 hover:bg-subtle text-slate-400 hover:text-text-secondary rounded-lg transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -8189,25 +8193,25 @@ export const OxygenDashboardPage: React.FC = () => {
 
             <form onSubmit={handleSubmitArrival} className="space-y-4">
               {/* Order Info Card */}
-              <div className="bg-slate-50 border border-slate-200/80 p-3.5 rounded-xl space-y-2 text-xs">
+              <div className="bg-subtle/50 border border-border-default p-3.5 rounded-xl space-y-2 text-xs">
                 <div className="flex justify-between">
-                  <span className="text-slate-500 font-medium">Pembekal:</span>
-                  <span className="font-bold text-slate-800">{arrivalRecord.supplier_name || 'LINDE EOX SDN BHD (CAW. MIRI)'}</span>
+                  <span className="text-text-muted font-medium">Pembekal:</span>
+                  <span className="font-bold text-text-primary">{arrivalRecord.supplier_name || 'LINDE EOX SDN BHD (CAW. MIRI)'}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500 font-medium">Tarikh Pesanan:</span>
-                  <span className="font-semibold text-slate-700">
+                  <span className="text-text-muted font-medium">Tarikh Pesanan:</span>
+                  <span className="font-semibold text-text-secondary">
                     {new Date(arrivalRecord.reception_date).toLocaleDateString('ms-MY', { day: '2-digit', month: 'short', year: 'numeric' })}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-slate-500 font-medium">Kod Vot:</span>
+                  <span className="text-text-muted font-medium">Kod Vot:</span>
                   <span className="font-mono font-bold text-teal-700">
                     {arrivalRecord.vote_code || '080702'} ({arrivalRecord.vote_activity || '27402'})
                   </span>
                 </div>
-                <div className="flex justify-between border-t border-slate-200/70 pt-2 font-bold">
-                  <span className="text-slate-600">Jumlah Anggaran:</span>
+                <div className="flex justify-between border-t border-border-default pt-2 font-bold">
+                  <span className="text-text-muted">Jumlah Anggaran:</span>
                   <span className="font-mono text-teal-800 text-sm">{fmt(arrivalRecord.total_amount)}</span>
                 </div>
               </div>
@@ -8215,7 +8219,7 @@ export const OxygenDashboardPage: React.FC = () => {
               {/* Form Inputs */}
               <div className="space-y-3">
                 <div className="space-y-1">
-                  <label className="text-[10px] font-extrabold text-slate-700 uppercase tracking-wider block">
+                  <label className="text-[10px] font-extrabold text-text-secondary uppercase tracking-wider block">
                     No. Delivery Order (DO) <span className="text-rose-500">*</span>
                   </label>
                   <input 
@@ -8225,13 +8229,13 @@ export const OxygenDashboardPage: React.FC = () => {
                     onChange={(e) => setArrivalDoNo(e.target.value)}
                     required
                     autoFocus
-                    className="bg-white border border-teal-300 text-slate-800 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-all text-xs font-mono font-bold rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
+                    className="bg-surface border border-teal-300 text-text-primary focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-colors text-xs font-mono font-bold rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-slate-600 uppercase tracking-wider block">
+                    <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">
                       No. Sales Order (SO) <span className="text-slate-400 font-normal">(Pilihan)</span>
                     </label>
                     <input 
@@ -8239,12 +8243,12 @@ export const OxygenDashboardPage: React.FC = () => {
                       placeholder="cth: 133045612"
                       value={arrivalSoNo}
                       onChange={(e) => setArrivalSoNo(e.target.value)}
-                      className="bg-white border border-slate-250 text-slate-800 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-all text-xs font-mono font-bold rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
+                      className="bg-surface border border-slate-250 text-text-primary focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-colors text-xs font-mono font-bold rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
                     />
                   </div>
 
                   <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-slate-600 uppercase tracking-wider block">
+                    <label className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">
                       Tarikh Ketibaan (Auto) <span className="text-rose-500">*</span>
                     </label>
                     <input 
@@ -8252,14 +8256,14 @@ export const OxygenDashboardPage: React.FC = () => {
                       value={arrivalDate}
                       onChange={(e) => setArrivalDate(e.target.value)}
                       required
-                      className="bg-white border border-slate-250 text-slate-800 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 transition-all text-xs font-medium rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
+                      className="bg-surface border border-slate-250 text-text-primary focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 transition-colors text-xs font-medium rounded-lg outline-none w-full px-3 py-2.5 shadow-xxs"
                     />
                   </div>
                 </div>
               </div>
 
               {/* Informative Unlock Banner */}
-              <div className="p-3 bg-emerald-50/90 border border-emerald-200 rounded-xl text-[11px] text-emerald-900 font-medium leading-relaxed flex items-start gap-2.5">
+              <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-[11px] text-emerald-400 dark:text-emerald-300 font-bold font-medium leading-relaxed flex items-start gap-2.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
                 <span>
                   Selepas No. DO dan Tarikh Ketibaan disimpan, status pesanan akan ditukar kepada <strong>Selesai (Completed)</strong> dan <strong>Laporan Penerimaan (KEW.PS-3)</strong> akan diaktifkan untuk dimuat turun.
@@ -8271,14 +8275,14 @@ export const OxygenDashboardPage: React.FC = () => {
                 <button 
                   type="button" 
                   onClick={() => setIsArrivalModalOpen(false)}
-                  className="flex-1 py-2.5 border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold transition-all"
+                  className="flex-1 py-2.5 border border-border-default hover:bg-subtle/50 text-text-secondary rounded-xl text-xs font-bold transition-colors"
                 >
                   {language === 'ms' ? 'Batal' : 'Cancel'}
                 </button>
                 <button 
                   type="submit"
                   disabled={isSubmittingArrival}
-                  className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-xl text-xs font-extrabold shadow-sm transition-all flex items-center justify-center gap-1.5 active:scale-98"
+                  className="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white rounded-xl text-xs font-extrabold shadow-sm transition-colors flex items-center justify-center gap-1.5 active:scale-98"
                 >
                   {isSubmittingArrival ? <Spinner size="sm" /> : <CheckCheck className="w-4 h-4" />}
                   {language === 'ms' ? 'Sahkan & Buka Laporan' : 'Confirm & Unlock Report'}
@@ -8293,23 +8297,23 @@ export const OxygenDashboardPage: React.FC = () => {
          ======================================================== */}
       {isOfficerModalOpen && (
         <div 
-          className="fixed inset-0 z-50 flex justify-end bg-slate-900/50 backdrop-blur-xs transition-all duration-300"
+          className="fixed inset-0 z-50 flex justify-end bg-slate-900/50 backdrop-blur-xs transition-colors duration-150"
           onClick={() => setIsOfficerModalOpen(false)}
         >
           <div 
-            className="bg-white text-slate-800 w-full max-w-md h-full shadow-2xl border-l border-slate-200 flex flex-col p-6 overflow-hidden relative"
+            className="bg-surface text-text-primary w-full max-w-md h-full shadow-2xl border-l border-border-default flex flex-col p-6 overflow-hidden relative"
             style={{ animation: 'slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards' }}
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-slate-100 pb-4 mb-5 flex-shrink-0">
+            <div className="flex items-center justify-between border-b border-border-subtle pb-4 mb-5 flex-shrink-0">
               <div>
                 <span className="text-[10px] font-black text-teal-700 uppercase tracking-widest block mb-0.5">Warrant Administration Settings</span>
-                <h3 className="text-base font-extrabold text-slate-900 tracking-tight">Edit Officer Signatures</h3>
-                <p className="text-xs text-slate-500 mt-0.5">Configure signees for the KKM Purchase Order.</p>
+                <h3 className="text-base font-extrabold text-text-primary tracking-tight">Edit Officer Signatures</h3>
+                <p className="text-xs text-text-muted mt-0.5">Configure signees for the KKM Purchase Order.</p>
               </div>
               <button 
                 onClick={() => setIsOfficerModalOpen(false)}
-                className="p-1.5 hover:bg-slate-100 text-slate-400 hover:text-slate-700 rounded-lg transition-all"
+                className="p-1.5 hover:bg-subtle text-slate-400 hover:text-text-secondary rounded-lg transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -8318,26 +8322,26 @@ export const OxygenDashboardPage: React.FC = () => {
             <form onSubmit={handleSaveSignatures} className="flex-grow flex flex-col justify-between overflow-y-auto pr-1">
               <div className="space-y-6">
                 {/* Pegawai Memohon */}
-                <div className="space-y-3.5 border-b border-slate-100 pb-5">
+                <div className="space-y-3.5 border-b border-border-subtle pb-5">
                   <h4 className="text-xs font-black text-teal-700 uppercase tracking-widest">1. Pegawai Yang Memohon</h4>
                   <div className="space-y-1.5">
-                    <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Officer Name</label>
+                    <label className="text-[9px] font-bold text-text-muted uppercase tracking-wider block">Officer Name</label>
                     <input 
                       type="text" 
                       value={tempSignatures.applicantName}
                       onChange={(e) => setTempSignatures(prev => ({ ...prev, applicantName: e.target.value }))}
                       required
-                      className="bg-white border border-slate-250 text-slate-800 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-all text-xs font-bold rounded-lg outline-none w-full px-3.5 py-2.5 shadow-xxs"
+                      className="bg-surface border border-slate-250 text-text-primary focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-colors text-xs font-bold rounded-lg outline-none w-full px-3.5 py-2.5 shadow-xxs"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Position / Jawatan</label>
+                    <label className="text-[9px] font-bold text-text-muted uppercase tracking-wider block">Position / Jawatan</label>
                     <input 
                       type="text" 
                       value={tempSignatures.applicantPosition}
                       onChange={(e) => setTempSignatures(prev => ({ ...prev, applicantPosition: e.target.value }))}
                       required
-                      className="bg-white border border-slate-250 text-slate-800 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-all text-xs font-semibold rounded-lg outline-none w-full px-3.5 py-2.5 shadow-xxs"
+                      className="bg-surface border border-slate-250 text-text-primary focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-colors text-xs font-semibold rounded-lg outline-none w-full px-3.5 py-2.5 shadow-xxs"
                     />
                   </div>
                 </div>
@@ -8346,40 +8350,40 @@ export const OxygenDashboardPage: React.FC = () => {
                 <div className="space-y-3.5 pb-5">
                   <h4 className="text-xs font-black text-teal-700 uppercase tracking-widest">2. Ketua Bahagian</h4>
                   <div className="space-y-1.5">
-                    <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Officer Name</label>
+                    <label className="text-[9px] font-bold text-text-muted uppercase tracking-wider block">Officer Name</label>
                     <input 
                       type="text" 
                       value={tempSignatures.headName}
                       onChange={(e) => setTempSignatures(prev => ({ ...prev, headName: e.target.value }))}
                       required
-                      className="bg-white border border-slate-250 text-slate-800 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-all text-xs font-bold rounded-lg outline-none w-full px-3.5 py-2.5 shadow-xxs"
+                      className="bg-surface border border-slate-250 text-text-primary focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-colors text-xs font-bold rounded-lg outline-none w-full px-3.5 py-2.5 shadow-xxs"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[9px] font-bold text-slate-500 uppercase tracking-wider block">Position / Jawatan</label>
+                    <label className="text-[9px] font-bold text-text-muted uppercase tracking-wider block">Position / Jawatan</label>
                     <input 
                       type="text" 
                       value={tempSignatures.headPosition}
                       onChange={(e) => setTempSignatures(prev => ({ ...prev, headPosition: e.target.value }))}
                       required
-                      className="bg-white border border-slate-250 text-slate-800 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-all text-xs font-semibold rounded-lg outline-none w-full px-3.5 py-2.5 shadow-xxs"
+                      className="bg-surface border border-slate-250 text-text-primary focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 placeholder-slate-400 transition-colors text-xs font-semibold rounded-lg outline-none w-full px-3.5 py-2.5 shadow-xxs"
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="flex gap-3 mt-6 border-t border-slate-100 pt-5">
+              <div className="flex gap-3 mt-6 border-t border-border-subtle pt-5">
                 <button 
                   type="button" 
                   onClick={() => setIsOfficerModalOpen(false)}
-                  className="flex-1 py-3 border border-slate-200 hover:bg-slate-50 text-slate-655 hover:text-slate-800 rounded-lg text-xs font-bold transition-all active:scale-98"
+                  className="flex-1 py-3 border border-border-default hover:bg-subtle/50 text-slate-655 hover:text-text-primary rounded-lg text-xs font-bold transition-colors active:scale-98"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit"
                   disabled={isSavingOfficers}
-                  className="flex-1 py-3 bg-teal-600 hover:bg-teal-700 disabled:opacity-50 text-white rounded-lg text-xs font-extrabold shadow-sm transition-all active:scale-98 flex items-center justify-center gap-1.5"
+                  className="flex-1 py-3 bg-teal-600 hover:bg-teal-700 disabled:opacity-50 text-white rounded-lg text-xs font-extrabold shadow-sm transition-colors active:scale-98 flex items-center justify-center gap-1.5"
                 >
                   {isSavingOfficers ? <Spinner size="sm" /> : <CheckCircle className="w-3.5 h-3.5" />}
                   Save Changes
@@ -8398,19 +8402,19 @@ export const OxygenDashboardPage: React.FC = () => {
           onClick={() => setIsPoPreviewModalOpen(false)}
         >
           <div 
-            className="bg-white rounded-[28px] w-full max-w-7xl h-[90vh] shadow-2xl relative border border-slate-200/50 flex flex-col overflow-hidden"
+            className="bg-surface rounded-[28px] w-full max-w-7xl h-[90vh] shadow-2xl relative border border-border-default flex flex-col overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4 flex-shrink-0 bg-slate-50/50">
+            <div className="flex items-center justify-between border-b border-border-subtle px-6 py-4 flex-shrink-0 bg-subtle/50">
               <div>
                 <span className="text-[10px] font-black text-teal-700 uppercase tracking-widest block mb-0.5">LPO Document Workspace</span>
-                <h3 className="text-base font-extrabold text-slate-900 tracking-tight">KKM Purchase Order Document Verification</h3>
-                <p className="text-xs text-slate-500 mt-0.5">Select signees and verify the generated PDF document live before printing.</p>
+                <h3 className="text-base font-extrabold text-text-primary tracking-tight">KKM Purchase Order Document Verification</h3>
+                <p className="text-xs text-text-muted mt-0.5">Select signees and verify the generated PDF document live before printing.</p>
               </div>
               <button 
                 onClick={() => setIsPoPreviewModalOpen(false)}
-                className="p-1.5 hover:bg-slate-100 text-slate-400 hover:text-slate-700 rounded-lg transition-all"
+                className="p-1.5 hover:bg-subtle text-slate-400 hover:text-text-secondary rounded-lg transition-colors"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -8420,11 +8424,11 @@ export const OxygenDashboardPage: React.FC = () => {
             <div className="flex-grow flex flex-col lg:flex-row overflow-hidden min-h-0">
               
               {/* Left Column: Live PDF Document Viewer (2/3 width) */}
-              <div className="flex-1 lg:flex-[2] bg-slate-100 p-4 flex items-center justify-center border-r border-slate-200/50 overflow-hidden relative">
+              <div className="flex-1 lg:flex-[2] bg-subtle p-4 flex items-center justify-center border-r border-border-default overflow-hidden relative">
                 {previewPdfUrl ? (
                   <iframe 
                     src={`${previewPdfUrl}#navpanes=0`} 
-                    className="w-full h-full border border-slate-200 rounded-2xl shadow-lg bg-white" 
+                    className="w-full h-full border border-border-default rounded-2xl shadow-lg bg-surface" 
                     title="Live PO PDF Preview"
                   />
                 ) : (
@@ -8438,24 +8442,24 @@ export const OxygenDashboardPage: React.FC = () => {
               {/* Right Column: Interactive Dropdown Controls (1/3 width) */}
               <form 
                 onSubmit={handleGeneratePoWithCustomSignatures} 
-                className="w-full lg:w-[380px] p-6 flex flex-col justify-between overflow-y-auto bg-white flex-shrink-0 min-h-0"
+                className="w-full lg:w-[380px] p-6 flex flex-col justify-between overflow-y-auto bg-surface flex-shrink-0 min-h-0"
               >
                 <div className="space-y-6">
                   {/* Summary Box */}
-                  <div className="bg-teal-50/40 border border-teal-100 rounded-2xl p-4 space-y-2">
+                  <div className="bg-accent-base/10 border border-teal-100 rounded-2xl p-4 space-y-2">
                     <span className="text-[10px] font-black text-teal-800 uppercase tracking-widest block">PO Reference</span>
-                    <div className="flex justify-between text-xs font-semibold text-slate-700">
+                    <div className="flex justify-between text-xs font-semibold text-text-secondary">
                       <span>Delivery Order No:</span>
                       <span className="font-mono text-teal-700 font-bold">{previewRecord.delivery_order_no}</span>
                     </div>
-                    <div className="flex justify-between text-xs font-semibold text-slate-700">
+                    <div className="flex justify-between text-xs font-semibold text-text-secondary">
                       <span>Total Amount:</span>
                       <span className="font-mono text-teal-850 font-black">{fmt(previewRecord.total_amount)}</span>
                     </div>
                   </div>
 
                   {/* Section 1: Kod Undi & Peruntukan (LOCKED / READ-ONLY) */}
-                  <div className="space-y-3.5 border-b border-slate-100 pb-5">
+                  <div className="space-y-3.5 border-b border-border-subtle pb-5">
                     <div className="flex items-center justify-between">
                       <h4 className="text-xs font-black text-teal-700 uppercase tracking-widest flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-teal-500" />
@@ -8463,8 +8467,8 @@ export const OxygenDashboardPage: React.FC = () => {
                       </h4>
                       <span className={`inline-flex items-center gap-1 text-[9px] font-mono font-extrabold px-2 py-0.5 rounded-full border ${
                         previewVoteCode.startsWith('24') || previewVoteCode === '020200'
-                          ? 'bg-purple-100 text-purple-800 border-purple-200'
-                          : 'bg-slate-100 text-slate-700 border-slate-200'
+                          ? 'bg-purple-100 text-indigo-400 border-indigo-500/20'
+                          : 'bg-subtle text-text-secondary border-border-default'
                       }`}>
                         <Lock className="w-2.5 h-2.5 text-amber-600" />
                         VOT {previewVoteCode} {previewVoteCode.startsWith('24') || previewVoteCode === '020200' ? '(AKAUN PENTADBIRAN)' : '(READ-ONLY)'}
@@ -8473,20 +8477,20 @@ export const OxygenDashboardPage: React.FC = () => {
 
                     {/* Read-Only Locked Box with Security Override Button */}
                     <div className="space-y-1.5">
-                      <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block flex items-center justify-between">
+                      <label className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider block flex items-center justify-between">
                         <span>{language === 'ms' ? 'Kod Vot Disahkan (Read-Only)' : 'Verified Vote Code (Read-Only)'}</span>
                         <span className="text-[9px] text-emerald-600 font-extrabold flex items-center gap-0.5">
                           <CheckCircle2 className="w-3 h-3" /> {language === 'ms' ? 'Terkunci' : 'Locked'}
                         </span>
                       </label>
 
-                      <div className="flex items-center justify-between gap-2 p-3 bg-slate-50/90 border border-slate-200/80 rounded-2xl shadow-2xs">
+                      <div className="flex items-center justify-between gap-2 p-3 bg-subtle/50 border border-border-default rounded-2xl shadow-elevation-1">
                         <div className="flex items-center gap-2.5 min-w-0">
-                          <div className="p-2 bg-white border border-slate-200 rounded-xl text-amber-600 shadow-2xs shrink-0">
+                          <div className="p-2 bg-surface border border-border-default rounded-xl text-amber-600 shadow-elevation-1 shrink-0">
                             <Lock className="w-4 h-4" />
                           </div>
                           <div className="min-w-0">
-                            <span className="text-xs font-mono font-black text-slate-900 block truncate">
+                            <span className="text-xs font-mono font-black text-text-primary block truncate">
                               Vot {previewVoteCode} {
                                 previewVoteCode === '24000' ? '(Sewaan - Pentadbiran)' :
                                 previewVoteCode === '24999' ? '(Sewaan Gas - Pentadbiran)' :
@@ -8495,7 +8499,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                 previewVoteCode === '080600' ? '(Duit Khas)' : ''
                               }
                             </span>
-                            <span className="text-[10px] text-slate-500 font-semibold block truncate">
+                            <span className="text-[10px] text-text-muted font-semibold block truncate">
                               {previewVoteCode.startsWith('24') || previewVoteCode === '020200'
                                 ? (language === 'ms' ? 'Akaun Pentadbiran Hospital' : 'Hospital Administration Account')
                                 : `Baki: ${fmt(financials?.by_vote_code?.[previewVoteCode]?.current_balance ?? (previewVoteCode === '080702' ? (financials?.current_balance ?? 0) : 0))}`
@@ -8508,7 +8512,7 @@ export const OxygenDashboardPage: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => handleOpenVoteOverrideModal(previewRecord)}
-                          className="px-3 py-1.5 bg-white hover:bg-amber-50 text-amber-800 hover:text-amber-900 border border-amber-300 rounded-xl text-[10px] font-black uppercase tracking-wider transition-all shadow-xs flex items-center gap-1 active:scale-95 shrink-0"
+                          className="px-3 py-1.5 bg-surface hover:bg-amber-500/10 text-amber-400 hover:text-amber-400 dark:text-amber-300 font-bold border border-amber-300 rounded-xl text-[10px] font-black uppercase tracking-wider transition-colors shadow-xs flex items-center gap-1 active:scale-95 shrink-0"
                           title={language === 'ms' ? 'Tukar Kod Vot dengan Kebenaran F@rmasi.2016' : 'Change Vote Code with F@rmasi.2016'}
                         >
                           <Lock className="w-3 h-3 text-amber-600" />
@@ -8519,18 +8523,18 @@ export const OxygenDashboardPage: React.FC = () => {
 
                     <div className="grid grid-cols-2 gap-2.5">
                       <div className="space-y-1">
-                        <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                        <label className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                           Aktiviti Vot
                         </label>
-                        <div className="bg-slate-50 border border-slate-200 text-slate-800 text-xs font-mono font-bold rounded-lg px-2.5 py-1.5 truncate">
+                        <div className="bg-subtle/50 border border-border-default text-text-primary text-xs font-mono font-bold rounded-lg px-2.5 py-1.5 truncate">
                           {previewVoteActivity || '27402'}
                         </div>
                       </div>
                       <div className="space-y-1">
-                        <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                        <label className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                           Baki Vot Semasa
                         </label>
-                        <div className="bg-slate-50 border border-slate-200 text-slate-800 text-xs font-mono font-bold rounded-lg px-2.5 py-1.5 truncate">
+                        <div className="bg-subtle/50 border border-border-default text-text-primary text-xs font-mono font-bold rounded-lg px-2.5 py-1.5 truncate">
                           {fmt(financials?.by_vote_code?.[previewVoteCode]?.current_balance ?? (previewVoteCode === '080702' ? (financials?.current_balance ?? 0) : 0))}
                         </div>
                       </div>
@@ -8541,23 +8545,23 @@ export const OxygenDashboardPage: React.FC = () => {
                       const isAdminVote = previewVoteCode.startsWith('24') || previewVoteCode === '020200'
                       if (isAdminVote) {
                         return (
-                          <div className="p-3 rounded-2xl border bg-purple-50/70 border-purple-200 text-purple-900 text-[10px] space-y-1.5 shadow-2xs">
+                          <div className="p-3 rounded-2xl border bg-indigo-500/10 border-indigo-500/20 text-indigo-400 dark:text-indigo-300 font-bold text-[10px] space-y-1.5 shadow-elevation-1">
                             <div className="flex justify-between items-center font-bold">
-                              <span className="text-[10px] uppercase tracking-wider text-purple-800">
+                              <span className="text-[10px] uppercase tracking-wider text-indigo-400">
                                 {language === 'ms' ? 'Status Peruntukan:' : 'Budget Allocation Status:'}
                               </span>
-                              <span className="font-mono text-[9px] font-black bg-purple-200/80 text-purple-900 px-2 py-0.5 rounded-full uppercase">
+                              <span className="font-mono text-[9px] font-black bg-purple-200/80 text-indigo-400 dark:text-indigo-300 font-bold px-2 py-0.5 rounded-full uppercase">
                                 {language === 'ms' ? 'Akaun Pentadbiran' : 'Hospital Admin Budget'}
                               </span>
                             </div>
-                            <p className="text-[9.5px] text-purple-800/90 leading-relaxed">
+                            <p className="text-[9.5px] text-indigo-400/90 leading-relaxed">
                               {language === 'ms'
                                 ? '✓ Pesanan Kerajaan (PO) ini dipertanggungjawabkan di bawah Peruntukan Pentadbiran (Objek 24000 / Program 020200). Sifar potongan terhadap baki Vot Farmasi mahupun Duit Khas.'
                                 : '✓ This Government PO is charged against Hospital Administration Budget (Object 24000 / Program 020200). Zero deduction from Pharmacy Vote or Duit Khas allocations.'}
                             </p>
-                            <div className="pt-1.5 border-t border-purple-200/80 flex justify-between text-[10px] font-mono">
+                            <div className="pt-1.5 border-t border-indigo-500/20 flex justify-between text-[10px] font-mono">
                               <span className="text-purple-700 font-semibold">{language === 'ms' ? 'Caj Pinjaman / Sewaan:' : 'Loan / Rental Charges:'}</span>
-                              <span className="font-extrabold text-purple-950">{fmt(previewLoanAmount || previewRecord.total_amount)}</span>
+                              <span className="font-extrabold text-indigo-400 dark:text-indigo-300 font-bold">{fmt(previewLoanAmount || previewRecord.total_amount)}</span>
                             </div>
                           </div>
                         )
@@ -8567,21 +8571,21 @@ export const OxygenDashboardPage: React.FC = () => {
                       const { balanceBefore, balanceAfter } = computePoBalances(previewRecord, previewVoteCode, refillAmt)
                       const isDeficit = balanceAfter < 0
                       return (
-                        <div className={`p-2.5 rounded-xl border text-[10px] space-y-1.5 ${isDeficit ? 'bg-rose-50/80 border-rose-200 text-rose-800' : 'bg-teal-50/70 border-teal-200 text-teal-900'}`}>
+                        <div className={`p-2.5 rounded-xl border text-[10px] space-y-1.5 ${isDeficit ? 'bg-rose-500/10 border-rose-500/20 text-rose-400' : 'bg-accent-base/10 border-accent-base/20 text-teal-900'}`}>
                           <div className="flex justify-between font-bold">
                             <span>Status Baki Vot {previewVoteCode} (Unit Farmasi):</span>
                             <span className="font-mono">{isDeficit ? 'PERUNTUKAN DEFISIT' : 'PERUNTUKAN SIHAT'}</span>
                           </div>
-                          <div className="grid grid-cols-2 gap-1 pt-1 border-t border-slate-200/60 font-mono text-[9px]">
-                            <span className="text-slate-500">Baki Sebelum PO:</span>
-                            <span className="font-bold text-right text-slate-800">{fmt(balanceBefore)}</span>
-                            <span className="text-slate-500">Tolak PO Refill Gas:</span>
-                            <span className="font-bold text-right text-slate-800">-{fmt(refillAmt)}</span>
-                            <span className="text-slate-500">Baki Selepas PO:</span>
+                          <div className="grid grid-cols-2 gap-1 pt-1 border-t border-border-default font-mono text-[9px]">
+                            <span className="text-text-muted">Baki Sebelum PO:</span>
+                            <span className="font-bold text-right text-text-primary">{fmt(balanceBefore)}</span>
+                            <span className="text-text-muted">Tolak PO Refill Gas:</span>
+                            <span className="font-bold text-right text-text-primary">-{fmt(refillAmt)}</span>
+                            <span className="text-text-muted">Baki Selepas PO:</span>
                             <span className={`font-bold text-right ${isDeficit ? 'text-rose-600' : 'text-teal-700'}`}>{fmt(balanceAfter)}</span>
                           </div>
                           {previewLoanAmount > 0 && (
-                            <div className="pt-1 border-t border-slate-200/60 flex justify-between text-[9px] text-purple-700 font-semibold">
+                            <div className="pt-1 border-t border-border-default flex justify-between text-[9px] text-purple-700 font-semibold">
                               <span>Caj Pinjaman (Bajet Pentadbiran):</span>
                               <span className="font-mono font-bold">{fmt(previewLoanAmount)}</span>
                             </div>
@@ -8598,13 +8602,13 @@ export const OxygenDashboardPage: React.FC = () => {
                   </div>
 
                   {/* Dropdown 2: Pegawai Memohon */}
-                  <div className="space-y-3.5 border-b border-slate-100 pb-5">
+                  <div className="space-y-3.5 border-b border-border-subtle pb-5">
                     <h4 className="text-xs font-black text-teal-700 uppercase tracking-widest flex items-center gap-1.5">
                       <span className="w-1.5 h-1.5 rounded-full bg-teal-500" />
                       2. Pegawai Yang Memohon
                     </h4>
                     <div className="space-y-1.5">
-                      <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                      <label className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                         Select Officer (Pharmacy Logistic)
                       </label>
                       <select
@@ -8619,7 +8623,7 @@ export const OxygenDashboardPage: React.FC = () => {
                           }
                         }}
                         value={previewSignatures.applicantName}
-                        className="w-full border border-slate-250 rounded-xl p-2.5 text-xs outline-none bg-white text-gray-700 focus:ring-2 focus:ring-teal-600/10 focus:border-teal-500 transition-all font-semibold"
+                        className="w-full border border-slate-250 rounded-xl p-2.5 text-xs outline-none bg-surface text-text-secondary focus:ring-2 focus:ring-teal-600/10 focus:border-teal-500 transition-colors font-semibold"
                       >
                         <option value="">-- Select Officer --</option>
                         {pharmacyLogisticUsers.map(user => (
@@ -8631,13 +8635,13 @@ export const OxygenDashboardPage: React.FC = () => {
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Officer Position (Custom)</label>
+                      <label className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider block">Officer Position (Custom)</label>
                       <input 
                         type="text" 
                         value={previewSignatures.applicantPosition}
                         onChange={(e) => setPreviewSignatures(prev => ({ ...prev, applicantPosition: e.target.value }))}
                         required
-                        className="bg-white border border-slate-250 text-slate-800 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 transition-all text-xs font-semibold rounded-lg outline-none w-full px-3 py-2"
+                        className="bg-surface border border-slate-250 text-text-primary focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 transition-colors text-xs font-semibold rounded-lg outline-none w-full px-3 py-2"
                       />
                     </div>
                   </div>
@@ -8649,7 +8653,7 @@ export const OxygenDashboardPage: React.FC = () => {
                       3. Ketua Bahagian
                     </h4>
                     <div className="space-y-1.5">
-                      <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                      <label className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                         Select Head of Dept (Pharmacy Logistic)
                       </label>
                       <select
@@ -8664,7 +8668,7 @@ export const OxygenDashboardPage: React.FC = () => {
                           }
                         }}
                         value={previewSignatures.headName}
-                        className="w-full border border-slate-250 rounded-xl p-2.5 text-xs outline-none bg-white text-gray-700 focus:ring-2 focus:ring-teal-600/10 focus:border-teal-500 transition-all font-semibold"
+                        className="w-full border border-slate-250 rounded-xl p-2.5 text-xs outline-none bg-surface text-text-secondary focus:ring-2 focus:ring-teal-600/10 focus:border-teal-500 transition-colors font-semibold"
                       >
                         <option value="">-- Select Head --</option>
                         {pharmacyLogisticUsers.map(user => (
@@ -8676,30 +8680,30 @@ export const OxygenDashboardPage: React.FC = () => {
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Position (Custom)</label>
+                      <label className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider block">Position (Custom)</label>
                       <input 
                         type="text" 
                         value={previewSignatures.headPosition}
                         onChange={(e) => setPreviewSignatures(prev => ({ ...prev, headPosition: e.target.value }))}
                         required
-                        className="bg-white border border-slate-250 text-slate-800 focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 transition-all text-xs font-semibold rounded-lg outline-none w-full px-3 py-2"
+                        className="bg-surface border border-slate-250 text-text-primary focus:border-teal-600 focus:ring-2 focus:ring-teal-600/10 transition-colors text-xs font-semibold rounded-lg outline-none w-full px-3 py-2"
                       />
                     </div>
                   </div>
                 </div>
 
                 {/* Footer Controls */}
-                <div className="flex gap-3 mt-6 border-t border-slate-100 pt-5 flex-shrink-0">
+                <div className="flex gap-3 mt-6 border-t border-border-subtle pt-5 flex-shrink-0">
                   <button 
                     type="button" 
                     onClick={() => setIsPoPreviewModalOpen(false)}
-                    className="flex-1 py-3 border border-slate-200 hover:bg-slate-50 text-slate-650 hover:text-slate-800 rounded-lg text-xs font-bold transition-all active:scale-98"
+                    className="flex-1 py-3 border border-border-default hover:bg-subtle/50 text-slate-650 hover:text-text-primary rounded-lg text-xs font-bold transition-colors active:scale-98"
                   >
                     Cancel
                   </button>
                   <button 
                     type="submit"
-                    className="flex-1 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-extrabold shadow-md transition-all active:scale-98 flex items-center justify-center gap-1.5"
+                    className="flex-1 py-3 bg-teal-600 hover:bg-teal-700 text-white rounded-lg text-xs font-extrabold shadow-md transition-colors active:scale-98 flex items-center justify-center gap-1.5"
                   >
                     <Printer className="w-3.5 h-3.5" />
                     Print PO
@@ -8719,7 +8723,7 @@ export const OxygenDashboardPage: React.FC = () => {
           onClick={() => setIsMonthlyModalOpen(false)}
         >
           <div 
-            className="bg-white rounded-[32px] w-full max-w-4xl max-h-[92vh] shadow-2xl relative border border-slate-200/80 flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+            className="bg-surface rounded-[32px] w-full max-w-4xl max-h-[92vh] shadow-2xl relative border border-border-default flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
@@ -8735,31 +8739,31 @@ export const OxygenDashboardPage: React.FC = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-2">
-                      <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full border ${currentMonthRec?.is_vie_tank ? 'text-blue-700 bg-blue-100/80 border-blue-200' : 'text-teal-700 bg-teal-100/80 border-teal-200'}`}>
+                      <span className={`text-[10px] font-black uppercase tracking-widest px-2.5 py-0.5 rounded-full border ${currentMonthRec?.is_vie_tank ? 'text-blue-700 bg-blue-100/80 border-blue-500/20' : 'text-teal-700 bg-teal-100/80 border-accent-base/20'}`}>
                         {language === 'ms' ? 'Modul Konsolidasi Dokumen' : 'Document Consolidation Workspace'}
                       </span>
                       <button
                         onClick={() => setIsMonthlyModalOpen(false)}
-                        className="text-slate-400 hover:text-slate-600 transition-colors p-1.5 rounded-xl hover:bg-white/80"
+                        className="text-slate-400 hover:text-text-muted transition-colors p-1.5 rounded-xl hover:bg-surface"
                       >
                         <X className="w-4 h-4" />
                       </button>
                     </div>
-                    <h3 className="text-lg font-extrabold text-slate-900 mt-1 flex items-center gap-2">
+                    <h3 className="text-lg font-extrabold text-text-primary mt-1 flex items-center gap-2">
                       {currentMonthRec?.is_vie_tank
                         ? (language === 'ms' ? 'Gabungan Tangki VIE & Dokumen Bulanan' : 'Monthly VIE Tank & Document Consolidation')
                         : (language === 'ms' ? 'Gabungan Silinder & Dokumen Bulanan' : 'Monthly Cylinder & Document Consolidation')}
                       {currentMonthRec?.is_vie_tank ? (
-                        <span className="px-2 py-0.5 text-[9px] font-black bg-blue-100 text-blue-700 border border-blue-200 rounded-full">
+                        <span className="px-2 py-0.5 text-[9px] font-black bg-blue-100 text-blue-700 border border-blue-500/20 rounded-full">
                           💧 TANGKI VIE
                         </span>
                       ) : (
-                        <span className="px-2 py-0.5 text-[9px] font-black bg-slate-100 text-slate-700 border border-slate-200 rounded-full">
+                        <span className="px-2 py-0.5 text-[9px] font-black bg-subtle text-text-secondary border border-border-default rounded-full">
                           🔵 SILINDER
                         </span>
                       )}
                     </h3>
-                    <p className="text-xs text-slate-600 font-medium mt-0.5 leading-relaxed">
+                    <p className="text-xs text-text-muted font-medium mt-0.5 leading-relaxed">
                       {currentMonthRec?.is_vie_tank
                         ? (language === 'ms'
                             ? 'Gabungkan semua entri penerimaan Tangki VIE cecair pukal (m³) bagi bulan pilihan menjadi satu PO dan Laporan Audit KEW.PS-3 rasmi.'
@@ -8781,7 +8785,7 @@ export const OxygenDashboardPage: React.FC = () => {
 
               if (!currentMonthRec) {
                 return (
-                  <div className="p-10 text-center text-slate-500 font-semibold italic">
+                  <div className="p-10 text-center text-text-muted font-semibold italic">
                     {language === 'ms' ? 'Tiada entri penerimaan oksigen untuk digabungkan.' : 'No oxygen reception entries available to consolidate.'}
                   </div>
                 )
@@ -8790,15 +8794,15 @@ export const OxygenDashboardPage: React.FC = () => {
               return (
                 <div className="p-6 overflow-y-auto space-y-6 flex-grow">
                   {/* Month Selection Bar */}
-                  <div className="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="bg-subtle/50 border border-border-default rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
-                      <label className="text-[10px] font-black text-slate-500 uppercase tracking-wider block mb-1">
+                      <label className="text-[10px] font-black text-text-muted uppercase tracking-wider block mb-1">
                         {language === 'ms' ? 'PILIH BULAN KONSOLIDASI' : 'SELECT CONSOLIDATION MONTH'}
                       </label>
                       <select
                         value={activeMonthKey}
                         onChange={(e) => setSelectedConsolidateMonthKey(e.target.value)}
-                        className="bg-white border border-slate-300 text-slate-900 font-bold text-sm rounded-xl px-3.5 py-2 outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 shadow-xs"
+                        className="bg-surface border border-border-default text-text-primary font-bold text-sm rounded-xl px-3.5 py-2 outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 shadow-xs"
                       >
                         {monthlyList.map(m => (
                           <option key={m.monthKey} value={m.monthKey}>
@@ -8809,7 +8813,7 @@ export const OxygenDashboardPage: React.FC = () => {
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-teal-800 bg-teal-100/70 border border-teal-200 px-3 py-1.5 rounded-xl flex items-center gap-1.5">
+                      <span className="text-xs font-bold text-teal-800 bg-teal-100/70 border border-accent-base/20 px-3 py-1.5 rounded-xl flex items-center gap-1.5">
                         <Sparkles className="w-3.5 h-3.5 text-teal-600" />
                         {currentMonthRec.entryCount} {language === 'ms' ? 'Penghantaran Dikesan' : 'Deliveries Detected'}
                       </span>
@@ -8818,11 +8822,11 @@ export const OxygenDashboardPage: React.FC = () => {
 
                   {/* Summary Metric Cards */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <div className="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-2xs">
-                      <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block">
+                    <div className="bg-surface border border-border-default rounded-2xl p-3.5 shadow-elevation-1">
+                      <span className="text-[9px] font-black text-text-secondary font-bold uppercase tracking-wider block">
                         {language === 'ms' ? 'BIL. PENGHANTARAN' : 'DELIVERY COUNT'}
                       </span>
-                      <span className="text-xl font-black text-slate-900 mt-1 block">
+                      <span className="text-xl font-black text-text-primary mt-1 block">
                         {currentMonthRec.entryCount}
                       </span>
                       <span className="text-[10px] text-teal-600 font-bold">
@@ -8830,20 +8834,20 @@ export const OxygenDashboardPage: React.FC = () => {
                       </span>
                     </div>
 
-                    <div className="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-2xs">
-                      <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block">
+                    <div className="bg-surface border border-border-default rounded-2xl p-3.5 shadow-elevation-1">
+                      <span className="text-[9px] font-black text-text-secondary font-bold uppercase tracking-wider block">
                         {language === 'ms' ? 'ISIAN SEMULA' : 'REFILL TOTAL'}
                       </span>
-                      <span className="text-xl font-black text-slate-900 mt-1 block">
+                      <span className="text-xl font-black text-text-primary mt-1 block">
                         {fmt(currentMonthRec.refill_amount)}
                       </span>
-                      <span className="text-[10px] text-slate-500 font-semibold">
+                      <span className="text-[10px] text-text-muted font-semibold">
                         {language === 'ms' ? 'Perbelanjaan gas' : 'Gas expenditure'}
                       </span>
                     </div>
 
-                    <div className="bg-white border border-slate-200 rounded-2xl p-3.5 shadow-2xs">
-                      <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider block">
+                    <div className="bg-surface border border-border-default rounded-2xl p-3.5 shadow-elevation-1">
+                      <span className="text-[9px] font-black text-text-secondary font-bold uppercase tracking-wider block">
                         {language === 'ms' ? 'CAJ PINJAMAN' : 'LOAN CHARGES'}
                       </span>
                       <span className="text-xl font-black text-purple-700 mt-1 block">
@@ -8868,7 +8872,7 @@ export const OxygenDashboardPage: React.FC = () => {
                   </div>
 
                   {/* Combined DO Reference */}
-                  <div className="bg-teal-50/50 border border-teal-100 rounded-2xl p-4">
+                  <div className="bg-accent-base/10 border border-teal-100 rounded-2xl p-4">
                     <span className="text-[10px] font-black text-teal-800 uppercase tracking-widest block mb-1">
                       {language === 'ms' ? 'Nota Serahan (DO) Yang Digabungkan' : 'Consolidated Delivery Orders (DO)'}
                     </span>
@@ -8878,19 +8882,19 @@ export const OxygenDashboardPage: React.FC = () => {
                   </div>
 
                   {/* Individual Entries Table Breakdown */}
-                  <div className="border border-slate-200 rounded-2xl overflow-hidden">
-                    <div className="px-4 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
-                      <span className="text-[10px] font-black text-slate-700 uppercase tracking-widest">
+                  <div className="border border-border-default rounded-2xl overflow-hidden">
+                    <div className="px-4 py-3 bg-subtle/50 border-b border-border-default flex items-center justify-between">
+                      <span className="text-[10px] font-black text-text-secondary uppercase tracking-widest">
                         {language === 'ms' ? 'Senarai Entri Penghantaran Individu' : 'Individual Delivery Entries List'}
                       </span>
-                      <span className="text-[10px] font-bold text-slate-500">
+                      <span className="text-[10px] font-bold text-text-muted">
                         {currentMonthRec.records.length} {language === 'ms' ? 'rekod' : 'records'}
                       </span>
                     </div>
 
                     <div className="max-h-48 overflow-y-auto">
                       <table className="w-full text-left text-xs border-collapse">
-                        <thead className="bg-slate-100/70 text-[9px] font-bold text-slate-600 uppercase border-b border-slate-200">
+                        <thead className="bg-subtle text-[9px] font-bold text-text-muted uppercase border-b border-border-default">
                           <tr>
                             <th className="px-4 py-2">{language === 'ms' ? 'TARIKH' : 'DATE'}</th>
                             <th className="px-4 py-2">{language === 'ms' ? 'DO NO.' : 'DO NO.'}</th>
@@ -8899,16 +8903,16 @@ export const OxygenDashboardPage: React.FC = () => {
                             <th className="px-4 py-2 text-right">{language === 'ms' ? 'JUMLAH' : 'TOTAL'}</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-slate-100 text-[11px]">
+                        <tbody className="divide-y divide-border-subtle text-[11px]">
                           {currentMonthRec.records.map((r, idx) => (
-                            <tr key={r.id || idx} className="hover:bg-slate-50/80">
-                              <td className="px-4 py-2 font-semibold text-slate-800">
+                            <tr key={r.id || idx} className="hover:bg-subtle/50">
+                              <td className="px-4 py-2 font-semibold text-text-primary">
                                 {new Date(r.reception_date).toLocaleDateString('ms-MY', { day: '2-digit', month: 'short', year: 'numeric' })}
                               </td>
                               <td className="px-4 py-2 font-mono font-bold text-teal-700">
                                 {r.delivery_order_no}
                               </td>
-                              <td className="px-4 py-2 text-right font-medium text-slate-700">
+                              <td className="px-4 py-2 text-right font-medium text-text-secondary">
                                 {fmt(r.refill_amount)}
                               </td>
                               <td className="px-4 py-2 text-right font-medium text-purple-700">
@@ -8925,9 +8929,9 @@ export const OxygenDashboardPage: React.FC = () => {
                   </div>
 
                   {/* Informational Guidance Callout */}
-                  <div className="bg-amber-50/80 border border-amber-200/80 rounded-2xl p-3.5 flex items-start gap-2.5">
+                  <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-3.5 flex items-start gap-2.5">
                     <span className="text-amber-600 text-sm">💡</span>
-                    <p className="text-[11px] text-amber-900 leading-relaxed font-medium">
+                    <p className="text-[11px] text-amber-400 dark:text-amber-300 font-bold leading-relaxed font-medium">
                       {currentMonthRec.is_vie_tank ? (
                         language === 'ms'
                           ? 'Semua bekalan cecair pukal Tangki VIE (m³) dijumlahkan secara berasingan bagi bulan ini. Tangki VIE dikendalikan khas dan tidak bercampur dengan silinder gas termampat.'
@@ -8950,11 +8954,11 @@ export const OxygenDashboardPage: React.FC = () => {
               const currentMonthRec = monthlyList.find(m => m.monthKey === activeMonthKey) || monthlyList[0]
 
               return (
-                <div className="p-6 bg-slate-50 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 flex-shrink-0">
+                <div className="p-6 bg-subtle/50 border-t border-border-subtle flex flex-col sm:flex-row items-center justify-between gap-3 flex-shrink-0">
                   <button
                     type="button"
                     onClick={() => setIsMonthlyModalOpen(false)}
-                    className="w-full sm:w-auto px-5 py-3 border border-slate-300 hover:bg-white text-slate-700 font-bold rounded-xl text-xs transition-all active:scale-95"
+                    className="w-full sm:w-auto px-5 py-3 border border-border-default hover:bg-surface text-text-secondary font-bold rounded-xl text-xs transition-colors active:scale-95"
                   >
                     {language === 'ms' ? 'Tutup' : 'Close'}
                   </button>
@@ -8968,7 +8972,7 @@ export const OxygenDashboardPage: React.FC = () => {
                           handleDownloadReport(currentMonthRec as any)
                         }
                       }}
-                      className="flex-1 sm:flex-none px-4 py-3 bg-white hover:bg-teal-50 border border-teal-300 text-teal-800 font-extrabold rounded-xl text-xs shadow-xs transition-all flex items-center justify-center gap-1.5 active:scale-95 disabled:opacity-50"
+                      className="flex-1 sm:flex-none px-4 py-3 bg-surface hover:bg-accent-base/10 border border-teal-300 text-teal-800 font-extrabold rounded-xl text-xs shadow-xs transition-colors flex items-center justify-center gap-1.5 active:scale-95 disabled:opacity-50"
                     >
                       <Download className="w-3.5 h-3.5 text-teal-600" />
                       {language === 'ms' ? 'Muat Turun Laporan (KEW.PS-3)' : 'Download Report (KEW.PS-3)'}
@@ -8983,7 +8987,7 @@ export const OxygenDashboardPage: React.FC = () => {
                           handleOpenPoPreview(currentMonthRec as any)
                         }
                       }}
-                      className="flex-1 sm:flex-none px-5 py-3 bg-teal-600 hover:bg-teal-700 text-white font-extrabold rounded-xl text-xs shadow-md shadow-teal-600/20 transition-all flex items-center justify-center gap-1.5 active:scale-95 disabled:opacity-50"
+                      className="flex-1 sm:flex-none px-5 py-3 bg-teal-600 hover:bg-teal-700 text-white font-extrabold rounded-xl text-xs shadow-md shadow-teal-600/20 transition-colors flex items-center justify-center gap-1.5 active:scale-95 disabled:opacity-50"
                     >
                       <FileText className="w-3.5 h-3.5" />
                       {language === 'ms' ? 'Pratonton & Cetak PO Bulanan' : 'Preview & Print Monthly PO'}
@@ -8999,7 +9003,7 @@ export const OxygenDashboardPage: React.FC = () => {
       {/* Admin Password Security Challenge Modal for Reset Inventory */}
       {isClearModalOpen && (
         <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-md z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-white border border-rose-200 rounded-3xl shadow-2xl max-w-md w-full overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="bg-surface border border-rose-500/20 rounded-3xl shadow-2xl max-w-md w-full overflow-hidden animate-in zoom-in-95 duration-200">
             {/* Modal Header */}
             <div className="bg-gradient-to-r from-rose-500/10 via-red-500/10 to-rose-500/10 border-b border-rose-100 p-6 flex items-start gap-4">
               <div className="p-3 bg-rose-500 text-white rounded-2xl shadow-lg shadow-rose-500/20 shrink-0">
@@ -9012,15 +9016,15 @@ export const OxygenDashboardPage: React.FC = () => {
                   </span>
                   <button
                     onClick={() => setIsClearModalOpen(false)}
-                    className="text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-lg hover:bg-white/50"
+                    className="text-slate-400 hover:text-text-muted transition-colors p-1 rounded-lg hover:bg-surface/50"
                   >
                     <X className="w-4 h-4" />
                   </button>
                 </div>
-                <h3 className="text-base font-extrabold text-slate-900 mt-1.5">
+                <h3 className="text-base font-extrabold text-text-primary mt-1.5">
                   Pengesahan Pentadbir (Admin Challenge)
                 </h3>
-                <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
+                <p className="text-xs text-text-muted font-medium mt-1 leading-relaxed">
                   Tindakan ini akan menetapkan semula stok silinder kepada 0 dan merekodkan log audit keselamatan.
                 </p>
               </div>
@@ -9029,14 +9033,14 @@ export const OxygenDashboardPage: React.FC = () => {
             {/* Form */}
             <form onSubmit={handleConfirmClearInventory} className="p-6 space-y-4">
               {clearPasswordError && (
-                <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl text-rose-700 text-xs font-bold flex items-center gap-2 animate-in shake duration-300">
+                <div className="p-3.5 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-rose-700 text-xs font-bold flex items-center gap-2 animate-in shake duration-300">
                   <ShieldAlert className="w-4 h-4 shrink-0 text-rose-600" />
                   <span>{clearPasswordError}</span>
                 </div>
               )}
 
               <div className="space-y-2">
-                <label className="text-xs font-bold text-slate-700 block">
+                <label className="text-xs font-bold text-text-secondary block">
                   Masukkan Kata Laluan Pentadbir (Admin Password):
                 </label>
                 <div className="relative">
@@ -9047,12 +9051,12 @@ export const OxygenDashboardPage: React.FC = () => {
                     placeholder="Masukkan kata laluan..."
                     required
                     autoFocus
-                    className="w-full pl-4 pr-10 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-slate-900 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500 transition-all"
+                    className="w-full pl-4 pr-10 py-3 bg-subtle/50 border border-border-default rounded-2xl text-text-primary text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-rose-500/30 focus:border-rose-500 transition-colors"
                   />
                   <button
                     type="button"
                     onClick={() => setShowClearPassword(!showClearPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-text-muted p-1"
                   >
                     {showClearPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -9063,18 +9067,18 @@ export const OxygenDashboardPage: React.FC = () => {
               </div>
 
               {/* Actions */}
-              <div className="flex items-center gap-3 pt-3 border-t border-slate-100">
+              <div className="flex items-center gap-3 pt-3 border-t border-border-subtle">
                 <button
                   type="button"
                   onClick={() => setIsClearModalOpen(false)}
-                  className="flex-1 py-3 px-4 border border-slate-200 hover:bg-slate-50 text-slate-600 font-bold rounded-2xl text-xs transition-all"
+                  className="flex-1 py-3 px-4 border border-border-default hover:bg-subtle/50 text-text-muted font-bold rounded-2xl text-xs transition-colors"
                 >
                   Batal (Cancel)
                 </button>
                 <button
                   type="submit"
                   disabled={isLoading || !clearPasswordInput}
-                  className="flex-1 py-3 px-4 bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white font-extrabold rounded-2xl text-xs shadow-lg shadow-rose-600/20 transition-all flex items-center justify-center gap-2 active:scale-95"
+                  className="flex-1 py-3 px-4 bg-rose-600 hover:bg-rose-700 disabled:opacity-50 text-white font-extrabold rounded-2xl text-xs shadow-lg shadow-rose-600/20 transition-colors flex items-center justify-center gap-2 active:scale-95"
                 >
                   <Lock className="w-3.5 h-3.5" />
                   {isLoading ? 'Mengosongkan...' : '🔒 Pengesahan & Padam'}
@@ -9088,10 +9092,10 @@ export const OxygenDashboardPage: React.FC = () => {
       {/* Vote Code Security Override & Audit Log Modal */}
       {isVoteOverrideModalOpen && overrideTargetRecord && (
         <div className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-white border border-amber-200 rounded-[28px] shadow-2xl max-w-md w-full overflow-hidden animate-in zoom-in-95 duration-200">
+          <div className="bg-surface border border-amber-500/20 rounded-[28px] shadow-2xl max-w-md w-full overflow-hidden animate-in zoom-in-95 duration-200">
             {/* Modal Header */}
             <div className="bg-gradient-to-r from-amber-500/10 via-amber-50/50 to-orange-50/20 border-b border-amber-100 p-6 flex items-start gap-4">
-              <div className="p-3 bg-amber-100 text-amber-700 rounded-2xl border border-amber-200 shadow-xs shrink-0">
+              <div className="p-3 bg-amber-100 text-amber-700 rounded-2xl border border-amber-500/20 shadow-xs shrink-0">
                 <ShieldAlert className="w-6 h-6" />
               </div>
               <div className="flex-1 min-w-0">
@@ -9102,15 +9106,15 @@ export const OxygenDashboardPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setIsVoteOverrideModalOpen(false)}
-                    className="text-slate-400 hover:text-slate-600 transition-colors p-1 rounded-lg hover:bg-white/50"
+                    className="text-slate-400 hover:text-text-muted transition-colors p-1 rounded-lg hover:bg-surface/50"
                   >
                     <X className="w-4 h-4" />
                   </button>
                 </div>
-                <h3 className="text-base font-extrabold text-slate-900 mt-1.5">
+                <h3 className="text-base font-extrabold text-text-primary mt-1.5">
                   {language === 'ms' ? 'Kebenaran Pertukaran Kod Vot' : 'Vote Code Override Authorization'}
                 </h3>
-                <p className="text-xs text-slate-500 font-medium mt-1 leading-relaxed">
+                <p className="text-xs text-text-muted font-medium mt-1 leading-relaxed">
                   {language === 'ms' 
                     ? `Pertukaran Kod Vot untuk Pesanan (DO) ${overrideTargetRecord.delivery_order_no || '-'} adalah terkawal dan direkodkan dalam log audit KKM.` 
                     : `Changing Vote Code for Delivery Order ${overrideTargetRecord.delivery_order_no || '-'} is controlled and logged in KKM audit logs.`}
@@ -9121,22 +9125,22 @@ export const OxygenDashboardPage: React.FC = () => {
             {/* Form */}
             <form onSubmit={handleSubmitVoteOverride} className="p-6 space-y-4">
               {overrideError && (
-                <div className="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-700 font-semibold flex items-start gap-2 animate-in fade-in duration-150">
+                <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-700 font-semibold flex items-start gap-2 animate-in fade-in duration-150">
                   <AlertTriangle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
                   <span>{overrideError}</span>
                 </div>
               )}
 
               {/* Current vs New Vote Selection */}
-              <div className="bg-slate-50 border border-slate-200 rounded-2xl p-3.5 space-y-2">
+              <div className="bg-subtle/50 border border-border-default rounded-2xl p-3.5 space-y-2">
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-slate-500 font-bold">{language === 'ms' ? 'Kod Vot Semasa:' : 'Current Vote Code:'}</span>
-                  <span className="font-mono font-black text-slate-800 bg-white px-2 py-0.5 rounded border border-slate-200">
+                  <span className="text-text-muted font-bold">{language === 'ms' ? 'Kod Vot Semasa:' : 'Current Vote Code:'}</span>
+                  <span className="font-mono font-black text-text-primary bg-surface px-2 py-0.5 rounded border border-border-default">
                     Vot {overrideTargetRecord.vote_code || '080702'}
                   </span>
                 </div>
-                <div className="pt-2 border-t border-slate-200 space-y-1.5">
-                  <label className="text-[10px] font-black text-slate-600 uppercase tracking-wider block">
+                <div className="pt-2 border-t border-border-default space-y-1.5">
+                  <label className="text-[10px] font-black text-text-muted uppercase tracking-wider block">
                     {language === 'ms' ? 'Pilih Kod Vot Baru (Sasaran) *' : 'Select New Vote Code *'}
                   </label>
                   <select
@@ -9147,7 +9151,7 @@ export const OxygenDashboardPage: React.FC = () => {
                       const act = financials?.by_vote_code?.[newCode]?.vote_activity || '27402'
                       setOverrideSelectedVoteActivity(act)
                     }}
-                    className="w-full bg-white border border-slate-300 rounded-xl px-3 py-2 text-xs font-mono font-black text-slate-800 outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20"
+                    className="w-full bg-surface border border-border-default rounded-xl px-3 py-2 text-xs font-mono font-black text-text-primary outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20"
                   >
                     {availableVoteCodes.map(code => {
                       const codeFin = financials?.by_vote_code?.[code]
@@ -9165,7 +9169,7 @@ export const OxygenDashboardPage: React.FC = () => {
 
               {/* Security Password */}
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-slate-700 uppercase tracking-wider block flex items-center justify-between">
+                <label className="text-[10px] font-black text-text-secondary uppercase tracking-wider block flex items-center justify-between">
                   <span>{language === 'ms' ? 'Kata Laluan Keselamatan Farmasi *' : 'Pharmacy Security Password *'}</span>
                   <span className="text-[9px] text-amber-700 font-mono font-bold">(F@rmasi.2016)</span>
                 </label>
@@ -9176,12 +9180,12 @@ export const OxygenDashboardPage: React.FC = () => {
                     onChange={(e) => setOverridePasswordInput(e.target.value)}
                     placeholder='Masukkan kata laluan F@rmasi.2016...'
                     required
-                    className="w-full bg-white border border-slate-300 rounded-xl pl-3.5 pr-10 py-2.5 text-xs font-mono font-semibold text-slate-800 outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20"
+                    className="w-full bg-surface border border-border-default rounded-xl pl-3.5 pr-10 py-2.5 text-xs font-mono font-semibold text-text-primary outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20"
                   />
                   <button
                     type="button"
                     onClick={() => setShowOverridePassword(!showOverridePassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-text-muted p-0.5"
                   >
                     {showOverridePassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -9190,7 +9194,7 @@ export const OxygenDashboardPage: React.FC = () => {
 
               {/* Audit Log Reason Textarea */}
               <div className="space-y-1.5">
-                <label className="text-[10px] font-black text-slate-700 uppercase tracking-wider block">
+                <label className="text-[10px] font-black text-text-secondary uppercase tracking-wider block">
                   {language === 'ms' ? 'Sebab / Justifikasi Pertukaran (Log Audit KKM) *' : 'Reason / Justification for Override (Audit Log) *'}
                 </label>
                 <textarea
@@ -9201,7 +9205,7 @@ export const OxygenDashboardPage: React.FC = () => {
                     ? 'Nyatakan sebab pertukaran (cth: Pembetulan peruntukan atas arahan Ketua Pegawai Farmasi / Memo pertukaran...)' 
                     : 'State justification (e.g. Allocation adjustment as directed by Head of Pharmacy...)'}
                   required
-                  className="w-full bg-white border border-slate-300 rounded-xl p-3 text-xs text-slate-800 font-medium outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 resize-none leading-relaxed"
+                  className="w-full bg-surface border border-border-default rounded-xl p-3 text-xs text-text-primary font-medium outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 resize-none leading-relaxed"
                 />
                 <span className="text-[9px] text-slate-400 font-medium block">
                   {language === 'ms' 
@@ -9211,18 +9215,18 @@ export const OxygenDashboardPage: React.FC = () => {
               </div>
 
               {/* Actions */}
-              <div className="flex items-center gap-2.5 pt-2 border-t border-slate-100">
+              <div className="flex items-center gap-2.5 pt-2 border-t border-border-subtle">
                 <button
                   type="button"
                   onClick={() => setIsVoteOverrideModalOpen(false)}
-                  className="flex-1 py-2.5 px-4 border border-slate-200 text-slate-600 hover:bg-slate-50 font-bold rounded-xl text-xs transition-all active:scale-95"
+                  className="flex-1 py-2.5 px-4 border border-border-default text-text-muted hover:bg-subtle/50 font-bold rounded-xl text-xs transition-colors active:scale-95"
                 >
                   {language === 'ms' ? 'Batal' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
                   disabled={overrideIsSubmitting || !overridePasswordInput || !overrideReasonInput}
-                  className="flex-1 py-2.5 px-4 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-extrabold rounded-xl text-xs shadow-md shadow-amber-600/20 transition-all active:scale-95 flex items-center justify-center gap-1.5 disabled:opacity-50"
+                  className="flex-1 py-2.5 px-4 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white font-extrabold rounded-xl text-xs shadow-md shadow-amber-600/20 transition-colors active:scale-95 flex items-center justify-center gap-1.5 disabled:opacity-50"
                 >
                   {overrideIsSubmitting ? (
                     <>

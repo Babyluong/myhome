@@ -62,7 +62,7 @@ export const FormulariSubMenu: React.FC = () => {
       path: ROUTES.FORMULARI_LASA,
       color: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
       badge: `${stats.lasaCount} Pairs`,
-      badgeColor: 'bg-amber-500 text-slate-900 border-transparent'
+      badgeColor: 'bg-amber-500 text-text-primary border-transparent'
     },
     {
       title: 'IV Dilution & Reconstitution Protocols',
@@ -155,41 +155,41 @@ export const FormulariSubMenu: React.FC = () => {
       {/* Quick stats panel */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
         <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
-          <div className="flex justify-between items-start text-slate-500">
+          <div className="flex justify-between items-start text-text-muted">
             <span className="text-xs sm:text-sm font-medium">Total Drugs</span>
             <Activity className="w-4 h-4 text-slate-400 flex-shrink-0" />
           </div>
           <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-white min-h-[36px] flex items-center">{stats.totalDrugs}</div>
-          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">MOH Formulary 2025</p>
+          <p className="text-[11px] sm:text-xs text-text-muted mt-1">MOH Formulary 2025</p>
         </div>
 
         <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
-          <div className="flex justify-between items-start text-slate-500">
+          <div className="flex justify-between items-start text-text-muted">
             <span className="text-xs sm:text-sm font-medium">HAM Items</span>
             <Flame className="w-4 h-4 text-rose-400 flex-shrink-0" />
           </div>
           <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-rose-400 min-h-[36px] flex items-center">{stats.hamCount}</div>
-          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">High Alert Risk</p>
+          <p className="text-[11px] sm:text-xs text-text-muted mt-1">High Alert Risk</p>
         </div>
 
         <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
-          <div className="flex justify-between items-start text-slate-500">
+          <div className="flex justify-between items-start text-text-muted">
             <span className="text-xs sm:text-sm font-medium">LASA Pairs</span>
             <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0" />
           </div>
           <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-amber-400 min-h-[36px] flex items-center">{stats.lasaCount}</div>
-          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">TALL-Man Lettering</p>
+          <p className="text-[11px] sm:text-xs text-text-muted mt-1">TALL-Man Lettering</p>
         </div>
 
         <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
-          <div className="flex justify-between items-start text-slate-500">
+          <div className="flex justify-between items-start text-text-muted">
             <span className="text-xs sm:text-sm font-medium">Stock Alerts</span>
             <TrendingDown className={`w-4 h-4 flex-shrink-0 ${stats.lowStockCount > 0 ? 'text-rose-400' : 'text-emerald-400'}`} />
           </div>
           <div className={`text-2xl sm:text-3xl font-bold font-mono mt-2 min-h-[36px] flex items-center ${stats.lowStockCount > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
             {stats.lowStockCount}
           </div>
-          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">Low / out of stock</p>
+          <p className="text-[11px] sm:text-xs text-text-muted mt-1">Low / out of stock</p>
         </div>
       </div>
 
@@ -205,7 +205,7 @@ export const FormulariSubMenu: React.FC = () => {
               <button
                 key={idx}
                 onClick={() => navigate(item.path)}
-                className="group text-left bg-slate-900/40 backdrop-blur-md border border-slate-800/80 rounded-2xl p-4 sm:p-6 hover:bg-slate-800/40 hover:border-slate-700/80 active:scale-[0.98] transition-all duration-200 shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[170px] cursor-pointer"
+                className="group text-left bg-slate-900/40 backdrop-blur-md border border-slate-800/80 rounded-2xl p-4 sm:p-6 hover:bg-slate-800/40 hover:border-slate-700/80 active:scale-[0.98] transition-colors duration-150 shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[170px] cursor-pointer"
               >
                 <div>
                   <div className="flex justify-between items-center mb-4">

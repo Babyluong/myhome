@@ -97,7 +97,7 @@ export const Modal: React.FC<ModalProps> = ({
               'max-h-[90vh] overflow-hidden flex flex-col pb-safe sm:pb-0',
               isDark
                 ? 'bg-[#141414] text-white border border-white/[0.12] shadow-[0_20px_50px_rgba(0,0,0,0.8)]'
-                : 'bg-white text-gray-900 dark:bg-[#141414] dark:text-white dark:border dark:border-white/[0.12]',
+                : 'bg-surface text-text-primary dark:bg-[#141414] dark:text-white dark:border dark:border-white/[0.12]',
               sizes[size],
               className
             )}
@@ -112,7 +112,7 @@ export const Modal: React.FC<ModalProps> = ({
               <div
                 className={cn(
                   'flex items-start justify-between px-4 py-3.5 sm:p-6 border-b',
-                  isDark ? 'border-white/[0.08]' : 'border-gray-100 dark:border-white/[0.08]'
+                  isDark ? 'border-white/[0.08]' : 'border-border-subtle dark:border-white/[0.08]'
                 )}
               >
                 <div>
@@ -120,7 +120,7 @@ export const Modal: React.FC<ModalProps> = ({
                     <h2
                       className={cn(
                         'text-lg sm:text-xl font-semibold',
-                        isDark ? 'text-white' : 'text-gray-900 dark:text-white'
+                        isDark ? 'text-white' : 'text-text-primary dark:text-white'
                       )}
                     >
                       {title}
@@ -130,7 +130,7 @@ export const Modal: React.FC<ModalProps> = ({
                     <p
                       className={cn(
                         'mt-0.5 sm:mt-1 text-xs sm:text-sm',
-                        isDark ? 'text-white/50' : 'text-gray-500 dark:text-white/50'
+                        isDark ? 'text-white/50' : 'text-text-muted dark:text-white/50'
                       )}
                     >
                       {description}
@@ -144,7 +144,7 @@ export const Modal: React.FC<ModalProps> = ({
                       'p-1.5 sm:p-2 -m-1 sm:-m-2 rounded-lg transition-colors',
                       isDark
                         ? 'text-white/40 hover:text-white hover:bg-white/10'
-                        : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:text-white/40 dark:hover:text-white dark:hover:bg-white/10'
+                        : 'text-gray-400 hover:text-text-muted hover:bg-subtle dark:text-white/40 dark:hover:text-white dark:hover:bg-white/10'
                     )}
                   >
                     <X className="w-5 h-5" />

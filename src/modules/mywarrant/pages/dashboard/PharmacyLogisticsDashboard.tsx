@@ -54,35 +54,35 @@ interface StatCardProps {
 
 const colorClasses = {
   primary: {
-    bg: 'bg-teal-50/50',
+    bg: 'bg-accent-base/10',
     border: 'border-teal-100',
-    icon: 'bg-teal-100 text-teal-600 border-teal-200',
+    icon: 'bg-teal-100 text-teal-600 border-accent-base/20',
     text: 'text-teal-900',
     subText: 'text-teal-900/60',
     accent: 'bg-teal-500/10'
   },
   success: {
-    bg: 'bg-emerald-50/50',
+    bg: 'bg-emerald-500/10',
     border: 'border-emerald-100',
     icon: 'bg-emerald-100 text-emerald-600 border-emerald-100',
-    text: 'text-emerald-900',
-    subText: 'text-emerald-900/60',
+    text: 'text-emerald-400 dark:text-emerald-300 font-bold',
+    subText: 'text-emerald-400 dark:text-emerald-300 font-bold/60',
     accent: 'bg-emerald-500/10'
   },
   warning: {
-    bg: 'bg-amber-50/50',
+    bg: 'bg-amber-500/10',
     border: 'border-amber-100',
     icon: 'bg-amber-100 text-amber-600 border-amber-100',
-    text: 'text-amber-900',
-    subText: 'text-amber-900/60',
+    text: 'text-amber-400 dark:text-amber-300 font-bold',
+    subText: 'text-amber-400 dark:text-amber-300 font-bold/60',
     accent: 'bg-amber-500/10'
   },
   error: {
-    bg: 'bg-rose-50/50',
+    bg: 'bg-rose-500/10',
     border: 'border-rose-100',
     icon: 'bg-rose-100 text-rose-600 border-rose-100',
-    text: 'text-rose-900',
-    subText: 'text-rose-900/60',
+    text: 'text-rose-400 dark:text-rose-300 font-bold',
+    subText: 'text-rose-400 dark:text-rose-300 font-bold/60',
     accent: 'bg-rose-500/10'
   },
   info: {
@@ -122,7 +122,7 @@ const StatCard: React.FC<StatCardProps> = ({
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ y: -4, shadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)' }}
       className={cn(
-        'relative overflow-hidden rounded-[2.5rem] p-6 transition-all duration-300 border-2 shadow-sm group',
+        'relative overflow-hidden rounded-[2.5rem] p-6 transition-colors duration-150 border-2 shadow-sm group',
         colors.bg,
         colors.border,
         link && 'cursor-pointer'
@@ -189,8 +189,8 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert, index }) => {
   }
 
   const bgMap = {
-    critical: 'bg-rose-50 border-rose-200',
-    warning: 'bg-amber-50 border-amber-200',
+    critical: 'bg-rose-500/10 border-rose-500/20',
+    warning: 'bg-amber-500/10 border-amber-500/20',
     info: 'bg-sky-50 border-sky-200',
   }
 
@@ -203,14 +203,14 @@ const AlertItem: React.FC<AlertItemProps> = ({ alert, index }) => {
       <Link
         to={alert.link || '#'}
         className={cn(
-          'flex items-start gap-3 p-3 rounded-xl border transition-all hover:shadow-sm',
+          'flex items-start gap-3 p-3 rounded-xl border transition-colors hover:shadow-sm',
           bgMap[alert.type]
         )}
       >
         <div className="flex-shrink-0 mt-0.5">{iconMap[alert.type]}</div>
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-medium text-gray-900">{alert.title}</p>
-          <p className="text-xs text-gray-600 mt-0.5 line-clamp-1">{alert.message}</p>
+          <p className="text-sm font-medium text-text-primary">{alert.title}</p>
+          <p className="text-xs text-text-muted mt-0.5 line-clamp-1">{alert.message}</p>
           <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
             <Clock className="w-3 h-3" />
             {formatDate(new Date(alert.timestamp), { hour: 'numeric', minute: 'numeric' })}
@@ -239,14 +239,14 @@ const QuickAction: React.FC<QuickActionProps> = ({ icon: Icon, label, descriptio
     <motion.div
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
-      className="flex items-center gap-4 p-4 rounded-xl bg-white border border-gray-200 hover:border-gray-300 hover:shadow-sm transition-all cursor-pointer"
+      className="flex items-center gap-4 p-4 rounded-xl bg-surface border border-border-default hover:border-border-default hover:shadow-sm transition-colors cursor-pointer"
     >
       <div className={cn('w-12 h-12 rounded-xl flex items-center justify-center', color)}>
         <Icon className="w-6 h-6 text-white" />
       </div>
       <div className="flex-1 min-w-0">
-        <p className="font-semibold text-gray-900">{label}</p>
-        <p className="text-xs text-gray-500">{description}</p>
+        <p className="font-semibold text-text-primary">{label}</p>
+        <p className="text-xs text-text-muted">{description}</p>
       </div>
       <ChevronRight className="w-5 h-5 text-gray-400" />
     </motion.div>
@@ -299,32 +299,32 @@ export const PharmacyLogisticsDashboard: React.FC = () => {
         {/* 8 Stat Cards Skeleton */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="bg-white border border-slate-200 p-5 rounded-2xl space-y-3 shadow-xs">
+            <div key={i} className="bg-surface border border-border-default p-5 rounded-2xl space-y-3 shadow-xs">
               <div className="flex justify-between items-center">
-                <Skeleton className="h-4 w-28 bg-slate-200" />
-                <Skeleton className="w-9 h-9 rounded-xl bg-slate-100" />
+                <Skeleton className="h-4 w-28 bg-subtle" />
+                <Skeleton className="w-9 h-9 rounded-xl bg-subtle" />
               </div>
-              <Skeleton className="h-8 w-20 bg-slate-200" />
-              <Skeleton className="h-3 w-32 bg-slate-100" />
+              <Skeleton className="h-8 w-20 bg-subtle" />
+              <Skeleton className="h-3 w-32 bg-subtle" />
             </div>
           ))}
         </div>
 
         {/* 2-Column Split Skeletons */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white border border-slate-200 p-6 rounded-3xl space-y-4 shadow-xs">
-            <Skeleton className="h-6 w-48 bg-slate-200" />
+          <div className="bg-surface border border-border-default p-6 rounded-3xl space-y-4 shadow-xs">
+            <Skeleton className="h-6 w-48 bg-subtle" />
             <div className="space-y-3">
               {Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-16 w-full rounded-2xl bg-slate-100" />
+                <Skeleton key={i} className="h-16 w-full rounded-2xl bg-subtle" />
               ))}
             </div>
           </div>
-          <div className="bg-white border border-slate-200 p-6 rounded-3xl space-y-4 shadow-xs">
-            <Skeleton className="h-6 w-48 bg-slate-200" />
+          <div className="bg-surface border border-border-default p-6 rounded-3xl space-y-4 shadow-xs">
+            <Skeleton className="h-6 w-48 bg-subtle" />
             <div className="space-y-3">
               {Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-16 w-full rounded-2xl bg-slate-100" />
+                <Skeleton key={i} className="h-16 w-full rounded-2xl bg-subtle" />
               ))}
             </div>
           </div>
@@ -343,8 +343,8 @@ export const PharmacyLogisticsDashboard: React.FC = () => {
       >
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-10 pointer-events-none">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white rounded-full -translate-y-1/2 translate-x-1/2" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white rounded-full translate-y-1/2 -translate-x-1/2" />
+          <div className="absolute top-0 right-0 w-64 h-64 bg-surface rounded-full -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-surface rounded-full translate-y-1/2 -translate-x-1/2" />
         </div>
 
         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
@@ -372,7 +372,7 @@ export const PharmacyLogisticsDashboard: React.FC = () => {
             <Button
               variant="ghost"
               size="sm"
-              className="text-white hover:bg-white/20 hover:text-white border border-white/20 rounded-xl px-4 gap-2 h-9"
+              className="text-white hover:bg-surface/20 hover:text-white border border-white/20 rounded-xl px-4 gap-2 h-9"
               onClick={loadDashboardData}
             >
               <RefreshCw className={cn("w-4 h-4", isLoading && "animate-spin")} />
@@ -384,8 +384,8 @@ export const PharmacyLogisticsDashboard: React.FC = () => {
 
       {/* Key Metrics - Primary Stats */}
       <div>
-        <h2 className="text-xl font-bold text-slate-800 mb-5 flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-lg bg-teal-50 flex items-center justify-center">
+        <h2 className="text-xl font-bold text-text-primary mb-5 flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-lg bg-accent-base/10 flex items-center justify-center">
             <BarChart3 className="w-5 h-5 text-teal-600" />
           </div>
           Key Metrics
@@ -430,13 +430,13 @@ export const PharmacyLogisticsDashboard: React.FC = () => {
 
       {/* Operations Overview */}
       <div>
-        <h2 className="text-xl font-bold text-slate-800 mb-5 flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-lg bg-teal-50 flex items-center justify-center">
+        <h2 className="text-xl font-bold text-text-primary mb-5 flex items-center gap-2.5">
+          <div className="w-9 h-9 rounded-lg bg-accent-base/10 flex items-center justify-center">
             <Activity className="w-5 h-5 text-teal-600" />
           </div>
           Operations Overview
         </h2>
-        <div className="bg-white p-8 rounded-[2.5rem] border border-gray-200 shadow-xl">
+        <div className="bg-surface p-8 rounded-[2.5rem] border border-border-default shadow-xl">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <StatCard
               title="Budget Utilization"
@@ -481,11 +481,11 @@ export const PharmacyLogisticsDashboard: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="lg:col-span-1 bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm"
+          className="lg:col-span-1 bg-surface rounded-2xl border border-border-default overflow-hidden shadow-sm"
         >
-          <div className="p-5 border-b border-gray-100 bg-gray-50">
+          <div className="p-5 border-b border-border-subtle bg-subtle/50">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2">
                 <AlertCircle className="w-5 h-5 text-rose-500" />
                 Active Alerts
               </h2>
@@ -497,7 +497,7 @@ export const PharmacyLogisticsDashboard: React.FC = () => {
 
           <div className="p-4 space-y-3 max-h-[400px] overflow-y-auto">
             {stats?.alerts.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
+              <div className="text-center py-8 text-text-muted">
                 <CheckCircle className="w-12 h-12 mx-auto mb-3 text-emerald-400" />
                 <p className="font-medium">All clear!</p>
                 <p className="text-sm">No active alerts at the moment.</p>
@@ -515,10 +515,10 @@ export const PharmacyLogisticsDashboard: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm"
+          className="lg:col-span-2 bg-surface rounded-2xl border border-border-default overflow-hidden shadow-sm"
         >
-          <div className="p-5 border-b border-gray-100 bg-gray-50">
-            <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <div className="p-5 border-b border-border-subtle bg-subtle/50">
+            <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2">
               <Layers className="w-5 h-5 text-teal-600" />
               Quick Actions
             </h2>
@@ -573,7 +573,7 @@ export const PharmacyLogisticsDashboard: React.FC = () => {
 
       {/* Summary Cards */}
       <div>
-        <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+        <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
           <FileText className="w-5 h-5 text-teal-600" />
           Summary Overview
         </h2>
@@ -583,10 +583,10 @@ export const PharmacyLogisticsDashboard: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm"
+            className="bg-surface rounded-2xl border border-border-default p-5 shadow-sm"
           >
-            <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
-              <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-border-subtle">
+              <h3 className="font-semibold text-text-primary flex items-center gap-2">
                 <ShoppingCart className="w-4 h-4 text-teal-600" />
                 Procurement
               </h3>
@@ -594,21 +594,21 @@ export const PharmacyLogisticsDashboard: React.FC = () => {
             </div>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Orders This Month</span>
+                <span className="text-sm text-text-muted">Orders This Month</span>
                 <span className="font-semibold">{stats?.procurement.orders_this_month || 0}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Total Value</span>
+                <span className="text-sm text-text-muted">Total Value</span>
                 <span className="font-semibold text-emerald-600">
                   {formatCurrency(stats?.procurement.orders_value_this_month || 0)}
                 </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Pending Deliveries</span>
+                <span className="text-sm text-text-muted">Pending Deliveries</span>
                 <span className="font-semibold text-amber-600">{stats?.procurement.pending_deliveries || 0}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Active Suppliers</span>
+                <span className="text-sm text-text-muted">Active Suppliers</span>
                 <span className="font-semibold">{stats?.procurement.supplier_count || 0}</span>
               </div>
             </div>
@@ -619,10 +619,10 @@ export const PharmacyLogisticsDashboard: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.35 }}
-            className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm"
+            className="bg-surface rounded-2xl border border-border-default p-5 shadow-sm"
           >
-            <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
-              <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-border-subtle">
+              <h3 className="font-semibold text-text-primary flex items-center gap-2">
                 <DollarSign className="w-4 h-4 text-teal-600" />
                 Budget Overview
               </h3>
@@ -630,31 +630,31 @@ export const PharmacyLogisticsDashboard: React.FC = () => {
             </div>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Total Allocated</span>
+                <span className="text-sm text-text-muted">Total Allocated</span>
                 <span className="font-semibold">{formatCurrency(stats?.budget.total_allocated || 0)}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Utilized</span>
+                <span className="text-sm text-text-muted">Utilized</span>
                 <span className="font-semibold text-sky-600">{formatCurrency(stats?.budget.total_utilized || 0)}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Committed</span>
+                <span className="text-sm text-text-muted">Committed</span>
                 <span className="font-semibold text-amber-600">{formatCurrency(stats?.budget.total_committed || 0)}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Available</span>
+                <span className="text-sm text-text-muted">Available</span>
                 <span className="font-semibold text-emerald-600">{formatCurrency(stats?.budget.total_available || 0)}</span>
               </div>
             </div>
             {/* Progress bar */}
-            <div className="mt-4 pt-3 border-t border-gray-100">
-              <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div className="mt-4 pt-3 border-t border-border-subtle">
+              <div className="h-2 bg-subtle rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-teal-500 to-emerald-500 rounded-full transition-all duration-500"
+                  className="h-full bg-gradient-to-r from-teal-500 to-emerald-500 rounded-full transition-colors duration-500"
                   style={{ width: `${stats?.budget.utilization_percentage || 0}%` }}
                 />
               </div>
-              <p className="text-xs text-gray-500 mt-1 text-right">
+              <p className="text-xs text-text-muted mt-1 text-right">
                 {Math.round(stats?.budget.utilization_percentage || 0)}% utilized
               </p>
             </div>
@@ -665,10 +665,10 @@ export const PharmacyLogisticsDashboard: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm"
+            className="bg-surface rounded-2xl border border-border-default p-5 shadow-sm"
           >
-            <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-100">
-              <h3 className="font-semibold text-gray-900 flex items-center gap-2">
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-border-subtle">
+              <h3 className="font-semibold text-text-primary flex items-center gap-2">
                 <Truck className="w-4 h-4 text-teal-600" />
                 Distribution
               </h3>
@@ -676,19 +676,19 @@ export const PharmacyLogisticsDashboard: React.FC = () => {
             </div>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Pending Requests</span>
+                <span className="text-sm text-text-muted">Pending Requests</span>
                 <span className="font-semibold text-amber-600">{stats?.distribution.pending_requests || 0}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">In Transit</span>
+                <span className="text-sm text-text-muted">In Transit</span>
                 <span className="font-semibold text-sky-600">{stats?.distribution.in_transit || 0}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Completed Today</span>
+                <span className="text-sm text-text-muted">Completed Today</span>
                 <span className="font-semibold text-emerald-600">{stats?.distribution.completed_today || 0}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-sm text-gray-600">Completed This Month</span>
+                <span className="text-sm text-text-muted">Completed This Month</span>
                 <span className="font-semibold">{stats?.distribution.completed_this_month || 0}</span>
               </div>
             </div>

@@ -21,6 +21,7 @@ import { NAGMasterSidebar } from '../components/NAGMasterSidebar'
 import { NAGClinicalMonograph } from '../components/NAGClinicalMonograph'
 import { NAGUserGuideBanner } from '../components/NAGUserGuideBanner'
 import { PaediatricDoseCalculatorModal } from '../components/PaediatricDoseCalculatorModal'
+import { ModulePageHeader } from '@/shared/components/ui/ModulePageHeader'
 import { NAGSyncManagerModal } from '../components/NAGSyncManagerModal'
 import {
   getAllNAGGuidelines,
@@ -85,71 +86,55 @@ export const AntimicrobialGuidelinePage: React.FC = () => {
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 w-full space-y-6 animate-fade-in">
-      {/* 1. TOP OFFICIAL KKM PORTAL HEADER */}
-      <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 bg-white border border-slate-200/90 rounded-3xl p-5 sm:p-7 shadow-sm relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600" />
+      {/* Standard Clinical Header */}
+      <ModulePageHeader
+        icon={ShieldCheck}
+        title="National Antimicrobial Guidelines (NAG 2024)"
+        description="National Antimicrobial Guideline 4th Edition (MOH) & Antimicrobial Stewardship (AMS) Portal Lawas Hospital"
+        badges={[
+          { label: syncMeta.edition, variant: 'neutral' },
+          { label: '17 Adult (A1–A17) • 14 Paediatric (B1–B14)', variant: 'accent' }
+        ]}
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setShowGuide(!showGuide)}
+              className="px-3.5 py-2 bg-surface hover:bg-subtle text-text-primary text-xs font-semibold rounded-xl transition-colors cursor-pointer flex items-center gap-1.5 border border-border-default shadow-xs"
+            >
+              <BookOpen className="w-3.5 h-3.5 text-text-muted" />
+              <span>{showGuide ? 'Tutup Panduan' : 'Panduan Pengguna'}</span>
+            </button>
 
-        <div className="flex items-center gap-4">
-          <div className="w-13 h-13 sm:w-14 sm:h-14 bg-gradient-to-br from-emerald-700 to-teal-800 text-white rounded-2xl shadow-md flex items-center justify-center flex-shrink-0">
-            <ShieldCheck className="w-7 h-7 sm:w-8 sm:h-8 text-emerald-200" />
+            <button
+              type="button"
+              onClick={() => handleOpenCalculator()}
+              className="px-3.5 py-2 bg-accent-base hover:bg-accent-hover text-accent-foreground text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <Calculator className="w-3.5 h-3.5" />
+              <span>Kalkulator Dos</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setIsSyncModalOpen(true)}
+              className="px-3.5 py-2 bg-surface hover:bg-subtle border border-border-default text-text-secondary text-xs font-semibold rounded-xl shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <RefreshCw className="w-3.5 h-3.5 text-text-muted" />
+              <span>Penyegerakan</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => window.print()}
+              className="px-3.5 py-2 bg-surface hover:bg-subtle border border-border-default text-text-secondary text-xs font-semibold rounded-xl shadow-xs flex items-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <Printer className="w-3.5 h-3.5 text-text-muted" />
+              <span>Cetak</span>
+            </button>
           </div>
-          <div>
-            <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900">
-                National Antimicrobial Guidelines (NAG 2024)
-              </h1>
-              <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200">
-                {syncMeta.edition}
-              </span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
-                17 Adult (A1–A17) • 14 Paediatric (B1–B14)
-              </span>
-            </div>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1 font-medium leading-relaxed">
-              National Antimicrobial Guideline 4th Edition (MOH) &amp; Antimicrobial Stewardship (AMS) Portal Lawas Hospital
-            </p>
-          </div>
-        </div>
-
-        {/* Action Tools */}
-        <div className="flex flex-wrap items-center gap-2 self-start lg:self-auto flex-shrink-0">
-          <button
-            type="button"
-            onClick={() => setShowGuide(!showGuide)}
-            className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl transition-all cursor-pointer flex items-center gap-1.5 border border-slate-200/80"
-          >
-            <BookOpen className="w-3.5 h-3.5 text-emerald-700" />
-            <span>{showGuide ? 'Tutup Panduan' : 'Panduan Pengguna'}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleOpenCalculator()}
-            className="px-3.5 py-2 bg-cyan-700 hover:bg-cyan-800 text-white text-xs font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-all cursor-pointer"
-          >
-            <Calculator className="w-3.5 h-3.5 text-cyan-200" />
-            <span>Kalkulator Dos</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setIsSyncModalOpen(true)}
-            className="px-3.5 py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl shadow-2xs flex items-center gap-1.5 transition-all cursor-pointer"
-          >
-            <RefreshCw className="w-3.5 h-3.5 text-slate-500" />
-            <span>Penyegerakan</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => window.print()}
-            className="px-3.5 py-2 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold rounded-xl shadow-2xs flex items-center gap-1.5 transition-all cursor-pointer"
-          >
-            <Printer className="w-3.5 h-3.5 text-slate-500" />
-            <span>Cetak</span>
-          </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* 2. FIRST-TIME USER GUIDE BANNER (TOGGLEABLE) */}
       {showGuide && (
@@ -162,34 +147,21 @@ export const AntimicrobialGuidelinePage: React.FC = () => {
       )}
 
       {/* 3. AMS PROTOCOL HIGHLIGHT BANNER */}
-      <div className="bg-gradient-to-r from-emerald-950 via-teal-950 to-slate-950 text-white rounded-3xl p-5 sm:p-6 shadow-md">
+      <div className="bg-surface/80 backdrop-blur-xl border border-white/10 rounded-2xl p-5 shadow-sm">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-2xl bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex-shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0">
               <FileCheck className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-xs sm:text-sm font-black text-white uppercase tracking-wider">
-                Polisi Antimicrobial Stewardship (AMS) Hospital Lawas:
-              </h3>
-              <p className="text-xs text-emerald-100/80 mt-0.5">
-                Prinsip wajib penggunaan antimikrobial rasional bagi membasmi rintangan kuman (AMR).
+              <div className="flex items-center gap-2">
+                <span className="text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 text-xs px-2.5 py-0.5 rounded-full font-medium inline-flex items-center gap-1.5">
+                  Polisi Antimicrobial Stewardship (AMS) Hospital Lawas
+                </span>
+              </div>
+              <p className="text-xs text-text-muted mt-1 leading-relaxed">
+                72-Hour Timeout mandatori bagi semua antibiotik spektrum luas (Broad-Spectrum). Rujuk pakar bagi antibiotik 'Access, Watch, Reserve (AWaRe)'.
               </p>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
-            <div className="px-3.5 py-2 rounded-xl bg-white/10 border border-white/10 flex items-center gap-2">
-              <Clock className="w-4 h-4 text-emerald-300 flex-shrink-0" />
-              <span>Semakan Wajib 48–72 Jam</span>
-            </div>
-            <div className="px-3.5 py-2 rounded-xl bg-white/10 border border-white/10 flex items-center gap-2">
-              <Activity className="w-4 h-4 text-emerald-300 flex-shrink-0" />
-              <span>Tukar IV ke Oral Pantas</span>
-            </div>
-            <div className="px-3.5 py-2 rounded-xl bg-white/10 border border-white/10 flex items-center gap-2">
-              <ShieldCheck className="w-4 h-4 text-emerald-300 flex-shrink-0" />
-              <span>Sekatan Ubat Tier-R</span>
             </div>
           </div>
         </div>
@@ -227,7 +199,7 @@ export const AntimicrobialGuidelinePage: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsMobileDetailOpen(false)}
-              className="lg:hidden px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-bold rounded-xl transition-all flex items-center gap-2 cursor-pointer shadow-2xs"
+              className="lg:hidden px-4 py-2 bg-subtle hover:bg-subtle text-text-primary text-xs font-bold rounded-xl transition-colors flex items-center gap-2 cursor-pointer shadow-elevation-1"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Back to Category List</span>

@@ -135,7 +135,7 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
             icon: ShieldAlert,
             color: criticalWards > 0 
               ? 'from-rose-500/10 to-red-500/10 border-rose-500/20 text-rose-700' 
-              : 'from-slate-500/10 to-slate-600/10 border-slate-500/10 text-slate-700',
+              : 'from-slate-500/10 to-slate-600/10 border-slate-500/10 text-text-secondary',
             iconColor: criticalWards > 0 ? 'text-rose-500 animate-pulse' : 'text-slate-400'
           },
           {
@@ -153,17 +153,17 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
             icon: Clock,
             color: pendingRequestsCount > 0 
               ? 'from-amber-500/10 to-orange-500/10 border-amber-500/20 text-amber-700' 
-              : 'from-slate-500/10 to-slate-600/10 border-slate-500/10 text-slate-700',
+              : 'from-slate-500/10 to-slate-600/10 border-slate-500/10 text-text-secondary',
             iconColor: pendingRequestsCount > 0 ? 'text-amber-500' : 'text-slate-400'
           }
         ].map((card, idx) => {
           const Icon = card.icon;
           return (
-            <div key={idx} className={`bg-gradient-to-br ${card.color} border backdrop-blur-xl rounded-3xl p-5 shadow-lg flex items-center justify-between transition-all duration-300 hover:scale-[1.02]`}>
+            <div key={idx} className={`bg-surface bg-gradient-to-br ${card.color} border border-border-default rounded-2xl p-5 shadow-xs flex items-center justify-between transition-[transform,opacity,box-shadow,border-color] duration-300 hover:scale-[1.02]`}>
               <div className="space-y-1">
-                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">{card.title}</span>
-                <div className="text-3xl font-extrabold text-slate-800 tracking-tight">{card.value}</div>
-                <span className="text-[11px] font-semibold text-slate-500">{card.subtitle}</span>
+                <span className="text-xs font-bold text-text-muted uppercase tracking-wider">{card.title}</span>
+                <div className="text-3xl font-extrabold text-text-primary tracking-tight">{card.value}</div>
+                <span className="text-[11px] font-semibold text-text-muted">{card.subtitle}</span>
               </div>
               <div className={`p-3.5 rounded-2xl bg-white/60 shadow-sm ${card.iconColor}`}>
                 <Icon className="w-6 h-6" />
@@ -174,7 +174,7 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
       </div>
 
       {/* Modern Search Area */}
-      <div className="bg-white/40 backdrop-blur-xl border border-white/40 rounded-3xl p-4 shadow-xl flex items-center">
+      <div className="bg-surface border border-white/40 rounded-3xl p-4 shadow-xl flex items-center">
         <div className="relative w-full md:w-96">
           <Search className="absolute left-3.5 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
           <input
@@ -182,15 +182,15 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
             placeholder="Search department or ward name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-11 pr-4 py-2.5 bg-white/65 border border-slate-200 rounded-2xl text-slate-800 placeholder-slate-400 font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/40 shadow-inner transition-all duration-200"
+            className="w-full pl-11 pr-4 py-2.5 bg-surface border border-border-default rounded-xl text-text-primary placeholder:text-text-muted font-semibold focus:outline-none focus:ring-2 focus:ring-blue-500/40 shadow-inner transition-[transform,opacity,box-shadow,border-color] duration-200"
           />
         </div>
       </div>
 
       {/* Unified Matrix Grid Layout */}
-      <div className="bg-white/50 backdrop-blur-md border border-slate-200/60 rounded-3xl shadow-xl overflow-hidden">
+      <div className="bg-surface border border-border-default rounded-2xl shadow-xs overflow-hidden">
         {/* Mobile View: Cards Layout */}
-        <div className="block md:hidden divide-y divide-slate-200/40 text-slate-700 font-medium bg-white/30">
+        <div className="block md:hidden divide-y divide-border-default text-text-secondary font-medium bg-white/30">
           {filteredData.length === 0 ? (
             <div className="py-12 text-center text-slate-400 font-bold">
               No departments found.
@@ -241,9 +241,9 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
 
               return (
                 <div key={row.department_id} className="p-5 space-y-3">
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                    <div className="font-extrabold text-slate-800 text-sm">{row.department_name}</div>
-                    <span className="text-[11px] font-extrabold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2.5 py-1 rounded-xl shadow-sm">
+                  <div className="flex items-center justify-between border-b border-border-subtle pb-2">
+                    <div className="font-extrabold text-text-primary text-sm">{row.department_name}</div>
+                    <span className="text-[11px] font-extrabold text-emerald-600 bg-emerald-500/10 border border-emerald-100 px-2.5 py-1 rounded-xl shadow-sm">
                       Total Allocated: {totalAvailable}
                     </span>
                   </div>
@@ -261,9 +261,9 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
                         if (!hasCylinders && !hasRequests) return null;
 
                         return (
-                          <div key={type} className="bg-slate-50/50 border border-slate-150 p-2.5 rounded-2xl flex flex-col justify-between gap-2 shadow-[0_1px_2px_rgba(0,0,0,0.01)]">
+                          <div key={type} className="bg-subtle/50 border border-slate-150 p-2.5 rounded-2xl flex flex-col justify-between gap-2 shadow-[0_1px_2px_rgba(0,0,0,0.01)]">
                             <div>
-                              <span className="text-[9px] font-extrabold text-slate-400 uppercase tracking-wider block leading-tight">{type}</span>
+                              <span className="text-[9px] font-extrabold text-text-secondary font-bold uppercase tracking-wider block leading-tight">{type}</span>
                               <div className="mt-1 font-bold text-xs">
                                 {hasCylinders ? (
                                   <button
@@ -275,7 +275,7 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
                                         (c) => getNormalizedType(c.display_name) === type
                                       )
                                     })}
-                                    className="font-bold cursor-pointer hover:bg-blue-50 px-2 py-0.5 rounded-lg transition-all duration-200 text-emerald-600 border border-transparent hover:border-blue-200/50 hover:underline inline-block text-xs"
+                                    className="font-bold cursor-pointer hover:bg-blue-500/10 px-2 py-0.5 rounded-lg transition-[transform,opacity,box-shadow,border-color] duration-200 text-emerald-600 border border-transparent hover:border-blue-500/20 hover:underline inline-block text-xs"
                                     title="Click to view cylinder assets inside this unit"
                                   >
                                     {stats.total} In Unit
@@ -286,14 +286,14 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
                               </div>
                             </div>
                             {hasRequests && (
-                              <div className="flex flex-col gap-0.5 mt-1 border-t border-slate-100 pt-1">
+                              <div className="flex flex-col gap-0.5 mt-1 border-t border-border-subtle pt-1">
                                 {reqs.pending > 0 && (
-                                  <span className="px-1.5 py-0.5 text-[8px] font-extrabold text-amber-700 bg-amber-50 rounded border border-amber-200 inline-block text-center w-full">
+                                  <span className="px-1.5 py-0.5 text-[8px] font-extrabold text-amber-700 bg-amber-500/10 rounded border border-amber-500/20 inline-block text-center w-full">
                                     +{reqs.pending} Req
                                   </span>
                                 )}
                                 {reqs.approved > 0 && (
-                                  <span className="px-1.5 py-0.5 text-[8px] font-extrabold text-blue-700 bg-blue-50 rounded border border-blue-200 inline-block text-center w-full">
+                                  <span className="px-1.5 py-0.5 text-[8px] font-extrabold text-blue-700 bg-blue-500/10 rounded border border-blue-500/20 inline-block text-center w-full">
                                     +{reqs.approved} App
                                   </span>
                                 )}
@@ -312,26 +312,26 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
 
         {/* Desktop View: Standard Table */}
         <div className="hidden md:block overflow-x-auto">
-          <table className="w-full text-left border-collapse text-slate-700 font-semibold text-sm">
+          <table className="w-full text-left border-collapse text-text-secondary font-semibold text-sm">
             <thead>
-              <tr className="border-b border-slate-200/80 bg-slate-50/50 text-slate-400 font-extrabold text-xs uppercase tracking-wider">
+              <tr className="border-b border-border-default bg-subtle/50 text-text-secondary font-bold text-xs uppercase tracking-wider">
                 <th className="py-4 px-6 min-w-[180px]">Department</th>
                 {cylinderTypes.map((type) => (
-                  <th key={type} className="py-4 px-4 text-center min-w-[120px] border-l border-slate-200/40">
+                  <th key={type} className="py-4 px-4 text-center min-w-[120px] border-l border-border-default">
                     <div>{type}</div>
-                    <div className="text-[9px] text-slate-400 font-bold mt-1">In Unit</div>
+                    <div className="text-[9px] text-text-muted font-bold mt-1">In Unit</div>
                   </th>
                 ))}
-                <th className="py-4 px-6 text-center min-w-[130px] border-l border-slate-200/40">
+                <th className="py-4 px-6 text-center min-w-[130px] border-l border-border-default">
                   <div>Total Allocation</div>
-                  <div className="text-[9px] text-slate-400 font-bold mt-1">Total Deployed</div>
+                  <div className="text-[9px] text-text-muted font-bold mt-1">Total Deployed</div>
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-border-subtle">
               {filteredData.length === 0 ? (
                 <tr>
-                  <td colSpan={cylinderTypes.length + 2} className="py-12 text-center text-slate-400 font-bold">
+                  <td colSpan={cylinderTypes.length + 2} className="py-12 text-center text-text-muted font-medium font-bold">
                     No departments found.
                   </td>
                 </tr>
@@ -382,9 +382,9 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
                   const totalAllocated = cylinderTypes.reduce((sum, type) => sum + rowSummary[type].total, 0);
 
                   return (
-                    <tr key={row.department_id} className="hover:bg-slate-50/50 transition-colors duration-150">
+                    <tr key={row.department_id} className="hover:bg-subtle/50 transition-colors duration-150">
                       {/* Department Name */}
-                      <td className="py-4 px-6 font-extrabold text-slate-800">
+                      <td className="py-4 px-6 font-extrabold text-text-primary">
                         {row.department_name}
                       </td>
 
@@ -396,7 +396,7 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
                         const hasRequests = reqs && (reqs.pending > 0 || reqs.approved > 0);
 
                         return (
-                          <td key={type} className="py-4 px-4 text-center border-l border-slate-100">
+                          <td key={type} className="py-4 px-4 text-center border-l border-border-subtle">
                             {hasCylinders ? (
                               <button
                                 onClick={() => setSelectedTagDetails({
@@ -407,7 +407,7 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
                                     (c) => getNormalizedType(c.display_name) === type
                                   )
                                 })}
-                                className="font-bold cursor-pointer hover:bg-blue-50 px-3 py-1.5 rounded-xl transition-all duration-200 text-emerald-600 border border-transparent hover:border-blue-200/50 hover:underline animate-fade-in"
+                                className="font-bold cursor-pointer hover:bg-blue-500/10 px-3 py-1.5 rounded-xl transition-[transform,opacity,box-shadow,border-color] duration-200 text-emerald-600 border border-transparent hover:border-blue-500/20 hover:underline animate-fade-in"
                                 title="Click to view cylinder assets inside this unit"
                               >
                                 {stats.total}
@@ -420,12 +420,12 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
                             {hasRequests && (
                               <div className="flex flex-col items-center gap-0.5 mt-1.5">
                                 {reqs.pending > 0 && (
-                                  <span className="px-1.5 py-0.5 text-[8px] font-extrabold text-amber-700 bg-amber-50 rounded border border-amber-200">
+                                  <span className="px-1.5 py-0.5 text-[8px] font-extrabold text-amber-700 bg-amber-500/10 rounded border border-amber-500/20">
                                     +{reqs.pending} Req
                                   </span>
                                 )}
                                 {reqs.approved > 0 && (
-                                  <span className="px-1.5 py-0.5 text-[8px] font-extrabold text-blue-700 bg-blue-50 rounded border border-blue-200">
+                                  <span className="px-1.5 py-0.5 text-[8px] font-extrabold text-blue-700 bg-blue-500/10 rounded border border-blue-500/20">
                                     +{reqs.approved} App
                                   </span>
                                 )}
@@ -436,7 +436,7 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
                       })}
 
                       {/* Total Allocation */}
-                      <td className="py-4 px-6 text-center border-l border-slate-100 bg-slate-50/20 font-extrabold text-emerald-600">
+                      <td className="py-4 px-6 text-center border-l border-border-subtle bg-subtle/50 font-extrabold text-emerald-600">
                         {totalAllocated}
                       </td>
                     </tr>
@@ -457,22 +457,22 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
       )}
 
       {/* Slide-over Drawer Panel from the right */}
-      <div className={`fixed inset-y-0 right-0 w-full max-w-md bg-white border-l border-slate-200/80 shadow-2xl z-50 flex flex-col transition-transform duration-300 ease-out transform ${
+      <div className={`fixed inset-y-0 right-0 w-full max-w-md bg-surface border-l border-border-default shadow-2xl z-50 flex flex-col transition-transform duration-300 ease-out transform ${
         selectedTagDetails ? 'translate-x-0' : 'translate-x-full'
       }`}>
         {selectedTagDetails && (
           <>
             {/* Header */}
-            <div className="bg-slate-50/60 border-b border-slate-200/80 px-6 py-5 flex items-center justify-between">
+            <div className="bg-subtle/50 border-b border-border-default px-6 py-5 flex items-center justify-between">
               <div>
-                <h3 className="text-base font-extrabold text-slate-800">Available Wards Assets</h3>
-                <p className="text-xs text-slate-500 font-semibold mt-0.5">
+                <h3 className="text-base font-extrabold text-text-primary">Available Wards Assets</h3>
+                <p className="text-xs text-text-muted font-semibold mt-0.5">
                   {selectedTagDetails.deptName} â€¢ {selectedTagDetails.type}
                 </p>
               </div>
               <button 
                 onClick={() => setSelectedTagDetails(null)}
-                className="p-1.5 rounded-full hover:bg-slate-200/60 text-slate-400 hover:text-slate-600 transition-colors duration-200"
+                className="p-1.5 rounded-full hover:bg-subtle text-slate-400 hover:text-text-secondary transition-colors duration-200"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -481,7 +481,7 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
             {/* Content list of cylinder tags inside unit */}
             <div className="p-6 flex-1 overflow-y-auto space-y-4">
               {selectedTagDetails.cylinders.length === 0 ? (
-                <div className="text-center py-12 text-slate-400 font-bold text-xs uppercase tracking-wider bg-slate-50 rounded-2xl border border-slate-100">
+                <div className="text-center py-12 text-slate-400 font-bold text-xs uppercase tracking-wider bg-subtle/50 rounded-2xl border border-border-subtle">
                   No available cylinders of this type currently in ward.
                 </div>
               ) : (
@@ -490,19 +490,19 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
                     Cylinder List ({selectedTagDetails.cylinders.length})
                   </div>
                   {selectedTagDetails.cylinders.map((cyl) => (
-                    <div key={cyl.id} className="bg-white border border-slate-200/80 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all duration-200 flex items-start gap-4">
-                      <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600">
+                    <div key={cyl.id} className="bg-surface border border-border-default p-4 rounded-2xl shadow-sm hover:shadow-md transition-[transform,opacity,box-shadow,border-color] duration-200 flex items-start gap-4">
+                      <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-600">
                         <Package className="w-5 h-5" />
                       </div>
                       <div className="space-y-1 flex-1 min-w-0">
                         <div className="flex items-center justify-between gap-2">
-                          <span className="font-extrabold text-slate-800 text-sm truncate">{cyl.serial_number}</span>
-                          <span className="inline-flex px-2 py-0.5 rounded-md text-[8px] uppercase font-bold border bg-emerald-50 text-emerald-700 border-emerald-200">
+                          <span className="font-extrabold text-text-primary text-sm truncate">{cyl.serial_number}</span>
+                          <span className="inline-flex px-2 py-0.5 rounded-md text-[8px] uppercase font-bold border bg-emerald-500/10 text-emerald-700 border-emerald-500/20">
                             Available
                           </span>
                         </div>
                         <p className="text-[10px] text-slate-400 font-bold font-mono truncate">{cyl.qr_code}</p>
-                        <div className="text-[9px] text-slate-400 flex items-center gap-1 font-semibold pt-1 border-t border-slate-100">
+                        <div className="text-[9px] text-slate-400 flex items-center gap-1 font-semibold pt-1 border-t border-border-subtle">
                           <Clock className="w-3 h-3" />
                           Updated: {new Date(cyl.updated_at).toLocaleString()}
                         </div>
@@ -514,10 +514,10 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
             </div>
 
             {/* Footer */}
-            <div className="bg-slate-50/60 border-t border-slate-200/80 px-6 py-4 flex justify-end">
+            <div className="bg-subtle/50 border-t border-border-default px-6 py-4 flex justify-end">
               <button
                 onClick={() => setSelectedTagDetails(null)}
-                className="px-5 py-2 bg-blue-600 text-white rounded-2xl text-xs font-bold shadow-md hover:shadow-lg hover:scale-102 active:scale-98 transition-all duration-200"
+                className="px-5 py-2 bg-blue-600 text-white rounded-2xl text-xs font-bold shadow-md hover:shadow-lg hover:scale-102 active:scale-98 transition-[transform,opacity,box-shadow,border-color] duration-200"
               >
                 Close Panel
               </button>
@@ -538,7 +538,7 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
           <span>= Clickable Assets (Only shows Available count. Click to view In-Ward serial numbers)</span>
         </div>
         <div className="flex items-center gap-1">
-          <span className="text-slate-700 font-bold">Slate Number</span>
+          <span className="text-text-secondary font-bold">Slate Number</span>
           <span>= Static Loan Cylinders (Non-Clickable)</span>
         </div>
       </div>

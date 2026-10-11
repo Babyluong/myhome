@@ -118,23 +118,23 @@ export const StaffHodPage: React.FC = () => {
   }
 
   return (
-    <div className="p-6 md:p-8 w-full space-y-8 text-slate-800">
+    <div className="p-6 md:p-8 w-full space-y-8 text-text-primary">
       {/* Header Panel */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-white border border-slate-100 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-surface border border-border-subtle rounded-3xl p-6 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-purple-400 via-purple-600 to-indigo-600" />
         
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate(ROUTES.STAFF_DASHBOARD)}
-            className="p-3 hover:bg-slate-50 border border-slate-100 rounded-2xl text-slate-400 hover:text-slate-700 transition-all shadow-sm"
+            className="p-3 hover:bg-subtle/50 border border-border-subtle rounded-2xl text-slate-400 hover:text-text-secondary transition-colors shadow-sm"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-800 flex items-center gap-2">
+            <h1 className="text-2xl font-black tracking-tight text-text-primary flex items-center gap-2">
               {isMs ? 'Portal Kelulusan HOD & Ringkasan Jabatan' : 'HOD Approval Portal & Department Summary'}
             </h1>
-            <p className="text-sm text-slate-500 mt-0.5 font-medium">
+            <p className="text-sm text-text-muted mt-0.5 font-medium">
               {isMs
                 ? 'Kelulusan Permohonan Cuti, Pengesahan Pergerakan & Cetakan Penyata Kehadiran Staf'
                 : 'Leave Approval, Movement Verification & Staff Attendance Summary'}
@@ -145,9 +145,9 @@ export const StaffHodPage: React.FC = () => {
         <div className="flex items-center gap-2.5">
           <Button
             onClick={handlePrintReport}
-            className="border-slate-200 hover:bg-slate-50 text-slate-700 rounded-2xl border shadow-sm font-bold flex items-center gap-2 px-5 py-2.5 transition-all text-sm bg-white"
+            className="border-border-default hover:bg-subtle/50 text-text-secondary rounded-2xl border shadow-sm font-bold flex items-center gap-2 px-5 py-2.5 transition-colors text-sm bg-surface"
           >
-            <Printer className="w-4 h-4 text-slate-500" />
+            <Printer className="w-4 h-4 text-text-muted" />
             <span>{isMs ? 'Print Summary' : 'Print Summary'}</span>
           </Button>
         </div>
@@ -155,87 +155,87 @@ export const StaffHodPage: React.FC = () => {
 
       {/* Summary Banner */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="p-6 rounded-3xl bg-white border border-slate-100 shadow-lg">
+        <div className="p-6 rounded-3xl bg-surface border border-border-subtle shadow-lg">
           <span className="text-xs font-bold text-slate-400 uppercase">{isMs ? 'Menunggu Tindakan HOD' : 'Pending HOD Action'}</span>
           <p className="text-3xl font-black font-mono text-purple-600 mt-2">
             {pendingLeaves.length} {isMs ? 'Permohonan' : 'Requests'}
           </p>
-          <p className="text-xs text-slate-500 mt-1 font-medium">{isMs ? 'Cuti Rehat & Tugas Luar' : 'Annual Leave & Duty'}</p>
+          <p className="text-xs text-text-muted mt-1 font-medium">{isMs ? 'Cuti Rehat & Tugas Luar' : 'Annual Leave & Duty'}</p>
         </div>
 
-        <div className="p-6 rounded-3xl bg-white border border-slate-100 shadow-lg">
+        <div className="p-6 rounded-3xl bg-surface border border-border-subtle shadow-lg">
           <span className="text-xs font-bold text-slate-400 uppercase">{isMs ? 'Kekuatan Anggota Hari Ini' : 'Today Staff Strength'}</span>
           <p className="text-3xl font-black font-mono text-emerald-600 mt-2">
             {stats ? `${stats.presentToday} / ${stats.totalStaff}` : '26 / 30'}
           </p>
-          <p className="text-xs text-slate-500 mt-1 font-medium">
+          <p className="text-xs text-text-muted mt-1 font-medium">
             {stats ? Math.round((stats.presentToday / stats.totalStaff) * 100) : 87}% {isMs ? 'Hadir Bertugas' : 'On Duty'}
           </p>
         </div>
 
-        <div className="p-6 rounded-3xl bg-white border border-slate-100 shadow-lg">
+        <div className="p-6 rounded-3xl bg-surface border border-border-subtle shadow-lg">
           <span className="text-xs font-bold text-slate-400 uppercase">{isMs ? 'Ketiadaan Bertugas' : 'Absent Officers'}</span>
           <p className="text-3xl font-black font-mono text-rose-600 mt-2">
             {stats ? stats.onLeaveToday + stats.onCourseToday : 3} {isMs ? 'Orang' : 'Staff'}
           </p>
-          <p className="text-xs text-slate-500 mt-1 font-medium">{isMs ? 'Cuti / Kursus Luar' : 'Leave / External Course'}</p>
+          <p className="text-xs text-text-muted mt-1 font-medium">{isMs ? 'Cuti / Kursus Luar' : 'Leave / External Course'}</p>
         </div>
       </div>
 
       {/* Pending Leave Approvals Section */}
-      <div className="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-xl">
-        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+      <div className="bg-surface border border-border-subtle rounded-3xl overflow-hidden shadow-xl">
+        <div className="p-6 border-b border-border-subtle flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-purple-50 text-purple-600">
+            <div className="p-2 rounded-xl bg-indigo-500/10 text-purple-600">
               <UserCheck className="w-5 h-5" />
             </div>
-            <h2 className="text-base font-black text-slate-800">
+            <h2 className="text-base font-black text-text-primary">
               {isMs ? 'Senarai Permohonan Cuti Menunggu Kelulusan' : 'Pending Leave Approvals Queue'}
             </h2>
           </div>
-          <span className="text-xs font-bold font-mono text-purple-600 bg-purple-50 px-3 py-1 rounded-full border border-purple-200">
+          <span className="text-xs font-bold font-mono text-purple-600 bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20">
             {pendingLeaves.length} {isMs ? 'Permohonan' : 'Requests'}
           </span>
         </div>
 
-        <div className="divide-y divide-slate-100">
+        <div className="divide-y divide-border-subtle">
           {pendingLeaves.length === 0 ? (
             <div className="text-center py-16 text-slate-400 text-sm">
               <CheckCircle2 className="w-12 h-12 text-emerald-500 mx-auto mb-3 opacity-80" />
-              <p className="font-bold text-slate-700 text-base">{isMs ? 'Tiada permohonan yang menunggu kelulusan.' : 'No pending approval requests.'}</p>
+              <p className="font-bold text-text-secondary text-base">{isMs ? 'Tiada permohonan yang menunggu kelulusan.' : 'No pending approval requests.'}</p>
               <p className="text-xs text-slate-400 mt-1">{isMs ? 'Semua permohonan staf telah diselesaikan.' : 'All staff requests have been processed.'}</p>
             </div>
           ) : (
             pendingLeaves.map(leave => (
               <div
                 key={leave.id}
-                className="p-6 hover:bg-slate-50/50 transition-colors flex flex-col lg:flex-row lg:items-center justify-between gap-6"
+                className="p-6 hover:bg-subtle/50 transition-colors flex flex-col lg:flex-row lg:items-center justify-between gap-6"
               >
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-700 border border-purple-200 flex items-center justify-center font-black text-sm shrink-0">
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 text-purple-700 border border-indigo-500/20 flex items-center justify-center font-black text-sm shrink-0">
                     {leave.user?.full_name?.charAt(0) || 'U'}
                   </div>
 
                   <div className="space-y-1">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <h3 className="font-extrabold text-slate-900 text-base">{leave.user?.full_name || 'Muhammad Farhan'}</h3>
-                      <span className="text-xs text-slate-500 font-medium">({leave.user?.jawatan || (isMs ? 'Pegawai Farmasi U41' : 'Pharmacy Officer')})</span>
-                      <span className="text-xs font-bold font-mono px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                      <h3 className="font-extrabold text-text-primary text-base">{leave.user?.full_name || 'Muhammad Farhan'}</h3>
+                      <span className="text-xs text-text-muted font-medium">({leave.user?.jawatan || (isMs ? 'Pegawai Farmasi U41' : 'Pharmacy Officer')})</span>
+                      <span className="text-xs font-bold font-mono px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
                         {leave.leave_type?.nama_cuti || (isMs ? 'Cuti Rehat' : 'Annual Leave')}
                       </span>
                     </div>
 
-                    <p className="text-xs text-slate-600 font-medium">
-                      {isMs ? 'Tarikh:' : 'Date:'} <strong className="text-slate-800 font-mono">{leave.tarikh_mula}</strong> {isMs ? 'hingga' : 'to'}{' '}
-                      <strong className="text-slate-800 font-mono">{leave.tarikh_tamat}</strong> (
+                    <p className="text-xs text-text-muted font-medium">
+                      {isMs ? 'Tarikh:' : 'Date:'} <strong className="text-text-primary font-mono">{leave.tarikh_mula}</strong> {isMs ? 'hingga' : 'to'}{' '}
+                      <strong className="text-text-primary font-mono">{leave.tarikh_tamat}</strong> (
                       <span className="text-emerald-700 font-bold">{leave.jumlah_hari} {isMs ? 'Hari' : 'Days'}</span>)
                     </p>
 
-                    <p className="text-xs text-slate-500 italic mt-1">{isMs ? 'Sebab:' : 'Reason:'} {leave.sebab}</p>
+                    <p className="text-xs text-text-muted italic mt-1">{isMs ? 'Sebab:' : 'Reason:'} {leave.sebab}</p>
 
                     {leave.replacement_user && (
-                      <p className="text-xs text-slate-600 font-medium mt-1">
-                        {isMs ? 'Pegawai Pengganti:' : 'Relief Officer:'} <strong className="text-slate-800">{leave.replacement_user.full_name}</strong>
+                      <p className="text-xs text-text-muted font-medium mt-1">
+                        {isMs ? 'Pegawai Pengganti:' : 'Relief Officer:'} <strong className="text-text-primary">{leave.replacement_user.full_name}</strong>
                       </p>
                     )}
                   </div>
@@ -249,7 +249,7 @@ export const StaffHodPage: React.FC = () => {
                       setRejectModalOpen(false)
                     }}
                     disabled={processing}
-                    className="border-rose-300 hover:bg-rose-50 text-rose-700 rounded-2xl border shadow-sm font-bold flex items-center gap-2 px-4 py-2 text-xs bg-white"
+                    className="border-rose-300 hover:bg-rose-500/10 text-rose-700 rounded-2xl border shadow-sm font-bold flex items-center gap-2 px-4 py-2 text-xs bg-surface"
                   >
                     <XCircle className="w-4 h-4 text-rose-500" />
                     <span>{isMs ? 'Tolak' : 'Reject'}</span>
@@ -279,7 +279,7 @@ export const StaffHodPage: React.FC = () => {
       >
         <form onSubmit={handleRejectSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-slate-700 mb-1">
+            <label className="block text-xs font-bold text-text-secondary mb-1">
               {isMs ? 'Sebab / Justifikasi Penolakan' : 'Reason / Justification for Rejection'} <span className="text-rose-500">*</span>
             </label>
             <textarea
@@ -288,16 +288,16 @@ export const StaffHodPage: React.FC = () => {
               value={rejectionReason}
               onChange={e => setRejectionReason(e.target.value)}
               required
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500"
+              className="w-full px-3.5 py-2.5 rounded-xl border border-border-default text-sm focus:ring-2 focus:ring-rose-500/20 focus:border-rose-500"
             />
           </div>
 
-          <div className="flex justify-end gap-3 pt-3 border-t border-slate-100">
+          <div className="flex justify-end gap-3 pt-3 border-t border-border-subtle">
             <Button
               type="button"
               variant="outline"
               onClick={() => setRejectModalOpen(false)}
-              className="border-slate-200 hover:bg-slate-50 text-slate-700 font-bold"
+              className="border-border-default hover:bg-subtle/50 text-text-secondary font-bold"
             >
               {isMs ? 'Batal' : 'Cancel'}
             </Button>

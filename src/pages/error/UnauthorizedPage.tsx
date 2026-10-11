@@ -47,18 +47,18 @@ export const UnauthorizedPage: React.FC = () => {
         {/* User Role Card */}
         <div className="p-4 rounded-2xl bg-slate-950/70 border border-white/5 text-left space-y-2">
           <div className="flex items-center justify-between text-xs">
-            <span className="text-slate-500">Nama Pengguna</span>
+            <span className="text-text-muted">Nama Pengguna</span>
             <span className="font-semibold text-white">{user?.full_name || 'Tidak Diketahui'}</span>
           </div>
           <div className="flex items-center justify-between text-xs">
-            <span className="text-slate-500">Peranan Semasa</span>
+            <span className="text-text-muted">Peranan Semasa</span>
             <span className="font-mono font-bold text-teal-400 px-2 py-0.5 rounded bg-teal-500/10 border border-teal-500/20 uppercase">
               {user?.role?.role_name || user?.role?.role_code || 'Staff Biasa'}
             </span>
           </div>
           {state?.attemptedPath && (
             <div className="flex items-center justify-between text-xs pt-1 border-t border-white/5">
-              <span className="text-slate-500">Laluan Dipohon</span>
+              <span className="text-text-muted">Laluan Dipohon</span>
               <span className="font-mono text-slate-400 truncate max-w-[200px]">{state.attemptedPath}</span>
             </div>
           )}
@@ -81,7 +81,7 @@ export const UnauthorizedPage: React.FC = () => {
               navigate(ROUTES.LOGIN)
             }}
             variant="outline"
-            className="flex-1 flex items-center justify-center gap-2 border-white/10 hover:bg-white/5 text-slate-300 hover:text-white py-2.5 rounded-xl"
+            className="flex-1 flex items-center justify-center gap-2 border-white/10 hover:bg-surface/5 text-slate-300 hover:text-white py-2.5 rounded-xl"
           >
             <KeyRound className="w-4 h-4" />
             <span>Tukar Akaun</span>
@@ -89,7 +89,7 @@ export const UnauthorizedPage: React.FC = () => {
         </div>
 
         {/* Security Notice Footer */}
-        <p className="text-[11px] text-slate-500 pt-2">
+        <p className="text-[11px] text-text-muted pt-2">
           Jika anda memerlukan akses kepada modul ini bagi tujuan tugas rasmi hospital, sila hubungi Pegawai Pentadbir Sistem (System Admin) untuk pengemaskinian peranan.
         </p>
       </motion.div>

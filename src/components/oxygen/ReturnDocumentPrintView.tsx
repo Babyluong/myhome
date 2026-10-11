@@ -655,7 +655,7 @@ export const ReturnDocumentPrintView: React.FC<ReturnDocumentPrintViewProps> = (
             <button
               onClick={handlePrint}
               disabled={isLoading || !!error}
-              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-all duration-200 active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md transition-[transform,opacity,box-shadow,border-color] duration-200 active:scale-95 cursor-pointer"
             >
               <Printer className="w-4 h-4" />
               <span>Print Document</span>

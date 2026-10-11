@@ -282,48 +282,48 @@ export const CylinderMaintenancePage: React.FC = () => {
     switch (status) {
       case 'draft':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800 border border-slate-200">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-subtle text-text-primary border border-border-default">
             <Clock className="w-3 h-3" /> Draft
           </span>
         )
       case 'pending_approval':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
             <Clock className="w-3 h-3" /> Dalam Semakan
           </span>
         )
       case 'approved':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-50 text-teal-800 border border-teal-200">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent-base/10 text-teal-800 border border-accent-base/20">
             <CheckCircle className="w-3 h-3" /> Diluluskan
           </span>
         )
       case 'sent_to_supplier':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-800 border border-blue-200">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-400 border border-blue-500/20">
             <Wrench className="w-3 h-3" /> Dihantar ke Pembekal
           </span>
         )
       case 'in_progress':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-800 border border-indigo-200">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
             <Loader2 className="w-3 h-3 animate-spin" /> Sedang Diselenggara
           </span>
         )
       case 'completed':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
             <CheckCircle className="w-3 h-3" /> Selesai
           </span>
         )
       case 'cancelled':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-50 text-rose-800 border border-rose-200">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20">
             <XCircle className="w-3 h-3" /> Batal
           </span>
         )
       default:
-        return <span className="text-xs text-slate-500 uppercase">{status}</span>
+        return <span className="text-xs text-text-muted uppercase">{status}</span>
     }
   }
 
@@ -347,15 +347,15 @@ export const CylinderMaintenancePage: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 p-6 space-y-6 max-w-[1400px] mx-auto min-h-screen bg-slate-50 text-slate-800">
+    <div className="flex-1 p-6 space-y-6 max-w-[1400px] mx-auto min-h-screen bg-subtle/50 text-text-primary">
       
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200 pb-5">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-border-default pb-5">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
+          <h1 className="text-2xl font-bold tracking-tight text-text-primary flex items-center gap-2">
             <Wrench className="w-6 h-6 text-[#00a68a]" /> Cylinder Maintenance Requests
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-text-muted mt-1">
             Manage purchase orders and request maintenance tasks like valve replacement, painting, and audits exclusive for medical cylinders.
           </p>
         </div>
@@ -363,7 +363,7 @@ export const CylinderMaintenancePage: React.FC = () => {
         {activeTab !== 'create' && (
           <button
             onClick={() => setActiveTab('create')}
-            className="flex items-center gap-1.5 px-4 py-2 bg-[#00a68a] hover:bg-[#009278] active:scale-98 text-white rounded-xl text-sm font-semibold transition-all duration-200 shadow-sm shadow-[#00a68a]/10"
+            className="flex items-center gap-1.5 px-4 py-2 bg-[#00a68a] hover:bg-[#009278] active:scale-98 text-white rounded-xl text-sm font-semibold transition-colors duration-150 shadow-sm shadow-[#00a68a]/10"
           >
             <Plus className="w-4 h-4" /> Create Maintenance Order
           </button>
@@ -371,17 +371,17 @@ export const CylinderMaintenancePage: React.FC = () => {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-slate-200 gap-6">
+      <div className="flex border-b border-border-default gap-6">
         <button
           onClick={() => {
             setActiveTab('active')
             setStatusFilter('all')
           }}
           className={cn(
-            'pb-3 text-sm font-semibold border-b-2 transition-all duration-200',
+            'pb-3 text-sm font-semibold border-b-2 transition-colors duration-150',
             activeTab === 'active'
               ? 'border-[#00a68a] text-[#00a68a]'
-              : 'border-transparent text-slate-400 hover:text-slate-600'
+              : 'border-transparent text-slate-400 hover:text-text-muted'
           )}
         >
           Active Requests
@@ -392,10 +392,10 @@ export const CylinderMaintenancePage: React.FC = () => {
             setStatusFilter('all')
           }}
           className={cn(
-            'pb-3 text-sm font-semibold border-b-2 transition-all duration-200',
+            'pb-3 text-sm font-semibold border-b-2 transition-colors duration-150',
             activeTab === 'history'
               ? 'border-[#00a68a] text-[#00a68a]'
-              : 'border-transparent text-slate-400 hover:text-slate-600'
+              : 'border-transparent text-slate-400 hover:text-text-muted'
           )}
         >
           Maintenance History
@@ -403,10 +403,10 @@ export const CylinderMaintenancePage: React.FC = () => {
         <button
           onClick={() => setActiveTab('create')}
           className={cn(
-            'pb-3 text-sm font-semibold border-b-2 transition-all duration-200',
+            'pb-3 text-sm font-semibold border-b-2 transition-colors duration-150',
             activeTab === 'create'
               ? 'border-[#00a68a] text-[#00a68a]'
-              : 'border-transparent text-slate-400 hover:text-slate-600'
+              : 'border-transparent text-slate-400 hover:text-text-muted'
           )}
         >
           New Request Form
@@ -417,7 +417,7 @@ export const CylinderMaintenancePage: React.FC = () => {
       {activeTab !== 'create' ? (
         <div className="space-y-4">
           {/* Search & Filter Bar */}
-          <div className="bg-white p-4 rounded-2xl border border-slate-200 flex flex-col md:flex-row gap-4 items-center justify-between">
+          <div className="bg-surface p-4 rounded-2xl border border-border-default flex flex-col md:flex-row gap-4 items-center justify-between">
             <div className="relative w-full md:max-w-sm">
               <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
               <input
@@ -425,7 +425,7 @@ export const CylinderMaintenancePage: React.FC = () => {
                 placeholder="Search maintenance number or supplier..."
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/12 transition-all"
+                className="w-full pl-9 pr-4 py-2 border border-border-default rounded-xl text-sm focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/12 transition-colors"
               />
             </div>
 
@@ -433,10 +433,10 @@ export const CylinderMaintenancePage: React.FC = () => {
               <button
                 onClick={() => setStatusFilter('all')}
                 className={cn(
-                  'px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all',
+                  'px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors',
                   statusFilter === 'all'
                     ? 'bg-[#e6f7f4] text-[#00a68a] border-[#00a68a]/20'
-                    : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'
+                    : 'bg-surface text-text-muted border-border-default hover:bg-subtle/50'
                 )}
               >
                 All Status
@@ -446,10 +446,10 @@ export const CylinderMaintenancePage: React.FC = () => {
                   <button
                     onClick={() => setStatusFilter('draft')}
                     className={cn(
-                      'px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all',
+                      'px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors',
                       statusFilter === 'draft'
                         ? 'bg-[#e6f7f4] text-[#00a68a] border-[#00a68a]/20'
-                        : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'
+                        : 'bg-surface text-text-muted border-border-default hover:bg-subtle/50'
                     )}
                   >
                     Draft
@@ -457,10 +457,10 @@ export const CylinderMaintenancePage: React.FC = () => {
                   <button
                     onClick={() => setStatusFilter('pending_approval')}
                     className={cn(
-                      'px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all',
+                      'px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors',
                       statusFilter === 'pending_approval'
                         ? 'bg-[#e6f7f4] text-[#00a68a] border-[#00a68a]/20'
-                        : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'
+                        : 'bg-surface text-text-muted border-border-default hover:bg-subtle/50'
                     )}
                   >
                     Dalam Semakan
@@ -468,10 +468,10 @@ export const CylinderMaintenancePage: React.FC = () => {
                   <button
                     onClick={() => setStatusFilter('approved')}
                     className={cn(
-                      'px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all',
+                      'px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors',
                       statusFilter === 'approved'
                         ? 'bg-[#e6f7f4] text-[#00a68a] border-[#00a68a]/20'
-                        : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'
+                        : 'bg-surface text-text-muted border-border-default hover:bg-subtle/50'
                     )}
                   >
                     Approved
@@ -479,10 +479,10 @@ export const CylinderMaintenancePage: React.FC = () => {
                   <button
                     onClick={() => setStatusFilter('sent_to_supplier')}
                     className={cn(
-                      'px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all',
+                      'px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors',
                       statusFilter === 'sent_to_supplier'
                         ? 'bg-[#e6f7f4] text-[#00a68a] border-[#00a68a]/20'
-                        : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'
+                        : 'bg-surface text-text-muted border-border-default hover:bg-subtle/50'
                     )}
                   >
                     Dihantar
@@ -490,10 +490,10 @@ export const CylinderMaintenancePage: React.FC = () => {
                   <button
                     onClick={() => setStatusFilter('in_progress')}
                     className={cn(
-                      'px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all',
+                      'px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors',
                       statusFilter === 'in_progress'
                         ? 'bg-[#e6f7f4] text-[#00a68a] border-[#00a68a]/20'
-                        : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'
+                        : 'bg-surface text-text-muted border-border-default hover:bg-subtle/50'
                     )}
                   >
                     Diselenggara
@@ -504,10 +504,10 @@ export const CylinderMaintenancePage: React.FC = () => {
                   <button
                     onClick={() => setStatusFilter('completed')}
                     className={cn(
-                      'px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all',
+                      'px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors',
                       statusFilter === 'completed'
                         ? 'bg-[#e6f7f4] text-[#00a68a] border-[#00a68a]/20'
-                        : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'
+                        : 'bg-surface text-text-muted border-border-default hover:bg-subtle/50'
                     )}
                   >
                     Selesai
@@ -515,10 +515,10 @@ export const CylinderMaintenancePage: React.FC = () => {
                   <button
                     onClick={() => setStatusFilter('cancelled')}
                     className={cn(
-                      'px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all',
+                      'px-3 py-1.5 rounded-lg text-xs font-semibold border transition-colors',
                       statusFilter === 'cancelled'
                         ? 'bg-[#e6f7f4] text-[#00a68a] border-[#00a68a]/20'
-                        : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'
+                        : 'bg-surface text-text-muted border-border-default hover:bg-subtle/50'
                     )}
                   >
                     Batal
@@ -530,37 +530,37 @@ export const CylinderMaintenancePage: React.FC = () => {
 
           {/* Grid/Table List */}
           {isLoading ? (
-            <div className="bg-white rounded-2xl border border-slate-200 p-8 flex justify-center items-center">
+            <div className="bg-surface rounded-2xl border border-border-default p-8 flex justify-center items-center">
               <Loader2 className="w-8 h-8 text-[#00a68a] animate-spin" />
-              <span className="ml-2 text-sm text-slate-500 font-medium">Loading maintenance requests...</span>
+              <span className="ml-2 text-sm text-text-muted font-medium">Loading maintenance requests...</span>
             </div>
           ) : error ? (
-            <div className="bg-rose-50 border border-rose-200 text-rose-800 p-4 rounded-xl flex gap-3 items-center">
+            <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 p-4 rounded-xl flex gap-3 items-center">
               <AlertTriangle className="w-5 h-5 flex-shrink-0" />
               <p className="text-sm font-medium">{error}</p>
             </div>
           ) : filteredRequests.length === 0 ? (
-            <div className="bg-white border border-slate-200 rounded-2xl p-16 flex flex-col items-center justify-center text-center">
+            <div className="bg-surface border border-border-default rounded-2xl p-16 flex flex-col items-center justify-center text-center">
               <Wrench className="w-12 h-12 text-slate-300 mb-4" />
-              <h3 className="text-md font-bold text-slate-700">No requests found</h3>
-              <p className="text-sm text-slate-500 mt-1 max-w-[300px]">
+              <h3 className="text-md font-bold text-text-secondary">No requests found</h3>
+              <p className="text-sm text-text-muted mt-1 max-w-[300px]">
                 No cylinder maintenance requests matched the filters or have been created yet.
               </p>
               {activeTab === 'active' && (
                 <button
                   onClick={() => setActiveTab('create')}
-                  className="mt-4 px-4 py-2 bg-[#00a68a] text-white text-sm font-semibold rounded-xl hover:bg-[#009278] transition-all"
+                  className="mt-4 px-4 py-2 bg-[#00a68a] text-white text-sm font-semibold rounded-xl hover:bg-[#009278] transition-colors"
                 >
                   Create Maintenance Request
                 </button>
               )}
             </div>
           ) : (
-            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)]">
+            <div className="bg-surface rounded-2xl border border-border-default overflow-hidden shadow-[0_2px_8px_-3px_rgba(0,0,0,0.05)]">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    <tr className="bg-subtle/50 border-b border-border-default text-xs font-bold text-text-muted uppercase tracking-wider">
                       <th className="px-6 py-4">No. Rujukan</th>
                       <th className="px-6 py-4">Pembekal</th>
                       <th className="px-6 py-4">Peruntukan</th>
@@ -570,29 +570,29 @@ export const CylinderMaintenancePage: React.FC = () => {
                       <th className="px-6 py-4 text-center">Tindakan</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 text-sm">
+                  <tbody className="divide-y divide-border-subtle text-sm">
                     {filteredRequests.map(req => (
-                      <tr key={req.id} className="hover:bg-slate-50/50 transition-colors">
-                        <td className="px-6 py-4 font-mono font-bold text-slate-900">
+                      <tr key={req.id} className="hover:bg-subtle/50 transition-colors">
+                        <td className="px-6 py-4 font-mono font-bold text-text-primary">
                           {req.maintenance_no}
                         </td>
                         <td className="px-6 py-4 font-medium">
                           {req.supplier?.company_name || 'Tiada Pembekal'}
                         </td>
-                        <td className="px-6 py-4 uppercase text-xs font-semibold text-slate-500">
+                        <td className="px-6 py-4 uppercase text-xs font-semibold text-text-muted">
                           {req.budget_source || '-'}
                         </td>
                         <td className="px-6 py-4">
                           {getStatusBadge(req.status)}
                         </td>
-                        <td className="px-6 py-4 text-slate-500">
+                        <td className="px-6 py-4 text-text-muted">
                           {new Date(req.requested_date).toLocaleDateString('ms-MY', {
                             day: 'numeric',
                             month: 'short',
                             year: 'numeric'
                           })}
                         </td>
-                        <td className="px-6 py-4 text-right font-mono font-bold text-slate-900 tabular-nums">
+                        <td className="px-6 py-4 text-right font-mono font-bold text-text-primary tabular-nums">
                           {formatCurrency(req.total_cost || 0)}
                         </td>
                         <td className="px-6 py-4 text-center">
@@ -602,7 +602,7 @@ export const CylinderMaintenancePage: React.FC = () => {
                               fetchRequestDetails(req.id)
                               setShowDetailsModal(true)
                             }}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors"
+                            className="inline-flex items-center gap-1 px-3 py-1.5 border border-border-default rounded-lg text-xs font-semibold text-text-muted hover:bg-subtle/50 transition-colors"
                           >
                             <Eye className="w-3.5 h-3.5" /> Papar
                           </button>
@@ -619,14 +619,14 @@ export const CylinderMaintenancePage: React.FC = () => {
         /* Create Form Tab */
         <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
-            <div className="bg-rose-50 border border-rose-200 text-rose-800 p-4 rounded-xl flex gap-3 items-center">
+            <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 p-4 rounded-xl flex gap-3 items-center">
               <AlertTriangle className="w-5 h-5 flex-shrink-0" />
               <p className="text-sm font-medium">{error}</p>
             </div>
           )}
 
           {submitSuccess && (
-            <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-xl flex gap-3 items-center">
+            <div className="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 p-4 rounded-xl flex gap-3 items-center">
               <CheckCircle className="w-5 h-5 flex-shrink-0" />
               <p className="text-sm font-medium">Maintenance request created successfully! Redirecting...</p>
             </div>
@@ -638,21 +638,21 @@ export const CylinderMaintenancePage: React.FC = () => {
             <div className="lg:col-span-2 space-y-6">
               
               {/* General details card */}
-              <div className="bg-white p-6 rounded-2xl border border-slate-200 space-y-4">
-                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-2">
+              <div className="bg-surface p-6 rounded-2xl border border-border-default space-y-4">
+                <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider border-b border-border-subtle pb-2">
                   1. Butiran Am Permohonan
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide">
+                    <label className="block text-xs font-bold text-text-muted uppercase tracking-wide">
                       Pembekal Selenggaraan
                     </label>
                     <select
                       value={selectedSupplier}
                       onChange={e => setSelectedSupplier(e.target.value)}
                       required
-                      className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-[#00a68a]"
+                      className="w-full px-3 py-2 border border-border-default rounded-xl text-sm focus:outline-none focus:border-[#00a68a]"
                     >
                       <option value="">-- Sila Pilih Pembekal --</option>
                       {suppliers.map(s => (
@@ -664,13 +664,13 @@ export const CylinderMaintenancePage: React.FC = () => {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide">
+                    <label className="block text-xs font-bold text-text-muted uppercase tracking-wide">
                       Sumber Peruntukan
                     </label>
                     <select
                       value={selectedBudgetSource}
                       onChange={(e) => setSelectedBudgetSource(e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-200 rounded-xl text-xs font-semibold bg-white text-slate-800 focus:ring-2 focus:ring-teal-600/10 focus:border-teal-500 transition-all outline-none"
+                      className="w-full px-3 py-2 border border-border-default rounded-xl text-xs font-semibold bg-surface text-text-primary focus:ring-2 focus:ring-teal-600/10 focus:border-teal-500 transition-colors outline-none"
                     >
                       <option value="080702">Waran (Vot: 080702 / CC - 27402) - Oksigen Perubatan</option>
                       <option value="080600">Waran (Vot: 080600 / Duit Khas - 27402) - Silinder & Gas</option>
@@ -679,7 +679,7 @@ export const CylinderMaintenancePage: React.FC = () => {
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide">
+                  <label className="block text-xs font-bold text-text-muted uppercase tracking-wide">
                     Justifikasi Keperluan
                   </label>
                   <textarea
@@ -688,12 +688,12 @@ export const CylinderMaintenancePage: React.FC = () => {
                     value={justification}
                     onChange={e => setJustification(e.target.value)}
                     required
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-[#00a68a] resize-none"
+                    className="w-full px-3 py-2 border border-border-default rounded-xl text-sm focus:outline-none focus:border-[#00a68a] resize-none"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-500 uppercase tracking-wide">
+                  <label className="block text-xs font-bold text-text-muted uppercase tracking-wide">
                     Nota Tambahan (Optional)
                   </label>
                   <textarea
@@ -701,15 +701,15 @@ export const CylinderMaintenancePage: React.FC = () => {
                     placeholder="Catatan tambahan..."
                     value={notes}
                     onChange={e => setNotes(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-[#00a68a] resize-none"
+                    className="w-full px-3 py-2 border border-border-default rounded-xl text-sm focus:outline-none focus:border-[#00a68a] resize-none"
                   />
                 </div>
               </div>
 
               {/* Cylinders table card */}
-              <div className="bg-white p-6 rounded-2xl border border-slate-200 space-y-4">
-                <div className="flex justify-between items-center border-b border-slate-100 pb-2">
-                  <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider">
+              <div className="bg-surface p-6 rounded-2xl border border-border-default space-y-4">
+                <div className="flex justify-between items-center border-b border-border-subtle pb-2">
+                  <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider">
                     2. Senarai Silinder & Jenis Selenggaraan
                   </h3>
                   <button
@@ -722,22 +722,22 @@ export const CylinderMaintenancePage: React.FC = () => {
                 </div>
 
                 {selectedCylinders.length === 0 ? (
-                  <div className="py-12 text-center border-2 border-dashed border-slate-200 rounded-xl flex flex-col items-center">
+                  <div className="py-12 text-center border-2 border-dashed border-border-default rounded-xl flex flex-col items-center">
                     <Wrench className="w-10 h-10 text-slate-300 mb-2" />
                     <p className="text-xs text-slate-400 font-medium">Tiada silinder dipilih.</p>
                     <button
                       type="button"
                       onClick={() => setShowCylinderPicker(true)}
-                      className="mt-3 px-3 py-1.5 bg-slate-100 text-slate-600 hover:bg-slate-200 rounded-lg text-xs font-semibold transition-colors"
+                      className="mt-3 px-3 py-1.5 bg-subtle text-text-muted hover:bg-subtle rounded-lg text-xs font-semibold transition-colors"
                     >
                       Pilih dari Inventori
                     </button>
                   </div>
                 ) : (
-                  <div className="overflow-hidden border border-slate-100 rounded-xl">
+                  <div className="overflow-hidden border border-border-subtle rounded-xl">
                     <table className="w-full text-left border-collapse text-xs">
                       <thead>
-                        <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold uppercase tracking-wider">
+                        <tr className="bg-subtle/50 border-b border-border-subtle text-text-muted font-bold uppercase tracking-wider">
                           <th className="px-4 py-3">No. Siri Silinder</th>
                           <th className="px-4 py-3">Jenis / Saiz</th>
                           <th className="px-4 py-3">Jenis Selenggaraan</th>
@@ -745,13 +745,13 @@ export const CylinderMaintenancePage: React.FC = () => {
                           <th className="px-4 py-3 text-center">Tindakan</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100">
+                      <tbody className="divide-y divide-border-subtle">
                         {selectedCylinders.map((item, idx) => (
-                          <tr key={item.cylinder.id} className="hover:bg-slate-50/20">
-                            <td className="px-4 py-3 font-mono font-bold text-slate-900">
+                          <tr key={item.cylinder.id} className="hover:bg-subtle/50">
+                            <td className="px-4 py-3 font-mono font-bold text-text-primary">
                               {item.cylinder.serial_number}
                             </td>
-                            <td className="px-4 py-3 text-slate-500">
+                            <td className="px-4 py-3 text-text-muted">
                               {item.cylinder.type_info?.type_name || '-'} / {item.cylinder.size_info?.code || '-'}
                             </td>
                             <td className="px-4 py-3">
@@ -762,7 +762,7 @@ export const CylinderMaintenancePage: React.FC = () => {
                                   updated[idx].maintenance_type = e.target.value as any
                                   setSelectedCylinders(updated)
                                 }}
-                                className="px-2 py-1 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-[#00a68a]"
+                                className="px-2 py-1 border border-border-default rounded-lg text-xs focus:outline-none focus:border-[#00a68a]"
                               >
                                 <option value="replacing_valve">Replacing Valve</option>
                                 <option value="painting">Painting</option>
@@ -782,7 +782,7 @@ export const CylinderMaintenancePage: React.FC = () => {
                                   updated[idx].cost = parseFloat(e.target.value) || 0
                                   setSelectedCylinders(updated)
                                 }}
-                                className="w-20 px-2 py-1 text-right border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-[#00a68a] font-mono"
+                                className="w-20 px-2 py-1 text-right border border-border-default rounded-lg text-xs focus:outline-none focus:border-[#00a68a] font-mono"
                               />
                             </td>
                             <td className="px-4 py-3 text-center">
@@ -792,7 +792,7 @@ export const CylinderMaintenancePage: React.FC = () => {
                                   const updated = selectedCylinders.filter((_, i) => i !== idx)
                                   setSelectedCylinders(updated)
                                 }}
-                                className="p-1 hover:text-rose-600 hover:bg-rose-50 rounded-lg text-slate-400 transition-colors"
+                                className="p-1 hover:text-rose-600 hover:bg-rose-500/10 rounded-lg text-slate-400 transition-colors"
                               >
                                 <Trash2 className="w-4 h-4" />
                               </button>
@@ -808,37 +808,37 @@ export const CylinderMaintenancePage: React.FC = () => {
 
             {/* Right Col: Summary & Action */}
             <div className="space-y-6">
-              <div className="bg-white p-6 rounded-2xl border border-slate-200 space-y-4 shadow-sm">
-                <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wider border-b border-slate-100 pb-2">
+              <div className="bg-surface p-6 rounded-2xl border border-border-default space-y-4 shadow-sm">
+                <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider border-b border-border-subtle pb-2">
                   Ringkasan Kos
                 </h3>
 
                 <div className="space-y-2 text-sm">
-                  <div className="flex justify-between text-slate-500">
+                  <div className="flex justify-between text-text-muted">
                     <span>Jumlah Silinder:</span>
-                    <span className="font-semibold text-slate-800">{selectedCylinders.length} unit</span>
+                    <span className="font-semibold text-text-primary">{selectedCylinders.length} unit</span>
                   </div>
-                  <div className="flex justify-between text-slate-500">
+                  <div className="flex justify-between text-text-muted">
                     <span>Purata Kos / Unit:</span>
-                    <span className="font-semibold text-slate-800 font-mono">
+                    <span className="font-semibold text-text-primary font-mono">
                       {selectedCylinders.length > 0
                         ? formatCurrency(calculateFormTotal() / selectedCylinders.length)
                         : 'RM 0.00'}
                     </span>
                   </div>
-                  <div className="border-t border-slate-100 pt-3 flex justify-between items-baseline">
-                    <span className="font-bold text-slate-900">Jumlah Anggaran:</span>
+                  <div className="border-t border-border-subtle pt-3 flex justify-between items-baseline">
+                    <span className="font-bold text-text-primary">Jumlah Anggaran:</span>
                     <span className="text-lg font-mono font-bold text-[#00a68a]">
                       {formatCurrency(calculateFormTotal())}
                     </span>
                   </div>
                 </div>
 
-                <div className="border-t border-slate-100 pt-4 space-y-3">
+                <div className="border-t border-border-subtle pt-4 space-y-3">
                   <button
                     type="submit"
                     disabled={isSubmitting || selectedCylinders.length === 0}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#00a68a] hover:bg-[#009278] active:scale-98 disabled:opacity-50 text-white rounded-xl text-sm font-semibold transition-all duration-200 shadow-sm"
+                    className="w-full flex items-center justify-center gap-2 py-2.5 bg-[#00a68a] hover:bg-[#009278] active:scale-98 disabled:opacity-50 text-white rounded-xl text-sm font-semibold transition-colors duration-150 shadow-sm"
                   >
                     {isSubmitting ? (
                       <>
@@ -851,7 +851,7 @@ export const CylinderMaintenancePage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setActiveTab('active')}
-                    className="w-full py-2.5 border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl text-sm font-semibold transition-all duration-200 text-center"
+                    className="w-full py-2.5 border border-border-default hover:bg-subtle/50 text-text-muted rounded-xl text-sm font-semibold transition-colors duration-150 text-center"
                   >
                     Batal
                   </button>
@@ -871,14 +871,14 @@ export const CylinderMaintenancePage: React.FC = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-2xl max-w-3xl w-full border border-slate-200 shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
+              className="bg-surface rounded-2xl max-w-3xl w-full border border-border-default shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
             >
               
               {/* Modal Header */}
-              <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+              <div className="px-6 py-4 border-b border-border-default flex justify-between items-center bg-subtle/50">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="font-mono text-lg font-bold text-slate-900">
+                    <span className="font-mono text-lg font-bold text-text-primary">
                       {selectedRequest.maintenance_no}
                     </span>
                     {getStatusBadge(selectedRequest.status)}
@@ -889,7 +889,7 @@ export const CylinderMaintenancePage: React.FC = () => {
                 </div>
                 <button
                   onClick={() => setShowDetailsModal(false)}
-                  className="p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-all"
+                  className="p-1 text-slate-400 hover:text-text-muted hover:bg-subtle rounded-xl transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -900,22 +900,22 @@ export const CylinderMaintenancePage: React.FC = () => {
                 {isDetailsLoading ? (
                   <div className="py-12 flex justify-center items-center">
                     <Loader2 className="w-8 h-8 text-[#00a68a] animate-spin" />
-                    <span className="ml-2 text-slate-500">Loading details...</span>
+                    <span className="ml-2 text-text-muted">Loading details...</span>
                   </div>
                 ) : detailsError ? (
-                  <div className="bg-rose-50 border border-rose-200 text-rose-800 p-4 rounded-xl flex gap-3 items-center">
+                  <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 p-4 rounded-xl flex gap-3 items-center">
                     <AlertTriangle className="w-5 h-5" />
                     <p className="font-medium">{detailsError}</p>
                   </div>
                 ) : (
                   <>
                     {/* General Request Info */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 bg-subtle/50 p-4 rounded-xl border border-border-default">
                       <div className="space-y-1">
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
                           Tarikh Dimohon
                         </span>
-                        <p className="font-medium text-slate-800">
+                        <p className="font-medium text-text-primary">
                           {new Date(selectedRequest.requested_date).toLocaleDateString('ms-MY', {
                             day: 'numeric',
                             month: 'short',
@@ -928,7 +928,7 @@ export const CylinderMaintenancePage: React.FC = () => {
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
                           Dimohon Oleh
                         </span>
-                        <p className="font-medium text-slate-800">
+                        <p className="font-medium text-text-primary">
                           {selectedRequest.requested_by_user?.full_name || 'Sistem'}
                         </p>
                       </div>
@@ -937,7 +937,7 @@ export const CylinderMaintenancePage: React.FC = () => {
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
                           Sumber Budget
                         </span>
-                        <p className="font-medium text-slate-800 uppercase">
+                        <p className="font-medium text-text-primary uppercase">
                           {selectedRequest.budget_source || '-'}
                         </p>
                       </div>
@@ -946,7 +946,7 @@ export const CylinderMaintenancePage: React.FC = () => {
                         <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
                           Pembekal
                         </span>
-                        <p className="font-medium text-slate-800 truncate">
+                        <p className="font-medium text-text-primary truncate">
                           {selectedRequest.supplier?.company_name || '-'}
                         </p>
                       </div>
@@ -957,11 +957,11 @@ export const CylinderMaintenancePage: React.FC = () => {
                       <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wide">
                         Justifikasi / Catatan
                       </h4>
-                      <div className="p-3 bg-white border border-slate-100 rounded-lg text-slate-600 italic">
+                      <div className="p-3 bg-surface border border-border-subtle rounded-lg text-text-muted italic">
                         {selectedRequest.justification || 'Tiada justifikasi disediakan.'}
                       </div>
                       {selectedRequest.notes && (
-                        <p className="text-xs text-slate-400 bg-slate-50 p-2 rounded border border-slate-100/50">
+                        <p className="text-xs text-slate-400 bg-subtle/50 p-2 rounded border border-border-subtle">
                           <strong>Catatan Tambahan:</strong> {selectedRequest.notes}
                         </p>
                       )}
@@ -973,36 +973,36 @@ export const CylinderMaintenancePage: React.FC = () => {
                         Senarai Silinder Terlibat
                       </h4>
                       
-                      <div className="overflow-hidden border border-slate-100 rounded-xl">
+                      <div className="overflow-hidden border border-border-subtle rounded-xl">
                         <table className="w-full text-left border-collapse text-xs">
                           <thead>
-                            <tr className="bg-slate-50 border-b border-slate-100 text-slate-500 font-bold uppercase tracking-wider">
+                            <tr className="bg-subtle/50 border-b border-border-subtle text-text-muted font-bold uppercase tracking-wider">
                               <th className="px-4 py-3">No. Siri</th>
                               <th className="px-4 py-3">Saiz / Jenis</th>
                               <th className="px-4 py-3">Jenis Selenggaraan</th>
                               <th className="px-4 py-3 text-right">Kos Selenggara</th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-slate-100">
+                          <tbody className="divide-y divide-border-subtle">
                             {selectedRequest.items?.map(item => (
-                              <tr key={item.id} className="hover:bg-slate-50/20">
-                                <td className="px-4 py-3 font-mono font-bold text-slate-900">
+                              <tr key={item.id} className="hover:bg-subtle/50">
+                                <td className="px-4 py-3 font-mono font-bold text-text-primary">
                                   {item.cylinder?.serial_number || 'Silinder Rujukan'}
                                 </td>
-                                <td className="px-4 py-3 text-slate-500">
+                                <td className="px-4 py-3 text-text-muted">
                                    {item.cylinder?.type_info?.type_name || '-'} / {item.cylinder?.size_info?.code || '-'}
                                 </td>
                                 <td className="px-4 py-3 font-medium">
                                   {getMaintenanceTypeLabel(item.maintenance_type)}
                                 </td>
-                                <td className="px-4 py-3 text-right font-mono font-bold text-slate-800 tabular-nums">
+                                <td className="px-4 py-3 text-right font-mono font-bold text-text-primary tabular-nums">
                                   {formatCurrency(item.cost || 0)}
                                 </td>
                               </tr>
                             ))}
                             {/* Totals row */}
-                            <tr className="bg-slate-50 font-bold">
-                              <td colSpan={3} className="px-4 py-3 text-right text-slate-700">
+                            <tr className="bg-subtle/50 font-bold">
+                              <td colSpan={3} className="px-4 py-3 text-right text-text-secondary">
                                 Jumlah Keseluruhan:
                               </td>
                               <td className="px-4 py-3 text-right font-mono text-[#00a68a] text-sm tabular-nums">
@@ -1015,18 +1015,18 @@ export const CylinderMaintenancePage: React.FC = () => {
                     </div>
 
                     {/* Workflow status updates action buttons */}
-                    <div className="border-t border-slate-200 pt-4 flex flex-wrap gap-2 justify-end">
+                    <div className="border-t border-border-default pt-4 flex flex-wrap gap-2 justify-end">
                       {selectedRequest.status === 'draft' && (
                         <>
                           <button
                             onClick={() => handleUpdateStatus(selectedRequest.id, 'pending_approval')}
-                            className="px-4 py-2 bg-[#00a68a] text-white hover:bg-[#009278] rounded-xl text-xs font-semibold shadow-sm transition-all"
+                            className="px-4 py-2 bg-[#00a68a] text-white hover:bg-[#009278] rounded-xl text-xs font-semibold shadow-sm transition-colors"
                           >
                             Hantar Untuk Semakan
                           </button>
                           <button
                             onClick={() => handleUpdateStatus(selectedRequest.id, 'cancelled')}
-                            className="px-4 py-2 border border-rose-200 text-rose-700 hover:bg-rose-50 rounded-xl text-xs font-semibold transition-all"
+                            className="px-4 py-2 border border-rose-500/20 text-rose-700 hover:bg-rose-500/10 rounded-xl text-xs font-semibold transition-colors"
                           >
                             Batal Permohonan
                           </button>
@@ -1037,13 +1037,13 @@ export const CylinderMaintenancePage: React.FC = () => {
                         <>
                           <button
                             onClick={() => handleUpdateStatus(selectedRequest.id, 'approved')}
-                            className="px-4 py-2 bg-[#00a68a] text-white hover:bg-[#009278] rounded-xl text-xs font-semibold shadow-sm transition-all"
+                            className="px-4 py-2 bg-[#00a68a] text-white hover:bg-[#009278] rounded-xl text-xs font-semibold shadow-sm transition-colors"
                           >
                             Luluskan Permohonan
                           </button>
                           <button
                             onClick={() => handleUpdateStatus(selectedRequest.id, 'cancelled')}
-                            className="px-4 py-2 border border-rose-200 text-rose-700 hover:bg-rose-50 rounded-xl text-xs font-semibold transition-all"
+                            className="px-4 py-2 border border-rose-500/20 text-rose-700 hover:bg-rose-500/10 rounded-xl text-xs font-semibold transition-colors"
                           >
                             Tolak
                           </button>
@@ -1053,7 +1053,7 @@ export const CylinderMaintenancePage: React.FC = () => {
                       {selectedRequest.status === 'approved' && (
                         <button
                           onClick={() => handleUpdateStatus(selectedRequest.id, 'sent_to_supplier')}
-                          className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-xl text-xs font-semibold shadow-sm transition-all"
+                          className="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-xl text-xs font-semibold shadow-sm transition-colors"
                         >
                           Hantar ke Pembekal
                         </button>
@@ -1062,7 +1062,7 @@ export const CylinderMaintenancePage: React.FC = () => {
                       {selectedRequest.status === 'sent_to_supplier' && (
                         <button
                           onClick={() => handleUpdateStatus(selectedRequest.id, 'in_progress')}
-                          className="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded-xl text-xs font-semibold shadow-sm transition-all"
+                          className="px-4 py-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded-xl text-xs font-semibold shadow-sm transition-colors"
                         >
                           Mula Proses Selenggaraan
                         </button>
@@ -1071,7 +1071,7 @@ export const CylinderMaintenancePage: React.FC = () => {
                       {selectedRequest.status === 'in_progress' && (
                         <button
                           onClick={() => handleUpdateStatus(selectedRequest.id, 'completed')}
-                          className="px-4 py-2 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl text-xs font-semibold shadow-sm transition-all"
+                          className="px-4 py-2 bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl text-xs font-semibold shadow-sm transition-colors"
                         >
                           Selesai & Kembalikan Silinder
                         </button>
@@ -1080,7 +1080,7 @@ export const CylinderMaintenancePage: React.FC = () => {
                       {['approved', 'sent_to_supplier', 'in_progress'].includes(selectedRequest.status) && (
                         <button
                           onClick={() => handleUpdateStatus(selectedRequest.id, 'cancelled')}
-                          className="px-4 py-2 border border-rose-200 text-rose-700 hover:bg-rose-50 rounded-xl text-xs font-semibold transition-all"
+                          className="px-4 py-2 border border-rose-500/20 text-rose-700 hover:bg-rose-500/10 rounded-xl text-xs font-semibold transition-colors"
                         >
                           Batal Permohonan
                         </button>
@@ -1102,21 +1102,21 @@ export const CylinderMaintenancePage: React.FC = () => {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-2xl max-w-xl w-full border border-slate-200 shadow-2xl overflow-hidden max-h-[80vh] flex flex-col"
+              className="bg-surface rounded-2xl max-w-xl w-full border border-border-default shadow-2xl overflow-hidden max-h-[80vh] flex flex-col"
             >
-              <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
-                <h3 className="font-bold text-slate-800 text-md">Pilih Silinder dari Inventori</h3>
+              <div className="px-6 py-4 border-b border-border-default flex justify-between items-center bg-subtle/50">
+                <h3 className="font-bold text-text-primary text-md">Pilih Silinder dari Inventori</h3>
                 <button
                   type="button"
                   onClick={() => setShowCylinderPicker(false)}
-                  className="p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl"
+                  className="p-1 text-slate-400 hover:text-text-muted hover:bg-subtle rounded-xl"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               {/* Picker Search */}
-               <div className="p-4 border-b border-slate-100 flex flex-col sm:flex-row gap-3">
+               <div className="p-4 border-b border-border-subtle flex flex-col sm:flex-row gap-3">
                 <div className="relative flex-1">
                   <Search className="absolute left-3 top-2.5 w-4 h-4 text-slate-400" />
                   <input
@@ -1124,13 +1124,13 @@ export const CylinderMaintenancePage: React.FC = () => {
                     placeholder="Cari no. siri silinder..."
                     value={searchCylinderTerm}
                     onChange={e => setSearchCylinderTerm(e.target.value)}
-                    className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#00a68a]"
+                    className="w-full pl-9 pr-4 py-2 border border-border-default rounded-xl text-xs focus:outline-none focus:border-[#00a68a]"
                   />
                 </div>
                 <select
                   value={selectedSizeFilter}
                   onChange={e => setSelectedSizeFilter(e.target.value)}
-                  className="px-3 py-2 border border-slate-200 rounded-xl text-xs focus:outline-none focus:border-[#00a68a] bg-white text-slate-700"
+                  className="px-3 py-2 border border-border-default rounded-xl text-xs focus:outline-none focus:border-[#00a68a] bg-surface text-text-secondary"
                 >
                   <option value="all">Semua Saiz</option>
                   {cylinderSizes.map(size => (
@@ -1146,7 +1146,7 @@ export const CylinderMaintenancePage: React.FC = () => {
                 {isLoadingCylinders ? (
                   <div className="py-8 flex justify-center items-center">
                     <Loader2 className="w-6 h-6 animate-spin text-[#00a68a]" />
-                    <span className="ml-2 text-xs text-slate-500">Loading cylinders...</span>
+                    <span className="ml-2 text-xs text-text-muted">Loading cylinders...</span>
                   </div>
                 ) : filteredAvailableCylinders.length === 0 ? (
                   <p className="text-center text-xs text-slate-400 py-8">
@@ -1170,10 +1170,10 @@ export const CylinderMaintenancePage: React.FC = () => {
                           setShowCylinderPicker(false)
                           setSearchCylinderTerm('')
                         }}
-                        className="flex items-center justify-between p-3 border border-slate-200 hover:border-[#00a68a] hover:bg-[#e6f7f4]/10 rounded-xl cursor-pointer transition-all group"
+                        className="flex items-center justify-between p-3 border border-border-default hover:border-[#00a68a] hover:bg-[#e6f7f4]/10 rounded-xl cursor-pointer transition-colors group"
                       >
                         <div>
-                          <p className="font-mono font-bold text-xs text-slate-900 group-hover:text-[#00a68a]">
+                          <p className="font-mono font-bold text-xs text-text-primary group-hover:text-[#00a68a]">
                             {cyl.serial_number}
                           </p>
                           <p className="text-[10px] text-slate-400 mt-0.5">

@@ -7,3 +7,5 @@ dist
 .agents/
 .gemini/
 scratch/
+.cursor/
+.playwright-mcp/

@@ -61,7 +61,7 @@ export const FormulationEditorTabs: React.FC<FormulationEditorTabsProps> = ({
             key={tab.id}
             type="button"
             onClick={() => onSelectTab(tab.id)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer shrink-0 active:scale-[0.98] ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-2 transition-colors cursor-pointer shrink-0 active:scale-[0.98] ${
               isActive
                 ? 'bg-teal-700 text-white shadow-xs font-bold'
                 : 'text-text-muted hover:text-text-primary hover:bg-subtle'

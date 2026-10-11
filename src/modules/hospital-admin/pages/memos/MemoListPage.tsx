@@ -26,12 +26,12 @@ import { MEMO_STATUS, MEMO_TYPES, DEFAULT_PAGE_SIZE, PAGE_SIZE_OPTIONS } from '@
 import type { MemoWithRelations, MemoStatus, MemoType, MemoPriority } from '@/types'
 
 const statusConfig: Record<MemoStatus, { color: string; bgColor: string; icon: React.ElementType; variant: 'success' | 'error' | 'warning' | 'gray' | 'primary' }> = {
-  draft: { color: 'text-gray-600', bgColor: 'bg-gray-100', icon: Edit, variant: 'gray' },
+  draft: { color: 'text-text-muted', bgColor: 'bg-subtle', icon: Edit, variant: 'gray' },
   pending_approval: { color: 'text-amber-600', bgColor: 'bg-amber-100', icon: Clock, variant: 'warning' },
   approved: { color: 'text-green-600', bgColor: 'bg-green-100', icon: CheckCircle, variant: 'success' },
   rejected: { color: 'text-red-600', bgColor: 'bg-red-100', icon: XCircle, variant: 'error' },
   published: { color: 'text-blue-600', bgColor: 'bg-blue-100', icon: Send, variant: 'primary' },
-  archived: { color: 'text-gray-500', bgColor: 'bg-gray-50', icon: FileText, variant: 'gray' },
+  archived: { color: 'text-text-muted', bgColor: 'bg-subtle/50', icon: FileText, variant: 'gray' },
 }
 
 const typeConfig: Record<MemoType, { label: string; color: string }> = {
@@ -43,7 +43,7 @@ const typeConfig: Record<MemoType, { label: string; color: string }> = {
 }
 
 const priorityConfig: Record<MemoPriority, { label: string; color: string }> = {
-  low: { label: 'Low', color: 'text-gray-500' },
+  low: { label: 'Low', color: 'text-text-muted' },
   normal: { label: 'Normal', color: 'text-blue-500' },
   high: { label: 'High', color: 'text-amber-500' },
   urgent: { label: 'Urgent', color: 'text-red-500' },
@@ -205,7 +205,7 @@ export const MemoListPage: React.FC = () => {
               variant="outline" 
               onClick={fetchMemos}
               disabled={isLoading}
-              className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
+              className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-surface/20"
               leftIcon={<RefreshCw className={cn('w-4 h-4', isLoading && 'animate-spin')} />}
             >
               Refresh
@@ -222,14 +222,14 @@ export const MemoListPage: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-xl p-5"
+          className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-500/20 rounded-xl p-5"
         >
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
               <AlertTriangle className="w-6 h-6 text-amber-600" />
             </div>
             <div>
-              <h3 className="font-semibold text-amber-900">
+              <h3 className="font-semibold text-amber-400 dark:text-amber-300 font-bold">
                 {pendingCount} Memo{pendingCount > 1 ? 's' : ''} Pending Approval
               </h3>
               <p className="text-sm text-amber-700">Review and approve memos before they can be published</p>
@@ -249,7 +249,7 @@ export const MemoListPage: React.FC = () => {
           onClick={() => { setStatusFilter('all'); setCurrentPage(1) }}
           className={cn(
             'px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap',
-            statusFilter === 'all' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+            statusFilter === 'all' ? 'bg-gray-900 text-white' : 'bg-subtle text-text-muted hover:bg-subtle'
           )}
         >
           All ({Object.values(statusCounts).reduce((a, b) => a + b, 0)})
@@ -262,7 +262,7 @@ export const MemoListPage: React.FC = () => {
               onClick={() => { setStatusFilter(status); setCurrentPage(1) }}
               className={cn(
                 'px-4 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-2',
-                statusFilter === status ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                statusFilter === status ? 'bg-gray-900 text-white' : 'bg-subtle text-text-muted hover:bg-subtle'
               )}
             >
               {status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())}
@@ -282,7 +282,7 @@ export const MemoListPage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15 }}
-        className="bg-white rounded-xl border border-slate-200 shadow-sm p-6"
+        className="bg-surface rounded-xl border border-border-default shadow-sm p-6"
       >
         <div className="flex items-center gap-4">
           <div className="flex-1 relative">
@@ -294,19 +294,19 @@ export const MemoListPage: React.FC = () => {
                 setSearch(e.target.value)
                 setCurrentPage(1)
               }}
-              className="pl-12 h-11 border-slate-300 focus:border-primary-500 focus:ring-primary-500"
+              className="pl-12 h-11 border-border-default focus:border-primary-500 focus:ring-primary-500"
             />
           </div>
 
           <div className="flex items-center gap-2">
-            <Filter className="w-5 h-5 text-slate-500" />
+            <Filter className="w-5 h-5 text-text-muted" />
             <Select
               value={typeFilter}
               onChange={(e) => {
                 setTypeFilter(e.target.value)
                 setCurrentPage(1)
               }}
-              className="w-48 h-11 border-slate-300 focus:border-primary-500"
+              className="w-48 h-11 border-border-default focus:border-primary-500"
             >
               <option value="all">All Types</option>
               {Object.entries(MEMO_TYPES).map(([key, value]) => (
@@ -319,7 +319,7 @@ export const MemoListPage: React.FC = () => {
           <Button 
             variant="ghost" 
             onClick={() => { setSearch(''); setTypeFilter('all'); setStatusFilter('all'); setCurrentPage(1) }}
-            className="text-slate-600 hover:text-slate-900"
+            className="text-text-muted hover:text-text-primary"
           >
             Reset Filters
           </Button>
@@ -331,11 +331,11 @@ export const MemoListPage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden"
+        className="bg-surface rounded-xl border border-border-default shadow-sm overflow-hidden"
       >
-        <div className="p-6 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
+        <div className="p-6 border-b border-border-default bg-gradient-to-r from-slate-50 to-white">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2">
               <Megaphone className="w-5 h-5 text-primary-600" />
               Memos
             </h2>
@@ -347,17 +347,17 @@ export const MemoListPage: React.FC = () => {
         {isLoading ? (
           <div className="p-12 text-center">
             <RefreshCw className="w-8 h-8 text-gray-400 mx-auto animate-spin mb-4" />
-            <p className="text-gray-500">Loading memos...</p>
+            <p className="text-text-muted">Loading memos...</p>
           </div>
         ) : memos.length === 0 ? (
           <div className="p-12 text-center">
             <Megaphone className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-1">No memos found</h3>
-            <p className="text-gray-500">There are no memos matching your filters.</p>
+            <h3 className="text-lg font-medium text-text-primary mb-1">No memos found</h3>
+            <p className="text-text-muted">There are no memos matching your filters.</p>
           </div>
         ) : (
           <>
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-border-subtle">
               {memos.map((memo, index) => {
                 const statusConf = statusConfig[memo.status]
                 const StatusIcon = statusConf.icon
@@ -372,7 +372,7 @@ export const MemoListPage: React.FC = () => {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.02 }}
-                    className="p-4 hover:bg-gray-50 transition-colors"
+                    className="p-4 hover:bg-subtle/50 transition-colors"
                   >
                     <div className="flex items-start gap-4">
                       {/* Status Icon */}
@@ -400,14 +400,14 @@ export const MemoListPage: React.FC = () => {
                           </span>
                         </div>
 
-                        <h4 className="font-medium text-gray-900">{memo.title}</h4>
+                        <h4 className="font-medium text-text-primary">{memo.title}</h4>
                         
                         <div 
-                          className="text-sm text-gray-600 mt-1 line-clamp-2"
+                          className="text-sm text-text-muted mt-1 line-clamp-2"
                           dangerouslySetInnerHTML={{ __html: memo.content.replace(/<[^>]*>/g, ' ').slice(0, 150) + '...' }}
                         />
 
-                        <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
+                        <div className="flex items-center gap-4 mt-3 text-xs text-text-muted">
                           <span>By: {memo.created_by_user?.full_name || 'Unknown'}</span>
                           <span>Created: {formatDate(memo.created_at)}</span>
                           {memo.publish_date && (
@@ -466,7 +466,7 @@ export const MemoListPage: React.FC = () => {
             </div>
 
             {/* Pagination */}
-            <div className="border-t border-gray-200">
+            <div className="border-t border-border-default">
               <Pagination
                 currentPage={currentPage}
                 totalPages={totalPages}
@@ -492,15 +492,15 @@ export const MemoListPage: React.FC = () => {
       >
         {selectedMemo && (
           <div className="space-y-4">
-            <div className="bg-gray-50 rounded-lg p-4">
-              <h4 className="font-medium text-gray-900">{selectedMemo.title}</h4>
+            <div className="bg-subtle/50 rounded-lg p-4">
+              <h4 className="font-medium text-text-primary">{selectedMemo.title}</h4>
               <div 
-                className="text-sm text-gray-600 mt-2"
+                className="text-sm text-text-muted mt-2"
                 dangerouslySetInnerHTML={{ __html: selectedMemo.content }}
               />
             </div>
             
-            <p className="text-gray-600">
+            <p className="text-text-muted">
               Are you sure you want to approve this memo? Once approved, it can be published.
             </p>
 
@@ -529,8 +529,8 @@ export const MemoListPage: React.FC = () => {
       >
         {selectedMemo && (
           <div className="space-y-4">
-            <div className="bg-gray-50 rounded-lg p-4">
-              <h4 className="font-medium text-gray-900">{selectedMemo.title}</h4>
+            <div className="bg-subtle/50 rounded-lg p-4">
+              <h4 className="font-medium text-text-primary">{selectedMemo.title}</h4>
             </div>
             
             <Textarea

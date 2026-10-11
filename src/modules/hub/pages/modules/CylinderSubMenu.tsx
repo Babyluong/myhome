@@ -173,47 +173,47 @@ export const CylinderSubMenu: React.FC = () => {
       {/* Quick stats panel */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
         <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
-          <div className="flex justify-between items-start text-slate-500">
+          <div className="flex justify-between items-start text-text-muted">
             <span className="text-xs sm:text-sm font-medium">Total Cylinders</span>
             <AirVent className="w-4 h-4 text-slate-400 flex-shrink-0" />
           </div>
           <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-white min-h-[36px] flex items-center">
             {stats.loading ? <Skeleton className="h-8 w-16 bg-slate-800/80 rounded-lg inline-block" /> : stats.totalCylinders}
           </div>
-          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">Facility inventory</p>
+          <p className="text-[11px] sm:text-xs text-text-muted mt-1">Facility inventory</p>
         </div>
 
         <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
-          <div className="flex justify-between items-start text-slate-500">
+          <div className="flex justify-between items-start text-text-muted">
             <span className="text-xs sm:text-sm font-medium">Full (Available)</span>
             <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
           </div>
           <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-emerald-400 min-h-[36px] flex items-center">
             {stats.loading ? <Skeleton className="h-8 w-16 bg-slate-800/80 rounded-lg inline-block" /> : stats.fullCylinders}
           </div>
-          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">Ready for issue</p>
+          <p className="text-[11px] sm:text-xs text-text-muted mt-1">Ready for issue</p>
         </div>
 
         <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
-          <div className="flex justify-between items-start text-slate-500">
+          <div className="flex justify-between items-start text-text-muted">
             <span className="text-xs sm:text-sm font-medium">In Use</span>
             <Activity className="w-4 h-4 text-cyan-400 flex-shrink-0" />
           </div>
           <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-cyan-400 min-h-[36px] flex items-center">
             {stats.loading ? <Skeleton className="h-8 w-16 bg-slate-800/80 rounded-lg inline-block" /> : stats.inUseCylinders}
           </div>
-          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">In ward / unit</p>
+          <p className="text-[11px] sm:text-xs text-text-muted mt-1">In ward / unit</p>
         </div>
 
         <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
-          <div className="flex justify-between items-start text-slate-500">
+          <div className="flex justify-between items-start text-text-muted">
             <span className="text-xs sm:text-sm font-medium">Empty / Servicing</span>
             <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0" />
           </div>
           <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-amber-400 min-h-[36px] flex items-center">
             {stats.loading ? <Skeleton className="h-8 w-16 bg-slate-800/80 rounded-lg inline-block" /> : stats.emptyCylinders}
           </div>
-          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">Requires refilling</p>
+          <p className="text-[11px] sm:text-xs text-text-muted mt-1">Requires refilling</p>
         </div>
       </div>
 
@@ -229,7 +229,7 @@ export const CylinderSubMenu: React.FC = () => {
               <button
                 key={idx}
                 onClick={() => navigate(mod.href)}
-                className="group text-left bg-slate-900/40 backdrop-blur-md border border-slate-800/80 hover:bg-slate-800/40 hover:border-teal-500/40 active:scale-[0.98] transition-all duration-200 shadow-xl rounded-2xl p-4 sm:p-6 flex flex-col justify-between min-h-[170px] cursor-pointer relative overflow-hidden"
+                className="group text-left bg-slate-900/40 backdrop-blur-md border border-slate-800/80 hover:bg-slate-800/40 hover:border-teal-500/40 active:scale-[0.98] transition-colors duration-150 shadow-xl rounded-2xl p-4 sm:p-6 flex flex-col justify-between min-h-[170px] cursor-pointer relative overflow-hidden"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">

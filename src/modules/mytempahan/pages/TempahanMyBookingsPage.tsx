@@ -138,32 +138,32 @@ export const TempahanMyBookingsPage: React.FC = () => {
   }
 
   return (
-    <div className="w-full p-4 sm:p-6 lg:p-8 space-y-6 text-slate-900 dark:text-slate-100">
+    <div className="w-full p-4 sm:p-6 lg:p-8 space-y-6 text-text-primary dark:text-slate-100">
       {/* 1. Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-5 shadow-xs">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-800 rounded-2xl p-5 shadow-xs">
         <div className="flex items-center gap-3.5">
           <button
             onClick={() => navigate(ROUTES.TEMPAHAN)}
-            className="p-2.5 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors shrink-0"
+            className="p-2.5 text-text-muted hover:text-text-primary dark:hover:text-white hover:bg-subtle dark:hover:bg-slate-800 rounded-xl transition-colors shrink-0"
             title="Back to Dashboard"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
 
-          <div className="w-10 h-10 rounded-xl bg-teal-50 dark:bg-teal-950/60 border border-teal-200 dark:border-teal-800/80 flex items-center justify-center text-teal-700 dark:text-teal-300 shrink-0">
+          <div className="w-10 h-10 rounded-xl bg-accent-base/10 dark:bg-teal-950/60 border border-accent-base/20 dark:border-teal-800/80 flex items-center justify-center text-teal-700 dark:text-teal-300 shrink-0">
             <CalendarDays className="w-5 h-5" />
           </div>
 
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-white">
+              <h1 className="text-lg sm:text-xl font-bold text-text-primary dark:text-white">
                 My Booking Requests
               </h1>
-              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-teal-50 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-800">
+              <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-accent-base/10 dark:bg-teal-950/50 text-teal-700 dark:text-teal-300 border border-accent-base/20 dark:border-teal-800">
                 {filteredBookings.length} Records
               </span>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            <p className="text-xs text-text-muted dark:text-slate-400 mt-0.5">
               Review approval status, print official confirmation slip, and display facility check-in QR code.
             </p>
           </div>
@@ -171,7 +171,7 @@ export const TempahanMyBookingsPage: React.FC = () => {
 
         <button
           onClick={() => navigate(ROUTES.TEMPAHAN_REQUEST_NEW)}
-          className="px-5 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 active:bg-teal-900 text-white text-xs font-bold shadow-sm transition-all flex items-center gap-2"
+          className="px-5 py-2.5 rounded-xl bg-teal-700 hover:bg-teal-800 active:bg-teal-900 text-white text-xs font-bold shadow-sm transition-colors flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
           <span>New Booking</span>
@@ -179,7 +179,7 @@ export const TempahanMyBookingsPage: React.FC = () => {
       </div>
 
       {/* 2. Tabs & Search Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-800 shadow-xs">
         {/* Status Tabs */}
         <div className="flex items-center gap-1.5 flex-wrap max-w-full">
           {[
@@ -193,10 +193,10 @@ export const TempahanMyBookingsPage: React.FC = () => {
               key={tab.id}
               onClick={() => setStatusTab(tab.id)}
               className={cn(
-                'px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all',
+                'px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors',
                 statusTab === tab.id
-                  ? 'bg-slate-900 dark:bg-teal-700 text-white shadow-2xs'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                  ? 'bg-slate-900 dark:bg-teal-700 text-white shadow-elevation-1'
+                  : 'bg-subtle dark:bg-slate-800 text-text-muted dark:text-slate-400 hover:bg-subtle dark:hover:bg-slate-700'
               )}
             >
               {tab.label}
@@ -212,17 +212,17 @@ export const TempahanMyBookingsPage: React.FC = () => {
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="Search reference no., purpose..."
-            className="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs font-medium focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
+            className="w-full pl-9 pr-4 py-2 rounded-xl border border-border-default dark:border-slate-700 bg-surface dark:bg-slate-800 text-text-primary dark:text-white text-xs font-medium focus:ring-2 focus:ring-teal-500 focus:outline-hidden"
           />
         </div>
       </div>
 
       {/* 3. Booking List Cards */}
       {filteredBookings.length === 0 ? (
-        <div className="p-12 text-center rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs space-y-3">
-          <Calendar className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto stroke-1" />
-          <h3 className="font-bold text-slate-800 dark:text-slate-200 text-sm">No Booking Records Found</h3>
-          <p className="text-xs text-slate-400 dark:text-slate-500 max-w-sm mx-auto">
+        <div className="p-12 text-center rounded-2xl bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-800 shadow-xs space-y-3">
+          <Calendar className="w-12 h-12 text-slate-300 dark:text-text-muted mx-auto stroke-1" />
+          <h3 className="font-bold text-text-primary dark:text-slate-200 text-sm">No Booking Records Found</h3>
+          <p className="text-xs text-slate-400 dark:text-text-muted max-w-sm mx-auto">
             You do not have any booking requests in this category.
           </p>
           <button
@@ -246,35 +246,35 @@ export const TempahanMyBookingsPage: React.FC = () => {
                 key={b.id}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-xs hover:shadow-md hover:border-teal-500/40 dark:hover:border-teal-500/30 transition-all flex flex-col justify-between space-y-4"
+                className="p-5 rounded-2xl bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-800 shadow-xs hover:shadow-md hover:border-teal-500/40 dark:hover:border-teal-500/30 transition-colors flex flex-col justify-between space-y-4"
               >
                 {/* Header */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs font-bold text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-slate-200 dark:border-slate-700">
+                    <span className="font-mono text-xs font-bold text-text-secondary dark:text-slate-300 bg-subtle dark:bg-slate-800 px-2.5 py-1 rounded-lg border border-border-default dark:border-slate-700">
                       {b.booking_number}
                     </span>
 
                     <span
                       className={cn(
                         'px-2.5 py-0.5 rounded-full text-[10px] font-semibold border',
-                        isApproved && 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
-                        isPending && 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',
-                        isRejected && 'bg-rose-50 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800',
-                        isCancelled && 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700',
-                        isCompleted && 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                        isApproved && 'bg-emerald-500/10 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border-emerald-500/20 dark:border-emerald-800',
+                        isPending && 'bg-amber-500/10 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-500/20 dark:border-amber-800',
+                        isRejected && 'bg-rose-500/10 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-500/20 dark:border-rose-800',
+                        isCancelled && 'bg-subtle dark:bg-slate-800 text-text-muted dark:text-slate-400 border-border-default dark:border-slate-700',
+                        isCompleted && 'bg-subtle dark:bg-slate-800 text-text-secondary dark:text-slate-300 border-border-default dark:border-slate-700'
                       )}
                     >
                       {isApproved ? 'APPROVED' : isPending ? 'UNDER REVIEW' : isRejected ? 'REJECTED' : isCancelled ? 'CANCELLED' : 'COMPLETED'}
                     </span>
                   </div>
 
-                  <h3 className="font-bold text-slate-900 dark:text-white text-sm line-clamp-2 leading-snug">
+                  <h3 className="font-bold text-text-primary dark:text-white text-sm line-clamp-2 leading-snug">
                     {b.purpose}
                   </h3>
 
-                  <div className="text-xs text-slate-500 dark:text-slate-400 space-y-1">
-                    <div className="flex items-center gap-1.5 font-medium text-slate-800 dark:text-slate-200">
+                  <div className="text-xs text-text-muted dark:text-slate-400 space-y-1">
+                    <div className="flex items-center gap-1.5 font-medium text-text-primary dark:text-slate-200">
                       <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                       <span className="truncate">{b.room?.name || 'Facility'} ({b.room?.location})</span>
                     </div>
@@ -293,12 +293,12 @@ export const TempahanMyBookingsPage: React.FC = () => {
                 </div>
 
                 {/* Footer Buttons */}
-                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-2">
+                <div className="pt-3 border-t border-border-subtle dark:border-slate-800 flex items-center justify-between gap-2">
                   <div className="flex items-center gap-1.5">
                     {isApproved && (
                       <button
                         onClick={() => downloadBookingConfirmationPdf(b)}
-                        className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-teal-50 dark:hover:bg-teal-950/60 text-slate-600 dark:text-slate-300 hover:text-teal-700 transition-colors"
+                        className="p-2 rounded-xl bg-subtle dark:bg-slate-800 hover:bg-accent-base/10 dark:hover:bg-teal-950/60 text-text-muted dark:text-slate-300 hover:text-teal-700 transition-colors"
                         title="Print Confirmation PDF"
                       >
                         <Printer className="w-4 h-4 text-teal-700 dark:text-teal-400" />
@@ -308,17 +308,17 @@ export const TempahanMyBookingsPage: React.FC = () => {
                     {isApproved && (
                       <button
                         onClick={() => setQrModalBooking(b)}
-                        className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"
+                        className="p-2 rounded-xl bg-subtle dark:bg-slate-800 hover:bg-subtle dark:hover:bg-slate-700 text-text-muted dark:text-slate-300 transition-colors"
                         title="Display Check-in QR Code"
                       >
-                        <QrCode className="w-4 h-4 text-slate-700 dark:text-slate-300" />
+                        <QrCode className="w-4 h-4 text-text-secondary dark:text-slate-300" />
                       </button>
                     )}
 
                     {(isPending || isApproved) && (
                       <button
                         onClick={() => setCancelModalBooking(b)}
-                        className="px-2.5 py-1.5 rounded-xl border border-rose-200 dark:border-rose-800 text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 text-[11px] font-semibold transition-colors"
+                        className="px-2.5 py-1.5 rounded-xl border border-rose-500/20 dark:border-rose-800 text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 dark:hover:bg-rose-950/30 text-[11px] font-semibold transition-colors"
                       >
                         Cancel
                       </button>
@@ -356,29 +356,29 @@ export const TempahanMyBookingsPage: React.FC = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="relative w-full max-w-sm bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-800 text-center space-y-4 z-10"
+              className="relative w-full max-w-sm bg-surface dark:bg-slate-900 rounded-3xl p-6 shadow-2xl border border-border-default dark:border-slate-800 text-center space-y-4 z-10"
             >
-              <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+              <div className="flex items-center justify-between pb-2 border-b border-border-subtle dark:border-slate-800">
                 <span className="text-xs font-bold text-slate-400 uppercase">Facility Access Pass</span>
-                <button onClick={() => setQrModalBooking(null)} className="text-slate-400 hover:text-slate-600">
+                <button onClick={() => setQrModalBooking(null)} className="text-slate-400 hover:text-text-muted">
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
               <div>
-                <h3 className="font-bold text-slate-900 dark:text-white text-base">{qrModalBooking.room?.name}</h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{qrModalBooking.date} • {qrModalBooking.start_time} - {qrModalBooking.end_time}</p>
+                <h3 className="font-bold text-text-primary dark:text-white text-base">{qrModalBooking.room?.name}</h3>
+                <p className="text-xs text-text-muted dark:text-slate-400 mt-0.5">{qrModalBooking.date} • {qrModalBooking.start_time} - {qrModalBooking.end_time}</p>
               </div>
 
               {/* QR Mock View */}
-              <div className="w-48 h-48 mx-auto bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center p-4">
-                <QrCode className="w-32 h-32 text-slate-800 dark:text-slate-100" />
+              <div className="w-48 h-48 mx-auto bg-subtle/50 dark:bg-slate-800 rounded-2xl border border-border-default dark:border-slate-700 flex flex-col items-center justify-center p-4">
+                <QrCode className="w-32 h-32 text-text-primary dark:text-slate-100" />
                 <span className="font-mono text-xs font-bold text-teal-700 dark:text-teal-400 mt-1">
                   {qrModalBooking.booking_number}
                 </span>
               </div>
 
-              <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center justify-between">
+              <div className="p-2.5 rounded-xl bg-subtle/50 dark:bg-slate-800 border border-border-default dark:border-slate-700 text-xs font-bold text-text-primary dark:text-slate-200 flex items-center justify-between">
                 <span>Door Lock PIN:</span>
                 <span className="font-mono text-sm tracking-widest text-teal-700 dark:text-teal-400">
                   {qrModalBooking.checkin_pin || '8842'}
@@ -404,26 +404,26 @@ export const TempahanMyBookingsPage: React.FC = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl p-6 shadow-2xl border border-slate-200 dark:border-slate-800 space-y-4 z-10 text-left"
+              className="relative w-full max-w-md bg-surface dark:bg-slate-900 rounded-3xl p-6 shadow-2xl border border-border-default dark:border-slate-800 space-y-4 z-10 text-left"
             >
               <div className="flex items-center gap-3 text-rose-600">
-                <div className="p-2 rounded-xl bg-rose-50 dark:bg-rose-950/50">
+                <div className="p-2 rounded-xl bg-rose-500/10 dark:bg-rose-950/50">
                   <AlertCircle className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-slate-900 dark:text-white text-base">Confirm Booking Cancellation</h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">Reference No.: {cancelModalBooking.booking_number}</p>
+                  <h3 className="font-bold text-text-primary dark:text-white text-base">Confirm Booking Cancellation</h3>
+                  <p className="text-xs text-text-muted dark:text-slate-400">Reference No.: {cancelModalBooking.booking_number}</p>
                 </div>
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-700 dark:text-slate-300 block">Cancellation Reason</label>
+                <label className="text-xs font-semibold text-text-secondary dark:text-slate-300 block">Cancellation Reason</label>
                 <textarea
                   rows={3}
                   value={cancelReason}
                   onChange={e => setCancelReason(e.target.value)}
                   placeholder="e.g. Meeting postponed to a new date..."
-                  className="w-full p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-rose-500 focus:outline-hidden"
+                  className="w-full p-2.5 rounded-xl border border-border-default dark:border-slate-700 bg-surface dark:bg-slate-800 text-text-primary dark:text-white text-xs focus:ring-2 focus:ring-rose-500 focus:outline-hidden"
                 />
               </div>
 
@@ -431,7 +431,7 @@ export const TempahanMyBookingsPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setCancelModalBooking(null)}
-                  className="px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-xs font-semibold hover:bg-slate-50 dark:hover:bg-slate-800"
+                  className="px-4 py-2 rounded-xl border border-border-default dark:border-slate-700 text-text-muted dark:text-slate-300 text-xs font-semibold hover:bg-subtle/50 dark:hover:bg-slate-800"
                 >
                   Back
                 </button>

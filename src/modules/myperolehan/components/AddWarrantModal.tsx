@@ -138,21 +138,21 @@ export const AddWarrantModal: React.FC<AddWarrantModalProps> = ({
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="relative w-full max-w-lg bg-white border border-slate-200 rounded-[2rem] p-6 sm:p-8 text-slate-900 shadow-2xl overflow-hidden"
+        className="relative w-full max-w-lg bg-surface border border-border-default rounded-[2rem] p-6 sm:p-8 text-text-primary shadow-2xl overflow-hidden"
       >
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+        <div className="flex items-center justify-between pb-4 border-b border-border-subtle mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 text-indigo-600 border border-indigo-100 flex items-center justify-center">
               <Wallet className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-lg font-black text-slate-900">Add Inflow Warrant Allocation</h3>
-              <p className="text-xs text-slate-500">Record official warrant allocations from MOH / State Health Department</p>
+              <h3 className="text-lg font-black text-text-primary">Add Inflow Warrant Allocation</h3>
+              <p className="text-xs text-text-muted">Record official warrant allocations from MOH / State Health Department</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+            className="p-2 rounded-xl text-slate-400 hover:text-text-secondary hover:bg-subtle transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -163,10 +163,10 @@ export const AddWarrantModal: React.FC<AddWarrantModalProps> = ({
             <button
               type="button"
               onClick={() => setBudgetType('warrant')}
-              className={`p-3 rounded-xl border-2 flex items-center gap-2 text-xs font-bold transition-all ${
+              className={`p-3 rounded-xl border-2 flex items-center gap-2 text-xs font-bold transition-colors ${
                 budgetType === 'warrant'
-                  ? 'bg-blue-50 border-blue-500 text-blue-900'
-                  : 'bg-white border-slate-200 text-slate-600'
+                  ? 'bg-blue-500/10 border-blue-500 text-blue-400 dark:text-blue-300 font-bold'
+                  : 'bg-surface border-border-default text-text-muted'
               }`}
             >
               <Building className="w-4 h-4 text-blue-600" />
@@ -176,10 +176,10 @@ export const AddWarrantModal: React.FC<AddWarrantModalProps> = ({
             <button
               type="button"
               onClick={() => setBudgetType('pembangunan')}
-              className={`p-3 rounded-xl border-2 flex items-center gap-2 text-xs font-bold transition-all ${
+              className={`p-3 rounded-xl border-2 flex items-center gap-2 text-xs font-bold transition-colors ${
                 budgetType === 'pembangunan'
-                  ? 'bg-amber-50 border-amber-500 text-amber-900'
-                  : 'bg-white border-slate-200 text-slate-600'
+                  ? 'bg-amber-500/10 border-amber-500 text-amber-400 dark:text-amber-300 font-bold'
+                  : 'bg-surface border-border-default text-text-muted'
               }`}
             >
               <HardHat className="w-4 h-4 text-amber-600" />
@@ -189,37 +189,37 @@ export const AddWarrantModal: React.FC<AddWarrantModalProps> = ({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1">Warrant Document No.</label>
+              <label className="block text-xs font-bold text-text-muted mb-1">Warrant Document No.</label>
               <input
                 type="text"
                 placeholder="e.g. WA/2026/FNB/002 or 91000914"
                 value={documentNo}
                 onChange={(e) => setDocumentNo(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:border-indigo-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-xs text-text-primary focus:bg-surface focus:border-indigo-500 focus:outline-none"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1">Warrant Date</label>
+              <label className="block text-xs font-bold text-text-muted mb-1">Warrant Date</label>
               <input
                 type="date"
                 value={warrantDate}
                 onChange={(e) => setWarrantDate(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:border-indigo-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-xs text-text-primary focus:bg-surface focus:border-indigo-500 focus:outline-none"
                 required
               />
             </div>
           </div>
 
           {/* Program, Objek, Kategori */}
-          <div className="space-y-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+          <div className="space-y-3 bg-subtle/50 p-3.5 rounded-2xl border border-border-default">
             <div>
-              <label className="block text-[11px] font-bold text-slate-600 mb-1">Program</label>
+              <label className="block text-[11px] font-bold text-text-muted mb-1">Program</label>
               <select
                 value={selectedProgramCode}
                 onChange={(e) => setSelectedProgramCode(e.target.value)}
-                className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 focus:border-indigo-500 focus:outline-none"
+                className="w-full px-3 py-1.5 bg-surface border border-border-default rounded-lg text-xs text-text-primary focus:border-indigo-500 focus:outline-none"
               >
                 {filteredPrograms.map((p) => (
                   <option key={p.id} value={p.code}>
@@ -231,11 +231,11 @@ export const AddWarrantModal: React.FC<AddWarrantModalProps> = ({
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-[11px] font-bold text-slate-600 mb-1">Object Code</label>
+                <label className="block text-[11px] font-bold text-text-muted mb-1">Object Code</label>
                 <select
                   value={selectedObjekCode}
                   onChange={(e) => setSelectedObjekCode(e.target.value)}
-                  className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 focus:border-indigo-500 focus:outline-none"
+                  className="w-full px-3 py-1.5 bg-surface border border-border-default rounded-lg text-xs text-text-primary focus:border-indigo-500 focus:outline-none"
                 >
                   {filteredObjeks.map((o) => (
                     <option key={o.id} value={o.code}>
@@ -246,11 +246,11 @@ export const AddWarrantModal: React.FC<AddWarrantModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-slate-600 mb-1">Category</label>
+                <label className="block text-[11px] font-bold text-text-muted mb-1">Category</label>
                 <select
                   value={selectedKategoriCode}
                   onChange={(e) => setSelectedKategoriCode(e.target.value)}
-                  className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs text-slate-900 focus:border-indigo-500 focus:outline-none"
+                  className="w-full px-3 py-1.5 bg-surface border border-border-default rounded-lg text-xs text-text-primary focus:border-indigo-500 focus:outline-none"
                 >
                   {filteredKategoris.map((k) => (
                     <option key={k.id} value={k.code}>
@@ -264,47 +264,47 @@ export const AddWarrantModal: React.FC<AddWarrantModalProps> = ({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1">Allocation Amount (RM)</label>
+              <label className="block text-xs font-bold text-text-muted mb-1">Allocation Amount (RM)</label>
               <input
                 type="number"
                 step="0.01"
                 min="0"
                 value={amount}
                 onChange={(e) => setAmount(Number(e.target.value))}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 font-mono font-bold focus:bg-white focus:border-indigo-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-xs text-text-primary font-mono font-bold focus:bg-surface focus:border-indigo-500 focus:outline-none"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-600 mb-1">Fiscal Year</label>
+              <label className="block text-xs font-bold text-text-muted mb-1">Fiscal Year</label>
               <input
                 type="number"
                 value={fiscalYear}
                 onChange={(e) => setFiscalYear(Number(e.target.value))}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 font-mono focus:bg-white focus:border-indigo-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-xs text-text-primary font-mono focus:bg-surface focus:border-indigo-500 focus:outline-none"
                 required
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-600 mb-1">Description / Warrant Details</label>
+            <label className="block text-xs font-bold text-text-muted mb-1">Description / Warrant Details</label>
             <textarea
               rows={2}
               placeholder="e.g. MOH First Distribution Warrant for Food Services..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:bg-white focus:border-indigo-500 focus:outline-none resize-none"
+              className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-xs text-text-primary focus:bg-surface focus:border-indigo-500 focus:outline-none resize-none"
             />
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-border-subtle">
             <Button
               type="button"
               variant="outline"
               onClick={onClose}
-              className="border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold"
+              className="border-border-default hover:bg-subtle/50 text-text-secondary rounded-xl font-bold"
             >
               Cancel
             </Button>

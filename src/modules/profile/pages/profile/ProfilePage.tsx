@@ -36,7 +36,7 @@ const ProfilePage: React.FC = () => {
   if (!user) {
     return (
       <div className="flex items-center justify-center h-full min-h-[400px]">
-        <p className="text-gray-500">User session not found. Please log in again.</p>
+        <p className="text-text-muted">User session not found. Please log in again.</p>
       </div>
     )
   }
@@ -56,15 +56,15 @@ const ProfilePage: React.FC = () => {
       {/* Page Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 tracking-tight">My Profile</h1>
-          <p className="text-gray-600 mt-1">
+          <h1 className="text-3xl font-bold text-text-primary tracking-tight">My Profile</h1>
+          <p className="text-text-muted mt-1">
             View and manage your personal details, profile picture, and security preferences
           </p>
         </div>
       </div>
 
       {/* Profile Overview Card */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <div className="bg-surface rounded-xl shadow-sm border border-border-default p-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
           {/* Avatar with Camera Overlay */}
           <div className="relative group cursor-pointer" onClick={() => setShowPhotoModal(true)}>
@@ -72,7 +72,7 @@ const ProfilePage: React.FC = () => {
               src={user.profile_photo_url}
               name={user.full_name}
               size="2xl"
-              className="w-24 h-24 ring-4 ring-primary-100/80 transition-all duration-200 group-hover:ring-primary-300"
+              className="w-24 h-24 ring-4 ring-primary-100/80 transition-colors duration-150 group-hover:ring-primary-300"
             />
             {/* Hover overlay badge */}
             <div className="absolute inset-0 rounded-full bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex flex-col items-center justify-center text-white">
@@ -91,19 +91,19 @@ const ProfilePage: React.FC = () => {
 
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-1.5 flex-wrap">
-              <h2 className="text-2xl font-bold text-gray-900 truncate">{user.full_name}</h2>
+              <h2 className="text-2xl font-bold text-text-primary truncate">{user.full_name}</h2>
               <Badge variant={user.status === 'active' ? 'success' : 'warning'}>
                 {user.status}
               </Badge>
             </div>
-            <p className="text-gray-600 text-sm mb-4">
+            <p className="text-text-muted text-sm mb-4">
               {user.jawatan || user.role?.role_name || 'Staff Member'}
             </p>
 
             <div className="flex flex-wrap gap-2.5">
               <button
                 onClick={() => setShowPhotoModal(true)}
-                className="px-3.5 py-2 text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-lg transition-colors flex items-center gap-2 shadow-xs"
+                className="px-3.5 py-2 text-xs font-semibold bg-surface border border-border-default text-text-secondary hover:bg-subtle/50 hover:text-text-primary rounded-lg transition-colors flex items-center gap-2 shadow-xs"
               >
                 <Camera className="w-3.5 h-3.5 text-primary-600" />
                 Change Photo
@@ -111,7 +111,7 @@ const ProfilePage: React.FC = () => {
 
               <button
                 onClick={() => setShowEditProfileModal(true)}
-                className="px-3.5 py-2 text-xs font-semibold bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900 rounded-lg transition-colors flex items-center gap-2 shadow-xs"
+                className="px-3.5 py-2 text-xs font-semibold bg-surface border border-border-default text-text-secondary hover:bg-subtle/50 hover:text-text-primary rounded-lg transition-colors flex items-center gap-2 shadow-xs"
               >
                 <Edit3 className="w-3.5 h-3.5 text-primary-600" />
                 Edit Information
@@ -130,9 +130,9 @@ const ProfilePage: React.FC = () => {
       </div>
 
       {/* Personal Information Card */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-4">
-        <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-          <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+      <div className="bg-surface rounded-xl shadow-sm border border-border-default p-6 space-y-4">
+        <div className="flex items-center justify-between pb-2 border-b border-border-subtle">
+          <h3 className="text-lg font-semibold text-text-primary flex items-center gap-2">
             <User className="w-5 h-5 text-primary-600" />
             Personal Information
           </h3>
@@ -149,36 +149,36 @@ const ProfilePage: React.FC = () => {
           <div className="flex items-start gap-3">
             <Mail className="w-5 h-5 text-gray-400 mt-0.5" />
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Email</p>
-              <p className="text-gray-900 font-medium">{user.email || '—'}</p>
+              <p className="text-xs font-medium text-text-muted uppercase tracking-wider">Email</p>
+              <p className="text-text-primary font-medium">{user.email || '—'}</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <Hash className="w-5 h-5 text-gray-400 mt-0.5" />
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Employee ID</p>
-              <p className="text-gray-900 font-medium font-mono">{user.employee_id || '—'}</p>
+              <p className="text-xs font-medium text-text-muted uppercase tracking-wider">Employee ID</p>
+              <p className="text-text-primary font-medium font-mono">{user.employee_id || '—'}</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <Hash className="w-5 h-5 text-gray-400 mt-0.5" />
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">IC Number</p>
-              <p className="text-gray-900 font-medium font-mono">{user.ic_number || '—'}</p>
+              <p className="text-xs font-medium text-text-muted uppercase tracking-wider">IC Number</p>
+              <p className="text-text-primary font-medium font-mono">{user.ic_number || '—'}</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <Phone className="w-5 h-5 text-gray-400 mt-0.5" />
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Phone Number</p>
-              <p className="text-gray-900 font-medium">{user.phone_number || '—'}</p>
+              <p className="text-xs font-medium text-text-muted uppercase tracking-wider">Phone Number</p>
+              <p className="text-text-primary font-medium">{user.phone_number || '—'}</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <Calendar className="w-5 h-5 text-gray-400 mt-0.5" />
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Date of Birth</p>
-              <p className="text-gray-900 font-medium">
+              <p className="text-xs font-medium text-text-muted uppercase tracking-wider">Date of Birth</p>
+              <p className="text-text-primary font-medium">
                 {user.date_of_birth ? formatDate(user.date_of_birth) : '—'}
               </p>
             </div>
@@ -186,24 +186,24 @@ const ProfilePage: React.FC = () => {
           <div className="flex items-start gap-3">
             <User className="w-5 h-5 text-gray-400 mt-0.5" />
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</p>
-              <p className="text-gray-900 font-medium capitalize">{user.gender || '—'}</p>
+              <p className="text-xs font-medium text-text-muted uppercase tracking-wider">Gender</p>
+              <p className="text-text-primary font-medium capitalize">{user.gender || '—'}</p>
             </div>
           </div>
           <div className="flex items-start gap-3 md:col-span-2">
             <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Address</p>
-              <p className="text-gray-900 font-medium">{user.address || '—'}</p>
+              <p className="text-xs font-medium text-text-muted uppercase tracking-wider">Address</p>
+              <p className="text-text-primary font-medium">{user.address || '—'}</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Work Information Card */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-4">
-        <div className="pb-2 border-b border-slate-100">
-          <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+      <div className="bg-surface rounded-xl shadow-sm border border-border-default p-6 space-y-4">
+        <div className="pb-2 border-b border-border-subtle">
+          <h3 className="text-lg font-semibold text-text-primary flex items-center gap-2">
             <Building2 className="w-5 h-5 text-primary-600" />
             Work Information
           </h3>
@@ -212,29 +212,29 @@ const ProfilePage: React.FC = () => {
           <div className="flex items-start gap-3">
             <Building2 className="w-5 h-5 text-gray-400 mt-0.5" />
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Hospital</p>
-              <p className="text-gray-900 font-medium">{user.hospital?.hospital_name || 'N/A'}</p>
+              <p className="text-xs font-medium text-text-muted uppercase tracking-wider">Hospital</p>
+              <p className="text-text-primary font-medium">{user.hospital?.hospital_name || 'N/A'}</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <Building2 className="w-5 h-5 text-gray-400 mt-0.5" />
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Department</p>
-              <p className="text-gray-900 font-medium">{user.department?.department_name || 'N/A'}</p>
+              <p className="text-xs font-medium text-text-muted uppercase tracking-wider">Department</p>
+              <p className="text-text-primary font-medium">{user.department?.department_name || 'N/A'}</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <Shield className="w-5 h-5 text-gray-400 mt-0.5" />
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Role</p>
-              <p className="text-gray-900 font-medium">{user.role?.role_name || 'N/A'}</p>
+              <p className="text-xs font-medium text-text-muted uppercase tracking-wider">Role</p>
+              <p className="text-text-primary font-medium">{user.role?.role_name || 'N/A'}</p>
             </div>
           </div>
           <div className="flex items-start gap-3">
             <Shield className="w-5 h-5 text-gray-400 mt-0.5" />
             <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Jawatan</p>
-              <p className="text-gray-900 font-medium">{user.jawatan || 'N/A'}</p>
+              <p className="text-xs font-medium text-text-muted uppercase tracking-wider">Jawatan</p>
+              <p className="text-text-primary font-medium">{user.jawatan || 'N/A'}</p>
             </div>
           </div>
         </div>

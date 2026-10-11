@@ -39,6 +39,7 @@ import {
 import { DrugQuotaItem, QuotaCategory } from '../types/drugQuotaTypes'
 import { AddQuotaDrugModal } from '../components/AddQuotaDrugModal'
 import { EditQuotaDrugModal } from '../components/EditQuotaDrugModal'
+import { ModulePageHeader } from '@/shared/components/ui/ModulePageHeader'
 import { RecordQuotaDispenseModal } from '../components/RecordQuotaDispenseModal'
 import { QuotaDispenseHistoryModal } from '../components/QuotaDispenseHistoryModal'
 import { PatientQuotaDrawer } from '../components/PatientQuotaDrawer'
@@ -166,13 +167,13 @@ export const DrugQuotaPage: React.FC = () => {
       case 'KATEGORI_A_STAR':
         return {
           label: 'Category A*',
-          badgeClass: 'bg-indigo-500/10 text-indigo-700 border-indigo-500/20',
+          badgeClass: 'bg-subtle text-text-secondary border border-border-default',
           dotClass: 'bg-indigo-500'
         }
       case 'KOS_TINGGI_BIOLOGIK':
         return {
           label: 'High-Cost & Biologics',
-          badgeClass: 'bg-purple-500/10 text-purple-700 border-purple-500/20',
+          badgeClass: 'bg-subtle text-text-secondary border border-border-default',
           dotClass: 'bg-purple-500'
         }
       case 'PROGRAM_KHAS_KKM':
@@ -190,7 +191,7 @@ export const DrugQuotaPage: React.FC = () => {
       default:
         return {
           label: 'Category A*',
-          badgeClass: 'bg-slate-500/10 text-slate-700 border-slate-500/20',
+          badgeClass: 'bg-slate-500/10 text-text-secondary border-slate-500/20',
           dotClass: 'bg-slate-500'
         }
     }
@@ -207,97 +208,83 @@ export const DrugQuotaPage: React.FC = () => {
         </div>
       )}
 
-      {/* Modern Top Header Banner */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 rounded-3xl border border-slate-800 p-6 sm:p-7 shadow-lg text-white">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <span className="p-2 bg-white/10 rounded-xl border border-white/15 text-indigo-300">
-                <Pill className="w-5 h-5" />
-              </span>
-              <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white">
-                Drug Quota Monitoring & Stock Alerts
-              </h1>
-              <span className="px-2.5 py-0.5 bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 rounded-full text-[11px] font-mono font-semibold">
-                MyPhIS Cloud Sync
-              </span>
-            </div>
-            <p className="text-xs sm:text-sm text-slate-300 font-normal max-w-3xl">
-              Direct integration of pharmacy physical inventory, named monthly patient quota registration, hospital allocation ceilings, and real-time balance tracking.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2.5 shrink-0 self-start md:self-auto">
+      {/* Standard Clinical Header */}
+      <ModulePageHeader
+        icon={Pill}
+        title="Drug Quota Monitoring & Stock Alerts"
+        description="Direct integration of pharmacy physical inventory, named monthly patient quota registration, hospital allocation ceilings, and real-time balance tracking."
+        badges={[
+          { label: 'MyPhIS Cloud Sync', variant: 'accent' }
+        ]}
+        actions={
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md flex items-center gap-2 cursor-pointer transition-all hover:scale-101"
+              className="px-4 py-2 bg-accent-base hover:bg-accent-hover text-accent-foreground rounded-xl text-xs font-bold shadow-xs flex items-center gap-2 cursor-pointer transition-colors"
             >
               <Plus className="w-4 h-4" />
               <span>+ Add Drug Quota</span>
             </button>
-
             <button
               onClick={refreshData}
               title="Refresh Data"
               disabled={isLoading}
-              className="p-2.5 bg-white/10 hover:bg-white/15 active:bg-white/20 text-white rounded-xl border border-white/15 cursor-pointer transition-all disabled:opacity-50"
+              className="p-2 bg-surface hover:bg-subtle text-text-secondary rounded-xl border border-border-default cursor-pointer transition-colors disabled:opacity-50"
             >
               <RotateCcw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
             </button>
-
             <button
               onClick={() => window.print()}
               title="Print Quota Report"
-              className="px-3.5 py-2.5 bg-white/10 hover:bg-white/15 text-white rounded-xl text-xs font-medium border border-white/15 flex items-center gap-2 cursor-pointer transition-colors"
+              className="p-2 bg-surface hover:bg-subtle text-text-secondary rounded-xl border border-border-default cursor-pointer transition-colors"
             >
               <Printer className="w-4 h-4" />
-              <span>Print</span>
             </button>
           </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* 4-Card Luxury Metric Pods Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Metric 1: Monthly Fill Rate */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all space-y-3">
+        <div className="bg-surface p-5 rounded-2xl border border-border-default shadow-xs hover:shadow-md transition-colors space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <span className="text-xs font-bold text-text-muted uppercase tracking-wider">
               Monthly Fill Rate
             </span>
-            <span className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
+            <span className="p-2 bg-subtle text-text-secondary border border-border-default rounded-xl">
               <Activity className="w-4 h-4" />
             </span>
           </div>
           <div className="space-y-1">
-            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-mono tracking-tight tabular-nums">
+            <div className="text-2xl sm:text-3xl font-extrabold text-text-primary font-mono tracking-tight tabular-nums">
               {stats.overallUsagePercentage}%
             </div>
-            <p className="text-xs text-slate-500 font-medium">
+            <p className="text-xs text-text-muted font-medium">
               {stats.totalUsedQuantity.toLocaleString()} / {stats.totalAllocatedQuantity.toLocaleString()} Approved Units
             </p>
           </div>
-          <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+          <div className="w-full bg-subtle rounded-full h-2 overflow-hidden">
             <div
-              className="bg-indigo-600 h-full rounded-full transition-all duration-500"
+              className="bg-accent-base h-full rounded-full transition-colors duration-500"
               style={{ width: `${Math.min(100, stats.overallUsagePercentage)}%` }}
             />
           </div>
         </div>
 
         {/* Metric 2: Physical Stock in MyInventory */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all space-y-3">
+        <div className="bg-surface p-5 rounded-2xl border border-border-default shadow-xs hover:shadow-md transition-colors space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <span className="text-xs font-bold text-text-muted uppercase tracking-wider">
               Physical Store Stock Balance
             </span>
-            <span className="p-2 bg-emerald-50 text-emerald-600 rounded-xl">
+            <span className="p-2 bg-subtle text-text-secondary border border-border-default rounded-xl">
               <Package className="w-4 h-4" />
             </span>
           </div>
           <div className="space-y-1">
-            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-mono tracking-tight tabular-nums">
-              {stats.totalPhysicalStockOnHand.toLocaleString()} <span className="text-sm font-normal text-slate-500">Units</span>
+            <div className="text-2xl sm:text-3xl font-extrabold text-text-primary font-mono tracking-tight tabular-nums">
+              {stats.totalPhysicalStockOnHand.toLocaleString()} <span className="text-sm font-normal text-text-muted">Units</span>
             </div>
             <p className="text-xs text-emerald-700 font-medium flex items-center gap-1">
               <CheckCircle2 className="w-3.5 h-3.5" />
@@ -310,20 +297,20 @@ export const DrugQuotaPage: React.FC = () => {
         </div>
 
         {/* Metric 3: Total Quota Allocation Budget */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all space-y-3">
+        <div className="bg-surface p-5 rounded-2xl border border-border-default shadow-xs hover:shadow-md transition-colors space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <span className="text-xs font-bold text-text-muted uppercase tracking-wider">
               Quota Allocation Value
             </span>
-            <span className="p-2 bg-blue-50 text-blue-600 rounded-xl">
+            <span className="p-2 bg-subtle text-text-secondary border border-border-default rounded-xl">
               <TrendingUp className="w-4 h-4" />
             </span>
           </div>
           <div className="space-y-1">
-            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-mono tracking-tight tabular-nums">
+            <div className="text-2xl sm:text-3xl font-extrabold text-text-primary font-mono tracking-tight tabular-nums">
               RM {stats.totalBudgetRM.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </div>
-            <p className="text-xs text-slate-500 font-medium">
+            <p className="text-xs text-text-muted font-medium">
               Utilized: RM {stats.usedBudgetRM.toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
           </div>
@@ -333,24 +320,24 @@ export const DrugQuotaPage: React.FC = () => {
         </div>
 
         {/* Metric 4: Registered Named Patients */}
-        <div className="bg-white p-5 rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all space-y-3">
+        <div className="bg-surface p-5 rounded-2xl border border-border-default shadow-xs hover:shadow-md transition-colors space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+            <span className="text-xs font-bold text-text-muted uppercase tracking-wider">
               Registered Named Patients
             </span>
-            <span className="p-2 bg-purple-50 text-purple-600 rounded-xl">
+            <span className="p-2 bg-subtle text-text-secondary border border-border-default rounded-xl">
               <Users className="w-4 h-4" />
             </span>
           </div>
           <div className="space-y-1">
-            <div className="text-2xl sm:text-3xl font-extrabold text-slate-900 font-mono tracking-tight tabular-nums">
-              {stats.totalRegisteredPatients} <span className="text-sm font-normal text-slate-500">Patients</span>
+            <div className="text-2xl sm:text-3xl font-extrabold text-text-primary font-mono tracking-tight tabular-nums">
+              {stats.totalRegisteredPatients} <span className="text-sm font-normal text-text-muted">Patients</span>
             </div>
-            <p className="text-xs text-slate-500 font-medium">
+            <p className="text-xs text-text-muted font-medium">
               {stats.totalFilledPatientsThisMonth} Filled • {stats.totalPendingPatientsThisMonth} Awaiting Refill
             </p>
           </div>
-          <div className="text-[11px] text-purple-700 font-medium">
+          <div className="text-[11px] text-text-muted font-medium">
             100% Verified Formal Approval
           </div>
         </div>
@@ -370,15 +357,15 @@ export const DrugQuotaPage: React.FC = () => {
             key={tab.key}
             type="button"
             onClick={() => setSelectedCategory(tab.key as any)}
-            className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all cursor-pointer flex items-center gap-2 border ${
+            className={`px-4 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer flex items-center gap-2 border ${
               selectedCategory === tab.key
                 ? 'bg-slate-900 text-white border-slate-900 shadow-sm'
-                : 'bg-white text-slate-600 border-slate-200/90 hover:bg-slate-50 hover:text-slate-900'
+                : 'bg-surface text-text-muted border-border-default hover:bg-subtle/50 hover:text-text-primary'
             }`}
           >
             <span>{tab.label}</span>
             <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
-              selectedCategory === tab.key ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'
+              selectedCategory === tab.key ? 'bg-white/20 text-white' : 'bg-subtle text-text-muted'
             }`}>
               {tab.count}
             </span>
@@ -387,7 +374,7 @@ export const DrugQuotaPage: React.FC = () => {
       </div>
 
       {/* Search & Filter Toolbar */}
-      <div className="bg-white rounded-2xl border border-slate-200/90 p-4 shadow-xs flex flex-col md:flex-row items-center justify-between gap-3">
+      <div className="bg-surface rounded-2xl border border-border-default p-4 shadow-xs flex flex-col md:flex-row items-center justify-between gap-3">
         <div className="relative w-full md:w-96">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
@@ -395,7 +382,7 @@ export const DrugQuotaPage: React.FC = () => {
             placeholder="Search drug names (Apixaban, Empagliflozin...), brands, indications..."
             value={searchTerm}
             onChange={e => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder:text-slate-400 focus:bg-white focus:outline-hidden focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-all"
+            className="w-full pl-10 pr-4 py-2 bg-subtle/50 border border-border-default rounded-xl text-xs text-text-primary placeholder:text-text-muted focus:bg-surface focus:outline-hidden focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-colors"
           />
         </div>
 
@@ -404,7 +391,7 @@ export const DrugQuotaPage: React.FC = () => {
           <select
             value={selectedHospital}
             onChange={e => setSelectedHospital(e.target.value)}
-            className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-hidden focus:border-indigo-600 cursor-pointer"
+            className="px-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-xs font-medium text-text-secondary focus:outline-hidden focus:border-indigo-600 cursor-pointer"
           >
             <option value="ALL">All Hospitals</option>
             {hospitals.map(h => (
@@ -416,7 +403,7 @@ export const DrugQuotaPage: React.FC = () => {
           <select
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value as any)}
-            className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-hidden focus:border-indigo-600 cursor-pointer"
+            className="px-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-xs font-medium text-text-secondary focus:outline-hidden focus:border-indigo-600 cursor-pointer"
           >
             <option value="ALL">All Quota Statuses</option>
             <option value="critical">Critical / Exhausted</option>
@@ -428,7 +415,7 @@ export const DrugQuotaPage: React.FC = () => {
           <select
             value={sortBy}
             onChange={e => setSortBy(e.target.value as any)}
-            className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 focus:outline-hidden focus:border-indigo-600 cursor-pointer"
+            className="px-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-xs font-medium text-text-secondary focus:outline-hidden focus:border-indigo-600 cursor-pointer"
           >
             <option value="nameAsc">Sort: Drug Name (A-Z)</option>
             <option value="remainingAsc">Sort: Lowest Balance</option>
@@ -441,19 +428,19 @@ export const DrugQuotaPage: React.FC = () => {
       {/* Modern Drug Quota Cards List */}
       <div className="space-y-4">
         {filteredItems.length === 0 ? (
-          <div className="bg-white rounded-3xl border border-slate-200/90 p-12 text-center text-slate-500 space-y-4 shadow-xs">
-            <div className="w-16 h-16 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-center mx-auto text-slate-400">
+          <div className="bg-surface rounded-3xl border border-border-default p-12 text-center text-text-muted space-y-4 shadow-xs">
+            <div className="w-16 h-16 bg-subtle/50 rounded-2xl border border-border-default flex items-center justify-center mx-auto text-slate-400">
               <Package className="w-8 h-8 stroke-1.5 text-indigo-600" />
             </div>
             <div className="space-y-1 max-w-md mx-auto">
-              <h3 className="text-base font-bold text-slate-900">Clean Slate Quota Database</h3>
-              <p className="text-xs text-slate-500">
+              <h3 className="text-base font-bold text-text-primary">Clean Slate Quota Database</h3>
+              <p className="text-xs text-text-muted">
                 No quota drugs or registered patients at this time. You can begin registering special approval medications for your facility.
               </p>
             </div>
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-xl shadow-xs inline-flex items-center gap-2 cursor-pointer transition-transform hover:scale-102"
+              className="px-4 py-2 bg-accent-base hover:bg-accent-hover text-accent-foreground text-xs font-bold rounded-xl shadow-xs inline-flex items-center gap-2 cursor-pointer transition-colors"
             >
               <Plus className="w-4 h-4" />
               <span>+ Add First Drug Quota</span>
@@ -470,10 +457,10 @@ export const DrugQuotaPage: React.FC = () => {
               <div
                 key={item.id}
                 onClick={() => setSelectedPatientQuotaItem(item)}
-                className="group bg-white rounded-2xl border border-slate-200/90 hover:border-indigo-300 shadow-xs hover:shadow-md transition-all duration-200 p-6 cursor-pointer space-y-5"
+                className="group bg-surface rounded-2xl border border-border-default hover:border-indigo-300 shadow-xs hover:shadow-md transition-colors duration-150 p-6 cursor-pointer space-y-5"
               >
                 {/* Top Row: Title, Badges & Live Status */}
-                <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 border-b border-slate-100 pb-4">
+                <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 border-b border-border-subtle pb-4">
                   <div className="space-y-2 flex-1">
                     {/* Badge Strip */}
                     <div className="flex flex-wrap items-center gap-2">
@@ -481,42 +468,42 @@ export const DrugQuotaPage: React.FC = () => {
                         <span className={`w-1.5 h-1.5 rounded-full ${theme.dotClass}`} />
                         <span>{theme.label}</span>
                       </span>
-                      <span className="px-2.5 py-0.5 rounded-lg text-[11px] font-mono font-semibold text-slate-700 bg-slate-100 border border-slate-200">
+                      <span className="px-2.5 py-0.5 rounded-lg text-[11px] font-mono font-semibold text-text-secondary bg-subtle border border-border-default">
                         Prescriber {item.prescriberCategory}
                       </span>
-                      <span className="px-2.5 py-0.5 rounded-lg text-[11px] text-slate-600 bg-slate-100 border border-slate-200 font-medium">
+                      <span className="px-2.5 py-0.5 rounded-lg text-[11px] text-text-muted bg-subtle border border-border-default font-medium">
                         Scheme: {item.skimPerolehan}
                       </span>
-                      <span className="px-2.5 py-0.5 rounded-lg text-[11px] text-slate-600 bg-slate-100 border border-slate-200 font-medium">
+                      <span className="px-2.5 py-0.5 rounded-lg text-[11px] text-text-muted bg-subtle border border-border-default font-medium">
                         {item.hospitalName}
                       </span>
-                      <span className="px-2.5 py-0.5 rounded-lg text-[11px] text-slate-600 bg-slate-100 border border-slate-200 font-medium">
+                      <span className="px-2.5 py-0.5 rounded-lg text-[11px] text-text-muted bg-subtle border border-border-default font-medium">
                         {item.department}
                       </span>
                     </div>
 
                     {/* Drug Title */}
                     <div>
-                      <h3 className="text-lg font-extrabold text-slate-900 tracking-tight group-hover:text-indigo-600 transition-colors">
+                      <h3 className="text-lg font-extrabold text-text-primary tracking-tight group-hover:text-accent-base transition-colors">
                         {item.genericName}
                       </h3>
                       {item.brandNames && item.brandNames.length > 0 && (
-                        <p className="text-xs text-slate-500 font-medium mt-0.5">
-                          Brand: <span className="text-slate-700 font-semibold">{item.brandNames.join(', ')}</span> • Form: {item.dosageForm} ({item.strength})
+                        <p className="text-xs text-text-muted font-medium mt-0.5">
+                          Brand: <span className="text-text-secondary font-semibold">{item.brandNames.join(', ')}</span> • Form: {item.dosageForm} ({item.strength})
                         </p>
                       )}
                     </div>
                   </div>
 
                   {/* Top-Right Quota Status Pill */}
-                  <div className="text-left md:text-right space-y-1 shrink-0 bg-slate-50 md:bg-transparent p-3 md:p-0 rounded-xl border md:border-0 border-slate-200">
+                  <div className="text-left md:text-right space-y-1 shrink-0 bg-subtle/50 md:bg-transparent p-3 md:p-0 rounded-xl border md:border-0 border-border-default">
                     <div className="flex items-center md:justify-end gap-1.5">
                       <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border inline-flex items-center gap-1.5 ${
                         isCritical
-                          ? 'bg-rose-50 text-rose-800 border-rose-200'
+                          ? 'bg-rose-500/10 text-rose-400 border-rose-500/20'
                           : isLow
-                          ? 'bg-amber-50 text-amber-800 border-amber-200'
-                          : 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                          ? 'bg-amber-500/10 text-amber-400 border-amber-500/20'
+                          : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
                       }`}>
                         <span className={`w-1.5 h-1.5 rounded-full ${
                           isCritical ? 'bg-rose-600 animate-pulse' : isLow ? 'bg-amber-600' : 'bg-emerald-600'
@@ -524,10 +511,10 @@ export const DrugQuotaPage: React.FC = () => {
                         <span>{isCritical ? 'Critical / Exhausted' : isLow ? 'Low Stock' : 'Stable Quota'}</span>
                       </span>
                     </div>
-                    <div className="text-xl font-extrabold text-slate-900 font-mono tracking-tight tabular-nums">
-                      {item.quotaRemaining.toLocaleString()} <span className="text-xs font-normal text-slate-500">{item.unit}</span>
+                    <div className="text-xl font-extrabold text-text-primary font-mono tracking-tight tabular-nums">
+                      {item.quotaRemaining.toLocaleString()} <span className="text-xs font-normal text-text-muted">{item.unit}</span>
                     </div>
-                    <p className="text-[11px] text-slate-500">
+                    <p className="text-[11px] text-text-muted">
                       Remaining of {item.monthlyQuota.toLocaleString()} {item.unit} ceiling
                     </p>
                   </div>
@@ -536,57 +523,57 @@ export const DrugQuotaPage: React.FC = () => {
                 {/* Middle Row: 4 Modern Metric Tiles */}
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3.5">
                   {/* Tile 1: MyInventory Physical Stock */}
-                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1.5">
-                    <div className="flex items-center gap-1.5 text-slate-500">
+                  <div className="p-4 bg-subtle/50 rounded-2xl border border-border-default space-y-1.5">
+                    <div className="flex items-center gap-1.5 text-text-muted">
                       <Package className="w-4 h-4 text-indigo-600" />
                       <span className="text-[10px] font-bold uppercase tracking-wider">MyInventory Physical Stock</span>
                     </div>
-                    <p className="text-base font-extrabold text-slate-900 font-mono">
-                      {(item.physicalStockOnHand ?? 0).toLocaleString()} <span className="text-xs font-normal text-slate-600">{item.unit}</span>
+                    <p className="text-base font-extrabold text-text-primary font-mono">
+                      {(item.physicalStockOnHand ?? 0).toLocaleString()} <span className="text-xs font-normal text-text-muted">{item.unit}</span>
                     </p>
-                    <p className="text-[11px] text-slate-500 truncate" title={item.storeLocation}>
+                    <p className="text-[11px] text-text-muted truncate" title={item.storeLocation}>
                       {item.storeLocation || 'Main Pharmacy Store'}
                     </p>
                   </div>
 
                   {/* Tile 2: Named Patient Quota */}
-                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1.5">
-                    <div className="flex items-center gap-1.5 text-slate-500">
+                  <div className="p-4 bg-subtle/50 rounded-2xl border border-border-default space-y-1.5">
+                    <div className="flex items-center gap-1.5 text-text-muted">
                       <Users className="w-4 h-4 text-emerald-600" />
                       <span className="text-[10px] font-bold uppercase tracking-wider">Named Patient Quota</span>
                     </div>
-                    <p className="text-base font-extrabold text-slate-900">
+                    <p className="text-base font-extrabold text-text-primary">
                       {item.totalRegisteredPatients} Patients
                     </p>
-                    <p className="text-[11px] text-slate-500">
+                    <p className="text-[11px] text-text-muted">
                       {item.filledPatientsCount} Filled • {item.pendingPatientsCount} Pending
                     </p>
                   </div>
 
                   {/* Tile 3: Monthly Commitment */}
-                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1.5">
-                    <div className="flex items-center gap-1.5 text-slate-500">
+                  <div className="p-4 bg-subtle/50 rounded-2xl border border-border-default space-y-1.5">
+                    <div className="flex items-center gap-1.5 text-text-muted">
                       <Activity className="w-4 h-4 text-purple-600" />
                       <span className="text-[10px] font-bold uppercase tracking-wider">Monthly Utilization</span>
                     </div>
-                    <p className="text-base font-extrabold text-slate-900 font-mono">
-                      {(item.totalPatientMonthlyUsage || 0).toLocaleString()} <span className="text-xs font-normal text-slate-600">{item.unit}/mo</span>
+                    <p className="text-base font-extrabold text-text-primary font-mono">
+                      {(item.totalPatientMonthlyUsage || 0).toLocaleString()} <span className="text-xs font-normal text-text-muted">{item.unit}/mo</span>
                     </p>
-                    <p className="text-[11px] text-slate-500">
+                    <p className="text-[11px] text-text-muted">
                       Usage: {pctUsed}% this month
                     </p>
                   </div>
 
                   {/* Tile 4: Price & Approval */}
-                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 space-y-1.5">
-                    <div className="flex items-center gap-1.5 text-slate-500">
+                  <div className="p-4 bg-subtle/50 rounded-2xl border border-border-default space-y-1.5">
+                    <div className="flex items-center gap-1.5 text-text-muted">
                       <FileCheck className="w-4 h-4 text-blue-600" />
                       <span className="text-[10px] font-bold uppercase tracking-wider">Price & Approval</span>
                     </div>
-                    <p className="text-base font-extrabold text-slate-900 font-mono">
-                      RM {(item.costPerUnit || 0).toFixed(2)} <span className="text-xs font-normal text-slate-600">/ {item.unit}</span>
+                    <p className="text-base font-extrabold text-text-primary font-mono">
+                      RM {(item.costPerUnit || 0).toFixed(2)} <span className="text-xs font-normal text-text-muted">/ {item.unit}</span>
                     </p>
-                    <p className="text-[11px] text-slate-500 font-mono truncate" title={item.specialApprovalRef}>
+                    <p className="text-[11px] text-text-muted font-mono truncate" title={item.specialApprovalRef}>
                       {item.specialApprovalRef || 'JKUT/2026'}
                     </p>
                   </div>
@@ -594,9 +581,9 @@ export const DrugQuotaPage: React.FC = () => {
 
                 {/* Approved Indications Strip */}
                 {item.approvedIndications && item.approvedIndications.length > 0 && (
-                  <div className="p-3.5 bg-slate-50/60 rounded-xl border border-slate-200/60 text-xs space-y-1">
+                  <div className="p-3.5 bg-subtle/50 rounded-xl border border-border-default text-xs space-y-1">
                     <span className="text-[10px] text-slate-400 uppercase font-bold tracking-wider block">Approved Indications under Quota:</span>
-                    <ul className="list-disc list-inside space-y-0.5 text-[11px] text-slate-700">
+                    <ul className="list-disc list-inside space-y-0.5 text-[11px] text-text-secondary">
                       {item.approvedIndications.slice(0, 2).map((ind, idx) => (
                         <li key={idx} className="truncate">{ind}</li>
                       ))}
@@ -605,9 +592,9 @@ export const DrugQuotaPage: React.FC = () => {
                 )}
 
                 {/* Bottom Action Row */}
-                <div className="pt-3 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-500">
+                <div className="pt-3 border-t border-border-subtle flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-text-muted">
                   <div className="flex items-center gap-2">
-                    <span className="text-[11px]">Updated: <strong className="text-slate-800 font-semibold">{item.lastUpdated || item.createdDate || '2026-08-25'}</strong></span>
+                    <span className="text-[11px]">Updated: <strong className="text-text-primary font-semibold">{item.lastUpdated || item.createdDate || '2026-08-25'}</strong></span>
                     <span>•</span>
                     <span className="text-[11px] font-medium">{item.verifiedBy || 'Facility Pharmacist'}</span>
                   </div>
@@ -619,7 +606,7 @@ export const DrugQuotaPage: React.FC = () => {
                         e.stopPropagation()
                         setSelectedPatientQuotaItem(item)
                       }}
-                      className="px-3.5 py-1.5 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
+                      className="px-3.5 py-1.5 bg-indigo-500/10 hover:bg-indigo-100 text-indigo-700 border border-indigo-500/20 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors shadow-elevation-1"
                     >
                       <Users className="w-3.5 h-3.5" />
                       <span>Patient Registry ({item.totalRegisteredPatients})</span>
@@ -632,9 +619,9 @@ export const DrugQuotaPage: React.FC = () => {
                         e.stopPropagation()
                         setHistoryTargetItem(item)
                       }}
-                      className="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-xl text-xs font-medium flex items-center gap-1.5 cursor-pointer transition-colors shadow-2xs"
+                      className="px-3.5 py-1.5 bg-subtle hover:bg-subtle text-text-secondary border border-border-default rounded-xl text-xs font-medium flex items-center gap-1.5 cursor-pointer transition-colors shadow-elevation-1"
                     >
-                      <History className="w-3.5 h-3.5 text-slate-500" />
+                      <History className="w-3.5 h-3.5 text-text-muted" />
                       <span>Logs ({item.dispenseLogs?.length || 0})</span>
                     </button>
 
@@ -645,7 +632,7 @@ export const DrugQuotaPage: React.FC = () => {
                         handleDeleteItem(item)
                       }}
                       title="Delete Quota Record"
-                      className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl border border-transparent hover:border-rose-200 transition-colors cursor-pointer"
+                      className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-500/10 rounded-xl border border-transparent hover:border-rose-500/20 transition-colors cursor-pointer"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>

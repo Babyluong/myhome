@@ -239,7 +239,7 @@ export const PorterReportsPage: React.FC = () => {
 
         <div className="bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-1">
           <p className="text-xs font-bold text-slate-400 uppercase">Average Completed TAT</p>
-          <h3 className="text-3xl font-black text-sky-400">{stats?.averageTATMinutes || 14} <span className="text-sm font-normal text-slate-500">Mins</span></h3>
+          <h3 className="text-3xl font-black text-sky-400">{stats?.averageTATMinutes || 14} <span className="text-sm font-normal text-text-muted">Mins</span></h3>
           <p className="text-xs text-slate-400">Hospital SLA Target: &lt; 30 mins</p>
         </div>
 
@@ -251,7 +251,7 @@ export const PorterReportsPage: React.FC = () => {
 
         <div className="bg-slate-900 border border-slate-800 p-6 rounded-3xl space-y-1">
           <p className="text-xs font-bold text-slate-400 uppercase">Ward Satisfaction Score</p>
-          <h3 className="text-3xl font-black text-amber-400">4.92 <span className="text-sm font-normal text-slate-500">/ 5.0</span></h3>
+          <h3 className="text-3xl font-black text-amber-400">4.92 <span className="text-sm font-normal text-text-muted">/ 5.0</span></h3>
           <p className="text-xs text-slate-400">Based on 384 ward ratings</p>
         </div>
       </div>
@@ -260,7 +260,7 @@ export const PorterReportsPage: React.FC = () => {
       <div className="flex bg-slate-950 p-1.5 rounded-2xl border border-slate-800 self-start w-fit text-xs font-bold">
         <button
           onClick={() => setActiveTab('workload')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl transition-all ${
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl transition-colors ${
             activeTab === 'workload' ? 'bg-sky-500 text-white shadow-md' : 'text-slate-400 hover:text-white'
           }`}
         >
@@ -270,7 +270,7 @@ export const PorterReportsPage: React.FC = () => {
 
         <button
           onClick={() => setActiveTab('category')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl transition-all ${
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl transition-colors ${
             activeTab === 'category' ? 'bg-sky-500 text-white shadow-md' : 'text-slate-400 hover:text-white'
           }`}
         >
@@ -280,7 +280,7 @@ export const PorterReportsPage: React.FC = () => {
 
         <button
           onClick={() => setActiveTab('logs')}
-          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl transition-all ${
+          className={`flex items-center gap-2 px-5 py-2.5 rounded-xl transition-colors ${
             activeTab === 'logs' ? 'bg-sky-500 text-white shadow-md' : 'text-slate-400 hover:text-white'
           }`}
         >
@@ -306,7 +306,7 @@ export const PorterReportsPage: React.FC = () => {
               </div>
 
               <div className="relative w-full sm:w-64">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
                 <input
                   type="text"
                   placeholder="Search Porter / Zone / Status..."
@@ -320,7 +320,7 @@ export const PorterReportsPage: React.FC = () => {
             {/* Workload Table */}
             <div className="hidden md:block overflow-x-auto">
               <table className="w-full text-xs text-left text-slate-300">
-                <thead className="bg-slate-950 text-slate-400 uppercase font-bold text-[10px] border-b border-slate-800">
+                <thead className="bg-slate-950 text-text-secondary font-bold uppercase font-bold text-[10px] border-b border-slate-800">
                   <tr>
                     <th className="p-3.5">Porter Staff</th>
                     <th className="p-3.5">Duty Zone</th>
@@ -364,11 +364,11 @@ export const PorterReportsPage: React.FC = () => {
 
                         <td className="p-3.5 text-center">
                           <span className="font-mono font-black text-base text-white">{item.totalCompleted}</span>
-                          <span className="text-[10px] text-slate-500 ml-1">tasks</span>
+                          <span className="text-[10px] text-text-muted ml-1">tasks</span>
                         </td>
 
                         <td className="p-3.5 text-center">
-                          <span className={`font-mono font-bold px-2 py-0.5 rounded-full text-xs ${item.totalStat > 0 ? 'bg-rose-500/20 text-rose-400' : 'text-slate-500'}`}>
+                          <span className={`font-mono font-bold px-2 py-0.5 rounded-full text-xs ${item.totalStat > 0 ? 'bg-rose-500/20 text-rose-400' : 'text-text-muted'}`}>
                             {item.totalStat}
                           </span>
                         </td>
@@ -392,7 +392,7 @@ export const PorterReportsPage: React.FC = () => {
                             </div>
                             <div className="w-full bg-slate-950 h-2 rounded-full overflow-hidden">
                               <div
-                                className={`h-full rounded-full transition-all duration-500 ${
+                                className={`h-full rounded-full transition-colors duration-500 ${
                                   item.workloadStatus === 'High'
                                     ? 'bg-gradient-to-r from-rose-500 to-amber-500'
                                     : item.workloadStatus === 'Optimum'
@@ -469,7 +469,7 @@ export const PorterReportsPage: React.FC = () => {
                       </div>
                       <div>
                         <div className="text-[10px] text-slate-400 uppercase">STAT</div>
-                        <div className={`text-xs font-bold font-mono mt-0.5 ${item.totalStat > 0 ? 'text-rose-400' : 'text-slate-500'}`}>
+                        <div className={`text-xs font-bold font-mono mt-0.5 ${item.totalStat > 0 ? 'text-rose-400' : 'text-text-muted'}`}>
                           {item.totalStat}
                         </div>
                       </div>
@@ -529,7 +529,7 @@ export const PorterReportsPage: React.FC = () => {
 
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-xs text-left text-slate-300">
-              <thead className="bg-slate-950 text-slate-400 uppercase font-bold text-[10px] border-b border-slate-800">
+              <thead className="bg-slate-950 text-text-secondary font-bold uppercase font-bold text-[10px] border-b border-slate-800">
                 <tr>
                   <th className="p-3.5">Category</th>
                   <th className="p-3.5">Total Tasks</th>
@@ -606,7 +606,7 @@ export const PorterReportsPage: React.FC = () => {
 
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-xs text-left text-slate-300">
-              <thead className="bg-slate-950 text-slate-400 uppercase font-bold text-[10px] border-b border-slate-800">
+              <thead className="bg-slate-950 text-text-secondary font-bold uppercase font-bold text-[10px] border-b border-slate-800">
                 <tr>
                   <th className="p-3">Reference No</th>
                   <th className="p-3">Category</th>
@@ -671,7 +671,7 @@ export const PorterReportsPage: React.FC = () => {
                 <div className="bg-slate-950/60 rounded-xl p-2.5 border border-slate-800 text-xs">
                   <div className="text-slate-400 text-[10px] uppercase font-semibold">Laluan Penghantaran</div>
                   <div className="text-slate-200 font-medium mt-0.5">
-                    {j.origin_department_name} <span className="text-slate-500 font-bold mx-1">➔</span> {j.destination_department_name}
+                    {j.origin_department_name} <span className="text-text-muted font-bold mx-1">➔</span> {j.destination_department_name}
                   </div>
                 </div>
 
@@ -711,13 +711,13 @@ export const PorterReportsPage: React.FC = () => {
               </div>
               <div className="text-right">
                 <span className="font-mono text-xl font-black text-emerald-400">{selectedPorterStat.totalCompleted}</span>
-                <p className="text-[10px] text-slate-500">Tasks Completed</p>
+                <p className="text-[10px] text-text-muted">Tasks Completed</p>
               </div>
             </div>
 
             {/* Category breakdown cards */}
             <div>
-              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Tasks By Logistics Category</h4>
+              <h4 className="text-xs font-bold text-text-secondary font-bold uppercase tracking-wider mb-3">Tasks By Logistics Category</h4>
               <div className="grid grid-cols-2 gap-2.5">
                 {[
                   { label: 'Patient Transfer', icon: Bed, count: selectedPorterStat.categoryBreakdown.patient_transfer || 3, color: 'text-indigo-400 bg-indigo-500/10' },
@@ -746,15 +746,15 @@ export const PorterReportsPage: React.FC = () => {
             {/* Performance summary */}
             <div className="p-3.5 bg-slate-950 border border-slate-800 rounded-2xl grid grid-cols-3 gap-2 text-center">
               <div>
-                <span className="text-[10px] text-slate-500 uppercase font-bold">Average TAT</span>
+                <span className="text-[10px] text-text-muted uppercase font-bold">Average TAT</span>
                 <p className="font-mono font-black text-sm text-sky-400 mt-0.5">{selectedPorterStat.avgTatMinutes} mins</p>
               </div>
               <div>
-                <span className="text-[10px] text-slate-500 uppercase font-bold">Ward Rating</span>
+                <span className="text-[10px] text-text-muted uppercase font-bold">Ward Rating</span>
                 <p className="font-mono font-black text-sm text-amber-400 mt-0.5">★ {selectedPorterStat.satisfactionRating}</p>
               </div>
               <div>
-                <span className="text-[10px] text-slate-500 uppercase font-bold">Workload Status</span>
+                <span className="text-[10px] text-text-muted uppercase font-bold">Workload Status</span>
                 <p className="font-black text-xs text-emerald-400 mt-0.5">{selectedPorterStat.workloadStatus}</p>
               </div>
             </div>

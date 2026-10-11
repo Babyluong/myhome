@@ -185,7 +185,7 @@ export default function UnitItemModal({ isOpen, onClose, unit }: UnitItemModalPr
         />
         
         {/* Modal */}
-        <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
+        <div className="relative bg-surface rounded-2xl shadow-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden">
           {/* Header */}
           <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
             <div className="flex items-center justify-between">
@@ -205,42 +205,42 @@ export default function UnitItemModal({ isOpen, onClose, unit }: UnitItemModalPr
           </div>
 
           {/* Unit Info */}
-          <div className="px-6 py-4 bg-slate-50 border-b border-slate-200">
+          <div className="px-6 py-4 bg-subtle/50 border-b border-border-default">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Location</label>
-                <p className="text-slate-900">{unit.location}</p>
+                <label className="block text-sm font-semibold text-text-secondary mb-1">Location</label>
+                <p className="text-text-primary">{unit.location}</p>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Responsible Person</label>
-                <p className="text-slate-900">{unit.responsiblePerson}</p>
+                <label className="block text-sm font-semibold text-text-secondary mb-1">Responsible Person</label>
+                <p className="text-text-primary">{unit.responsiblePerson}</p>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1">Contact</label>
-                <p className="text-slate-900">{unit.contactNumber}</p>
+                <label className="block text-sm font-semibold text-text-secondary mb-1">Contact</label>
+                <p className="text-text-primary">{unit.contactNumber}</p>
               </div>
             </div>
           </div>
 
           {/* Filters */}
-          <div className="px-6 py-4 bg-white border-b border-slate-200">
+          <div className="px-6 py-4 bg-surface border-b border-border-default">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Search Items</label>
+                <label className="block text-sm font-semibold text-text-secondary mb-2">Search Items</label>
                 <input
                   type="text"
                   placeholder="Search by name or code..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border-default rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Category</label>
+                <label className="block text-sm font-semibold text-text-secondary mb-2">Category</label>
                 <select
                   value={categoryFilter}
                   onChange={(e) => setCategoryFilter(e.target.value as any)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border-default rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="all">All Categories</option>
                   <option value="Drug">Drug</option>
@@ -248,11 +248,11 @@ export default function UnitItemModal({ isOpen, onClose, unit }: UnitItemModalPr
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Status</label>
+                <label className="block text-sm font-semibold text-text-secondary mb-2">Status</label>
                 <select
                   value={activeFilter}
                   onChange={(e) => setActiveFilter(e.target.value as any)}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-border-default rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
                   <option value="all">All Status</option>
                   <option value="active">Active</option>
@@ -260,7 +260,7 @@ export default function UnitItemModal({ isOpen, onClose, unit }: UnitItemModalPr
                 </select>
               </div>
               <div className="flex items-end">
-                <button className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white px-4 py-2 rounded-lg font-semibold hover:from-green-700 hover:to-emerald-700 transition-all duration-200">
+                <button className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white px-4 py-2 rounded-lg font-semibold hover:from-green-700 hover:to-emerald-700 transition-[transform,opacity,box-shadow,border-color] duration-200">
                   Add New Item
                 </button>
               </div>
@@ -270,47 +270,47 @@ export default function UnitItemModal({ isOpen, onClose, unit }: UnitItemModalPr
           {/* Items Table */}
           <div className="overflow-x-auto max-h-96">
             <table className="w-full">
-              <thead className="bg-slate-100 sticky top-0">
+              <thead className="bg-subtle sticky top-0">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-700">Item Details</th>
-                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-700">Category</th>
-                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-700">Current Stock</th>
-                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-700">Request Limits</th>
-                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-700">Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-700">Last Requested</th>
-                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-slate-700">Actions</th>
+                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-text-secondary">Item Details</th>
+                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-text-secondary">Category</th>
+                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-text-secondary">Current Stock</th>
+                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-text-secondary">Request Limits</th>
+                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-text-secondary">Status</th>
+                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-text-secondary">Last Requested</th>
+                  <th className="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider text-text-secondary">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200">
+              <tbody className="divide-y divide-border-default">
                 {filteredItems.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-50 transition-colors">
+                  <tr key={item.id} className="hover:bg-subtle/50 transition-colors">
                     <td className="px-4 py-3">
                       <div>
-                        <div className="text-sm font-semibold text-slate-900">{item.itemName}</div>
-                        <div className="text-sm text-slate-500">{item.itemCode}</div>
+                        <div className="text-sm font-semibold text-text-primary">{item.itemName}</div>
+                        <div className="text-sm text-text-muted">{item.itemCode}</div>
                         <div className="text-xs text-slate-400">{item.unit}</div>
                       </div>
                     </td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                         item.category === 'Drug' 
-                          ? 'bg-blue-100 text-blue-800' 
+                          ? 'bg-blue-100 text-blue-400' 
                           : 'bg-green-100 text-green-800'
                       }`}>
                         {item.category}
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      <div className="text-sm font-semibold text-slate-900">
+                      <div className="text-sm font-semibold text-text-primary">
                         {item.currentStock.toLocaleString()} {item.unit}
                       </div>
                     </td>
                     <td className="px-4 py-3">
                       <div>
-                        <div className="text-sm text-slate-700">
+                        <div className="text-sm text-text-secondary">
                           Min: {item.minRequestQuantity} {item.unit}
                         </div>
-                        <div className="text-sm text-slate-700">
+                        <div className="text-sm text-text-secondary">
                           Max: {item.maxRequestQuantity} {item.unit}
                         </div>
                       </div>
@@ -324,26 +324,26 @@ export default function UnitItemModal({ isOpen, onClose, unit }: UnitItemModalPr
                           }`}
                         >
                           <span
-                            className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                            className={`inline-block h-4 w-4 transform rounded-full bg-surface transition-transform ${
                               item.isActive ? 'translate-x-6' : 'translate-x-1'
                             }`}
                           />
                         </button>
                         <span className={`text-sm font-medium ${
-                          item.isActive ? 'text-green-700' : 'text-gray-500'
+                          item.isActive ? 'text-green-700' : 'text-text-muted'
                         }`}>
                           {item.isActive ? 'Active' : 'Inactive'}
                         </span>
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-sm text-slate-700">
+                    <td className="px-4 py-3 text-sm text-text-secondary">
                       {item.lastRequested || 'Never'}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex space-x-2">
                         <button 
                           onClick={() => startEdit(item)}
-                          className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                          className="text-blue-600 hover:text-blue-400 text-sm font-medium"
                         >
                           Edit
                         </button>
@@ -357,29 +357,29 @@ export default function UnitItemModal({ isOpen, onClose, unit }: UnitItemModalPr
           </div>
 
           {/* Summary */}
-          <div className="px-6 py-4 bg-slate-50 border-t border-slate-200">
+          <div className="px-6 py-4 bg-subtle/50 border-t border-border-default">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-slate-900">{unitItems.length}</div>
-                <div className="text-sm text-slate-600">Total Items</div>
+                <div className="text-2xl font-bold text-text-primary">{unitItems.length}</div>
+                <div className="text-sm text-text-secondary">Total Items</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-green-600">
                   {unitItems.filter(item => item.isActive).length}
                 </div>
-                <div className="text-sm text-slate-600">Active Items</div>
+                <div className="text-sm text-text-secondary">Active Items</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-red-600">
                   {unitItems.filter(item => !item.isActive).length}
                 </div>
-                <div className="text-sm text-slate-600">Inactive Items</div>
+                <div className="text-sm text-text-secondary">Inactive Items</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-blue-600">
                   {unitItems.filter(item => item.category === 'Drug').length}
                 </div>
-                <div className="text-sm text-slate-600">Drug Items</div>
+                <div className="text-sm text-text-secondary">Drug Items</div>
               </div>
             </div>
           </div>
@@ -390,7 +390,7 @@ export default function UnitItemModal({ isOpen, onClose, unit }: UnitItemModalPr
           <div className="fixed inset-0 z-[100] overflow-y-auto">
             <div className="flex min-h-screen items-center justify-center p-4">
               <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={cancelEdit}></div>
-              <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl">
+              <div className="relative bg-surface rounded-2xl shadow-2xl w-full max-w-2xl">
                 <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4 rounded-t-2xl">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-bold text-white">Edit Item - {editingItem.itemName}</h3>
@@ -408,52 +408,52 @@ export default function UnitItemModal({ isOpen, onClose, unit }: UnitItemModalPr
                 <div className="p-6 space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-2">Item Name</label>
+                      <label className="block text-sm font-semibold text-text-secondary mb-2">Item Name</label>
                       <input
                         type="text"
                         value={editForm.itemName}
                         onChange={(e) => setEditForm(prev => ({ ...prev, itemName: e.target.value }))}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-border-default rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-2">Item Code</label>
+                      <label className="block text-sm font-semibold text-text-secondary mb-2">Item Code</label>
                       <input
                         type="text"
                         value={editForm.itemCode}
                         onChange={(e) => setEditForm(prev => ({ ...prev, itemCode: e.target.value }))}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-border-default rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-2">Min Request Quantity</label>
+                      <label className="block text-sm font-semibold text-text-secondary mb-2">Min Request Quantity</label>
                       <input
                         type="number"
                         min="1"
                         value={editForm.minRequestQuantity}
                         onChange={(e) => setEditForm(prev => ({ ...prev, minRequestQuantity: parseInt(e.target.value) || 0 }))}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-border-default rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-2">Max Request Quantity</label>
+                      <label className="block text-sm font-semibold text-text-secondary mb-2">Max Request Quantity</label>
                       <input
                         type="number"
                         min="1"
                         value={editForm.maxRequestQuantity}
                         onChange={(e) => setEditForm(prev => ({ ...prev, maxRequestQuantity: parseInt(e.target.value) || 0 }))}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-border-default rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-2">Unit</label>
+                      <label className="block text-sm font-semibold text-text-secondary mb-2">Unit</label>
                       <select
                         value={editForm.unit}
                         onChange={(e) => setEditForm(prev => ({ ...prev, unit: e.target.value }))}
-                        className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 py-2 border border-border-default rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       >
                         <option value="tablets">Tablets</option>
                         <option value="pieces">Pieces</option>
@@ -466,27 +466,27 @@ export default function UnitItemModal({ isOpen, onClose, unit }: UnitItemModalPr
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Description</label>
+                    <label className="block text-sm font-semibold text-text-secondary mb-2">Description</label>
                     <textarea
                       value={editForm.description}
                       onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))}
                       rows={3}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-border-default rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       placeholder="Enter item description..."
                     />
                   </div>
                 </div>
                 
-                <div className="px-6 py-4 bg-slate-50 rounded-b-2xl flex justify-end space-x-3">
+                <div className="px-6 py-4 bg-subtle/50 rounded-b-2xl flex justify-end space-x-3">
                   <button
                     onClick={cancelEdit}
-                    className="px-4 py-2 text-slate-600 hover:text-slate-800 font-medium transition-colors"
+                    className="px-4 py-2 text-text-secondary hover:text-text-primary font-medium transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={saveEdit}
-                    className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition-all duration-200"
+                    className="px-6 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-semibold hover:from-blue-700 hover:to-indigo-700 transition-[transform,opacity,box-shadow,border-color] duration-200"
                   >
                     Save Changes
                   </button>

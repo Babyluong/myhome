@@ -1,14 +1,14 @@
 {
   "name": "hospital-operation-management-ecosystem",
   "private": true,
-  "version": "2.6.1",
+  "version": "2.8.1",
   "type": "module",
   "description": "Hospital Operation Management Ecosystem (HOME) - A comprehensive hospital management system",
   "scripts": {
     "predev": "powershell -NoProfile -Command \"$ErrorActionPreference='SilentlyContinue'; $conn = Get-NetTCPConnection -LocalPort 3000; if ($conn) { $pids = $conn | Select-Object -ExpandProperty OwningProcess -Unique; $pids | ForEach-Object { Stop-Process -Id $_ -Force; Write-Host \"[predev] Killed zombie process PID $_  on port 3000\" } } else { Write-Host '[predev] Port 3000 is free. Starting fresh...' }\"",
     "dev": "vite",
     "prebuild": "node scripts/generate_system_releases.cjs",
-    "build": "node scripts/generate_system_releases.cjs && tsc && vite build",
+    "build": "tsc && vite build",
     "release:sync": "node scripts/generate_system_releases.cjs",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
@@ -17,7 +17,10 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",
+    "@react-three/drei": "^9.122.0",
+    "@react-three/fiber": "^8.18.0",
     "@supabase/supabase-js": "^2.39.0",
+    "@types/three": "^0.186.0",
     "clsx": "^2.0.0",
     "date-fns": "^4.1.0",
     "dotenv": "^17.4.2",
@@ -37,6 +40,7 @@
     "recharts": "^2.10.3",
     "tailwind-merge": "^2.2.0",
     "tesseract.js": "^7.0.0",
+    "three": "^0.186.1",
     "xlsx": "^0.18.5",
     "zod": "^3.22.4",
     "zustand": "^4.4.7"

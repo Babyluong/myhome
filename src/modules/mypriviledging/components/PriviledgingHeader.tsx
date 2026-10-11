@@ -43,7 +43,7 @@ export const PriviledgingHeader: React.FC<PriviledgingHeaderProps> = ({
         <div className="flex items-center gap-3.5">
           <button
             onClick={() => navigate(ROUTES.HUB)}
-            className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors shrink-0"
+            className="p-2 text-text-muted hover:text-text-primary dark:hover:text-white hover:bg-subtle dark:hover:bg-slate-800 rounded-xl transition-colors shrink-0"
             title={t('nav.back_to_hub', isMs ? 'Kembali ke Hub Utama' : 'Back to Main Hub')}
           >
             <ArrowLeft className="w-5 h-5" />
@@ -62,7 +62,7 @@ export const PriviledgingHeader: React.FC<PriviledgingHeaderProps> = ({
                 {isMs ? 'Piawaian C&P KKM' : 'MOH C&P Standards'}
               </span>
               {pendingReviewsCount > 0 && isAdminMode && (
-                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-50 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-500/10 dark:bg-amber-950/50 text-amber-700 dark:text-amber-300 border border-amber-500/20 dark:border-amber-800">
                   {pendingReviewsCount} {isMs ? 'Menunggu Tindakan' : 'Pending Review'}
                 </span>
               )}
@@ -87,7 +87,7 @@ export const PriviledgingHeader: React.FC<PriviledgingHeaderProps> = ({
                   onToggleAdminMode(false);
                 }}
                 className={cn(
-                  'flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all',
+                  'flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors',
                   !isAdminMode
                     ? 'bg-surface text-accent-base font-semibold shadow-xs'
                     : 'text-text-muted hover:text-text-primary'
@@ -103,10 +103,10 @@ export const PriviledgingHeader: React.FC<PriviledgingHeaderProps> = ({
                   onToggleAdminMode(true);
                 }}
                 className={cn(
-                  'flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all',
+                  'flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors',
                   isAdminMode
-                    ? 'bg-emerald-700 text-white font-semibold shadow-2xs'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-emerald-700 text-white font-semibold shadow-elevation-1'
+                    : 'text-text-muted dark:text-slate-400 hover:text-text-primary dark:hover:text-white'
                 )}
               >
                 <ShieldAlert className="w-3.5 h-3.5" />
@@ -119,7 +119,7 @@ export const PriviledgingHeader: React.FC<PriviledgingHeaderProps> = ({
           {onOpenSubmitModal && (
             <button
               onClick={onOpenSubmitModal}
-              className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs md:text-sm font-semibold rounded-xl shadow-xs hover:shadow-sm transition-all active:scale-95"
+              className="inline-flex items-center gap-1.5 px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white text-xs md:text-sm font-semibold rounded-xl shadow-xs hover:shadow-sm transition-colors active:scale-95"
             >
               <Plus className="w-4 h-4" />
               <span>{isMs ? 'Log Prosedur Baharu' : 'Log New Procedure'}</span>

@@ -723,7 +723,7 @@ export function StaffOrgChartPage() {
           style={{ width: cardWidth }}
           className={`
             relative cursor-pointer group rounded-2xl overflow-hidden
-            border transition-all duration-[150ms]
+            border transition-colors duration-[150ms]
             ${isRoot
               ? 'bg-gradient-to-b from-[#1a1f2e] to-[#111827] border-[rgba(99,102,241,0.5)] shadow-[0_0_40px_rgba(99,102,241,0.22)] hover:border-[rgba(99,102,241,0.8)] hover:shadow-[0_0_60px_rgba(99,102,241,0.35)]'
               : isVacant
@@ -852,7 +852,7 @@ export function StaffOrgChartPage() {
         {hasChildren && (
           <button
             onClick={e => toggleCollapse(node.id, e)}
-            className={`mt-1.5 w-6 h-6 rounded-full flex items-center justify-center border text-white transition-all duration-150 z-20 shadow-md ${
+            className={`mt-1.5 w-6 h-6 rounded-full flex items-center justify-center border text-white transition-colors duration-150 z-20 shadow-md ${
               isCollapsed
                 ? 'bg-indigo-600 border-indigo-400 text-white shadow-[0_0_12px_rgba(99,102,241,0.6)]'
                 : 'bg-[#1e2538] border-indigo-400/50 hover:border-indigo-400 text-indigo-200 hover:text-white shadow-[0_0_8px_rgba(99,102,241,0.3)]'
@@ -1041,18 +1041,18 @@ export function StaffOrgChartPage() {
 
             <p
               className={`font-black leading-tight line-clamp-2 w-full px-0.5 ${
-                isRoot ? 'text-slate-950 text-[8.5px]' : isVacant ? 'text-amber-950 italic text-[7.2px]' : 'text-slate-900 text-[7.8px]'
+                isRoot ? 'text-slate-950 text-[8.5px]' : isVacant ? 'text-amber-400 dark:text-amber-300 font-bold italic text-[7.2px]' : 'text-text-primary text-[7.8px]'
               }`}
             >
               {node.name}
             </p>
-            <p className="text-[6.8px] font-semibold text-slate-700 leading-tight mt-0.5 line-clamp-1 px-0.5">
+            <p className="text-[6.8px] font-semibold text-text-secondary leading-tight mt-0.5 line-clamp-1 px-0.5">
               {node.role}
             </p>
           </div>
 
           {/* Bottom row */}
-          <div className="pt-0.5 border-t border-slate-200 flex items-center justify-between text-[6px]">
+          <div className="pt-0.5 border-t border-border-default flex items-center justify-between text-[6px]">
             <span
               className="font-bold px-1 py-0.2 rounded"
               style={{
@@ -1064,7 +1064,7 @@ export function StaffOrgChartPage() {
               {isVacant ? 'Kosong' : 'Hadir'}
             </span>
             {node.phone && node.phone !== '—' && (
-              <span className="font-mono text-slate-700 font-bold">{node.phone}</span>
+              <span className="font-mono text-text-secondary font-bold">{node.phone}</span>
             )}
           </div>
         </div>
@@ -1221,7 +1221,7 @@ export function StaffOrgChartPage() {
                 <button
                   key={mode}
                   onClick={() => setViewMode(mode as any)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-150 ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors duration-150 ${
                     viewMode === mode ? 'bg-white/[0.10] text-white' : 'text-white/40 hover:text-white/70'
                   }`}
                 >
@@ -1234,10 +1234,10 @@ export function StaffOrgChartPage() {
             {/* Edit toggle */}
             <button
               onClick={() => setIsEditMode(!isEditMode)}
-              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all duration-150 ${
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-colors duration-150 ${
                 isEditMode
                   ? 'bg-amber-500 text-white ring-2 ring-amber-500/30'
-                  : 'bg-white/[0.06] border border-white/[0.10] text-white/70 hover:text-white hover:bg-white/[0.10]'
+                  : 'bg-white/[0.06] border border-white/[0.10] text-white/70 hover:text-white hover:bg-surface/[0.10]'
               }`}
             >
               <Edit3 className="w-3.5 h-3.5" />
@@ -1266,7 +1266,7 @@ export function StaffOrgChartPage() {
             {!isEditMode && (
               <button
                 onClick={() => window.print()}
-                className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/30 shadow-lg shadow-indigo-500/20 transition-all duration-150 hover:scale-[1.02] active:scale-[0.98]"
+                className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white border border-indigo-400/30 shadow-lg shadow-indigo-500/20 transition-colors duration-150 hover:scale-[1.02] active:scale-[0.98]"
                 title={isMs ? "Print Official Organization Chart (PDF Landscape)" : "Print Official Org Chart (PDF Landscape)"}
               >
                 <Printer className="w-4 h-4 text-white" />
@@ -1308,7 +1308,7 @@ export function StaffOrgChartPage() {
               placeholder={isMs ? "Cari nama, jawatan, gred..." : "Search name, position, grade..."}
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-slate-900/90 border border-slate-700/80 rounded-xl text-xs text-white placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-slate-900 transition-all duration-150 shadow-sm font-medium"
+              className="w-full pl-9 pr-4 py-2 bg-slate-900/90 border border-slate-700/80 rounded-xl text-xs text-white placeholder:text-text-muted focus:outline-none focus:border-indigo-500 focus:bg-slate-900 transition-colors duration-150 shadow-sm font-medium"
             />
             {searchQuery && (
               <button onClick={() => setSearchQuery('')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white">
@@ -1368,10 +1368,10 @@ export function StaffOrgChartPage() {
                 {/* 2-Layer vs 1-Layer Toggle */}
                 <button
                   onClick={() => setIsTwoLayerLayout(prev => !prev)}
-                  className={`px-3 py-1 rounded-lg text-[11px] font-semibold flex items-center gap-1.5 border transition-all duration-150 ${
+                  className={`px-3 py-1 rounded-lg text-[11px] font-semibold flex items-center gap-1.5 border transition-colors duration-150 ${
                     isTwoLayerLayout
                       ? 'bg-indigo-600/30 border-indigo-500/60 text-indigo-200 shadow-[0_0_12px_rgba(99,102,241,0.25)]'
-                      : 'bg-white/[0.05] border-white/[0.08] text-white/50 hover:text-white hover:bg-white/[0.10]'
+                      : 'bg-white/[0.05] border-white/[0.08] text-white/50 hover:text-white hover:bg-surface/[0.10]'
                   }`}
                   title="Toggle 2-Layer Compact Tree Layout"
                 >
@@ -1381,13 +1381,13 @@ export function StaffOrgChartPage() {
 
                 <div className="h-4 w-px bg-white/10 mx-1" />
 
-                <button onClick={() => setZoomLevel(z => Math.min(z + 0.1, 1.5))} className="w-7 h-7 rounded-lg bg-white/[0.05] hover:bg-white/[0.10] border border-white/[0.08] flex items-center justify-center text-white/50 hover:text-white transition-all duration-150">
+                <button onClick={() => setZoomLevel(z => Math.min(z + 0.1, 1.5))} className="w-7 h-7 rounded-lg bg-white/[0.05] hover:bg-surface/[0.10] border border-white/[0.08] flex items-center justify-center text-white/50 hover:text-white transition-colors duration-150">
                   <ZoomIn className="w-3.5 h-3.5" />
                 </button>
-                <button onClick={() => setZoomLevel(z => Math.max(z - 0.1, 0.4))} className="w-7 h-7 rounded-lg bg-white/[0.05] hover:bg-white/[0.10] border border-white/[0.08] flex items-center justify-center text-white/50 hover:text-white transition-all duration-150">
+                <button onClick={() => setZoomLevel(z => Math.max(z - 0.1, 0.4))} className="w-7 h-7 rounded-lg bg-white/[0.05] hover:bg-surface/[0.10] border border-white/[0.08] flex items-center justify-center text-white/50 hover:text-white transition-colors duration-150">
                   <ZoomOut className="w-3.5 h-3.5" />
                 </button>
-                <button onClick={() => { setZoomLevel(1.0); setCollapsedNodes(new Set()) }} className="px-2.5 py-1 rounded-lg bg-white/[0.08] hover:bg-white/[0.14] border border-white/20 text-xs font-semibold text-white transition-all duration-150">
+                <button onClick={() => { setZoomLevel(1.0); setCollapsedNodes(new Set()) }} className="px-2.5 py-1 rounded-lg bg-white/[0.08] hover:bg-surface/[0.14] border border-white/20 text-xs font-semibold text-white transition-colors duration-150">
                   {Math.round(zoomLevel * 100)}%
                 </button>
               </div>
@@ -1439,10 +1439,10 @@ export function StaffOrgChartPage() {
                           key={staff.id}
                           whileHover={{ y: -3, transition: { duration: 0.15 } }}
                           onClick={() => isEditMode ? handleOpenEdit(staff) : setSelectedStaff(staff)}
-                          className={`relative cursor-pointer rounded-xl border p-4 transition-all duration-[150ms] group ${
+                          className={`relative cursor-pointer rounded-xl border p-4 transition-colors duration-[150ms] group ${
                             isVacant
                               ? 'bg-[#1e1a12] border-[rgba(245,158,11,0.3)] hover:border-[rgba(245,158,11,0.6)]'
-                              : 'bg-white/[0.04] border-white/10 hover:bg-white/[0.08] hover:border-white/20'
+                              : 'bg-white/[0.04] border-white/10 hover:bg-surface/[0.08] hover:border-white/20'
                           } ${isEditMode ? 'ring-1 ring-amber-500/40' : ''}`}
                         >
                           <div
@@ -1513,7 +1513,7 @@ export function StaffOrgChartPage() {
               </thead>
               <tbody>
                 {filteredStaffList.length === 0 ? (
-                  <tr><td colSpan={6} className="px-6 py-16 text-center text-slate-400 text-sm">Tiada posisi dijumpai</td></tr>
+                  <tr><td colSpan={6} className="px-6 py-16 text-center text-text-muted font-medium text-sm">Tiada posisi dijumpai</td></tr>
                 ) : filteredStaffList.map((staff, i) => {
                   const photoUrl = getNodePhoto(staff)
                   const isVacant = staff.status === 'vacant' || staff.name.includes('Kekosongan')
@@ -1522,7 +1522,7 @@ export function StaffOrgChartPage() {
                     <tr
                       key={staff.id}
                       onClick={() => isEditMode ? handleOpenEdit(staff) : setSelectedStaff(staff)}
-                      className={`border-b border-white/[0.04] cursor-pointer transition-colors duration-100 hover:bg-white/[0.04] group ${i % 2 === 0 ? '' : 'bg-white/[0.01]'}`}
+                      className={`border-b border-white/[0.04] cursor-pointer transition-colors duration-100 hover:bg-surface/[0.04] group ${i % 2 === 0 ? '' : 'bg-white/[0.01]'}`}
                     >
                       <td className="px-5 py-3">
                         <div className="flex items-center gap-2.5">
@@ -1560,10 +1560,10 @@ export function StaffOrgChartPage() {
                       <td className="px-5 py-3 text-right">
                         <button
                           onClick={e => { e.stopPropagation(); isEditMode ? handleOpenEdit(staff) : setSelectedStaff(staff) }}
-                          className={`px-3 py-1 rounded-lg text-xs font-bold transition-all duration-150 ${
+                          className={`px-3 py-1 rounded-lg text-xs font-bold transition-colors duration-150 ${
                             isEditMode
                               ? 'bg-amber-500/20 text-amber-300 hover:bg-amber-500/30'
-                              : 'bg-white/[0.08] text-slate-200 hover:bg-white/[0.15] hover:text-white'
+                              : 'bg-white/[0.08] text-slate-200 hover:bg-surface/[0.15] hover:text-white'
                           }`}
                         >
                           {isEditMode ? 'Edit' : 'View'}
@@ -1602,7 +1602,7 @@ export function StaffOrgChartPage() {
                 <span className="text-xs font-bold text-slate-200 uppercase tracking-wider">Profil Pegawai</span>
                 <button
                   onClick={() => setSelectedStaff(null)}
-                  className="w-7 h-7 rounded-lg bg-white/[0.08] hover:bg-white/[0.16] text-slate-300 hover:text-white flex items-center justify-center transition-all duration-150"
+                  className="w-7 h-7 rounded-lg bg-white/[0.08] hover:bg-surface/[0.16] text-slate-300 hover:text-white flex items-center justify-center transition-colors duration-150"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -1660,7 +1660,7 @@ export function StaffOrgChartPage() {
                     { label: 'Status Semasa', value: selectedStaff.statusDetail || STATUS_CONFIG[selectedStaff.status]?.label },
                   ].map(({ label, value, accent: itemAccent }) => (
                     <div key={label} className="flex items-start justify-between gap-3 px-4 py-3 rounded-xl bg-slate-900/60 border border-slate-700/60">
-                      <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex-shrink-0 mt-0.5">{label}</span>
+                      <span className="text-[11px] font-bold text-text-secondary font-bold uppercase tracking-wider flex-shrink-0 mt-0.5">{label}</span>
                       <span
                         className="text-xs font-semibold text-right"
                         style={{ color: itemAccent || '#f8fafc' }}
@@ -1677,14 +1677,14 @@ export function StaffOrgChartPage() {
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       onClick={() => { setSelectedStaff(null); navigate(ROUTES.STAFF_CALENDAR) }}
-                      className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-xs font-semibold text-slate-200 hover:text-white hover:bg-slate-700 transition-all duration-150"
+                      className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-xs font-semibold text-slate-200 hover:text-white hover:bg-slate-700 transition-colors duration-150"
                     >
                       <Calendar className="w-3.5 h-3.5" />
                       <span>Kalendar</span>
                     </button>
                     <button
                       onClick={() => { setSelectedStaff(null); navigate(ROUTES.STAFF_MOVEMENT) }}
-                      className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-xs font-semibold text-slate-200 hover:text-white hover:bg-slate-700 transition-all duration-150"
+                      className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-xs font-semibold text-slate-200 hover:text-white hover:bg-slate-700 transition-colors duration-150"
                     >
                       <Briefcase className="w-3.5 h-3.5" />
                       <span>Log Pergerakan</span>
@@ -1693,7 +1693,7 @@ export function StaffOrgChartPage() {
                   {isEditMode === false && (
                     <button
                       onClick={() => { handleOpenEdit(selectedStaff); setSelectedStaff(null); setIsEditMode(true) }}
-                      className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-xs font-semibold text-indigo-400 hover:bg-indigo-500/20 transition-all duration-150"
+                      className="w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-xs font-semibold text-indigo-400 hover:bg-indigo-500/20 transition-colors duration-150"
                     >
                       <Edit3 className="w-3.5 h-3.5" />
                       <span>Kemaskini Maklumat Posisi</span>
@@ -1733,7 +1733,7 @@ export function StaffOrgChartPage() {
                 </div>
                 <button
                   onClick={() => setEditModalOpen(false)}
-                  className="w-7 h-7 rounded-lg bg-white/[0.08] hover:bg-white/[0.16] text-slate-300 hover:text-white flex items-center justify-center transition-all duration-150"
+                  className="w-7 h-7 rounded-lg bg-white/[0.08] hover:bg-surface/[0.16] text-slate-300 hover:text-white flex items-center justify-center transition-colors duration-150"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -1773,7 +1773,7 @@ export function StaffOrgChartPage() {
                     <input
                       type="text" required placeholder="cth. Pengarah Hospital Lawas"
                       value={formName} onChange={e => setFormName(e.target.value)}
-                      className="w-full px-3 py-2.5 bg-slate-900 border border-indigo-500/50 rounded-xl text-xs text-white font-medium focus:outline-none focus:border-indigo-400 placeholder:text-slate-500 shadow-sm"
+                      className="w-full px-3 py-2.5 bg-slate-900 border border-indigo-500/50 rounded-xl text-xs text-white font-medium focus:outline-none focus:border-indigo-400 placeholder:text-text-muted shadow-sm"
                     />
                   </div>
                 )}
@@ -1786,12 +1786,12 @@ export function StaffOrgChartPage() {
                   <input
                     type="text" required placeholder="cth. Pegawai Farmasi"
                     value={formRole} onChange={e => setFormRole(e.target.value)}
-                    className="w-full px-3 py-2.5 bg-slate-900 border border-slate-700 hover:border-slate-600 rounded-xl text-xs text-white font-medium focus:outline-none focus:border-indigo-500 placeholder:text-slate-500 shadow-sm"
+                    className="w-full px-3 py-2.5 bg-slate-900 border border-slate-700 hover:border-slate-600 rounded-xl text-xs text-white font-medium focus:outline-none focus:border-indigo-500 placeholder:text-text-muted shadow-sm"
                   />
                   <div className="flex flex-wrap gap-1.5 pt-1">
                     {COMMON_ROLE_PRESETS.slice(0, 5).map(p => (
                       <button key={p} type="button" onClick={() => setFormRole(p)}
-                        className={`text-[10px] px-2.5 py-1 rounded-lg border transition-all duration-100 font-medium ${
+                        className={`text-[10px] px-2.5 py-1 rounded-lg border transition-colors duration-100 font-medium ${
                           formRole === p
                             ? 'bg-indigo-600 text-white border-indigo-500 shadow-sm font-semibold'
                             : 'bg-slate-800 text-slate-200 border-slate-700 hover:bg-slate-700 hover:text-white'
@@ -1862,13 +1862,13 @@ export function StaffOrgChartPage() {
                 <div className="flex items-center justify-end gap-2 pt-3 border-t border-white/[0.10]">
                   <button
                     type="button" onClick={() => setEditModalOpen(false)}
-                    className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-200 hover:text-white hover:bg-slate-700 transition-all duration-150"
+                    className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-200 hover:text-white hover:bg-slate-700 transition-colors duration-150"
                   >
                     Batal
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-all duration-150 flex items-center gap-1.5 shadow-lg shadow-indigo-500/20"
+                    className="px-5 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white transition-colors duration-150 flex items-center gap-1.5 shadow-lg shadow-indigo-500/20"
                   >
                     <Save className="w-3.5 h-3.5" />
                     <span>Simpan Perubahan</span>
@@ -1882,7 +1882,7 @@ export function StaffOrgChartPage() {
       {/* ─────────────────────────────────────────────────────────────────────────────
           OFFICIAL PRINT VIEW (KKM / HOSPITAL LAWAS EXECUTIVE LANDSCAPE REPORT)
           ───────────────────────────────────────────────────────────────────────────── */}
-      <div id="official-org-chart-print-area" className="hidden bg-white text-slate-900">
+      <div id="official-org-chart-print-area" className="hidden bg-surface text-text-primary">
         {/* Formal Government Letterhead Header */}
         <div className="flex items-start justify-between border-b-2 border-slate-900 pb-2 mb-2">
           <div className="flex items-center gap-4">
@@ -1895,13 +1895,13 @@ export function StaffOrgChartPage() {
               <h1 className="text-sm font-black tracking-wide text-slate-950 uppercase">
                 Kementerian Kesihatan Malaysia
               </h1>
-              <h2 className="text-[10px] font-bold text-slate-800 uppercase">
+              <h2 className="text-[10px] font-bold text-text-primary uppercase">
                 Jabatan Kesihatan Negeri Sarawak
               </h2>
-              <h3 className="text-xs font-black text-indigo-950 uppercase mt-0.5">
+              <h3 className="text-xs font-black text-indigo-400 dark:text-indigo-300 font-bold uppercase mt-0.5">
                 Hospital Lawas
               </h3>
-              <p className="text-[9px] font-semibold text-slate-600 uppercase">
+              <p className="text-[9px] font-semibold text-text-muted uppercase">
                 Jabatan Farmasi &amp; Bekalan Logistik Perubatan
               </p>
               <div className="inline-block mt-1 px-2 py-0.5 bg-slate-900 text-white text-[8.5px] font-black uppercase tracking-wider rounded">
@@ -1910,22 +1910,22 @@ export function StaffOrgChartPage() {
             </div>
           </div>
 
-          <div className="text-right border border-slate-300 rounded-lg p-2 bg-slate-50 text-[8px] min-w-[190px] space-y-1">
-            <div className="flex justify-between gap-2 border-b border-slate-200 pb-1">
-              <span className="text-slate-500 font-semibold">No. Dokumen:</span>
-              <span className="font-mono font-bold text-slate-900">HLWS/FARM/ORG/2026-V2</span>
+          <div className="text-right border border-border-default rounded-lg p-2 bg-subtle/50 text-[8px] min-w-[190px] space-y-1">
+            <div className="flex justify-between gap-2 border-b border-border-default pb-1">
+              <span className="text-text-muted font-semibold">No. Dokumen:</span>
+              <span className="font-mono font-bold text-text-primary">HLWS/FARM/ORG/2026-V2</span>
             </div>
-            <div className="flex justify-between gap-2 border-b border-slate-200 pb-1">
-              <span className="text-slate-500 font-semibold">Print Date:</span>
-              <span className="font-bold text-slate-900">{currentDateStr}</span>
+            <div className="flex justify-between gap-2 border-b border-border-default pb-1">
+              <span className="text-text-muted font-semibold">Print Date:</span>
+              <span className="font-bold text-text-primary">{currentDateStr}</span>
             </div>
-            <div className="flex justify-between gap-2 border-b border-slate-200 pb-1">
-              <span className="text-slate-500 font-semibold">Klasifikasi:</span>
-              <span className="font-bold text-emerald-800 bg-emerald-100 px-1 rounded">Rasmi / Edaran Dalaman</span>
+            <div className="flex justify-between gap-2 border-b border-border-default pb-1">
+              <span className="text-text-muted font-semibold">Klasifikasi:</span>
+              <span className="font-bold text-emerald-400 bg-emerald-100 px-1 rounded">Rasmi / Edaran Dalaman</span>
             </div>
             <div className="flex justify-between gap-2">
-              <span className="text-slate-500 font-semibold">Status:</span>
-              <span className="font-bold text-indigo-900">Berkuat Kuasa Serta-Merta</span>
+              <span className="text-text-muted font-semibold">Status:</span>
+              <span className="font-bold text-indigo-400 dark:text-indigo-300 font-bold">Berkuat Kuasa Serta-Merta</span>
             </div>
           </div>
         </div>
@@ -1948,51 +1948,51 @@ export function StaffOrgChartPage() {
         {/* Official 3-Tier Verification Sign-Off Footer */}
         <div className="shrink-0 mt-2 pt-2 border-t-2 border-slate-900 grid grid-cols-3 gap-4 text-[8.5px] break-inside-avoid page-break-inside-avoid">
           {/* Box 1: Disediakan */}
-          <div className="border border-slate-300 rounded-lg p-2 bg-slate-50 flex flex-col justify-between h-18">
+          <div className="border border-border-default rounded-lg p-2 bg-subtle/50 flex flex-col justify-between h-18">
             <div>
-              <p className="font-black text-slate-900 uppercase text-[8px] border-b border-slate-200 pb-1 mb-1">
+              <p className="font-black text-text-primary uppercase text-[8px] border-b border-border-default pb-1 mb-1">
                 1. Disediakan Oleh:
               </p>
               <div className="h-6 border-b border-dashed border-slate-400 mb-1" />
             </div>
             <div>
-              <p className="font-bold text-slate-900 text-[8px]">Pegawai Pentadbiran / Sistem MyStaff</p>
-              <p className="text-[7.5px] text-slate-600">Unit Pengurusan Sumber Manusia, Hospital Lawas</p>
+              <p className="font-bold text-text-primary text-[8px]">Pegawai Pentadbiran / Sistem MyStaff</p>
+              <p className="text-[7.5px] text-text-muted">Unit Pengurusan Sumber Manusia, Hospital Lawas</p>
             </div>
           </div>
 
           {/* Box 2: Disemak */}
-          <div className="border border-slate-300 rounded-lg p-2 bg-slate-50 flex flex-col justify-between h-18">
+          <div className="border border-border-default rounded-lg p-2 bg-subtle/50 flex flex-col justify-between h-18">
             <div>
-              <p className="font-black text-slate-900 uppercase text-[8px] border-b border-slate-200 pb-1 mb-1">
+              <p className="font-black text-text-primary uppercase text-[8px] border-b border-border-default pb-1 mb-1">
                 2. Disemak Oleh:
               </p>
               <div className="h-6 border-b border-dashed border-slate-400 mb-1" />
             </div>
             <div>
-              <p className="font-bold text-slate-900 text-[8px]">Timbalan Pengarah Hospital (Klinikal)</p>
-              <p className="text-[7.5px] text-slate-600">Hospital Lawas, Sarawak</p>
+              <p className="font-bold text-text-primary text-[8px]">Timbalan Pengarah Hospital (Klinikal)</p>
+              <p className="text-[7.5px] text-text-muted">Hospital Lawas, Sarawak</p>
             </div>
           </div>
 
           {/* Box 3: Disahkan */}
-          <div className="border-2 border-indigo-950 rounded-lg p-2 bg-indigo-50/60 flex flex-col justify-between h-18">
+          <div className="border-2 border-indigo-950 rounded-lg p-2 bg-indigo-500/10 flex flex-col justify-between h-18">
             <div>
-              <p className="font-black text-indigo-950 uppercase text-[8px] border-b border-indigo-200 pb-1 mb-1">
+              <p className="font-black text-indigo-400 dark:text-indigo-300 font-bold uppercase text-[8px] border-b border-indigo-500/20 pb-1 mb-1">
                 3. Disahkan &amp; Diluluskan Oleh:
               </p>
               <div className="h-6 border-b border-dashed border-indigo-400 mb-1" />
             </div>
             <div>
               <p className="font-black text-slate-950 text-[8.5px]">Tan Yuan Zhang</p>
-              <p className="text-[7.5px] font-bold text-indigo-950">Ketua Pegawai Farmasi (UF52 / UF48)</p>
-              <p className="text-[7px] text-slate-600">Hospital Lawas, Sarawak</p>
+              <p className="text-[7.5px] font-bold text-indigo-400 dark:text-indigo-300 font-bold">Ketua Pegawai Farmasi (UF52 / UF48)</p>
+              <p className="text-[7px] text-text-muted">Hospital Lawas, Sarawak</p>
             </div>
           </div>
         </div>
 
         {/* Print Disclaimer Footer */}
-        <div className="shrink-0 mt-1 flex items-center justify-between text-[7px] text-slate-500">
+        <div className="shrink-0 mt-1 flex items-center justify-between text-[7px] text-text-muted">
           <span>Sistem Pengurusan Hospital Lawas (HOMES) — Modul MyStaff OrgChart</span>
           <span>Dokumen ini dijana secara digital dan sah untuk kegunaan urusan rasmi KKM.</span>
         </div>

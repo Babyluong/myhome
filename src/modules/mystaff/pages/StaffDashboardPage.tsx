@@ -102,7 +102,7 @@ export const StaffDashboardPage: React.FC = () => {
           <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => navigate(ROUTES.STAFF_MOVEMENT)}
-              className="inline-flex items-center gap-2 px-3.5 py-2 bg-accent-base hover:bg-accent-hover text-white rounded-lg text-xs font-semibold shadow-sm transition-all"
+              className="inline-flex items-center gap-2 px-3.5 py-2 bg-accent-base hover:bg-accent-hover text-white rounded-lg text-xs font-semibold shadow-sm transition-colors"
             >
               <Plus className="w-3.5 h-3.5 text-white shrink-0" />
               <span>Record Movement</span>
@@ -110,7 +110,7 @@ export const StaffDashboardPage: React.FC = () => {
 
             <button
               onClick={() => navigate(ROUTES.STAFF_REMINDERS)}
-              className="inline-flex items-center gap-2 px-3.5 py-2 bg-surface hover:bg-subtle border border-border-default text-text-primary rounded-lg text-xs font-semibold shadow-sm transition-all"
+              className="inline-flex items-center gap-2 px-3.5 py-2 bg-surface hover:bg-subtle border border-border-default text-text-primary rounded-lg text-xs font-semibold shadow-sm transition-colors"
             >
               <Bell className="w-3.5 h-3.5 text-text-muted shrink-0" />
               <span>Event Log</span>
@@ -118,7 +118,7 @@ export const StaffDashboardPage: React.FC = () => {
 
             <button
               onClick={() => navigate(ROUTES.STAFF_CALENDAR)}
-              className="inline-flex items-center gap-2 px-3.5 py-2 bg-surface hover:bg-subtle border border-border-default text-text-primary rounded-lg text-xs font-semibold shadow-sm transition-all"
+              className="inline-flex items-center gap-2 px-3.5 py-2 bg-surface hover:bg-subtle border border-border-default text-text-primary rounded-lg text-xs font-semibold shadow-sm transition-colors"
             >
               <Calendar className="w-3.5 h-3.5 text-text-muted shrink-0" />
               <span>Department Calendar</span>
@@ -126,7 +126,7 @@ export const StaffDashboardPage: React.FC = () => {
 
             <button
               onClick={() => navigate(ROUTES.STAFF_ORG_CHART)}
-              className="inline-flex items-center gap-2 px-3.5 py-2 bg-surface hover:bg-subtle border border-border-default text-text-primary rounded-lg text-xs font-semibold shadow-sm transition-all"
+              className="inline-flex items-center gap-2 px-3.5 py-2 bg-surface hover:bg-subtle border border-border-default text-text-primary rounded-lg text-xs font-semibold shadow-sm transition-colors"
             >
               <Network className="w-3.5 h-3.5 text-text-muted shrink-0" />
               <span>Org Chart</span>
@@ -324,7 +324,7 @@ export const StaffDashboardPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
             <button
               onClick={() => navigate(ROUTES.STAFF_MOVEMENT)}
-              className="text-left p-5 rounded-xl bg-surface border border-border-default shadow-sm hover:border-accent-base/40 transition-all group"
+              className="text-left p-5 rounded-xl bg-surface border border-border-default shadow-sm hover:border-accent-base/40 transition-colors group"
             >
               <div className="p-2.5 w-fit rounded-lg bg-subtle text-text-secondary border border-border-default mb-3 group-hover:bg-accent-base/10 group-hover:text-accent-base transition-colors">
                 <Briefcase className="w-5 h-5" />
@@ -339,7 +339,7 @@ export const StaffDashboardPage: React.FC = () => {
 
             <button
               onClick={() => navigate(ROUTES.STAFF_REMINDERS)}
-              className="text-left p-5 rounded-xl bg-surface border border-border-default shadow-sm hover:border-accent-base/40 transition-all group"
+              className="text-left p-5 rounded-xl bg-surface border border-border-default shadow-sm hover:border-accent-base/40 transition-colors group"
             >
               <div className="p-2.5 w-fit rounded-lg bg-subtle text-text-secondary border border-border-default mb-3 group-hover:bg-accent-base/10 group-hover:text-accent-base transition-colors">
                 <Bell className="w-5 h-5" />
@@ -354,7 +354,7 @@ export const StaffDashboardPage: React.FC = () => {
 
             <button
               onClick={() => navigate(ROUTES.STAFF_CALENDAR)}
-              className="text-left p-5 rounded-xl bg-surface border border-border-default shadow-sm hover:border-accent-base/40 transition-all group"
+              className="text-left p-5 rounded-xl bg-surface border border-border-default shadow-sm hover:border-accent-base/40 transition-colors group"
             >
               <div className="p-2.5 w-fit rounded-lg bg-subtle text-text-secondary border border-border-default mb-3 group-hover:bg-accent-base/10 group-hover:text-accent-base transition-colors">
                 <Calendar className="w-5 h-5" />

@@ -40,7 +40,7 @@ export const PriviledgingKpiCards: React.FC<PriviledgingKpiCardsProps> = ({
         subtitle: isMs ? 'Perlu verifikasi klinikal' : 'Requires clinical verification',
         icon: Clock,
         iconColor: 'text-amber-600 dark:text-amber-400',
-        iconBg: 'bg-amber-50 dark:bg-amber-950/60 border-amber-200 dark:border-amber-800/60',
+        iconBg: 'bg-amber-500/10 dark:bg-amber-950/60 border-amber-500/20 dark:border-amber-800/60',
         statusKey: 'pending'
       },
       {
@@ -49,7 +49,7 @@ export const PriviledgingKpiCards: React.FC<PriviledgingKpiCardsProps> = ({
         subtitle: isMs ? 'Maklum balas dihantar' : 'Feedback sent to clinician',
         icon: AlertCircle,
         iconColor: 'text-rose-600 dark:text-rose-400',
-        iconBg: 'bg-rose-50 dark:bg-rose-950/60 border-rose-200 dark:border-rose-800/60',
+        iconBg: 'bg-rose-500/10 dark:bg-rose-950/60 border-rose-500/20 dark:border-rose-800/60',
         statusKey: 'changes_requested'
       },
       {
@@ -58,7 +58,7 @@ export const PriviledgingKpiCards: React.FC<PriviledgingKpiCardsProps> = ({
         subtitle: isMs ? 'Ditauliahkan berdikari' : 'Credentialed for independent practice',
         icon: CheckCircle2,
         iconColor: 'text-emerald-600 dark:text-emerald-400',
-        iconBg: 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-200 dark:border-emerald-800/60',
+        iconBg: 'bg-emerald-500/10 dark:bg-emerald-950/60 border-emerald-500/20 dark:border-emerald-800/60',
         statusKey: 'approved'
       },
       {
@@ -68,8 +68,8 @@ export const PriviledgingKpiCards: React.FC<PriviledgingKpiCardsProps> = ({
           ? `Kadar Kelulusan: ${kpis.approvalRatePercentage}%`
           : `Approval Rate: ${kpis.approvalRatePercentage}%`,
         icon: ShieldCheck,
-        iconColor: 'text-slate-700 dark:text-slate-300',
-        iconBg: 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700',
+        iconColor: 'text-text-secondary dark:text-slate-300',
+        iconBg: 'bg-subtle dark:bg-slate-800 border-border-default dark:border-slate-700',
         statusKey: 'all'
       }
     ];
@@ -82,17 +82,17 @@ export const PriviledgingKpiCards: React.FC<PriviledgingKpiCardsProps> = ({
             <div
               key={idx}
               onClick={() => onFilterClick && onFilterClick(card.statusKey)}
-              className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-4 md:p-5 shadow-xs hover:shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-200 cursor-pointer"
+              className="bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-800 rounded-2xl p-4 md:p-5 shadow-xs hover:shadow-sm hover:border-border-default dark:hover:border-slate-700 transition-colors duration-150 cursor-pointer"
             >
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-text-muted dark:text-slate-400">
                     {card.label}
                   </p>
-                  <h3 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mt-1">
+                  <h3 className="text-2xl md:text-3xl font-bold text-text-primary dark:text-white mt-1">
                     {card.value}
                   </h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                  <p className="text-xs text-text-muted dark:text-slate-400 mt-1">
                     {card.subtitle}
                   </p>
                 </div>
@@ -114,8 +114,8 @@ export const PriviledgingKpiCards: React.FC<PriviledgingKpiCardsProps> = ({
       value: activeStaff?.totalLogged || 0,
       subtitle: isMs ? 'Log Buku Komprehensif' : 'Comprehensive clinical logbook',
       icon: FileText,
-      iconColor: 'text-slate-700 dark:text-slate-300',
-      iconBg: 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700',
+      iconColor: 'text-text-secondary dark:text-slate-300',
+      iconBg: 'bg-subtle dark:bg-slate-800 border-border-default dark:border-slate-700',
       statusKey: 'all'
     },
     {
@@ -124,7 +124,7 @@ export const PriviledgingKpiCards: React.FC<PriviledgingKpiCardsProps> = ({
       subtitle: isMs ? 'Dalam semakan JKCP' : 'Under JKCP review',
       icon: Clock,
       iconColor: 'text-amber-600 dark:text-amber-400',
-      iconBg: 'bg-amber-50 dark:bg-amber-950/60 border-amber-200 dark:border-amber-800/60',
+      iconBg: 'bg-amber-500/10 dark:bg-amber-950/60 border-amber-500/20 dark:border-amber-800/60',
       statusKey: 'pending'
     },
     {
@@ -133,7 +133,7 @@ export const PriviledgingKpiCards: React.FC<PriviledgingKpiCardsProps> = ({
       subtitle: isMs ? 'Sila semak maklum balas' : 'Please review supervisor feedback',
       icon: AlertCircle,
       iconColor: 'text-rose-600 dark:text-rose-400',
-      iconBg: 'bg-rose-50 dark:bg-rose-950/60 border-rose-200 dark:border-rose-800/60',
+      iconBg: 'bg-rose-500/10 dark:bg-rose-950/60 border-rose-500/20 dark:border-rose-800/60',
       statusKey: 'changes_requested'
     },
     {
@@ -142,7 +142,7 @@ export const PriviledgingKpiCards: React.FC<PriviledgingKpiCardsProps> = ({
       subtitle: isMs ? 'Ditauliahkan berdikari' : 'Credentialed for independent practice',
       icon: Award,
       iconColor: 'text-emerald-600 dark:text-emerald-400',
-      iconBg: 'bg-emerald-50 dark:bg-emerald-950/60 border-emerald-200 dark:border-emerald-800/60',
+      iconBg: 'bg-emerald-500/10 dark:bg-emerald-950/60 border-emerald-500/20 dark:border-emerald-800/60',
       statusKey: 'approved'
     }
   ];
@@ -155,17 +155,17 @@ export const PriviledgingKpiCards: React.FC<PriviledgingKpiCardsProps> = ({
           <div
             key={idx}
             onClick={() => onFilterClick && onFilterClick(card.statusKey)}
-            className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-4 md:p-5 shadow-xs hover:shadow-sm hover:border-slate-300 dark:hover:border-slate-700 transition-all duration-200 cursor-pointer"
+            className="bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-800 rounded-2xl p-4 md:p-5 shadow-xs hover:shadow-sm hover:border-border-default dark:hover:border-slate-700 transition-colors duration-150 cursor-pointer"
           >
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-text-muted dark:text-slate-400">
                   {card.label}
                 </p>
-                <h3 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mt-1">
+                <h3 className="text-2xl md:text-3xl font-bold text-text-primary dark:text-white mt-1">
                   {card.value}
                 </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                <p className="text-xs text-text-muted dark:text-slate-400 mt-1">
                   {card.subtitle}
                 </p>
               </div>

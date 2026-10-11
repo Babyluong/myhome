@@ -362,7 +362,7 @@ export const PorterRosterPage: React.FC = () => {
               if (porters.length > 0) setEditPorterId(porters[0].id)
               setIsEditModalOpen(true)
             }}
-            className="flex items-center gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-bold rounded-xl px-4 py-2 text-xs shadow-lg shadow-sky-500/20"
+            className="flex items-center gap-2 bg-accent-base hover:bg-accent-hover text-white font-bold rounded-xl px-4 py-2 text-xs shadow-lg shadow-sky-500/20"
           >
             <Plus className="w-4 h-4" />
             <span>Add Assignment</span>
@@ -410,7 +410,7 @@ export const PorterRosterPage: React.FC = () => {
             return (
               <div
                 key={summary.porter_id}
-                className="bg-slate-950/80 border border-slate-800/80 rounded-2xl p-4 space-y-2.5 hover:border-slate-700 transition-all"
+                className="bg-slate-950/80 border border-slate-800/80 rounded-2xl p-4 space-y-2.5 hover:border-slate-700 transition-colors"
               >
                 <div className="flex justify-between items-start">
                   <div>
@@ -427,7 +427,7 @@ export const PorterRosterPage: React.FC = () => {
                 {/* Progress Bar */}
                 <div className="w-full bg-slate-900 h-2 rounded-full overflow-hidden">
                   <div
-                    className={`h-full rounded-full transition-all duration-500 ${
+                    className={`h-full rounded-full transition-colors duration-500 ${
                       isOver
                         ? 'bg-rose-500'
                         : isOptimum
@@ -458,7 +458,7 @@ export const PorterRosterPage: React.FC = () => {
                       <span>Over {summary.hour_difference}h (Exceeds Cap)</span>
                     </span>
                   )}
-                  <span className="font-mono text-slate-500 font-bold">{pct}%</span>
+                  <span className="font-mono text-text-muted font-bold">{pct}%</span>
                 </div>
               </div>
             )
@@ -504,7 +504,7 @@ export const PorterRosterPage: React.FC = () => {
           <div className="flex bg-slate-950 p-1 rounded-2xl border border-slate-800 text-xs font-bold">
             <button
               onClick={() => setActiveView('matrix')}
-              className={`px-4 py-2 rounded-xl transition-all ${
+              className={`px-4 py-2 rounded-xl transition-colors ${
                 activeView === 'matrix' ? 'bg-sky-500 text-white shadow-md' : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -512,7 +512,7 @@ export const PorterRosterPage: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveView('weekly_board')}
-              className={`px-4 py-2 rounded-xl transition-all ${
+              className={`px-4 py-2 rounded-xl transition-colors ${
                 activeView === 'weekly_board' ? 'bg-sky-500 text-white shadow-md' : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -520,7 +520,7 @@ export const PorterRosterPage: React.FC = () => {
             </button>
             <button
               onClick={() => setActiveView('exchanges')}
-              className={`px-4 py-2 rounded-xl transition-all flex items-center gap-1.5 ${
+              className={`px-4 py-2 rounded-xl transition-colors flex items-center gap-1.5 ${
                 activeView === 'exchanges' ? 'bg-sky-500 text-white shadow-md' : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -541,7 +541,7 @@ export const PorterRosterPage: React.FC = () => {
 
           <button
             onClick={() => setSelectedWeekIndex('all')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+            className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors ${
               selectedWeekIndex === 'all'
                 ? 'bg-sky-500 text-white shadow-md'
                 : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
@@ -554,7 +554,7 @@ export const PorterRosterPage: React.FC = () => {
             <button
               key={w.weekIndex}
               onClick={() => setSelectedWeekIndex(w.weekIndex)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-colors ${
                 selectedWeekIndex === w.weekIndex
                   ? 'bg-sky-500 text-white shadow-md'
                   : 'bg-slate-950 text-slate-400 hover:text-white border border-slate-800'
@@ -600,7 +600,7 @@ export const PorterRosterPage: React.FC = () => {
           <div>
             <label className="block text-[10px] font-bold text-slate-400 uppercase mb-1">Search Name / Staff No</label>
             <div className="relative">
-              <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+              <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
               <input
                 type="text"
                 placeholder="Search Porter..."
@@ -632,7 +632,7 @@ export const PorterRosterPage: React.FC = () => {
           <Coffee className="w-3.5 h-3.5" />
           <span>Off Day (OFF): Rest Day (0h)</span>
         </div>
-        <span className="text-slate-500 ml-auto text-[11px] hidden lg:inline">
+        <span className="text-text-muted ml-auto text-[11px] hidden lg:inline">
           💡 <em>Click or drag & drop shift badges to update assignments.</em>
         </span>
       </div>
@@ -655,7 +655,7 @@ export const PorterRosterPage: React.FC = () => {
 
           <div className="overflow-x-auto">
             <table className="w-full text-xs text-left border-collapse min-w-[700px]">
-              <thead className="bg-slate-950 text-slate-400 uppercase font-bold text-[10px] border-b border-slate-800 sticky top-0 z-10">
+              <thead className="bg-slate-950 text-text-secondary font-bold uppercase font-bold text-[10px] border-b border-slate-800 sticky top-0 z-10">
                 <tr>
                   <th className="p-3 w-56 sticky left-0 bg-slate-950 z-20">Porter Staff</th>
                   <th className="p-3 w-40">Duty Zone</th>
@@ -737,7 +737,7 @@ export const PorterRosterPage: React.FC = () => {
                             <div
                               draggable
                               onDragStart={() => handleDragStart(porter.id, shiftType, dateStr, shiftObj?.id)}
-                              className={`mx-auto rounded-xl font-extrabold flex items-center justify-center border transition-all select-none ${
+                              className={`mx-auto rounded-xl font-extrabold flex items-center justify-center border transition-colors select-none ${
                                 activeWeekRange ? 'h-9 px-2 text-xs gap-1' : 'w-7 h-7 text-[10px]'
                               } ${cfg.color}`}
                             >
@@ -823,7 +823,7 @@ export const PorterRosterPage: React.FC = () => {
                         key={r.id}
                         draggable
                         onDragStart={() => handleDragStart(r.porter_id, r.shift, todayStr, r.id)}
-                        className="bg-slate-950 border border-slate-800 hover:border-sky-500/50 rounded-2xl p-3.5 space-y-2 cursor-grab active:cursor-grabbing transition-all shadow-md"
+                        className="bg-slate-950 border border-slate-800 hover:border-sky-500/50 rounded-2xl p-3.5 space-y-2 cursor-grab active:cursor-grabbing transition-colors shadow-md"
                       >
                         <div className="flex items-center gap-3">
                           <img
@@ -835,7 +835,7 @@ export const PorterRosterPage: React.FC = () => {
                             <p className="font-extrabold text-white text-xs truncate">{r.porter_name}</p>
                             <p className="text-[10px] text-slate-400 font-mono">{porter?.staff_no} • {r.zone}</p>
                           </div>
-                          <GripVertical className="w-4 h-4 text-slate-600" />
+                          <GripVertical className="w-4 h-4 text-text-muted" />
                         </div>
                       </div>
                     )
@@ -843,7 +843,7 @@ export const PorterRosterPage: React.FC = () => {
 
                   {portersInShift.length === 0 && (
                     <div className="h-full flex items-center justify-center p-8 border-2 border-dashed border-slate-800 rounded-2xl text-center">
-                      <p className="text-xs text-slate-500">No porters assigned to this shift. Drag & drop cards here to assign.</p>
+                      <p className="text-xs text-text-muted">No porters assigned to this shift. Drag & drop cards here to assign.</p>
                     </div>
                   )}
                 </div>
@@ -877,7 +877,7 @@ export const PorterRosterPage: React.FC = () => {
 
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-xs text-left text-slate-300">
-              <thead className="bg-slate-950 text-slate-400 uppercase font-bold text-[10px] border-b border-slate-800">
+              <thead className="bg-slate-950 text-text-secondary font-bold uppercase font-bold text-[10px] border-b border-slate-800">
                 <tr>
                   <th className="p-3.5">Requester</th>
                   <th className="p-3.5">Relinquished Shift</th>
@@ -931,7 +931,7 @@ export const PorterRosterPage: React.FC = () => {
                           </Button>
                         </div>
                       ) : (
-                        <span className="text-slate-500 font-mono text-[10px]">
+                        <span className="text-text-muted font-mono text-[10px]">
                           {ex.approved_by || 'Completed'}
                         </span>
                       )}
@@ -999,7 +999,7 @@ export const PorterRosterPage: React.FC = () => {
                     </button>
                   </div>
                 ) : (
-                  <div className="text-right text-[11px] text-slate-500 font-mono">
+                  <div className="text-right text-[11px] text-text-muted font-mono">
                     Tindakan: {ex.approved_by || 'Selesai'}
                   </div>
                 )}
@@ -1023,7 +1023,7 @@ export const PorterRosterPage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div
               onClick={() => handleExportPDF('weekly')}
-              className="p-4 bg-slate-950 border border-slate-800 hover:border-sky-500/60 rounded-2xl cursor-pointer hover:bg-sky-500/5 transition-all space-y-2"
+              className="p-4 bg-slate-950 border border-slate-800 hover:border-sky-500/60 rounded-2xl cursor-pointer hover:bg-sky-500/5 transition-colors space-y-2"
             >
               <div className="p-2.5 bg-sky-500/10 rounded-xl w-fit text-sky-400">
                 <FileDown className="w-5 h-5" />
@@ -1036,7 +1036,7 @@ export const PorterRosterPage: React.FC = () => {
 
             <div
               onClick={() => handleExportPDF('monthly')}
-              className="p-4 bg-slate-950 border border-slate-800 hover:border-emerald-500/60 rounded-2xl cursor-pointer hover:bg-emerald-500/5 transition-all space-y-2"
+              className="p-4 bg-slate-950 border border-slate-800 hover:border-emerald-500/60 rounded-2xl cursor-pointer hover:bg-emerald-500/5 transition-colors space-y-2"
             >
               <div className="p-2.5 bg-emerald-500/10 rounded-xl w-fit text-emerald-400">
                 <Printer className="w-5 h-5" />

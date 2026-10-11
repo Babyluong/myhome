@@ -118,22 +118,22 @@ export const MsdsDetailModal: React.FC<MsdsDetailModalProps> = ({ item, onClose,
           {/* Quick Metrics Bar */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 px-6 py-3 bg-slate-950/60 border-b border-slate-800 text-xs font-mono">
             <div>
-              <span className="text-slate-500 block text-[10px] uppercase font-sans font-semibold">Status Semakan</span>
+              <span className="text-text-muted block text-[10px] uppercase font-sans font-semibold">Status Semakan</span>
               <span className="text-emerald-400 font-bold flex items-center gap-1 mt-0.5">
                 <CheckCircle2 className="w-3.5 h-3.5" />
                 {item.status}
               </span>
             </div>
             <div>
-              <span className="text-slate-500 block text-[10px] uppercase font-sans font-semibold">Formula Kimia</span>
+              <span className="text-text-muted block text-[10px] uppercase font-sans font-semibold">Formula Kimia</span>
               <span className="text-white font-bold mt-0.5 block">{item.chemicalFormula}</span>
             </div>
             <div>
-              <span className="text-slate-500 block text-[10px] uppercase font-sans font-semibold">Had PEL (Malaysia)</span>
+              <span className="text-text-muted block text-[10px] uppercase font-sans font-semibold">Had PEL (Malaysia)</span>
               <span className="text-amber-300 font-semibold mt-0.5 block truncate">{item.pelMalaysia}</span>
             </div>
             <div>
-              <span className="text-slate-500 block text-[10px] uppercase font-sans font-semibold">Kod Sisa (JAS)</span>
+              <span className="text-text-muted block text-[10px] uppercase font-sans font-semibold">Kod Sisa (JAS)</span>
               <span className="text-cyan-400 font-bold mt-0.5 block">{item.scheduledWasteCode}</span>
             </div>
           </div>
@@ -148,7 +148,7 @@ export const MsdsDetailModal: React.FC<MsdsDetailModalProps> = ({ item, onClose,
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2.5 p-2.5 rounded-xl transition-all border text-left ${
+                    className={`flex items-center gap-2.5 p-2.5 rounded-xl transition-colors border text-left ${
                       isActive
                         ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300 shadow-sm'
                         : 'bg-slate-900/80 border-slate-800/80 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
@@ -164,7 +164,7 @@ export const MsdsDetailModal: React.FC<MsdsDetailModalProps> = ({ item, onClose,
                       {tab.num}
                     </div>
                     <div className="min-w-0">
-                      <div className="text-[10px] uppercase tracking-wider text-slate-500 font-semibold truncate">
+                      <div className="text-[10px] uppercase tracking-wider text-text-muted font-semibold truncate">
                         {tab.range}
                       </div>
                       <div className="text-xs font-bold truncate">{tab.title}</div>
@@ -182,7 +182,7 @@ export const MsdsDetailModal: React.FC<MsdsDetailModalProps> = ({ item, onClose,
                 {/* GHS Pictograms & Signal Word */}
                 <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                    <span className="text-xs font-bold text-text-secondary font-bold uppercase tracking-wider">
                       Klasifikasi Piktogram GHS (CLASS 2013)
                     </span>
                     <span
@@ -346,19 +346,19 @@ export const MsdsDetailModal: React.FC<MsdsDetailModalProps> = ({ item, onClose,
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                     <div className="p-3 rounded-lg bg-slate-950 border border-slate-800">
-                      <span className="text-slate-500 block font-semibold text-[10px] uppercase">Respirator / Pernafasan</span>
+                      <span className="text-text-muted block font-semibold text-[10px] uppercase">Respirator / Pernafasan</span>
                       <span className="text-white font-medium">{item.ppeRequired.respirator}</span>
                     </div>
                     <div className="p-3 rounded-lg bg-slate-950 border border-slate-800">
-                      <span className="text-slate-500 block font-semibold text-[10px] uppercase">Sarung Tangan</span>
+                      <span className="text-text-muted block font-semibold text-[10px] uppercase">Sarung Tangan</span>
                       <span className="text-white font-medium">{item.ppeRequired.gloves}</span>
                     </div>
                     <div className="p-3 rounded-lg bg-slate-950 border border-slate-800">
-                      <span className="text-slate-500 block font-semibold text-[10px] uppercase">Perlindungan Mata & Muka</span>
+                      <span className="text-text-muted block font-semibold text-[10px] uppercase">Perlindungan Mata & Muka</span>
                       <span className="text-white font-medium">{item.ppeRequired.eyeProtection}</span>
                     </div>
                     <div className="p-3 rounded-lg bg-slate-950 border border-slate-800">
-                      <span className="text-slate-500 block font-semibold text-[10px] uppercase">Perlindungan Badan</span>
+                      <span className="text-text-muted block font-semibold text-[10px] uppercase">Perlindungan Badan</span>
                       <span className="text-white font-medium">{item.ppeRequired.bodyProtection}</span>
                     </div>
                   </div>
@@ -375,12 +375,12 @@ export const MsdsDetailModal: React.FC<MsdsDetailModalProps> = ({ item, onClose,
                     Seksyen 9: Sifat Fizikal & Kimia
                   </h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3 p-4 rounded-xl bg-slate-950 border border-slate-800">
-                    <div><span className="text-slate-500 block text-[10px] uppercase">Keadaan Fizikal</span><span className="text-white font-semibold">{item.physicalState}</span></div>
-                    <div><span className="text-slate-500 block text-[10px] uppercase">Rupa & Warna</span><span className="text-white font-semibold">{item.appearance}</span></div>
-                    <div><span className="text-slate-500 block text-[10px] uppercase">Nilai pH</span><span className="text-white font-semibold">{item.ph}</span></div>
-                    <div><span className="text-slate-500 block text-[10px] uppercase">Takat Kilat</span><span className="text-white font-semibold">{item.flashPoint}</span></div>
-                    <div><span className="text-slate-500 block text-[10px] uppercase">Takat Didih</span><span className="text-white font-semibold">{item.boilingPoint}</span></div>
-                    <div><span className="text-slate-500 block text-[10px] uppercase">Had PEL Malaysia</span><span className="text-amber-300 font-semibold">{item.pelMalaysia}</span></div>
+                    <div><span className="text-text-muted block text-[10px] uppercase">Keadaan Fizikal</span><span className="text-white font-semibold">{item.physicalState}</span></div>
+                    <div><span className="text-text-muted block text-[10px] uppercase">Rupa & Warna</span><span className="text-white font-semibold">{item.appearance}</span></div>
+                    <div><span className="text-text-muted block text-[10px] uppercase">Nilai pH</span><span className="text-white font-semibold">{item.ph}</span></div>
+                    <div><span className="text-text-muted block text-[10px] uppercase">Takat Kilat</span><span className="text-white font-semibold">{item.flashPoint}</span></div>
+                    <div><span className="text-text-muted block text-[10px] uppercase">Takat Didih</span><span className="text-white font-semibold">{item.boilingPoint}</span></div>
+                    <div><span className="text-text-muted block text-[10px] uppercase">Had PEL Malaysia</span><span className="text-amber-300 font-semibold">{item.pelMalaysia}</span></div>
                   </div>
                 </div>
 
@@ -409,7 +409,7 @@ export const MsdsDetailModal: React.FC<MsdsDetailModalProps> = ({ item, onClose,
           <div className="p-4 bg-slate-950 border-t border-slate-800 flex flex-wrap items-center justify-between gap-3">
             <button
               onClick={onEmergencyClick}
-              className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 font-semibold text-xs transition-all"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 font-semibold text-xs transition-colors"
             >
               <ShieldAlert className="w-4 h-4" />
               Talian Kecemasan HAZMAT
@@ -418,7 +418,7 @@ export const MsdsDetailModal: React.FC<MsdsDetailModalProps> = ({ item, onClose,
             <div className="flex items-center gap-2">
               <button
                 onClick={handlePrint}
-                className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs transition-all border border-slate-700"
+                className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs transition-colors border border-slate-700"
               >
                 <Printer className="w-4 h-4" />
                 Cetak (Print)
@@ -426,7 +426,7 @@ export const MsdsDetailModal: React.FC<MsdsDetailModalProps> = ({ item, onClose,
 
               <button
                 onClick={handleDownload}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-all shadow-sm"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition-colors shadow-sm"
               >
                 <Download className="w-4 h-4" />
                 Muat Turun MSDS (PDF)

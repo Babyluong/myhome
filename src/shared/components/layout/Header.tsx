@@ -49,13 +49,16 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ onOpenSyncDrawer }) => {
   const { isOnline, isSyncing, pendingCount } = useOfflineStatus()
   const { user } = useAuthStore()
-  const { theme, toggleTheme, setSidebarOpen } = useUIStore()
+  const { theme, toggleTheme } = useUIStore()
   const location = useLocation()
   const navigate = useNavigate()
   const { t } = useLanguage()
 
   // Determine current module
   const currentModule = useMemo(() => {
+    if (location.pathname === '/hub' || location.pathname === '/') {
+      return { name: 'Module Hub', code: 'hub' }
+    }
     const routeModule = getCurrentModuleInfo(location.pathname)
     if (routeModule) return routeModule
 
@@ -83,21 +86,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSyncDrawer }) => {
   }, [user?.role])
 
   return (
-    <header className="fixed top-0 left-0 right-0 bg-surface/90 backdrop-blur-md border-b border-border-default text-text-primary z-30 transition-colors duration-150 header-safe-pt">
+    <header className="fixed top-0 left-0 right-0 bg-surface/80 backdrop-blur-xl border-b border-border-default text-text-primary z-30 transition-colors duration-150 header-safe-pt">
       <div className="h-14 sm:h-20 lg:h-24 px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-2 sm:gap-4">
         {/* Left Side - Official Government Branding */}
-        <div className="flex items-center gap-1.5 sm:gap-4 lg:gap-6 min-w-0">
-          {/* Mobile Navigation Drawer Trigger */}
-          <button
-            type="button"
-            onClick={() => setSidebarOpen(true)}
-            className="lg:hidden w-10 h-10 flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-subtle active:scale-95 rounded-lg border border-transparent hover:border-border-default transition-all duration-150 min-h-[44px] min-w-[44px] -ml-1 mr-0.5 flex-shrink-0"
-            aria-label="Open Navigation Menu"
-            title="Open Navigation Menu"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
-
+        <div className="flex items-center gap-2 sm:gap-4 lg:gap-6 min-w-0">
           {/* Jata Negara & Branding - Clickable to return home */}
           <div 
             className="flex items-center gap-2 sm:gap-3.5 lg:gap-4 cursor-pointer group min-w-0"
@@ -112,15 +104,25 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSyncDrawer }) => {
               />
             </div>
             <div className="flex flex-col min-w-0 justify-center">
-              <div className="flex items-center gap-1.5 sm:gap-2">
-                <h1 className="text-base sm:text-xl lg:text-2xl font-bold tracking-tight text-text-primary group-hover:text-accent-base transition-colors whitespace-nowrap">
+              <div className="flex items-center gap-2">
+                <h1 className="text-sm sm:text-xl lg:text-2xl font-bold tracking-tight text-text-primary group-hover:text-accent-base transition-colors whitespace-nowrap leading-tight">
                   H.O.M.E.
                 </h1>
-                {/* Mobile Active Module Indicator */}
-                <span className="xl:hidden inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-medium bg-accent-subtle text-accent-base border border-accent-base/25 truncate max-w-[105px] xs:max-w-[140px]">
+                {/* Tablet / Small Laptop Active Module Indicator */}
+                <span className="hidden sm:inline-flex xl:hidden items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-accent-subtle text-accent-base border border-accent-base/25 truncate max-w-[180px]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent-base animate-pulse mr-1.5 flex-shrink-0" />
                   {currentModule.name}
                 </span>
               </div>
+
+              {/* Mobile Active Module Display (Dedicated line on mobile: clear, un-squeezed, prominent) */}
+              <div className="sm:hidden flex items-center min-w-0 mt-0.5">
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold bg-accent-subtle text-accent-base border border-accent-base/30 max-w-[170px] xs:max-w-[210px]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-accent-base animate-pulse flex-shrink-0" />
+                  <span className="truncate">{currentModule.name}</span>
+                </span>
+              </div>
+
               <p className="hidden md:block text-[11px] lg:text-xs text-text-secondary font-medium leading-tight tracking-wide group-hover:text-text-primary transition-colors truncate">
                 Hospital Operation &amp; Management Ecosystem
               </p>
@@ -137,7 +139,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSyncDrawer }) => {
           <div className="hidden xl:flex flex-col gap-1 flex-shrink-0">
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-semibold text-text-muted uppercase tracking-widest">MODULE:</span>
-              <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-accent-subtle text-accent-base border border-accent-base/25">
+              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-accent-subtle text-accent-base border border-accent-base/25">
                 <span className="w-1.5 h-1.5 rounded-full bg-accent-base animate-pulse mr-1.5" />
                 {currentModule.name}
               </span>
@@ -156,7 +158,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSyncDrawer }) => {
           {/* Home / Landing Page - Desktop & Tablet */}
           <button 
             onClick={() => navigate('/')}
-            className="hidden sm:flex w-10 h-10 sm:w-11 sm:h-11 items-center justify-center text-text-muted hover:text-text-primary hover:bg-subtle active:bg-muted-surface border border-transparent hover:border-border-default rounded-lg transition-all duration-150 flex-shrink-0 min-h-[44px] min-w-[44px]"
+            className="hidden sm:flex w-10 h-10 sm:w-11 sm:h-11 items-center justify-center text-text-muted hover:text-text-primary hover:bg-subtle active:bg-muted-surface border border-transparent hover:border-border-default rounded-xl transition-[transform,opacity,box-shadow,border-color] duration-150 active:scale-[0.98] flex-shrink-0 min-h-[44px] min-w-[44px]"
             title="Return to Main Hub"
             aria-label="Return to Main Hub"
           >
@@ -166,21 +168,21 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSyncDrawer }) => {
           {/* Theme Switcher Toggle (Light / Dark) */}
           <button
             onClick={toggleTheme}
-            className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-subtle active:bg-muted-surface border border-transparent hover:border-border-default rounded-lg transition-all duration-150 flex-shrink-0 min-h-[44px] min-w-[44px]"
+            className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-subtle active:bg-muted-surface border border-transparent hover:border-border-default rounded-xl transition-[transform,opacity,box-shadow,border-color] duration-150 active:scale-[0.98] flex-shrink-0 min-h-[44px] min-w-[44px]"
             title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
             aria-label="Toggle Theme"
           >
             {theme === 'dark' ? (
               <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-amber-400 hover:rotate-45 transition-transform duration-200" />
             ) : (
-              <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-slate-700 hover:-rotate-12 transition-transform duration-200" />
+              <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-text-secondary hover:-rotate-12 transition-transform duration-200" />
             )}
           </button>
 
           {/* Search - Hidden on small mobile */}
           <button 
             onClick={() => navigate(ROUTES.HUB)}
-            className="hidden sm:flex w-10 h-10 sm:w-11 sm:h-11 items-center justify-center text-text-muted hover:text-text-primary hover:bg-subtle active:bg-muted-surface border border-transparent hover:border-border-default rounded-lg transition-all duration-150 flex-shrink-0 min-h-[44px] min-w-[44px]"
+            className="hidden sm:flex w-10 h-10 sm:w-11 sm:h-11 items-center justify-center text-text-muted hover:text-text-primary hover:bg-subtle active:bg-muted-surface border border-transparent hover:border-border-default rounded-xl transition-[transform,opacity,box-shadow,border-color] duration-150 active:scale-[0.98] flex-shrink-0 min-h-[44px] min-w-[44px]"
             title="Search modules"
             aria-label="Search"
           >
@@ -190,7 +192,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSyncDrawer }) => {
           {/* Network & Offline Sync Status Indicator */}
           <button
             onClick={onOpenSyncDrawer}
-            className={`relative w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-lg transition-all duration-150 active:scale-95 flex-shrink-0 min-h-[44px] min-w-[44px] border ${
+            className={`relative w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-lg transition-colors duration-150 active:scale-95 flex-shrink-0 min-h-[44px] min-w-[44px] border ${
               !isOnline
                 ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30 hover:bg-amber-500/20'
                 : isSyncing
@@ -222,7 +224,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSyncDrawer }) => {
 
           {/* Notifications */}
           <button 
-            className="relative w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-subtle active:bg-muted-surface border border-transparent hover:border-border-default rounded-lg transition-all duration-150 flex-shrink-0 min-h-[44px] min-w-[44px]"
+            className="relative w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-subtle active:bg-muted-surface border border-transparent hover:border-border-default rounded-xl transition-[transform,opacity,box-shadow,border-color] duration-150 active:scale-[0.98] flex-shrink-0 min-h-[44px] min-w-[44px]"
             aria-label="Notifications"
           >
             <Bell className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -243,7 +245,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSyncDrawer }) => {
           {/* User Profile Trigger */}
           <button
             onClick={() => navigate(ROUTES.PROFILE, { state: { fromModule: currentModule } })}
-            className="flex items-center gap-2 sm:gap-3 hover:bg-subtle active:bg-muted-surface border border-transparent hover:border-border-default rounded-lg px-1.5 sm:px-2.5 py-1.5 transition-all duration-150 group flex-shrink-0 min-h-[44px]"
+            className="flex items-center gap-2 sm:gap-3 hover:bg-subtle active:bg-muted-surface border border-transparent hover:border-border-default rounded-lg px-1.5 sm:px-2.5 py-1.5 transition-colors duration-150 group flex-shrink-0 min-h-[44px]"
             aria-label="User Profile"
           >
             <div className="text-right hidden sm:block">
@@ -258,7 +260,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSyncDrawer }) => {
               src={user?.profile_photo_url}
               name={user?.full_name}
               size="sm"
-              className="w-8 h-8 sm:w-10 sm:h-10 ring-2 ring-accent-base/20 group-hover:ring-accent-base/40 transition-all duration-150 flex-shrink-0"
+              className="w-8 h-8 sm:w-10 sm:h-10 ring-2 ring-accent-base/20 group-hover:ring-accent-base/40 transition-colors duration-150 flex-shrink-0"
             />
           </button>
         </div>

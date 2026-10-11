@@ -74,11 +74,11 @@ export const InquiryForm: React.FC<InquiryFormProps> = ({ onSuccess }) => {
           <CheckCircle className="w-8 h-8 text-success-600" />
         </div>
         
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+        <h3 className="text-lg font-semibold text-text-primary mb-2">
           Inquiry Sent Successfully!
         </h3>
         
-        <p className="text-sm text-gray-600 mb-6">
+        <p className="text-sm text-text-muted mb-6">
           Thank you for contacting us. Our team will review your inquiry and get back to you soon.
         </p>
         

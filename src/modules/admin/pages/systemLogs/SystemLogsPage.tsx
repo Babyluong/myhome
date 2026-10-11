@@ -59,16 +59,16 @@ const categoryIcons: Record<HospitalLogCategory, React.ElementType> = {
 }
 
 const categoryColors: Record<HospitalLogCategory, string> = {
-  authentication: 'bg-blue-50 text-blue-700 border-blue-100',
-  user_activity: 'bg-purple-50 text-purple-700 border-purple-100',
-  administrative: 'bg-teal-50 text-teal-700 border-teal-100',
-  security: 'bg-amber-50 text-amber-700 border-amber-100',
-  system: 'bg-slate-50 text-slate-700 border-slate-100',
+  authentication: 'bg-blue-500/10 text-blue-700 border-blue-100',
+  user_activity: 'bg-indigo-500/10 text-purple-700 border-purple-100',
+  administrative: 'bg-accent-base/10 text-teal-700 border-teal-100',
+  security: 'bg-amber-500/10 text-amber-700 border-amber-100',
+  system: 'bg-subtle/50 text-text-secondary border-border-subtle',
 }
 
 const severityConfig: Record<HospitalLogSeverity, { color: string; icon: React.ElementType; bgColor: string }> = {
-  info: { color: 'text-blue-600', icon: Info, bgColor: 'bg-blue-50' },
-  warning: { color: 'text-amber-600', icon: AlertTriangle, bgColor: 'bg-amber-50' },
+  info: { color: 'text-blue-600', icon: Info, bgColor: 'bg-blue-500/10' },
+  warning: { color: 'text-amber-600', icon: AlertTriangle, bgColor: 'bg-amber-500/10' },
   error: { color: 'text-red-600', icon: AlertCircle, bgColor: 'bg-red-50' },
   critical: { color: 'text-red-800', icon: AlertCircle, bgColor: 'bg-red-100' },
 }
@@ -353,7 +353,7 @@ const SystemLogsPage: React.FC = () => {
           <nav className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
             <span className="text-slate-400">Monitoring</span>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-            <span className="text-slate-800 font-extrabold tracking-wide">MyWarrant Logs</span>
+            <span className="text-text-primary font-extrabold tracking-wide">MyWarrant Logs</span>
           </nav>
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-20">
@@ -365,7 +365,7 @@ const SystemLogsPage: React.FC = () => {
                 <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-teal-950 to-slate-900">
                   MyWarrant Activity Logs
                 </h1>
-                <p className="text-slate-500 font-semibold text-[11px] flex items-center gap-1.5">
+                <p className="text-text-muted font-semibold text-[11px] flex items-center gap-1.5">
                   <Sparkles className="w-3 h-3 text-teal-500 animate-pulse" />
                   {isSystemAdmin 
                     ? 'Monitor MyWarrant system activities and events across all hospitals'
@@ -379,7 +379,7 @@ const SystemLogsPage: React.FC = () => {
               <button 
                 onClick={fetchLogs} 
                 disabled={isLoading}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300 border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 active:scale-95 shadow-sm disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-colors duration-150 border border-border-default bg-surface text-text-secondary hover:bg-subtle/50 hover:border-border-default active:scale-95 shadow-sm disabled:opacity-50"
               >
                 <RefreshCw className={cn('w-3.5 h-3.5', isLoading && 'animate-spin')} />
                 Refresh
@@ -387,22 +387,22 @@ const SystemLogsPage: React.FC = () => {
               
               <div className="relative group">
                 <button 
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300 border border-teal-200/50 bg-gradient-to-r from-teal-500 to-emerald-600 text-white hover:from-teal-600 hover:to-emerald-700 active:scale-95 shadow-md shadow-teal-500/15"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-colors duration-150 border border-accent-base/20 bg-gradient-to-r from-teal-500 to-emerald-600 text-white hover:from-teal-600 hover:to-emerald-700 active:scale-95 shadow-md shadow-teal-500/15"
                 >
                   <Download className="w-3.5 h-3.5" />
                   Export Data
                 </button>
-                <div className="absolute right-0 top-full mt-2 w-44 bg-white rounded-2xl shadow-xl border border-slate-100/85 p-1.5 opacity-0 scale-95 origin-top-right invisible group-hover:opacity-100 group-hover:visible group-hover:scale-100 transition-all duration-200 z-30">
+                <div className="absolute right-0 top-full mt-2 w-44 bg-surface rounded-2xl shadow-xl border border-border-subtle p-1.5 opacity-0 scale-95 origin-top-right invisible group-hover:opacity-100 group-hover:visible group-hover:scale-100 transition-colors duration-150 z-30">
                   <button
                     onClick={() => handleExport('csv')}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-colors"
+                    className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-text-secondary hover:bg-subtle/50 rounded-xl transition-colors"
                   >
                     <FileSpreadsheet className="w-4 h-4 text-emerald-500" />
                     Export CSV
                   </button>
                   <button
                     onClick={() => handleExport('json')}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 rounded-xl transition-colors"
+                    className="w-full flex items-center gap-2 px-3 py-2 text-xs font-bold text-text-secondary hover:bg-subtle/50 rounded-xl transition-colors"
                   >
                     <FileJson className="w-4 h-4 text-teal-500" />
                     Export JSON
@@ -422,7 +422,7 @@ const SystemLogsPage: React.FC = () => {
             className="grid grid-cols-2 md:grid-cols-5 gap-4"
           >
             {/* Total */}
-            <div className="rounded-2xl p-5 bg-gradient-to-br from-slate-900 to-indigo-950 text-white shadow-lg border border-slate-800/50 hover:shadow-xl transition-all duration-300">
+            <div className="rounded-2xl p-5 bg-gradient-to-br from-slate-900 to-indigo-950 text-white shadow-lg border border-slate-800/50 hover:shadow-xl transition-colors duration-150">
               <div className="flex items-center gap-2.5 mb-3 opacity-80">
                 <FileText className="w-4 h-4" />
                 <span className="text-[10px] font-black uppercase tracking-wider">Total Logs</span>
@@ -437,10 +437,10 @@ const SystemLogsPage: React.FC = () => {
                 <div
                   key={category}
                   className={cn(
-                    'rounded-2xl p-5 cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-lg border',
+                    'rounded-2xl p-5 cursor-pointer transition-colors duration-150 hover:-translate-y-1 hover:shadow-lg border',
                     categoryFilter === category 
-                      ? 'ring-2 ring-teal-500 bg-white border-transparent shadow-md' 
-                      : 'bg-white border-slate-100 hover:border-slate-200'
+                      ? 'ring-2 ring-teal-500 bg-surface border-transparent shadow-md' 
+                      : 'bg-surface border-border-subtle hover:border-border-default'
                   )}
                   onClick={() => setCategoryFilter(categoryFilter === category ? 'all' : category)}
                 >
@@ -448,9 +448,9 @@ const SystemLogsPage: React.FC = () => {
                     <div className={cn("p-1.5 rounded-lg border", categoryColors[category as HospitalLogCategory])}>
                       <Icon className="w-4 h-4" />
                     </div>
-                    <span className="text-[10px] font-bold text-slate-500 capitalize tracking-tight">{category.replace('_', ' ')}</span>
+                    <span className="text-[10px] font-bold text-text-muted capitalize tracking-tight">{category.replace('_', ' ')}</span>
                   </div>
-                  <p className="text-3xl font-black text-slate-900 tracking-tight">{count}</p>
+                  <p className="text-3xl font-black text-text-primary tracking-tight">{count}</p>
                 </div>
               )
             })}
@@ -463,7 +463,7 @@ const SystemLogsPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            className="flex flex-wrap items-center gap-3 p-4 bg-white rounded-2xl border border-slate-100 shadow-sm"
+            className="flex flex-wrap items-center gap-3 p-4 bg-surface rounded-2xl border border-border-subtle shadow-sm"
           >
             <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 pl-1">Severity (Last 7 days):</span>
             <div className="flex flex-wrap items-center gap-2">
@@ -475,15 +475,15 @@ const SystemLogsPage: React.FC = () => {
                     key={severity}
                     onClick={() => setSeverityFilter(severityFilter === severity ? 'all' : severity)}
                     className={cn(
-                      'flex items-center gap-2 px-3 py-1.5 rounded-xl transition-all duration-200 border',
+                      'flex items-center gap-2 px-3 py-1.5 rounded-xl transition-colors duration-150 border',
                       severityFilter === severity 
                         ? 'bg-slate-900 border-slate-900 text-white shadow-sm' 
-                        : 'bg-white border-slate-100 text-slate-600 hover:bg-slate-50 hover:border-slate-200'
+                        : 'bg-surface border-border-subtle text-text-muted hover:bg-subtle/50 hover:border-border-default'
                     )}
                   >
                     <Icon className={cn('w-3.5 h-3.5', severityFilter === severity ? 'text-white' : config.color)} />
                     <span className="text-xs font-semibold capitalize">
-                      {severity}: <span className={cn("font-bold", severityFilter === severity ? 'text-white' : 'text-slate-800')}>{count}</span>
+                      {severity}: <span className={cn("font-bold", severityFilter === severity ? 'text-white' : 'text-text-primary')}>{count}</span>
                     </span>
                   </button>
                 )
@@ -497,14 +497,14 @@ const SystemLogsPage: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-white rounded-2xl border border-slate-150 p-6 shadow-sm space-y-6"
+          className="bg-surface rounded-2xl border border-slate-150 p-6 shadow-sm space-y-6"
         >
-          <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+          <div className="flex items-center justify-between pb-4 border-b border-border-subtle">
             <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-slate-50 text-slate-600 rounded-lg">
+              <div className="p-1.5 bg-subtle/50 text-text-muted rounded-lg">
                 <Filter className="w-4 h-4" />
               </div>
-              <span className="text-xs font-black uppercase tracking-wider text-slate-800">Filter Controls</span>
+              <span className="text-xs font-black uppercase tracking-wider text-text-primary">Filter Controls</span>
             </div>
             <button 
               onClick={resetFilters}
@@ -528,7 +528,7 @@ const SystemLogsPage: React.FC = () => {
                     setSearch(e.target.value)
                     setCurrentPage(1)
                   }}
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-800 bg-white placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10 transition-all duration-200"
+                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border-default text-sm font-semibold text-text-primary bg-surface placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10 transition-colors duration-150"
                 />
               </div>
             </div>
@@ -544,7 +544,7 @@ const SystemLogsPage: React.FC = () => {
                       setHospitalFilter(e.target.value)
                       setCurrentPage(1)
                     }}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-800 bg-white focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10 appearance-none transition-all duration-200"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-border-default text-sm font-semibold text-text-primary bg-surface focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10 appearance-none transition-colors duration-150"
                   >
                     <option value="all">All Hospitals</option>
                     {hospitals.map((hospital) => (
@@ -566,7 +566,7 @@ const SystemLogsPage: React.FC = () => {
                     setCategoryFilter(e.target.value)
                     setCurrentPage(1)
                   }}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-800 bg-white focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10 appearance-none transition-all duration-200"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-border-default text-sm font-semibold text-text-primary bg-surface focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10 appearance-none transition-colors duration-150"
                 >
                   <option value="all">All Categories</option>
                   {Object.entries(HOSPITAL_LOG_CATEGORY).map(([key, value]) => (
@@ -587,7 +587,7 @@ const SystemLogsPage: React.FC = () => {
                     setSeverityFilter(e.target.value)
                     setCurrentPage(1)
                   }}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-800 bg-white focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10 appearance-none transition-all duration-200"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-border-default text-sm font-semibold text-text-primary bg-surface focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10 appearance-none transition-colors duration-150"
                 >
                   <option value="all">All Severities</option>
                   {Object.entries(HOSPITAL_LOG_SEVERITY).map(([key, value]) => (
@@ -608,7 +608,7 @@ const SystemLogsPage: React.FC = () => {
                     setUserFilter(e.target.value)
                     setCurrentPage(1)
                   }}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-800 bg-white focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10 appearance-none transition-all duration-200"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-border-default text-sm font-semibold text-text-primary bg-surface focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10 appearance-none transition-colors duration-150"
                 >
                   <option value="all">All Users</option>
                   {users.map((user) => (
@@ -630,7 +630,7 @@ const SystemLogsPage: React.FC = () => {
                       setModuleFilter(e.target.value)
                       setCurrentPage(1)
                     }}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-800 bg-white focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10 appearance-none transition-all duration-200"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-border-default text-sm font-semibold text-text-primary bg-surface focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10 appearance-none transition-colors duration-150"
                   >
                     <option value="all">All Modules</option>
                     {modules.map((module) => (
@@ -653,7 +653,7 @@ const SystemLogsPage: React.FC = () => {
                       setActionFilter(e.target.value)
                       setCurrentPage(1)
                     }}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-800 bg-white focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10 appearance-none transition-all duration-200"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-border-default text-sm font-semibold text-text-primary bg-surface focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10 appearance-none transition-colors duration-150"
                   >
                     <option value="all">All Actions</option>
                     {actions.map((action) => (
@@ -676,7 +676,7 @@ const SystemLogsPage: React.FC = () => {
                     setStartDate(e.target.value)
                     setCurrentPage(1)
                   }}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-800 bg-white focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10 appearance-none transition-all duration-200"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-border-default text-sm font-semibold text-text-primary bg-surface focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10 appearance-none transition-colors duration-150"
                 />
               </div>
             </div>
@@ -692,7 +692,7 @@ const SystemLogsPage: React.FC = () => {
                     setEndDate(e.target.value)
                     setCurrentPage(1)
                   }}
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-800 bg-white focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10 appearance-none transition-all duration-200"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-border-default text-sm font-semibold text-text-primary bg-surface focus:outline-none focus:border-teal-500 focus:ring-2 focus:ring-teal-500/10 appearance-none transition-colors duration-150"
                 />
               </div>
             </div>
@@ -704,7 +704,7 @@ const SystemLogsPage: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
-          className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm"
+          className="bg-surface rounded-2xl border border-border-subtle overflow-hidden shadow-sm"
         >
           {isLoading ? (
             <div className="p-12 flex items-center justify-center">
@@ -712,10 +712,10 @@ const SystemLogsPage: React.FC = () => {
             </div>
           ) : logs.length === 0 ? (
             <div className="p-16 text-center">
-              <div className="w-16 h-16 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-slate-100">
+              <div className="w-16 h-16 bg-subtle/50 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-border-subtle">
                 <FileText className="w-6 h-6" />
               </div>
-              <h3 className="text-sm font-bold text-slate-800 mb-1">No logs found</h3>
+              <h3 className="text-sm font-bold text-text-primary mb-1">No logs found</h3>
               <p className="text-xs font-semibold text-slate-400">Try adjusting your filters or date range</p>
             </div>
           ) : (
@@ -724,7 +724,7 @@ const SystemLogsPage: React.FC = () => {
               <div className="hidden md:block overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-slate-100 bg-slate-50/50 text-[10px] font-black uppercase tracking-wider text-slate-400">
+                    <tr className="border-b border-border-subtle bg-subtle/50 text-[10px] font-black uppercase tracking-wider text-slate-400">
                       <th className="py-4.5 px-6">Date & Time</th>
                       <th className="py-4.5 px-6">User / Operator</th>
                       <th className="py-4.5 px-6">Action / Event</th>
@@ -734,7 +734,7 @@ const SystemLogsPage: React.FC = () => {
                       <th className="py-4.5 px-6 text-right">Details</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="divide-y divide-border-subtle">
                     {logs.map((log) => {
                       const CategoryIcon = categoryIcons[log.category]
                       const severityConf = severityConfig[log.severity]
@@ -743,12 +743,12 @@ const SystemLogsPage: React.FC = () => {
                       return (
                         <tr 
                           key={log.id} 
-                          className="hover:bg-slate-50/30 transition-colors group cursor-pointer text-sm"
+                          className="hover:bg-subtle/50 transition-colors group cursor-pointer text-sm"
                           onClick={() => handleViewLog(log)}
                         >
                           {/* Timestamp Column */}
                           <td className="py-4.5 px-6 whitespace-nowrap">
-                            <div className="font-bold text-slate-700">{formatDateTime(log.created_at)}</div>
+                            <div className="font-bold text-text-secondary">{formatDateTime(log.created_at)}</div>
                             {log.ip_address && (
                               <div className="text-[10px] text-slate-400 font-mono mt-0.5">IP: {log.ip_address}</div>
                             )}
@@ -758,10 +758,10 @@ const SystemLogsPage: React.FC = () => {
                           <td className="py-4.5 px-6 whitespace-nowrap">
                             {log.user ? (
                               <div className="flex items-center gap-2">
-                                <div className="w-7 h-7 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center">
-                                  <User className="w-3.5 h-3.5 text-slate-500" />
+                                <div className="w-7 h-7 rounded-full bg-subtle border border-border-default flex items-center justify-center">
+                                  <User className="w-3.5 h-3.5 text-text-muted" />
                                 </div>
-                                <div className="font-extrabold text-slate-800" title={log.user.full_name}>
+                                <div className="font-extrabold text-text-primary" title={log.user.full_name}>
                                   {log.user.full_name}
                                 </div>
                               </div>
@@ -772,10 +772,10 @@ const SystemLogsPage: React.FC = () => {
 
                           {/* Action & Description Column */}
                           <td className="py-4.5 px-6 max-w-[280px]">
-                            <div className="font-black text-slate-900 leading-snug group-hover:text-teal-650 transition-colors capitalize">
+                            <div className="font-black text-text-primary leading-snug group-hover:text-teal-650 transition-colors capitalize">
                               {log.action.replace(/_/g, ' ')}
                             </div>
-                            <div className="text-xs text-slate-500 font-semibold truncate mt-1" title={log.description}>
+                            <div className="text-xs text-text-muted font-semibold truncate mt-1" title={log.description}>
                               {log.description}
                             </div>
                           </td>
@@ -784,12 +784,12 @@ const SystemLogsPage: React.FC = () => {
                           <td className="py-4.5 px-6 whitespace-nowrap">
                             {log.entity_type ? (
                               <div className="flex flex-col">
-                                <span className="inline-flex items-center w-fit px-2 py-0.5 rounded-md text-[10px] font-bold bg-teal-50 text-teal-700 border border-teal-100 capitalize">
+                                <span className="inline-flex items-center w-fit px-2 py-0.5 rounded-md text-[10px] font-bold bg-accent-base/10 text-teal-700 border border-teal-100 capitalize">
                                   {log.entity_type.replace(/_/g, ' ')}
                                 </span>
                                 {log.entity_id && (
                                   <span className="text-[10px] font-mono text-slate-400/90 mt-1">
-                                    ID: <span className="font-semibold text-slate-500">{log.entity_id.substring(0, 8)}...</span>
+                                    ID: <span className="font-semibold text-text-muted">{log.entity_id.substring(0, 8)}...</span>
                                   </span>
                                 )}
                               </div>
@@ -817,8 +817,8 @@ const SystemLogsPage: React.FC = () => {
                               "inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider border",
                               log.severity === 'critical' ? 'bg-red-50 text-red-700 border-red-200' :
                               log.severity === 'error' ? 'bg-red-50 text-red-650 border-red-150' :
-                              log.severity === 'warning' ? 'bg-amber-50 text-amber-600 border-amber-150' :
-                              'bg-slate-50 text-slate-650 border-slate-150'
+                              log.severity === 'warning' ? 'bg-amber-500/10 text-amber-600 border-amber-150' :
+                              'bg-subtle/50 text-slate-650 border-slate-150'
                             )}>
                               {log.severity}
                             </span>
@@ -828,7 +828,7 @@ const SystemLogsPage: React.FC = () => {
                           <td className="py-4.5 px-6 text-right whitespace-nowrap" onClick={(e) => e.stopPropagation()}>
                             <button
                               onClick={() => handleViewLog(log)}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider text-teal-600 hover:text-teal-700 hover:bg-teal-50 border border-transparent hover:border-teal-100 transition-all active:scale-95"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider text-teal-600 hover:text-teal-700 hover:bg-accent-base/10 border border-transparent hover:border-teal-100 transition-colors active:scale-95"
                             >
                               <Eye className="w-3.5 h-3.5" />
                               View
@@ -842,25 +842,25 @@ const SystemLogsPage: React.FC = () => {
               </div>
 
               {/* Mobile View: High-End Native Activity Cards (Zero Horizontal Scroll!) */}
-              <div className="md:hidden divide-y divide-slate-100">
+              <div className="md:hidden divide-y divide-border-subtle">
                 {logs.map((log) => {
                   const CategoryIcon = categoryIcons[log.category]
                   return (
                     <div 
                       key={log.id}
                       onClick={() => handleViewLog(log)}
-                      className="p-4 space-y-2.5 hover:bg-slate-50/50 transition-colors active:bg-slate-100/50 cursor-pointer"
+                      className="p-4 space-y-2.5 hover:bg-subtle/50 transition-colors active:bg-subtle cursor-pointer"
                     >
                       <div className="flex items-center justify-between gap-2">
-                        <span className="font-mono text-xs text-slate-500 font-bold">
+                        <span className="font-mono text-xs text-text-muted font-bold">
                           {formatDateTime(log.created_at)}
                         </span>
                         <span className={cn(
                           "inline-flex items-center px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider border",
                           log.severity === 'critical' ? 'bg-red-50 text-red-700 border-red-200' :
                           log.severity === 'error' ? 'bg-red-50 text-red-650 border-red-150' :
-                          log.severity === 'warning' ? 'bg-amber-50 text-amber-600 border-amber-150' :
-                          'bg-slate-50 text-slate-650 border-slate-150'
+                          log.severity === 'warning' ? 'bg-amber-500/10 text-amber-600 border-amber-150' :
+                          'bg-subtle/50 text-slate-650 border-slate-150'
                         )}>
                           {log.severity}
                         </span>
@@ -868,18 +868,18 @@ const SystemLogsPage: React.FC = () => {
 
                       <div>
                         <div className="flex items-center gap-2 mb-1">
-                          <div className="w-5 h-5 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center flex-shrink-0">
-                            <User className="w-3 h-3 text-slate-500" />
+                          <div className="w-5 h-5 rounded-full bg-subtle border border-border-default flex items-center justify-center flex-shrink-0">
+                            <User className="w-3 h-3 text-text-muted" />
                           </div>
-                          <span className="font-extrabold text-slate-800 text-xs truncate">
+                          <span className="font-extrabold text-text-primary text-xs truncate">
                             {log.user?.full_name || 'System Operator'}
                           </span>
                         </div>
-                        <h4 className="font-black text-slate-900 text-xs capitalize leading-tight">
+                        <h4 className="font-black text-text-primary text-xs capitalize leading-tight">
                           {log.action.replace(/_/g, ' ')}
                         </h4>
                         {log.description && (
-                          <p className="text-xs text-slate-500 line-clamp-2 mt-1 font-medium">
+                          <p className="text-xs text-text-muted line-clamp-2 mt-1 font-medium">
                             {log.description}
                           </p>
                         )}
@@ -895,7 +895,7 @@ const SystemLogsPage: React.FC = () => {
                             {log.category.replace('_', ' ')}
                           </span>
                           {log.entity_type && (
-                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-slate-100 text-slate-700 border border-slate-200 capitalize">
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-subtle text-text-secondary border border-border-default capitalize">
                               {log.entity_type.replace(/_/g, ' ')}
                             </span>
                           )}
@@ -906,7 +906,7 @@ const SystemLogsPage: React.FC = () => {
                             e.stopPropagation()
                             handleViewLog(log)
                           }}
-                          className="px-2.5 py-1 text-xs font-black uppercase tracking-wider text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 rounded-lg transition-all flex items-center gap-1"
+                          className="px-2.5 py-1 text-xs font-black uppercase tracking-wider text-teal-700 bg-accent-base/10 hover:bg-teal-100 border border-accent-base/20 rounded-lg transition-colors flex items-center gap-1"
                         >
                           <Eye className="w-3 h-3" />
                           <span>View</span>
@@ -918,7 +918,7 @@ const SystemLogsPage: React.FC = () => {
               </div>
 
               {/* Pagination */}
-              <div className="border-t border-slate-100 p-4">
+              <div className="border-t border-border-subtle p-4">
                 <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}
@@ -948,7 +948,7 @@ const SystemLogsPage: React.FC = () => {
           >
             <div className="space-y-6">
               {/* Header Info */}
-              <div className="flex items-start gap-4 pb-5 border-b border-slate-100">
+              <div className="flex items-start gap-4 pb-5 border-b border-border-subtle">
                 <div
                   className={cn(
                     'w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 border',
@@ -968,8 +968,8 @@ const SystemLogsPage: React.FC = () => {
                       "inline-flex items-center px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider border",
                       selectedLog.severity === 'critical' ? 'bg-red-50 text-red-750 border-red-200' :
                       selectedLog.severity === 'error' ? 'bg-red-50 text-red-650 border-red-150' :
-                      selectedLog.severity === 'warning' ? 'bg-amber-50 text-amber-600 border-amber-150' :
-                      'bg-slate-50 text-slate-600 border-slate-150'
+                      selectedLog.severity === 'warning' ? 'bg-amber-500/10 text-amber-600 border-amber-150' :
+                      'bg-subtle/50 text-text-muted border-slate-150'
                     )}>
                       {selectedLog.severity}
                     </span>
@@ -983,10 +983,10 @@ const SystemLogsPage: React.FC = () => {
                       {selectedLog.category.replace('_', ' ')}
                     </span>
                   </div>
-                  <h3 className="text-base font-black text-slate-800 mb-1 leading-snug">
+                  <h3 className="text-base font-black text-text-primary mb-1 leading-snug">
                     {selectedLog.action.replace(/_/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())}
                   </h3>
-                  <p className="text-sm font-semibold text-slate-500 leading-relaxed">{selectedLog.description}</p>
+                  <p className="text-sm font-semibold text-text-muted leading-relaxed">{selectedLog.description}</p>
                 </div>
               </div>
 
@@ -994,55 +994,55 @@ const SystemLogsPage: React.FC = () => {
               <div className="grid grid-cols-2 gap-x-6 gap-y-4">
                 <div>
                   <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">Timestamp</label>
-                  <p className="text-sm font-extrabold text-slate-800">{formatDateTime(selectedLog.created_at)}</p>
+                  <p className="text-sm font-extrabold text-text-primary">{formatDateTime(selectedLog.created_at)}</p>
                 </div>
                 {selectedLog.hospital && (
                   <div>
                     <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">Hospital</label>
-                    <p className="text-sm font-extrabold text-slate-800">{selectedLog.hospital.hospital_name}</p>
+                    <p className="text-sm font-extrabold text-text-primary">{selectedLog.hospital.hospital_name}</p>
                   </div>
                 )}
                 {selectedLog.user && (
                   <div>
                     <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">User</label>
-                    <p className="text-sm font-extrabold text-slate-800">{selectedLog.user.full_name}</p>
+                    <p className="text-sm font-extrabold text-text-primary">{selectedLog.user.full_name}</p>
                   </div>
                 )}
                 {selectedLog.module && (
                   <div>
                     <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">Module</label>
-                    <p className="text-sm font-extrabold text-slate-800">{selectedLog.module}</p>
+                    <p className="text-sm font-extrabold text-text-primary">{selectedLog.module}</p>
                   </div>
                 )}
                 {selectedLog.ip_address && (
                   <div>
                     <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">IP Address</label>
-                    <p className="text-sm font-mono font-extrabold text-slate-800">{selectedLog.ip_address}</p>
+                    <p className="text-sm font-mono font-extrabold text-text-primary">{selectedLog.ip_address}</p>
                   </div>
                 )}
                 {selectedLog.user_agent && (
                   <div className="col-span-2">
                     <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">User Agent</label>
-                    <p className="text-xs font-semibold text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100 leading-normal">{selectedLog.user_agent}</p>
+                    <p className="text-xs font-semibold text-text-muted bg-subtle/50 p-2.5 rounded-xl border border-border-subtle leading-normal">{selectedLog.user_agent}</p>
                   </div>
                 )}
                 {selectedLog.entity_type && (
                   <div>
                     <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">Entity Type</label>
-                    <p className="text-sm font-extrabold text-slate-800">{selectedLog.entity_type}</p>
+                    <p className="text-sm font-extrabold text-text-primary">{selectedLog.entity_type}</p>
                   </div>
                 )}
                 {selectedLog.entity_id && (
                   <div>
                     <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-1">Entity ID</label>
-                    <p className="text-sm font-mono font-extrabold text-slate-800 text-xs truncate" title={selectedLog.entity_id}>{selectedLog.entity_id}</p>
+                    <p className="text-sm font-mono font-extrabold text-text-primary text-xs truncate" title={selectedLog.entity_id}>{selectedLog.entity_id}</p>
                   </div>
                 )}
               </div>
 
               {/* Metadata */}
               {selectedLog.metadata && Object.keys(selectedLog.metadata).length > 0 && (
-                <div className="pt-2 border-t border-slate-100">
+                <div className="pt-2 border-t border-border-subtle">
                   <label className="text-[10px] font-black uppercase tracking-wider text-slate-400 block mb-2">Metadata Details</label>
                   <pre className="bg-slate-900 text-slate-200 p-4 rounded-xl text-xs overflow-auto max-h-48 font-mono leading-normal shadow-inner">
                     {JSON.stringify(selectedLog.metadata, null, 2)}

@@ -230,7 +230,7 @@ export const KunciLogPage: React.FC = () => {
         </div>
         <Button
           onClick={handleExportCSV}
-          className="min-h-[44px] border-slate-200 text-slate-700 bg-white hover:bg-slate-50 rounded-xl border font-semibold flex items-center gap-2 px-4 py-2.5"
+          className="min-h-[44px] border-border-default text-text-secondary bg-surface hover:bg-subtle/50 rounded-xl border font-semibold flex items-center gap-2 px-4 py-2.5"
         >
           <Download className="w-4 h-4" />
           Export CSV
@@ -238,7 +238,7 @@ export const KunciLogPage: React.FC = () => {
       </div>
 
       {/* Filter panel */}
-      <Card className="rounded-xl shadow-soft bg-white border border-slate-100 p-4">
+      <Card className="rounded-xl shadow-elevation-1 bg-surface border border-border-subtle p-4">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           <div className="md:col-span-2 relative">
             <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
@@ -247,7 +247,7 @@ export const KunciLogPage: React.FC = () => {
               placeholder="Search key, borrower, remarks..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 pl-9 pr-4 py-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
+              className="w-full rounded-xl border border-border-default pl-9 pr-4 py-2.5 text-sm bg-subtle/50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-surface transition-colors"
             />
           </div>
 
@@ -255,7 +255,7 @@ export const KunciLogPage: React.FC = () => {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
+              className="w-full rounded-xl border border-border-default px-3 py-2.5 text-sm bg-subtle/50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-surface transition-colors"
             >
               <option value="">All Transactions</option>
               <option value="active">Currently Borrowed</option>
@@ -269,7 +269,7 @@ export const KunciLogPage: React.FC = () => {
               type="date"
               value={startDate}
               onChange={(e) => setStartDate(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
+              className="w-full rounded-xl border border-border-default px-3 py-2 text-sm bg-subtle/50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-surface transition-colors"
               placeholder="Start Date"
             />
           </div>
@@ -279,7 +279,7 @@ export const KunciLogPage: React.FC = () => {
               type="date"
               value={endDate}
               onChange={(e) => setEndDate(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
+              className="w-full rounded-xl border border-border-default px-3 py-2 text-sm bg-subtle/50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-surface transition-colors"
               placeholder="End Date"
             />
           </div>
@@ -287,7 +287,7 @@ export const KunciLogPage: React.FC = () => {
       </Card>
 
       {/* Logs Table Card */}
-      <Card className="rounded-2xl shadow-soft bg-white border border-slate-200">
+      <Card className="rounded-2xl shadow-elevation-1 bg-surface border border-border-default">
         <CardContent className="p-0">
           {loading ? (
             <div className="p-4 sm:p-6 space-y-4">
@@ -309,8 +309,8 @@ export const KunciLogPage: React.FC = () => {
             <>
               {/* Desktop View: Full Table */}
               <div className="hidden md:block overflow-x-auto">
-                <table className="w-full text-left text-sm text-slate-600">
-                  <thead className="bg-slate-50 text-slate-500 font-semibold border-b border-slate-100">
+                <table className="w-full text-left text-sm text-text-muted">
+                  <thead className="bg-subtle/50 text-text-muted font-semibold border-b border-border-subtle">
                     <tr>
                       <th className="p-4">Checkout Date & Time</th>
                       <th className="p-4">Key Details</th>
@@ -323,7 +323,7 @@ export const KunciLogPage: React.FC = () => {
                       <th className="p-4 text-right">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="divide-y divide-border-subtle">
                     {filteredLogs.map((log) => {
                       const active = !log.tarikh_masa_pulang
                       const overdue = active && new Date(log.jangka_masa_pulang).getTime() < new Date().getTime()
@@ -334,19 +334,19 @@ export const KunciLogPage: React.FC = () => {
                       const penerima = log.pegawai_penerima_id ? (log.pegawai_penerima?.full_name || borrowers.find(b => b.id === log.pegawai_penerima_id)?.full_name) : '-'
 
                       return (
-                        <tr key={log.id} className="hover:bg-slate-50/50 transition-colors">
-                          <td className="p-4 font-mono text-xs text-slate-500">
+                        <tr key={log.id} className="hover:bg-subtle/50 transition-colors">
+                          <td className="p-4 font-mono text-xs text-text-muted">
                             {formatDateTime(log.tarikh_masa_ambil)}
                           </td>
                           <td className="p-4">
-                            <div className="font-semibold text-slate-800">{log.kunci?.nama_kunci}</div>
+                            <div className="font-semibold text-text-primary">{log.kunci?.nama_kunci}</div>
                             <div className="text-xs text-slate-400 font-mono mt-0.5">{log.kunci?.kod_kunci}</div>
                           </td>
-                          <td className="p-4 font-medium text-slate-800">
+                          <td className="p-4 font-medium text-text-primary">
                             {borrower}
                           </td>
                           <td className="p-4 text-xs">
-                            <div className="text-slate-700">
+                            <div className="text-text-secondary">
                               Issuer: {penyerah}
                             </div>
                             {saksi && (
@@ -358,7 +358,7 @@ export const KunciLogPage: React.FC = () => {
                           <td className="p-4">
                             {active ? (
                               <div className="space-y-1">
-                                <Badge className="border-amber-200 text-amber-700 bg-amber-50 text-[9px] font-bold">
+                                <Badge className="border-amber-500/20 text-amber-700 bg-amber-500/10 text-[9px] font-bold">
                                   IN USE / BORROWED
                                 </Badge>
                                 {overdue && (
@@ -370,18 +370,18 @@ export const KunciLogPage: React.FC = () => {
                                 )}
                               </div>
                             ) : (
-                              <span className="font-mono text-xs text-slate-500">
+                              <span className="font-mono text-xs text-text-muted">
                                 {formatDateTime(log.tarikh_masa_pulang)}
                               </span>
                             )}
                           </td>
-                          <td className="p-4 text-slate-700 text-xs">
+                          <td className="p-4 text-text-secondary text-xs">
                             {penerima}
                           </td>
                           <td className="p-4 font-mono text-xs">
                             {formatDuration(log.duration_seconds)}
                           </td>
-                          <td className="p-4 max-w-xs text-xs text-slate-500 truncate" title={log.catatan_penggunaan || ''}>
+                          <td className="p-4 max-w-xs text-xs text-text-muted truncate" title={log.catatan_penggunaan || ''}>
                             {log.catatan_penggunaan || <span className="text-slate-300">No incident report</span>}
                             {log.keadaan_kunci === 'damaged' && (
                               <div className="text-rose-600 font-bold text-[10px] mt-0.5">
@@ -409,7 +409,7 @@ export const KunciLogPage: React.FC = () => {
                                   setActiveLogToReturn(log)
                                   setReturnModalOpen(true)
                                 }}
-                                className="text-xs border-amber-500 text-amber-600 hover:bg-amber-50 px-3 py-1.5 rounded-lg border font-bold"
+                                className="text-xs border-amber-500 text-amber-600 hover:bg-amber-500/10 px-3 py-1.5 rounded-lg border font-bold"
                               >
                                 Check-In
                               </Button>
@@ -425,7 +425,7 @@ export const KunciLogPage: React.FC = () => {
               </div>
 
               {/* Mobile View: High-End Native Cards (Zero Horizontal Scroll!) */}
-              <div className="md:hidden divide-y divide-slate-100">
+              <div className="md:hidden divide-y divide-border-subtle">
                 {filteredLogs.map((log) => {
                   const active = !log.tarikh_masa_pulang
                   const overdue = active && new Date(log.jangka_masa_pulang).getTime() < new Date().getTime()
@@ -439,20 +439,20 @@ export const KunciLogPage: React.FC = () => {
                     <div key={log.id} className="p-4 space-y-3">
                       <div className="flex items-start justify-between gap-2">
                         <div>
-                          <span className="font-mono font-bold text-slate-500 text-xs block">
+                          <span className="font-mono font-bold text-text-muted text-xs block">
                             {log.kunci?.kod_kunci}
                           </span>
-                          <h4 className="font-extrabold text-slate-900 text-sm">
+                          <h4 className="font-extrabold text-text-primary text-sm">
                             {log.kunci?.nama_kunci}
                           </h4>
                         </div>
                         <div className="flex flex-col items-end gap-1 flex-shrink-0">
                           {active ? (
-                            <Badge className="border-amber-200 text-amber-700 bg-amber-50 text-[9px] font-bold">
+                            <Badge className="border-amber-500/20 text-amber-700 bg-amber-500/10 text-[9px] font-bold">
                               BORROWED
                             </Badge>
                           ) : (
-                            <Badge className="border-emerald-200 text-emerald-700 bg-emerald-50 text-[9px] font-bold">
+                            <Badge className="border-emerald-500/20 text-emerald-700 bg-emerald-500/10 text-[9px] font-bold">
                               RETURNED
                             </Badge>
                           )}
@@ -464,44 +464,44 @@ export const KunciLogPage: React.FC = () => {
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50/70 p-3 rounded-xl border border-slate-100">
+                      <div className="grid grid-cols-2 gap-2 text-xs bg-subtle/50 p-3 rounded-xl border border-border-subtle">
                         <div>
-                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                          <span className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                             Borrower
                           </span>
-                          <span className="font-semibold text-slate-800 truncate block">
+                          <span className="font-semibold text-text-primary truncate block">
                             {borrower}
                           </span>
                         </div>
                         <div>
-                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                          <span className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                             Duration
                           </span>
-                          <span className="font-mono font-bold text-slate-700">
+                          <span className="font-mono font-bold text-text-secondary">
                             {formatDuration(log.duration_seconds)}
                           </span>
                         </div>
                         <div>
-                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                          <span className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                             Checkout
                           </span>
-                          <span className="font-mono text-[11px] text-slate-600 block">
+                          <span className="font-mono text-[11px] text-text-muted block">
                             {formatDateTime(log.tarikh_masa_ambil)}
                           </span>
                         </div>
                         <div>
-                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                          <span className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                             Return
                           </span>
-                          <span className="font-mono text-[11px] text-slate-600 block">
+                          <span className="font-mono text-[11px] text-text-muted block">
                             {log.tarikh_masa_pulang ? formatDateTime(log.tarikh_masa_pulang) : '-'}
                           </span>
                         </div>
-                        <div className="col-span-2 pt-1 border-t border-slate-200/60">
-                          <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+                        <div className="col-span-2 pt-1 border-t border-border-default">
+                          <span className="text-[9px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                             Officers
                           </span>
-                          <span className="text-slate-600 text-[11px] block">
+                          <span className="text-text-muted text-[11px] block">
                             Out: <strong>{penyerah}</strong>
                             {penerima !== '-' && <span> • In: <strong>{penerima}</strong></span>}
                             {saksi && <span className="italic text-slate-400"> (Witness: {saksi})</span>}
@@ -510,9 +510,9 @@ export const KunciLogPage: React.FC = () => {
                       </div>
 
                       {(log.catatan_penggunaan || log.keadaan_kunci === 'damaged' || log.keadaan_mangga === 'damaged' || log.keadaan_mangga === 'loose') && (
-                        <div className="p-2 bg-amber-50/60 border border-amber-200/70 rounded-lg text-xs space-y-0.5">
+                        <div className="p-2 bg-amber-500/10 border border-amber-500/20 rounded-lg text-xs space-y-0.5">
                           {log.catatan_penggunaan && (
-                            <p className="text-slate-700 italic">"{log.catatan_penggunaan}"</p>
+                            <p className="text-text-secondary italic">"{log.catatan_penggunaan}"</p>
                           )}
                           {log.keadaan_kunci === 'damaged' && (
                             <span className="text-rose-600 font-bold text-[10px] block">⚠️ Damaged Key</span>
@@ -535,7 +535,7 @@ export const KunciLogPage: React.FC = () => {
                             setActiveLogToReturn(log)
                             setReturnModalOpen(true)
                           }}
-                          className="w-full min-h-[44px] text-xs border-amber-500 bg-amber-50 text-amber-700 hover:bg-amber-100 py-2 rounded-xl border font-bold flex items-center justify-center"
+                          className="w-full min-h-[44px] text-xs border-amber-500 bg-amber-500/10 text-amber-700 hover:bg-amber-100 py-2 rounded-xl border font-bold flex items-center justify-center"
                         >
                           Check-In
                         </Button>
@@ -558,24 +558,24 @@ export const KunciLogPage: React.FC = () => {
       >
         <form onSubmit={handleReturnSubmit} className="space-y-4 pt-2">
           {activeLogToReturn && (
-            <div className="bg-slate-50 rounded-xl p-3 border border-slate-100 text-xs space-y-1 text-slate-600">
-              <div>Key: <strong className="text-slate-800">{activeLogToReturn.kunci?.nama_kunci} ({activeLogToReturn.kunci?.kod_kunci})</strong></div>
-              <div>Borrower: <strong className="text-slate-800">{activeLogToReturn.peminjam?.full_name || borrowers.find(b => b.id === activeLogToReturn.peminjam_id)?.full_name}</strong></div>
-              <div>Borrowed Time: <strong className="text-slate-800">{formatDateTime(activeLogToReturn.tarikh_masa_ambil)}</strong></div>
-              <div>Return Time (Record): <strong className="text-slate-800">{formatDateTime(new Date(returnDateTime).toISOString())}</strong></div>
+            <div className="bg-subtle/50 rounded-xl p-3 border border-border-subtle text-xs space-y-1 text-text-muted">
+              <div>Key: <strong className="text-text-primary">{activeLogToReturn.kunci?.nama_kunci} ({activeLogToReturn.kunci?.kod_kunci})</strong></div>
+              <div>Borrower: <strong className="text-text-primary">{activeLogToReturn.peminjam?.full_name || borrowers.find(b => b.id === activeLogToReturn.peminjam_id)?.full_name}</strong></div>
+              <div>Borrowed Time: <strong className="text-text-primary">{formatDateTime(activeLogToReturn.tarikh_masa_ambil)}</strong></div>
+              <div>Return Time (Record): <strong className="text-text-primary">{formatDateTime(new Date(returnDateTime).toISOString())}</strong></div>
             </div>
           )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
+              <label className="block text-xs font-semibold text-text-muted mb-1.5 uppercase">
                 Physical Key Condition *
               </label>
               <select
                 value={keyCondition}
                 onChange={(e) => setKeyCondition(e.target.value as any)}
                 required
-                className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
+                className="w-full rounded-xl border border-border-default p-2.5 text-sm bg-subtle/50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-surface transition-colors"
               >
                 <option value="good">Good / Intact (No Damage)</option>
                 <option value="damaged">Damaged / Bent / Broken</option>
@@ -583,14 +583,14 @@ export const KunciLogPage: React.FC = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
+              <label className="block text-xs font-semibold text-text-muted mb-1.5 uppercase">
                 Padlock & Door Lock Condition *
               </label>
               <select
                 value={lockCondition}
                 onChange={(e) => setLockCondition(e.target.value as any)}
                 required
-                className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
+                className="w-full rounded-xl border border-border-default p-2.5 text-sm bg-subtle/50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-surface transition-colors"
               >
                 <option value="good">Secure / Fully Functional</option>
                 <option value="loose">Loose / Wobbly Screws</option>
@@ -600,7 +600,7 @@ export const KunciLogPage: React.FC = () => {
           </div>
 
           <div className="mt-2">
-            <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
+            <label className="block text-xs font-semibold text-text-muted mb-1.5 uppercase">
               Return Date & Time *
             </label>
             <input
@@ -608,12 +608,12 @@ export const KunciLogPage: React.FC = () => {
               required
               value={returnDateTime}
               onChange={(e) => setReturnDateTime(e.target.value)}
-              className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all"
+              className="w-full rounded-xl border border-border-default p-2.5 text-sm bg-subtle/50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-surface transition-colors"
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-500 mb-1.5 uppercase">
+            <label className="block text-xs font-semibold text-text-muted mb-1.5 uppercase">
               Return Remarks & Incident Report (If Any)
             </label>
             <textarea
@@ -621,7 +621,7 @@ export const KunciLogPage: React.FC = () => {
               value={remarks}
               onChange={(e) => setRemarks(e.target.value)}
               placeholder="E.g.: Key returned on time. Padlock functioning smoothly with no issues..."
-              className="w-full rounded-xl border border-slate-200 p-2.5 text-sm bg-slate-50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-white transition-all resize-none"
+              className="w-full rounded-xl border border-border-default p-2.5 text-sm bg-subtle/50 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:bg-surface transition-colors resize-none"
             />
           </div>
 
@@ -644,14 +644,14 @@ export const KunciLogPage: React.FC = () => {
                 setActiveLogToReturn(null)
                 setReturnPhoto(null)
               }}
-              className="border-slate-200 text-slate-500 hover:bg-slate-50 px-4 py-2 border rounded-xl"
+              className="border-border-default text-text-muted hover:bg-subtle/50 px-4 py-2 border rounded-xl"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={!returnPhoto}
-              className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-5 py-2 rounded-xl shadow-soft disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-5 py-2 rounded-xl shadow-elevation-1 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Complete Return
             </Button>

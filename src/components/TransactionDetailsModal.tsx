@@ -42,13 +42,13 @@ function getMovementTypeColor(type: string) {
     case 'RECEIVE':
       return 'bg-green-100 text-green-800 border-green-200';
     case 'ISSUE':
-      return 'bg-blue-100 text-blue-800 border-blue-200';
+      return 'bg-blue-100 text-blue-400 border-blue-500/20';
     case 'ADJUST':
       return 'bg-orange-100 text-orange-800 border-orange-200';
     case 'TRANSFER':
-      return 'bg-purple-100 text-purple-800 border-purple-200';
+      return 'bg-purple-100 text-indigo-400 border-indigo-500/20';
     default:
-      return 'bg-gray-100 text-gray-800 border-gray-200';
+      return 'bg-subtle text-text-primary border-border-default';
   }
 }
 
@@ -143,25 +143,25 @@ export default function TransactionDetailsModal({ isOpen, onClose, transaction }
         />
         
         {/* Modal */}
-        <div className="relative w-full max-w-4xl bg-white rounded-2xl shadow-2xl border border-slate-200/60">
+        <div className="relative w-full max-w-4xl bg-surface rounded-2xl shadow-2xl border border-border-default">
           {/* Header */}
-          <div className="flex items-center justify-between p-8 border-b border-slate-200/60 bg-gradient-to-r from-slate-50 to-blue-50/50 rounded-t-2xl">
+          <div className="flex items-center justify-between p-8 border-b border-border-default bg-subtle/50 rounded-t-2xl">
             <div className="flex items-center space-x-4">
               <div className={`p-3 rounded-xl ${getMovementTypeColor(transaction.type)}`}>
                 {getMovementIcon(transaction.type)}
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-slate-900">
+                <h3 className="text-2xl font-bold text-text-primary">
                   Transaction Details
                 </h3>
-                <p className="text-slate-600 font-semibold">
+                <p className="text-text-secondary font-semibold">
                   {transaction.reference}
                 </p>
               </div>
             </div>
             <button
               onClick={onClose}
-              className="text-slate-400 hover:text-slate-600 transition-colors p-2 hover:bg-slate-100 rounded-lg"
+              className="text-slate-400 hover:text-text-secondary transition-colors p-2 hover:bg-subtle rounded-lg"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -173,16 +173,16 @@ export default function TransactionDetailsModal({ isOpen, onClose, transaction }
           <div className="p-8 space-y-8">
             {/* Basic Information */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-slate-50 rounded-xl p-4">
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Transaction ID</label>
-                <p className="text-lg font-bold text-slate-900 font-mono">{transaction.id}</p>
+              <div className="bg-subtle/50 rounded-xl p-4">
+                <label className="block text-sm font-semibold text-text-secondary mb-2">Transaction ID</label>
+                <p className="text-lg font-bold text-text-primary font-mono">{transaction.id}</p>
               </div>
-              <div className="bg-slate-50 rounded-xl p-4">
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Date & Time</label>
-                <p className="text-lg font-bold text-slate-900">{transaction.date} at {transaction.time}</p>
+              <div className="bg-subtle/50 rounded-xl p-4">
+                <label className="block text-sm font-semibold text-text-secondary mb-2">Date & Time</label>
+                <p className="text-lg font-bold text-text-primary">{transaction.date} at {transaction.time}</p>
               </div>
-              <div className="bg-slate-50 rounded-xl p-4">
-                <label className="block text-sm font-semibold text-slate-700 mb-2">Type</label>
+              <div className="bg-subtle/50 rounded-xl p-4">
+                <label className="block text-sm font-semibold text-text-secondary mb-2">Type</label>
                 <span className={`inline-flex items-center px-3 py-2 rounded-xl text-sm font-bold border ${getMovementTypeColor(transaction.type)}`}>
                   {getMovementIcon(transaction.type)}
                   <span className="ml-2">{transaction.type}</span>
@@ -192,22 +192,22 @@ export default function TransactionDetailsModal({ isOpen, onClose, transaction }
 
             {/* Item Information */}
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6">
-              <h4 className="text-xl font-bold text-slate-900 mb-4">Item Information</h4>
+              <h4 className="text-xl font-bold text-text-primary mb-4">Item Information</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Item Name</label>
-                  <p className="text-lg font-bold text-slate-900">{transaction.itemName}</p>
+                  <label className="block text-sm font-semibold text-text-secondary mb-2">Item Name</label>
+                  <p className="text-lg font-bold text-text-primary">{transaction.itemName}</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Item Code</label>
-                  <p className="text-lg font-bold text-slate-900 font-mono">{transaction.itemCode}</p>
+                  <label className="block text-sm font-semibold text-text-secondary mb-2">Item Code</label>
+                  <p className="text-lg font-bold text-text-primary font-mono">{transaction.itemCode}</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Category</label>
-                  <p className="text-lg font-bold text-slate-900">{transaction.category}</p>
+                  <label className="block text-sm font-semibold text-text-secondary mb-2">Category</label>
+                  <p className="text-lg font-bold text-text-primary">{transaction.category}</p>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Quantity</label>
+                  <label className="block text-sm font-semibold text-text-secondary mb-2">Quantity</label>
                   <p className={`text-2xl font-bold ${transaction.quantity > 0 ? 'text-green-600' : 'text-red-600'}`}>
                     {transaction.quantity > 0 ? '+' : ''}{transaction.quantity}
                   </p>
@@ -218,38 +218,38 @@ export default function TransactionDetailsModal({ isOpen, onClose, transaction }
             {/* Balance Information */}
             {(transaction.balanceBefore !== undefined && transaction.balanceAfter !== undefined) && (
               <div className="bg-gradient-to-r from-emerald-50 to-green-50 rounded-2xl p-6">
-                <h4 className="text-xl font-bold text-slate-900 mb-6">Balance Information</h4>
-                <div className="bg-white rounded-xl p-6">
+                <h4 className="text-xl font-bold text-text-primary mb-6">Balance Information</h4>
+                <div className="bg-surface rounded-xl p-6">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div className="text-center">
-                      <label className="block text-sm font-semibold text-slate-700 mb-3">Balance Before</label>
-                      <div className="text-4xl font-bold text-slate-800 mb-2">
+                      <label className="block text-sm font-semibold text-text-secondary mb-3">Balance Before</label>
+                      <div className="text-4xl font-bold text-text-primary mb-2">
                         {transaction.balanceBefore}
                       </div>
-                      <p className="text-sm text-slate-600 font-medium">units in {transaction.unit}</p>
+                      <p className="text-sm text-text-secondary font-medium">units in {transaction.unit}</p>
                     </div>
                     <div className="text-center">
-                      <label className="block text-sm font-semibold text-slate-700 mb-3">Transaction</label>
+                      <label className="block text-sm font-semibold text-text-secondary mb-3">Transaction</label>
                       <div className={`text-4xl font-bold ${transaction.quantity > 0 ? 'text-green-600' : 'text-red-600'}`}>
                         {transaction.quantity > 0 ? '+' : ''}{transaction.quantity}
                       </div>
-                      <p className="text-sm text-slate-600 font-medium">{transaction.type.toLowerCase()}</p>
+                      <p className="text-sm text-text-secondary font-medium">{transaction.type.toLowerCase()}</p>
                     </div>
                     <div className="text-center">
-                      <label className="block text-sm font-semibold text-slate-700 mb-3">Balance After</label>
+                      <label className="block text-sm font-semibold text-text-secondary mb-3">Balance After</label>
                       <div className="text-4xl font-bold text-blue-600">
                         {transaction.balanceAfter}
                       </div>
-                      <p className="text-sm text-slate-600 font-medium">units in {transaction.unit}</p>
+                      <p className="text-sm text-text-secondary font-medium">units in {transaction.unit}</p>
                     </div>
                   </div>
-                  <div className="mt-6 pt-6 border-t border-slate-200">
+                  <div className="mt-6 pt-6 border-t border-border-default">
                     <div className="flex items-center justify-center space-x-3">
                       <div className="w-4 h-4 bg-slate-400 rounded-full"></div>
                       <div className="flex-1 h-1 bg-gradient-to-r from-slate-400 via-blue-400 to-blue-600 rounded-full"></div>
                       <div className="w-4 h-4 bg-blue-600 rounded-full"></div>
                     </div>
-                    <p className="text-center text-sm font-semibold text-slate-600 mt-3">
+                    <p className="text-center text-sm font-semibold text-text-secondary mt-3">
                       Inventory flow: {transaction.balanceBefore} â†’ {transaction.balanceAfter}
                     </p>
                   </div>
@@ -259,24 +259,24 @@ export default function TransactionDetailsModal({ isOpen, onClose, transaction }
 
             {/* Batch & Expiry Information - Always shown for all transactions */}
             <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-6">
-              <h4 className="text-xl font-bold text-slate-900 mb-4">Batch & Expiry Information</h4>
+              <h4 className="text-xl font-bold text-text-primary mb-4">Batch & Expiry Information</h4>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white rounded-xl p-4">
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Batch Number</label>
-                  <p className="text-lg font-bold text-slate-900 font-mono">
+                <div className="bg-surface rounded-xl p-4">
+                  <label className="block text-sm font-semibold text-text-secondary mb-2">Batch Number</label>
+                  <p className="text-lg font-bold text-text-primary font-mono">
                     {additionalDetails.batchNumber || transaction.batchNumber || 'N/A'}
                   </p>
                 </div>
-                <div className="bg-white rounded-xl p-4">
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Expiry Date</label>
-                  <p className="text-lg font-bold text-slate-900">
+                <div className="bg-surface rounded-xl p-4">
+                  <label className="block text-sm font-semibold text-text-secondary mb-2">Expiry Date</label>
+                  <p className="text-lg font-bold text-text-primary">
                     {additionalDetails.expiryDate || transaction.expiryDate || 'N/A'}
                   </p>
                 </div>
                 {additionalDetails.supplier && (
-                  <div className="bg-white rounded-xl p-4">
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Supplier</label>
-                    <p className="text-lg font-bold text-slate-900">{additionalDetails.supplier}</p>
+                  <div className="bg-surface rounded-xl p-4">
+                    <label className="block text-sm font-semibold text-text-secondary mb-2">Supplier</label>
+                    <p className="text-lg font-bold text-text-primary">{additionalDetails.supplier}</p>
                   </div>
                 )}
               </div>
@@ -284,24 +284,24 @@ export default function TransactionDetailsModal({ isOpen, onClose, transaction }
 
             {/* Location & Personnel */}
             <div className="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl p-6">
-              <h4 className="text-xl font-bold text-slate-900 mb-4">Location & Personnel</h4>
+              <h4 className="text-xl font-bold text-text-primary mb-4">Location & Personnel</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-white rounded-xl p-4">
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Unit/Location</label>
-                  <p className="text-lg font-bold text-slate-900">{transaction.unit}</p>
+                <div className="bg-surface rounded-xl p-4">
+                  <label className="block text-sm font-semibold text-text-secondary mb-2">Unit/Location</label>
+                  <p className="text-lg font-bold text-text-primary">{transaction.unit}</p>
                 </div>
-                <div className="bg-white rounded-xl p-4">
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Requested By</label>
-                  <p className="text-lg font-bold text-slate-900">{transaction.requestedBy}</p>
+                <div className="bg-surface rounded-xl p-4">
+                  <label className="block text-sm font-semibold text-text-secondary mb-2">Requested By</label>
+                  <p className="text-lg font-bold text-text-primary">{transaction.requestedBy}</p>
                 </div>
                 {additionalDetails.approvedBy && (
-                  <div className="bg-white rounded-xl p-4">
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">Approved By</label>
-                    <p className="text-lg font-bold text-slate-900">{additionalDetails.approvedBy}</p>
+                  <div className="bg-surface rounded-xl p-4">
+                    <label className="block text-sm font-semibold text-text-secondary mb-2">Approved By</label>
+                    <p className="text-lg font-bold text-text-primary">{additionalDetails.approvedBy}</p>
                   </div>
                 )}
-                <div className="bg-white rounded-xl p-4">
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Status</label>
+                <div className="bg-surface rounded-xl p-4">
+                  <label className="block text-sm font-semibold text-text-secondary mb-2">Status</label>
                   <span className="inline-flex items-center px-3 py-2 rounded-xl text-sm font-bold bg-green-100 text-green-800">
                     {additionalDetails.status || 'Completed'}
                   </span>
@@ -312,34 +312,34 @@ export default function TransactionDetailsModal({ isOpen, onClose, transaction }
             {/* Additional Details based on transaction type */}
             {transaction.type === 'ISSUE' && additionalDetails.reason && (
               <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-2xl p-6">
-                <h4 className="text-xl font-bold text-slate-900 mb-4">Issue Details</h4>
-                <div className="bg-white rounded-xl p-4">
-                  <label className="block text-sm font-semibold text-slate-700 mb-2">Reason</label>
-                  <p className="text-lg font-bold text-slate-900">{additionalDetails.reason}</p>
+                <h4 className="text-xl font-bold text-text-primary mb-4">Issue Details</h4>
+                <div className="bg-surface rounded-xl p-4">
+                  <label className="block text-sm font-semibold text-text-secondary mb-2">Reason</label>
+                  <p className="text-lg font-bold text-text-primary">{additionalDetails.reason}</p>
                 </div>
               </div>
             )}
 
             {transaction.type === 'ADJUST' && (
               <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl p-6">
-                <h4 className="text-xl font-bold text-slate-900 mb-4">Adjustment Details</h4>
+                <h4 className="text-xl font-bold text-text-primary mb-4">Adjustment Details</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {additionalDetails.reason && (
-                    <div className="bg-white rounded-xl p-4">
-                      <label className="block text-sm font-semibold text-slate-700 mb-2">Reason</label>
-                      <p className="text-lg font-bold text-slate-900">{additionalDetails.reason}</p>
+                    <div className="bg-surface rounded-xl p-4">
+                      <label className="block text-sm font-semibold text-text-secondary mb-2">Reason</label>
+                      <p className="text-lg font-bold text-text-primary">{additionalDetails.reason}</p>
                     </div>
                   )}
                   {additionalDetails.previousQuantity !== undefined && (
-                    <div className="bg-white rounded-xl p-4">
-                      <label className="block text-sm font-semibold text-slate-700 mb-2">Previous Quantity</label>
-                      <p className="text-lg font-bold text-slate-900">{additionalDetails.previousQuantity}</p>
+                    <div className="bg-surface rounded-xl p-4">
+                      <label className="block text-sm font-semibold text-text-secondary mb-2">Previous Quantity</label>
+                      <p className="text-lg font-bold text-text-primary">{additionalDetails.previousQuantity}</p>
                     </div>
                   )}
                   {additionalDetails.newQuantity !== undefined && (
-                    <div className="bg-white rounded-xl p-4">
-                      <label className="block text-sm font-semibold text-slate-700 mb-2">New Quantity</label>
-                      <p className="text-lg font-bold text-slate-900">{additionalDetails.newQuantity}</p>
+                    <div className="bg-surface rounded-xl p-4">
+                      <label className="block text-sm font-semibold text-text-secondary mb-2">New Quantity</label>
+                      <p className="text-lg font-bold text-text-primary">{additionalDetails.newQuantity}</p>
                     </div>
                   )}
                 </div>
@@ -348,18 +348,18 @@ export default function TransactionDetailsModal({ isOpen, onClose, transaction }
 
             {transaction.type === 'TRANSFER' && (
               <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-6">
-                <h4 className="text-xl font-bold text-slate-900 mb-4">Transfer Details</h4>
+                <h4 className="text-xl font-bold text-text-primary mb-4">Transfer Details</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {additionalDetails.fromLocation && (
-                    <div className="bg-white rounded-xl p-4">
-                      <label className="block text-sm font-semibold text-slate-700 mb-2">From Location</label>
-                      <p className="text-lg font-bold text-slate-900">{additionalDetails.fromLocation}</p>
+                    <div className="bg-surface rounded-xl p-4">
+                      <label className="block text-sm font-semibold text-text-secondary mb-2">From Location</label>
+                      <p className="text-lg font-bold text-text-primary">{additionalDetails.fromLocation}</p>
                     </div>
                   )}
                   {additionalDetails.toLocation && (
-                    <div className="bg-white rounded-xl p-4">
-                      <label className="block text-sm font-semibold text-slate-700 mb-2">To Location</label>
-                      <p className="text-lg font-bold text-slate-900">{additionalDetails.toLocation}</p>
+                    <div className="bg-surface rounded-xl p-4">
+                      <label className="block text-sm font-semibold text-text-secondary mb-2">To Location</label>
+                      <p className="text-lg font-bold text-text-primary">{additionalDetails.toLocation}</p>
                     </div>
                   )}
                 </div>
@@ -367,10 +367,10 @@ export default function TransactionDetailsModal({ isOpen, onClose, transaction }
             )}
 
             {/* Notes */}
-            <div className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-2xl p-6">
-              <h4 className="text-xl font-bold text-slate-900 mb-4">Additional Information</h4>
-              <div className="bg-white rounded-xl p-4">
-                <p className="text-slate-600 font-medium">
+            <div className="bg-subtle/50 rounded-2xl p-6">
+              <h4 className="text-xl font-bold text-text-primary mb-4">Additional Information</h4>
+              <div className="bg-surface rounded-xl p-4">
+                <p className="text-text-secondary font-medium">
                   This transaction was processed through the Pharmacy Inventory & Logistics System (PILS). 
                   All movements are automatically logged and tracked for audit purposes.
                 </p>
@@ -379,10 +379,10 @@ export default function TransactionDetailsModal({ isOpen, onClose, transaction }
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end space-x-4 p-8 border-t border-slate-200/60 bg-gradient-to-r from-slate-50 to-blue-50/50 rounded-b-2xl">
+          <div className="flex justify-end space-x-4 p-8 border-t border-border-default bg-subtle/50 rounded-b-2xl">
             <button
               onClick={onClose}
-              className="px-6 py-3 text-sm font-semibold text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-sm"
+              className="px-6 py-3 text-sm font-semibold text-text-secondary bg-surface border border-border-default rounded-xl hover:bg-subtle/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-[transform,opacity,box-shadow,border-color] duration-200 shadow-sm"
             >
               Close
             </button>
@@ -390,7 +390,7 @@ export default function TransactionDetailsModal({ isOpen, onClose, transaction }
               onClick={() => {
                 window.print();
               }}
-              className="px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 border border-transparent rounded-xl hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 shadow-lg"
+              className="px-6 py-3 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 border border-transparent rounded-xl hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-[transform,opacity,box-shadow,border-color] duration-200 shadow-lg"
             >
               Print Details
             </button>

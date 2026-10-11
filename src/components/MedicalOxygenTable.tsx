@@ -220,15 +220,15 @@ export default function MedicalOxygenTable({
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'Full':
-        return 'bg-emerald-100 text-emerald-800';
+        return 'bg-emerald-100 text-emerald-400';
       case 'Partial':
-        return 'bg-amber-100 text-amber-800';
+        return 'bg-amber-100 text-amber-400';
       case 'Empty':
         return 'bg-red-100 text-red-800';
       case 'Maintenance':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-100 text-blue-400';
       default:
-        return 'bg-slate-100 text-slate-800';
+        return 'bg-subtle text-text-primary';
     }
   };
 
@@ -240,11 +240,11 @@ export default function MedicalOxygenTable({
   };
 
   return (
-    <div className="rounded-2xl bg-white p-8 shadow-xl border border-slate-200/50">
+    <div className="rounded-2xl bg-surface p-8 shadow-xl border border-border-default">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-2xl font-bold text-slate-900">{title}</h2>
-          <p className="text-slate-600 mt-1">{description}</p>
+          <h2 className="text-2xl font-bold text-text-primary">{title}</h2>
+          <p className="text-text-secondary mt-1">{description}</p>
         </div>
         <MedicalOxygenSearchFilter
           onSearchChange={setSearchQuery}
@@ -253,28 +253,28 @@ export default function MedicalOxygenTable({
         />
       </div>
 
-      <div className="overflow-hidden rounded-xl border border-slate-200">
+      <div className="overflow-hidden rounded-xl border border-border-default">
         <table className="min-w-full">
-          <thead className="bg-gradient-to-r from-slate-50 to-slate-100">
+          <thead className="bg-subtle/50">
             <tr>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700 uppercase tracking-wider">Cylinder Code</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700 uppercase tracking-wider">Category</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700 uppercase tracking-wider">Size</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700 uppercase tracking-wider">Capacity</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700 uppercase tracking-wider">Connection</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700 uppercase tracking-wider">Pressure</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700 uppercase tracking-wider">Status</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700 uppercase tracking-wider">Location</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700 uppercase tracking-wider">Last Filled</th>
-              <th className="px-6 py-4 text-left text-sm font-semibold text-slate-700 uppercase tracking-wider">Supplier</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-text-secondary uppercase tracking-wider">Cylinder Code</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-text-secondary uppercase tracking-wider">Category</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-text-secondary uppercase tracking-wider">Size</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-text-secondary uppercase tracking-wider">Capacity</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-text-secondary uppercase tracking-wider">Connection</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-text-secondary uppercase tracking-wider">Pressure</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-text-secondary uppercase tracking-wider">Status</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-text-secondary uppercase tracking-wider">Location</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-text-secondary uppercase tracking-wider">Last Filled</th>
+              <th className="px-6 py-4 text-left text-sm font-semibold text-text-secondary uppercase tracking-wider">Supplier</th>
             </tr>
           </thead>
-          <tbody className="bg-white divide-y divide-slate-100">
+          <tbody className="bg-surface divide-y divide-border-subtle">
             {paginatedCylinders.map((cylinder) => {
               const pressurePercentage = ((cylinder.currentPressure / cylinder.maxPressure) * 100).toFixed(1);
               
               return (
-                <tr key={cylinder.id} className="hover:bg-slate-50 transition-colors duration-150">
+                <tr key={cylinder.id} className="hover:bg-subtle/50 transition-colors duration-150">
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
@@ -283,8 +283,8 @@ export default function MedicalOxygenTable({
                         </svg>
                       </div>
                       <div>
-                        <div className="text-sm font-semibold text-slate-900">{cylinder.cylinderCode}</div>
-                        <div className="text-xs text-slate-500">{cylinder.serialNumber}</div>
+                        <div className="text-sm font-semibold text-text-primary">{cylinder.cylinderCode}</div>
+                        <div className="text-xs text-text-muted">{cylinder.serialNumber}</div>
                       </div>
                     </div>
                   </td>
@@ -292,32 +292,32 @@ export default function MedicalOxygenTable({
                   <td className="px-6 py-4">
                     <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
                       cylinder.category === 'Private' 
-                        ? 'bg-emerald-100 text-emerald-800' 
-                        : 'bg-amber-100 text-amber-800'
+                        ? 'bg-emerald-100 text-emerald-400' 
+                        : 'bg-amber-100 text-amber-400'
                     }`}>
                       {cylinder.category}
                     </span>
                   </td>
                   
                   <td className="px-6 py-4">
-                    <div className="text-sm font-semibold text-slate-900">{cylinder.size}</div>
+                    <div className="text-sm font-semibold text-text-primary">{cylinder.size}</div>
                   </td>
                   
                   <td className="px-6 py-4">
-                    <div className="text-sm text-slate-700">{cylinder.capacity} m³</div>
+                    <div className="text-sm text-text-secondary">{cylinder.capacity} m³</div>
                   </td>
                   
                   <td className="px-6 py-4">
-                    <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-slate-100 text-slate-700">
+                    <span className="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-subtle text-text-secondary">
                       {cylinder.connectionType}
                     </span>
                   </td>
                   
                   <td className="px-6 py-4">
                     <div className="flex items-center space-x-2">
-                      <div className="flex-1 bg-slate-200 rounded-full h-2">
+                      <div className="flex-1 bg-subtle rounded-full h-2">
                         <div 
-                          className={`h-2 rounded-full transition-all duration-300 ${
+                          className={`h-2 rounded-full transition-[transform,opacity,box-shadow,border-color] duration-300 ${
                             parseFloat(pressurePercentage) > 80 ? 'bg-emerald-500' :
                             parseFloat(pressurePercentage) > 40 ? 'bg-amber-500' : 'bg-red-500'
                           }`}
@@ -328,7 +328,7 @@ export default function MedicalOxygenTable({
                         {cylinder.currentPressure} PSI
                       </span>
                     </div>
-                    <div className="text-xs text-slate-500 mt-1">{pressurePercentage}% full</div>
+                    <div className="text-xs text-text-muted mt-1">{pressurePercentage}% full</div>
                   </td>
                   
                   <td className="px-6 py-4">
@@ -338,15 +338,15 @@ export default function MedicalOxygenTable({
                   </td>
                   
                   <td className="px-6 py-4">
-                    <div className="text-sm text-slate-700">{cylinder.location}</div>
+                    <div className="text-sm text-text-secondary">{cylinder.location}</div>
                   </td>
                   
                   <td className="px-6 py-4">
-                    <div className="text-sm text-slate-700">{cylinder.lastFilled}</div>
+                    <div className="text-sm text-text-secondary">{cylinder.lastFilled}</div>
                   </td>
                   
                   <td className="px-6 py-4">
-                    <div className="text-sm text-slate-700">{cylinder.supplier}</div>
+                    <div className="text-sm text-text-secondary">{cylinder.supplier}</div>
                   </td>
                 </tr>
               );
@@ -357,14 +357,14 @@ export default function MedicalOxygenTable({
 
       {/* Pagination Controls */}
       <div className="mt-6 flex items-center justify-between">
-        <div className="text-sm text-slate-600">
+        <div className="text-sm text-text-secondary">
           Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of {totalItems} cylinders
         </div>
         <div className="flex items-center space-x-2">
           <button
             onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
             disabled={currentPage === 1}
-            className="px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+            className="px-3 py-2 text-sm font-medium text-text-muted bg-surface border border-border-default rounded-lg hover:bg-subtle/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
           >
             Previous
           </button>
@@ -389,7 +389,7 @@ export default function MedicalOxygenTable({
                   className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${
                     currentPage === pageNum
                       ? 'bg-blue-600 text-white'
-                      : 'text-slate-700 bg-white border border-slate-300 hover:bg-slate-50'
+                      : 'text-text-secondary bg-surface border border-border-default hover:bg-subtle/50'
                   }`}
                 >
                   {pageNum}
@@ -401,7 +401,7 @@ export default function MedicalOxygenTable({
           <button
             onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
             disabled={currentPage === totalPages}
-            className="px-3 py-2 text-sm font-medium text-slate-500 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+            className="px-3 py-2 text-sm font-medium text-text-muted bg-surface border border-border-default rounded-lg hover:bg-subtle/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
           >
             Next
           </button>

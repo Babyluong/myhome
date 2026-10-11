@@ -689,20 +689,20 @@ export const PaymentPage: React.FC = () => {
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
           <span className="text-slate-400">Procurement</span>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-          <span className="text-slate-800 font-extrabold tracking-wide">Payment Registry</span>
+          <span className="text-text-primary font-extrabold tracking-wide">Payment Registry</span>
         </nav>
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative z-20">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-gradient-to-tr from-slate-900 to-indigo-950 border border-slate-800/80 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/10 hover:rotate-2 transition-transform duration-300">
+            <div className="w-14 h-14 bg-surface border border-border-default rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/10 hover:rotate-2 transition-transform duration-300">
               <IconMoney className="h-6 w-6 text-white" />
             </div>
             <div className="space-y-0.5">
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900">
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-transparent bg-clip-text bg-surface border border-border-default">
                 Payment Management
               </h1>
-              <p className="text-slate-500 font-semibold text-[11px] flex items-center gap-1.5">
+              <p className="text-text-muted font-semibold text-[11px] flex items-center gap-1.5">
                 <Sparkles className="w-3 h-3 text-indigo-500" />
                 Track Procurement Payments and Settle Accounts Payables
               </p>
@@ -714,7 +714,7 @@ export const PaymentPage: React.FC = () => {
               <button
                 onClick={handleBulkAuthorizeDisbursement}
                 disabled={isBulkAuthorizing}
-                className="flex items-center gap-2 px-4 py-2 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl border border-emerald-650 transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-emerald-600/10 animate-fade-in"
+                className="flex items-center gap-2 px-4 py-2 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl border border-emerald-650 transition-colors duration-150 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm shadow-emerald-600/10 animate-fade-in"
               >
                 <Sparkles className="w-3.5 h-3.5 text-emerald-150" />
                 {isBulkAuthorizing ? 'Authorizing...' : 'Bulk Authorize'}
@@ -730,7 +730,7 @@ export const PaymentPage: React.FC = () => {
             />
             <button
               onClick={() => document.getElementById('payment-excel-upload')?.click()}
-              className="flex items-center gap-2 px-4 py-2 text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-700 rounded-xl border border-indigo-650 transition-all duration-200 active:scale-95 shadow-sm shadow-indigo-600/10"
+              className="flex items-center gap-2 px-4 py-2 text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-700 rounded-xl border border-indigo-650 transition-colors duration-150 active:scale-95 shadow-sm shadow-indigo-600/10"
             >
               <Upload className="w-3.5 h-3.5 text-indigo-150" />
               Upload Excel
@@ -743,7 +743,7 @@ export const PaymentPage: React.FC = () => {
                   localStorage.removeItem('paymentExcelData')
                   toast.success('Excel Data Cleared', 'Excel payment mappings have been cleared.')
                 }}
-                className="flex items-center gap-2 px-3 py-2 text-xs font-bold bg-amber-50 hover:bg-amber-105 border border-amber-200 text-amber-700 rounded-xl transition-all duration-200 active:scale-95 shadow-sm"
+                className="flex items-center gap-2 px-3 py-2 text-xs font-bold bg-amber-500/10 hover:bg-amber-105 border border-amber-500/20 text-amber-700 rounded-xl transition-colors duration-150 active:scale-95 shadow-sm"
               >
                 Clear Excel
               </button>
@@ -751,9 +751,9 @@ export const PaymentPage: React.FC = () => {
 
             <button 
               onClick={loadLpos}
-              className="flex items-center gap-2 px-4 py-2 text-xs font-bold bg-white text-slate-700 hover:text-slate-900 hover:bg-slate-50 rounded-xl border border-slate-200/85 transition-all duration-200 active:scale-95 shadow-sm"
+              className="flex items-center gap-2 px-4 py-2 text-xs font-bold bg-surface text-text-secondary hover:text-text-primary hover:bg-subtle/50 rounded-xl border border-border-default transition-colors duration-150 active:scale-95 shadow-sm"
             >
-              <IconRefresh className="w-3.5 h-3.5 text-slate-500" />
+              <IconRefresh className="w-3.5 h-3.5 text-text-muted" />
               Reload Data
             </button>
           </div>
@@ -761,15 +761,15 @@ export const PaymentPage: React.FC = () => {
 
         {/* Stats Cards Row */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-300">
+          <div className="bg-surface rounded-2xl p-5 border border-border-subtle shadow-sm relative overflow-hidden group hover:shadow-md transition-colors duration-150">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Total Managed Volume</span>
-                <h3 className="text-2xl font-black text-slate-900 tabular-nums">
+                <h3 className="text-2xl font-black text-text-primary tabular-nums">
                   {formatCurrency(stats.totalOutstandingValue + stats.totalPaidValue).replace('MYR', 'RM')}
                 </h3>
               </div>
-              <div className="w-10 h-10 bg-indigo-50 border border-indigo-100 rounded-xl flex items-center justify-center text-indigo-600">
+              <div className="w-10 h-10 bg-indigo-500/10 border border-indigo-100 rounded-xl flex items-center justify-center text-indigo-600">
                 <IconMoney className="w-5 h-5" />
               </div>
             </div>
@@ -778,7 +778,7 @@ export const PaymentPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-300">
+          <div className="bg-surface rounded-2xl p-5 border border-border-subtle shadow-sm relative overflow-hidden group hover:shadow-md transition-colors duration-150">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Accounts Payable</span>
@@ -786,7 +786,7 @@ export const PaymentPage: React.FC = () => {
                   {formatCurrency(stats.totalOutstandingValue).replace('MYR', 'RM')}
                 </h3>
               </div>
-              <div className="w-10 h-10 bg-blue-50 border border-blue-100 rounded-xl flex items-center justify-center text-blue-600">
+              <div className="w-10 h-10 bg-blue-500/10 border border-blue-100 rounded-xl flex items-center justify-center text-blue-600">
                 <IconClock className="w-5 h-5" />
               </div>
             </div>
@@ -795,7 +795,7 @@ export const PaymentPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group hover:shadow-md transition-all duration-300">
+          <div className="bg-surface rounded-2xl p-5 border border-border-subtle shadow-sm relative overflow-hidden group hover:shadow-md transition-colors duration-150">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">Disbursed Volume</span>
@@ -803,7 +803,7 @@ export const PaymentPage: React.FC = () => {
                   {formatCurrency(stats.totalPaidValue).replace('MYR', 'RM')}
                 </h3>
               </div>
-              <div className="w-10 h-10 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center justify-center text-emerald-600">
+              <div className="w-10 h-10 bg-emerald-500/10 border border-emerald-100 rounded-xl flex items-center justify-center text-emerald-600">
                 <IconCheck className="w-5 h-5" />
               </div>
             </div>
@@ -814,17 +814,17 @@ export const PaymentPage: React.FC = () => {
         </div>
 
         {/* Filters and List */}
-        <div className="bg-white rounded-3xl border border-slate-100 shadow-xl shadow-slate-900/[0.02] overflow-hidden">
+        <div className="bg-surface rounded-3xl border border-border-subtle shadow-xl shadow-slate-900/[0.02] overflow-hidden">
           {/* Tabs header */}
-          <div className="border-b border-slate-100 bg-slate-50/50 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex flex-wrap items-center gap-1 bg-white p-1 rounded-2xl border border-slate-200/80 shadow-sm self-start">
+          <div className="border-b border-border-subtle bg-subtle/50 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex flex-wrap items-center gap-1 bg-surface p-1 rounded-2xl border border-border-default shadow-sm self-start">
               <button
                 onClick={() => handleTabChange('all')}
                 className={cn(
-                  "px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 uppercase tracking-wider",
+                  "px-4 py-2 text-xs font-bold rounded-xl transition-colors duration-150 uppercase tracking-wider",
                   activeTab === 'all' 
                     ? "bg-slate-900 text-white shadow-md shadow-slate-950/10" 
-                    : "text-slate-500 hover:text-slate-950"
+                    : "text-text-muted hover:text-slate-950"
                 )}
               >
                 All Transactions ({lpos.length})
@@ -832,10 +832,10 @@ export const PaymentPage: React.FC = () => {
               <button
                 onClick={() => handleTabChange('sent_for_payment')}
                 className={cn(
-                  "px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 uppercase tracking-wider",
+                  "px-4 py-2 text-xs font-bold rounded-xl transition-colors duration-150 uppercase tracking-wider",
                   activeTab === 'sent_for_payment' 
                     ? "bg-blue-600 text-white shadow-md shadow-blue-500/10" 
-                    : "text-slate-500 hover:text-slate-950"
+                    : "text-text-muted hover:text-slate-950"
                 )}
               >
                 Processing ({stats.processingCount})
@@ -843,10 +843,10 @@ export const PaymentPage: React.FC = () => {
               <button
                 onClick={() => handleTabChange('paid')}
                 className={cn(
-                  "px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 uppercase tracking-wider",
+                  "px-4 py-2 text-xs font-bold rounded-xl transition-colors duration-150 uppercase tracking-wider",
                   activeTab === 'paid' 
                     ? "bg-emerald-600 text-white shadow-md shadow-emerald-500/10" 
-                    : "text-slate-500 hover:text-slate-950"
+                    : "text-text-muted hover:text-slate-950"
                 )}
               >
                 Fully Paid ({stats.paidCount})
@@ -860,7 +860,7 @@ export const PaymentPage: React.FC = () => {
                 <select
                   value={voteCodeFilter}
                   onChange={(e) => { setVoteCodeFilter(e.target.value); setPage(1) }}
-                  className="pl-8 pr-8 py-2 text-xs font-bold bg-white text-slate-700 border border-slate-200 rounded-xl outline-none focus:border-indigo-500 transition-all duration-150 appearance-none shadow-sm cursor-pointer"
+                  className="pl-8 pr-8 py-2 text-xs font-bold bg-surface text-text-secondary border border-border-default rounded-xl outline-none focus:border-indigo-500 transition-colors duration-150 appearance-none shadow-sm cursor-pointer"
                 >
                   <option value="">All Vote Codes</option>
                   {filterMetadata.voteCodes.map(code => (
@@ -874,7 +874,7 @@ export const PaymentPage: React.FC = () => {
                 <select
                   value={categoryFilter}
                   onChange={(e) => { setCategoryFilter(e.target.value); setPage(1) }}
-                  className="pl-8 pr-8 py-2 text-xs font-bold bg-white text-slate-700 border border-slate-200 rounded-xl outline-none focus:border-indigo-500 transition-all duration-150 appearance-none shadow-sm cursor-pointer"
+                  className="pl-8 pr-8 py-2 text-xs font-bold bg-surface text-text-secondary border border-border-default rounded-xl outline-none focus:border-indigo-500 transition-colors duration-150 appearance-none shadow-sm cursor-pointer"
                 >
                   <option value="">All Categories</option>
                   {filterMetadata.categories.map(cat => (
@@ -888,7 +888,7 @@ export const PaymentPage: React.FC = () => {
                 <select
                   value={excelStatusFilter}
                   onChange={(e) => { setExcelStatusFilter(e.target.value); setPage(1) }}
-                  className="pl-8 pr-8 py-2 text-xs font-bold bg-white text-slate-700 border border-slate-200 rounded-xl outline-none focus:border-indigo-500 transition-all duration-150 appearance-none shadow-sm cursor-pointer"
+                  className="pl-8 pr-8 py-2 text-xs font-bold bg-surface text-text-secondary border border-border-default rounded-xl outline-none focus:border-indigo-500 transition-colors duration-150 appearance-none shadow-sm cursor-pointer"
                 >
                   <option value="">All Excel Mappings</option>
                   <option value="ready">Excel Mapped (READY)</option>
@@ -899,7 +899,7 @@ export const PaymentPage: React.FC = () => {
           </div>
 
           {/* Search bar */}
-          <div className="p-4 bg-white border-b border-slate-100">
+          <div className="p-4 bg-surface border-b border-border-subtle">
             <div className="relative w-full max-w-md">
               <IconSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
@@ -907,7 +907,7 @@ export const PaymentPage: React.FC = () => {
                 placeholder="Search LPO Number, PO, Supplier, or Items..."
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setPage(1) }}
-                className="w-full pl-10 pr-4 py-2.5 text-sm bg-[#f8fafc] text-slate-900 placeholder:text-slate-400 border border-slate-200 rounded-xl outline-none focus:bg-white focus:border-indigo-500 transition-all duration-200"
+                className="w-full pl-10 pr-4 py-2.5 text-sm bg-[#f8fafc] text-text-primary placeholder:text-text-muted border border-border-default rounded-xl outline-none focus:bg-surface focus:border-indigo-500 transition-colors duration-150"
               />
             </div>
           </div>
@@ -917,22 +917,22 @@ export const PaymentPage: React.FC = () => {
             {isLoading ? (
               <div className="py-24 flex flex-col items-center justify-center gap-3">
                 <Spinner size="lg" className="text-indigo-600 animate-spin" />
-                <p className="text-xs font-black text-slate-500 uppercase tracking-widest animate-pulse">Loading Accounts Payable...</p>
+                <p className="text-xs font-black text-text-muted uppercase tracking-widest animate-pulse">Loading Accounts Payable...</p>
               </div>
             ) : filteredLpos.length === 0 ? (
-              <div className="py-24 flex flex-col items-center justify-center text-slate-400 gap-4 bg-slate-50/20">
-                <div className="w-16 h-16 bg-white shadow-sm rounded-2xl flex items-center justify-center text-slate-400 border border-slate-100">
+              <div className="py-24 flex flex-col items-center justify-center text-slate-400 gap-4 bg-subtle/50">
+                <div className="w-16 h-16 bg-surface shadow-sm rounded-2xl flex items-center justify-center text-slate-400 border border-border-subtle">
                   <IconMoney className="w-7 h-7 text-slate-400" />
                 </div>
                 <div className="text-center space-y-1.5">
-                  <h4 className="font-extrabold text-slate-800 text-sm uppercase tracking-wider">No Payments Found</h4>
+                  <h4 className="font-extrabold text-text-primary text-sm uppercase tracking-wider">No Payments Found</h4>
                   <p className="text-xs text-slate-400 max-w-xs leading-relaxed">No LPO transactions match the selected tab and filters.</p>
                 </div>
               </div>
             ) : (
               <table className="w-full text-left border-collapse min-w-[1000px]">
                 <thead>
-                  <tr className="bg-slate-50/70 border-b border-slate-150 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                  <tr className="bg-subtle/50 border-b border-slate-150 text-[10px] font-black text-slate-400 uppercase tracking-widest">
                     <th className="px-6 py-4.5 font-bold tracking-widest">LPO & PO Details</th>
                     <th className="px-6 py-4.5 font-bold tracking-widest">Supplier Name</th>
                     <th className="px-6 py-4.5 font-bold tracking-widest">Category & Vote Code</th>
@@ -943,7 +943,7 @@ export const PaymentPage: React.FC = () => {
                     <th className="px-6 py-4.5 text-right font-bold tracking-widest">Actions</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-sm font-semibold text-slate-700 bg-white">
+                <tbody className="divide-y divide-border-subtle text-sm font-semibold text-text-secondary bg-surface">
                   {paginatedLpos.map((lpo) => {
                     const lpoDate = formatDateTime(lpo.document_date)
                     
@@ -952,27 +952,27 @@ export const PaymentPage: React.FC = () => {
                       const cat = (category || '').toLowerCase().replace(/_/g, ' ');
                       if (cat.includes('non drug') || cat.includes('non-drug')) {
                         return (
-                          <Badge variant="warning" className="font-extrabold text-[9px] tracking-wider px-2.5 py-0.5 border border-amber-200/50 bg-amber-50/60 text-amber-700 rounded-md shadow-3xs uppercase">
+                          <Badge variant="warning" className="font-extrabold text-[9px] tracking-wider px-2.5 py-0.5 border border-amber-500/20 bg-amber-500/10 text-amber-700 rounded-md shadow-3xs uppercase">
                             NON DRUG
                           </Badge>
                         );
                       }
                       if (cat.includes('drug')) {
                         return (
-                          <Badge variant="success" className="font-extrabold text-[9px] tracking-wider px-2.5 py-0.5 border border-emerald-250/50 bg-emerald-50/60 text-emerald-700 rounded-md shadow-3xs uppercase">
+                          <Badge variant="success" className="font-extrabold text-[9px] tracking-wider px-2.5 py-0.5 border border-emerald-250/50 bg-emerald-500/10 text-emerald-700 rounded-md shadow-3xs uppercase">
                             DRUG
                           </Badge>
                         );
                       }
                       if (cat.includes('vaccine')) {
                         return (
-                          <Badge variant="purple" className="font-extrabold text-[9px] tracking-wider px-2.5 py-0.5 border border-purple-200/50 bg-purple-50/60 text-purple-700 rounded-md shadow-3xs uppercase">
+                          <Badge variant="purple" className="font-extrabold text-[9px] tracking-wider px-2.5 py-0.5 border border-indigo-500/20 bg-indigo-500/10 text-purple-700 rounded-md shadow-3xs uppercase">
                             VACCINE
                           </Badge>
                         );
                       }
                       return (
-                        <Badge variant="secondary" className="font-extrabold text-[9px] tracking-wider px-2.5 py-0.5 border border-slate-200/50 bg-slate-50 text-slate-700 rounded-md shadow-3xs uppercase">
+                        <Badge variant="secondary" className="font-extrabold text-[9px] tracking-wider px-2.5 py-0.5 border border-border-default bg-subtle/50 text-text-secondary rounded-md shadow-3xs uppercase">
                           {category?.replace('_', ' ') || 'STANDARD'}
                         </Badge>
                       );
@@ -982,7 +982,7 @@ export const PaymentPage: React.FC = () => {
                     const getStatusBadge = (status: string) => {
                       if (status === 'paid') {
                         return (
-                          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] font-black tracking-widest rounded-full shadow-3xs">
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 text-[10px] font-black tracking-widest rounded-full shadow-3xs">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                             FULLY PAID
                           </div>
@@ -990,14 +990,14 @@ export const PaymentPage: React.FC = () => {
                       }
                       if (status === 'sent_for_payment' || status === 'processing') {
                         return (
-                          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-50 border border-blue-200 text-blue-700 text-[10px] font-black tracking-widest rounded-full shadow-3xs">
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-700 text-[10px] font-black tracking-widest rounded-full shadow-3xs">
                             <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
                             PROCESSING
                           </div>
                         );
                       }
                       return (
-                        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-200 text-amber-700 text-[10px] font-black tracking-widest rounded-full shadow-3xs">
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-700 text-[10px] font-black tracking-widest rounded-full shadow-3xs">
                           <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
                           UNPAID
                         </div>
@@ -1010,30 +1010,30 @@ export const PaymentPage: React.FC = () => {
                       <tr 
                         key={lpo.lpo_id}
                         onClick={() => openPaymentWorkspace(lpo)}
-                        className="hover:bg-slate-50/50 hover:shadow-xs transition-all duration-200 cursor-pointer"
+                        className="hover:bg-subtle/50 hover:shadow-xs transition-colors duration-150 cursor-pointer"
                       >
                         <td className="px-6 py-5">
                           <div className="space-y-1.5">
                             <div className="flex items-center gap-2">
-                              <span className="font-extrabold text-slate-900 tracking-tight text-[13.5px] hover:text-indigo-600 transition-colors">
+                              <span className="font-extrabold text-text-primary tracking-tight text-[13.5px] hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">
                                 {lpo.lpo_number}
                               </span>
-                              <span className="text-[9px] text-slate-600 font-mono font-bold px-1.5 py-0.5 border border-slate-200 bg-slate-100 rounded-md shadow-3xs uppercase">
+                              <span className="text-[9px] text-text-muted font-mono font-bold px-1.5 py-0.5 border border-border-default bg-subtle rounded-md shadow-3xs uppercase">
                                 LPO
                               </span>
                               {paymentExcelData.has((lpo.lpo_number || '').toUpperCase().trim().replace(/\s+/g, '')) && (
-                                <span className="inline-flex items-center gap-1 text-[8.5px] text-amber-700 font-extrabold px-1.5 py-0.5 border border-amber-200 bg-amber-50 rounded-md shadow-3xs uppercase tracking-wide">
+                                <span className="inline-flex items-center gap-1 text-[8.5px] text-amber-700 font-extrabold px-1.5 py-0.5 border border-amber-500/20 bg-amber-500/10 rounded-md shadow-3xs uppercase tracking-wide">
                                   <Sparkles className="w-2.5 h-2.5 text-amber-600 animate-pulse" />
                                   Auto-fill Ready
                                 </span>
                               )}
                             </div>
                             <div className="flex items-center gap-2">
-                              <span className="font-mono bg-indigo-50/70 text-indigo-700 border border-indigo-100/50 px-1.5 py-0.5 rounded text-[10px] font-bold shadow-3xs">
+                              <span className="font-mono bg-indigo-500/10 text-indigo-700 border border-indigo-100/50 px-1.5 py-0.5 rounded text-[10px] font-bold shadow-3xs">
                                 {lpo.po_number}
                               </span>
                               <span className="text-[10px] text-slate-300 font-normal">|</span>
-                              <span className="text-[10px] text-slate-400 font-bold bg-slate-50 px-1.5 py-0.5 rounded border border-slate-150 uppercase tracking-wide">
+                              <span className="text-[10px] text-slate-400 font-bold bg-subtle/50 px-1.5 py-0.5 rounded border border-slate-150 uppercase tracking-wide">
                                 {lpo.po_type?.replace('_', ' ')}
                               </span>
                             </div>
@@ -1045,10 +1045,10 @@ export const PaymentPage: React.FC = () => {
                               <IconBuildingStore className="w-4.5 h-4.5" />
                             </div>
                             <div className="flex flex-col">
-                              <span className="truncate font-extrabold text-slate-800 text-[13px] tracking-tight block uppercase" title={lpo.supplier_name}>
+                              <span className="truncate font-extrabold text-text-primary text-[13px] tracking-tight block uppercase" title={lpo.supplier_name}>
                                 {lpo.supplier_name || '—'}
                               </span>
-                              <span className="text-[9px] text-slate-400 font-bold tracking-wider uppercase mt-0.5 flex items-center gap-1">
+                              <span className="text-[9px] text-text-secondary font-bold font-bold tracking-wider uppercase mt-0.5 flex items-center gap-1">
                                 <BadgeCheck className="w-3 h-3 text-emerald-500" />
                                 Official Supplier
                               </span>
@@ -1066,19 +1066,19 @@ export const PaymentPage: React.FC = () => {
                           </div>
                         </td>
                         <td className="px-6 py-5">
-                          <div className="flex items-center gap-2 text-slate-800">
+                          <div className="flex items-center gap-2 text-text-primary">
                             <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" />
                             <span className="font-extrabold text-[12.5px] tracking-tight">{lpoDate.date}</span>
                           </div>
                         </td>
                         <td className="px-6 py-5 text-center">
                           {paymentExcelData.has((lpo.lpo_number || '').toUpperCase().trim().replace(/\s+/g, '')) ? (
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-250/50 text-amber-700 text-[10px] font-black tracking-widest rounded-full shadow-3xs">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 border border-amber-250/50 text-amber-700 text-[10px] font-black tracking-widest rounded-full shadow-3xs">
                               <Sparkles className="w-3.5 h-3.5 text-amber-600 animate-pulse" />
                               READY
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-50 border border-slate-200 text-slate-400 text-[10px] font-black tracking-widest rounded-full shadow-3xs">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-subtle/50 border border-border-default text-slate-400 text-[10px] font-black tracking-widest rounded-full shadow-3xs">
                               NOT FOUND
                             </span>
                           )}
@@ -1086,7 +1086,7 @@ export const PaymentPage: React.FC = () => {
                         <td className="px-6 py-5 text-right tabular-nums">
                           <div className="inline-flex items-baseline justify-end w-full">
                             <span className="text-[10px] font-bold text-slate-400 mr-1.5 uppercase">RM</span>
-                            <span className="font-black text-slate-900 text-[14px] tracking-tight">{formattedAmount}</span>
+                            <span className="font-black text-text-primary text-[14px] tracking-tight">{formattedAmount}</span>
                           </div>
                         </td>
                         <td className="px-6 py-5 text-center">
@@ -1099,7 +1099,7 @@ export const PaymentPage: React.FC = () => {
                                 href={lpo.document_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-9 h-9 rounded-xl border border-slate-200 flex items-center justify-center text-slate-500 hover:text-slate-950 hover:bg-slate-50 hover:border-slate-300 transition-all duration-150 shadow-3xs"
+                                className="w-9 h-9 rounded-xl border border-border-default flex items-center justify-center text-text-muted hover:text-slate-950 hover:bg-subtle/50 hover:border-border-default transition-colors duration-150 shadow-3xs"
                                 title="View LPO Document"
                               >
                                 <IconFileText className="w-4.5 h-4.5" />
@@ -1109,13 +1109,13 @@ export const PaymentPage: React.FC = () => {
                             {lpo.payment_status !== 'paid' ? (
                               <button
                                 onClick={() => openPaymentWorkspace(lpo)}
-                                className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-850 text-white font-black text-xs rounded-xl shadow-sm shadow-indigo-600/10 hover:shadow-md hover:shadow-indigo-600/15 transition-all duration-150 active:scale-95 flex items-center gap-2 uppercase tracking-widest"
+                                className="px-4 py-2 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-850 text-white font-black text-xs rounded-xl shadow-sm shadow-indigo-600/10 hover:shadow-md hover:shadow-indigo-600/15 transition-colors duration-150 active:scale-95 flex items-center gap-2 uppercase tracking-widest"
                               >
                                 <IconMoney className="w-3.5 h-3.5 text-indigo-100" />
                                 Settle
                               </button>
                             ) : (
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50/50 border border-emerald-100 text-emerald-600 text-[10px] font-black uppercase tracking-widest rounded-lg shadow-3xs pr-3">
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-500/10 border border-emerald-100 text-emerald-600 text-[10px] font-black uppercase tracking-widest rounded-lg shadow-3xs pr-3">
                                 <Check className="w-3.5 h-3.5 text-emerald-500" />
                                 Settled
                               </span>
@@ -1132,11 +1132,11 @@ export const PaymentPage: React.FC = () => {
 
           {/* Pagination bar */}
           {!isLoading && totalPages > 1 && (
-            <div className="border-t border-slate-100 p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="border-t border-border-subtle p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
               <div className="flex items-center gap-3">
                 <div className="w-1.5 h-7 bg-slate-900 rounded-full" />
-                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                  Showing Page <span className="text-slate-900">{page}</span> of <span className="text-slate-900">{totalPages}</span>
+                <span className="text-[10px] font-black text-text-muted uppercase tracking-widest">
+                  Showing Page <span className="text-text-primary">{page}</span> of <span className="text-text-primary">{totalPages}</span>
                 </span>
               </div>
 
@@ -1144,14 +1144,14 @@ export const PaymentPage: React.FC = () => {
                 <button
                   disabled={page <= 1}
                   onClick={() => setPage(p => p - 1)}
-                  className="w-9 h-9 rounded-xl border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50 transition-all duration-150 disabled:opacity-40 disabled:pointer-events-none"
+                  className="w-9 h-9 rounded-xl border border-border-default flex items-center justify-center text-text-muted hover:bg-subtle/50 transition-colors duration-150 disabled:opacity-40 disabled:pointer-events-none"
                 >
                   <IconChevronLeft className="w-4 h-4" />
                 </button>
                 <button
                   disabled={page >= totalPages}
                   onClick={() => setPage(p => p + 1)}
-                  className="w-9 h-9 rounded-xl border border-slate-200 flex items-center justify-center text-slate-500 hover:bg-slate-50 transition-all duration-150 disabled:opacity-40 disabled:pointer-events-none"
+                  className="w-9 h-9 rounded-xl border border-border-default flex items-center justify-center text-text-muted hover:bg-subtle/50 transition-colors duration-150 disabled:opacity-40 disabled:pointer-events-none"
                 >
                   <IconChevronRight className="w-4 h-4" />
                 </button>
@@ -1171,7 +1171,7 @@ export const PaymentPage: React.FC = () => {
           />
 
           {/* Slide-over panel */}
-          <div className="relative w-full max-w-6xl bg-white h-full shadow-2xl flex flex-col z-10 animate-slide-in overflow-hidden border-l border-slate-200">
+          <div className="relative w-full max-w-6xl bg-surface h-full shadow-2xl flex flex-col z-10 animate-slide-in overflow-hidden border-l border-border-default">
             {/* Header */}
             <div className="bg-slate-900 p-5 px-6 text-white flex items-center justify-between flex-shrink-0">
               <div className="space-y-1">
@@ -1191,23 +1191,23 @@ export const PaymentPage: React.FC = () => {
 
             {/* Main Workspace Body */}
             {isLoadingWorkspaceDetails ? (
-              <div className="flex-1 flex flex-col items-center justify-center p-20 gap-3 bg-slate-50">
+              <div className="flex-1 flex flex-col items-center justify-center p-20 gap-3 bg-subtle/50">
                 <Spinner size="lg" className="text-indigo-600" />
-                <p className="text-xs font-bold text-slate-500 uppercase tracking-widest animate-pulse">
+                <p className="text-xs font-bold text-text-muted uppercase tracking-widest animate-pulse">
                   Loading Timeline & Receipt Details...
                 </p>
               </div>
             ) : (
-              <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden bg-slate-50/40">
+              <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden bg-subtle/50">
                 
                 {/* Column 1: Payment & Vendor Summary */}
-                <div className="lg:col-span-3 bg-white p-6 border-r border-slate-100 flex flex-col justify-between relative overflow-y-auto">
+                <div className="lg:col-span-3 bg-surface p-6 border-r border-border-subtle flex flex-col justify-between relative overflow-y-auto">
                   <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 via-indigo-600 to-teal-500" />
                   
                   <div className="space-y-6">
                     {/* Badge and LPO number */}
                     <div className="flex justify-between items-center">
-                      <Badge variant="info" className="font-extrabold text-[9px] bg-indigo-50 border-indigo-100 text-indigo-700 tracking-wider">
+                      <Badge variant="info" className="font-extrabold text-[9px] bg-indigo-500/10 border-indigo-100 text-indigo-700 tracking-wider">
                         PAYMENT
                       </Badge>
                       <span className="font-mono text-xs font-black text-slate-400">
@@ -1217,40 +1217,40 @@ export const PaymentPage: React.FC = () => {
 
                     {/* Vendor Identity */}
                     <div className="space-y-3 pt-2">
-                      <div className="w-12 h-12 rounded-2xl bg-indigo-50/80 border border-indigo-100 flex items-center justify-center text-indigo-600 shadow-sm">
+                      <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-100 flex items-center justify-center text-indigo-600 shadow-sm">
                         <Building2 className="w-5 h-5" />
                       </div>
                       <div className="space-y-0.5">
-                        <h4 className="text-base font-extrabold text-slate-900 uppercase leading-snug tracking-tight">
+                        <h4 className="text-base font-extrabold text-text-primary uppercase leading-snug tracking-tight">
                           {selectedLpo.supplier_name}
                         </h4>
-                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                        <span className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider flex items-center gap-1">
                           <BadgeCheck className="w-3.5 h-3.5 text-emerald-500" />
                           Authorized Official Vendor
                         </span>
                       </div>
                     </div>
 
-                    <div className="border-t border-slate-100 pt-5 space-y-4">
+                    <div className="border-t border-border-subtle pt-5 space-y-4">
                       {/* Amount display */}
                       <div className="bg-gradient-to-br from-slate-50 to-slate-100/50 rounded-2xl p-4 border border-slate-150/60 shadow-xs">
                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">
                           Total Amount Due
                         </span>
-                        <span className="text-2xl font-black text-slate-900 tracking-tight block mt-0.5">
+                        <span className="text-2xl font-black text-text-primary tracking-tight block mt-0.5">
                           {formatCurrency(selectedLpo.total_amount).replace('MYR', 'RM')}
                         </span>
                       </div>
 
                       {/* Summary data points */}
                       <div className="space-y-3 text-xs">
-                        <div className="flex justify-between items-center py-1.5 border-b border-slate-100">
+                        <div className="flex justify-between items-center py-1.5 border-b border-border-subtle">
                           <span className="font-bold text-slate-400 uppercase text-[9px] tracking-wider">Issued Date</span>
-                          <span className="font-extrabold text-slate-800">{formatShortDate(selectedLpo.document_date || selectedLpo.order_date)}</span>
+                          <span className="font-extrabold text-text-primary">{formatShortDate(selectedLpo.document_date || selectedLpo.order_date)}</span>
                         </div>
-                        <div className="flex justify-between items-center py-1.5 border-b border-slate-100">
+                        <div className="flex justify-between items-center py-1.5 border-b border-border-subtle">
                           <span className="font-bold text-slate-400 uppercase text-[9px] tracking-wider">LPO Status</span>
-                          <Badge variant="gray" className="font-extrabold text-[9px] bg-slate-50 text-slate-600 tracking-widest uppercase">
+                          <Badge variant="gray" className="font-extrabold text-[9px] bg-subtle/50 text-text-muted tracking-widest uppercase">
                             {selectedLpo.lpo_status || 'VERIFIED'}
                           </Badge>
                         </div>
@@ -1268,22 +1268,22 @@ export const PaymentPage: React.FC = () => {
                   </div>
 
                   {/* TreasuryCircular Note */}
-                  <div className="mt-8 bg-slate-50 border border-slate-150/60 rounded-xl p-3.5 flex items-start gap-2.5 shadow-2xs">
+                  <div className="mt-8 bg-subtle/50 border border-slate-150/60 rounded-xl p-3.5 flex items-start gap-2.5 shadow-elevation-1">
                     <AlertCircle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
-                    <p className="text-[10px] font-semibold text-slate-500 leading-relaxed">
-                      This transaction is subject to <strong className="text-slate-700">Treasury Circular 2024 (Amendment 3)</strong>. Ensure all eGRN references are validated before disbursement.
+                    <p className="text-[10px] font-semibold text-text-muted leading-relaxed">
+                      This transaction is subject to <strong className="text-text-secondary">Treasury Circular 2024 (Amendment 3)</strong>. Ensure all eGRN references are validated before disbursement.
                     </p>
                   </div>
                 </div>
 
                 {/* Column 2: Item Details & Delivery Timeline Verification */}
-                <div className="lg:col-span-5 p-6 overflow-y-auto flex flex-col gap-4 border-r border-slate-100 bg-slate-50/50">
+                <div className="lg:col-span-5 p-6 overflow-y-auto flex flex-col gap-4 border-r border-border-subtle bg-subtle/50">
                   <div className="flex justify-between items-center flex-shrink-0">
                     <div className="space-y-0.5">
-                      <h4 className="text-xs font-black text-slate-800 uppercase tracking-widest">Item Details</h4>
+                      <h4 className="text-xs font-black text-text-primary uppercase tracking-widest">Item Details</h4>
                       <p className="text-[10px] text-slate-400 font-semibold">Verify items to be disbursed</p>
                     </div>
-                    <Badge className="bg-slate-200 hover:bg-slate-200 text-slate-800 font-black text-[9px] tracking-wider px-2 py-0.5 rounded-lg border-0 shadow-none">
+                    <Badge className="bg-subtle hover:bg-subtle text-text-primary font-black text-[9px] tracking-wider px-2 py-0.5 rounded-lg border-0 shadow-none">
                       {selectedPoItems.length} ITEMS
                     </Badge>
                   </div>
@@ -1294,20 +1294,20 @@ export const PaymentPage: React.FC = () => {
                       return (
                         <div 
                           key={item.id || index}
-                          className="bg-white border border-slate-150/80 rounded-2xl p-4 shadow-sm hover:shadow-md hover:border-slate-350 transition-all duration-200 space-y-3.5 relative overflow-hidden group"
+                          className="bg-surface border border-slate-150/80 rounded-2xl p-4 shadow-sm hover:shadow-md hover:border-slate-350 transition-colors duration-150 space-y-3.5 relative overflow-hidden group"
                         >
                           {/* Item Identity and Calculation */}
                           <div className="flex items-start justify-between gap-4">
                             <div className="flex gap-3">
-                              <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-500 group-hover:scale-105 transition-transform duration-200 flex-shrink-0">
+                              <div className="w-10 h-10 rounded-xl bg-subtle/50 border border-border-subtle flex items-center justify-center text-text-muted group-hover:scale-105 transition-transform duration-200 flex-shrink-0">
                                 <Package className="w-5 h-5 text-slate-400" />
                               </div>
                               <div className="space-y-1">
-                                <span className="font-extrabold text-slate-900 text-xs block leading-tight uppercase">
+                                <span className="font-extrabold text-text-primary text-xs block leading-tight uppercase">
                                   {item.item_name}
                                 </span>
                                 <div className="flex items-center gap-1.5 flex-wrap">
-                                  <span className="font-mono text-[9px] text-slate-400 tracking-wider">
+                                  <span className="font-mono text-[9px] text-text-secondary font-bold tracking-wider">
                                     {item.item_code}
                                   </span>
                                   <span className="text-[9px] text-slate-300">|</span>
@@ -1320,52 +1320,52 @@ export const PaymentPage: React.FC = () => {
                             
                             <div className="text-right flex-shrink-0 space-y-0.5">
                               <span className="text-[9px] font-black text-slate-400 block uppercase tracking-wider">Item Total</span>
-                              <span className="font-black text-slate-900 text-sm tabular-nums">
+                              <span className="font-black text-text-primary text-sm tabular-nums">
                                 {formatCurrency(totalItemPrice).replace('MYR', 'RM')}
                               </span>
                             </div>
                           </div>
 
                           {/* Unit calculation bar */}
-                          <div className="bg-slate-50/50 rounded-lg p-2 border border-slate-100/70 text-[10px] text-slate-500 font-bold flex items-center justify-between">
+                          <div className="bg-subtle/50 rounded-lg p-2 border border-border-subtle text-[10px] text-text-muted font-bold flex items-center justify-between">
                             <span>Unit Rate Breakdown</span>
-                            <span className="font-mono tabular-nums text-slate-700">
-                              {item.quantity_ordered} x {formatCurrency(item.unit_price).replace('MYR', 'RM')} = <strong className="text-slate-900">{formatCurrency(totalItemPrice).replace('MYR', 'RM')}</strong>
+                            <span className="font-mono tabular-nums text-text-secondary">
+                              {item.quantity_ordered} x {formatCurrency(item.unit_price).replace('MYR', 'RM')} = <strong className="text-text-primary">{formatCurrency(totalItemPrice).replace('MYR', 'RM')}</strong>
                             </span>
                           </div>
 
                           {/* Delivery timeline nested subcard */}
-                          <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4 space-y-3.5 relative">
-                            <div className="flex items-center justify-between border-b border-slate-200/60 pb-2">
+                          <div className="bg-subtle/50 border border-border-subtle rounded-2xl p-4 space-y-3.5 relative">
+                            <div className="flex items-center justify-between border-b border-border-default pb-2">
                               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Verification Timeline</span>
-                              <span className="text-[10px] font-black text-indigo-600 uppercase bg-indigo-50 border border-indigo-100/50 px-2 py-0.5 rounded-md">
+                              <span className="text-[10px] font-black text-indigo-600 uppercase bg-indigo-500/10 border border-indigo-100/50 px-2 py-0.5 rounded-md">
                                 GRN VERIFIED
                               </span>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">
                               {/* Left Sub-column: Timeline points */}
-                              <div className="space-y-2 text-xs font-semibold text-slate-600">
+                              <div className="space-y-2 text-xs font-semibold text-text-muted">
                                 <div className="flex items-center gap-2">
                                   <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
-                                  <span>Ord: <strong className="text-slate-900">{formatShortDate(selectedLpo.document_date || selectedLpo.order_date)}</strong></span>
+                                  <span>Ord: <strong className="text-text-primary">{formatShortDate(selectedLpo.document_date || selectedLpo.order_date)}</strong></span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                                  <span>Rcv: <strong className="text-slate-900">{formatShortDate(workspaceGrn?.receipt_date || workspaceGrn?.receiving_date || new Date(new Date(selectedLpo.document_date || selectedLpo.order_date).getTime() + 15 * 86400000).toISOString())}</strong></span>
+                                  <span>Rcv: <strong className="text-text-primary">{formatShortDate(workspaceGrn?.receipt_date || workspaceGrn?.receiving_date || new Date(new Date(selectedLpo.document_date || selectedLpo.order_date).getTime() + 15 * 86400000).toISOString())}</strong></span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                                  <span>DO: <strong className="text-slate-900 font-mono text-[10px] tracking-tight">{workspaceGrn?.delivery_note_number || workspaceGrn?.gr_number || egrnReference}</strong></span>
+                                  <span>DO: <strong className="text-text-primary font-mono text-[10px] tracking-tight">{workspaceGrn?.delivery_note_number || workspaceGrn?.gr_number || egrnReference}</strong></span>
                                 </div>
                               </div>
 
                               {/* Right Sub-column: Status/Penalty */}
                               <div className="flex flex-col items-end justify-center">
                                 {workspacePenalty?.days_delayed > 0 || (!workspacePenalty && new Date(workspaceGrn?.receipt_date || new Date(new Date(selectedLpo.document_date || selectedLpo.order_date).getTime() + 15 * 86400000)).getTime() > new Date(selectedLpo.document_date || selectedLpo.order_date).getTime() + 10 * 86400000) ? (
-                                  <div className="bg-amber-50 border border-amber-200/85 rounded-xl p-2.5 flex flex-col items-center justify-center text-center shadow-2xs w-full">
+                                  <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-2.5 flex flex-col items-center justify-center text-center shadow-elevation-1 w-full">
                                     <AlertCircle className="w-3.5 h-3.5 text-amber-600 mb-0.5" />
-                                    <span className="text-[9px] font-black text-amber-800 uppercase tracking-wider block">
+                                    <span className="text-[9px] font-black text-amber-400 uppercase tracking-wider block">
                                       {workspacePenalty?.days_delayed || 13} DAYS LATE!
                                     </span>
                                     <span className="text-[7px] font-bold text-amber-500 uppercase tracking-widest mt-0.5">
@@ -1373,9 +1373,9 @@ export const PaymentPage: React.FC = () => {
                                     </span>
                                   </div>
                                 ) : (
-                                  <div className="bg-emerald-50 border border-emerald-200/85 rounded-xl p-2.5 flex flex-col items-center justify-center text-center shadow-2xs w-full">
+                                  <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-2.5 flex flex-col items-center justify-center text-center shadow-elevation-1 w-full">
                                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 mb-0.5" />
-                                    <span className="text-[9px] font-black text-emerald-800 uppercase tracking-wider block">
+                                    <span className="text-[9px] font-black text-emerald-400 uppercase tracking-wider block">
                                       ON TIME
                                     </span>
                                     <span className="text-[7px] font-bold text-emerald-500 uppercase tracking-widest mt-0.5">
@@ -1393,18 +1393,18 @@ export const PaymentPage: React.FC = () => {
                 </div>
 
                 {/* Column 3: Transaction Details & Settlement Form */}
-                <div className="lg:col-span-4 bg-white p-6 flex flex-col justify-between overflow-y-auto">
+                <div className="lg:col-span-4 bg-surface p-6 flex flex-col justify-between overflow-y-auto">
                   <div className="space-y-6">
                     <div className="space-y-0.5">
-                      <h4 className="text-xs font-black text-slate-800 uppercase tracking-widest">Transaction Details</h4>
+                      <h4 className="text-xs font-black text-text-primary uppercase tracking-widest">Transaction Details</h4>
                       <p className="text-[10px] text-slate-400 font-semibold">Enter the payment execution details below.</p>
                     </div>
 
                     {selectedLpo && paymentExcelData.has((selectedLpo.lpo_number || '').toUpperCase().trim().replace(/\s+/g, '')) && (
-                      <div className="bg-emerald-50 border border-emerald-250/60 rounded-xl p-3 flex items-start gap-2.5 shadow-2xs">
+                      <div className="bg-emerald-500/10 border border-emerald-250/60 rounded-xl p-3 flex items-start gap-2.5 shadow-elevation-1">
                         <Sparkles className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
                         <div className="space-y-0.5">
-                          <span className="text-[10px] font-black text-emerald-800 uppercase tracking-wide block">
+                          <span className="text-[10px] font-black text-emerald-400 uppercase tracking-wide block">
                             Auto-filled from Excel
                           </span>
                           <p className="text-[9.5px] font-semibold text-emerald-600 leading-normal">
@@ -1417,20 +1417,20 @@ export const PaymentPage: React.FC = () => {
                     <div className="space-y-4.5">
                       {/* Received Date (System) */}
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                        <label className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                           Received Date (System)
                         </label>
                         <input
                           type="date"
                           value={receivedDate}
                           disabled={true}
-                          className="w-full px-3 py-2 text-sm bg-slate-50 border border-slate-200 text-slate-500 rounded-xl outline-none transition-all font-semibold cursor-not-allowed"
+                          className="w-full px-3 py-2 text-sm bg-subtle/50 border border-border-default text-text-muted rounded-xl outline-none transition-colors font-semibold cursor-not-allowed"
                         />
                       </div>
 
                       {/* Invoice Date */}
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                        <label className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                           Invoice Date
                         </label>
                         <input
@@ -1441,13 +1441,13 @@ export const PaymentPage: React.FC = () => {
                             setDateSentToAdmin(e.target.value)
                           }}
                           disabled={selectedLpo.payment_status === 'paid'}
-                          className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-xl outline-none focus:border-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 transition-all font-semibold"
+                          className="w-full px-3 py-2 text-sm bg-surface border border-border-default rounded-xl outline-none focus:border-indigo-500 disabled:bg-subtle/50 disabled:text-text-muted transition-colors font-semibold"
                         />
                       </div>
 
                       {/* Effective Date (Payment Date) input */}
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                        <label className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                           Effective Date (Payment Date)
                         </label>
                         <input
@@ -1455,13 +1455,13 @@ export const PaymentPage: React.FC = () => {
                           value={effectiveDate}
                           onChange={(e) => setEffectiveDate(e.target.value)}
                           disabled={selectedLpo.payment_status === 'paid'}
-                          className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-xl outline-none focus:border-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 transition-all font-semibold"
+                          className="w-full px-3 py-2 text-sm bg-surface border border-border-default rounded-xl outline-none focus:border-indigo-500 disabled:bg-subtle/50 disabled:text-text-muted transition-colors font-semibold"
                         />
                       </div>
 
                       {/* Credit Note Input */}
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                        <label className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                           Credit Note
                         </label>
                         <input
@@ -1470,13 +1470,13 @@ export const PaymentPage: React.FC = () => {
                           value={creditNote}
                           onChange={(e) => setCreditNote(e.target.value)}
                           disabled={selectedLpo.payment_status === 'paid'}
-                          className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-xl outline-none focus:border-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 transition-all font-semibold placeholder:text-slate-300"
+                          className="w-full px-3 py-2 text-sm bg-surface border border-border-default rounded-xl outline-none focus:border-indigo-500 disabled:bg-subtle/50 disabled:text-text-muted transition-colors font-semibold placeholder:text-slate-300"
                         />
                       </div>
 
                       {/* eGRN Reference */}
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                        <label className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                           eGRN Reference
                         </label>
                         <input
@@ -1484,13 +1484,13 @@ export const PaymentPage: React.FC = () => {
                           value={egrnReference}
                           onChange={(e) => setEgrnReference(e.target.value)}
                           disabled={selectedLpo.payment_status === 'paid'}
-                          className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-xl outline-none focus:border-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 transition-all font-mono font-bold tracking-wide"
+                          className="w-full px-3 py-2 text-sm bg-surface border border-border-default rounded-xl outline-none focus:border-indigo-500 disabled:bg-subtle/50 disabled:text-text-muted transition-colors font-mono font-bold tracking-wide"
                         />
                       </div>
 
                       {/* Invoice Number */}
                       <div className="space-y-1.5">
-                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">
+                        <label className="text-[10px] font-bold text-text-secondary font-bold uppercase tracking-wider block">
                           Invoice Number
                         </label>
                         <input
@@ -1498,7 +1498,7 @@ export const PaymentPage: React.FC = () => {
                           value={invoiceNumber}
                           onChange={(e) => setInvoiceNumber(e.target.value)}
                           disabled={selectedLpo.payment_status === 'paid'}
-                          className="w-full px-3 py-2 text-sm bg-white border border-slate-200 rounded-xl outline-none focus:border-indigo-500 disabled:bg-slate-50 disabled:text-slate-500 transition-all font-mono font-bold tracking-wide"
+                          className="w-full px-3 py-2 text-sm bg-surface border border-border-default rounded-xl outline-none focus:border-indigo-500 disabled:bg-subtle/50 disabled:text-text-muted transition-colors font-mono font-bold tracking-wide"
                         />
                       </div>
 
@@ -1507,8 +1507,8 @@ export const PaymentPage: React.FC = () => {
                         <label className={cn(
                           "flex items-start gap-3.5 p-4 rounded-2xl border cursor-pointer select-none transition-colors",
                           confirmPHISChecked 
-                            ? "bg-amber-50/70 border-amber-200 text-slate-800" 
-                            : "bg-amber-50/20 border-amber-100 text-slate-500 hover:bg-amber-50/40"
+                            ? "bg-amber-500/10 border-amber-500/20 text-text-primary" 
+                            : "bg-amber-500/10 border-amber-100 text-text-muted hover:bg-amber-500/10"
                         )}>
                           <input
                             type="checkbox"
@@ -1522,7 +1522,7 @@ export const PaymentPage: React.FC = () => {
                             className="w-4.5 h-4.5 rounded text-amber-600 focus:ring-amber-500 border-amber-300 mt-0.5 cursor-pointer disabled:cursor-not-allowed"
                           />
                           <div className="space-y-1">
-                            <span className="text-[10px] font-black text-amber-800 uppercase tracking-widest block">
+                            <span className="text-[10px] font-black text-amber-400 uppercase tracking-widest block">
                               Ledger Compliance Lock
                             </span>
                             <p className="text-[10px] font-semibold leading-normal">
@@ -1535,10 +1535,10 @@ export const PaymentPage: React.FC = () => {
                   </div>
 
                   {/* Actions Footer */}
-                  <div className="pt-5 border-t border-slate-100 flex items-center justify-end gap-3 flex-shrink-0 mt-8">
+                  <div className="pt-5 border-t border-border-subtle flex items-center justify-end gap-3 flex-shrink-0 mt-8">
                     <button
                       onClick={() => setIsWorkspaceOpen(false)}
-                      className="px-4 py-2.5 border border-slate-250 hover:bg-slate-50 font-bold text-xs rounded-xl text-slate-600 transition-all uppercase tracking-wider"
+                      className="px-4 py-2.5 border border-slate-250 hover:bg-subtle/50 font-bold text-xs rounded-xl text-text-muted transition-colors uppercase tracking-wider"
                     >
                       {selectedLpo.payment_status === 'paid' ? 'Close Workspace' : 'Cancel'}
                     </button>
@@ -1548,7 +1548,7 @@ export const PaymentPage: React.FC = () => {
                         disabled={isProcessing}
                         onClick={handleAuthorizeDisbursement}
                         className={cn(
-                          "px-5 py-2.5 font-black text-xs rounded-xl text-white shadow-md transition-all flex items-center gap-2 uppercase tracking-widest",
+                          "px-5 py-2.5 font-black text-xs rounded-xl text-white shadow-md transition-colors flex items-center gap-2 uppercase tracking-widest",
                           isProcessing 
                             ? "bg-slate-400 cursor-not-allowed" 
                             : "bg-indigo-600 hover:bg-indigo-700 shadow-indigo-600/10 active:scale-95"
@@ -1560,7 +1560,7 @@ export const PaymentPage: React.FC = () => {
                     ) : (
                       <button
                         disabled={true}
-                        className="px-5 py-2.5 bg-emerald-600 text-white font-black text-xs rounded-xl shadow-md transition-all flex items-center gap-2 uppercase tracking-widest cursor-not-allowed opacity-90"
+                        className="px-5 py-2.5 bg-emerald-600 text-white font-black text-xs rounded-xl shadow-md transition-colors flex items-center gap-2 uppercase tracking-widest cursor-not-allowed opacity-90"
                       >
                         <Check className="w-4 h-4 text-white" />
                         Disbursement Authorized
@@ -1585,7 +1585,7 @@ export const PaymentPage: React.FC = () => {
           />
 
           {/* Modal content */}
-          <div className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl flex flex-col z-10 overflow-hidden border border-slate-200 animate-in fade-in zoom-in-95 duration-200 max-h-[85vh]">
+          <div className="relative w-full max-w-4xl bg-surface rounded-3xl shadow-2xl flex flex-col z-10 overflow-hidden border border-border-default animate-in fade-in zoom-in-95 duration-200 max-h-[85vh]">
             {/* Header */}
             <div className="bg-slate-900 p-5 px-6 text-white flex items-center justify-between flex-shrink-0">
               <div className="space-y-1">
@@ -1604,14 +1604,14 @@ export const PaymentPage: React.FC = () => {
             </div>
 
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-150">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-subtle/50 p-4 rounded-2xl border border-slate-150">
                 <div>
-                  <h4 className="text-xs font-black text-slate-800 uppercase tracking-wider">File details</h4>
+                  <h4 className="text-xs font-black text-text-primary uppercase tracking-wider">File details</h4>
                   <p className="text-sm font-extrabold text-indigo-600 mt-0.5">{uploadedFileName}</p>
                 </div>
-                <div className="flex gap-4 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                <div className="flex gap-4 text-xs font-bold text-text-muted uppercase tracking-wider">
                   <div>
-                    Parsed: <span className="text-slate-900 font-black">{uploadPreviewRows.length}</span>
+                    Parsed: <span className="text-text-primary font-black">{uploadPreviewRows.length}</span>
                   </div>
                   <div>
                     Errors: <span className={cn("font-black", uploadErrors.length > 0 ? "text-red-500" : "text-emerald-600")}>{uploadErrors.length}</span>
@@ -1620,14 +1620,14 @@ export const PaymentPage: React.FC = () => {
               </div>
 
               {!isParsingExcel && (uploadPreviewRows.length > 0 || uploadErrors.length > 0) && (
-                <div className="flex flex-wrap items-center gap-1 bg-slate-55 p-1 rounded-2xl border border-slate-200 shadow-sm self-start">
+                <div className="flex flex-wrap items-center gap-1 bg-slate-55 p-1 rounded-2xl border border-border-default shadow-sm self-start">
                   <button
                     onClick={() => setModalFilter('all')}
                     className={cn(
-                      "px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 uppercase tracking-wider",
+                      "px-4 py-2 text-xs font-bold rounded-xl transition-colors duration-150 uppercase tracking-wider",
                       modalFilter === 'all' 
                         ? "bg-slate-900 text-white shadow-md shadow-slate-950/10" 
-                        : "text-slate-500 hover:text-slate-950"
+                        : "text-text-muted hover:text-slate-950"
                     )}
                   >
                     All ({modalCounts.all})
@@ -1635,10 +1635,10 @@ export const PaymentPage: React.FC = () => {
                   <button
                     onClick={() => setModalFilter('matched')}
                     className={cn(
-                      "px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 uppercase tracking-wider",
+                      "px-4 py-2 text-xs font-bold rounded-xl transition-colors duration-150 uppercase tracking-wider",
                       modalFilter === 'matched' 
                         ? "bg-emerald-600 text-white shadow-md shadow-emerald-505/10" 
-                        : "text-slate-500 hover:text-slate-950"
+                        : "text-text-muted hover:text-slate-950"
                     )}
                   >
                     Matched ({modalCounts.matched})
@@ -1646,10 +1646,10 @@ export const PaymentPage: React.FC = () => {
                   <button
                     onClick={() => setModalFilter('not_found')}
                     className={cn(
-                      "px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 uppercase tracking-wider",
+                      "px-4 py-2 text-xs font-bold rounded-xl transition-colors duration-150 uppercase tracking-wider",
                       modalFilter === 'not_found' 
                         ? "bg-amber-600 text-white shadow-md shadow-amber-505/10" 
-                        : "text-slate-500 hover:text-slate-950"
+                        : "text-text-muted hover:text-slate-950"
                     )}
                   >
                     Not Found ({modalCounts.notFound})
@@ -1657,10 +1657,10 @@ export const PaymentPage: React.FC = () => {
                   <button
                     onClick={() => setModalFilter('error')}
                     className={cn(
-                      "px-4 py-2 text-xs font-bold rounded-xl transition-all duration-200 uppercase tracking-wider",
+                      "px-4 py-2 text-xs font-bold rounded-xl transition-colors duration-150 uppercase tracking-wider",
                       modalFilter === 'error' 
                         ? "bg-red-600 text-white shadow-md shadow-red-505/10" 
-                        : "text-slate-500 hover:text-slate-950"
+                        : "text-text-muted hover:text-slate-950"
                     )}
                   >
                     Errors / Warnings ({modalCounts.errors})
@@ -1671,7 +1671,7 @@ export const PaymentPage: React.FC = () => {
               {isParsingExcel ? (
                 <div className="py-16 flex flex-col items-center justify-center gap-3">
                   <Spinner size="lg" className="text-indigo-600" />
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-widest animate-pulse">
+                  <p className="text-xs font-bold text-text-muted uppercase tracking-widest animate-pulse">
                     {uploadProgress.status} ({uploadProgress.percent}%)
                   </p>
                 </div>
@@ -1692,7 +1692,7 @@ export const PaymentPage: React.FC = () => {
               ) : (
                 <div className="space-y-4">
                   {uploadErrors.length > 0 && (modalFilter === 'all' || modalFilter === 'error') && (
-                    <div className="p-4 bg-amber-50 border border-amber-250 rounded-2xl text-amber-800 text-xs space-y-1.5 max-h-60 overflow-y-auto">
+                    <div className="p-4 bg-amber-500/10 border border-amber-250 rounded-2xl text-amber-400 text-xs space-y-1.5 max-h-60 overflow-y-auto">
                       <h5 className="font-extrabold uppercase tracking-wider flex items-center gap-1.5">
                         <AlertCircle className="w-4 h-4 text-amber-650" />
                         Warnings during parsing ({uploadErrors.length})
@@ -1710,13 +1710,13 @@ export const PaymentPage: React.FC = () => {
                   {modalFilter !== 'error' && (
                     <div className="border border-slate-150 rounded-2xl overflow-hidden">
                       {filteredPreviewRows.length === 0 ? (
-                        <div className="p-12 text-center text-slate-400 font-bold uppercase tracking-wider bg-white">
+                        <div className="p-12 text-center text-text-secondary font-bold font-bold uppercase tracking-wider bg-surface">
                           No matching records found for this filter.
                         </div>
                       ) : (
                         <table className="w-full text-left border-collapse">
                           <thead>
-                            <tr className="bg-slate-50/70 border-b border-slate-150 text-[10px] font-black text-slate-400 uppercase tracking-widest">
+                            <tr className="bg-subtle/50 border-b border-slate-150 text-[10px] font-black text-slate-400 uppercase tracking-widest">
                               <th className="px-4 py-3 font-bold tracking-widest">LPO Number</th>
                               <th className="px-4 py-3 font-bold tracking-widest">Supplier</th>
                               <th className="px-4 py-3 font-bold tracking-widest">Payment Date</th>
@@ -1725,36 +1725,36 @@ export const PaymentPage: React.FC = () => {
                               <th className="px-4 py-3 text-center font-bold tracking-widest">Match DB</th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-slate-100 text-xs font-semibold text-slate-700 bg-white">
+                          <tbody className="divide-y divide-border-subtle text-xs font-semibold text-text-secondary bg-surface">
                             {filteredPreviewRows.map((row, idx) => {
                               const normalizedLpoKey = (row.lpoNumber || '').toUpperCase().trim().replace(/\s+/g, '')
                               const isMatched = lpos.some(l => (l.lpo_number || '').toUpperCase().trim().replace(/\s+/g, '') === normalizedLpoKey)
                               
                               return (
-                                <tr key={idx} className="hover:bg-slate-50/50">
-                                  <td className="px-4 py-3.5 font-extrabold text-slate-900 font-mono">
+                                <tr key={idx} className="hover:bg-subtle/50">
+                                  <td className="px-4 py-3.5 font-extrabold text-text-primary font-mono">
                                     {row.lpoNumber}
                                   </td>
-                                  <td className="px-4 py-3.5 truncate max-w-[150px] uppercase font-bold text-slate-500">
+                                  <td className="px-4 py-3.5 truncate max-w-[150px] uppercase font-bold text-text-muted">
                                     {row.supplierName || '—'}
                                   </td>
                                   <td className="px-4 py-3.5">
                                     {row.paymentDate}
                                   </td>
                                   <td className="px-4 py-3.5 space-y-0.5">
-                                    <span className="font-bold text-slate-800 font-mono block">{row.invoiceNo}</span>
+                                    <span className="font-bold text-text-primary font-mono block">{row.invoiceNo}</span>
                                     <span className="text-[10px] text-slate-400">{row.invoiceDate}</span>
                                   </td>
-                                  <td className="px-4 py-3.5 text-right tabular-nums font-black text-slate-900">
+                                  <td className="px-4 py-3.5 text-right tabular-nums font-black text-text-primary">
                                     {row.paymentAmount > 0 ? formatCurrency(row.paymentAmount).replace('MYR', '').replace('RM', '').trim() : '—'}
                                   </td>
                                   <td className="px-4 py-3.5 text-center">
                                     {isMatched ? (
-                                      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 border border-emerald-250 text-emerald-700 text-[9px] font-black uppercase tracking-wider rounded-md">
+                                      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-500/10 border border-emerald-250 text-emerald-700 text-[9px] font-black uppercase tracking-wider rounded-md">
                                         Matched
                                       </span>
                                     ) : (
-                                      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 border border-amber-250 text-amber-700 text-[9px] font-black uppercase tracking-wider rounded-md" title="LPO number not found in local system LPO list">
+                                      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-500/10 border border-amber-250 text-amber-700 text-[9px] font-black uppercase tracking-wider rounded-md" title="LPO number not found in local system LPO list">
                                         Not Found
                                       </span>
                                     )}
@@ -1772,10 +1772,10 @@ export const PaymentPage: React.FC = () => {
             </div>
 
             {/* Footer */}
-            <div className="bg-slate-50 p-5 px-6 border-t border-slate-150 flex items-center justify-end gap-3 flex-shrink-0">
+            <div className="bg-subtle/50 p-5 px-6 border-t border-slate-150 flex items-center justify-end gap-3 flex-shrink-0">
               <button
                 onClick={() => setIsUploadModalOpen(false)}
-                className="px-4 py-2 border border-slate-250 hover:bg-slate-105 font-bold text-xs rounded-xl text-slate-600 transition-all uppercase tracking-wider bg-white"
+                className="px-4 py-2 border border-slate-250 hover:bg-slate-105 font-bold text-xs rounded-xl text-text-muted transition-colors uppercase tracking-wider bg-surface"
               >
                 Cancel
               </button>
@@ -1783,7 +1783,7 @@ export const PaymentPage: React.FC = () => {
                 disabled={isParsingExcel || uploadPreviewRows.length === 0}
                 onClick={handleApplyExcelData}
                 className={cn(
-                  "px-5 py-2.5 font-black text-xs rounded-xl text-white shadow-md transition-all flex items-center gap-2 uppercase tracking-widest",
+                  "px-5 py-2.5 font-black text-xs rounded-xl text-white shadow-md transition-colors flex items-center gap-2 uppercase tracking-widest",
                   isParsingExcel || uploadPreviewRows.length === 0
                     ? "bg-slate-400 cursor-not-allowed" 
                     : "bg-indigo-600 hover:bg-indigo-700 shadow-indigo-600/10 active:scale-95"

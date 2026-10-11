@@ -224,7 +224,7 @@ export const AdminBroadcastModal: React.FC<AdminBroadcastModalProps> = ({
                   <h3 className="text-base sm:text-lg font-bold text-text-primary tracking-tight">
                     System Broadcast &amp; Maintenance Console
                   </h3>
-                  <span className="px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-800 dark:text-amber-300 font-mono text-[9px] font-bold uppercase">
+                  <span className="px-2 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-400 dark:text-amber-300 font-mono text-[9px] font-bold uppercase">
                     Admin Only
                   </span>
                 </div>
@@ -249,9 +249,9 @@ export const AdminBroadcastModal: React.FC<AdminBroadcastModalProps> = ({
             <button
               type="button"
               onClick={() => setActiveTab('create')}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+              className={`px-3 py-1.5 rounded-lg font-semibold transition-colors ${
                 activeTab === 'create'
-                  ? 'bg-surface text-text-primary border border-border-default shadow-2xs'
+                  ? 'bg-surface text-text-primary border border-border-default shadow-elevation-1'
                   : 'text-text-muted hover:text-text-primary'
               }`}
             >
@@ -260,9 +260,9 @@ export const AdminBroadcastModal: React.FC<AdminBroadcastModalProps> = ({
             <button
               type="button"
               onClick={() => setActiveTab('manage')}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+              className={`px-3 py-1.5 rounded-lg font-semibold transition-colors ${
                 activeTab === 'manage'
-                  ? 'bg-surface text-text-primary border border-border-default shadow-2xs'
+                  ? 'bg-surface text-text-primary border border-border-default shadow-elevation-1'
                   : 'text-text-muted hover:text-text-primary'
               }`}
             >
@@ -396,7 +396,7 @@ export const AdminBroadcastModal: React.FC<AdminBroadcastModalProps> = ({
                           enableMaintenanceMode ? 'bg-amber-500' : 'bg-surface-subtle border border-border-default'
                         }`}
                       >
-                        <div className={`bg-white w-4 h-4 rounded-full shadow-xs transform transition-transform ${
+                        <div className={`bg-surface w-4 h-4 rounded-full shadow-xs transform transition-transform ${
                           enableMaintenanceMode ? 'translate-x-5' : 'translate-x-0'
                         }`} />
                       </button>
@@ -434,7 +434,7 @@ export const AdminBroadcastModal: React.FC<AdminBroadcastModalProps> = ({
                           onClick={() => handleModuleToggle(mod)}
                           className={`px-2 py-1 rounded-md text-[10px] font-semibold transition-colors ${
                             isSelected
-                              ? 'bg-amber-500/20 text-amber-800 dark:text-amber-300 border border-amber-500/40'
+                              ? 'bg-amber-500/20 text-amber-400 dark:text-amber-300 border border-amber-500/40'
                               : 'bg-surface hover:bg-surface-hover text-text-muted border border-border-default'
                           }`}
                         >
@@ -457,7 +457,7 @@ export const AdminBroadcastModal: React.FC<AdminBroadcastModalProps> = ({
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-5 py-2.5 rounded-xl bg-ink hover:bg-ink-hover text-ink-text text-xs font-medium transition-colors flex items-center gap-1.5 shadow-2xs"
+                    className="px-5 py-2.5 rounded-xl bg-ink hover:bg-ink-hover text-ink-text text-xs font-medium transition-colors flex items-center gap-1.5 shadow-elevation-1"
                   >
                     {isSubmitting ? (
                       <span>Publishing...</span>
@@ -491,7 +491,7 @@ export const AdminBroadcastModal: React.FC<AdminBroadcastModalProps> = ({
                         <div className="flex items-center gap-2 mb-1">
                           <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider ${
                             item.type === 'maintenance'
-                              ? 'bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30'
+                              ? 'bg-amber-500/15 text-amber-400 dark:text-amber-300 border border-amber-500/30'
                               : item.type === 'system_update'
                                 ? 'bg-accent-subtle text-accent-base border border-accent-base/30'
                                 : 'bg-surface-subtle text-text-secondary border border-border-default'

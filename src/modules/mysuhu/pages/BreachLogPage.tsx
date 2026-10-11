@@ -134,7 +134,7 @@ export const BreachLogPage: React.FC = () => {
             <button 
               onClick={handleExportCsv}
               disabled={filteredBreaches.length === 0}
-              className="inline-flex items-center gap-2 px-3.5 py-2 bg-surface hover:bg-subtle border border-border-default text-text-primary rounded-lg text-xs font-semibold shadow-sm transition-all disabled:opacity-40"
+              className="inline-flex items-center gap-2 px-3.5 py-2 bg-surface hover:bg-subtle border border-border-default text-text-primary rounded-lg text-xs font-semibold shadow-sm transition-colors disabled:opacity-40"
             >
               <Download className="w-3.5 h-3.5 text-text-muted" />
               <span>Export CSV</span>
@@ -154,7 +154,7 @@ export const BreachLogPage: React.FC = () => {
               placeholder="Search unit, location, comments..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-subtle border border-border-default rounded-lg text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-base focus:ring-1 focus:ring-accent-base transition-all font-medium"
+              className="w-full pl-9 pr-4 py-2 bg-subtle border border-border-default rounded-lg text-xs text-text-primary placeholder:text-text-muted focus:outline-none focus:border-accent-base focus:ring-1 focus:ring-accent-base transition-colors font-medium"
             />
           </div>
 
@@ -169,7 +169,7 @@ export const BreachLogPage: React.FC = () => {
             <select
               value={selectedLocation}
               onChange={(e) => setSelectedLocation(e.target.value)}
-              className="px-3 py-1.5 bg-surface border border-border-default rounded-lg text-xs text-text-secondary font-medium focus:outline-none focus:border-accent-base focus:ring-1 focus:ring-accent-base transition-all"
+              className="px-3 py-1.5 bg-surface border border-border-default rounded-lg text-xs text-text-secondary font-medium focus:outline-none focus:border-accent-base focus:ring-1 focus:ring-accent-base transition-colors"
             >
               <option value="all">All Locations</option>
               {locations.map(loc => (
@@ -393,14 +393,14 @@ export const BreachLogPage: React.FC = () => {
                   setShowCorrectModal(false)
                   setCorrectReadingId(null)
                 }}
-                className="px-4 py-2 bg-subtle hover:bg-subtle/80 text-text-secondary rounded-lg text-xs font-semibold transition-all"
+                className="px-4 py-2 bg-subtle hover:bg-subtle/80 text-text-secondary rounded-lg text-xs font-semibold transition-colors"
               >
                 Cancel
               </button>
               <button 
                 onClick={handleCorrectSubmit}
                 disabled={submitting || !correctNote.trim()}
-                className="px-4 py-2 bg-accent-base hover:bg-accent-hover text-white rounded-lg text-xs font-semibold transition-all shadow-sm disabled:opacity-50"
+                className="px-4 py-2 bg-accent-base hover:bg-accent-hover text-white rounded-lg text-xs font-semibold transition-colors shadow-sm disabled:opacity-50"
               >
                 {submitting ? 'Saving...' : 'Save Comments'}
               </button>

@@ -100,13 +100,13 @@ export const DepartmentDetailPage: React.FC = () => {
             >
               Back
             </Button>
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-bold text-text-primary">
               {departmentId === 'new' ? 'Create New Department' : 'Edit Department'}
             </h1>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+        <div className="bg-surface rounded-xl border border-border-default shadow-sm p-6">
           <DepartmentForm
             department={department || undefined}
             onSuccess={() => {
@@ -134,7 +134,7 @@ export const DepartmentDetailPage: React.FC = () => {
   if (!department) {
     return (
       <div className="flex items-center justify-center h-64">
-        <p className="text-slate-600">Department not found</p>
+        <p className="text-text-muted">Department not found</p>
       </div>
     )
   }
@@ -151,7 +151,7 @@ export const DepartmentDetailPage: React.FC = () => {
           >
             Back to Departments
           </Button>
-          <h1 className="text-2xl font-bold text-slate-900">Department Details</h1>
+          <h1 className="text-2xl font-bold text-text-primary">Department Details</h1>
         </div>
         <div className="flex items-center gap-3">
           {!isHospitalAdmin && (
@@ -173,7 +173,7 @@ export const DepartmentDetailPage: React.FC = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-xl border border-slate-200 shadow-sm p-6"
+            className="bg-surface rounded-xl border border-border-default shadow-sm p-6"
           >
             <div className="flex items-start gap-6">
               <div className="w-16 h-16 bg-teal-100 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -181,12 +181,12 @@ export const DepartmentDetailPage: React.FC = () => {
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <h2 className="text-2xl font-bold text-slate-900">{department.department_name}</h2>
+                  <h2 className="text-2xl font-bold text-text-primary">{department.department_name}</h2>
                   <Badge variant={department.status === 'active' ? 'success' : 'gray'}>
                     {department.status.charAt(0).toUpperCase() + department.status.slice(1)}
                   </Badge>
                 </div>
-                <p className="text-slate-600 mb-4 font-mono font-semibold">{department.department_code}</p>
+                <p className="text-text-muted mb-4 font-mono font-semibold">{department.department_code}</p>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                   <InfoItem
@@ -221,9 +221,9 @@ export const DepartmentDetailPage: React.FC = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-white rounded-xl border border-slate-200 shadow-sm p-6"
+              className="bg-surface rounded-xl border border-border-default shadow-sm p-6"
             >
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">Status Management</h3>
+              <h3 className="text-lg font-semibold text-text-primary mb-4">Status Management</h3>
               <div className="space-y-2">
                 {Object.entries(DEPARTMENT_STATUS).map(([key, value]) => (
                   <button
@@ -232,8 +232,8 @@ export const DepartmentDetailPage: React.FC = () => {
                     className={cn(
                       'w-full text-left px-4 py-2 rounded-lg border transition-colors',
                       department.status === value
-                        ? 'bg-teal-50 border-teal-300 text-teal-900 font-semibold'
-                        : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100'
+                        ? 'bg-accent-base/10 border-teal-300 text-teal-900 font-semibold'
+                        : 'bg-subtle/50 border-border-default text-text-secondary hover:bg-subtle'
                     )}
                   >
                     {value.charAt(0).toUpperCase() + value.slice(1)}
@@ -248,9 +248,9 @@ export const DepartmentDetailPage: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white rounded-xl border border-slate-200 shadow-sm p-6"
+            className="bg-surface rounded-xl border border-border-default shadow-sm p-6"
           >
-            <h3 className="text-lg font-semibold text-slate-900 mb-4">Information</h3>
+            <h3 className="text-lg font-semibold text-text-primary mb-4">Information</h3>
             <div className="space-y-3">
               <InfoItem icon={Clock} label="Created" value={formatDate(department.created_at)} small />
               <InfoItem
@@ -279,8 +279,8 @@ const InfoItem: React.FC<InfoItemProps> = ({ icon: Icon, label, value, fullWidth
   <div className={cn('flex items-start gap-3', fullWidth && 'md:col-span-2')}>
     <Icon className={cn('text-slate-400 flex-shrink-0 mt-0.5', small ? 'w-4 h-4' : 'w-5 h-5')} />
     <div className="flex-1 min-w-0">
-      <p className={cn('text-slate-500', small ? 'text-xs' : 'text-sm')}>{label}</p>
-      <p className={cn('font-semibold text-slate-900 mt-0.5', small ? 'text-sm' : 'text-base')}>
+      <p className={cn('text-text-muted', small ? 'text-xs' : 'text-sm')}>{label}</p>
+      <p className={cn('font-semibold text-text-primary mt-0.5', small ? 'text-sm' : 'text-base')}>
         {value}
       </p>
     </div>

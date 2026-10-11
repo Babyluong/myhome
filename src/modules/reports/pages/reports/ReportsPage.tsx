@@ -138,32 +138,32 @@ export const ReportsPage: React.FC = () => {
 
   const getCategoryColor = (category: string) => {
     const colors: Record<string, string> = {
-      inventory: 'text-teal-600 bg-teal-50 border-teal-200',
-      procurement: 'text-blue-600 bg-blue-50 border-blue-200',
-      financial: 'text-emerald-600 bg-emerald-50 border-emerald-200',
-      distribution: 'text-purple-600 bg-purple-50 border-purple-200',
+      inventory: 'text-teal-600 bg-accent-base/10 border-accent-base/20',
+      procurement: 'text-blue-600 bg-blue-500/10 border-blue-500/20',
+      financial: 'text-emerald-600 bg-emerald-500/10 border-emerald-500/20',
+      distribution: 'text-purple-600 bg-indigo-500/10 border-indigo-500/20',
       oxygen: 'text-cyan-600 bg-cyan-50 border-cyan-200',
     }
-    return colors[category] || 'text-gray-600 bg-gray-50 border-gray-200'
+    return colors[category] || 'text-text-muted bg-subtle/50 border-border-default'
   }
 
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-          <FileText className="w-6 h-6 text-gray-600" />
+        <h1 className="text-2xl font-bold text-text-primary flex items-center gap-2">
+          <FileText className="w-6 h-6 text-text-muted" />
           Pharmacy Reports
         </h1>
-        <p className="text-sm text-gray-600 mt-1">
+        <p className="text-sm text-text-muted mt-1">
           Generate and export reports for inventory, procurement, financial, and operational data.
         </p>
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col md:flex-row md:items-end gap-4 bg-gray-50 p-4 rounded-xl border border-gray-200">
+      <div className="flex flex-col md:flex-row md:items-end gap-4 bg-subtle/50 p-4 rounded-xl border border-border-default">
         <div className="w-full md:w-48">
-          <label className="block text-xs font-medium text-gray-600 mb-1">Report Category</label>
+          <label className="block text-xs font-medium text-text-muted mb-1">Report Category</label>
           <Select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)}>
             {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>
@@ -174,7 +174,7 @@ export const ReportsPage: React.FC = () => {
         </div>
 
         <div className="w-full md:w-40">
-          <label className="block text-xs font-medium text-gray-600 mb-1">Date From</label>
+          <label className="block text-xs font-medium text-text-muted mb-1">Date From</label>
           <Input
             type="date"
             value={dateFrom}
@@ -183,7 +183,7 @@ export const ReportsPage: React.FC = () => {
         </div>
 
         <div className="w-full md:w-40">
-          <label className="block text-xs font-medium text-gray-600 mb-1">Date To</label>
+          <label className="block text-xs font-medium text-text-muted mb-1">Date To</label>
           <Input
             type="date"
             value={dateTo}
@@ -191,7 +191,7 @@ export const ReportsPage: React.FC = () => {
           />
         </div>
 
-        <div className="flex items-center gap-2 text-xs text-gray-500">
+        <div className="flex items-center gap-2 text-xs text-text-muted">
           <Calendar className="w-4 h-4" />
           <span>{filteredReports.length} reports available</span>
         </div>
@@ -202,13 +202,13 @@ export const ReportsPage: React.FC = () => {
         {filteredReports.map((report) => (
           <div
             key={report.id}
-            className={`rounded-xl border p-4 transition-all hover:shadow-md ${getCategoryColor(report.category)}`}
+            className={`rounded-xl border p-4 transition-colors hover:shadow-md ${getCategoryColor(report.category)}`}
           >
             <div className="flex items-start gap-3">
               <div className="p-2 rounded-lg bg-white/50">{report.icon}</div>
               <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-gray-900">{report.name}</h3>
-                <p className="text-xs text-gray-600 mt-1 line-clamp-2">{report.description}</p>
+                <h3 className="font-semibold text-text-primary">{report.name}</h3>
+                <p className="text-xs text-text-muted mt-1 line-clamp-2">{report.description}</p>
               </div>
             </div>
 
@@ -230,9 +230,9 @@ export const ReportsPage: React.FC = () => {
 
       {/* Selected Report Preview */}
       {selectedReport && (
-        <div className="bg-white border border-gray-200 rounded-2xl p-6">
+        <div className="bg-surface border border-border-default rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-semibold text-gray-900">{selectedReport.name}</h2>
+            <h2 className="font-semibold text-text-primary">{selectedReport.name}</h2>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" className="flex items-center gap-1">
                 <Download className="w-4 h-4" />
@@ -245,12 +245,12 @@ export const ReportsPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-xl p-8 text-center">
+          <div className="bg-subtle/50 rounded-xl p-8 text-center">
             <FileText className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-text-muted">
               Report preview will be displayed here.
             </p>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-text-muted mt-1">
               Select date range and click Generate to view report data.
             </p>
           </div>
@@ -258,8 +258,8 @@ export const ReportsPage: React.FC = () => {
       )}
 
       {/* Quick Tips */}
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-        <h3 className="font-medium text-blue-800 mb-2">ðŸ’¡ Report Tips</h3>
+      <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
+        <h3 className="font-medium text-blue-400 mb-2">ðŸ’¡ Report Tips</h3>
         <ul className="text-sm text-blue-700 space-y-1 list-disc list-inside">
           <li>Select a date range for accurate period-based reports</li>
           <li>Stock Level and Near Expiry reports show current snapshot data</li>

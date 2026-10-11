@@ -101,7 +101,7 @@ export const PorterMyRequestsPage: React.FC = () => {
 
         <Button
           onClick={() => navigate('/porter/requests/new')}
-          className="flex items-center gap-2 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700 text-white font-bold shadow-lg shadow-sky-500/20 rounded-xl px-5 py-2.5"
+          className="flex items-center gap-2 bg-accent-base hover:bg-accent-hover text-white font-bold shadow-lg shadow-sky-500/20 rounded-xl px-5 py-2.5"
         >
           <Plus className="w-4 h-4" />
           <span>New Request</span>
@@ -113,7 +113,7 @@ export const PorterMyRequestsPage: React.FC = () => {
         <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-800">
           <button
             onClick={() => setActiveTab('active')}
-            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+            className={`px-4 py-2 rounded-lg text-xs font-bold transition-colors ${
               activeTab === 'active' ? 'bg-sky-500 text-white shadow-md' : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -121,7 +121,7 @@ export const PorterMyRequestsPage: React.FC = () => {
           </button>
           <button
             onClick={() => setActiveTab('completed')}
-            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+            className={`px-4 py-2 rounded-lg text-xs font-bold transition-colors ${
               activeTab === 'completed' ? 'bg-sky-500 text-white shadow-md' : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -129,7 +129,7 @@ export const PorterMyRequestsPage: React.FC = () => {
           </button>
           <button
             onClick={() => setActiveTab('all')}
-            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+            className={`px-4 py-2 rounded-lg text-xs font-bold transition-colors ${
               activeTab === 'all' ? 'bg-sky-500 text-white shadow-md' : 'text-slate-400 hover:text-white'
             }`}
           >
@@ -138,7 +138,7 @@ export const PorterMyRequestsPage: React.FC = () => {
         </div>
 
         <div className="relative flex-1 sm:max-w-xs">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
           <input
             type="text"
             placeholder="Search Reference No, Ward, Porter..."
@@ -152,10 +152,10 @@ export const PorterMyRequestsPage: React.FC = () => {
       {/* Orders List / Cards */}
       <div className="space-y-4">
         {filteredJobs.length === 0 ? (
-          <div className="p-16 text-center text-slate-500 bg-slate-900/40 rounded-3xl border border-slate-800/80">
-            <ClipboardList className="w-12 h-12 mx-auto text-slate-600 mb-3" />
+          <div className="p-16 text-center text-text-muted bg-slate-900/40 rounded-3xl border border-slate-800/80">
+            <ClipboardList className="w-12 h-12 mx-auto text-text-muted mb-3" />
             <p className="font-bold text-slate-400">No request records found.</p>
-            <p className="text-xs text-slate-500 mt-1">Create a new request to start dispatch service.</p>
+            <p className="text-xs text-text-muted mt-1">Create a new request to start dispatch service.</p>
           </div>
         ) : (
           filteredJobs.map((job) => {
@@ -166,13 +166,13 @@ export const PorterMyRequestsPage: React.FC = () => {
             return (
               <div
                 key={job.id}
-                className="bg-slate-900 border border-slate-800 hover:border-slate-700/80 rounded-3xl p-6 shadow-xl transition-all space-y-5"
+                className="bg-slate-900 border border-slate-800 hover:border-slate-700/80 rounded-3xl p-6 shadow-xl transition-colors space-y-5"
               >
                 {/* Card Top: Ref + Badges */}
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
                   <div className="flex items-center gap-3">
                     <span className="font-mono text-sm font-black text-sky-400">{job.no_rujukan}</span>
-                    <span className="text-slate-600">|</span>
+                    <span className="text-text-muted">|</span>
                     <span className="text-xs font-extrabold text-white uppercase">{job.sub_category || job.category}</span>
                     <UrgencyBadge urgency={job.urgency} />
                   </div>
@@ -219,7 +219,7 @@ export const PorterMyRequestsPage: React.FC = () => {
                         </div>
                         <span>Assigned Porter: <strong className="text-white">{job.assigned_porter_name}</strong></span>
                         {job.assigned_porter_phone && (
-                          <span className="text-slate-500 font-mono">({job.assigned_porter_phone})</span>
+                          <span className="text-text-muted font-mono">({job.assigned_porter_phone})</span>
                         )}
                       </div>
                     ) : (
@@ -238,7 +238,7 @@ export const PorterMyRequestsPage: React.FC = () => {
                           setCancellingJobId(job.id)
                           setIsCancelModalOpen(true)
                         }}
-                        className="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 font-semibold rounded-xl border border-rose-500/30 transition-all text-xs"
+                        className="px-3 py-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 font-semibold rounded-xl border border-rose-500/30 transition-colors text-xs"
                       >
                         Cancel Request
                       </button>

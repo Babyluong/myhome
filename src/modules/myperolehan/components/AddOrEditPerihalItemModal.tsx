@@ -131,25 +131,25 @@ export const AddOrEditPerihalItemModal: React.FC<AddOrEditPerihalItemModalProps>
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.95 }}
-        className="relative w-full max-w-lg bg-white border border-slate-200 rounded-[2rem] p-6 sm:p-8 text-slate-900 shadow-2xl overflow-hidden"
+        className="relative w-full max-w-lg bg-surface border border-border-default rounded-[2rem] p-6 sm:p-8 text-text-primary shadow-2xl overflow-hidden"
       >
-        <div className="flex items-center justify-between pb-4 border-b border-slate-100 mb-6">
+        <div className="flex items-center justify-between pb-4 border-b border-border-subtle mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-2xl bg-indigo-500/10 text-indigo-600 border border-indigo-100 flex items-center justify-center">
               {itemToEdit ? <Edit2 className="w-5 h-5" /> : <Tag className="w-5 h-5" />}
             </div>
             <div>
-              <h3 className="text-lg font-black text-slate-900">
+              <h3 className="text-lg font-black text-text-primary">
                 {itemToEdit ? 'Update Catalog Item' : 'Add Perihal Catalog Item'}
               </h3>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-text-muted">
                 {itemToEdit ? `ID: ${itemToEdit.id.slice(0, 8)}...` : 'Register new perihal item & contract rate'}
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+            className="p-2 rounded-xl text-slate-400 hover:text-text-secondary hover:bg-subtle transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -157,35 +157,35 @@ export const AddOrEditPerihalItemModal: React.FC<AddOrEditPerihalItemModalProps>
 
         <form onSubmit={handleSubmit} className="space-y-4 text-xs">
           <div>
-            <label className="block font-bold text-slate-700 mb-1">Item Name / Perihal</label>
+            <label className="block font-bold text-text-secondary mb-1">Item Name / Perihal</label>
             <input
               type="text"
               placeholder="e.g. Blenderised Diet / Equipment Lease / Meter Reading"
               value={perihalName}
               onChange={(e) => setPerihalName(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-indigo-500 focus:outline-none font-semibold"
+              className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-text-primary focus:bg-surface focus:border-indigo-500 focus:outline-none font-semibold"
               required
             />
           </div>
 
           <div>
-            <label className="block font-bold text-slate-700 mb-1">Description / Specifications</label>
+            <label className="block font-bold text-text-secondary mb-1">Description / Specifications</label>
             <textarea
               rows={2}
               placeholder="e.g. Clinical rehabilitation inpatient diet..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-indigo-500 focus:outline-none resize-none"
+              className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-text-primary focus:bg-surface focus:border-indigo-500 focus:outline-none resize-none"
             />
           </div>
 
-          <div className="grid grid-cols-3 gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+          <div className="grid grid-cols-3 gap-3 bg-subtle/50 p-3.5 rounded-2xl border border-border-default">
             <div>
-              <label className="block font-bold text-slate-600 mb-1 text-[11px]">Program</label>
+              <label className="block font-bold text-text-muted mb-1 text-[11px]">Program</label>
               <select
                 value={programCode}
                 onChange={(e) => setProgramCode(e.target.value)}
-                className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 focus:border-indigo-500 focus:outline-none"
+                className="w-full px-2.5 py-1.5 bg-surface border border-border-default rounded-lg text-text-primary focus:border-indigo-500 focus:outline-none"
               >
                 <option value="020200">020200 (Hospital Management)</option>
                 <option value="022300">022300 (Dietetics & Food Services)</option>
@@ -194,25 +194,25 @@ export const AddOrEditPerihalItemModal: React.FC<AddOrEditPerihalItemModalProps>
             </div>
 
             <div>
-              <label className="block font-bold text-slate-600 mb-1 text-[11px]">Object Code</label>
+              <label className="block font-bold text-text-muted mb-1 text-[11px]">Object Code</label>
               <input
                 type="text"
                 placeholder="29000 / 24000"
                 value={objekCode}
                 onChange={(e) => setObjekCode(e.target.value)}
-                className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 font-mono focus:border-indigo-500 focus:outline-none"
+                className="w-full px-2.5 py-1.5 bg-surface border border-border-default rounded-lg text-text-primary font-mono focus:border-indigo-500 focus:outline-none"
                 required
               />
             </div>
 
             <div>
-              <label className="block font-bold text-slate-600 mb-1 text-[11px]">Category Code</label>
+              <label className="block font-bold text-text-muted mb-1 text-[11px]">Category Code</label>
               <input
                 type="text"
                 placeholder="29126 / 24202"
                 value={kategoriCode}
                 onChange={(e) => setKategoriCode(e.target.value)}
-                className="w-full px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-slate-900 font-mono focus:border-indigo-500 focus:outline-none"
+                className="w-full px-2.5 py-1.5 bg-surface border border-border-default rounded-lg text-text-primary font-mono focus:border-indigo-500 focus:outline-none"
                 required
               />
             </div>
@@ -220,36 +220,36 @@ export const AddOrEditPerihalItemModal: React.FC<AddOrEditPerihalItemModalProps>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block font-bold text-slate-700 mb-1">Meal Session / Classification</label>
+              <label className="block font-bold text-text-secondary mb-1">Meal Session / Classification</label>
               <input
                 type="text"
                 placeholder="e.g. Lunch / Breakfast / UNIT"
                 value={mealSession}
                 onChange={(e) => setMealSession(e.target.value)}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:bg-white focus:border-indigo-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-text-primary focus:bg-surface focus:border-indigo-500 focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block font-bold text-slate-700 mb-1">Contract / Unit Price (RM)</label>
+              <label className="block font-bold text-text-secondary mb-1">Contract / Unit Price (RM)</label>
               <input
                 type="number"
                 step="0.01"
                 min="0"
                 value={unitPrice}
                 onChange={(e) => setUnitPrice(Number(e.target.value))}
-                className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono font-bold focus:bg-white focus:border-indigo-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-text-primary font-mono font-bold focus:bg-surface focus:border-indigo-500 focus:outline-none"
                 required
               />
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-border-subtle">
             <Button
               type="button"
               variant="outline"
               onClick={onClose}
-              className="border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl font-bold"
+              className="border-border-default hover:bg-subtle/50 text-text-secondary rounded-xl font-bold"
             >
               Cancel
             </Button>

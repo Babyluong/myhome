@@ -40,7 +40,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onOpenSyncDrawer }) => {
       className={cn(
         "lg:hidden fixed bottom-0 left-0 right-0 z-40",
         "bg-slate-950/90 backdrop-blur-2xl border-t border-slate-800/80 shadow-[0_-8px_30px_rgba(0,0,0,0.7)]",
-        "transition-all duration-300"
+        "transition-colors duration-150"
       )}
       style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 0px), 6px)' }}
     >
@@ -59,7 +59,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onOpenSyncDrawer }) => {
           <motion.div
             whileTap={{ scale: 0.90 }}
             className={cn(
-              "w-full h-full flex flex-col items-center justify-center rounded-2xl relative transition-all duration-200",
+              "w-full h-full flex flex-col items-center justify-center rounded-2xl relative transition-colors duration-150",
               isHubActive ? "text-teal-300" : "text-slate-400 hover:text-slate-200"
             )}
           >
@@ -72,7 +72,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onOpenSyncDrawer }) => {
             )}
 
             <div className={cn(
-              "relative w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200 z-10",
+              "relative w-8 h-8 rounded-xl flex items-center justify-center transition-colors duration-150 z-10",
               isHubActive 
                 ? "bg-teal-500/20 text-teal-300 scale-105" 
                 : "bg-slate-900/60 border border-slate-800/60 text-slate-400 group-hover:text-slate-200 group-hover:border-slate-700"
@@ -99,7 +99,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onOpenSyncDrawer }) => {
             onClick={toggleSidebar}
             whileTap={{ scale: 0.90 }}
             className={cn(
-              "w-full h-full flex flex-col items-center justify-center rounded-2xl relative transition-all duration-200 group",
+              "w-full h-full flex flex-col items-center justify-center rounded-2xl relative transition-colors duration-150 group",
               sidebarOpen ? "text-teal-300" : isInsideModule ? "text-slate-200" : "text-slate-400 hover:text-slate-200"
             )}
             aria-label={sidebarOpen ? "Tutup Menu Modul" : "Buka Menu Modul"}
@@ -113,7 +113,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onOpenSyncDrawer }) => {
             )}
 
             <div className={cn(
-              "relative w-9 h-8 rounded-xl flex items-center justify-center transition-all duration-200 z-10 shadow-sm",
+              "relative w-9 h-8 rounded-xl flex items-center justify-center transition-colors duration-150 z-10 shadow-sm",
               sidebarOpen
                 ? "bg-teal-500 text-slate-950 font-bold shadow-[0_0_14px_rgba(20,184,166,0.4)] scale-105"
                 : isInsideModule
@@ -170,7 +170,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onOpenSyncDrawer }) => {
               type="button"
               onClick={onOpenSyncDrawer}
               whileTap={{ scale: 0.90 }}
-              className="w-full h-full flex flex-col items-center justify-center rounded-2xl relative transition-all duration-200 group text-amber-400"
+              className="w-full h-full flex flex-col items-center justify-center rounded-2xl relative transition-colors duration-150 group text-amber-400"
               aria-label="Status Penyegerakan"
             >
               <div className="relative w-8 h-8 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 flex items-center justify-center shadow-xs">
@@ -204,7 +204,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onOpenSyncDrawer }) => {
           <motion.div
             whileTap={{ scale: 0.90 }}
             className={cn(
-              "w-full h-full flex flex-col items-center justify-center rounded-2xl relative transition-all duration-200",
+              "w-full h-full flex flex-col items-center justify-center rounded-2xl relative transition-colors duration-150",
               isProfileActive ? "text-teal-300" : "text-slate-400 hover:text-slate-200"
             )}
           >
@@ -217,7 +217,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ onOpenSyncDrawer }) => {
             )}
 
             <div className={cn(
-              "relative w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200 z-10",
+              "relative w-8 h-8 rounded-xl flex items-center justify-center transition-colors duration-150 z-10",
               isProfileActive 
                 ? "bg-teal-500/20 text-teal-300 scale-105 ring-2 ring-teal-500/40 ring-offset-2 ring-offset-slate-950" 
                 : "bg-slate-900/60 border border-slate-800/60 text-slate-400 group-hover:text-slate-200 group-hover:border-slate-700"

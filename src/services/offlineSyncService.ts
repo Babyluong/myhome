@@ -158,6 +158,32 @@ class OfflineSyncService {
         if (success) {
           await offlineQueue.remove(mutation.id)
           successCount++
+
+          // R3 Compliance: Automatic audit logging upon replaying offline mutation
+          try {
+            const effectiveUserId = (mutation.payload as any)?.created_by || 
+                                    (mutation.payload as any)?.user_id || 
+                                    null
+            const isValidUuid = typeof effectiveUserId === 'string' &&
+              /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(effectiveUserId)
+
+            await supabase.from('audit_logs').insert({
+              user_id: isValidUuid ? effectiveUserId : null,
+              action: `OFFLINE_SYNC_${mutation.action}`,
+              module: mutation.module || 'offline_sync',
+              entity_type: mutation.table,
+              entity_id: (mutation.payload as any)?.id || mutation.matchCriteria?.id || null,
+              new_values: {
+                table: mutation.table,
+                action: mutation.action,
+                mutation_id: mutation.id,
+                offline_timestamp: new Date(mutation.timestamp).toISOString(),
+                synced_at: new Date().toISOString()
+              }
+            })
+          } catch (auditErr) {
+            console.warn('[OfflineSync] Audit log replay notice (non-blocking):', auditErr)
+          }
         } else {
           failureCount++
           await offlineQueue.updateStatus(mutation.id, 'failed', 'Server rejected mutation')

@@ -297,14 +297,14 @@ export const KunciDashboardPage: React.FC = () => {
           <div className="flex items-center gap-2">
             <button 
               onClick={() => setScanModalOpen(true)}
-              className="inline-flex items-center gap-2 px-3.5 py-2 bg-surface hover:bg-subtle border border-border-default text-text-primary rounded-lg text-xs font-semibold shadow-sm transition-all"
+              className="inline-flex items-center gap-2 px-3.5 py-2 bg-surface hover:bg-subtle border border-border-default text-text-primary rounded-lg text-xs font-semibold shadow-sm transition-colors"
             >
               <QrCode className="w-4 h-4 text-text-muted" />
               <span>Scan Key QR</span>
             </button>
             <button 
               onClick={() => setCheckoutModalOpen(true)}
-              className="inline-flex items-center gap-2 px-3.5 py-2 bg-accent-base hover:bg-accent-hover text-white rounded-lg text-xs font-semibold shadow-sm transition-all"
+              className="inline-flex items-center gap-2 px-3.5 py-2 bg-accent-base hover:bg-accent-hover text-white rounded-lg text-xs font-semibold shadow-sm transition-colors"
             >
               <Plus className="w-4 h-4" />
               <span>Record Loan</span>
@@ -317,7 +317,7 @@ export const KunciDashboardPage: React.FC = () => {
       {stats.overdue > 0 && (
         <div 
           onClick={() => navigate('/kunci/log')}
-          className="flex items-center justify-between p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl cursor-pointer hover:bg-rose-500/15 transition-all shadow-sm group"
+          className="flex items-center justify-between p-4 bg-rose-500/10 border border-rose-500/20 rounded-xl cursor-pointer hover:bg-rose-500/15 transition-colors shadow-sm group"
         >
           <div className="flex items-center gap-3">
             <div className="p-2 bg-rose-600 text-white rounded-lg">
@@ -340,43 +340,77 @@ export const KunciDashboardPage: React.FC = () => {
 
       {/* Hospital KPI Stats */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 sm:gap-4">
-        <div className="bg-surface border border-border-default p-4 rounded-xl shadow-sm">
-          <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wide">
-            Total Master Keys
-          </span>
-          <div className="text-2xl font-bold font-mono text-text-primary mt-1 tabular-nums">
+        <div className="group relative bg-surface/90 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-border-default shadow-elevation-1 hover:border-border-strong transition-[transform,opacity,box-shadow,border-color] duration-200 hover:-translate-y-0.5 overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-accent-base/40 to-transparent" />
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wider">
+              Total Master Keys
+            </span>
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-accent-base/10 text-accent-base border border-accent-base/20">
+              Registry
+            </span>
+          </div>
+          <div className="text-2xl sm:text-3xl font-bold font-mono text-text-primary mt-1 tabular-nums">
             {loading ? <Skeleton className="h-7 w-12 bg-subtle inline-block rounded" /> : stats.total}
           </div>
         </div>
-        <div className="bg-surface border border-border-default p-4 rounded-xl shadow-sm">
-          <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wide">
-            Available in Storage
-          </span>
-          <div className="text-2xl font-bold font-mono text-emerald-600 mt-1 tabular-nums">
+
+        <div className="group relative bg-surface/90 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-border-default shadow-elevation-1 hover:border-border-strong transition-[transform,opacity,box-shadow,border-color] duration-200 hover:-translate-y-0.5 overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-emerald-500/40 to-transparent" />
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wider">
+              Available
+            </span>
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+              In Storage
+            </span>
+          </div>
+          <div className="text-2xl sm:text-3xl font-bold font-mono text-emerald-600 mt-1 tabular-nums">
             {loading ? <Skeleton className="h-7 w-12 bg-subtle inline-block rounded" /> : stats.available}
           </div>
         </div>
-        <div className="bg-surface border border-border-default p-4 rounded-xl shadow-sm">
-          <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wide">
-            Currently Borrowed
-          </span>
-          <div className="text-2xl font-bold font-mono text-amber-500 mt-1 tabular-nums">
+
+        <div className="group relative bg-surface/90 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-border-default shadow-elevation-1 hover:border-border-strong transition-[transform,opacity,box-shadow,border-color] duration-200 hover:-translate-y-0.5 overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-amber-500/40 to-transparent" />
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wider">
+              Borrowed
+            </span>
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+              Active Loan
+            </span>
+          </div>
+          <div className="text-2xl sm:text-3xl font-bold font-mono text-amber-500 mt-1 tabular-nums">
             {loading ? <Skeleton className="h-7 w-12 bg-subtle inline-block rounded" /> : stats.borrowed}
           </div>
         </div>
-        <div className="bg-surface border border-border-default p-4 rounded-xl shadow-sm">
-          <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wide">
-            Overdue Alerts
-          </span>
-          <div className="text-2xl font-bold font-mono text-rose-600 mt-1 tabular-nums">
+
+        <div className="group relative bg-surface/90 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-border-default shadow-elevation-1 hover:border-border-strong transition-[transform,opacity,box-shadow,border-color] duration-200 hover:-translate-y-0.5 overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-rose-500/40 to-transparent" />
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wider">
+              Overdue
+            </span>
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">
+              Alert
+            </span>
+          </div>
+          <div className="text-2xl sm:text-3xl font-bold font-mono text-rose-600 mt-1 tabular-nums">
             {loading ? <Skeleton className="h-7 w-12 bg-subtle inline-block rounded" /> : stats.overdue}
           </div>
         </div>
-        <div className="bg-surface border border-border-default p-4 rounded-xl shadow-sm col-span-2 md:col-span-1">
-          <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wide">
-            Damaged & Lost
-          </span>
-          <div className="text-2xl font-bold font-mono text-text-muted mt-1 tabular-nums">
+
+        <div className="group relative bg-surface/90 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-border-default shadow-elevation-1 hover:border-border-strong transition-[transform,opacity,box-shadow,border-color] duration-200 hover:-translate-y-0.5 overflow-hidden col-span-2 md:col-span-1">
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-text-muted/30 to-transparent" />
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wider">
+              Damaged / Lost
+            </span>
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-subtle text-text-muted border border-border-default">
+              Audit
+            </span>
+          </div>
+          <div className="text-2xl sm:text-3xl font-bold font-mono text-text-muted mt-1 tabular-nums">
             {loading ? <Skeleton className="h-7 w-12 bg-subtle inline-block rounded" /> : (stats.damaged + stats.lost)}
           </div>
         </div>
@@ -424,7 +458,7 @@ export const KunciDashboardPage: React.FC = () => {
                 <div 
                   key={dept.id}
                   onClick={() => navigate(`/kunci/daftar?dept=${dept.id}`)}
-                  className={`bg-surface border rounded-xl p-5 shadow-sm hover:shadow-md cursor-pointer transition-all duration-200 flex flex-col justify-between group ${borderClass}`}
+                  className={`bg-surface border rounded-xl p-5 shadow-sm hover:shadow-md cursor-pointer transition-colors duration-150 flex flex-col justify-between group ${borderClass}`}
                 >
                   <div>
                     <div className="flex justify-between items-start gap-3 mb-3">
@@ -704,7 +738,7 @@ export const KunciDashboardPage: React.FC = () => {
               value={selectedKeyId}
               onChange={(e) => setSelectedKeyId(e.target.value)}
               required
-              className="w-full rounded-lg border border-border-default p-2.5 text-xs bg-subtle text-text-primary focus:outline-none focus:border-accent-base focus:ring-1 focus:ring-accent-base transition-all font-medium"
+              className="w-full rounded-lg border border-border-default p-2.5 text-xs bg-subtle text-text-primary focus:outline-none focus:border-accent-base focus:ring-1 focus:ring-accent-base transition-colors font-medium"
             >
               <option value="">-- Please Select Key --</option>
               {availableKeys.map((k) => (
@@ -736,7 +770,7 @@ export const KunciDashboardPage: React.FC = () => {
                 value={durationHours}
                 onChange={(e) => setDurationHours(e.target.value)}
                 required
-                className="w-full rounded-lg border border-border-default p-2.5 text-xs bg-subtle text-text-primary focus:outline-none focus:border-accent-base focus:ring-1 focus:ring-accent-base transition-all font-medium"
+                className="w-full rounded-lg border border-border-default p-2.5 text-xs bg-subtle text-text-primary focus:outline-none focus:border-accent-base focus:ring-1 focus:ring-accent-base transition-colors font-medium"
               >
                 <option value="1">1 Hour</option>
                 <option value="2">2 Hours</option>
@@ -751,7 +785,7 @@ export const KunciDashboardPage: React.FC = () => {
                   placeholder="Enter number of hours..."
                   value={customHours}
                   onChange={(e) => setCustomHours(e.target.value)}
-                  className="w-full mt-2 rounded-lg border border-border-default p-2.5 text-xs bg-subtle text-text-primary focus:outline-none focus:border-accent-base focus:ring-1 focus:ring-accent-base transition-all font-medium"
+                  className="w-full mt-2 rounded-lg border border-border-default p-2.5 text-xs bg-subtle text-text-primary focus:outline-none focus:border-accent-base focus:ring-1 focus:ring-accent-base transition-colors font-medium"
                 />
               )}
             </div>
@@ -795,7 +829,7 @@ export const KunciDashboardPage: React.FC = () => {
               placeholder="E.g.: Retrieve Paediatric Ward DDA stock / LPO stock inspection..."
               value={purpose}
               onChange={(e) => setPurpose(e.target.value)}
-              className="w-full rounded-lg border border-border-default p-2.5 text-xs bg-subtle text-text-primary focus:outline-none focus:border-accent-base focus:ring-1 focus:ring-accent-base transition-all font-medium"
+              className="w-full rounded-lg border border-border-default p-2.5 text-xs bg-subtle text-text-primary focus:outline-none focus:border-accent-base focus:ring-1 focus:ring-accent-base transition-colors font-medium"
             />
           </div>
 
@@ -843,7 +877,7 @@ export const KunciDashboardPage: React.FC = () => {
                 value={keyCondition}
                 onChange={(e) => setKeyCondition(e.target.value as any)}
                 required
-                className="w-full rounded-lg border border-border-default p-2.5 text-xs bg-subtle text-text-primary focus:outline-none focus:border-accent-base focus:ring-1 focus:ring-accent-base transition-all font-medium"
+                className="w-full rounded-lg border border-border-default p-2.5 text-xs bg-subtle text-text-primary focus:outline-none focus:border-accent-base focus:ring-1 focus:ring-accent-base transition-colors font-medium"
               >
                 <option value="good">Good / Intact (No Damage)</option>
                 <option value="damaged">Damaged / Bent / Broken</option>
@@ -858,7 +892,7 @@ export const KunciDashboardPage: React.FC = () => {
                 value={lockCondition}
                 onChange={(e) => setLockCondition(e.target.value as any)}
                 required
-                className="w-full rounded-lg border border-border-default p-2.5 text-xs bg-subtle text-text-primary focus:outline-none focus:border-accent-base focus:ring-1 focus:ring-accent-base transition-all font-medium"
+                className="w-full rounded-lg border border-border-default p-2.5 text-xs bg-subtle text-text-primary focus:outline-none focus:border-accent-base focus:ring-1 focus:ring-accent-base transition-colors font-medium"
               >
                 <option value="good">Secure / Fully Functional</option>
                 <option value="loose">Loose / Wobbly Screws</option>
@@ -876,7 +910,7 @@ export const KunciDashboardPage: React.FC = () => {
               required
               value={returnDateTime}
               onChange={(e) => setReturnDateTime(e.target.value)}
-              className="w-full rounded-lg border border-border-default p-2.5 text-xs bg-subtle text-text-primary focus:outline-none focus:border-accent-base focus:ring-1 focus:ring-accent-base transition-all font-medium"
+              className="w-full rounded-lg border border-border-default p-2.5 text-xs bg-subtle text-text-primary focus:outline-none focus:border-accent-base focus:ring-1 focus:ring-accent-base transition-colors font-medium"
             />
           </div>
 
@@ -889,7 +923,7 @@ export const KunciDashboardPage: React.FC = () => {
               value={remarks}
               onChange={(e) => setRemarks(e.target.value)}
               placeholder="E.g.: Key returned on time. Padlock functioning smoothly with no issues..."
-              className="w-full rounded-lg border border-border-default p-2.5 text-xs bg-subtle text-text-primary focus:outline-none focus:border-accent-base focus:ring-1 focus:ring-accent-base transition-all resize-none font-medium"
+              className="w-full rounded-lg border border-border-default p-2.5 text-xs bg-subtle text-text-primary focus:outline-none focus:border-accent-base focus:ring-1 focus:ring-accent-base transition-colors resize-none font-medium"
             />
           </div>
 

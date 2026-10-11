@@ -191,47 +191,47 @@ export const InventorySubMenu: React.FC = () => {
       {/* Quick stats panel */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
         <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
-          <div className="flex justify-between items-start text-slate-500">
+          <div className="flex justify-between items-start text-text-muted">
             <span className="text-xs sm:text-sm font-medium">Total Items</span>
             <Package className="w-4 h-4 text-slate-400 flex-shrink-0" />
           </div>
           <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-white min-h-[36px] flex items-center">
             {metrics.loading ? <Skeleton className="h-8 w-16 bg-slate-800/80 rounded-lg inline-block" /> : metrics.totalItems}
           </div>
-          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">Drugs & Consumables</p>
+          <p className="text-[11px] sm:text-xs text-text-muted mt-1">Drugs & Consumables</p>
         </div>
 
         <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
-          <div className="flex justify-between items-start text-slate-500">
+          <div className="flex justify-between items-start text-text-muted">
             <span className="text-xs sm:text-sm font-medium">Low Stock Alerts</span>
             <AlertTriangle className="w-4 h-4 text-rose-400 flex-shrink-0" />
           </div>
           <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-rose-400 min-h-[36px] flex items-center">
             {metrics.loading ? <Skeleton className="h-8 w-16 bg-slate-800/80 rounded-lg inline-block" /> : metrics.lowStockCount}
           </div>
-          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">Below safety buffer</p>
+          <p className="text-[11px] sm:text-xs text-text-muted mt-1">Below safety buffer</p>
         </div>
 
         <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
-          <div className="flex justify-between items-start text-slate-500">
+          <div className="flex justify-between items-start text-text-muted">
             <span className="text-xs sm:text-sm font-medium">Near Expiry</span>
             <Clock className="w-4 h-4 text-amber-400 flex-shrink-0" />
           </div>
           <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-amber-400 min-h-[36px] flex items-center">
             {metrics.loading ? <Skeleton className="h-8 w-16 bg-slate-800/80 rounded-lg inline-block" /> : metrics.nearExpiryCount}
           </div>
-          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">Action needed</p>
+          <p className="text-[11px] sm:text-xs text-text-muted mt-1">Action needed</p>
         </div>
 
         <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
-          <div className="flex justify-between items-start text-slate-500">
+          <div className="flex justify-between items-start text-text-muted">
             <span className="text-xs sm:text-sm font-medium">Slow-Moving</span>
             <TrendingDown className="w-4 h-4 text-yellow-400 flex-shrink-0" />
           </div>
           <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-yellow-400 min-h-[36px] flex items-center">
             {metrics.loading ? <Skeleton className="h-8 w-16 bg-slate-800/80 rounded-lg inline-block" /> : metrics.slowMovingCount}
           </div>
-          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">&gt; 90 days stagnant</p>
+          <p className="text-[11px] sm:text-xs text-text-muted mt-1">&gt; 90 days stagnant</p>
         </div>
       </div>
 
@@ -247,7 +247,7 @@ export const InventorySubMenu: React.FC = () => {
               <button
                 key={idx}
                 onClick={() => navigate(item.path)}
-                className="group text-left bg-slate-900/40 backdrop-blur-md border border-slate-800/80 rounded-2xl p-4 sm:p-6 hover:bg-slate-800/40 hover:border-slate-700/80 active:scale-[0.98] transition-all duration-200 shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[170px] cursor-pointer"
+                className="group text-left bg-slate-900/40 backdrop-blur-md border border-slate-800/80 rounded-2xl p-4 sm:p-6 hover:bg-slate-800/40 hover:border-slate-700/80 active:scale-[0.98] transition-colors duration-150 shadow-xl relative overflow-hidden flex flex-col justify-between min-h-[170px] cursor-pointer"
               >
                 <div>
                   <div className="flex justify-between items-center mb-4">

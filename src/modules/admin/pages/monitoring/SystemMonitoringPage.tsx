@@ -176,10 +176,10 @@ const SystemMonitoringPage: React.FC = () => {
             />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">
+            <h1 className="text-2xl font-bold text-text-primary">
               {isSystemAdmin ? 'System Monitoring' : 'Hospital System Health'}
             </h1>
-            <p className="text-sm text-slate-600 mt-1">
+            <p className="text-sm text-text-muted mt-1">
               {isSystemAdmin 
                 ? `Last updated: ${formatDate(lastRefresh, { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`
                 : `Monitoring ${user?.hospital?.hospital_name || 'your hospital'} â€¢ Last updated: ${formatDate(lastRefresh, { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`
@@ -241,7 +241,7 @@ const SystemMonitoringPage: React.FC = () => {
               />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-slate-900">System Status</h2>
+              <h2 className="text-lg font-semibold text-text-primary">System Status</h2>
               <p
                 className={cn(
                   'text-2xl font-bold capitalize',
@@ -255,14 +255,14 @@ const SystemMonitoringPage: React.FC = () => {
             </div>
           </div>
           <div className="text-right">
-            <p className="text-sm text-slate-600">{isSystemAdmin ? 'System Health' : 'Service Health'}</p>
-            <p className="text-3xl font-bold text-slate-900">
+            <p className="text-sm text-text-muted">{isSystemAdmin ? 'System Health' : 'Service Health'}</p>
+            <p className="text-3xl font-bold text-text-primary">
               {isSystemAdmin 
                 ? `${healthLogs.filter((h) => h.status === 'healthy').length} / ${healthLogs.length}`
                 : `${services.filter((s) => s.status === 'healthy').length} / ${services.length}`
               }
             </p>
-            <p className="text-xs text-slate-500">Checks Healthy</p>
+            <p className="text-xs text-text-muted">Checks Healthy</p>
           </div>
         </div>
       </motion.div>
@@ -359,7 +359,7 @@ const SystemMonitoringPage: React.FC = () => {
               <div
                 key={health.id}
                 className={cn(
-                  'bg-white rounded-xl border-2 p-6',
+                  'bg-surface rounded-xl border-2 p-6',
                   health.status === 'healthy' && 'border-success-200',
                   health.status === 'warning' && 'border-warning-200',
                   health.status === 'critical' && 'border-error-200'
@@ -385,8 +385,8 @@ const SystemMonitoringPage: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-slate-900 capitalize">{health.check_type}</h3>
-                      <p className="text-xs text-slate-500">{getRelativeTime(health.checked_at)}</p>
+                      <h3 className="font-semibold text-text-primary capitalize">{health.check_type}</h3>
+                      <p className="text-xs text-text-muted">{getRelativeTime(health.checked_at)}</p>
                     </div>
                   </div>
                   <StatusIcon
@@ -401,19 +401,19 @@ const SystemMonitoringPage: React.FC = () => {
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-slate-600">Status</span>
+                    <span className="text-sm text-text-muted">Status</span>
                     <Badge variant={statusColor as any} size="sm">
                       {health.status}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-slate-600">Value</span>
-                    <span className="text-lg font-bold text-slate-900">
+                    <span className="text-sm text-text-muted">Value</span>
+                    <span className="text-lg font-bold text-text-primary">
                       {health.value} {health.unit}
                     </span>
                   </div>
                   {health.message && (
-                    <p className="text-xs text-slate-500 mt-2">{health.message}</p>
+                    <p className="text-xs text-text-muted mt-2">{health.message}</p>
                   )}
                 </div>
               </div>
@@ -429,7 +429,7 @@ const SystemMonitoringPage: React.FC = () => {
               <div
                 key={metric.id}
                 className={cn(
-                  'bg-white rounded-xl border-2 p-6',
+                  'bg-surface rounded-xl border-2 p-6',
                   metric.status === 'healthy' && 'border-success-200',
                   metric.status === 'warning' && 'border-warning-200',
                   metric.status === 'critical' && 'border-error-200'
@@ -455,8 +455,8 @@ const SystemMonitoringPage: React.FC = () => {
                       />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-slate-900 capitalize">{metric.check_type.replace('_', ' ')}</h3>
-                      <p className="text-xs text-slate-500">{getRelativeTime(metric.checked_at)}</p>
+                      <h3 className="font-semibold text-text-primary capitalize">{metric.check_type.replace('_', ' ')}</h3>
+                      <p className="text-xs text-text-muted">{getRelativeTime(metric.checked_at)}</p>
                     </div>
                   </div>
                   <StatusIcon
@@ -471,19 +471,19 @@ const SystemMonitoringPage: React.FC = () => {
 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-slate-600">Status</span>
+                    <span className="text-sm text-text-muted">Status</span>
                     <Badge variant={statusColor as any} size="sm">
                       {metric.status}
                     </Badge>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-sm text-slate-600">Value</span>
-                    <span className="text-lg font-bold text-slate-900">
+                    <span className="text-sm text-text-muted">Value</span>
+                    <span className="text-lg font-bold text-text-primary">
                       {metric.value} {metric.unit}
                     </span>
                   </div>
                   {metric.message && (
-                    <p className="text-xs text-slate-500 mt-2">{metric.message}</p>
+                    <p className="text-xs text-text-muted mt-2">{metric.message}</p>
                   )}
                 </div>
               </div>
@@ -501,9 +501,9 @@ const SystemMonitoringPage: React.FC = () => {
           className="grid grid-cols-1 lg:grid-cols-2 gap-6"
         >
           {/* Module Usage */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+          <div className="bg-surface rounded-xl border border-border-default shadow-sm p-6">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+              <h3 className="text-lg font-semibold text-text-primary flex items-center gap-2">
                 <Settings className="w-5 h-5 text-primary-600" />
                 Module Usage
               </h3>
@@ -513,15 +513,15 @@ const SystemMonitoringPage: React.FC = () => {
                 Object.entries(statistics.module_usage).map(([code, usage]) => (
                   <div key={code} className="space-y-1">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="font-medium text-slate-700 capitalize">{code}</span>
-                      <span className="text-slate-600">
+                      <span className="font-medium text-text-secondary capitalize">{code}</span>
+                      <span className="text-text-muted">
                         {usage.count} hospitals ({usage.percentage}%)
                       </span>
                     </div>
-                    <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="h-2 bg-subtle rounded-full overflow-hidden">
                       <div
                         className={cn(
-                          'h-full rounded-full transition-all',
+                          'h-full rounded-full transition-colors',
                           usage.percentage >= 80 && 'bg-success-500',
                           usage.percentage >= 50 && usage.percentage < 80 && 'bg-primary-500',
                           usage.percentage < 50 && 'bg-warning-500'
@@ -535,9 +535,9 @@ const SystemMonitoringPage: React.FC = () => {
           </div>
 
         {/* User Statistics */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+        <div className="bg-surface rounded-xl border border-border-default shadow-sm p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-text-primary flex items-center gap-2">
               <Users className="w-5 h-5 text-primary-600" />
               User Statistics
             </h3>
@@ -579,9 +579,9 @@ const SystemMonitoringPage: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
-          className="bg-white rounded-xl border border-slate-200 shadow-sm p-6"
+          className="bg-surface rounded-xl border border-border-default shadow-sm p-6"
         >
-          <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+          <h3 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
             <Activity className="w-5 h-5 text-primary-600" />
             Service Status
           </h3>
@@ -592,7 +592,7 @@ const SystemMonitoringPage: React.FC = () => {
                 className={cn(
                   'flex items-center justify-between p-3 rounded-lg',
                   service.status === 'healthy' ? 'bg-green-50' :
-                  service.status === 'warning' ? 'bg-amber-50' : 'bg-red-50'
+                  service.status === 'warning' ? 'bg-amber-500/10' : 'bg-red-50'
                 )}
               >
                 <div className="flex items-center gap-3">
@@ -601,7 +601,7 @@ const SystemMonitoringPage: React.FC = () => {
                     service.status === 'healthy' ? 'bg-green-500' :
                     service.status === 'warning' ? 'bg-amber-500' : 'bg-red-500'
                   )} />
-                  <span className="text-sm font-medium text-gray-900">{service.name}</span>
+                  <span className="text-sm font-medium text-text-primary">{service.name}</span>
                 </div>
                 <Badge 
                   variant={
@@ -624,10 +624,10 @@ const SystemMonitoringPage: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="bg-white rounded-xl border border-slate-200 shadow-sm p-6"
+          className="bg-surface rounded-xl border border-border-default shadow-sm p-6"
         >
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+            <h3 className="text-lg font-semibold text-text-primary flex items-center gap-2">
               <Building2 className="w-5 h-5 text-primary-600" />
               Hospital Status Overview
             </h3>
@@ -635,19 +635,19 @@ const SystemMonitoringPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="text-center p-4 bg-success-50 rounded-lg border border-success-200">
               <p className="text-2xl font-bold text-success-600">{statistics.active_hospitals}</p>
-              <p className="text-sm text-slate-600 mt-1">Active Hospitals</p>
+              <p className="text-sm text-text-muted mt-1">Active Hospitals</p>
             </div>
             <div className="text-center p-4 bg-warning-50 rounded-lg border border-warning-200">
               <p className="text-2xl font-bold text-warning-600">{statistics.pending_setup_hospitals}</p>
-              <p className="text-sm text-slate-600 mt-1">Pending Setup</p>
+              <p className="text-sm text-text-muted mt-1">Pending Setup</p>
             </div>
-            <div className="text-center p-4 bg-slate-50 rounded-lg border border-slate-200">
-              <p className="text-2xl font-bold text-slate-600">{statistics.inactive_hospitals}</p>
-              <p className="text-sm text-slate-600 mt-1">Inactive</p>
+            <div className="text-center p-4 bg-subtle/50 rounded-lg border border-border-default">
+              <p className="text-2xl font-bold text-text-muted">{statistics.inactive_hospitals}</p>
+              <p className="text-sm text-text-muted mt-1">Inactive</p>
             </div>
             <div className="text-center p-4 bg-primary-50 rounded-lg border border-primary-200">
               <p className="text-2xl font-bold text-primary-600">{statistics.total_hospitals}</p>
-              <p className="text-sm text-slate-600 mt-1">Total Hospitals</p>
+              <p className="text-sm text-text-muted mt-1">Total Hospitals</p>
             </div>
           </div>
         </motion.div>
@@ -699,9 +699,9 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon, color, su
           <Icon className="w-6 h-6" />
         </div>
       </div>
-      <h3 className="text-2xl font-bold text-slate-900 mb-1">{value}</h3>
-      <p className="text-sm text-slate-600">{title}</p>
-      {subtitle && <p className="text-xs text-slate-500 mt-1">{subtitle}</p>}
+      <h3 className="text-2xl font-bold text-text-primary mb-1">{value}</h3>
+      <p className="text-sm text-text-muted">{title}</p>
+      {subtitle && <p className="text-xs text-text-muted mt-1">{subtitle}</p>}
     </div>
   )
 }
@@ -718,12 +718,12 @@ const StatRow: React.FC<StatRowProps> = ({ label, value, color }) => {
     success: 'text-success-600',
     warning: 'text-warning-600',
     error: 'text-error-600',
-    gray: 'text-slate-600',
+    gray: 'text-text-muted',
   }
 
   return (
     <div className="flex items-center justify-between">
-      <span className="text-sm text-slate-600">{label}</span>
+      <span className="text-sm text-text-muted">{label}</span>
       <span className={cn('text-lg font-bold', colorClasses[color])}>{value.toLocaleString()}</span>
     </div>
   )

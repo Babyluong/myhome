@@ -237,7 +237,7 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-200">
-      <div className="bg-white rounded-3xl max-w-3xl w-full shadow-2xl border border-slate-100 overflow-hidden my-6 max-h-[92vh] flex flex-col">
+      <div className="bg-surface rounded-3xl max-w-3xl w-full shadow-2xl border border-border-subtle overflow-hidden my-6 max-h-[92vh] flex flex-col">
         {/* Header */}
         <div className="bg-gradient-to-r from-emerald-800 via-teal-800 to-cyan-900 p-5 text-white flex-shrink-0">
           <div className="flex items-center justify-between">
@@ -262,7 +262,7 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
 
             <button
               onClick={onClose}
-              className="p-2 text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-all cursor-pointer"
+              className="p-2 text-white/80 hover:text-white hover:bg-surface/10 rounded-xl transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -272,22 +272,22 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-5 sm:p-6 overflow-y-auto flex-1 space-y-6">
           {errorMsg && (
-            <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-800 flex items-center gap-2.5">
+            <div className="p-3.5 bg-rose-500/10 border border-rose-500/20 rounded-2xl text-xs text-rose-400 flex items-center gap-2.5">
               <AlertCircle className="w-4 h-4 text-rose-600 flex-shrink-0" />
               <span>{errorMsg}</span>
             </div>
           )}
 
           {isSuccess && (
-            <div className="p-3.5 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs text-emerald-800 flex items-center gap-2.5">
+            <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-xs text-emerald-400 flex items-center gap-2.5">
               <Check className="w-4 h-4 text-emerald-600 flex-shrink-0" />
               <span>Protokol hospital berjaya disimpan!</span>
             </div>
           )}
 
           {/* Section 1: Hospital & Drug Info */}
-          <div className="bg-slate-50/80 rounded-2xl p-4 border border-slate-200/80 space-y-4">
-            <div className="text-xs font-black uppercase text-slate-500 tracking-wider flex items-center gap-1.5">
+          <div className="bg-subtle/50 rounded-2xl p-4 border border-border-default space-y-4">
+            <div className="text-xs font-black uppercase text-text-muted tracking-wider flex items-center gap-1.5">
               <Building2 className="w-3.5 h-3.5 text-emerald-600" />
               <span>Maklumat Hospital &amp; Ubat</span>
             </div>
@@ -295,7 +295,7 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
             <div className="grid grid-cols-1 sm:grid-cols-12 gap-3.5">
               {/* Hospital Name */}
               <div className="sm:col-span-6 space-y-1">
-                <label className="text-xs font-bold text-slate-700">
+                <label className="text-xs font-bold text-text-secondary">
                   Nama Hospital / Wad / Jabatan <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -303,14 +303,14 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
                   value={hospitalName}
                   onChange={e => setHospitalName(e.target.value)}
                   placeholder="Contoh: Hospital Selayang / PICU"
-                  className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-hidden focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                  className="w-full px-3 py-2.5 bg-surface border border-border-default rounded-xl text-xs font-bold text-text-primary focus:outline-hidden focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                   required
                 />
               </div>
 
               {/* Drug Name */}
               <div className="sm:col-span-6 space-y-1">
-                <label className="text-xs font-bold text-slate-700">
+                <label className="text-xs font-bold text-text-secondary">
                   Nama Ubat Pediatrik <span className="text-rose-500">*</span>
                 </label>
                 <input
@@ -318,14 +318,14 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
                   value={drugName}
                   onChange={e => setDrugName(e.target.value)}
                   placeholder="Contoh: Meropenem IV / Ampicillin Syrup"
-                  className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-hidden focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                  className="w-full px-3 py-2.5 bg-surface border border-border-default rounded-xl text-xs font-bold text-text-primary focus:outline-hidden focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                   required
                 />
               </div>
 
               {/* Category */}
               <div className="sm:col-span-6 space-y-1">
-                <label className="text-xs font-bold text-slate-700">
+                <label className="text-xs font-bold text-text-secondary">
                   Kategori Farmakologi
                 </label>
                 <input
@@ -333,19 +333,19 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
                   value={category}
                   onChange={e => setCategory(e.target.value)}
                   placeholder="Contoh: Carbapenem, Cephalosporin, Penicillin"
-                  className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-hidden focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
+                  className="w-full px-3 py-2.5 bg-surface border border-border-default rounded-xl text-xs font-bold text-text-primary focus:outline-hidden focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500"
                 />
               </div>
 
               {/* Route */}
               <div className="sm:col-span-6 space-y-1">
-                <label className="text-xs font-bold text-slate-700">
+                <label className="text-xs font-bold text-text-secondary">
                   Laluan Pemberian (Route)
                 </label>
                 <select
                   value={route}
                   onChange={e => setRoute(e.target.value as PaediatricRoute)}
-                  className="w-full px-3 py-2.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-hidden focus:border-emerald-500"
+                  className="w-full px-3 py-2.5 bg-surface border border-border-default rounded-xl text-xs font-bold text-text-primary focus:outline-hidden focus:border-emerald-500"
                 >
                   <option value="Oral">Oral (Sirap / Tablet)</option>
                   <option value="IV">IV (Intravenous Parenteral)</option>
@@ -363,14 +363,14 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
           {/* Section 2: Indications & Dosing Regimens */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <div className="text-xs font-black uppercase text-slate-500 tracking-wider flex items-center gap-1.5">
+              <div className="text-xs font-black uppercase text-text-muted tracking-wider flex items-center gap-1.5">
                 <Layers className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Indikasi Klinikal &amp; Formula Pengiraan Dos ({indications.length})</span>
               </div>
               <button
                 type="button"
                 onClick={handleAddIndication}
-                className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-xl text-xs font-bold transition-all flex items-center gap-1 cursor-pointer border border-emerald-200/80"
+                className="px-3 py-1.5 bg-emerald-500/10 hover:bg-emerald-100 text-emerald-700 rounded-xl text-xs font-bold transition-colors flex items-center gap-1 cursor-pointer border border-emerald-500/20"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Tambah Indikasi</span>
@@ -381,15 +381,15 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
               {indications.map((ind, indIdx) => (
                 <div
                   key={ind.id || indIdx}
-                  className="bg-white rounded-2xl p-4 sm:p-5 border-2 border-emerald-100 shadow-xs space-y-4 relative"
+                  className="bg-surface rounded-2xl p-4 sm:p-5 border-2 border-emerald-100 shadow-xs space-y-4 relative"
                 >
                   {/* Indication Header */}
-                  <div className="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                  <div className="flex items-center justify-between border-b border-border-subtle pb-2.5">
                     <div className="flex items-center gap-2">
                       <span className="w-5 h-5 rounded-full bg-emerald-600 text-white text-[11px] font-black flex items-center justify-center">
                         {indIdx + 1}
                       </span>
-                      <span className="text-xs font-bold text-slate-800">
+                      <span className="text-xs font-bold text-text-primary">
                         Indikasi Klinikal #{indIdx + 1}
                       </span>
                     </div>
@@ -398,7 +398,7 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
                       <button
                         type="button"
                         onClick={() => handleRemoveIndication(indIdx)}
-                        className="text-xs text-rose-500 hover:text-rose-700 hover:bg-rose-50 p-1.5 rounded-lg transition-all flex items-center gap-1 cursor-pointer"
+                        className="text-xs text-rose-500 hover:text-rose-700 hover:bg-rose-500/10 p-1.5 rounded-lg transition-colors flex items-center gap-1 cursor-pointer"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                         <span>Padam</span>
@@ -409,7 +409,7 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
                   {/* Indication Name & Formula Label */}
                   <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
                     <div className="sm:col-span-6 space-y-1">
-                      <label className="text-[11px] font-bold text-slate-700">
+                      <label className="text-[11px] font-bold text-text-secondary">
                         Nama Indikasi / Diagnosis <span className="text-rose-500">*</span>
                       </label>
                       <input
@@ -417,13 +417,13 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
                         value={ind.name}
                         onChange={e => handleUpdateIndication(indIdx, { name: e.target.value })}
                         placeholder="Contoh: Sepsis Teruk / Meningitis / CAP"
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-hidden focus:border-emerald-500 focus:bg-white"
+                        className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-xs font-bold text-text-primary focus:outline-hidden focus:border-emerald-500 focus:bg-surface"
                         required
                       />
                     </div>
 
                     <div className="sm:col-span-6 space-y-1">
-                      <label className="text-[11px] font-bold text-slate-700">
+                      <label className="text-[11px] font-bold text-text-secondary">
                         Formula Teks Paparan
                       </label>
                       <input
@@ -431,17 +431,17 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
                         value={ind.doseFormula}
                         onChange={e => handleUpdateIndication(indIdx, { doseFormula: e.target.value })}
                         placeholder="Contoh: 40 mg/kg/dos IV Q8H"
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-hidden focus:border-emerald-500 focus:bg-white"
+                        className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-xs font-bold text-text-primary focus:outline-hidden focus:border-emerald-500 focus:bg-surface"
                       />
                     </div>
                   </div>
 
                   {/* Calculation Mode & Dose Values */}
-                  <div className="bg-emerald-50/50 rounded-xl p-3.5 border border-emerald-100 space-y-3">
+                  <div className="bg-emerald-500/10 rounded-xl p-3.5 border border-emerald-100 space-y-3">
                     <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
                       {/* Calculation Mode */}
                       <div className="sm:col-span-6 space-y-1">
-                        <label className="text-[11px] font-bold text-emerald-950 flex items-center gap-1">
+                        <label className="text-[11px] font-bold text-emerald-400 dark:text-emerald-300 font-bold flex items-center gap-1">
                           <span>Mod Pengiraan Dos:</span>
                         </label>
                         <select
@@ -450,7 +450,7 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
                             const newMode = e.target.value as PaediatricDoseCalculationMode
                             handleUpdateIndication(indIdx, { calculationMode: newMode })
                           }}
-                          className="w-full px-3 py-2 bg-white border border-emerald-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-hidden focus:border-emerald-500"
+                          className="w-full px-3 py-2 bg-surface border border-emerald-500/20 rounded-xl text-xs font-bold text-text-primary focus:outline-hidden focus:border-emerald-500"
                         >
                           <option value="daily_divided">
                             Jumlah Dos Harian (mg/kg/hari) dibahagi N kali
@@ -463,7 +463,7 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
 
                       {/* Dose Value */}
                       <div className="sm:col-span-6 space-y-1">
-                        <label className="text-[11px] font-bold text-emerald-950">
+                        <label className="text-[11px] font-bold text-emerald-400 dark:text-emerald-300 font-bold">
                           {ind.calculationMode === 'per_dose'
                             ? 'Nilai Dos (mg/kg/dos):'
                             : 'Nilai Dos Harian (mg/kg/hari):'}{' '}
@@ -481,10 +481,10 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
                               })
                             }
                             placeholder="Contoh: 40"
-                            className="w-full px-3 pr-20 py-2 bg-white border border-emerald-200 rounded-xl text-xs font-black text-slate-900 focus:outline-hidden focus:border-emerald-500"
+                            className="w-full px-3 pr-20 py-2 bg-surface border border-emerald-500/20 rounded-xl text-xs font-black text-text-primary focus:outline-hidden focus:border-emerald-500"
                             required
                           />
-                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-slate-500">
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-bold text-text-muted">
                             {ind.calculationMode === 'per_dose' ? 'mg/kg/dos' : 'mg/kg/hari'}
                           </span>
                         </div>
@@ -492,7 +492,7 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
 
                       {/* Frequency Selection */}
                       <div className="sm:col-span-6 space-y-1">
-                        <label className="text-[11px] font-bold text-slate-700">
+                        <label className="text-[11px] font-bold text-text-secondary">
                           Kekerapan Pemberian (Frequency):
                         </label>
                         <select
@@ -509,7 +509,7 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
                               })
                             }
                           }}
-                          className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-hidden focus:border-emerald-500"
+                          className="w-full px-3 py-2 bg-surface border border-border-default rounded-xl text-xs font-bold text-text-primary focus:outline-hidden focus:border-emerald-500"
                         >
                           {FREQUENCY_OPTIONS.map(opt => (
                             <option key={opt.key} value={opt.key}>
@@ -521,7 +521,7 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
 
                       {/* Frequency Label Custom text */}
                       <div className="sm:col-span-6 space-y-1">
-                        <label className="text-[11px] font-bold text-slate-700">
+                        <label className="text-[11px] font-bold text-text-secondary">
                           Label Kekerapan Paparan:
                         </label>
                         <input
@@ -531,7 +531,7 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
                             handleUpdateIndication(indIdx, { frequencyLabel: e.target.value })
                           }
                           placeholder="Contoh: TDS (Setiap 8 Jam)"
-                          className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-hidden focus:border-emerald-500"
+                          className="w-full px-3 py-2 bg-surface border border-border-default rounded-xl text-xs font-bold text-text-primary focus:outline-hidden focus:border-emerald-500"
                         />
                       </div>
                     </div>
@@ -540,7 +540,7 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
                   {/* Dose Limits (Caps) */}
                   <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
                     <div className="sm:col-span-6 space-y-1">
-                      <label className="text-[11px] font-bold text-slate-700 flex items-center gap-1">
+                      <label className="text-[11px] font-bold text-text-secondary flex items-center gap-1">
                         <ShieldAlert className="w-3.5 h-3.5 text-amber-600" />
                         <span>Had Maksimum Sekali Pemberian (Single Cap mg):</span>
                       </label>
@@ -555,12 +555,12 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
                           })
                         }
                         placeholder="Contoh: 1000 mg"
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-hidden focus:border-emerald-500 focus:bg-white"
+                        className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-xs font-bold text-text-primary focus:outline-hidden focus:border-emerald-500 focus:bg-surface"
                       />
                     </div>
 
                     <div className="sm:col-span-6 space-y-1">
-                      <label className="text-[11px] font-bold text-slate-700 flex items-center gap-1">
+                      <label className="text-[11px] font-bold text-text-secondary flex items-center gap-1">
                         <ShieldAlert className="w-3.5 h-3.5 text-amber-600" />
                         <span>Had Maksimum Harian (Daily Cap mg):</span>
                       </label>
@@ -575,14 +575,14 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
                           })
                         }
                         placeholder="Contoh: 3000 mg"
-                        className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-hidden focus:border-emerald-500 focus:bg-white"
+                        className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-xs font-bold text-text-primary focus:outline-hidden focus:border-emerald-500 focus:bg-surface"
                       />
                     </div>
                   </div>
 
                   {/* Formulations & Liquid Strengths */}
-                  <div className="space-y-2 pt-1 border-t border-slate-100">
-                    <label className="text-[11px] font-bold text-slate-700 flex items-center justify-between">
+                  <div className="space-y-2 pt-1 border-t border-border-subtle">
+                    <label className="text-[11px] font-bold text-text-secondary flex items-center justify-between">
                       <span>Kekuatan Formulasi Cecair / Suspensi (mg/mL):</span>
                       <span className="text-[10px] text-slate-400 font-normal">
                         Pilih atau tambah kepekatan cecair
@@ -595,7 +595,7 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
                         {ind.standardFormulations.map((form, fIdx) => (
                           <div
                             key={fIdx}
-                            className="bg-teal-50 border border-teal-200 text-teal-900 px-2.5 py-1 rounded-xl text-xs font-bold flex items-center gap-1.5"
+                            className="bg-accent-base/10 border border-accent-base/20 text-teal-900 px-2.5 py-1 rounded-xl text-xs font-bold flex items-center gap-1.5"
                           >
                             <span>{form.label}</span>
                             <button
@@ -624,7 +624,7 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
                           key={qIdx}
                           type="button"
                           onClick={() => handleAddFormulationToIndication(indIdx, qf)}
-                          className="px-2 py-0.5 bg-slate-100 hover:bg-emerald-100 hover:text-emerald-800 text-slate-600 rounded-lg text-[10px] font-medium transition-colors cursor-pointer"
+                          className="px-2 py-0.5 bg-subtle hover:bg-emerald-100 hover:text-emerald-400 text-text-muted rounded-lg text-[10px] font-medium transition-colors cursor-pointer"
                         >
                           {qf.label.split('(')[0]}
                         </button>
@@ -634,7 +634,7 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
 
                   {/* Clinical Advice Note */}
                   <div className="space-y-1 pt-1">
-                    <label className="text-[11px] font-bold text-slate-700 flex items-center gap-1">
+                    <label className="text-[11px] font-bold text-text-secondary flex items-center gap-1">
                       <FileText className="w-3.5 h-3.5 text-emerald-600" />
                       <span>Nasihat Klinikal &amp; Amalan Hospital:</span>
                     </label>
@@ -645,7 +645,7 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
                         handleUpdateIndication(indIdx, { clinicalAdvice: e.target.value })
                       }
                       placeholder="Contoh: Beri selepas makan. Goncang botol dengan baik. Pantau paras TDM."
-                      className="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 focus:outline-hidden focus:border-emerald-500 focus:bg-white"
+                      className="w-full px-3 py-2 bg-subtle/50 border border-border-default rounded-xl text-xs text-text-primary focus:outline-hidden focus:border-emerald-500 focus:bg-surface"
                     />
                   </div>
                 </div>
@@ -654,18 +654,18 @@ export const AddEditPaediatricProtocolModal: React.FC<AddEditPaediatricProtocolM
           </div>
 
           {/* Footer Actions */}
-          <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
+          <div className="pt-3 border-t border-border-subtle flex items-center justify-between gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer"
+              className="px-4 py-2.5 bg-subtle hover:bg-subtle text-text-secondary rounded-xl text-xs font-bold transition-colors cursor-pointer"
             >
               Batal
             </button>
 
             <button
               type="submit"
-              className="px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center gap-2 cursor-pointer"
+              className="px-6 py-2.5 bg-accent-base hover:bg-accent-hover text-white rounded-xl text-xs font-bold transition-colors shadow-md flex items-center gap-2 cursor-pointer"
             >
               <Save className="w-4 h-4" />
               <span>{editingPreset ? 'Simpan Perubahan' : 'Daftar Protokol Hospital'}</span>

@@ -91,7 +91,7 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
       <div className="min-h-screen flex items-center justify-center" suppressHydrationWarning>
         <div className="text-center" suppressHydrationWarning>
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto" suppressHydrationWarning></div>
-          <p className="mt-2 text-sm text-gray-600">Loading...</p>
+          <p className="mt-2 text-sm text-text-secondary">Loading...</p>
         </div>
       </div>
     );
@@ -103,7 +103,7 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
       <div className="min-h-screen flex items-center justify-center" suppressHydrationWarning>
         <div className="text-center" suppressHydrationWarning>
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto" suppressHydrationWarning></div>
-          <p className="mt-2 text-sm text-gray-600">Checking authentication...</p>
+          <p className="mt-2 text-sm text-text-secondary">Checking authentication...</p>
         </div>
       </div>
     );
@@ -115,7 +115,7 @@ export default function AuthWrapper({ children }: { children: React.ReactNode })
       <div className="min-h-screen flex items-center justify-center" suppressHydrationWarning>
         <div className="text-center" suppressHydrationWarning>
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto" suppressHydrationWarning></div>
-          <p className="mt-2 text-sm text-gray-600">Redirecting to login...</p>
+          <p className="mt-2 text-sm text-text-secondary">Redirecting to login...</p>
         </div>
       </div>
     );

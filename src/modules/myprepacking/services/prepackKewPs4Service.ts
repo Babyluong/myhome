@@ -52,13 +52,14 @@ export interface PrepackLedgerItemWithBalances extends PrepackItem {
  * 1. Fetch all Prepack items with genuine 3-tier live balances
  */
 export const getPrepackLedgerItems = async (
-  hospitalId?: string
+  hospitalId?: string,
+  onlyActive: boolean = true
 ): Promise<{ data: PrepackLedgerItemWithBalances[] | null; error: any }> => {
   try {
     const targetHospId = hospitalId || await getActiveHospitalId()
 
     // 1. Fetch prepack items
-    const { data: items, error: itemsErr } = await supabase
+    let query = supabase
       .from('prepack_items')
       .select(`
         *,
@@ -72,7 +73,12 @@ export const getPrepackLedgerItems = async (
         )
       `)
       .eq('hospital_id', targetHospId)
-      .order('item_name', { ascending: true })
+
+    if (onlyActive) {
+      query = query.eq('status', 'active')
+    }
+
+    const { data: items, error: itemsErr } = await query.order('item_name', { ascending: true })
 
     if (itemsErr) throw itemsErr
     if (!items || items.length === 0) return { data: [], error: null }

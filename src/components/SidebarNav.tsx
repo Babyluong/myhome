@@ -94,8 +94,8 @@ export default function SidebarNav({ collapsed = false }: Props) {
 
   function item(href: string, icon: React.ReactNode, label: string, hasSubItems = false, parentKey = '') {
     const active = pathname === href || (href !== '/' && pathname.startsWith(href));
-    const base = `flex items-center ${collapsed ? 'justify-center' : 'gap-2.5'} rounded-xl px-3 py-2 transition-all duration-200 cursor-pointer group`;
-    const inactive = 'hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 text-slate-700 hover:shadow-sm hover:scale-[1.02]';
+    const base = `flex items-center ${collapsed ? 'justify-center' : 'gap-2.5'} rounded-xl px-3 py-2 transition-[transform,opacity,box-shadow,border-color] duration-200 cursor-pointer group`;
+    const inactive = 'hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 text-text-secondary hover:shadow-sm hover:scale-[1.02]';
     const activeCls = 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg ring-2 ring-blue-500/20 scale-[1.02]';
     
     if (hasSubItems) {
@@ -144,9 +144,9 @@ export default function SidebarNav({ collapsed = false }: Props) {
 
   function subItem(href: string, label: string, hasSubItems = false, parentKey = '') {
     const active = pathname === href || (href !== '/' && pathname.startsWith(href));
-    const base = `flex items-center ${collapsed ? 'justify-center' : 'gap-2'} rounded-lg px-3 py-1.5 transition-all duration-200 text-sm group`;
-    const inactive = 'hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 text-slate-600 hover:shadow-sm hover:scale-[1.01]';
-    const activeCls = 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 border border-blue-200/50 shadow-sm scale-[1.01] font-semibold';
+    const base = `flex items-center ${collapsed ? 'justify-center' : 'gap-2'} rounded-lg px-3 py-1.5 transition-[transform,opacity,box-shadow,border-color] duration-200 text-sm group`;
+    const inactive = 'hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:text-blue-700 text-text-secondary hover:shadow-sm hover:scale-[1.01]';
+    const activeCls = 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-400 border border-blue-500/20 shadow-sm scale-[1.01] font-semibold';
     
     if (hasSubItems) {
       const isExpanded = expandedItems.includes(parentKey);
@@ -190,7 +190,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
         {collapsed ? (
           <div className="h-6" />
         ) : (
-          <div className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-400 bg-gradient-to-r from-slate-100/50 to-blue-100/30 rounded-lg border border-slate-200/30">Main</div>
+          <div className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-slate-400 bg-subtle/50 rounded-lg border border-border-default">Main</div>
         )}
         {item('/', <IconHome />, 'Dashboard')}
       </div>
@@ -200,7 +200,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
         <div className="space-y-1.5">
           {item('/patient-management', <IconUsers />, 'Patient Management', true, 'patient-management')}
           {expandedItems.includes('patient-management') && (
-            <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-200/50 pl-3.5">
+            <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-500/20 pl-3.5">
               {subItem('/patient-management/patient-visit', 'Patient Visit')}
               {subItem('/patient-management/patient-data', 'Patient Data')}
             </div>
@@ -215,7 +215,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
           <div className="space-y-1.5">
             {item('/distribution', <IconTruck />, 'Distribution', true, 'distribution')}
             {expandedItems.includes('distribution') && (
-              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-200/50 pl-3.5">
+              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-500/20 pl-3.5">
                 {subItem('/distribution/request', 'Request')}
                 {subItem('/distribution/issue', 'Issue')}
               </div>
@@ -226,7 +226,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
           <div className="space-y-1.5">
             {item('/catalog', <IconBeaker />, 'Catalog', true, 'catalog-etu')}
             {expandedItems.includes('catalog-etu') && (
-              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-200/50 pl-3.5">
+              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-500/20 pl-3.5">
                 {/* {subItem('/drug-catalog', 'Drug Catalog')} */}
                 {/* {subItem('/non-drug-catalog', 'Non Drug Catalog')} */}
                 {subItem('/supplier-catalog', 'Supplier Catalog')}
@@ -247,7 +247,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
           <div className="space-y-1.5">
             {item('/system', <IconCog />, 'System', true, 'system-etu')}
             {expandedItems.includes('system-etu') && (
-              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-200/50 pl-3.5">
+              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-500/20 pl-3.5">
                 {subItem('/logs', 'Logs')}
                 {subItem('/settings', 'Settings')}
               </div>
@@ -284,7 +284,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
           <div className="space-y-1.5">
             {item('/distribution', <IconTruck />, 'Distribution', true, 'distribution-general-ward')}
             {expandedItems.includes('distribution-general-ward') && (
-              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-200/50 pl-3.5">
+              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-500/20 pl-3.5">
                 {subItem('/distribution/request', 'Request')}
                 {subItem('/distribution/issue', 'Issue')}
               </div>
@@ -295,7 +295,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
           <div className="space-y-1.5">
             {item('/catalog', <IconBeaker />, 'Catalog', true, 'catalog-general-ward')}
             {expandedItems.includes('catalog-general-ward') && (
-              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-200/50 pl-3.5">
+              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-500/20 pl-3.5">
                 {/* {subItem('/drug-catalog', 'Drug Catalog')} */}
                 {/* {subItem('/non-drug-catalog', 'Non Drug Catalog')} */}
               </div>
@@ -311,7 +311,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
           <div className="space-y-1.5">
             {item('/system', <IconCog />, 'System', true, 'system-general-ward')}
             {expandedItems.includes('system-general-ward') && (
-              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-200/50 pl-3.5">
+              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-500/20 pl-3.5">
                 {subItem('/logs', 'Logs')}
                 {subItem('/settings', 'Settings')}
               </div>
@@ -327,7 +327,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
           <div className="space-y-1.5">
             {item('/distribution', <IconTruck />, 'Distribution', true, 'distribution-maternity-ward')}
             {expandedItems.includes('distribution-maternity-ward') && (
-              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-200/50 pl-3.5">
+              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-500/20 pl-3.5">
                 {subItem('/distribution/request', 'Request')}
                 {subItem('/distribution/issue', 'Issue')}
               </div>
@@ -338,7 +338,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
           <div className="space-y-1.5">
             {item('/catalog', <IconBeaker />, 'Catalog', true, 'catalog-maternity-ward')}
             {expandedItems.includes('catalog-maternity-ward') && (
-              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-200/50 pl-3.5">
+              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-500/20 pl-3.5">
                 {/* {subItem('/drug-catalog', 'Drug Catalog')} */}
                 {/* {subItem('/non-drug-catalog', 'Non Drug Catalog')} */}
                 {subItem('/supplier-catalog', 'Supplier Catalog')}
@@ -359,7 +359,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
           <div className="space-y-1.5">
             {item('/system', <IconCog />, 'System', true, 'system-maternity-ward')}
             {expandedItems.includes('system-maternity-ward') && (
-              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-200/50 pl-3.5">
+              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-500/20 pl-3.5">
                 {subItem('/logs', 'Logs')}
                 {subItem('/settings', 'Settings')}
               </div>
@@ -375,7 +375,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
           <div className="space-y-1.5">
             {item('/distribution', <IconTruck />, 'Distribution', true, 'distribution-paediatric-ward')}
             {expandedItems.includes('distribution-paediatric-ward') && (
-              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-200/50 pl-3.5">
+              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-500/20 pl-3.5">
                 {subItem('/distribution/request', 'Request')}
                 {subItem('/distribution/issue', 'Issue')}
               </div>
@@ -386,7 +386,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
           <div className="space-y-1.5">
             {item('/catalog', <IconBeaker />, 'Catalog', true, 'catalog-paediatric-ward')}
             {expandedItems.includes('catalog-paediatric-ward') && (
-              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-200/50 pl-3.5">
+              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-500/20 pl-3.5">
                 {/* {subItem('/drug-catalog', 'Drug Catalog')} */}
                 {/* {subItem('/non-drug-catalog', 'Non Drug Catalog')} */}
                 {subItem('/supplier-catalog', 'Supplier Catalog')}
@@ -407,7 +407,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
           <div className="space-y-1.5">
             {item('/system', <IconCog />, 'System', true, 'system-paediatric-ward')}
             {expandedItems.includes('system-paediatric-ward') && (
-              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-200/50 pl-3.5">
+              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-500/20 pl-3.5">
                 {subItem('/logs', 'Logs')}
                 {subItem('/settings', 'Settings')}
               </div>
@@ -421,7 +421,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
         <div className="space-y-1.5">
           {item('/front-desk', <IconHome />, 'Front Desk', true, 'frontdesk')}
           {expandedItems.includes('frontdesk') && (
-            <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-200/50 pl-3.5">
+            <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-500/20 pl-3.5">
               {subItem('/front-desk/patient-management', 'Patient Management')}
               {subItem('/front-desk/visit-management', 'Visit Management')}
               {subItem('/front-desk/no-show-management', 'No Show Management')}
@@ -445,7 +445,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
           <div className="space-y-1.5">
             {item('/dispensing/outpatient', <IconHome />, 'Outpatient Services', true, 'pc-outpatient')}
             {expandedItems.includes('pc-outpatient') && (
-              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-200/50 pl-3.5">
+              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-500/20 pl-3.5">
                 {subItem('/dispensing/outpatient', 'Outpatient Counter')}
                 {subItem('/dispensing/vas', 'SPUB & VAS')}
               </div>
@@ -471,7 +471,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
           <div className="space-y-1.5">
             {item('/dispensing/clinical/tdm', <IconBeaker />, 'Clinical Services', true, 'pc-clinical')}
             {expandedItems.includes('pc-clinical') && (
-              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-purple-200/50 pl-3.5">
+              <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-indigo-500/20 pl-3.5">
                 {subItem('/dispensing/clinical/tdm', 'TDM')}
                 {subItem('/dispensing/clinical/ams', 'AMS')}
                 {subItem('/dispensing/clinical/ham', 'High-Risk Medicines')}
@@ -514,7 +514,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
           {item('/office-admin', <IconCog />, 'Office Administration')}
           {item('/waran', <IconMoney />, 'Financial Management', true, 'waran')}
           {expandedItems.includes('waran') && (
-            <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-200/50 pl-3.5">
+            <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-500/20 pl-3.5">
               {subItem('/waran/budget-overview', 'Financial Overview')}
               {subItem('/waran/budget-allocation', 'Budgetary Allocation')}
               {subItem('/waran/appl-budget', 'Annual Procurement Plan (APPL)')}
@@ -530,7 +530,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
         <div className="space-y-1.5">
           {item('/inventory', <IconBox />, 'Inventory', true, 'inventory')}
           {expandedItems.includes('inventory') && (
-            <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-200/50 pl-3.5">
+            <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-500/20 pl-3.5">
               {/* Hide all submenus for Office Admin except Medical Oxygen */}
               {department !== 'Office Admin' && subItem('/inventory/drug', 'Drug')}
               {department !== 'Office Admin' && subItem('/inventory/non-drug', 'Non Drug')}
@@ -547,7 +547,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
         <div className="space-y-1.5">
           {item('/waran', <IconMoney />, 'Financial Management', true, 'waran')}
           {expandedItems.includes('waran') && (
-            <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-200/50 pl-3.5">
+            <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-500/20 pl-3.5">
               {subItem('/waran/budget-overview', 'Financial Overview')}
               {subItem('/waran/budget-allocation', 'Budgetary Allocation')}
               {subItem('/waran/appl-budget', 'Annual Procurement Plan (APPL)')}
@@ -563,7 +563,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
         <div className="space-y-1.5">
           {item('/procurement', <IconReceipt />, 'Procurement', true, 'procurement')}
           {expandedItems.includes('procurement') && (
-            <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-200/50 pl-3.5">
+            <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-500/20 pl-3.5">
               {subItem('/purchase-orders', 'Purchase Orders')}
               {subItem('/lpo-management', 'LPO Oversight')}
               {subItem('/delivery-orders', 'Delivery Oversight')}
@@ -580,7 +580,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
         <div className="space-y-1.5">
           {item('/distribution', <IconTruck />, 'Distribution', true, 'distribution-pharmacy')}
           {expandedItems.includes('distribution-pharmacy') && (
-            <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-200/50 pl-3.5">
+            <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-500/20 pl-3.5">
               {subItem('/issuing', 'Intra Facility Transfer')}
               {subItem('/borrowing', 'Inter Facility Transfer')}
             </div>
@@ -593,7 +593,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
         <div className="space-y-1.5">
           {item('/compliance', <IconAlert />, 'Compliance & Risk', true, 'compliance')}
           {expandedItems.includes('compliance') && (
-            <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-200/50 pl-3.5">
+            <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-500/20 pl-3.5">
               {subItem('/lou', 'LOU Oversight')}
               {department === 'Pharmacy Logistic' && subItem('/penalties', 'Penalty Oversight')}
               {subItem('/bad-stock', 'Defective Stock')}
@@ -609,7 +609,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
         <div className="space-y-1.5">
           {item('/catalog', <IconBeaker />, 'Catalog', true, 'catalog')}
           {expandedItems.includes('catalog') && (
-            <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-200/50 pl-3.5">
+            <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-500/20 pl-3.5">
               {/* {subItem('/drug-catalog', 'Drug Catalog')} */}
               {/* {subItem('/non-drug-catalog', 'Non Drug Catalog')} */}
               {subItem('/supplier-catalog', 'Supplier Catalog')}
@@ -627,7 +627,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
         <div className="space-y-1.5">
           {item('/maintenance', <IconMaintenance />, 'Maintenance', true, 'maintenance')}
           {expandedItems.includes('maintenance') && (
-            <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-200/50 pl-3.5">
+            <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-500/20 pl-3.5">
               {subItem('/maintenance/unit-catalog-list', 'Unit Catalog List')}
               {subItem('/maintenance/stock-location', 'Stock Location')}
               {subItem('/stock-verification', 'Stock Verification')}
@@ -641,7 +641,7 @@ export default function SidebarNav({ collapsed = false }: Props) {
         <div className="space-y-1.5">
           {item('/system', <IconCog />, 'System', true, 'system')}
           {expandedItems.includes('system') && (
-            <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-200/50 pl-3.5">
+            <div className="ml-2 mt-1.5 space-y-1 border-l-2 border-blue-500/20 pl-3.5">
               {subItem('/reports', 'Reports')}
               {subItem('/logs', 'Logs')}
               {subItem('/settings', 'Settings')}

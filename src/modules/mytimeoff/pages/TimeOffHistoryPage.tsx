@@ -118,23 +118,23 @@ export const TimeOffHistoryPage: React.FC = () => {
   }, [claims, redemptions, isMs])
 
   return (
-    <div className="p-6 md:p-8 w-full space-y-8 text-slate-800">
+    <div className="p-6 md:p-8 w-full space-y-8 text-text-primary">
       {/* Header Panel */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-white border border-slate-100 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-surface border border-border-subtle rounded-3xl p-6 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500" />
 
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate(ROUTES.TIMEOFF_DASHBOARD)}
-            className="p-3 hover:bg-slate-50 border border-slate-100 rounded-2xl text-slate-400 hover:text-slate-700 transition-all shadow-sm"
+            className="p-3 hover:bg-subtle/50 border border-border-subtle rounded-2xl text-slate-400 hover:text-text-secondary transition-colors shadow-sm"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <h1 className="text-2xl font-black tracking-tight text-slate-800 flex items-center gap-2">
+            <h1 className="text-2xl font-black tracking-tight text-text-primary flex items-center gap-2">
               {isMs ? 'Sejarah & Penyata Cuti Gantian' : 'Time Off Ledger & History'}
             </h1>
-            <p className="text-sm text-slate-500 mt-0.5 font-medium">
+            <p className="text-sm text-text-muted mt-0.5 font-medium">
               {isMs
                 ? 'Rekod transaksi kredit & debit jam cuti gantian serta status permohonan cuti'
                 : 'Credit and debit ledger records and leave redemption status'}
@@ -148,7 +148,7 @@ export const TimeOffHistoryPage: React.FC = () => {
           <select
             value={selectedYear}
             onChange={(e) => setSelectedYear(Number(e.target.value))}
-            className="px-4 py-2 rounded-xl border border-slate-200 text-sm font-mono font-bold bg-white text-slate-800"
+            className="px-4 py-2 rounded-xl border border-border-default text-sm font-mono font-bold bg-surface text-text-primary"
           >
             {[2026, 2025, 2024].map((yr) => (
               <option key={yr} value={yr}>
@@ -161,7 +161,7 @@ export const TimeOffHistoryPage: React.FC = () => {
 
       {/* Summary KPI Strip */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="p-6 rounded-3xl bg-white border border-slate-100 shadow-md">
+        <div className="p-6 rounded-3xl bg-surface border border-border-subtle shadow-md">
           <div className="flex items-center justify-between text-xs text-slate-400 font-bold uppercase">
             <span>{isMs ? 'Jumlah Terkumpul (+)' : 'Total Earned (+)'}</span>
             <TrendingUp className="w-4 h-4 text-emerald-500" />
@@ -174,7 +174,7 @@ export const TimeOffHistoryPage: React.FC = () => {
           </div>
         </div>
 
-        <div className="p-6 rounded-3xl bg-white border border-slate-100 shadow-md">
+        <div className="p-6 rounded-3xl bg-surface border border-border-subtle shadow-md">
           <div className="flex items-center justify-between text-xs text-slate-400 font-bold uppercase">
             <span>{isMs ? 'Jumlah Ditebus (-)' : 'Total Redeemed (-)'}</span>
             <TrendingDown className="w-4 h-4 text-rose-500" />
@@ -202,13 +202,13 @@ export const TimeOffHistoryPage: React.FC = () => {
       </div>
 
       {/* Tabs Switcher */}
-      <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
+      <div className="flex items-center gap-2 border-b border-border-default pb-2">
         <button
           onClick={() => setActiveTab('redemptions')}
-          className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 ${
+          className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-colors flex items-center gap-2 ${
             activeTab === 'redemptions'
               ? 'bg-blue-600 text-white shadow-md'
-              : 'text-slate-600 hover:bg-slate-100'
+              : 'text-text-muted hover:bg-subtle'
           }`}
         >
           <CalendarDays className="w-4 h-4" />
@@ -220,10 +220,10 @@ export const TimeOffHistoryPage: React.FC = () => {
 
         <button
           onClick={() => setActiveTab('timeline')}
-          className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-all flex items-center gap-2 ${
+          className={`px-5 py-2.5 rounded-2xl text-xs font-bold transition-colors flex items-center gap-2 ${
             activeTab === 'timeline'
               ? 'bg-blue-600 text-white shadow-md'
-              : 'text-slate-600 hover:bg-slate-100'
+              : 'text-text-muted hover:bg-subtle'
           }`}
         >
           <Layers className="w-4 h-4" />
@@ -236,10 +236,10 @@ export const TimeOffHistoryPage: React.FC = () => {
 
       {/* Tab 1: Redemptions Table */}
       {activeTab === 'redemptions' && (
-        <div className="bg-white border border-slate-100 rounded-3xl overflow-hidden shadow-xl">
+        <div className="bg-surface border border-border-subtle rounded-3xl overflow-hidden shadow-xl">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm text-slate-700">
-              <thead className="bg-slate-50/80 border-b border-slate-100 text-xs uppercase font-black text-slate-500">
+            <table className="w-full text-left text-sm text-text-secondary">
+              <thead className="bg-subtle/50 border-b border-border-subtle text-xs uppercase font-black text-text-muted">
                 <tr>
                   <th className="px-6 py-4">{isMs ? 'No. Rujukan' : 'Ref No'}</th>
                   <th className="px-6 py-4">{isMs ? 'Tarikh Cuti' : 'Leave Date'}</th>
@@ -249,10 +249,10 @@ export const TimeOffHistoryPage: React.FC = () => {
                   <th className="px-6 py-4">{isMs ? 'Kelulusan Pegawai' : 'Approval Action'}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 font-medium">
+              <tbody className="divide-y divide-border-subtle font-medium">
                 {isLoading ? (
                   <tr>
-                    <td colSpan={6} className="text-center py-12 text-slate-400">
+                    <td colSpan={6} className="text-center py-12 text-text-muted font-medium">
                       <div className="inline-flex items-center gap-2">
                         <Clock className="w-4 h-4 animate-spin text-blue-600" />
                         <span>{isMs ? 'Memuatkan data...' : 'Loading data...'}</span>
@@ -261,9 +261,9 @@ export const TimeOffHistoryPage: React.FC = () => {
                   </tr>
                 ) : redemptions.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="text-center py-12 text-slate-400">
+                    <td colSpan={6} className="text-center py-12 text-text-muted font-medium">
                       <div className="space-y-2">
-                        <p className="font-semibold text-slate-600">
+                        <p className="font-semibold text-text-muted">
                           {isMs ? 'Tiada Rekod Penebusan Dijumpai' : 'No Redemptions Recorded'}
                         </p>
                         <p className="text-xs text-slate-400">
@@ -281,11 +281,11 @@ export const TimeOffHistoryPage: React.FC = () => {
                     const isRejected = r.status === 'rejected'
 
                     return (
-                      <tr key={r.id} className="hover:bg-slate-50/60 transition-colors">
-                        <td className="px-6 py-4 font-mono font-bold text-slate-900 text-xs">
+                      <tr key={r.id} className="hover:bg-subtle/50 transition-colors">
+                        <td className="px-6 py-4 font-mono font-bold text-text-primary text-xs">
                           {r.redemption_no || 'RDM-REF'}
                         </td>
-                        <td className="px-6 py-4 text-xs font-mono font-bold text-slate-800">
+                        <td className="px-6 py-4 text-xs font-mono font-bold text-text-primary">
                           {r.redeem_date}
                         </td>
                         <td className="px-6 py-4">
@@ -294,18 +294,18 @@ export const TimeOffHistoryPage: React.FC = () => {
                           </span>{' '}
                           <span className="text-xs text-slate-400">{isMs ? 'Jam' : 'Hrs'}</span>
                         </td>
-                        <td className="px-6 py-4 text-xs text-slate-600 max-w-xs truncate">
+                        <td className="px-6 py-4 text-xs text-text-muted max-w-xs truncate">
                           {r.reason || '-'}
                         </td>
                         <td className="px-6 py-4">
                           {isApproved && (
-                            <span className="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                            <span className="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-bold bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
                               <CheckCircle2 className="w-3.5 h-3.5" />
                               {isMs ? 'Diluluskan' : 'Approved'}
                             </span>
                           )}
                           {isPending && (
-                            <span className="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                            <span className="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-bold bg-amber-500/10 text-amber-700 border border-amber-500/20">
                               <Clock className="w-3.5 h-3.5" />
                               {isMs ? 'Menunggu Kelulusan' : 'Pending'}
                             </span>
@@ -313,17 +313,17 @@ export const TimeOffHistoryPage: React.FC = () => {
                           {isRejected && (
                             <span
                               title={r.rejection_reason || ''}
-                              className="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-bold bg-rose-50 text-rose-700 border border-rose-200"
+                              className="inline-flex items-center gap-1.5 text-xs px-3 py-1 rounded-full font-bold bg-rose-500/10 text-rose-700 border border-rose-500/20"
                             >
                               <AlertCircle className="w-3.5 h-3.5" />
                               {isMs ? 'Ditolak' : 'Rejected'}
                             </span>
                           )}
                         </td>
-                        <td className="px-6 py-4 text-xs text-slate-500">
+                        <td className="px-6 py-4 text-xs text-text-muted">
                           {r.approved_by ? (
                             <div>
-                              <div className="font-bold text-slate-800">
+                              <div className="font-bold text-text-primary">
                                 {r.approver?.full_name || (isMs ? 'Penyelia' : 'Supervisor')}
                               </div>
                               <div className="text-[11px] text-slate-400 font-mono">
@@ -348,9 +348,9 @@ export const TimeOffHistoryPage: React.FC = () => {
 
       {/* Tab 2: Transaction Ledger Timeline */}
       {activeTab === 'timeline' && (
-        <div className="bg-white border border-slate-100 rounded-3xl p-6 shadow-xl space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-            <h3 className="text-base font-black text-slate-800">
+        <div className="bg-surface border border-border-subtle rounded-3xl p-6 shadow-xl space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-border-subtle">
+            <h3 className="text-base font-black text-text-primary">
               {isMs ? 'Penyata Aliran Jam Cuti Gantian' : 'Hours Movement Ledger'}
             </h3>
             <span className="text-xs text-slate-400 font-mono">
@@ -360,7 +360,7 @@ export const TimeOffHistoryPage: React.FC = () => {
 
           {ledgerEntries.length === 0 ? (
             <div className="text-center py-12 text-slate-400">
-              <p className="font-semibold text-slate-600">
+              <p className="font-semibold text-text-muted">
                 {isMs ? 'Tiada Transaksi Diluluskan' : 'No Approved Transactions'}
               </p>
               <p className="text-xs text-slate-400 mt-1">
@@ -376,14 +376,14 @@ export const TimeOffHistoryPage: React.FC = () => {
                 return (
                   <div
                     key={item.id}
-                    className="p-4 rounded-2xl border border-slate-100 hover:border-slate-200 transition-all flex items-center justify-between gap-4"
+                    className="p-4 rounded-2xl border border-border-subtle hover:border-border-default transition-colors flex items-center justify-between gap-4"
                   >
                     <div className="flex items-center gap-3.5">
                       <div
                         className={`p-3 rounded-2xl ${
                           isCredit
-                            ? 'bg-emerald-50 text-emerald-600 border border-emerald-100'
-                            : 'bg-rose-50 text-rose-600 border border-rose-100'
+                            ? 'bg-emerald-500/10 text-emerald-600 border border-emerald-100'
+                            : 'bg-rose-500/10 text-rose-600 border border-rose-100'
                         }`}
                       >
                         {isCredit ? (
@@ -394,12 +394,12 @@ export const TimeOffHistoryPage: React.FC = () => {
                       </div>
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="font-bold text-slate-800 text-sm">{item.title}</span>
-                          <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+                          <span className="font-bold text-text-primary text-sm">{item.title}</span>
+                          <span className="text-[11px] font-mono px-2 py-0.5 rounded-full bg-subtle text-text-muted">
                             {item.reference}
                           </span>
                         </div>
-                        <p className="text-xs text-slate-500 mt-0.5">{item.notes}</p>
+                        <p className="text-xs text-text-muted mt-0.5">{item.notes}</p>
                       </div>
                     </div>
 

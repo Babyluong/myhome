@@ -120,9 +120,9 @@ export const NAGMasterSidebar: React.FC<NAGMasterSidebarProps> = ({
   ]
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm flex flex-col h-[calc(100vh-140px)] min-h-[600px] overflow-hidden">
+    <div className="bg-surface rounded-3xl border border-border-default shadow-sm flex flex-col h-[calc(100vh-140px)] min-h-[600px] overflow-hidden">
       {/* 1. STICKY TOP SEARCH & FILTERS HEADER */}
-      <div className="p-4 sm:p-5 border-b border-slate-100 space-y-3 bg-slate-50/50">
+      <div className="p-4 sm:p-5 border-b border-border-subtle space-y-3 bg-subtle/50">
         {/* Search Input */}
         <div className="relative">
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -131,13 +131,13 @@ export const NAGMasterSidebar: React.FC<NAGMasterSidebarProps> = ({
             placeholder="Cari indikasi, ubat, patogen..."
             value={searchTerm}
             onChange={e => onSearchChange(e.target.value)}
-            className="w-full pl-10 pr-8 py-2.5 bg-white border border-slate-200 rounded-2xl text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-hidden focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 font-medium transition-all shadow-2xs"
+            className="w-full pl-10 pr-8 py-2.5 bg-surface border border-border-default rounded-2xl text-xs sm:text-sm text-text-primary placeholder-slate-400 focus:outline-hidden focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 font-medium transition-colors shadow-elevation-1"
           />
           {searchTerm && (
             <button
               type="button"
               onClick={() => onSearchChange('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-1 cursor-pointer"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-text-muted p-1 cursor-pointer"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -151,10 +151,10 @@ export const NAGMasterSidebar: React.FC<NAGMasterSidebarProps> = ({
               key={idx}
               type="button"
               onClick={() => onSearchChange(chip.q)}
-              className={`px-2.5 py-1 rounded-xl text-[11px] font-bold transition-all border cursor-pointer ${
+              className={`px-2.5 py-1 rounded-xl text-[11px] font-bold transition-colors border cursor-pointer ${
                 searchTerm.toLowerCase() === chip.q.toLowerCase()
-                  ? 'bg-emerald-700 text-white border-emerald-700 shadow-2xs'
-                  : 'bg-white hover:bg-emerald-50 hover:border-emerald-200 text-slate-700 border-slate-200/80 shadow-2xs'
+                  ? 'bg-emerald-700 text-white border-emerald-700 shadow-elevation-1'
+                  : 'bg-surface hover:bg-emerald-500/10 hover:border-emerald-500/20 text-text-secondary border-border-default shadow-elevation-1'
               }`}
             >
               {chip.label}
@@ -163,14 +163,14 @@ export const NAGMasterSidebar: React.FC<NAGMasterSidebarProps> = ({
         </div>
 
         {/* Population Tabs */}
-        <div className="grid grid-cols-3 p-1 bg-slate-200/70 rounded-2xl border border-slate-200 text-xs font-black">
+        <div className="grid grid-cols-3 p-1 bg-slate-200/70 rounded-2xl border border-border-default text-xs font-black">
           <button
             type="button"
             onClick={() => onSelectPopulation('All')}
-            className={`py-1.5 rounded-xl transition-all text-center cursor-pointer ${
+            className={`py-1.5 rounded-xl transition-colors text-center cursor-pointer ${
               selectedPopulation === 'All'
-                ? 'bg-white text-slate-900 shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-surface text-text-primary shadow-xs'
+                : 'text-text-muted hover:text-text-primary'
             }`}
           >
             Semua
@@ -178,10 +178,10 @@ export const NAGMasterSidebar: React.FC<NAGMasterSidebarProps> = ({
           <button
             type="button"
             onClick={() => onSelectPopulation('Adult')}
-            className={`py-1.5 rounded-xl transition-all text-center cursor-pointer flex items-center justify-center gap-1 ${
+            className={`py-1.5 rounded-xl transition-colors text-center cursor-pointer flex items-center justify-center gap-1 ${
               selectedPopulation === 'Adult'
                 ? 'bg-emerald-700 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                : 'text-text-muted hover:text-text-primary'
             }`}
           >
             <User className="w-3 h-3" />
@@ -190,10 +190,10 @@ export const NAGMasterSidebar: React.FC<NAGMasterSidebarProps> = ({
           <button
             type="button"
             onClick={() => onSelectPopulation('Paediatric')}
-            className={`py-1.5 rounded-xl transition-all text-center cursor-pointer flex items-center justify-center gap-1 ${
+            className={`py-1.5 rounded-xl transition-colors text-center cursor-pointer flex items-center justify-center gap-1 ${
               selectedPopulation === 'Paediatric'
                 ? 'bg-cyan-700 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                : 'text-text-muted hover:text-text-primary'
             }`}
           >
             <Baby className="w-3 h-3" />
@@ -205,7 +205,7 @@ export const NAGMasterSidebar: React.FC<NAGMasterSidebarProps> = ({
         <select
           value={selectedSetting}
           onChange={e => onSelectSetting(e.target.value)}
-          className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:outline-hidden focus:border-emerald-500 cursor-pointer shadow-2xs"
+          className="w-full px-3 py-2 bg-surface border border-border-default rounded-xl text-xs font-bold text-text-secondary focus:outline-hidden focus:border-emerald-500 cursor-pointer shadow-elevation-1"
         >
           <option value="ALL">All Clinical Settings</option>
           <option value="Community-Acquired">Komuniti (Community-Acquired)</option>
@@ -217,13 +217,13 @@ export const NAGMasterSidebar: React.FC<NAGMasterSidebarProps> = ({
       </div>
 
       {/* 2. SCROLLABLE NAVIGATION LIST */}
-      <div className="flex-1 overflow-y-auto p-3 space-y-1 divide-y divide-slate-100">
+      <div className="flex-1 overflow-y-auto p-3 space-y-1 divide-y divide-border-subtle">
         {/* CASE A: SEARCH MODE ACTIVE */}
         {searchTerm.trim() ? (
           <div className="space-y-2 pt-1">
-            <div className="px-2 py-1 flex items-center justify-between text-xs text-slate-500 font-bold">
+            <div className="px-2 py-1 flex items-center justify-between text-xs text-text-muted font-bold">
               <span>Smart Search Results</span>
-              <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-mono">
+              <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-400 text-[10px] font-mono">
                 {searchResults.length} ditemui
               </span>
             </div>
@@ -231,7 +231,7 @@ export const NAGMasterSidebar: React.FC<NAGMasterSidebarProps> = ({
             {searchResults.length === 0 ? (
               <div className="p-6 text-center text-slate-400 space-y-2">
                 <Search className="w-8 h-8 mx-auto opacity-40" />
-                <p className="text-xs font-bold text-slate-600">Tiada padanan ditemui</p>
+                <p className="text-xs font-bold text-text-muted">Tiada padanan ditemui</p>
                 <p className="text-[11px] text-slate-400">
                   Try different keywords or select &apos;All&apos; on the population filter.
                 </p>
@@ -246,12 +246,12 @@ export const NAGMasterSidebar: React.FC<NAGMasterSidebarProps> = ({
                     <div
                       key={item.id}
                       onClick={() => onSelectGuideline(item)}
-                      className={`p-3 rounded-2xl text-left cursor-pointer transition-all border ${
+                      className={`p-3 rounded-2xl text-left cursor-pointer transition-colors border ${
                         isSelected
                           ? isPaed
                             ? 'bg-cyan-50/90 border-cyan-500 shadow-xs ring-1 ring-cyan-500/30'
-                            : 'bg-emerald-50/90 border-emerald-500 shadow-xs ring-1 ring-emerald-500/30'
-                          : 'bg-white hover:bg-slate-50 text-slate-800 border-slate-200/80 shadow-2xs hover:border-slate-300'
+                            : 'bg-emerald-500/10 border-emerald-500 shadow-xs ring-1 ring-emerald-500/30'
+                          : 'bg-surface hover:bg-subtle/50 text-text-primary border-border-default shadow-elevation-1 hover:border-border-default'
                       }`}
                     >
                       <div className="flex items-center justify-between gap-1 mb-1">
@@ -261,25 +261,25 @@ export const NAGMasterSidebar: React.FC<NAGMasterSidebarProps> = ({
                               {item.categoryCode}
                             </span>
                           )}
-                          <span className="text-[10px] font-bold text-slate-500 truncate max-w-[140px]">
+                          <span className="text-[10px] font-bold text-text-muted truncate max-w-[140px]">
                             {item.bodySystem}
                           </span>
                         </div>
                         <span
                           className={`text-[9px] font-black uppercase px-1.5 py-0.2 rounded-full ${
-                            isPaed ? 'bg-cyan-100 text-cyan-800' : 'bg-emerald-100 text-emerald-800'
+                            isPaed ? 'bg-cyan-100 text-cyan-800' : 'bg-emerald-100 text-emerald-400'
                           }`}
                         >
                           {isPaed ? 'Pediatrik' : 'Dewasa'}
                         </span>
                       </div>
 
-                      <h4 className="text-xs font-black text-slate-900 leading-snug">
+                      <h4 className="text-xs font-black text-text-primary leading-snug">
                         {item.conditionName}
                       </h4>
 
-                      <div className="text-[10px] text-slate-500 mt-1 truncate">
-                        1st-line: <strong className="text-slate-700">{item.firstLineTherapy.regimen}</strong>
+                      <div className="text-[10px] text-text-muted mt-1 truncate">
+                        1st-line: <strong className="text-text-secondary">{item.firstLineTherapy.regimen}</strong>
                       </div>
                     </div>
                   )
@@ -290,7 +290,7 @@ export const NAGMasterSidebar: React.FC<NAGMasterSidebarProps> = ({
         ) : (
           /* CASE B: HIERARCHICAL ORGAN SYSTEM TREE */
           <div className="space-y-1 pt-1">
-            <div className="px-2 py-1 flex items-center justify-between text-[11px] text-slate-400 font-bold uppercase tracking-wider">
+            <div className="px-2 py-1 flex items-center justify-between text-[11px] text-text-secondary font-bold font-bold uppercase tracking-wider">
               <span>Direktori Sistem Organ ({activeCategoryMetaList.length})</span>
             </div>
 
@@ -304,17 +304,17 @@ export const NAGMasterSidebar: React.FC<NAGMasterSidebarProps> = ({
                   {/* Category Header Row */}
                   <div
                     onClick={() => toggleExpandCategory(cat.code)}
-                    className={`p-2.5 rounded-2xl flex items-center justify-between gap-2 cursor-pointer transition-all ${
+                    className={`p-2.5 rounded-2xl flex items-center justify-between gap-2 cursor-pointer transition-colors ${
                       hasActiveChild
-                        ? 'bg-slate-100/90 text-slate-900 font-black'
-                        : 'hover:bg-slate-50 text-slate-700'
+                        ? 'bg-subtle text-text-primary font-black'
+                        : 'hover:bg-subtle/50 text-text-secondary'
                     }`}
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
                       <span className="text-base flex-shrink-0">{cat.icon}</span>
                       <div className="min-w-0">
                         <div className="flex items-center gap-1.5">
-                          <span className="text-[10px] font-black px-1.5 py-0.5 rounded-md bg-slate-200 text-slate-800 font-mono">
+                          <span className="text-[10px] font-black px-1.5 py-0.5 rounded-md bg-subtle text-text-primary font-mono">
                             {cat.code}
                           </span>
                           <span className="text-xs font-bold truncate">
@@ -325,7 +325,7 @@ export const NAGMasterSidebar: React.FC<NAGMasterSidebarProps> = ({
                     </div>
 
                     <div className="flex items-center gap-1.5 flex-shrink-0">
-                      <span className="text-[10px] text-slate-400 font-bold px-1.5 py-0.5 rounded-md bg-slate-100">
+                      <span className="text-[10px] text-slate-400 font-bold px-1.5 py-0.5 rounded-md bg-subtle">
                         {catGuidelines.length}
                       </span>
                       {isExpanded ? (
@@ -338,7 +338,7 @@ export const NAGMasterSidebar: React.FC<NAGMasterSidebarProps> = ({
 
                   {/* Subtopics / Child Guidelines List */}
                   {isExpanded && catGuidelines.length > 0 && (
-                    <div className="pl-4 pr-1 py-1 space-y-1 border-l-2 border-slate-200/80 ml-4 animate-fade-in">
+                    <div className="pl-4 pr-1 py-1 space-y-1 border-l-2 border-border-default ml-4 animate-fade-in">
                       {catGuidelines.map(g => {
                         const isSelected = selectedGuidelineId === g.id
                         const isPaed = g.targetPopulation === 'Paediatric' || g.targetPopulation === 'Neonatal'
@@ -347,12 +347,12 @@ export const NAGMasterSidebar: React.FC<NAGMasterSidebarProps> = ({
                           <div
                             key={g.id}
                             onClick={() => onSelectGuideline(g)}
-                            className={`p-2.5 rounded-xl text-left cursor-pointer transition-all ${
+                            className={`p-2.5 rounded-xl text-left cursor-pointer transition-colors ${
                               isSelected
                                 ? isPaed
                                   ? 'bg-cyan-700 text-white shadow-xs font-black'
                                   : 'bg-emerald-700 text-white shadow-xs font-black'
-                                : 'hover:bg-slate-100 text-slate-700 text-xs font-medium'
+                                : 'hover:bg-subtle text-text-secondary text-xs font-medium'
                             }`}
                           >
                             <div className="flex items-center justify-between gap-1">

@@ -192,15 +192,15 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
             onClick={handleExportCSV}
             variant="outline"
             size="sm"
-            className="bg-white border-2 border-slate-200 hover:bg-slate-50 text-slate-700 font-bold px-4 py-2 rounded-xl flex items-center gap-2 shadow-xs transition-all"
+            className="bg-surface border-2 border-border-default hover:bg-subtle/50 text-text-secondary font-bold px-4 py-2 rounded-xl flex items-center gap-2 shadow-xs transition-colors"
           >
-            <Download className="w-4 h-4 text-slate-500" />
+            <Download className="w-4 h-4 text-text-muted" />
             <span>Export</span>
           </Button>
 
           <Button
             onClick={handleOpenAdd}
-            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2 rounded-xl flex items-center gap-2 shadow-sm transition-all"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-2 rounded-xl flex items-center gap-2 shadow-sm transition-colors"
           >
             <Plus className="w-4 h-4" />
             <span>Add Item</span>
@@ -209,13 +209,13 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
       </div>
 
       {/* Sub-navigation Switcher */}
-      <div className="flex items-center gap-2 border-b border-slate-200 pb-3">
+      <div className="flex items-center gap-2 border-b border-border-default pb-3">
         <button
           onClick={() => setActiveTab('catalog')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-2 ${
             activeTab === 'catalog'
               ? 'bg-slate-900 text-white shadow-xs'
-              : 'text-slate-500 hover:text-slate-800 bg-white border border-slate-200'
+              : 'text-text-muted hover:text-text-primary bg-surface border border-border-default'
           }`}
         >
           <Tag className="w-4 h-4" />
@@ -224,10 +224,10 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
 
         <button
           onClick={() => setActiveTab('suppliers')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold transition-colors flex items-center gap-2 ${
             activeTab === 'suppliers'
               ? 'bg-slate-900 text-white shadow-xs'
-              : 'text-slate-500 hover:text-slate-800 bg-white border border-slate-200'
+              : 'text-text-muted hover:text-text-primary bg-surface border border-border-default'
           }`}
         >
           <Building className="w-4 h-4" />
@@ -239,17 +239,17 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
         /* 2-Column Split View: Left Classification Panel + Right Main Catalog */
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Left Panel: Classification Filter Card */}
-          <div className="lg:col-span-3 bg-white rounded-2xl border-2 border-slate-100 p-5 shadow-xs space-y-5">
-            <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
-              <div className="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+          <div className="lg:col-span-3 bg-surface rounded-2xl border-2 border-border-subtle p-5 shadow-xs space-y-5">
+            <div className="flex items-center gap-2.5 pb-3 border-b border-border-subtle">
+              <div className="w-8 h-8 rounded-xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center">
                 <Layers className="w-4 h-4" />
               </div>
-              <h3 className="font-black text-sm text-slate-900">Classification</h3>
+              <h3 className="font-black text-sm text-text-primary">Classification</h3>
             </div>
 
             {/* PROGRAM DROPDOWN */}
             <div className="space-y-1.5">
-              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider">
+              <label className="block text-[10px] font-black text-text-secondary font-bold uppercase tracking-wider">
                 PROGRAM
               </label>
               <select
@@ -259,7 +259,7 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
                   setSelectedObjek('all')
                   setSelectedKategori('all')
                 }}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:bg-white focus:border-indigo-500 focus:outline-none"
+                className="w-full px-3 py-2.5 bg-subtle/50 border border-border-default rounded-xl text-xs font-semibold text-text-primary focus:bg-surface focus:border-indigo-500 focus:outline-none"
               >
                 <option value="all">All Programs</option>
                 <option value="022300">022300 - Dietetics & Food Services</option>
@@ -270,7 +270,7 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
 
             {/* OBJEK DROPDOWN */}
             <div className="space-y-1.5">
-              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider">
+              <label className="block text-[10px] font-black text-text-secondary font-bold uppercase tracking-wider">
                 OBJEK
               </label>
               <select
@@ -279,7 +279,7 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
                   setSelectedObjek(e.target.value)
                   setSelectedKategori('all')
                 }}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:bg-white focus:border-indigo-500 focus:outline-none"
+                className="w-full px-3 py-2.5 bg-subtle/50 border border-border-default rounded-xl text-xs font-semibold text-text-primary focus:bg-surface focus:border-indigo-500 focus:outline-none"
               >
                 <option value="all">All Objects</option>
                 {availableObjeks.map((obj) => (
@@ -292,13 +292,13 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
 
             {/* KATEGORI DROPDOWN */}
             <div className="space-y-1.5">
-              <label className="block text-[10px] font-black text-slate-400 uppercase tracking-wider">
+              <label className="block text-[10px] font-black text-text-secondary font-bold uppercase tracking-wider">
                 CATEGORY
               </label>
               <select
                 value={selectedKategori}
                 onChange={(e) => setSelectedKategori(e.target.value)}
-                className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:bg-white focus:border-indigo-500 focus:outline-none"
+                className="w-full px-3 py-2.5 bg-subtle/50 border border-border-default rounded-xl text-xs font-semibold text-text-primary focus:bg-surface focus:border-indigo-500 focus:outline-none"
               >
                 <option value="all">All Categories</option>
                 {availableKategoris.map((kat) => (
@@ -318,7 +318,7 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
                   setSelectedKategori('all')
                   setSearchTerm('')
                 }}
-                className="w-full py-2 text-xs font-bold text-slate-500 hover:text-indigo-600 transition-colors border-t border-slate-100 pt-3"
+                className="w-full py-2 text-xs font-bold text-text-muted hover:text-indigo-600 transition-colors border-t border-border-subtle pt-3"
               >
                 Reset Filter
               </button>
@@ -334,15 +334,15 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
                 placeholder="Search perihal items by name or code..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-4 pr-10 py-3.5 bg-white border-2 border-slate-100 rounded-2xl text-xs text-slate-900 placeholder-slate-400 shadow-xs focus:border-indigo-500 focus:outline-none"
+                className="w-full pl-4 pr-10 py-3.5 bg-surface border-2 border-border-subtle rounded-2xl text-xs text-text-primary placeholder-slate-400 shadow-xs focus:border-indigo-500 focus:outline-none"
               />
               <Search className="w-4 h-4 text-slate-400 absolute right-4 top-1/2 -translate-y-1/2" />
             </div>
 
             {/* Main Table Container */}
-            <div className="bg-white rounded-2xl border-2 border-slate-100 shadow-xs overflow-hidden">
+            <div className="bg-surface rounded-2xl border-2 border-border-subtle shadow-xs overflow-hidden">
               {/* Header Row matching Screenshot 2 */}
-              <div className="grid grid-cols-12 gap-4 px-6 py-3.5 bg-slate-50/60 border-b border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-wider">
+              <div className="grid grid-cols-12 gap-4 px-6 py-3.5 bg-subtle/50 border-b border-border-subtle text-[10px] font-black text-text-secondary font-bold uppercase tracking-wider">
                 <div className="col-span-5">ITEM NAME & DESCRIPTION</div>
                 <div className="col-span-3">CLASSIFICATION DETAILS</div>
                 <div className="col-span-2 text-right">PRICE / UNIT</div>
@@ -355,11 +355,11 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
                   const isCollapsed = collapsedGroups[groupName]
 
                   return (
-                    <div key={groupName} className="border-b border-slate-100 last:border-b-0">
+                    <div key={groupName} className="border-b border-border-subtle last:border-b-0">
                       {/* Group Header Banner with Chevron */}
                       <button
                         onClick={() => toggleGroup(groupName)}
-                        className="w-full flex items-center justify-between px-6 py-3 bg-slate-50/30 hover:bg-slate-50 transition-colors border-b border-slate-100/60 text-left"
+                        className="w-full flex items-center justify-between px-6 py-3 bg-subtle/50 hover:bg-subtle/50 transition-colors border-b border-border-subtle text-left"
                       >
                         <div className="flex items-center gap-2">
                           {isCollapsed ? (
@@ -367,10 +367,10 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
                           ) : (
                             <ChevronUp className="w-4 h-4 text-slate-400" />
                           )}
-                          <span className="text-xs font-black text-slate-800 tracking-wide">
+                          <span className="text-xs font-black text-text-primary tracking-wide">
                             {groupName}
                           </span>
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-slate-200 text-slate-700">
+                          <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-subtle text-text-secondary">
                             {items.length} ITEMS
                           </span>
                         </div>
@@ -378,15 +378,15 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
 
                       {/* Items under Group */}
                       {!isCollapsed && (
-                        <div className="divide-y divide-slate-100">
+                        <div className="divide-y divide-border-subtle">
                           {items.map((item) => (
                             <div
                               key={item.id}
-                              className="grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-slate-50/50 transition-colors"
+                              className="grid grid-cols-12 gap-4 px-6 py-4 items-center hover:bg-subtle/50 transition-colors"
                             >
                               {/* 1. Item Name & Description */}
                               <div className="col-span-5 space-y-0.5">
-                                <h4 className="text-xs font-black text-slate-900 leading-tight">
+                                <h4 className="text-xs font-black text-text-primary leading-tight">
                                   {item.perihal_name}
                                 </h4>
                                 <p className="text-[11px] text-slate-400 font-medium">
@@ -399,25 +399,25 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
                                 <span
                                   className={`inline-block text-[10px] font-mono font-black px-2 py-0.5 rounded border ${
                                     item.program_code === '022300'
-                                      ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                      ? 'bg-blue-500/10 text-blue-700 border-blue-500/20'
                                       : item.program_code === 'P42'
-                                      ? 'bg-amber-50 text-amber-700 border-amber-200'
-                                      : 'bg-indigo-50 text-indigo-700 border-indigo-200'
+                                      ? 'bg-amber-500/10 text-amber-700 border-amber-500/20'
+                                      : 'bg-indigo-500/10 text-indigo-700 border-indigo-500/20'
                                   }`}
                                 >
                                   {item.program_code}
                                 </span>
-                                <p className="text-[11px] font-mono font-semibold text-slate-500">
+                                <p className="text-[11px] font-mono font-semibold text-text-muted">
                                   {item.objek_code} — {item.kategori_code}
                                 </p>
                               </div>
 
                               {/* 3. Price / Unit */}
                               <div className="col-span-2 text-right">
-                                <p className="text-sm font-black text-slate-900 font-mono">
+                                <p className="text-sm font-black text-text-primary font-mono">
                                   {formatCurrency(Number(item.unit_price) || 0)}
                                 </p>
-                                <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider mt-0.5">
+                                <p className="text-[9px] font-black text-text-secondary font-bold uppercase tracking-wider mt-0.5">
                                   PER {item.unit || 'UNIT'}
                                 </p>
                               </div>
@@ -426,14 +426,14 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
                               <div className="col-span-2 flex items-center justify-end gap-1.5">
                                 <button
                                   onClick={() => handleOpenEdit(item)}
-                                  className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                                  className="p-1.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-500/10 rounded-lg transition-colors"
                                   title="Edit Item"
                                 >
                                   <Edit2 className="w-3.5 h-3.5" />
                                 </button>
                                 <button
                                   onClick={() => handleDelete(item.id, item.perihal_name)}
-                                  className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                                  className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-500/10 rounded-lg transition-colors"
                                   title="Delete Item"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
@@ -462,58 +462,58 @@ export const PerihalSuppliersTab: React.FC<PerihalSuppliersTabProps> = ({
               key={s.id}
               initial={{ opacity: 0, scale: 0.98 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="rounded-[2rem] bg-white border-2 border-slate-100 p-6 shadow-xs space-y-4 hover:border-slate-300 hover:shadow-md transition-all"
+              className="rounded-[2rem] bg-surface border-2 border-border-subtle p-6 shadow-xs space-y-4 hover:border-border-default hover:shadow-md transition-colors"
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 border border-blue-100 flex items-center justify-center">
                     <Building className="w-5 h-5" />
                   </div>
                   <div>
-                    <h4 className="font-black text-sm text-slate-900">{s.company_name}</h4>
+                    <h4 className="font-black text-sm text-text-primary">{s.company_name}</h4>
                     <span className="text-[10px] font-mono text-slate-400 font-bold">
                       {s.supplier_code || 'ADM-SUPPLIER'}
                     </span>
                   </div>
                 </div>
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-700 border border-emerald-500/20">
                   Active
                 </span>
               </div>
 
-              <div className="space-y-2 text-xs text-slate-600 border-t border-slate-100 pt-3">
+              <div className="space-y-2 text-xs text-text-muted border-t border-border-subtle pt-3">
                 {s.contact_person && (
                   <p className="flex items-center gap-2">
                     <span className="text-slate-400">Contact Person:</span>
-                    <strong className="text-slate-800">{s.contact_person}</strong>
+                    <strong className="text-text-primary">{s.contact_person}</strong>
                   </p>
                 )}
                 {s.contact_person_phone && (
                   <p className="flex items-center gap-2">
                     <Phone className="w-3.5 h-3.5 text-indigo-600" />
-                    <span className="font-mono font-semibold text-slate-700">{s.contact_person_phone}</span>
+                    <span className="font-mono font-semibold text-text-secondary">{s.contact_person_phone}</span>
                   </p>
                 )}
                 {s.email && (
                   <p className="flex items-center gap-2">
                     <Mail className="w-3.5 h-3.5 text-indigo-600" />
-                    <span className="truncate text-slate-700">{s.email}</span>
+                    <span className="truncate text-text-secondary">{s.email}</span>
                   </p>
                 )}
                 {s.address && (
-                  <p className="flex items-start gap-2 text-slate-500">
+                  <p className="flex items-start gap-2 text-text-muted">
                     <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
                     <span className="line-clamp-2">{s.address}</span>
                   </p>
                 )}
               </div>
 
-              <div className="flex items-center gap-2 pt-2 border-t border-slate-100 text-[10px]">
-                <span className="px-2 py-0.5 bg-emerald-50 text-emerald-700 font-bold rounded border border-emerald-200 flex items-center gap-1">
+              <div className="flex items-center gap-2 pt-2 border-t border-border-subtle text-[10px]">
+                <span className="px-2 py-0.5 bg-emerald-500/10 text-emerald-700 font-bold rounded border border-emerald-500/20 flex items-center gap-1">
                   <FileCheck2 className="w-3 h-3" />
                   <span>MOF VERIFIED</span>
                 </span>
-                <span className="px-2 py-0.5 bg-purple-50 text-purple-700 font-bold rounded border border-purple-200">
+                <span className="px-2 py-0.5 bg-indigo-500/10 text-purple-700 font-bold rounded border border-indigo-500/20">
                   BUMIPUTERA
                 </span>
               </div>

@@ -128,7 +128,7 @@ Address: Block E1, E3, E6, E7 & E10, Parcel E, Federal Government Administrative
             <Button
               variant="outline"
               onClick={() => navigate(ROUTES.LOGIN)}
-              className="border-white/20 text-white hover:bg-white/10"
+              className="border-white/20 text-white hover:bg-surface/10"
             >
               Back to Login
             </Button>
@@ -142,23 +142,23 @@ Address: Block E1, E3, E6, E7 & E10, Parcel E, Federal Government Administrative
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-12 p-8 bg-white rounded-2xl shadow-lg border border-slate-200"
+          className="mb-12 p-8 bg-surface rounded-2xl shadow-lg border border-border-default"
         >
           <div className="flex items-start gap-4 mb-6">
             <div className="p-3 bg-teal-100 rounded-xl">
               <Shield className="w-6 h-6 text-teal-600" />
             </div>
             <div className="flex-1">
-              <h2 className="text-2xl font-bold text-slate-900 mb-3">
+              <h2 className="text-2xl font-bold text-text-primary mb-3">
                 Our Commitment to Your Privacy
               </h2>
-              <p className="text-slate-700 leading-relaxed text-lg">
+              <p className="text-text-secondary leading-relaxed text-lg">
                 The Ministry of Health Malaysia is dedicated to maintaining the highest standards of data protection and privacy. This Privacy Policy demonstrates our commitment to safeguarding your personal information in accordance with Malaysian law and MOH guidelines.
               </p>
             </div>
           </div>
-          <div className="mt-6 p-4 bg-slate-50 rounded-xl border-l-4 border-teal-500">
-            <p className="text-sm text-slate-600">
+          <div className="mt-6 p-4 bg-subtle/50 rounded-xl border-l-4 border-teal-500">
+            <p className="text-sm text-text-secondary">
               <strong>Last Updated:</strong> {new Date().toLocaleDateString('en-MY', { year: 'numeric', month: 'long', day: 'numeric' })}
             </p>
           </div>
@@ -174,17 +174,17 @@ Address: Block E1, E3, E6, E7 & E10, Parcel E, Federal Government Administrative
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="p-8 bg-white rounded-2xl shadow-md border border-slate-200 hover:shadow-lg transition-shadow"
+                className="p-8 bg-surface rounded-2xl shadow-md border border-border-default hover:shadow-lg transition-shadow"
               >
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-teal-50 rounded-xl flex-shrink-0">
+                  <div className="p-3 bg-accent-base/10 rounded-xl flex-shrink-0">
                     <Icon className="w-6 h-6 text-teal-600" />
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-slate-900 mb-4">
+                    <h3 className="text-xl font-bold text-text-primary mb-4">
                       {section.title}
                     </h3>
-                    <p className="text-slate-700 leading-relaxed whitespace-pre-line">
+                    <p className="text-text-secondary leading-relaxed whitespace-pre-line">
                       {section.content}
                     </p>
                   </div>
@@ -199,15 +199,15 @@ Address: Block E1, E3, E6, E7 & E10, Parcel E, Federal Government Administrative
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
-          className="mt-12 p-6 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-2xl border border-teal-200"
+          className="mt-12 p-6 bg-gradient-to-r from-teal-50 to-cyan-50 rounded-2xl border border-accent-base/20"
         >
           <div className="flex items-start gap-4">
             <CheckCircle className="w-6 h-6 text-teal-600 flex-shrink-0 mt-1" />
             <div>
-              <h4 className="font-bold text-slate-900 mb-2">
+              <h4 className="font-bold text-text-primary mb-2">
                 Your Privacy Matters
               </h4>
-              <p className="text-slate-700 text-sm leading-relaxed">
+              <p className="text-text-secondary text-sm leading-relaxed">
                 We are committed to protecting your privacy and ensuring the security of your personal information. 
                 If you have any questions or concerns about this Privacy Policy or our data handling practices, 
                 please do not hesitate to contact our Data Protection Officer.

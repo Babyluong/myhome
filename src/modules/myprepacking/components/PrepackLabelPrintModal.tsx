@@ -211,7 +211,7 @@ export const PrepackLabelPrintModal: React.FC<PrepackLabelPrintModalProps> = ({
                   type="button"
                   key={f.id}
                   onClick={() => setFormat(f.id as LabelFormat)}
-                  className={`w-full p-2.5 rounded-lg border text-left transition-all active:scale-[0.98] cursor-pointer ${
+                  className={`w-full p-2.5 rounded-lg border text-left transition-colors active:scale-[0.98] cursor-pointer ${
                     format === f.id
                       ? 'border-teal-500 bg-teal-500/10 text-teal-600 dark:text-teal-400 font-semibold shadow-xs'
                       : 'border-border-default bg-surface hover:bg-subtle text-text-secondary'
@@ -312,7 +312,7 @@ export const PrepackLabelPrintModal: React.FC<PrepackLabelPrintModalProps> = ({
           {format === 'uod_50x25' && (
             <div 
               id="printable-label-uod"
-              className="w-[300px] h-[150px] bg-white text-black p-3 rounded shadow-md border border-gray-400 font-sans relative flex flex-col justify-between select-none"
+              className="w-[300px] h-[150px] bg-surface text-black p-3 rounded shadow-md border border-gray-400 font-sans relative flex flex-col justify-between select-none"
             >
               <div>
                 <div className="text-[9px] font-black tracking-tight uppercase border-b border-black pb-0.5 mb-1 flex justify-between items-center">
@@ -322,7 +322,7 @@ export const PrepackLabelPrintModal: React.FC<PrepackLabelPrintModalProps> = ({
                 <div className="text-[11px] font-black leading-tight line-clamp-2 uppercase">
                   {item.item_name}
                 </div>
-                <div className="text-[9px] text-gray-800 font-semibold mt-0.5">
+                <div className="text-[9px] text-text-primary font-semibold mt-0.5">
                   Dose: {item.strength || '1 Unit'} ({item.dosage_form})
                 </div>
               </div>
@@ -331,12 +331,12 @@ export const PrepackLabelPrintModal: React.FC<PrepackLabelPrintModalProps> = ({
                 <div className="text-[8px] space-y-0.5 leading-tight">
                   <div className="font-mono font-bold">Lot: {batch.batch_number}</div>
                   {includeMfgDetails && (
-                    <div className="text-[7.5px] text-gray-700">Mfg: {batch.mfg_batch_number} (Exp: {batch.mfg_expiry_date})</div>
+                    <div className="text-[7.5px] text-text-secondary">Mfg: {batch.mfg_batch_number} (Exp: {batch.mfg_expiry_date})</div>
                   )}
                   <div className="text-[9px] font-black text-black">
                     USE BEFORE: {batch.prepack_expiry_date}
                   </div>
-                  <div className="text-[7.5px] text-gray-600">Packed: {batch.pack_date}</div>
+                  <div className="text-[7.5px] text-text-muted">Packed: {batch.pack_date}</div>
                 </div>
 
                 {includeQr && qrDataUrl && (
@@ -347,7 +347,7 @@ export const PrepackLabelPrintModal: React.FC<PrepackLabelPrintModalProps> = ({
           )}
 
           {format === 'uod_40x20' && (
-            <div className="w-[240px] h-[120px] bg-white text-black p-2 rounded shadow-md border border-gray-400 font-sans relative flex flex-col justify-between select-none">
+            <div className="w-[240px] h-[120px] bg-surface text-black p-2 rounded shadow-md border border-gray-400 font-sans relative flex flex-col justify-between select-none">
               <div>
                 <div className="text-[8px] font-black uppercase flex justify-between border-b border-black pb-0.5 mb-0.5">
                   <span>{hospitalName}</span>
@@ -372,7 +372,7 @@ export const PrepackLabelPrintModal: React.FC<PrepackLabelPrintModalProps> = ({
           )}
 
           {format === 'bulk_70x35' && (
-            <div className="w-[360px] h-[180px] bg-white text-black p-3.5 rounded shadow-md border-2 border-black font-sans relative flex flex-col justify-between select-none">
+            <div className="w-[360px] h-[180px] bg-surface text-black p-3.5 rounded shadow-md border-2 border-black font-sans relative flex flex-col justify-between select-none">
               <div className="text-center border-b-2 border-black pb-1">
                 <div className="text-[9px] font-bold tracking-wider">PHARMACY DEPARTMENT</div>
                 <div className="text-[10px] font-black">{hospitalName}</div>
@@ -382,7 +382,7 @@ export const PrepackLabelPrintModal: React.FC<PrepackLabelPrintModalProps> = ({
                 <div className="text-[12px] font-black uppercase leading-tight line-clamp-2">
                   {item.item_name}
                 </div>
-                <div className="text-[9px] text-gray-800 font-medium mt-0.5">
+                <div className="text-[9px] text-text-primary font-medium mt-0.5">
                   {item.pack_type === 'uod'
                     ? `Quantity: ${item.units_per_pack} dose per sachet (UOD)`
                     : item.pack_type === 'prepack_liquid'
@@ -393,12 +393,12 @@ export const PrepackLabelPrintModal: React.FC<PrepackLabelPrintModalProps> = ({
                 </div>
               </div>
 
-              <div className="flex justify-between items-center text-[8.5px] border-t border-gray-300 pt-1">
+              <div className="flex justify-between items-center text-[8.5px] border-t border-border-default pt-1">
                 <div>
                   <div className="font-mono font-bold">Batch No: {batch.batch_number}</div>
-                  <div className="text-gray-700">Original Mfg: {batch.mfg_batch_number} (Exp: {batch.mfg_expiry_date})</div>
+                  <div className="text-text-secondary">Original Mfg: {batch.mfg_batch_number} (Exp: {batch.mfg_expiry_date})</div>
                   <div className="font-black text-[9.5px]">EXPIRY DATE: {batch.prepack_expiry_date}</div>
-                  <div className="text-[7.5px] text-gray-600">Packed: {batch.pack_date}</div>
+                  <div className="text-[7.5px] text-text-muted">Packed: {batch.pack_date}</div>
                 </div>
                 {includeQr && qrDataUrl && (
                   <img src={qrDataUrl} alt="QR Code" className="w-14 h-14 object-contain" />
@@ -412,8 +412,8 @@ export const PrepackLabelPrintModal: React.FC<PrepackLabelPrintModalProps> = ({
           )}
 
           {format === 'sheet_a4_24' && (
-            <div className="w-[320px] bg-white text-black p-3 rounded shadow-md border border-gray-400 font-sans space-y-2">
-              <div className="text-[9px] font-bold text-gray-500 uppercase text-center border-b pb-1">
+            <div className="w-[320px] bg-surface text-black p-3 rounded shadow-md border border-gray-400 font-sans space-y-2">
+              <div className="text-[9px] font-bold text-text-muted uppercase text-center border-b pb-1">
                 A4 Sticker Sheet Grid Preview (24 Stickers)
               </div>
               <div className="grid grid-cols-2 gap-1.5 opacity-80">
@@ -425,7 +425,7 @@ export const PrepackLabelPrintModal: React.FC<PrepackLabelPrintModalProps> = ({
                   </div>
                 ))}
               </div>
-              <div className="text-[8px] text-center text-gray-500 italic">
+              <div className="text-[8px] text-center text-text-muted italic">
                 Printed across 3 columns x 8 rows on standard A4 sticker paper
               </div>
             </div>
@@ -464,7 +464,7 @@ export const PrepackLabelPrintModal: React.FC<PrepackLabelPrintModalProps> = ({
 
       <div id="print-area" className="hidden">
         {Array.from({ length: printQuantity }).map((_, idx) => (
-          <div key={idx} className="thermal-page bg-white text-black font-sans flex flex-col justify-between">
+          <div key={idx} className="thermal-page bg-surface text-black font-sans flex flex-col justify-between">
             <div>
               <div style={{ fontSize: '6pt', fontWeight: 'bold' }}>
                 {hospitalName} • UOD

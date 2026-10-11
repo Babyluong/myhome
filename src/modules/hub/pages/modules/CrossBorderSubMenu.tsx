@@ -9,7 +9,7 @@ export const CrossBorderSubMenu: React.FC = () => {
     navigate('/transporter/dashboard', { replace: true });
   }, [navigate]);
 
-  return <div className="p-8 text-center text-slate-500 text-sm">Loading...</div>;
+  return <div className="p-8 text-center text-text-muted text-sm">Loading...</div>;
 };
 
 export default CrossBorderSubMenu;

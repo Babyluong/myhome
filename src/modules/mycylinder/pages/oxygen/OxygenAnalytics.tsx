@@ -71,17 +71,17 @@ export const OxygenAnalytics = ({ year, onYearChange }: OxygenAnalyticsProps) =>
 
     return (
         <div className="space-y-10 animate-in fade-in duration-700">
-            <div className="flex items-center justify-between border-b border-gray-100 pb-4">
+            <div className="flex items-center justify-between border-b border-border-subtle pb-4">
                 <div>
-                    <h2 className="text-xl font-bold text-gray-900 flex items-center gap-3">
+                    <h2 className="text-xl font-bold text-text-primary flex items-center gap-3">
                         <TrendingUp className="h-6 w-6 text-blue-600" />
                         Logistics Performance Analytics
                     </h2>
-                    <p className="text-sm text-gray-500 mt-1">Monthly trends and quarterly breakdown of oxygen consumption</p>
+                    <p className="text-sm text-text-muted mt-1">Monthly trends and quarterly breakdown of oxygen consumption</p>
                 </div>
                 <div className="w-[140px]">
                     <Select value={year.toString()} onValueChange={(v) => onYearChange(Number(v))}>
-                        <SelectTrigger className="bg-white border-gray-200">
+                        <SelectTrigger className="bg-surface border-border-default">
                             <SelectValue placeholder="Year" />
                         </SelectTrigger>
                         <SelectContent>
@@ -97,7 +97,7 @@ export const OxygenAnalytics = ({ year, onYearChange }: OxygenAnalyticsProps) =>
             <div className="space-y-4">
                 <div className="flex items-center justify-between px-1">
                     <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Cylinder Usage Channels</h3>
-                    <div className="h-px flex-1 bg-gray-100 mx-4" />
+                    <div className="h-px flex-1 bg-subtle mx-4" />
                 </div>
 
                 <div className="grid grid-cols-1 gap-4">
@@ -106,15 +106,15 @@ export const OxygenAnalytics = ({ year, onYearChange }: OxygenAnalyticsProps) =>
                         const cleanType = type.replace('Medical Oxygen - ', '');
 
                         return (
-                            <Card key={type} className="shadow-none border border-gray-100 bg-white overflow-hidden">
+                            <Card key={type} className="shadow-none border border-border-subtle bg-surface overflow-hidden">
                                 <div className="flex h-[140px]">
                                     {/* Type Info Sidebar */}
-                                    <div className="w-[200px] border-r border-gray-50 p-4 flex flex-col justify-center bg-slate-50/30">
-                                        <span className="text-[11px] font-black text-slate-500 uppercase tracking-wider mb-1">Cylinder Type</span>
-                                        <span className="text-sm font-bold text-gray-800 leading-tight">{cleanType}</span>
+                                    <div className="w-[200px] border-r border-gray-50 p-4 flex flex-col justify-center bg-subtle/50">
+                                        <span className="text-[11px] font-black text-text-muted uppercase tracking-wider mb-1">Cylinder Type</span>
+                                        <span className="text-sm font-bold text-text-primary leading-tight">{cleanType}</span>
                                         <div className="mt-2 flex items-center gap-2">
                                             <div className="h-2 w-2 rounded-full" style={{ backgroundColor: color }} />
-                                            <span className="text-[11px] text-slate-600 font-semibold tracking-tight">Monitoring Active</span>
+                                            <span className="text-[11px] text-text-muted font-semibold tracking-tight">Monitoring Active</span>
                                         </div>
                                     </div>
 
@@ -165,21 +165,21 @@ export const OxygenAnalytics = ({ year, onYearChange }: OxygenAnalyticsProps) =>
             </div>
 
             {/* Financial Performance Channels */}
-            <div className="pt-6 border-t border-gray-100 space-y-4">
+            <div className="pt-6 border-t border-border-subtle space-y-4">
                 <div className="flex items-center justify-between px-1">
                     <h3 className="text-sm font-bold text-gray-400 uppercase tracking-widest">Financial Performance Channels</h3>
-                    <div className="h-px flex-1 bg-gray-100 mx-4" />
+                    <div className="h-px flex-1 bg-subtle mx-4" />
                 </div>
 
                 {/* Channel: Loan Count */}
-                <Card className="shadow-none border border-gray-100 bg-white overflow-hidden">
+                <Card className="shadow-none border border-border-subtle bg-surface overflow-hidden">
                     <div className="flex h-[140px]">
-                        <div className="w-[200px] border-r border-gray-50 p-4 flex flex-col justify-center bg-blue-50/20">
+                        <div className="w-[200px] border-r border-gray-50 p-4 flex flex-col justify-center bg-blue-500/10">
                             <span className="text-[11px] font-black text-blue-600 uppercase tracking-wider mb-1">Performance Metric</span>
-                            <span className="text-sm font-bold text-gray-800 leading-tight">Loan Count</span>
+                            <span className="text-sm font-bold text-text-primary leading-tight">Loan Count</span>
                             <div className="mt-2 flex items-center gap-2">
                                 <div className="h-2 w-2 rounded-full bg-blue-500" />
-                                <span className="text-[11px] text-slate-600 font-semibold tracking-tight">Cylinder Volume Tracking</span>
+                                <span className="text-[11px] text-text-muted font-semibold tracking-tight">Cylinder Volume Tracking</span>
                             </div>
                         </div>
                         <div className="flex-1 pr-4">
@@ -210,14 +210,14 @@ export const OxygenAnalytics = ({ year, onYearChange }: OxygenAnalyticsProps) =>
                 </Card>
 
                 {/* Channel: Loan Cost */}
-                <Card className="shadow-none border border-gray-100 bg-white overflow-hidden">
+                <Card className="shadow-none border border-border-subtle bg-surface overflow-hidden">
                     <div className="flex h-[140px]">
                         <div className="w-[200px] border-r border-gray-50 p-4 flex flex-col justify-center bg-yellow-50/20">
                             <span className="text-[11px] font-black text-yellow-700 uppercase tracking-wider mb-1">Financial Metric</span>
-                            <span className="text-sm font-bold text-gray-800 leading-tight">Rental Cost (RM)</span>
+                            <span className="text-sm font-bold text-text-primary leading-tight">Rental Cost (RM)</span>
                             <div className="mt-2 flex items-center gap-2">
                                 <div className="h-2 w-2 rounded-full bg-yellow-500" />
-                                <span className="text-[11px] text-slate-700 font-semibold tracking-tight">Spend Optimization</span>
+                                <span className="text-[11px] text-text-secondary font-semibold tracking-tight">Spend Optimization</span>
                             </div>
                         </div>
                         <div className="flex-1 pr-4">
@@ -250,53 +250,53 @@ export const OxygenAnalytics = ({ year, onYearChange }: OxygenAnalyticsProps) =>
 
             {/* 3. Quarterly Summary Table */}
             <Card className="shadow-md border-none overflow-hidden">
-                <CardHeader className="bg-white border-b border-gray-50">
-                    <CardTitle className="text-lg font-semibold text-gray-800">Quarterly Performance Matrix</CardTitle>
+                <CardHeader className="bg-surface border-b border-gray-50">
+                    <CardTitle className="text-lg font-semibold text-text-primary">Quarterly Performance Matrix</CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm text-left">
-                            <thead className="bg-gray-50 text-gray-500 font-medium border-b border-gray-100">
+                            <thead className="bg-subtle/50 text-text-muted font-medium border-b border-border-subtle">
                                 <tr>
                                     <th className="px-4 py-3">Cylinder Type</th>
-                                    <th className="px-4 py-3 text-center">Q1 <span className="text-[11px] block font-normal text-slate-500">(Jan-Mar)</span></th>
-                                    <th className="px-4 py-3 text-center">Q2 <span className="text-[11px] block font-normal text-slate-500">(Apr-Jun)</span></th>
-                                    <th className="px-4 py-3 text-center">Q3 <span className="text-[11px] block font-normal text-slate-500">(Jul-Sep)</span></th>
-                                    <th className="px-4 py-3 text-center">Q4 <span className="text-[11px] block font-normal text-slate-500">(Oct-Dec)</span></th>
+                                    <th className="px-4 py-3 text-center">Q1 <span className="text-[11px] block font-normal text-text-muted">(Jan-Mar)</span></th>
+                                    <th className="px-4 py-3 text-center">Q2 <span className="text-[11px] block font-normal text-text-muted">(Apr-Jun)</span></th>
+                                    <th className="px-4 py-3 text-center">Q3 <span className="text-[11px] block font-normal text-text-muted">(Jul-Sep)</span></th>
+                                    <th className="px-4 py-3 text-center">Q4 <span className="text-[11px] block font-normal text-text-muted">(Oct-Dec)</span></th>
                                     <th className="px-4 py-3 text-right">Total Year</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50">
                                 {data.quarterly_stats.map((q: any) => (
-                                    <tr key={q.type} className="hover:bg-slate-50/50 transition-colors">
-                                        <td className="px-4 py-3 font-medium text-slate-700">
+                                    <tr key={q.type} className="hover:bg-subtle/50 transition-colors">
+                                        <td className="px-4 py-3 font-medium text-text-secondary">
                                             {q.type.replace('Medical Oxygen - ', '')}
                                         </td>
                                         <td className="px-4 py-3 text-center">
                                             <div className="flex flex-col items-center">
-                                                <span className="font-bold text-slate-900">{q.q1}</span>
-                                                <span className="text-[11px] text-slate-500 font-medium tracking-tight">Avg {q.avg_q1}</span>
+                                                <span className="font-bold text-text-primary">{q.q1}</span>
+                                                <span className="text-[11px] text-text-muted font-medium tracking-tight">Avg {q.avg_q1}</span>
                                             </div>
                                         </td>
                                         <td className="px-4 py-3 text-center">
                                             <div className="flex flex-col items-center">
-                                                <span className="font-bold text-slate-900">{q.q2}</span>
-                                                <span className="text-[11px] text-slate-500 font-medium tracking-tight">Avg {q.avg_q2}</span>
+                                                <span className="font-bold text-text-primary">{q.q2}</span>
+                                                <span className="text-[11px] text-text-muted font-medium tracking-tight">Avg {q.avg_q2}</span>
                                             </div>
                                         </td>
                                         <td className="px-4 py-3 text-center">
                                             <div className="flex flex-col items-center">
-                                                <span className="font-bold text-slate-900">{q.q3}</span>
-                                                <span className="text-[11px] text-slate-500 font-medium tracking-tight">Avg {q.avg_q3}</span>
+                                                <span className="font-bold text-text-primary">{q.q3}</span>
+                                                <span className="text-[11px] text-text-muted font-medium tracking-tight">Avg {q.avg_q3}</span>
                                             </div>
                                         </td>
                                         <td className="px-4 py-3 text-center">
                                             <div className="flex flex-col items-center">
-                                                <span className="font-bold text-slate-900">{q.q4}</span>
-                                                <span className="text-[11px] text-slate-500 font-medium tracking-tight">Avg {q.avg_q4}</span>
+                                                <span className="font-bold text-text-primary">{q.q4}</span>
+                                                <span className="text-[11px] text-text-muted font-medium tracking-tight">Avg {q.avg_q4}</span>
                                             </div>
                                         </td>
-                                        <td className="px-4 py-3 text-right font-black text-slate-900">
+                                        <td className="px-4 py-3 text-right font-black text-text-primary">
                                             {q.total}
                                         </td>
                                     </tr>

@@ -130,7 +130,7 @@ export const AuditLogPage: React.FC = () => {
       label: 'Date & Time',
       sortable: true,
       render: (_: unknown, row: AuditLogWithRelations) => (
-        <span className="text-sm text-slate-700">{formatDateTime(row.created_at)}</span>
+        <span className="text-sm text-text-secondary">{formatDateTime(row.created_at)}</span>
       ),
     },
     {
@@ -138,8 +138,8 @@ export const AuditLogPage: React.FC = () => {
       label: 'User',
       render: (_: unknown, row: AuditLogWithRelations) => (
         <div>
-          <div className="font-medium text-slate-900">{row.user?.full_name || 'Unknown'}</div>
-          <div className="text-xs text-slate-500">{row.user?.email || 'N/A'}</div>
+          <div className="font-medium text-text-primary">{row.user?.full_name || 'Unknown'}</div>
+          <div className="text-xs text-text-muted">{row.user?.email || 'N/A'}</div>
         </div>
       ),
     },
@@ -158,7 +158,7 @@ export const AuditLogPage: React.FC = () => {
       label: 'Module',
       sortable: true,
       render: (_: unknown, row: AuditLogWithRelations) => (
-        <span className="text-sm text-slate-700 capitalize">{row.module}</span>
+        <span className="text-sm text-text-secondary capitalize">{row.module}</span>
       ),
     },
     {
@@ -167,10 +167,10 @@ export const AuditLogPage: React.FC = () => {
       render: (_: unknown, row: AuditLogWithRelations) => (
         <div>
           {row.entity_type && (
-            <span className="text-sm text-slate-700 capitalize">{row.entity_type}</span>
+            <span className="text-sm text-text-secondary capitalize">{row.entity_type}</span>
           )}
           {row.entity_id && (
-            <div className="text-xs text-slate-500 font-mono">{row.entity_id.slice(0, 8)}...</div>
+            <div className="text-xs text-text-muted font-mono">{row.entity_id.slice(0, 8)}...</div>
           )}
         </div>
       ),
@@ -179,7 +179,7 @@ export const AuditLogPage: React.FC = () => {
       key: 'ip_address',
       label: 'IP Address',
       render: (_: unknown, row: AuditLogWithRelations) => (
-        <span className="text-sm text-slate-500 font-mono">{row.ip_address || 'N/A'}</span>
+        <span className="text-sm text-text-muted font-mono">{row.ip_address || 'N/A'}</span>
       ),
     },
     {
@@ -209,8 +209,8 @@ export const AuditLogPage: React.FC = () => {
       <div className="pb-4">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Audit Logs</h1>
-            <p className="text-sm text-slate-600 mt-1">View system activity and changes</p>
+            <h1 className="text-2xl font-bold text-text-primary">Audit Logs</h1>
+            <p className="text-sm text-text-muted mt-1">View system activity and changes</p>
           </div>
           <div className="flex items-center gap-3">
             <Button
@@ -256,7 +256,7 @@ export const AuditLogPage: React.FC = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-4"
+            className="bg-subtle/50 border border-border-default rounded-xl p-4 mb-4"
           >
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <Select
@@ -313,9 +313,9 @@ export const AuditLogPage: React.FC = () => {
       </div>
 
       {/* Table */}
-      <div className="flex-1 overflow-auto bg-white">
+      <div className="flex-1 overflow-auto bg-surface">
         <div className="p-6">
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <div className="bg-surface rounded-xl border border-border-default shadow-sm overflow-hidden">
             <Table
               data={logs}
               columns={columns}
@@ -363,55 +363,55 @@ export const AuditLogPage: React.FC = () => {
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <p className="text-sm text-slate-500">Date & Time</p>
-                <p className="font-medium text-slate-900">{formatDateTime(selectedLog.created_at)}</p>
+                <p className="text-sm text-text-muted">Date & Time</p>
+                <p className="font-medium text-text-primary">{formatDateTime(selectedLog.created_at)}</p>
               </div>
               <div>
-                <p className="text-sm text-slate-500">User</p>
-                <p className="font-medium text-slate-900">
+                <p className="text-sm text-text-muted">User</p>
+                <p className="font-medium text-text-primary">
                   {selectedLog.user?.full_name || 'Unknown'} ({selectedLog.user?.email || 'N/A'})
                 </p>
               </div>
               <div>
-                <p className="text-sm text-slate-500">Action</p>
+                <p className="text-sm text-text-muted">Action</p>
                 <Badge variant={getActionColor(selectedLog.action)} className="capitalize">
                   {selectedLog.action}
                 </Badge>
               </div>
               <div>
-                <p className="text-sm text-slate-500">Module</p>
-                <p className="font-medium text-slate-900 capitalize">{selectedLog.module}</p>
+                <p className="text-sm text-text-muted">Module</p>
+                <p className="font-medium text-text-primary capitalize">{selectedLog.module}</p>
               </div>
               {selectedLog.entity_type && (
                 <div>
-                  <p className="text-sm text-slate-500">Entity Type</p>
-                  <p className="font-medium text-slate-900 capitalize">{selectedLog.entity_type}</p>
+                  <p className="text-sm text-text-muted">Entity Type</p>
+                  <p className="font-medium text-text-primary capitalize">{selectedLog.entity_type}</p>
                 </div>
               )}
               {selectedLog.entity_id && (
                 <div>
-                  <p className="text-sm text-slate-500">Entity ID</p>
-                  <p className="font-medium text-slate-900 font-mono text-sm">{selectedLog.entity_id}</p>
+                  <p className="text-sm text-text-muted">Entity ID</p>
+                  <p className="font-medium text-text-primary font-mono text-sm">{selectedLog.entity_id}</p>
                 </div>
               )}
               {selectedLog.ip_address && (
                 <div>
-                  <p className="text-sm text-slate-500">IP Address</p>
-                  <p className="font-medium text-slate-900 font-mono">{selectedLog.ip_address}</p>
+                  <p className="text-sm text-text-muted">IP Address</p>
+                  <p className="font-medium text-text-primary font-mono">{selectedLog.ip_address}</p>
                 </div>
               )}
               {selectedLog.user_agent && (
                 <div className="col-span-2">
-                  <p className="text-sm text-slate-500">User Agent</p>
-                  <p className="font-medium text-slate-900 text-sm">{selectedLog.user_agent}</p>
+                  <p className="text-sm text-text-muted">User Agent</p>
+                  <p className="font-medium text-text-primary text-sm">{selectedLog.user_agent}</p>
                 </div>
               )}
             </div>
 
             {selectedLog.old_values && Object.keys(selectedLog.old_values).length > 0 && (
               <div>
-                <p className="text-sm text-slate-500 mb-2">Old Values</p>
-                <pre className="bg-slate-50 p-3 rounded-lg text-sm overflow-x-auto">
+                <p className="text-sm text-text-muted mb-2">Old Values</p>
+                <pre className="bg-subtle/50 p-3 rounded-lg text-sm overflow-x-auto">
                   {JSON.stringify(selectedLog.old_values, null, 2)}
                 </pre>
               </div>
@@ -419,8 +419,8 @@ export const AuditLogPage: React.FC = () => {
 
             {selectedLog.new_values && Object.keys(selectedLog.new_values).length > 0 && (
               <div>
-                <p className="text-sm text-slate-500 mb-2">New Values</p>
-                <pre className="bg-slate-50 p-3 rounded-lg text-sm overflow-x-auto">
+                <p className="text-sm text-text-muted mb-2">New Values</p>
+                <pre className="bg-subtle/50 p-3 rounded-lg text-sm overflow-x-auto">
                   {JSON.stringify(selectedLog.new_values, null, 2)}
                 </pre>
               </div>

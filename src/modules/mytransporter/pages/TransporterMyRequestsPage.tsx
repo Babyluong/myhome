@@ -506,7 +506,7 @@ const TransporterMyRequestsPage: React.FC = () => {
       {/* Back to dashboard */}
       <button 
         onClick={() => navigate('/transporter/dashboard')}
-        className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors text-sm font-semibold mb-4 cursor-pointer"
+        className="flex items-center gap-2 text-text-muted hover:text-text-primary transition-colors text-sm font-semibold mb-4 cursor-pointer"
       >
         <ArrowLeft className="w-4 h-4" />
         <span>{isEn ? 'Back to Dashboard' : 'Kembali ke Papan Pemuka'}</span>
@@ -515,10 +515,10 @@ const TransporterMyRequestsPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-black text-slate-900 tracking-tight">
+          <h1 className="text-2xl font-black text-text-primary tracking-tight">
             {isEn ? 'Transport Request Records' : 'Senarai Permohonan Pengangkutan'}
           </h1>
-          <p className="text-slate-500 text-sm">
+          <p className="text-text-muted text-sm">
             {isEn 
               ? 'Monitor and manage your hospital Ambulance and Official Vehicle dispatch applications.'
               : 'Pantau dan semak permohonan Ambulans serta Kereta Jabatan hospital anda.'}
@@ -534,7 +534,7 @@ const TransporterMyRequestsPage: React.FC = () => {
       </div>
 
       {/* Filters Card */}
-      <Card className="border border-slate-200 shadow-sm">
+      <Card className="border border-border-default shadow-sm">
         <CardContent className="p-4 grid grid-cols-1 md:grid-cols-4 gap-4">
           {/* Search */}
           <div className="relative">
@@ -553,7 +553,7 @@ const TransporterMyRequestsPage: React.FC = () => {
           <select 
             value={typeFilter}
             onChange={(e) => setTypeFilter(e.target.value)}
-            className="bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
+            className="bg-subtle/50 border border-border-default hover:border-border-default rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
           >
             <option value="all">{isEn ? 'All Vehicle Types' : 'Semua Jenis Kenderaan'}</option>
             <option value="ambulance">{isEn ? 'Ambulance' : 'Ambulans'}</option>
@@ -565,7 +565,7 @@ const TransporterMyRequestsPage: React.FC = () => {
           <select 
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="bg-slate-50 border border-slate-200 hover:border-slate-300 rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
+            className="bg-subtle/50 border border-border-default hover:border-border-default rounded-xl px-4 py-2 text-sm outline-none focus:border-blue-600 transition-colors cursor-pointer"
           >
             <option value="all">{isEn ? 'All Statuses' : 'Semua Status'}</option>
             <option value="submitted">{isEn ? 'Submitted (New)' : 'Dihantar (Baru)'}</option>
@@ -584,7 +584,7 @@ const TransporterMyRequestsPage: React.FC = () => {
               setStatusFilter('all')
               setTypeFilter('all')
             }}
-            className="border-slate-200 text-slate-600 hover:bg-slate-50 cursor-pointer"
+            className="border-border-default text-text-muted hover:bg-subtle/50 cursor-pointer"
           >
             {isEn ? 'Reset Filters' : 'Kosongkan Penapis'}
           </Button>
@@ -592,14 +592,14 @@ const TransporterMyRequestsPage: React.FC = () => {
       </Card>
 
       {/* Requests Table */}
-      <Card className="border border-slate-200 shadow-sm overflow-hidden">
+      <Card className="border border-border-default shadow-sm overflow-hidden">
         <CardContent className="p-0">
           {loading ? (
-            <div className="p-12 text-center text-slate-500 font-medium animate-pulse">
+            <div className="p-12 text-center text-text-muted font-medium animate-pulse">
               {isEn ? 'Loading requests...' : 'Memuatkan permohonan...'}
             </div>
           ) : filteredRequests.length === 0 ? (
-            <div className="p-12 text-center text-slate-500 space-y-2">
+            <div className="p-12 text-center text-text-muted space-y-2">
               <ClipboardList className="w-10 h-10 mx-auto text-slate-300" />
               <p className="font-bold text-sm">{isEn ? 'No Request Records Found' : 'Tiada Rekod Permohonan'}</p>
               <p className="text-xs">
@@ -612,7 +612,7 @@ const TransporterMyRequestsPage: React.FC = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-slate-50 border-b border-slate-100 text-xs font-semibold text-slate-500 uppercase tracking-wider whitespace-nowrap">
+                  <tr className="bg-subtle/50 border-b border-border-subtle text-xs font-semibold text-text-muted uppercase tracking-wider whitespace-nowrap">
                     <th className="px-6 py-4">{isEn ? 'Reference No.' : 'No. Rujukan'}</th>
                     <th className="px-6 py-4">{isEn ? 'Type' : 'Jenis'}</th>
                     <th className="px-6 py-4">{isEn ? 'Purpose & Destination' : 'Tujuan & Destinasi'}</th>
@@ -621,18 +621,18 @@ const TransporterMyRequestsPage: React.FC = () => {
                     <th className="px-6 py-4 text-right">{isEn ? 'Actions' : 'Tindakan'}</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100 text-sm text-slate-700">
+                <tbody className="divide-y divide-border-subtle text-sm text-text-secondary">
                   {filteredRequests.map((req) => (
-                    <tr key={req.id} className="hover:bg-slate-50/50 transition-colors">
+                    <tr key={req.id} className="hover:bg-subtle/50 transition-colors">
                       <td className="px-6 py-4 font-mono font-bold text-blue-600 select-all whitespace-nowrap">{req.no_rujukan}</td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           {req.jenis_permohonan === 'ambulance' ? (
-                            <span className="p-1.5 bg-rose-50 text-rose-600 rounded-lg"><Ambulance className="w-4.5 h-4.5" /></span>
+                            <span className="p-1.5 bg-rose-500/10 text-rose-600 rounded-lg"><Ambulance className="w-4.5 h-4.5" /></span>
                           ) : req.jenis_permohonan === 'van_jenazah' ? (
-                            <span className="p-1.5 bg-slate-100 text-slate-700 rounded-lg"><Truck className="w-4.5 h-4.5" /></span>
+                            <span className="p-1.5 bg-subtle text-text-secondary rounded-lg"><Truck className="w-4.5 h-4.5" /></span>
                           ) : (
-                            <span className="p-1.5 bg-blue-50 text-blue-600 rounded-lg"><Car className="w-4.5 h-4.5" /></span>
+                            <span className="p-1.5 bg-blue-500/10 text-blue-600 rounded-lg"><Car className="w-4.5 h-4.5" /></span>
                           )}
                           <span className="font-semibold capitalize">
                             {req.jenis_permohonan === 'sg' 
@@ -645,9 +645,9 @@ const TransporterMyRequestsPage: React.FC = () => {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-1.5">
-                          <div className="font-bold text-slate-800 truncate max-w-xs">{req.destinasi}</div>
+                          <div className="font-bold text-text-primary truncate max-w-xs">{req.destinasi}</div>
                           {req.is_crossborder && (
-                            <span className="bg-blue-50 text-blue-700 text-[9px] font-bold px-1.5 py-0.5 rounded border border-blue-100 flex items-center gap-0.5">
+                            <span className="bg-blue-500/10 text-blue-700 text-[9px] font-bold px-1.5 py-0.5 rounded border border-blue-100 flex items-center gap-0.5">
                               🌐 {isEn ? 'Cross-Border' : 'Sempadan'}
                             </span>
                           )}
@@ -655,7 +655,7 @@ const TransporterMyRequestsPage: React.FC = () => {
                         <div className="text-xs text-slate-400 truncate max-w-xs">{req.tujuan_permohonan}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-600">
+                        <div className="flex items-center gap-1.5 text-xs font-semibold text-text-muted">
                           <Calendar className="w-3.5 h-3.5 text-slate-400" />
                           {new Date(req.tarikh_masa_diperlukan).toLocaleString(isEn ? 'en-US' : 'ms-MY', {
                             dateStyle: 'short',
@@ -668,7 +668,7 @@ const TransporterMyRequestsPage: React.FC = () => {
                         <Button 
                           variant="ghost" 
                           onClick={() => handleOpenDetails(req)}
-                          className="text-xs text-slate-600 hover:text-slate-900 border border-slate-200 rounded-lg px-2.5 py-1 cursor-pointer"
+                          className="text-xs text-text-muted hover:text-text-primary border border-border-default rounded-lg px-2.5 py-1 cursor-pointer"
                         >
                           <Info className="w-3.5 h-3.5 mr-1 inline" />
                           {isEn ? 'Details' : 'Butiran'}
@@ -678,7 +678,7 @@ const TransporterMyRequestsPage: React.FC = () => {
                           <Button 
                             variant="ghost" 
                             onClick={() => req.is_crossborder ? setPrintRequest(req) : handlePrintPDF(req)}
-                            className="text-xs text-blue-600 hover:text-blue-800 border border-blue-100 rounded-lg px-2.5 py-1 bg-blue-50/50 cursor-pointer"
+                            className="text-xs text-blue-600 hover:text-blue-400 border border-blue-100 rounded-lg px-2.5 py-1 bg-blue-500/10 cursor-pointer"
                           >
                             <Printer className="w-3.5 h-3.5 mr-1 inline" />
                             {isEn ? 'Print' : 'Cetak'}
@@ -689,7 +689,7 @@ const TransporterMyRequestsPage: React.FC = () => {
                           <Button 
                             variant="ghost" 
                             onClick={() => handleOpenEdit(req.id)}
-                            className="text-xs text-amber-600 hover:text-amber-800 border border-amber-100 rounded-lg px-2.5 py-1 bg-amber-50/50 cursor-pointer"
+                            className="text-xs text-amber-600 hover:text-amber-400 border border-amber-100 rounded-lg px-2.5 py-1 bg-amber-500/10 cursor-pointer"
                           >
                             <FileText className="w-3.5 h-3.5 mr-1 inline" />
                             {isEn ? 'Amend' : 'Pinda'}
@@ -700,7 +700,7 @@ const TransporterMyRequestsPage: React.FC = () => {
                           <Button 
                             variant="ghost" 
                             onClick={() => handleOpenCancel(req.id)}
-                            className="text-xs text-rose-600 hover:text-rose-800 border border-rose-100 rounded-lg px-2.5 py-1 bg-rose-50/50 cursor-pointer"
+                            className="text-xs text-rose-600 hover:text-rose-400 border border-rose-100 rounded-lg px-2.5 py-1 bg-rose-500/10 cursor-pointer"
                           >
                             <Trash2 className="w-3.5 h-3.5 mr-1 inline" />
                             {isEn ? 'Cancel' : 'Batal'}
@@ -727,20 +727,20 @@ const TransporterMyRequestsPage: React.FC = () => {
           <div className="p-6 space-y-6">
             
             {/* Overview Section */}
-            <div className="bg-slate-50 border border-slate-200/60 p-4 rounded-xl space-y-3">
+            <div className="bg-subtle/50 border border-border-default p-4 rounded-xl space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                <span className="text-xs font-bold text-text-secondary font-bold uppercase tracking-wider">
                   {isEn ? 'Current Status' : 'Status Semasa'}
                 </span>
                 {getStatusBadge(selectedRequest.status_semasa)}
               </div>
               <div className="text-sm">
-                <div className="font-bold text-slate-800">{selectedRequest.destinasi}</div>
-                <div className="text-xs text-slate-500 mt-0.5">{selectedRequest.tujuan_permohonan}</div>
+                <div className="font-bold text-text-primary">{selectedRequest.destinasi}</div>
+                <div className="text-xs text-text-muted mt-0.5">{selectedRequest.tujuan_permohonan}</div>
               </div>
 
               {selectedRequest.is_crossborder && (selectedRequest.status_semasa === 'approved' || selectedRequest.status_semasa === 'completed') && (
-                <div className="grid grid-cols-2 gap-3 pt-3 border-t border-slate-200/60">
+                <div className="grid grid-cols-2 gap-3 pt-3 border-t border-border-default">
                   <Button
                     onClick={() => handlePrintCrossborderForm(selectedRequest)}
                     className="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xxs py-2 px-2.5 rounded-lg flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
@@ -761,7 +761,7 @@ const TransporterMyRequestsPage: React.FC = () => {
 
             {/* Basic Info Table */}
             <div className="space-y-3">
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b pb-1">
+              <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider border-b pb-1">
                 {isEn ? 'Trip Details' : 'Maklumat Perjalanan'}
               </h4>
               <div className="grid grid-cols-2 gap-y-3 text-sm">
@@ -769,7 +769,7 @@ const TransporterMyRequestsPage: React.FC = () => {
                   <span className="block text-xs font-bold text-slate-400">
                     {isEn ? 'Service Type' : 'Jenis Perkhidmatan'}
                   </span>
-                  <span className="font-semibold text-slate-800 capitalize">
+                  <span className="font-semibold text-text-primary capitalize">
                     {selectedRequest.jenis_permohonan === 'sg' 
                       ? (isEn ? 'Official Car (SG)' : 'Kereta Jabatan (SG)') 
                       : selectedRequest.jenis_permohonan === 'van_jenazah' 
@@ -781,21 +781,21 @@ const TransporterMyRequestsPage: React.FC = () => {
                   <span className="block text-xs font-bold text-slate-400">
                     {isEn ? 'Requesting Unit' : 'Unit Pemohon'}
                   </span>
-                  <span className="font-semibold text-slate-800">{selectedRequest.unit_pemohon}</span>
+                  <span className="font-semibold text-text-primary">{selectedRequest.unit_pemohon}</span>
                 </div>
                 {selectedRequest.nama_pemohon && (
                   <div>
                     <span className="block text-xs font-bold text-slate-400">
                       {isEn ? 'Applicant Name' : 'Nama Pemohon'}
                     </span>
-                    <span className="font-semibold text-slate-800">{selectedRequest.nama_pemohon}</span>
+                    <span className="font-semibold text-text-primary">{selectedRequest.nama_pemohon}</span>
                   </div>
                 )}
                  <div>
                   <span className="block text-xs font-bold text-slate-400">
                     {isEn ? 'Date & Time' : 'Tarikh & Masa'}
                   </span>
-                  <span className="font-bold text-slate-800">
+                  <span className="font-bold text-text-primary">
                     {new Date(selectedRequest.tarikh_masa_diperlukan).toLocaleString(isEn ? 'en-US' : 'ms-MY')}
                     {selectedRequest.tarikh_masa_sehingga && (
                       <>
@@ -809,12 +809,12 @@ const TransporterMyRequestsPage: React.FC = () => {
                   <span className="block text-xs font-bold text-slate-400">
                     {isEn ? 'Escort Personnel' : 'Kakitangan Pengiring'}
                   </span>
-                  <span className="font-semibold text-slate-800 capitalize">
+                  <span className="font-semibold text-text-primary capitalize">
                     {selectedRequest.pengiring_list && selectedRequest.pengiring_list.length > 0 ? (
                       <span className="block space-y-0.5 mt-1">
                         {selectedRequest.pengiring_list.map((escort, idx) => (
                           <span key={idx} className="block text-xs font-medium normal-case">
-                            • <span className="capitalize text-slate-500">{escort.job.replace(/_/g, ' ')}</span>: {escort.name}
+                            • <span className="capitalize text-text-muted">{escort.job.replace(/_/g, ' ')}</span>: {escort.name}
                           </span>
                         ))}
                       </span>
@@ -829,18 +829,18 @@ const TransporterMyRequestsPage: React.FC = () => {
                       <span className="block text-xs font-bold text-slate-400">
                         {isEn ? 'Service Requirement' : 'Keperluan Perkhidmatan'}
                       </span>
-                      <span className="font-semibold text-slate-800">
+                      <span className="font-semibold text-text-primary">
                         {selectedRequest.pemandu_diperlukan 
                           ? (isEn ? 'Vehicle & Driver' : 'Pemandu & Kereta') 
                           : (isEn ? 'Vehicle Only (Self-Drive)' : 'Kereta Sahaja (Tanpa Pemandu)')}
                       </span>
                     </div>
                     {selectedRequest.senarai_penumpang && selectedRequest.senarai_penumpang.length > 0 && (
-                      <div className="col-span-2 mt-2 pt-2 border-t border-slate-100/60">
+                      <div className="col-span-2 mt-2 pt-2 border-t border-border-subtle">
                         <span className="block text-xs font-bold text-slate-400">
                           {isEn ? 'Passenger Roster (Staff/Accompanying)' : 'Senarai Penumpang (Staf/Pengikut)'}
                         </span>
-                        <div className="text-xs font-medium text-slate-800 space-y-0.5 mt-1">
+                        <div className="text-xs font-medium text-text-primary space-y-0.5 mt-1">
                           {selectedRequest.senarai_penumpang.map((passenger, idx) => (
                             <div key={idx}>• {passenger.name}</div>
                           ))}
@@ -850,11 +850,11 @@ const TransporterMyRequestsPage: React.FC = () => {
                   </>
                 )}
                 {selectedRequest.medical_officer_referring && (
-                  <div className="col-span-2 mt-2 pt-2 border-t border-slate-100/60">
+                  <div className="col-span-2 mt-2 pt-2 border-t border-border-subtle">
                     <span className="block text-xs font-bold text-slate-400">
                       {isEn ? 'Referring Medical Officer' : 'Pegawai Perubatan Merujuk (Referring MO)'}
                     </span>
-                    <span className="font-semibold text-slate-800 text-xs">
+                    <span className="font-semibold text-text-primary text-xs">
                       Dr. {selectedRequest.medical_officer_referring.name} | {isEn ? 'Department' : 'Jabatan'}: {selectedRequest.medical_officer_referring.department}
                     </span>
                   </div>
@@ -864,7 +864,7 @@ const TransporterMyRequestsPage: React.FC = () => {
 
             {/* Patient details (Conditional) */}
             {(selectedRequest.jenis_permohonan === 'ambulance' || selectedRequest.bawa_pesakit) && (
-              <div className="space-y-3 pt-4 border-t border-slate-100">
+              <div className="space-y-3 pt-4 border-t border-border-subtle">
                 {selectedRequest.is_crossborder ? (
                   <>
                     <h4 className="text-xs font-bold uppercase tracking-wider border-b pb-1 text-blue-700">
@@ -877,39 +877,39 @@ const TransporterMyRequestsPage: React.FC = () => {
                     <h4 className="text-xs font-bold uppercase tracking-wider border-b pb-1 text-rose-700">
                       {isEn ? 'Patient Clinical Details' : 'Maklumat Pesakit'}
                     </h4>
-                    <div className="grid grid-cols-2 gap-y-3 text-sm bg-rose-50/20 p-4 rounded-xl border border-rose-100">
+                    <div className="grid grid-cols-2 gap-y-3 text-sm bg-rose-500/10 p-4 rounded-xl border border-rose-100">
                       <div className="col-span-2">
-                        <span className="block text-xs font-bold text-rose-800/60">
+                        <span className="block text-xs font-bold text-rose-400/60">
                           {isEn ? 'Full Name' : 'Nama Penuh'}
                         </span>
-                        <span className="font-bold text-slate-800">{selectedRequest.nama_pesakit || '-'}</span>
+                        <span className="font-bold text-text-primary">{selectedRequest.nama_pesakit || '-'}</span>
                       </div>
                       <div>
-                        <span className="block text-xs font-bold text-rose-800/60">
+                        <span className="block text-xs font-bold text-rose-400/60">
                           {isEn ? 'Patient RN' : 'No RN Pesakit'}
                         </span>
-                        <span className="font-semibold font-mono text-slate-800">{selectedRequest.rn_pesakit || '-'}</span>
+                        <span className="font-semibold font-mono text-text-primary">{selectedRequest.rn_pesakit || '-'}</span>
                       </div>
                       <div>
-                        <span className="block text-xs font-bold text-rose-800/60">
+                        <span className="block text-xs font-bold text-rose-400/60">
                           {isEn ? 'Gender' : 'Jantina'}
                         </span>
-                        <span className="font-semibold text-slate-800">{selectedRequest.jantina_pesakit || '-'}</span>
+                        <span className="font-semibold text-text-primary">{selectedRequest.jantina_pesakit || '-'}</span>
                       </div>
                       <div className="col-span-2">
-                        <span className="block text-xs font-bold text-rose-800/60">
+                        <span className="block text-xs font-bold text-rose-400/60">
                           {isEn ? 'Clinical Diagnosis' : 'Diagnosis Pesakit'}
                         </span>
-                        <span className="font-semibold text-slate-800">{selectedRequest.diagnosis_pesakit || '-'}</span>
+                        <span className="font-semibold text-text-primary">{selectedRequest.diagnosis_pesakit || '-'}</span>
                       </div>
                       {selectedRequest.patient_mobility && (
                         <div className={`col-span-2 p-2.5 rounded-lg text-xs font-bold flex flex-col gap-1 border ${
                           selectedRequest.patient_mobility === 'stretcher'
-                            ? 'bg-amber-50 border-amber-200 text-amber-950'
-                            : 'bg-slate-50 border-slate-200 text-slate-900'
+                            ? 'bg-amber-500/10 border-amber-500/20 text-amber-400 dark:text-amber-300 font-bold'
+                            : 'bg-subtle/50 border-border-default text-text-primary'
                         }`}>
                           <div className="flex items-center gap-2">
-                            <Info className={`w-3.5 h-3.5 ${selectedRequest.patient_mobility === 'stretcher' ? 'text-amber-600' : 'text-slate-500'}`} />
+                            <Info className={`w-3.5 h-3.5 ${selectedRequest.patient_mobility === 'stretcher' ? 'text-amber-600' : 'text-text-muted'}`} />
                             <span>
                               {isEn ? 'Patient Mobility:' : 'Mobiliti Pesakit:'}{' '}
                               <span className="capitalize">
@@ -920,31 +920,31 @@ const TransporterMyRequestsPage: React.FC = () => {
                             </span>
                           </div>
                           {selectedRequest.patient_mobility === 'stretcher' && (
-                            <p className="text-[10px] text-amber-800 font-medium leading-normal mt-0.5 pl-5">
+                            <p className="text-[10px] text-amber-400 font-medium leading-normal mt-0.5 pl-5">
                               {isEn ? '⚠️ Driver MANDATED to assist ward transfer with stretcher.' : '⚠️ Pemandu WAJIB naik ke wad untuk mengambil pesakit.'}
                             </p>
                           )}
                         </div>
                       )}
                   {selectedRequest.oksigen_diperlukan && (
-                    <div className="col-span-2 p-2.5 bg-rose-50 border border-rose-200 rounded-lg text-xs font-bold text-rose-950 flex flex-col gap-1">
+                    <div className="col-span-2 p-2.5 bg-rose-500/10 border border-rose-500/20 rounded-lg text-xs font-bold text-rose-400 dark:text-rose-300 font-bold flex flex-col gap-1">
                       <div className="flex items-center gap-2">
                         <Shield className="w-3.5 h-3.5 text-rose-600" />
                         <span>{isEn ? 'Continuous Oxygen Support Required' : 'Sokongan Oksigen Berterusan Diperlukan'}</span>
                       </div>
                       {selectedRequest.jenis_oksigen && (
-                        <div className="text-xxs text-rose-800 font-medium pl-5">
-                          {isEn ? 'Oxygen Device:' : 'Alat Oksigen:'} <span className="text-rose-900 font-semibold">{selectedRequest.jenis_oksigen}</span>
+                        <div className="text-xxs text-rose-400 font-medium pl-5">
+                          {isEn ? 'Oxygen Device:' : 'Alat Oksigen:'} <span className="text-rose-400 dark:text-rose-300 font-bold font-semibold">{selectedRequest.jenis_oksigen}</span>
                         </div>
                       )}
                     </div>
                   )}
                   {selectedRequest.mesin_diperlukan && selectedRequest.mesin_diperlukan.length > 0 && (
                     <div className="col-span-2 pt-2">
-                      <span className="block text-xs font-bold text-rose-800/60">
+                      <span className="block text-xs font-bold text-rose-400/60">
                         {isEn ? 'Medical Devices / Machines Required' : 'Peralatan / Mesin Diperlukan'}
                       </span>
-                      <span className="text-xs font-semibold text-slate-800">
+                      <span className="text-xs font-semibold text-text-primary">
                         {selectedRequest.mesin_diperlukan.join(', ')}
                       </span>
                     </div>
@@ -957,8 +957,8 @@ const TransporterMyRequestsPage: React.FC = () => {
 
             {/* Vehicle & Driver Details */}
             {selectedRequest.kenderaan && (
-              <div className="space-y-3 pt-4 border-t border-slate-100">
-                <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b pb-1">
+              <div className="space-y-3 pt-4 border-t border-border-subtle">
+                <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider border-b pb-1">
                   {isEn ? 'Assigned Vehicle & Duty Driver' : 'Kenderaan & On-Duty Driver'}
                 </h4>
                 <div className="grid grid-cols-2 gap-y-3 text-sm">
@@ -966,7 +966,7 @@ const TransporterMyRequestsPage: React.FC = () => {
                     <span className="block text-xs font-bold text-slate-400">
                       {isEn ? 'Driver Name' : 'Pemandu'}
                     </span>
-                    <span className="font-bold text-slate-800">{selectedRequest.pemandu?.full_name || 'Ali bin Ahmad'}</span>
+                    <span className="font-bold text-text-primary">{selectedRequest.pemandu?.full_name || 'Ali bin Ahmad'}</span>
                   </div>
                   <div>
                     <span className="block text-xs font-bold text-slate-400">
@@ -978,7 +978,7 @@ const TransporterMyRequestsPage: React.FC = () => {
                     <span className="block text-xs font-bold text-slate-400">
                       {isEn ? 'Vehicle Model' : 'Model Kenderaan'}
                     </span>
-                    <span className="font-semibold text-slate-800">{selectedRequest.kenderaan.model}</span>
+                    <span className="font-semibold text-text-primary">{selectedRequest.kenderaan.model}</span>
                   </div>
                 </div>
               </div>
@@ -986,8 +986,8 @@ const TransporterMyRequestsPage: React.FC = () => {
 
             {/* Rejection / Cancellation note */}
             {selectedRequest.sebab_tolak && (
-              <div className="p-4 bg-rose-50 border border-rose-200 text-rose-950 rounded-xl space-y-1">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-rose-800">
+              <div className="p-4 bg-rose-500/10 border border-rose-500/20 text-rose-400 dark:text-rose-300 font-bold rounded-xl space-y-1">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-rose-400">
                   {isEn ? 'Rejection / Cancellation Remarks' : 'Catatan Sebab Penolakan / Pembatalan'}
                 </h4>
                 <p className="text-sm font-semibold italic">"{selectedRequest.sebab_tolak}"</p>
@@ -995,12 +995,12 @@ const TransporterMyRequestsPage: React.FC = () => {
             )}
 
             {/* Audit Logs Trail */}
-            <div className="space-y-3 pt-4 border-t border-slate-100">
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider border-b pb-1">
+            <div className="space-y-3 pt-4 border-t border-border-subtle">
+              <h4 className="text-xs font-bold text-text-muted uppercase tracking-wider border-b pb-1">
                 {isEn ? 'Approval Audit Trail' : 'Jejak Audit Kelulusan'}
               </h4>
               {loadingLogs ? (
-                <div className="text-xs text-slate-500">
+                <div className="text-xs text-text-muted">
                   {isEn ? 'Loading audit trail...' : 'Memuatkan log audit...'}
                 </div>
               ) : logs.length === 0 ? (
@@ -1008,12 +1008,12 @@ const TransporterMyRequestsPage: React.FC = () => {
                   {isEn ? 'No logs recorded.' : 'Tiada log direkodkan.'}
                 </div>
               ) : (
-                <div className="relative border-l border-slate-200 pl-4 space-y-4">
+                <div className="relative border-l border-border-default pl-4 space-y-4">
                   {logs.map((log) => (
                     <div key={log.id} className="relative text-xs">
                       {/* Circle indicator */}
                       <span className="absolute -left-[21px] top-1 w-2.5 h-2.5 bg-slate-300 rounded-full border border-white" />
-                      <div className="flex justify-between items-center font-bold text-slate-800">
+                      <div className="flex justify-between items-center font-bold text-text-primary">
                         <span>{log.tindakan}</span>
                         <span className="text-slate-400 font-medium">
                           {new Date(log.created_at).toLocaleString(isEn ? 'en-US' : 'ms-MY', {
@@ -1022,7 +1022,7 @@ const TransporterMyRequestsPage: React.FC = () => {
                           })}
                         </span>
                       </div>
-                      <div className="text-slate-500 mt-0.5">{log.catatan}</div>
+                      <div className="text-text-muted mt-0.5">{log.catatan}</div>
                       <div className="text-slate-400 mt-0.5">
                         {isEn ? 'By:' : 'Oleh:'} {log.performer?.full_name || (isEn ? 'Staff' : 'Kakitangan')}
                       </div>
@@ -1038,13 +1038,13 @@ const TransporterMyRequestsPage: React.FC = () => {
       {/* 2. Cancellation Reason Confirmation Modal */}
       {isCancelOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 max-w-md w-full mx-4 space-y-4 animate-scaleIn">
-            <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+          <div className="bg-surface rounded-2xl shadow-xl border border-border-default p-6 max-w-md w-full mx-4 space-y-4 animate-scaleIn">
+            <h3 className="text-lg font-bold text-text-primary flex items-center gap-2">
               <XCircle className="w-5 h-5 text-rose-600" />
               {isEn ? 'Confirm Trip Cancellation' : 'Sahkan Pembatalan Trip'}
             </h3>
             
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-text-muted">
               {isEn 
                 ? 'Please state the reason for cancelling this transport trip. The reason will be stored in the audit log.'
                 : 'Sila nyatakan sebab pembatalan trip pengangkutan ini. Sebab yang diberikan akan didaftarkan dalam log audit sistem.'}
@@ -1055,7 +1055,7 @@ const TransporterMyRequestsPage: React.FC = () => {
               placeholder={isEn ? 'E.g., Patient discharged early / Appointment postponed...' : 'Contoh: Pesakit dibenarkan pulang wad / Temujanji ditunda...'}
               value={cancelReason}
               onChange={(e) => setCancelReason(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-rose-500 focus:bg-white transition-colors font-medium shadow-xs"
+              className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-text-primary placeholder:text-text-muted outline-none focus:border-rose-500 focus:bg-surface transition-colors font-medium shadow-xs"
               required
             />
 
@@ -1063,7 +1063,7 @@ const TransporterMyRequestsPage: React.FC = () => {
               <Button 
                 variant="outline" 
                 onClick={() => setIsCancelOpen(false)}
-                className="border-slate-200 text-slate-700 cursor-pointer"
+                className="border-border-default text-text-secondary cursor-pointer"
               >
                 {isEn ? 'Cancel' : 'Batal'}
               </Button>
@@ -1081,13 +1081,13 @@ const TransporterMyRequestsPage: React.FC = () => {
       {/* 3. Amend/Edit Reason Confirmation Modal */}
       {isEditReasonOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 max-w-md w-full mx-4 space-y-4 animate-scaleIn">
-            <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+          <div className="bg-surface rounded-2xl shadow-xl border border-border-default p-6 max-w-md w-full mx-4 space-y-4 animate-scaleIn">
+            <h3 className="text-lg font-bold text-text-primary flex items-center gap-2">
               <FileText className="w-5 h-5 text-amber-500" />
               {isEn ? 'Specify Amendment Reason' : 'Nyatakan Sebab Pindaan'}
             </h3>
             
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-text-muted">
               {isEn 
                 ? 'Please state why this transport request needs to be amended. The reason will be recorded in the system audit trail.'
                 : 'Sila nyatakan sebab permohonan pengangkutan ini perlu dipinda/dikemaskini. Sebab yang diberikan akan didaftarkan dalam log audit sistem.'}
@@ -1098,7 +1098,7 @@ const TransporterMyRequestsPage: React.FC = () => {
               placeholder={isEn ? 'E.g., Appointment time changed / Gender correction...' : 'Contoh: Pertukaran tarikh temujanji / Pertukaran jantina pesakit...'}
               value={editReason}
               onChange={(e) => setEditReason(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-amber-500 focus:bg-white transition-colors font-medium shadow-xs"
+              className="w-full bg-subtle/50 border border-border-default rounded-xl p-3 text-sm text-text-primary placeholder:text-text-muted outline-none focus:border-amber-500 focus:bg-surface transition-colors font-medium shadow-xs"
               required
             />
 
@@ -1106,7 +1106,7 @@ const TransporterMyRequestsPage: React.FC = () => {
               <Button 
                 variant="outline" 
                 onClick={() => setIsEditReasonOpen(false)}
-                className="border-slate-200 text-slate-700 cursor-pointer"
+                className="border-border-default text-text-secondary cursor-pointer"
               >
                 {isEn ? 'Back' : 'Batal'}
               </Button>
@@ -1124,9 +1124,9 @@ const TransporterMyRequestsPage: React.FC = () => {
       {/* 4. Print Options Modal for Crossborder Requests */}
       {printRequest && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs">
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 p-6 max-w-md w-full mx-4 space-y-4 animate-scaleIn">
-            <div className="flex items-center justify-between border-b pb-2 border-slate-100">
-              <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
+          <div className="bg-surface rounded-2xl shadow-xl border border-border-default p-6 max-w-md w-full mx-4 space-y-4 animate-scaleIn">
+            <div className="flex items-center justify-between border-b pb-2 border-border-subtle">
+              <h3 className="text-sm font-bold text-text-primary flex items-center gap-2">
                 <Printer className="w-4 h-4 text-blue-600" />
                 {isEn ? 'Cross-Border Document Print Options' : 'Pilihan Cetakan Dokumen Sempadan'}
               </h3>
@@ -1139,7 +1139,7 @@ const TransporterMyRequestsPage: React.FC = () => {
               </button>
             </div>
 
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-text-muted">
               {isEn 
                 ? 'This is a cross-border patient transfer. Select the document you wish to generate and print:'
                 : 'Permohonan ini adalah trip merentas sempadan. Sila pilih dokumen yang ingin dimuat turun / dicetak:'}
@@ -1152,10 +1152,10 @@ const TransporterMyRequestsPage: React.FC = () => {
                   handlePrintPDF(printRequest)
                   setPrintRequest(null)
                 }}
-                className="w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/10 transition-all flex items-center justify-between group cursor-pointer"
+                className="w-full text-left p-3 rounded-xl border border-border-default hover:border-blue-500 hover:bg-blue-500/10 transition-colors flex items-center justify-between group cursor-pointer"
               >
                 <div>
-                  <span className="block text-xs font-bold text-slate-800">
+                  <span className="block text-xs font-bold text-text-primary">
                     {isEn ? '1. Hospital Vehicle Transit Clearance Form' : '1. Borang Kebenaran Kenderaan Hospital'}
                   </span>
                   <span className="block text-[10px] text-slate-400 mt-0.5">
@@ -1171,10 +1171,10 @@ const TransporterMyRequestsPage: React.FC = () => {
                   handlePrintCrossborderForm(printRequest)
                   setPrintRequest(null)
                 }}
-                className="w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/10 transition-all flex items-center justify-between group cursor-pointer"
+                className="w-full text-left p-3 rounded-xl border border-border-default hover:border-blue-500 hover:bg-blue-500/10 transition-colors flex items-center justify-between group cursor-pointer"
               >
                 <div>
-                  <span className="block text-xs font-bold text-slate-800">
+                  <span className="block text-xs font-bold text-text-primary">
                     {isEn ? '2. Cross-Border Patient Declaration Form' : '2. Borang Deklarasi Merentas Sempadan'}
                   </span>
                   <span className="block text-[10px] text-slate-400 mt-0.5">
@@ -1190,10 +1190,10 @@ const TransporterMyRequestsPage: React.FC = () => {
                   handlePrintPermissionLetter(printRequest)
                   setPrintRequest(null)
                 }}
-                className="w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50/10 transition-all flex items-center justify-between group cursor-pointer"
+                className="w-full text-left p-3 rounded-xl border border-border-default hover:border-blue-500 hover:bg-blue-500/10 transition-colors flex items-center justify-between group cursor-pointer"
               >
                 <div>
-                  <span className="block text-xs font-bold text-slate-800">
+                  <span className="block text-xs font-bold text-text-primary">
                     {isEn ? '3. Hospital Director Transit Permission Letter' : '3. Surat Pelepasan Kebenaran Pengarah'}
                   </span>
                   <span className="block text-[10px] text-slate-400 mt-0.5">
@@ -1204,11 +1204,11 @@ const TransporterMyRequestsPage: React.FC = () => {
               </button>
             </div>
 
-            <div className="flex justify-end pt-2 border-t border-slate-100">
+            <div className="flex justify-end pt-2 border-t border-border-subtle">
               <Button 
                 variant="outline" 
                 onClick={() => setPrintRequest(null)}
-                className="border-slate-200 text-slate-700 text-xs px-3.5 py-1.5 cursor-pointer"
+                className="border-border-default text-text-secondary text-xs px-3.5 py-1.5 cursor-pointer"
               >
                 {isEn ? 'Close' : 'Tutup'}
               </Button>

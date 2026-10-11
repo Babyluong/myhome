@@ -227,9 +227,9 @@ export async function loadFacilityDrugInventory(
       department_id: row.department_id,
     }))
 
-    // ─── SYNC WITH KEW.PS-4 LEDGER BATCHES & TRANSACTIONS ───
+    // ─── SYNC WITH KEW.PS-4 LEDGER BATCHES ───
     try {
-      // 1. Fetch active batches from pharmacy_stock_batches (scoped to store if provided)
+      // Fetch active batches from pharmacy_stock_batches (scoped to store if provided)
       let batchesQuery = supabase
         .from('pharmacy_stock_batches')
         .select('item_id, batch_number, expiry_date, quantity_on_hand, status, location_id')
@@ -241,18 +241,6 @@ export async function loadFacilityDrugInventory(
       }
 
       const { data: batches } = await batchesQuery
-
-      // 2. Fetch stock transactions for fallbacks
-      const { data: transactions } = await supabase
-        .from('pharmacy_stock_transactions')
-        .select(`
-          item_id,
-          quantity,
-          created_at,
-          batch:pharmacy_stock_batches(batch_number, expiry_date)
-        `)
-        .eq('hospital_id', effectiveHospitalId)
-        .order('created_at', { ascending: false })
 
       const batchMap = new Map<string, { totalStock: number; primaryBatch: string; earliestExpiry: string }>()
       if (batches && batches.length > 0) {
@@ -279,42 +267,26 @@ export async function loadFacilityDrugInventory(
         })
       }
 
-      const txMap = new Map<string, { latestBalance: number; latestBatch: string; latestExpiry: string }>()
-      if (transactions && transactions.length > 0) {
-        transactions.forEach((t: any) => {
-          if (!t.item_id || txMap.has(t.item_id)) return
-          const batchObj = Array.isArray(t.batch) ? t.batch[0] : t.batch
-          txMap.set(t.item_id, {
-            latestBalance: Number(t.quantity || 0),
-            latestBatch: batchObj?.batch_number || '',
-            latestExpiry: batchObj?.expiry_date || '',
-          })
-        })
-      }
-
       items.forEach(item => {
         const drugId = item.id || (item as any).drug_id
         const bInfo = drugId ? batchMap.get(drugId) : null
-        const tInfo = drugId ? txMap.get(drugId) : null
         const dbStock = item.facility_stock
 
-        if (bInfo && (bInfo.totalStock > 0 || bInfo.primaryBatch || bInfo.earliestExpiry)) {
-          if (typeof dbStock === 'number' && dbStock >= 0 && dbStock !== bInfo.totalStock && dbStock > 0) {
-            // Respect facility_stock explicitly set on facility_drug_inventory table (e.g. from Check & Found or direct edit)
+        if (bInfo) {
+          // If batches are registered in KEW.PS-4 ledger for this store, reflect ledger stock
+          if (typeof dbStock === 'number' && dbStock > 0 && dbStock !== bInfo.totalStock) {
+            // Respect facility_stock explicitly set on facility_drug_inventory table (e.g. from manual adjustment)
             item.facility_stock = dbStock
-          } else if (bInfo.totalStock > 0) {
+          } else {
             item.facility_stock = bInfo.totalStock
-          } else if (tInfo && tInfo.latestBalance > 0) {
-            item.facility_stock = tInfo.latestBalance
           }
           if (bInfo.primaryBatch) item.batch_number = bInfo.primaryBatch
           if (bInfo.earliestExpiry) item.expiry_date = bInfo.earliestExpiry
-        } else if (tInfo) {
-          if (tInfo.latestBalance > 0) {
-            item.facility_stock = tInfo.latestBalance
-          }
-          if (tInfo.latestBatch && !item.batch_number) item.batch_number = tInfo.latestBatch
-          if (tInfo.latestExpiry && !item.expiry_date) item.expiry_date = tInfo.latestExpiry
+        } else {
+          // No batches in ledger for this store location: retain exact facility_stock from facility_drug_inventory
+          item.facility_stock = typeof dbStock === 'number' ? dbStock : 0
+          if (!item.batch_number) item.batch_number = ''
+          if (!item.expiry_date) item.expiry_date = ''
         }
       })
     } catch (syncErr) {
@@ -343,6 +315,57 @@ export async function loadFacilityDrugInventory(
   }
 }
 
+// ─── Location & Scoping Parameter Resolver ──────────────────────────────────
+
+/**
+ * Resolves overloaded parameters for single/batch additions.
+ * Supports both signatures:
+ *  - 7 parameters: (hospitalId, item/items, stock, buffer, location, storeLocationId, departmentId)
+ *  - 6 parameters (legacy): (hospitalId, item/items, stock, buffer, storeLocationId, departmentId)
+ */
+function resolveInventoryLocationParams(
+  p5?: string,
+  p6?: string,
+  p7?: string
+): { location?: string; storeLocationId?: string; departmentId?: string } {
+  // If p7 was explicitly provided (even if undefined/null)
+  if (p7 !== undefined) {
+    const storeLoc = p6 && isUuid(p6) ? p6 : undefined
+    const dept = p7 && isUuid(p7) && p7 !== storeLoc ? p7 : undefined
+    return {
+      location: p5 || undefined,
+      storeLocationId: storeLoc,
+      departmentId: dept,
+    }
+  }
+
+  // If p5 is a UUID, caller used 5 or 6 parameter legacy signature: (stock, buffer, storeLocationId, departmentId)
+  if (p5 && isUuid(p5)) {
+    const storeLoc = p5
+    const dept = p6 && isUuid(p6) && p6 !== storeLoc ? p6 : undefined
+    return {
+      location: undefined,
+      storeLocationId: storeLoc,
+      departmentId: dept,
+    }
+  }
+
+  // If p5 is not a UUID (or undefined) and p6 is a UUID, p6 is storeLocationId
+  if (p6 && isUuid(p6)) {
+    return {
+      location: p5 || undefined,
+      storeLocationId: p6,
+      departmentId: undefined,
+    }
+  }
+
+  return {
+    location: p5 || undefined,
+    storeLocationId: undefined,
+    departmentId: undefined,
+  }
+}
+
 // ─── Add ──────────────────────────────────────────────────────────────────────
 
 export async function addToFacilityDrugInventory(
@@ -350,9 +373,15 @@ export async function addToFacilityDrugInventory(
   drug: DrugWithRelations,
   facilityStock = 0,
   minBufferLevel = 20,
-  storeLocationId?: string,
-  departmentId?: string
+  locationOrStoreLocationId?: string,
+  storeLocationIdOrDeptId?: string,
+  departmentIdArg?: string
 ): Promise<{ success: boolean; error?: string }> {
+  const { location, storeLocationId, departmentId } = resolveInventoryLocationParams(
+    locationOrStoreLocationId,
+    storeLocationIdOrDeptId,
+    departmentIdArg
+  )
   const effectiveHospitalId = normalizeHospitalId(hospitalId)
   if (!isSupabaseConfigured() || !isUuid(drug.id)) {
     // Offline / non-UUID custom item: write to cache only
@@ -364,6 +393,7 @@ export async function addToFacilityDrugInventory(
       ...drug,
       facility_stock: facilityStock,
       min_buffer_level: minBufferLevel,
+      location: location,
       store_location_id: storeLocationId,
       department_id: departmentId,
       added_at: new Date().toISOString(),
@@ -379,6 +409,7 @@ export async function addToFacilityDrugInventory(
       facility_stock: facilityStock,
       min_buffer_level: minBufferLevel,
     }
+    if (location) payload.location = location
     if (storeLocationId) payload.store_location_id = storeLocationId
     if (departmentId) payload.department_id = departmentId
 
@@ -407,9 +438,15 @@ export async function batchAddToFacilityDrugInventory(
   drugs: DrugWithRelations[],
   facilityStock = 0,
   minBufferLevel = 20,
-  storeLocationId?: string,
-  departmentId?: string
+  locationOrStoreLocationId?: string,
+  storeLocationIdOrDeptId?: string,
+  departmentIdArg?: string
 ): Promise<{ added: number; skipped: number; error?: string }> {
+  const { location, storeLocationId, departmentId } = resolveInventoryLocationParams(
+    locationOrStoreLocationId,
+    storeLocationIdOrDeptId,
+    departmentIdArg
+  )
   const effectiveHospitalId = normalizeHospitalId(hospitalId)
   if (!isSupabaseConfigured()) {
     const cached = readCache(effectiveHospitalId, storeLocationId)
@@ -419,6 +456,7 @@ export async function batchAddToFacilityDrugInventory(
       ...d,
       facility_stock: facilityStock,
       min_buffer_level: minBufferLevel,
+      location: location,
       store_location_id: storeLocationId,
       department_id: departmentId,
       added_at: new Date().toISOString(),
@@ -429,14 +467,25 @@ export async function batchAddToFacilityDrugInventory(
 
   try {
     const validDrugs = drugs.filter(d => isUuid(d.id))
-    const rows = validDrugs.map(d => ({
-      hospital_id: effectiveHospitalId,
-      drug_id: d.id,
-      facility_stock: facilityStock,
-      min_buffer_level: minBufferLevel,
-      store_location_id: storeLocationId || null,
-      department_id: departmentId || null,
-    }))
+    const seenDrugIds = new Set<string>()
+    const uniqueDrugs = validDrugs.filter(d => {
+      if (seenDrugIds.has(d.id)) return false
+      seenDrugIds.add(d.id)
+      return true
+    })
+
+    const rows = uniqueDrugs.map(d => {
+      const row: any = {
+        hospital_id: effectiveHospitalId,
+        drug_id: d.id,
+        facility_stock: facilityStock,
+        min_buffer_level: minBufferLevel,
+        store_location_id: storeLocationId || null,
+        department_id: departmentId || null,
+      }
+      if (location) row.location = location
+      return row
+    })
 
     const { error, data } = await supabase
       .from('facility_drug_inventory')

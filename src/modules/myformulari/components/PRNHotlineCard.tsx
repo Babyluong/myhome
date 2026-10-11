@@ -13,28 +13,24 @@ export const PRNHotlineCard: React.FC = () => {
   }
 
   return (
-    <div className="bg-gradient-to-br from-slate-900 via-slate-800 to-indigo-950 text-white rounded-3xl p-6 sm:p-7 shadow-xl border border-indigo-500/20 relative overflow-hidden">
-      {/* Background ambient glow */}
-      <div className="absolute top-0 right-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-1/3 w-60 h-60 bg-rose-500/10 rounded-full blur-2xl pointer-events-none" />
-
+    <div className="bg-surface rounded-2xl p-5 sm:p-6 shadow-elevation-1 border border-border-default relative overflow-hidden">
       <div className="relative z-10 space-y-5">
         {/* Header Title */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-white/10 pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border-subtle pb-4">
           <div className="flex items-center gap-3.5">
-            <div className="p-3 bg-gradient-to-br from-indigo-500 to-rose-600 rounded-2xl shadow-lg flex-shrink-0">
-              <PhoneCall className="w-6 h-6 text-white" />
+            <div className="p-2.5 bg-rose-500/10 text-rose-500 border border-rose-500/20 rounded-xl flex-shrink-0">
+              <PhoneCall className="w-5 h-5" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-lg font-bold text-white tracking-tight">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h3 className="text-base sm:text-lg font-bold text-text-primary tracking-tight">
                   National Poison Centre (PRN) & MOH Toxicology Reference
                 </h3>
-                <span className="px-2.5 py-0.5 text-[10px] font-bold bg-rose-500 text-white rounded-full uppercase tracking-wider animate-pulse">
+                <span className="px-2 py-0.5 text-[10px] font-bold bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 rounded-full uppercase tracking-wider">
                   24/7 Toxicology
                 </span>
               </div>
-              <p className="text-xs text-slate-300 mt-0.5">
+              <p className="text-xs text-text-muted mt-0.5">
                 Drug & Poison Information Service (DPIS) USM / MOH
               </p>
             </div>
@@ -45,7 +41,7 @@ export const PRNHotlineCard: React.FC = () => {
               href="https://t.me/khidmatnasihatkeracunanPRN"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/30 text-xs font-semibold rounded-xl transition-all shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-accent-base/10 hover:bg-accent-base/20 text-accent-base border border-accent-base/30 text-xs font-semibold rounded-xl transition-colors shadow-xs"
             >
               <Send className="w-3.5 h-3.5" />
               <span>PRN Telegram</span>
@@ -56,20 +52,20 @@ export const PRNHotlineCard: React.FC = () => {
         {/* Hotlines Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {/* Toll Free */}
-          <div className="bg-white/5 border border-white/10 hover:border-indigo-400/40 rounded-2xl p-4 transition-all">
-            <div className="text-[11px] font-medium text-indigo-300 uppercase tracking-wider">
+          <div className="bg-subtle/50 hover:bg-subtle border border-border-default hover:border-border-strong rounded-xl p-4 transition-colors">
+            <div className="text-[11px] font-semibold text-text-muted uppercase tracking-wider">
               Toll-Free Hotline
             </div>
             <div className="flex items-center justify-between mt-1.5">
               <a
                 href={`tel:${PRN_CONTACT_INFO.tollFree}`}
-                className="text-lg font-black text-white hover:text-indigo-200 tracking-tight font-mono"
+                className="text-lg font-bold text-text-primary hover:text-accent-base tracking-tight font-mono"
               >
                 {PRN_CONTACT_INFO.tollFree}
               </a>
               <button
                 onClick={() => handleCopy(PRN_CONTACT_INFO.tollFree)}
-                className="p-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-slate-300 hover:text-white transition-colors cursor-pointer"
+                className="p-1.5 bg-surface hover:bg-hover border border-border-default rounded-lg text-text-muted hover:text-text-primary transition-colors cursor-pointer"
                 title="Copy Number"
               >
                 {copiedNumber === PRN_CONTACT_INFO.tollFree ? (
@@ -79,24 +75,24 @@ export const PRNHotlineCard: React.FC = () => {
                 )}
               </button>
             </div>
-            <p className="text-[11px] text-slate-400 mt-1">Nationwide across Malaysia (Landline / Mobile)</p>
+            <p className="text-[11px] text-text-muted mt-1">Nationwide across Malaysia (Landline / Mobile)</p>
           </div>
 
           {/* Direct Line 1 */}
-          <div className="bg-white/5 border border-white/10 hover:border-indigo-400/40 rounded-2xl p-4 transition-all">
-            <div className="text-[11px] font-medium text-indigo-300 uppercase tracking-wider">
+          <div className="bg-subtle/50 hover:bg-subtle border border-border-default hover:border-border-strong rounded-xl p-4 transition-colors">
+            <div className="text-[11px] font-semibold text-text-muted uppercase tracking-wider">
               Direct Emergency Line 1
             </div>
             <div className="flex items-center justify-between mt-1.5">
               <a
                 href={`tel:${PRN_CONTACT_INFO.hotlines[0]}`}
-                className="text-lg font-black text-white hover:text-indigo-200 tracking-tight font-mono"
+                className="text-lg font-bold text-text-primary hover:text-accent-base tracking-tight font-mono"
               >
                 {PRN_CONTACT_INFO.hotlines[0]}
               </a>
               <button
                 onClick={() => handleCopy(PRN_CONTACT_INFO.hotlines[0])}
-                className="p-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-slate-300 hover:text-white transition-colors cursor-pointer"
+                className="p-1.5 bg-surface hover:bg-hover border border-border-default rounded-lg text-text-muted hover:text-text-primary transition-colors cursor-pointer"
                 title="Copy Number"
               >
                 {copiedNumber === PRN_CONTACT_INFO.hotlines[0] ? (
@@ -106,24 +102,24 @@ export const PRNHotlineCard: React.FC = () => {
                 )}
               </button>
             </div>
-            <p className="text-[11px] text-slate-400 mt-1">Clinical Toxicology Consultation</p>
+            <p className="text-[11px] text-text-muted mt-1">Clinical Toxicology Consultation</p>
           </div>
 
           {/* Direct Line 2 */}
-          <div className="bg-white/5 border border-white/10 hover:border-indigo-400/40 rounded-2xl p-4 transition-all">
-            <div className="text-[11px] font-medium text-indigo-300 uppercase tracking-wider">
+          <div className="bg-subtle/50 hover:bg-subtle border border-border-default hover:border-border-strong rounded-xl p-4 transition-colors">
+            <div className="text-[11px] font-semibold text-text-muted uppercase tracking-wider">
               Direct Emergency Line 2
             </div>
             <div className="flex items-center justify-between mt-1.5">
               <a
                 href={`tel:${PRN_CONTACT_INFO.hotlines[1]}`}
-                className="text-lg font-black text-white hover:text-indigo-200 tracking-tight font-mono"
+                className="text-lg font-bold text-text-primary hover:text-accent-base tracking-tight font-mono"
               >
                 {PRN_CONTACT_INFO.hotlines[1]}
               </a>
               <button
                 onClick={() => handleCopy(PRN_CONTACT_INFO.hotlines[1])}
-                className="p-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-slate-300 hover:text-white transition-colors cursor-pointer"
+                className="p-1.5 bg-surface hover:bg-hover border border-border-default rounded-lg text-text-muted hover:text-text-primary transition-colors cursor-pointer"
                 title="Copy Number"
               >
                 {copiedNumber === PRN_CONTACT_INFO.hotlines[1] ? (
@@ -133,12 +129,12 @@ export const PRNHotlineCard: React.FC = () => {
                 )}
               </button>
             </div>
-            <p className="text-[11px] text-slate-400 mt-1">Analytical Lab & Antidote Stock Verification</p>
+            <p className="text-[11px] text-text-muted mt-1">Analytical Lab & Antidote Stock Verification</p>
           </div>
         </div>
 
         {/* Information Badges Footer */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-2 text-xs text-slate-300 bg-white/5 rounded-2xl p-3 border border-white/5">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pt-2 text-xs text-text-secondary bg-subtle/50 rounded-xl p-3 border border-border-default">
           <div className="flex items-center gap-2">
             <Clock className="w-4 h-4 text-amber-400 flex-shrink-0" />
             <span>

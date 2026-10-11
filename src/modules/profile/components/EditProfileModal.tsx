@@ -94,23 +94,23 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
     >
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Read-Only System Identity Reference */}
-        <div className="bg-slate-50 border border-slate-200/80 rounded-xl p-4 space-y-2.5">
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+        <div className="bg-subtle/50 border border-border-default rounded-xl p-4 space-y-2.5">
+          <div className="flex items-center gap-2 text-xs font-semibold text-text-muted uppercase tracking-wider">
             <AlertCircle className="w-3.5 h-3.5 text-slate-400" />
             Official Account Reference (Read-Only)
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 text-xs">
-            <div className="bg-white px-3 py-2 rounded-lg border border-slate-200">
-              <span className="text-slate-500 block text-[11px]">Email</span>
-              <span className="font-medium text-slate-800 truncate block">{user.email}</span>
+            <div className="bg-surface px-3 py-2 rounded-lg border border-border-default">
+              <span className="text-text-muted block text-[11px]">Email</span>
+              <span className="font-medium text-text-primary truncate block">{user.email}</span>
             </div>
-            <div className="bg-white px-3 py-2 rounded-lg border border-slate-200">
-              <span className="text-slate-500 block text-[11px]">Employee ID</span>
-              <span className="font-medium text-slate-800 font-mono block">{user.employee_id || '—'}</span>
+            <div className="bg-surface px-3 py-2 rounded-lg border border-border-default">
+              <span className="text-text-muted block text-[11px]">Employee ID</span>
+              <span className="font-medium text-text-primary font-mono block">{user.employee_id || '—'}</span>
             </div>
-            <div className="bg-white px-3 py-2 rounded-lg border border-slate-200">
-              <span className="text-slate-500 block text-[11px]">IC Number</span>
-              <span className="font-medium text-slate-800 font-mono block">{user.ic_number || '—'}</span>
+            <div className="bg-surface px-3 py-2 rounded-lg border border-border-default">
+              <span className="text-text-muted block text-[11px]">IC Number</span>
+              <span className="font-medium text-text-primary font-mono block">{user.ic_number || '—'}</span>
             </div>
           </div>
         </div>
@@ -118,7 +118,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
         {/* Editable Fields */}
         <div className="space-y-4">
           <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+            <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
               <UserIcon className="w-3.5 h-3.5 text-slate-400" />
               Full Name <span className="text-red-500">*</span>
             </label>
@@ -136,7 +136,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+              <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
                 <Phone className="w-3.5 h-3.5 text-slate-400" />
                 Phone Number
               </label>
@@ -153,7 +153,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+              <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
                 <Calendar className="w-3.5 h-3.5 text-slate-400" />
                 Date of Birth
               </label>
@@ -168,7 +168,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+            <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
               <UserIcon className="w-3.5 h-3.5 text-slate-400" />
               Gender
             </label>
@@ -176,7 +176,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
               value={gender}
               onChange={(e) => setGender(e.target.value as Gender)}
               disabled={isLoading}
-              className="w-full px-3.5 py-2.5 rounded-lg border border-slate-200 bg-white text-slate-800 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-600 transition-colors"
+              className="w-full px-3.5 py-2.5 rounded-lg border border-border-default bg-surface text-text-primary text-sm font-medium focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-600 transition-colors"
             >
               <option value="">Select Gender</option>
               <option value="male">Male</option>
@@ -185,7 +185,7 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+            <label className="block text-xs font-semibold text-text-secondary uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
               <MapPin className="w-3.5 h-3.5 text-slate-400" />
               Residential Address
             </label>
@@ -201,12 +201,12 @@ export const EditProfileModal: React.FC<EditProfileModalProps> = ({
         </div>
 
         {/* Modal Actions */}
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-100">
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-border-subtle">
           <button
             type="button"
             onClick={onClose}
             disabled={isLoading}
-            className="px-4 py-2 text-sm font-medium text-slate-700 hover:text-slate-900 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+            className="px-4 py-2 text-sm font-medium text-text-secondary hover:text-text-primary bg-surface border border-border-default rounded-lg hover:bg-subtle/50 transition-colors disabled:opacity-50"
           >
             Cancel
           </button>

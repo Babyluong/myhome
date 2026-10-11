@@ -108,35 +108,35 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
     switch (status) {
       case 'approved':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-500/20 dark:border-emerald-800">
             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             {isMs ? 'Diluluskan' : 'Approved'}
           </span>
         );
       case 'pending':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-500/10 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-500/20 dark:border-amber-800">
             <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
             {isMs ? 'Menunggu Semakan' : 'Pending Review'}
           </span>
         );
       case 'changes_requested':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-500/10 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-500/20 dark:border-rose-800">
             <AlertCircle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
             {isMs ? 'Perlu Pindaan' : 'Changes Requested'}
           </span>
         );
       case 'rejected':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300">
-            <XCircle className="w-3.5 h-3.5 text-slate-500" />
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-subtle dark:bg-slate-800 text-text-secondary dark:text-slate-300 border border-border-default">
+            <XCircle className="w-3.5 h-3.5 text-text-muted" />
             {isMs ? 'Ditolak' : 'Rejected'}
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-subtle dark:bg-slate-800 text-text-muted dark:text-slate-400 border border-border-default dark:border-slate-700">
             <FileEdit className="w-3.5 h-3.5" />
             {isMs ? 'Draf' : 'Draft'}
           </span>
@@ -153,14 +153,14 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
       case 'level_2_direct_supervision':
         return <span className="text-xs font-semibold text-amber-700 dark:text-amber-400">{isMs ? 'Pengawasan (T2)' : 'Direct Supervised (L2)'}</span>;
       default:
-        return <span className="text-xs font-semibold text-slate-500">{isMs ? 'Pemerhatian (T1)' : 'Observed (L1)'}</span>;
+        return <span className="text-xs font-semibold text-text-muted">{isMs ? 'Pemerhatian (T1)' : 'Observed (L1)'}</span>;
     }
   };
 
   return (
-    <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl shadow-xs overflow-hidden">
+    <div className="bg-surface dark:bg-slate-900 border border-border-default dark:border-slate-800 rounded-2xl shadow-xs overflow-hidden">
       {/* Table Controls & Tabs */}
-      <div className="p-4 md:p-5 border-b border-slate-200/80 dark:border-slate-800 space-y-3.5">
+      <div className="p-4 md:p-5 border-b border-border-default dark:border-slate-800 space-y-3.5">
         {/* Status Filter Tabs */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar">
           {statusTabs.map((tab) => {
@@ -171,10 +171,10 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                 type="button"
                 onClick={() => onStatusFilterChange && onStatusFilterChange(tab.id)}
                 className={cn(
-                  'flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all',
+                  'flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-colors',
                   isTabActive
-                    ? 'bg-emerald-700 text-white shadow-2xs'
-                    : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                    ? 'bg-emerald-700 text-white shadow-elevation-1'
+                    : 'bg-subtle dark:bg-slate-800 text-text-muted dark:text-slate-400 hover:bg-subtle dark:hover:bg-slate-700'
                 )}
               >
                 <span>{tab.label}</span>
@@ -183,7 +183,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                     'px-2 py-0.5 rounded-full text-[10px] font-bold',
                     isTabActive
                       ? 'bg-white/20 text-white'
-                      : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
+                      : 'bg-subtle dark:bg-slate-700 text-text-secondary dark:text-slate-300'
                   )}
                 >
                   {tab.count}
@@ -202,7 +202,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={isMs ? 'Cari nama prosedur, staf, kategori, atau MRN...' : 'Search procedure name, staff, category, or MRN...'}
-              className="w-full pl-10 pr-4 py-2 bg-slate-50/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
+              className="w-full pl-10 pr-4 py-2 bg-subtle/50 dark:bg-slate-800/80 border border-border-default dark:border-slate-700 rounded-xl text-xs md:text-sm text-text-primary dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
             />
           </div>
 
@@ -210,7 +210,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
             <select
               value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
+              className="w-full px-3 py-2 bg-subtle/50 dark:bg-slate-800/80 border border-border-default dark:border-slate-700 rounded-xl text-xs md:text-sm text-text-primary dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
             >
               <option value="all">{isMs ? 'Semua Peranan' : 'All Roles'}</option>
               <option value="nurses">{isMs ? 'Jururawat' : 'Registered Nurses'}</option>
@@ -222,7 +222,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
             <select
               value={selectedDepartment}
               onChange={(e) => setSelectedDepartment(e.target.value)}
-              className="w-full px-3 py-2 bg-slate-50/80 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs md:text-sm text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
+              className="w-full px-3 py-2 bg-subtle/50 dark:bg-slate-800/80 border border-border-default dark:border-slate-700 rounded-xl text-xs md:text-sm text-text-primary dark:text-white focus:ring-2 focus:ring-emerald-600 focus:outline-hidden"
             >
               <option value="all">{isMs ? 'Semua Jabatan' : 'All Departments'}</option>
               {departments.map((dept) => (
@@ -238,11 +238,11 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
       {/* Table Records */}
       {filteredSubmissions.length === 0 ? (
         <div className="p-10 text-center">
-          <Clock className="w-9 h-9 text-slate-300 dark:text-slate-600 mx-auto mb-2" />
-          <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">
+          <Clock className="w-9 h-9 text-slate-300 dark:text-text-muted mx-auto mb-2" />
+          <h4 className="text-sm font-bold text-text-primary dark:text-slate-200">
             {isMs ? 'Tiada Rekod Dijumpai' : 'No Records Found'}
           </h4>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+          <p className="text-xs text-text-muted dark:text-slate-400 mt-0.5">
             {isMs
               ? 'Tiada rekod prosedur yang sepadan dengan kriteria tapisan anda.'
               : 'No procedure records match your filter criteria.'}
@@ -254,7 +254,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left text-xs border-collapse">
               <thead>
-                <tr className="bg-slate-50/80 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 uppercase font-bold text-[11px] tracking-wider select-none">
+                <tr className="bg-subtle/50 dark:bg-slate-800/50 border-b border-border-default dark:border-slate-800 text-text-muted dark:text-slate-400 uppercase font-bold text-[11px] tracking-wider select-none">
                   <th className="py-3 px-4">{isMs ? 'Tarikh' : 'Date'}</th>
                   <th className="py-3 px-4">{isMs ? 'Staf Klinikal' : 'Clinical Staff'}</th>
                   <th className="py-3 px-4">{isMs ? 'Kategori & Prosedur' : 'Category & Procedure'}</th>
@@ -263,19 +263,19 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                   <th className="py-3 px-4 text-right">{isMs ? 'Tindakan' : 'Actions'}</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+              <tbody className="divide-y divide-border-subtle dark:divide-slate-800">
                 {filteredSubmissions.map((sub) => (
                   <tr
                     key={sub.id}
-                    className="hover:bg-slate-50/60 dark:hover:bg-slate-800/40 transition-colors"
+                    className="hover:bg-subtle/50 dark:hover:bg-slate-800/40 transition-colors"
                   >
                     {/* Date Column */}
                     <td className="py-3.5 px-4 whitespace-nowrap">
-                      <p className="font-semibold text-slate-900 dark:text-slate-100">
+                      <p className="font-semibold text-text-primary dark:text-slate-100">
                         {sub.procedureDate}
                       </p>
                       {sub.patientIdentifier && (
-                        <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+                        <span className="text-[10px] text-text-muted dark:text-slate-400 font-mono">
                           {sub.patientIdentifier}
                         </span>
                       )}
@@ -283,10 +283,10 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
 
                     {/* Staff Column */}
                     <td className="py-3.5 px-4">
-                      <div className="font-semibold text-slate-900 dark:text-white">
+                      <div className="font-semibold text-text-primary dark:text-white">
                         {sub.staffName}
                       </div>
-                      <div className="text-[11px] text-slate-500 dark:text-slate-400 flex items-center gap-1 mt-0.5">
+                      <div className="text-[11px] text-text-muted dark:text-slate-400 flex items-center gap-1 mt-0.5">
                         <span className="font-medium text-emerald-700 dark:text-emerald-400">{sub.staffGrade}</span>
                         <span>•</span>
                         <span className="truncate max-w-[150px]">{sub.staffDepartment}</span>
@@ -295,14 +295,14 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
 
                     {/* Category & Procedure Column */}
                     <td className="py-3.5 px-4 max-w-xs">
-                      <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 tracking-wider block">
+                      <span className="text-[10px] uppercase font-bold text-text-muted dark:text-text-secondary font-bold tracking-wider block">
                         {sub.categoryName}
                       </span>
-                      <p className="font-bold text-slate-900 dark:text-slate-100 line-clamp-2 mt-0.5">
+                      <p className="font-bold text-text-primary dark:text-slate-100 line-clamp-2 mt-0.5">
                         {sub.procedureName}
                       </p>
                       {sub.review?.adminNotes && sub.status === 'changes_requested' && (
-                        <p className="text-[11px] text-rose-700 dark:text-rose-300 font-medium mt-1 bg-rose-50 dark:bg-rose-950/40 p-1.5 rounded-lg border border-rose-200 dark:border-rose-800">
+                        <p className="text-[11px] text-rose-700 dark:text-rose-300 font-medium mt-1 bg-rose-500/10 dark:bg-rose-950/40 p-1.5 rounded-lg border border-rose-500/20 dark:border-rose-800">
                           {isMs ? 'Nota JKCP: ' : 'JKCP Notes: '} {sub.review.adminNotes}
                         </p>
                       )}
@@ -317,7 +317,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                     <td className="py-3.5 px-4 whitespace-nowrap">
                       {renderStatusBadge(sub.status)}
                       {sub.review?.validityEndDate && sub.status === 'approved' && (
-                        <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">
+                        <div className="text-[10px] text-text-muted dark:text-slate-400 mt-0.5">
                           {isMs ? 'Sahlaku: ' : 'Valid until: '} {sub.review.validityEndDate}
                         </div>
                       )}
@@ -331,7 +331,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                           <button
                             type="button"
                             onClick={() => onReviewSubmission(sub)}
-                            className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-lg shadow-2xs transition-all flex items-center gap-1 active:scale-95 text-[11px]"
+                            className="px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-lg shadow-elevation-1 transition-colors flex items-center gap-1 active:scale-95 text-[11px]"
                           >
                             <Award className="w-3.5 h-3.5" />
                             <span>{isMs ? 'Semak & Luluskan' : 'Review & Endorse'}</span>
@@ -345,7 +345,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                               <button
                                 type="button"
                                 onClick={() => onEditSubmission(sub)}
-                                className="p-1.5 text-slate-600 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-800 rounded-lg"
+                                className="p-1.5 text-text-muted hover:text-text-primary dark:hover:text-white bg-subtle dark:bg-slate-800 rounded-lg"
                                 title={isMs ? 'Sunting Draf' : 'Edit Draft'}
                               >
                                 <FileEdit className="w-3.5 h-3.5" />
@@ -366,7 +366,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                               <button
                                 type="button"
                                 onClick={() => onDeleteSubmission(sub.id)}
-                                className="p-1.5 text-rose-600 hover:text-rose-800 bg-rose-50 dark:bg-rose-950/40 rounded-lg"
+                                className="p-1.5 text-rose-600 hover:text-rose-400 bg-rose-500/10 dark:bg-rose-950/40 rounded-lg"
                                 title={isMs ? 'Padam Draf' : 'Delete Draft'}
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
@@ -380,7 +380,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                           <button
                             type="button"
                             onClick={() => onEditSubmission(sub)}
-                            className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg text-[11px] flex items-center gap-1 shadow-2xs"
+                            className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-lg text-[11px] flex items-center gap-1 shadow-elevation-1"
                           >
                             <FileEdit className="w-3.5 h-3.5" />
                             <span>{isMs ? 'Pinda & Hantar Semula' : 'Revise & Resubmit'}</span>
@@ -392,9 +392,9 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                           <button
                             type="button"
                             onClick={() => onViewCertificate(sub.staffId)}
-                            className="px-2.5 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 font-semibold rounded-lg text-[11px] flex items-center gap-1 border border-slate-200 dark:border-slate-700"
+                            className="px-2.5 py-1.5 bg-subtle dark:bg-slate-800 text-text-secondary dark:text-slate-300 hover:bg-subtle font-semibold rounded-lg text-[11px] flex items-center gap-1 border border-border-default dark:border-slate-700"
                           >
-                            <Printer className="w-3 h-3 text-slate-500" />
+                            <Printer className="w-3 h-3 text-text-muted" />
                             <span>{isMs ? 'Sijil' : 'Certificate'}</span>
                           </button>
                         )}
@@ -407,15 +407,15 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
           </div>
 
           {/* Mobile Native Card View (Zero Horizontal Scroll!) */}
-          <div className="md:hidden divide-y divide-slate-100 dark:divide-slate-800">
+          <div className="md:hidden divide-y divide-border-subtle dark:divide-slate-800">
             {filteredSubmissions.map((sub) => (
-              <div key={sub.id} className="p-4 space-y-3 bg-white dark:bg-slate-900">
+              <div key={sub.id} className="p-4 space-y-3 bg-surface dark:bg-slate-900">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 tracking-wider block">
+                    <span className="text-[10px] uppercase font-bold text-text-muted dark:text-text-secondary font-bold tracking-wider block">
                       {sub.categoryName}
                     </span>
-                    <h4 className="font-bold text-slate-900 dark:text-white text-sm mt-0.5">
+                    <h4 className="font-bold text-text-primary dark:text-white text-sm mt-0.5">
                       {sub.procedureName}
                     </h4>
                   </div>
@@ -425,19 +425,19 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 dark:bg-slate-800/50 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
+                <div className="grid grid-cols-2 gap-2 text-xs bg-subtle/50 dark:bg-slate-800/50 p-2.5 rounded-xl border border-border-subtle dark:border-slate-800">
                   <div>
                     <span className="text-[10px] uppercase font-bold text-slate-400 block">{isMs ? 'Staf' : 'Staff'}</span>
-                    <span className="font-medium text-slate-800 dark:text-slate-200">{sub.staffName} ({sub.staffGrade})</span>
+                    <span className="font-medium text-text-primary dark:text-slate-200">{sub.staffName} ({sub.staffGrade})</span>
                   </div>
                   <div>
                     <span className="text-[10px] uppercase font-bold text-slate-400 block">{isMs ? 'Tarikh' : 'Date'}</span>
-                    <span className="font-mono text-slate-700 dark:text-slate-300">{sub.procedureDate}</span>
+                    <span className="font-mono text-text-secondary dark:text-slate-300">{sub.procedureDate}</span>
                   </div>
                 </div>
 
                 {sub.review?.adminNotes && sub.status === 'changes_requested' && (
-                  <p className="text-[11px] text-rose-700 dark:text-rose-300 font-medium bg-rose-50 dark:bg-rose-950/40 p-2 rounded-lg border border-rose-200 dark:border-rose-800">
+                  <p className="text-[11px] text-rose-700 dark:text-rose-300 font-medium bg-rose-500/10 dark:bg-rose-950/40 p-2 rounded-lg border border-rose-500/20 dark:border-rose-800">
                     {isMs ? 'Nota JKCP: ' : 'JKCP Notes: '} {sub.review.adminNotes}
                   </p>
                 )}
@@ -472,7 +472,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                         <button
                           type="button"
                           onClick={() => onEditSubmission(sub)}
-                          className="flex-1 min-h-[44px] bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-800 dark:text-slate-200 font-semibold rounded-xl text-xs flex items-center justify-center gap-1"
+                          className="flex-1 min-h-[44px] bg-subtle dark:bg-slate-800 hover:bg-subtle text-text-primary dark:text-slate-200 font-semibold rounded-xl text-xs flex items-center justify-center gap-1"
                         >
                           <FileEdit className="w-4 h-4" />
                           <span>{isMs ? 'Sunting' : 'Edit'}</span>
@@ -492,7 +492,7 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                         <button
                           type="button"
                           onClick={() => onDeleteSubmission(sub.id)}
-                          className="min-h-[44px] px-3 bg-rose-50 dark:bg-rose-950/40 text-rose-600 hover:text-rose-800 rounded-xl flex items-center justify-center"
+                          className="min-h-[44px] px-3 bg-rose-500/10 dark:bg-rose-950/40 text-rose-600 hover:text-rose-400 rounded-xl flex items-center justify-center"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -504,9 +504,9 @@ export const SubmissionsTable: React.FC<SubmissionsTableProps> = ({
                     <button
                       type="button"
                       onClick={() => onViewCertificate(sub.staffId)}
-                      className="w-full min-h-[44px] bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 font-semibold rounded-xl text-xs flex items-center justify-center gap-1.5 border border-slate-200 dark:border-slate-700"
+                      className="w-full min-h-[44px] bg-subtle dark:bg-slate-800 text-text-secondary dark:text-slate-300 hover:bg-subtle font-semibold rounded-xl text-xs flex items-center justify-center gap-1.5 border border-border-default dark:border-slate-700"
                     >
-                      <Printer className="w-4 h-4 text-slate-500" />
+                      <Printer className="w-4 h-4 text-text-muted" />
                       <span>{isMs ? 'Cetak Sijil Keistimewaan' : 'Print Privileging Certificate'}</span>
                     </button>
                   )}

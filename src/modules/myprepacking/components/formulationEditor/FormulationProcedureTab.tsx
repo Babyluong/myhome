@@ -138,7 +138,7 @@ export const FormulationProcedureTab: React.FC<FormulationProcedureTabProps> = (
             steps.map((step, idx) => (
               <div
                 key={idx}
-                className="flex items-start gap-2 p-2.5 rounded-lg border border-border-default bg-surface hover:border-border-strong transition-all shadow-2xs group"
+                className="flex items-start gap-2 p-2.5 rounded-lg border border-border-default bg-surface hover:border-border-strong transition-colors shadow-elevation-1 group"
               >
                 <div className="flex flex-col items-center gap-0.5 shrink-0 pt-0.5">
                   <button
@@ -192,13 +192,13 @@ export const FormulationProcedureTab: React.FC<FormulationProcedureTabProps> = (
             onChange={(e) => setNewStepText(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddStep())}
             placeholder="Add new step (e.g. Ensure work area is clean and free of sparks...)"
-            className="flex-1 px-3 py-2 text-xs bg-surface border border-border-default rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-1 focus:ring-teal-500 shadow-2xs"
+            className="flex-1 px-3 py-2 text-xs bg-surface border border-border-default rounded-lg text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-1 focus:ring-teal-500 shadow-elevation-1"
           />
           <button
             type="button"
             onClick={handleAddStep}
             disabled={!newStepText.trim()}
-            className="px-3 py-2 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] disabled:opacity-40 text-white rounded-lg text-xs font-semibold flex items-center gap-1 shrink-0 cursor-pointer shadow-2xs"
+            className="px-3 py-2 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] disabled:opacity-40 text-white rounded-lg text-xs font-semibold flex items-center gap-1 shrink-0 cursor-pointer shadow-elevation-1"
           >
             <Plus className="w-3.5 h-3.5" />
             <span>Add Step</span>

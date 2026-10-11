@@ -216,7 +216,7 @@ export const InventoryDrugPickerModal: React.FC<InventoryDrugPickerModalProps> =
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/[0.06] transition-colors"
+            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-surface/[0.06] transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -233,7 +233,7 @@ export const InventoryDrugPickerModal: React.FC<InventoryDrugPickerModalProps> =
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
                 placeholder="Cari mengikut nama ubat, generik, atau kod item MDC..."
-                className="w-full pl-9 pr-9 py-2 bg-slate-950/80 border border-white/[0.1] rounded-xl text-sm text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-all"
+                className="w-full pl-9 pr-9 py-2 bg-slate-950/80 border border-white/[0.1] rounded-xl text-sm text-slate-100 placeholder:text-text-muted focus:outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 transition-colors"
               />
               {searchTerm && (
                 <button
@@ -274,10 +274,10 @@ export const InventoryDrugPickerModal: React.FC<InventoryDrugPickerModalProps> =
               <button
                 key={f.id}
                 onClick={() => setFormulationFilter(f.id)}
-                className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-all ${
+                className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors ${
                   formulationFilter === f.id
                     ? 'bg-teal-500 text-slate-950 font-semibold shadow-sm shadow-teal-500/30'
-                    : 'bg-white/[0.04] text-slate-300 hover:bg-white/[0.08] border border-white/[0.06]'
+                    : 'bg-white/[0.04] text-slate-300 hover:bg-surface/[0.08] border border-white/[0.06]'
                 }`}
               >
                 {f.label}
@@ -295,9 +295,9 @@ export const InventoryDrugPickerModal: React.FC<InventoryDrugPickerModalProps> =
             </div>
           ) : filteredDrugs.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 gap-2 text-slate-400">
-              <Package className="w-10 h-10 text-slate-600 mb-1" />
+              <Package className="w-10 h-10 text-text-muted mb-1" />
               <p className="text-sm font-medium text-slate-300">Tiada ubat dijumpai</p>
-              <p className="text-xs text-slate-500">Cuba ubah carian kata kunci atau tetapan penapis skim.</p>
+              <p className="text-xs text-text-muted">Cuba ubah carian kata kunci atau tetapan penapis skim.</p>
             </div>
           ) : (
             <div className="space-y-1.5">
@@ -322,27 +322,27 @@ export const InventoryDrugPickerModal: React.FC<InventoryDrugPickerModalProps> =
                   <div
                     key={drug.id}
                     onClick={() => !isAlreadyInWard && toggleSelectDrug(drug.id)}
-                    className={`flex items-start sm:items-center justify-between gap-3 p-3 rounded-xl border transition-all cursor-pointer ${
+                    className={`flex items-start sm:items-center justify-between gap-3 p-3 rounded-xl border transition-colors cursor-pointer ${
                       isAlreadyInWard
                         ? 'bg-white/[0.01] border-white/[0.04] opacity-50 cursor-not-allowed'
                         : isSelected
                         ? 'bg-teal-500/10 border-teal-500/40 shadow-sm'
-                        : 'bg-white/[0.02] border-white/[0.05] hover:bg-white/[0.04] hover:border-white/[0.1]'
+                        : 'bg-white/[0.02] border-white/[0.05] hover:bg-surface/[0.04] hover:border-white/[0.1]'
                     }`}
                   >
                     <div className="flex items-start gap-3 flex-1 min-w-0">
                       <div className="pt-0.5">
                         <div
-                          className={`w-5 h-5 rounded-md flex items-center justify-center border transition-all ${
+                          className={`w-5 h-5 rounded-md flex items-center justify-center border transition-colors ${
                             isAlreadyInWard
-                              ? 'bg-slate-800 border-slate-700 text-slate-500'
+                              ? 'bg-slate-800 border-slate-700 text-text-muted'
                               : isSelected
                               ? 'bg-teal-500 border-teal-500 text-slate-950 font-bold'
                               : 'border-white/20 bg-slate-900/60'
                           }`}
                         >
                           {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
-                          {isAlreadyInWard && <CheckCircle2 className="w-3.5 h-3.5 text-slate-500" />}
+                          {isAlreadyInWard && <CheckCircle2 className="w-3.5 h-3.5 text-text-muted" />}
                         </div>
                       </div>
 
@@ -387,7 +387,7 @@ export const InventoryDrugPickerModal: React.FC<InventoryDrugPickerModalProps> =
                         </span>
                       ) : (
                         <span
-                          className={`inline-block px-2.5 py-1 rounded-lg text-xs font-semibold transition-all ${
+                          className={`inline-block px-2.5 py-1 rounded-lg text-xs font-semibold transition-colors ${
                             isSelected
                               ? 'bg-teal-500 text-slate-950 shadow-sm'
                               : 'bg-white/[0.05] text-slate-300'
@@ -414,14 +414,14 @@ export const InventoryDrugPickerModal: React.FC<InventoryDrugPickerModalProps> =
               <button
                 disabled={page <= 1}
                 onClick={() => setPage(p => Math.max(1, p - 1))}
-                className="p-1.5 rounded-lg border border-white/[0.08] hover:bg-white/[0.06] disabled:opacity-40 disabled:cursor-not-allowed"
+                className="p-1.5 rounded-lg border border-white/[0.08] hover:bg-surface/[0.06] disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
               <button
                 disabled={page >= totalPages}
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-                className="p-1.5 rounded-lg border border-white/[0.08] hover:bg-white/[0.06] disabled:opacity-40 disabled:cursor-not-allowed"
+                className="p-1.5 rounded-lg border border-white/[0.08] hover:bg-surface/[0.06] disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -469,7 +469,7 @@ export const InventoryDrugPickerModal: React.FC<InventoryDrugPickerModalProps> =
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 rounded-xl text-xs font-medium text-slate-300 hover:bg-white/[0.06] border border-white/[0.08] transition-colors"
+              className="px-4 py-2 rounded-xl text-xs font-medium text-slate-300 hover:bg-surface/[0.06] border border-white/[0.08] transition-colors"
             >
               Batal
             </button>
@@ -477,7 +477,7 @@ export const InventoryDrugPickerModal: React.FC<InventoryDrugPickerModalProps> =
               type="button"
               disabled={selectedDrugIds.size === 0 || isSubmitting}
               onClick={handleSubmit}
-              className="flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 shadow-md shadow-teal-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="flex items-center gap-2 px-5 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 shadow-md shadow-teal-500/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isSubmitting ? (
                 <>

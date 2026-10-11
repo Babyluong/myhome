@@ -116,7 +116,7 @@ export const ProfilePhotoModal: React.FC<ProfilePhotoModalProps> = ({
     >
       <div className="space-y-6">
         {/* Current & Preview Avatar Display */}
-        <div className="flex flex-col items-center justify-center p-6 bg-slate-50 border border-slate-200/80 rounded-xl text-center">
+        <div className="flex flex-col items-center justify-center p-6 bg-subtle/50 border border-border-default rounded-xl text-center">
           <div className="relative mb-4">
             <Avatar
               src={currentDisplayPhoto}
@@ -130,8 +130,8 @@ export const ProfilePhotoModal: React.FC<ProfilePhotoModalProps> = ({
               </span>
             )}
           </div>
-          <p className="text-sm font-semibold text-slate-800">{user.full_name}</p>
-          <p className="text-xs text-slate-500 mt-0.5">
+          <p className="text-sm font-semibold text-text-primary">{user.full_name}</p>
+          <p className="text-xs text-text-muted mt-0.5">
             {previewUrl
               ? 'New photo selected. Click "Save Photo" to apply.'
               : user.profile_photo_url
@@ -149,10 +149,10 @@ export const ProfilePhotoModal: React.FC<ProfilePhotoModalProps> = ({
           onDragLeave={() => setDragOver(false)}
           onDrop={handleDrop}
           onClick={() => fileInputRef.current?.click()}
-          className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-all duration-150 ${
+          className={`border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors duration-150 ${
             dragOver
               ? 'border-primary-500 bg-primary-50/50'
-              : 'border-slate-300 hover:border-primary-400 bg-white hover:bg-slate-50/50'
+              : 'border-border-default hover:border-primary-400 bg-surface hover:bg-subtle/50'
           }`}
         >
           <input
@@ -175,14 +175,14 @@ export const ProfilePhotoModal: React.FC<ProfilePhotoModalProps> = ({
               <span className="text-sm font-semibold text-primary-600 hover:underline">
                 Click to browse
               </span>{' '}
-              <span className="text-sm text-slate-600">or drag and drop your photo</span>
+              <span className="text-sm text-text-muted">or drag and drop your photo</span>
             </div>
             <p className="text-xs text-slate-400">Supports PNG, JPG, JPEG, WEBP up to 5MB</p>
           </div>
         </div>
 
         {/* Action Controls */}
-        <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+        <div className="flex items-center justify-between pt-4 border-t border-border-subtle">
           <div>
             {(user.profile_photo_url || previewUrl) && (
               <button
@@ -206,7 +206,7 @@ export const ProfilePhotoModal: React.FC<ProfilePhotoModalProps> = ({
               type="button"
               onClick={onClose}
               disabled={isLoading || isRemoving}
-              className="px-4 py-2 text-sm font-medium text-slate-700 hover:text-slate-900 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+              className="px-4 py-2 text-sm font-medium text-text-secondary hover:text-text-primary bg-surface border border-border-default rounded-lg hover:bg-subtle/50 transition-colors disabled:opacity-50"
             >
               Cancel
             </button>

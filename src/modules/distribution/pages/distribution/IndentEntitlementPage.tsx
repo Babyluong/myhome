@@ -256,7 +256,7 @@ export const IndentEntitlementPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Left Column: Department Selector */}
         <div className="lg:col-span-1 p-4 rounded-2xl bg-slate-900/90 border border-slate-800/90 space-y-3 shadow-xl">
-          <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5 mb-2">
+          <h2 className="text-xs font-semibold text-text-secondary font-bold uppercase tracking-wider flex items-center gap-1.5 mb-2">
             <Building2 className="w-4 h-4 text-emerald-400" /> Select Department
           </h2>
 
@@ -267,7 +267,7 @@ export const IndentEntitlementPage: React.FC = () => {
                 <button
                   key={dept.id}
                   onClick={() => setSelectedDeptId(dept.id)}
-                  className={`w-full text-left p-3 rounded-xl border text-xs font-medium transition-all ${
+                  className={`w-full text-left p-3 rounded-xl border text-xs font-medium transition-colors ${
                     isSelected
                       ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-300 font-semibold shadow-md'
                       : 'bg-slate-950/60 border-slate-800/80 text-slate-300 hover:bg-slate-800/40'
@@ -300,7 +300,7 @@ export const IndentEntitlementPage: React.FC = () => {
               </div>
 
               <div className="w-full sm:w-64 relative">
-                <Search className="w-3.5 h-3.5 text-slate-500 absolute left-3 top-2.5" />
+                <Search className="w-3.5 h-3.5 text-text-muted absolute left-3 top-2.5" />
                 <Input
                   placeholder="Filter items..."
                   value={search}
@@ -315,13 +315,13 @@ export const IndentEntitlementPage: React.FC = () => {
                 <Spinner size="lg" />
               </div>
             ) : filteredEntitlements.length === 0 ? (
-              <div className="py-12 text-center text-xs text-slate-500 border border-dashed border-slate-800 rounded-xl">
+              <div className="py-12 text-center text-xs text-text-muted border border-dashed border-slate-800 rounded-xl">
                 No entitlement items configured for this department yet. Click "Add Entitlement Item" to grant access.
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs text-slate-300">
-                  <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider text-[10px]">
+                  <thead className="bg-slate-950 text-text-secondary font-bold uppercase tracking-wider text-[10px]">
                     <tr>
                       <th className="p-3">Item Code</th>
                       <th className="p-3">Item Name</th>
@@ -488,7 +488,7 @@ export const IndentEntitlementPage: React.FC = () => {
                     </div>
 
                     <div className="relative">
-                      <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
+                      <Search className="w-4 h-4 text-text-muted absolute left-3 top-2.5" />
                       <Input
                         placeholder="Search facility inventory by code or description..."
                         value={catalogSearch}
@@ -505,7 +505,7 @@ export const IndentEntitlementPage: React.FC = () => {
                         <Spinner size="md" />
                       </div>
                     ) : filteredCatalogItems.length === 0 ? (
-                      <div className="py-12 text-center text-xs text-slate-500">
+                      <div className="py-12 text-center text-xs text-text-muted">
                         No inventory items found matching search.
                       </div>
                     ) : (
@@ -515,7 +515,7 @@ export const IndentEntitlementPage: React.FC = () => {
                           <div
                             key={item.item_code}
                             onClick={() => handleToggleSelectItem(item)}
-                            className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between ${
+                            className={`p-3 rounded-xl border transition-colors cursor-pointer flex items-center justify-between ${
                               isSelected
                                 ? 'bg-emerald-500/15 border-emerald-500/50 shadow-md ring-1 ring-emerald-500/40'
                                 : 'bg-slate-900/60 border-slate-800/80 hover:bg-slate-800/40'
@@ -537,11 +537,11 @@ export const IndentEntitlementPage: React.FC = () => {
                                 </span>
                               </div>
                               <p className="text-xs font-semibold text-slate-100">{item.item_name}</p>
-                              <p className="text-[10px] text-slate-500">Unit: {item.unit}</p>
+                              <p className="text-[10px] text-text-muted">Unit: {item.unit}</p>
                             </div>
 
                             <div
-                              className={`w-5 h-5 rounded-lg border flex items-center justify-center transition-all ${
+                              className={`w-5 h-5 rounded-lg border flex items-center justify-center transition-colors ${
                                 isSelected
                                   ? 'bg-emerald-500 border-emerald-400 text-slate-950 shadow-sm'
                                   : 'border-slate-700 bg-slate-950 text-transparent'
@@ -592,13 +592,13 @@ export const IndentEntitlementPage: React.FC = () => {
                   <div className="flex-1 overflow-y-auto custom-scrollbar border border-slate-800/80 rounded-xl p-3 bg-slate-950/80 space-y-3">
                     {selectedQueue.length === 0 ? (
                       <div className="py-20 text-center space-y-2">
-                        <div className="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto text-slate-600">
+                        <div className="w-12 h-12 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto text-text-muted">
                           <ArrowRight className="w-6 h-6" />
                         </div>
                         <p className="text-xs text-slate-400 font-medium">
                           No items selected yet.
                         </p>
-                        <p className="text-[11px] text-slate-500 max-w-xs mx-auto">
+                        <p className="text-[11px] text-text-muted max-w-xs mx-auto">
                           Click items from the catalog on the left to configure quota limits and authorize them for{' '}
                           <span className="text-emerald-400 font-semibold">{selectedDeptObj?.department_name}</span>.
                         </p>
@@ -624,7 +624,7 @@ export const IndentEntitlementPage: React.FC = () => {
 
                             <button
                               onClick={() => handleToggleSelectItem(config.item)}
-                              className="p-1 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-slate-800 transition-colors"
+                              className="p-1 rounded-lg text-text-muted hover:text-rose-400 hover:bg-slate-800 transition-colors"
                             >
                               <X className="w-4 h-4" />
                             </button>

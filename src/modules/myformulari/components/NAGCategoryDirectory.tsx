@@ -68,25 +68,25 @@ export const NAGCategoryDirectory: React.FC<NAGCategoryDirectoryProps> = ({
   }, [selectedCategoryCode])
 
   return (
-    <div className="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-4 sm:p-6 space-y-6">
+    <div className="bg-surface rounded-3xl border border-border-default shadow-sm p-4 sm:p-6 space-y-6">
       {/* 1. SECTION & POPULATION SELECTOR */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-slate-100">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-border-subtle">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-1.5 rounded-lg bg-emerald-100 text-emerald-800">
+            <span className="p-1.5 rounded-lg bg-emerald-100 text-emerald-400">
               <Layers className="w-4 h-4" />
             </span>
-            <h3 className="text-sm sm:text-base font-black text-slate-900 tracking-tight">
+            <h3 className="text-sm sm:text-base font-black text-text-primary tracking-tight">
               Official NAG 2024 Guidelines Directory (MOH)
             </h3>
           </div>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-text-muted mt-1">
             Select patient population domain and clinical system to view indications and official empiric regimens.
           </p>
         </div>
 
         {/* Population Segmented Control */}
-        <div className="inline-flex p-1 bg-slate-100 rounded-2xl border border-slate-200/80 self-start lg:self-auto">
+        <div className="inline-flex p-1 bg-subtle rounded-2xl border border-border-default self-start lg:self-auto">
           <button
             type="button"
             onClick={() => {
@@ -94,14 +94,14 @@ export const NAGCategoryDirectory: React.FC<NAGCategoryDirectoryProps> = ({
               onSelectCategory('ALL')
               onSelectTopic('ALL')
             }}
-            className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-black transition-colors flex items-center gap-1.5 cursor-pointer ${
               selectedPopulation === 'All'
-                ? 'bg-white text-slate-900 shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-surface text-text-primary shadow-xs'
+                : 'text-text-muted hover:text-text-primary'
             }`}
           >
             <span>All (A &amp; B)</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-200 text-slate-700 font-bold">
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-subtle text-text-secondary font-bold">
               31 Categories
             </span>
           </button>
@@ -113,16 +113,16 @@ export const NAGCategoryDirectory: React.FC<NAGCategoryDirectoryProps> = ({
               onSelectCategory('ALL')
               onSelectTopic('ALL')
             }}
-            className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-black transition-colors flex items-center gap-1.5 cursor-pointer ${
               selectedPopulation === 'Adult'
                 ? 'bg-emerald-700 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                : 'text-text-muted hover:text-text-primary'
             }`}
           >
             <User className="w-3.5 h-3.5" />
             <span>Adult (Section A)</span>
             <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
-              selectedPopulation === 'Adult' ? 'bg-emerald-900/60 text-white' : 'bg-slate-200 text-slate-700'
+              selectedPopulation === 'Adult' ? 'bg-emerald-900/60 text-white' : 'bg-subtle text-text-secondary'
             }`}>
               17
             </span>
@@ -135,16 +135,16 @@ export const NAGCategoryDirectory: React.FC<NAGCategoryDirectoryProps> = ({
               onSelectCategory('ALL')
               onSelectTopic('ALL')
             }}
-            className={`px-3.5 py-2 rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-black transition-colors flex items-center gap-1.5 cursor-pointer ${
               selectedPopulation === 'Paediatric'
                 ? 'bg-cyan-700 text-white shadow-xs'
-                : 'text-slate-600 hover:text-slate-900'
+                : 'text-text-muted hover:text-text-primary'
             }`}
           >
             <Baby className="w-3.5 h-3.5" />
             <span>Paediatric &amp; Neonatal (Section B)</span>
             <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
-              selectedPopulation === 'Paediatric' ? 'bg-cyan-900/60 text-white' : 'bg-slate-200 text-slate-700'
+              selectedPopulation === 'Paediatric' ? 'bg-cyan-900/60 text-white' : 'bg-subtle text-text-secondary'
             }`}>
               14
             </span>
@@ -156,7 +156,7 @@ export const NAGCategoryDirectory: React.FC<NAGCategoryDirectoryProps> = ({
       <div className="space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
           <div className="flex items-center gap-2">
-            <h4 className="text-xs font-black uppercase tracking-wider text-slate-700">
+            <h4 className="text-xs font-black uppercase tracking-wider text-text-secondary">
               {selectedPopulation === 'Adult'
                 ? 'Section A: 17 Adult Disease Categories'
                 : selectedPopulation === 'Paediatric'
@@ -177,13 +177,13 @@ export const NAGCategoryDirectory: React.FC<NAGCategoryDirectoryProps> = ({
                 placeholder="Filter category name..."
                 value={categorySearchQuery}
                 onChange={e => setCategorySearchQuery(e.target.value)}
-                className="w-full pl-8 pr-6 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-hidden focus:border-emerald-500 font-medium"
+                className="w-full pl-8 pr-6 py-1.5 bg-subtle/50 border border-border-default rounded-xl text-xs text-text-primary placeholder-slate-400 focus:outline-hidden focus:border-emerald-500 font-medium"
               />
               {categorySearchQuery && (
                 <button
                   type="button"
                   onClick={() => setCategorySearchQuery('')}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-text-muted"
                 >
                   <X className="w-3 h-3" />
                 </button>
@@ -197,7 +197,7 @@ export const NAGCategoryDirectory: React.FC<NAGCategoryDirectoryProps> = ({
                   onSelectCategory('ALL')
                   onSelectTopic('ALL')
                 }}
-                className="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all cursor-pointer flex items-center gap-1 flex-shrink-0"
+                className="px-2.5 py-1.5 rounded-xl bg-subtle hover:bg-subtle text-text-secondary text-xs font-bold transition-colors cursor-pointer flex items-center gap-1 flex-shrink-0"
               >
                 <X className="w-3.5 h-3.5" />
                 <span>Show All</span>
@@ -215,16 +215,16 @@ export const NAGCategoryDirectory: React.FC<NAGCategoryDirectoryProps> = ({
               onSelectCategory('ALL')
               onSelectTopic('ALL')
             }}
-            className={`p-3 rounded-2xl text-left transition-all border cursor-pointer flex flex-col justify-between gap-2 relative overflow-hidden ${
+            className={`p-3 rounded-2xl text-left transition-colors border cursor-pointer flex flex-col justify-between gap-2 relative overflow-hidden ${
               selectedCategoryCode === 'ALL'
                 ? 'bg-slate-900 text-white border-slate-900 shadow-md ring-2 ring-slate-900/20'
-                : 'bg-white hover:bg-slate-50 text-slate-800 border-slate-200/90 shadow-2xs hover:border-slate-300'
+                : 'bg-surface hover:bg-subtle/50 text-text-primary border-border-default shadow-elevation-1 hover:border-border-default'
             }`}
           >
             <div className="flex items-center justify-between">
               <span className="text-lg">✨</span>
               <span className={`text-[10px] font-black px-1.5 py-0.5 rounded-md ${
-                selectedCategoryCode === 'ALL' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700'
+                selectedCategoryCode === 'ALL' ? 'bg-white/20 text-white' : 'bg-subtle text-text-secondary'
               }`}>
                 Semua
               </span>
@@ -250,12 +250,12 @@ export const NAGCategoryDirectory: React.FC<NAGCategoryDirectoryProps> = ({
                   onSelectCategory(cat.code)
                   onSelectTopic('ALL')
                 }}
-                className={`p-3 rounded-2xl text-left transition-all border cursor-pointer flex flex-col justify-between gap-2 relative group overflow-hidden ${
+                className={`p-3 rounded-2xl text-left transition-colors border cursor-pointer flex flex-col justify-between gap-2 relative group overflow-hidden ${
                   isSelected
                     ? isPaed
                       ? 'bg-cyan-800 text-white border-cyan-800 shadow-md ring-2 ring-cyan-500/30'
                       : 'bg-emerald-800 text-white border-emerald-800 shadow-md ring-2 ring-emerald-500/30'
-                    : 'bg-white hover:bg-slate-50 text-slate-800 border-slate-200/90 shadow-2xs hover:border-slate-300'
+                    : 'bg-surface hover:bg-subtle/50 text-text-primary border-border-default shadow-elevation-1 hover:border-border-default'
                 }`}
               >
                 <div className="flex items-center justify-between">
@@ -263,10 +263,10 @@ export const NAGCategoryDirectory: React.FC<NAGCategoryDirectoryProps> = ({
                   <span
                     className={`text-[10px] font-black px-1.5 py-0.5 rounded-md font-mono ${
                       isSelected
-                        ? 'bg-amber-400 text-slate-950 shadow-2xs'
+                        ? 'bg-amber-400 text-slate-950 shadow-elevation-1'
                         : isPaed
                         ? 'bg-cyan-50 text-cyan-800 border border-cyan-200'
-                        : 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                        : 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
                     }`}
                   >
                     {cat.code}
@@ -341,10 +341,10 @@ export const NAGCategoryDirectory: React.FC<NAGCategoryDirectoryProps> = ({
             <button
               type="button"
               onClick={() => onSelectTopic('ALL')}
-              className={`p-3.5 rounded-2xl text-left transition-all border cursor-pointer space-y-1.5 ${
+              className={`p-3.5 rounded-2xl text-left transition-colors border cursor-pointer space-y-1.5 ${
                 selectedTopic === 'ALL'
                   ? 'bg-emerald-600 text-white border-emerald-500 shadow-md ring-2 ring-emerald-400/40'
-                  : 'bg-white/10 hover:bg-white/15 text-slate-100 border-white/10'
+                  : 'bg-white/10 hover:bg-surface/15 text-slate-100 border-white/10'
               }`}
             >
               <div className="flex items-center justify-between">
@@ -366,10 +366,10 @@ export const NAGCategoryDirectory: React.FC<NAGCategoryDirectoryProps> = ({
                   key={t.number}
                   type="button"
                   onClick={() => onSelectTopic(t.title)}
-                  className={`p-3.5 rounded-2xl text-left transition-all border cursor-pointer space-y-1.5 ${
+                  className={`p-3.5 rounded-2xl text-left transition-colors border cursor-pointer space-y-1.5 ${
                     isTopicSelected
                       ? 'bg-emerald-600 text-white border-emerald-500 shadow-md ring-2 ring-emerald-400/40'
-                      : 'bg-white/10 hover:bg-white/15 text-slate-100 border-white/10'
+                      : 'bg-white/10 hover:bg-surface/15 text-slate-100 border-white/10'
                   }`}
                 >
                   <div className="flex items-center justify-between">

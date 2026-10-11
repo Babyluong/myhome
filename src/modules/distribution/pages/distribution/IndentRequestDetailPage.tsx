@@ -288,7 +288,7 @@ export const IndentRequestDetailPage: React.FC = () => {
               <User className="w-3.5 h-3.5 text-rose-400" />
               <span>Rejected by: <strong className="text-slate-200 font-semibold">{request.approver?.full_name || 'Store Pharmacist'}</strong></span>
               {request.updated_at && (
-                <span className="text-slate-500">on {formatDateTime(request.updated_at)}</span>
+                <span className="text-text-muted">on {formatDateTime(request.updated_at)}</span>
               )}
             </p>
           </div>
@@ -299,14 +299,14 @@ export const IndentRequestDetailPage: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* 1. Requesting Dept (From) */}
         <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800/90 space-y-2">
-          <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+          <p className="text-[11px] font-semibold text-text-secondary font-bold uppercase tracking-wider flex items-center gap-1.5">
             <Building2 className="w-3.5 h-3.5 text-slate-400" /> Requesting Unit (From)
           </p>
           <p className="text-sm font-bold text-slate-100">
             {request.requesting_department?.department_name || 'Department'}
           </p>
           <p className="text-xs text-slate-400 flex items-center gap-1">
-            <User className="w-3 h-3 text-slate-500" /> Requested by: {request.requester?.full_name || 'Staff'}
+            <User className="w-3 h-3 text-text-muted" /> Requested by: {request.requester?.full_name || 'Staff'}
           </p>
         </div>
 
@@ -325,7 +325,7 @@ export const IndentRequestDetailPage: React.FC = () => {
 
         {/* 3. Key Dates & Priority */}
         <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800/90 space-y-2">
-          <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+          <p className="text-[11px] font-semibold text-text-secondary font-bold uppercase tracking-wider flex items-center gap-1.5">
             <Calendar className="w-3.5 h-3.5 text-slate-400" /> Dates & Priority
           </p>
           <div className="flex justify-between text-xs">
@@ -342,18 +342,18 @@ export const IndentRequestDetailPage: React.FC = () => {
 
         {/* 4. Status & Approval Info */}
         <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800/90 space-y-2">
-          <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+          <p className="text-[11px] font-semibold text-text-secondary font-bold uppercase tracking-wider flex items-center gap-1.5">
             <Clock className="w-3.5 h-3.5 text-slate-400" /> Status & Approval
           </p>
           {request.status === 'rejected' ? (
             <p className="text-xs text-rose-400">
               Rejected by: <span className="font-semibold text-slate-200">{request.approver?.full_name || 'Officer'}</span>
-              <span className="text-[10px] text-slate-500 block mt-0.5">{formatDateTime(request.updated_at)}</span>
+              <span className="text-[10px] text-text-muted block mt-0.5">{formatDateTime(request.updated_at)}</span>
             </p>
           ) : request.approved_by ? (
             <p className="text-xs text-slate-300">
               Approved by: <span className="font-semibold text-emerald-400">{request.approver?.full_name || 'Officer'}</span>
-              <span className="text-[10px] text-slate-500 block mt-0.5">{formatDateTime(request.approved_at || request.updated_at)}</span>
+              <span className="text-[10px] text-text-muted block mt-0.5">{formatDateTime(request.approved_at || request.updated_at)}</span>
             </p>
           ) : (
             <p className="text-xs text-amber-400 flex items-center gap-1.5">
@@ -388,7 +388,7 @@ export const IndentRequestDetailPage: React.FC = () => {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs text-slate-300">
-            <thead className="bg-slate-950 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-800">
+            <thead className="bg-slate-950 text-text-secondary font-bold uppercase tracking-wider text-[10px] border-b border-slate-800">
               <tr>
                 <th className="p-3 pl-4 min-w-[200px]">Item Code & Description</th>
                 <th className="p-3 text-center">Type</th>
@@ -504,7 +504,7 @@ export const IndentRequestDetailPage: React.FC = () => {
                                 {b.batch_number}
                               </span>
                               {b.location && (
-                                <span className="text-[10px] text-slate-500 truncate">
+                                <span className="text-[10px] text-text-muted truncate">
                                   Loc: {b.location}
                                 </span>
                               )}
@@ -516,7 +516,7 @@ export const IndentRequestDetailPage: React.FC = () => {
                           {item.batch_number}
                         </span>
                       ) : (
-                        <span className="text-xs text-slate-500 italic">—</span>
+                        <span className="text-xs text-text-muted italic">—</span>
                       )}
                     </td>
 
@@ -541,7 +541,7 @@ export const IndentRequestDetailPage: React.FC = () => {
                           {formatDate(item.expiry_date)}
                         </span>
                       ) : (
-                        <span className="text-xs text-slate-500 italic">—</span>
+                        <span className="text-xs text-text-muted italic">—</span>
                       )}
                     </td>
 
@@ -558,7 +558,7 @@ export const IndentRequestDetailPage: React.FC = () => {
                           ))}
                         </div>
                       ) : (
-                        <span className="text-xs text-slate-500 italic">—</span>
+                        <span className="text-xs text-text-muted italic">—</span>
                       )}
                     </td>
 

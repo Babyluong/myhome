@@ -72,39 +72,39 @@ const warrantSchema = z.object({
 
 // Category colors for visual distinction
 const CATEGORY_COLORS: Record<string, string> = {
-  drug: 'bg-blue-50 text-blue-700 border-blue-200',
-  non_drug: 'bg-purple-50 text-purple-700 border-purple-200',
-  non_standard: 'bg-amber-50 text-amber-800 border-amber-200',
-  reagent: 'bg-teal-50 text-teal-700 border-teal-200',
-  vaccine: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  insulin: 'bg-rose-50 text-rose-700 border-rose-200',
-  hepc: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+  drug: 'bg-blue-500/10 text-blue-700 border-blue-500/20',
+  non_drug: 'bg-indigo-500/10 text-purple-700 border-indigo-500/20',
+  non_standard: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+  reagent: 'bg-accent-base/10 text-teal-700 border-accent-base/20',
+  vaccine: 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20',
+  insulin: 'bg-rose-500/10 text-rose-700 border-rose-500/20',
+  hepc: 'bg-indigo-500/10 text-indigo-700 border-indigo-500/20',
   medical_oxygen: 'bg-cyan-50 text-cyan-800 border-cyan-200',
-  sglt2: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+  sglt2: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
   pathologist: 'bg-orange-50 text-orange-800 border-orange-200',
-  medical_cylinder: 'bg-slate-100 text-slate-700 border-slate-300',
-  x_ray: 'bg-zinc-100 text-zinc-700 border-zinc-300',
-  duit_khas: 'bg-amber-100/90 text-amber-900 border-amber-300 font-black',
+  medical_cylinder: 'bg-subtle text-text-secondary border-border-default',
+  x_ray: 'bg-subtle text-text-secondary border-border-default',
+  duit_khas: 'bg-amber-100/90 text-amber-400 dark:text-amber-300 font-bold border-amber-300 font-black',
 }
 
 // Department colors
 const DEPARTMENT_COLORS: Record<WarrantDepartment, string> = {
-  pharmacy: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  nephrology: 'bg-blue-50 text-blue-700 border-blue-200',
+  pharmacy: 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20',
+  nephrology: 'bg-blue-500/10 text-blue-700 border-blue-500/20',
   radiology_radiography: 'bg-violet-50 text-violet-700 border-violet-200',
   emergency_trauma: 'bg-red-50 text-red-700 border-red-200',
   cssu_cssd: 'bg-orange-50 text-orange-800 border-orange-200',
   operation_theater: 'bg-pink-50 text-pink-700 border-pink-200',
-  laboratory_pathology: 'bg-teal-50 text-teal-700 border-teal-200',
+  laboratory_pathology: 'bg-accent-base/10 text-teal-700 border-accent-base/20',
   general_ward: 'bg-sky-50 text-sky-800 border-sky-200',
   female_ward: 'bg-pink-50 text-pink-700 border-pink-200',
-  male_ward: 'bg-blue-50 text-blue-700 border-blue-200',
-  wound_care: 'bg-amber-50 text-amber-800 border-amber-200',
+  male_ward: 'bg-blue-500/10 text-blue-700 border-blue-500/20',
+  wound_care: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
   rehabilitation: 'bg-lime-50 text-lime-800 border-lime-300',
   anaesthesiology: 'bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200',
-  paediatric_ward: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-  maternity_ward: 'bg-rose-50 text-rose-700 border-rose-200',
-  klinik_pakar: 'bg-teal-50 text-teal-800 border-teal-200',
+  paediatric_ward: 'bg-indigo-500/10 text-indigo-700 border-indigo-500/20',
+  maternity_ward: 'bg-rose-500/10 text-rose-700 border-rose-500/20',
+  klinik_pakar: 'bg-accent-base/10 text-teal-800 border-accent-base/20',
 }
 
 export const WarrantPage: React.FC = () => {
@@ -291,7 +291,7 @@ export const WarrantPage: React.FC = () => {
     if (usage >= 100) {
       return {
         label: 'DEFICIT',
-        badgeClass: 'bg-rose-50 text-rose-700 border-rose-200',
+        badgeClass: 'bg-rose-500/10 text-rose-700 border-rose-500/20',
         barClass: 'bg-rose-600',
         dotClass: 'bg-rose-500',
       }
@@ -299,7 +299,7 @@ export const WarrantPage: React.FC = () => {
     if (usage >= 90) {
       return {
         label: 'CRITICAL',
-        badgeClass: 'bg-rose-50 text-rose-700 border-rose-200',
+        badgeClass: 'bg-rose-500/10 text-rose-700 border-rose-500/20',
         barClass: 'bg-rose-500',
         dotClass: 'bg-rose-500',
       }
@@ -307,14 +307,14 @@ export const WarrantPage: React.FC = () => {
     if (usage >= 70) {
       return {
         label: 'WATCHING',
-        badgeClass: 'bg-amber-50 text-amber-700 border-amber-200',
+        badgeClass: 'bg-amber-500/10 text-amber-700 border-amber-500/20',
         barClass: 'bg-amber-500',
         dotClass: 'bg-amber-500',
       }
     }
     return {
       label: 'HEALTHY',
-      badgeClass: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+      badgeClass: 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20',
       barClass: 'bg-emerald-500',
       dotClass: 'bg-emerald-500',
     }
@@ -412,7 +412,7 @@ export const WarrantPage: React.FC = () => {
     if (docNos.length === 1) {
       return (
         <span 
-          className="font-mono text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 border border-slate-200/80 shadow-2xs inline-block tracking-tight"
+          className="font-mono text-[10px] font-bold px-2 py-0.5 rounded-md bg-subtle text-text-primary border border-border-default shadow-elevation-1 inline-block tracking-tight"
           title={`Document No: ${docNos[0]}`}
         >
           {docNos[0]}
@@ -423,13 +423,13 @@ export const WarrantPage: React.FC = () => {
     return (
       <div className="flex flex-wrap items-center justify-center gap-1 max-w-[200px] mx-auto" title={`Document Nos: ${docNos.join(', ')}`}>
         {docNos.slice(0, maxVisible).map(doc => (
-          <span key={doc} className="font-mono text-[9px] font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 tracking-tight">
+          <span key={doc} className="font-mono text-[9px] font-bold px-1.5 py-0.5 rounded bg-subtle text-text-secondary border border-border-default tracking-tight">
             {doc}
           </span>
         ))}
         {docNos.length > maxVisible && (
           <span 
-            className="font-mono text-[9px] font-bold text-slate-500 px-1 py-0.5 rounded bg-slate-50 border border-slate-200/80 cursor-help"
+            className="font-mono text-[9px] font-bold text-text-muted px-1 py-0.5 rounded bg-subtle/50 border border-border-default cursor-help"
             title={docNos.join(', ')}
           >
             +{docNos.length - maxVisible}
@@ -482,17 +482,17 @@ export const WarrantPage: React.FC = () => {
         return (
           <div
             key={cat.category}
-            className="bg-white rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all duration-200 p-5 flex flex-col justify-between"
+            className="bg-surface rounded-2xl border border-border-default shadow-sm hover:shadow-md transition-colors duration-150 p-5 flex flex-col justify-between"
           >
             <div>
               {/* Card Top: Code, Category Name, Share %, and Health Badge */}
               <div className="flex items-start justify-between gap-2 mb-3.5">
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <span className="font-mono text-[9px] font-black px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
+                    <span className="font-mono text-[9px] font-black px-1.5 py-0.5 rounded bg-subtle text-text-secondary border border-border-default">
                       {catCode}
                     </span>
-                    <h4 className="text-sm font-black text-slate-900 tracking-tight">
+                    <h4 className="text-sm font-black text-text-primary tracking-tight">
                       {getCategoryLabel(cat.category)}
                     </h4>
                   </div>
@@ -507,16 +507,16 @@ export const WarrantPage: React.FC = () => {
               </div>
 
               {/* Financial Metric Block */}
-              <div className="p-3 bg-slate-50/70 border border-slate-100 rounded-xl mb-4">
+              <div className="p-3 bg-subtle/50 border border-border-subtle rounded-xl mb-4">
                 <div className="flex items-baseline justify-between">
-                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Allocation</span>
-                  <span className="text-base font-black font-mono tabular-nums text-slate-900">
+                  <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Allocation</span>
+                  <span className="text-base font-black font-mono tabular-nums text-text-primary">
                     {formatCurrency(cat.allocation).replace('MYR', 'RM')}
                   </span>
                 </div>
 
                 {/* Progress bar */}
-                <div className="mt-2.5 mb-2 h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                <div className="mt-2.5 mb-2 h-1.5 bg-subtle rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full ${catHealth.barClass}`}
                     style={{ width: `${Math.min(catUsage, 100)}%` }}
@@ -524,11 +524,11 @@ export const WarrantPage: React.FC = () => {
                 </div>
 
                 <div className="flex items-center justify-between text-[10px] font-bold">
-                  <span className="text-slate-500">
-                    Spent: <strong className="font-mono tabular-nums text-slate-700">{formatCurrency(cat.expenses).replace('MYR', 'RM')}</strong>
+                  <span className="text-text-muted">
+                    Spent: <strong className="font-mono tabular-nums text-text-secondary">{formatCurrency(cat.expenses).replace('MYR', 'RM')}</strong>
                   </span>
-                  <span className="text-slate-500">
-                    Bal: <strong className={`font-mono tabular-nums ${cat.balance < 0 ? 'text-rose-600' : 'text-slate-900'}`}>
+                  <span className="text-text-muted">
+                    Bal: <strong className={`font-mono tabular-nums ${cat.balance < 0 ? 'text-rose-600' : 'text-text-primary'}`}>
                       {formatCurrency(cat.balance).replace('MYR', 'RM')}
                     </strong>
                   </span>
@@ -538,11 +538,11 @@ export const WarrantPage: React.FC = () => {
               {/* Department / Vote Code List */}
               <div className="space-y-3">
                 {cat.departments?.map((dept) => (
-                  <div key={dept.department} className="pt-2.5 first:pt-0 border-t border-slate-100 first:border-0">
+                  <div key={dept.department} className="pt-2.5 first:pt-0 border-t border-border-subtle first:border-0">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-1.5">
                         <div className="w-1.5 h-1.5 rounded-full bg-slate-400" />
-                        <span className="text-[10px] font-black uppercase tracking-wider text-slate-700">
+                        <span className="text-[10px] font-black uppercase tracking-wider text-text-secondary">
                           {getDepartmentLabel(dept.department)}
                         </span>
                       </div>
@@ -559,18 +559,18 @@ export const WarrantPage: React.FC = () => {
                         return (
                           <div
                             key={vc.vote_code}
-                            className="flex items-center justify-between p-2 rounded-lg bg-slate-50/50 hover:bg-slate-100/60 border border-slate-100 transition-colors text-[10px]"
+                            className="flex items-center justify-between p-2 rounded-lg bg-subtle/50 hover:bg-subtle border border-border-subtle transition-colors text-[10px]"
                           >
                             <div className="flex items-center gap-1.5">
-                              <span className="font-mono font-bold px-1.5 py-0.5 rounded bg-white border border-slate-200 text-slate-700">
+                              <span className="font-mono font-bold px-1.5 py-0.5 rounded bg-surface border border-border-default text-text-secondary">
                                 {vc.vote_code}
                               </span>
-                              <span className="font-mono font-bold tabular-nums text-slate-800">
+                              <span className="font-mono font-bold tabular-nums text-text-primary">
                                 {formatCurrency(vc.allocation).replace('MYR', 'RM')}
                               </span>
                             </div>
                             <div className="flex items-center gap-2">
-                              <span className="font-mono text-slate-500 tabular-nums">
+                              <span className="font-mono text-text-muted tabular-nums">
                                 Bal: {formatCurrency(vc.balance).replace('MYR', 'RM')}
                               </span>
                               <span className={`font-mono font-extrabold tabular-nums px-1.5 py-0.2 rounded text-[9px] ${vcHealth.badgeClass}`}>
@@ -587,9 +587,9 @@ export const WarrantPage: React.FC = () => {
             </div>
 
             {/* Card Footer */}
-            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-400">
+            <div className="mt-4 pt-3 border-t border-border-subtle flex items-center justify-between text-[10px] font-bold text-slate-400">
               <span>Kadar Gunaan: {catUsage.toFixed(1)}%</span>
-              <span className="text-slate-500">
+              <span className="text-text-muted">
                 {cat.departments?.length || 0} {cat.departments?.length === 1 ? 'Department' : 'Departments'}
               </span>
             </div>
@@ -694,23 +694,23 @@ export const WarrantPage: React.FC = () => {
     {
       key: 'warrant_date',
       header: 'Date',
-      render: (w: Warrant) => <span className="font-medium text-slate-800">{formatDate(w.warrant_date)}</span>,
+      render: (w: Warrant) => <span className="font-medium text-text-primary">{formatDate(w.warrant_date)}</span>,
     },
     {
       key: 'document_no',
       header: 'Document No',
-      render: (w: Warrant) => <span className="font-mono text-xs text-slate-900 font-bold">{w.document_no}</span>,
+      render: (w: Warrant) => <span className="font-mono text-xs text-text-primary font-bold">{w.document_no}</span>,
     },
     {
       key: 'vote_code',
       header: 'Vote',
-      render: (w: Warrant) => <Badge variant="outline" className="font-mono text-[10px] font-bold px-2.5 py-0.5 rounded-lg bg-slate-100/90 border-slate-200 text-slate-800">{w.vote_code}</Badge>,
+      render: (w: Warrant) => <Badge variant="outline" className="font-mono text-[10px] font-bold px-2.5 py-0.5 rounded-lg bg-subtle border-border-default text-text-primary">{w.vote_code}</Badge>,
     },
     {
       key: 'category',
       header: 'Category',
       render: (w: Warrant) => (
-        <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider border", CATEGORY_COLORS[w.category] || 'bg-slate-100 text-slate-700 border-slate-200')}>
+        <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider border", CATEGORY_COLORS[w.category] || 'bg-subtle text-text-secondary border-border-default')}>
           {getCategoryLabel(w.category)}
         </span>
       ),
@@ -719,7 +719,7 @@ export const WarrantPage: React.FC = () => {
       key: 'department',
       header: 'Department',
       render: (w: Warrant) => (
-        <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider border", DEPARTMENT_COLORS[w.department] || 'bg-slate-100 text-slate-700 border-slate-200')}>
+        <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider border", DEPARTMENT_COLORS[w.department] || 'bg-subtle text-text-secondary border-border-default')}>
           {getDepartmentLabel(w.department)}
         </span>
       ),
@@ -727,12 +727,12 @@ export const WarrantPage: React.FC = () => {
     {
       key: 'amount',
       header: 'Amount',
-      render: (w: Warrant) => <span className="font-black text-slate-900 tabular-nums">{formatCurrency(Number(w.amount))}</span>,
+      render: (w: Warrant) => <span className="font-black text-text-primary tabular-nums">{formatCurrency(Number(w.amount))}</span>,
     },
   ]
 
   return (
-    <div className="min-h-screen bg-[#fcfdfe] relative font-sans overflow-x-hidden pb-16 text-slate-900">
+    <div className="min-h-screen bg-[#fcfdfe] relative font-sans overflow-x-hidden pb-16 text-text-primary">
       {/* Premium Ambient Radial Lights */}
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-gradient-to-br from-blue-500/[0.04] to-indigo-500/[0.02] rounded-full blur-[140px] pointer-events-none -z-10 animate-pulse-subtle" />
       <div className="absolute top-1/4 left-0 w-[500px] h-[500px] bg-gradient-to-tr from-sky-500/[0.02] to-teal-500/[0.03] rounded-full blur-[120px] pointer-events-none -z-10" />
@@ -750,19 +750,19 @@ export const WarrantPage: React.FC = () => {
           <nav className="flex items-center gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
             <span className="text-slate-400">Financial</span>
             <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-            <span className="text-slate-800 font-extrabold tracking-wide">Warrant Management</span>
+            <span className="text-text-primary font-extrabold tracking-wide">Warrant Management</span>
           </nav>
 
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 relative z-20">
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-gradient-to-tr from-slate-900 to-indigo-950 border border-slate-800/80 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/10 hover:rotate-2 transition-transform duration-300">
+              <div className="w-14 h-14 bg-surface border border-border-default rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/10 hover:rotate-2 transition-transform duration-300">
                 <Wallet className="h-6 w-6 text-white" />
               </div>
               <div className="space-y-0.5">
-                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900">
+                <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-transparent bg-clip-text bg-surface border border-border-default">
                   Warrant Management
                 </h1>
-                <p className="text-slate-500 font-semibold text-[11px] flex items-center gap-1.5">
+                <p className="text-text-muted font-semibold text-[11px] flex items-center gap-1.5">
                   <Sparkles className="w-3 h-3 text-indigo-500 animate-pulse" />
                   FY {selectedYear} Allocation Monitoring & Distribution Control
                 </p>
@@ -772,7 +772,7 @@ export const WarrantPage: React.FC = () => {
             <div className="flex items-center gap-2.5">
               <button 
                 onClick={() => setIsFormOpen(true)}
-                className="h-10 px-5 bg-gradient-to-r from-slate-900 to-indigo-950 hover:from-slate-950 hover:to-black text-white font-bold text-xs rounded-xl shadow-md transition-all duration-200 flex items-center gap-1.5 active:scale-95 hover:shadow-lg hover:shadow-slate-300/30"
+                className="h-10 px-5 bg-surface border border-border-default hover:from-slate-950 hover:to-black text-white font-bold text-xs rounded-xl shadow-md transition-colors duration-150 flex items-center gap-1.5 active:scale-95 hover:shadow-lg hover:shadow-slate-300/30"
               >
                 <Plus className="h-4 w-4" />
                 Add Warrant
@@ -782,13 +782,13 @@ export const WarrantPage: React.FC = () => {
         </motion.div>
 
         {/* Dynamic Filters Deck */}
-        <div className="bg-white/80 backdrop-blur-md p-4 rounded-[2rem] border border-slate-200/80 shadow-xl shadow-slate-200/10 flex flex-col md:flex-row items-center gap-4">
+        <div className="bg-surface backdrop-blur-md p-4 rounded-[2rem] border border-border-default shadow-xl shadow-slate-200/10 flex flex-col md:flex-row items-center gap-4">
           <div className="relative w-full md:flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type="text"
               placeholder="Search by document number, category..."
-              className="w-full pl-11 pr-4 h-11 bg-slate-50 hover:bg-slate-100/50 border border-slate-200 rounded-2xl text-sm font-semibold text-slate-900 focus:ring-2 focus:ring-slate-900/10 focus:bg-white transition-all outline-none"
+              className="w-full pl-11 pr-4 h-11 bg-subtle/50 hover:bg-subtle border border-border-default rounded-2xl text-sm font-semibold text-text-primary focus:ring-2 focus:ring-slate-900/10 focus:bg-surface transition-colors outline-none"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -798,7 +798,7 @@ export const WarrantPage: React.FC = () => {
             <select
               value={selectedYear}
               onChange={(e) => setSelectedYear(Number(e.target.value))}
-              className="h-11 px-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-slate-900/10 outline-none cursor-pointer"
+              className="h-11 px-4 bg-subtle/50 border border-border-default rounded-2xl text-xs font-bold text-text-primary focus:ring-2 focus:ring-slate-900/10 outline-none cursor-pointer"
             >
               {years.map(y => <option key={y} value={y}>FY {y}</option>)}
             </select>
@@ -806,7 +806,7 @@ export const WarrantPage: React.FC = () => {
             <select
               value={filterVoteCode}
               onChange={(e) => setFilterVoteCode(e.target.value)}
-              className="h-11 px-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-slate-900/10 outline-none cursor-pointer"
+              className="h-11 px-4 bg-subtle/50 border border-border-default rounded-2xl text-xs font-bold text-text-primary focus:ring-2 focus:ring-slate-900/10 outline-none cursor-pointer"
             >
               <option value="">All Vote Codes</option>
               {availableFilterVoteCodes.map(vc => <option key={vc} value={vc}>{vc}</option>)}
@@ -815,7 +815,7 @@ export const WarrantPage: React.FC = () => {
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
-              className="h-11 px-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-slate-900/10 outline-none cursor-pointer"
+              className="h-11 px-4 bg-subtle/50 border border-border-default rounded-2xl text-xs font-bold text-text-primary focus:ring-2 focus:ring-slate-900/10 outline-none cursor-pointer"
             >
               <option value="">All Categories</option>
               {WARRANT_CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
@@ -824,7 +824,7 @@ export const WarrantPage: React.FC = () => {
             <select
               value={filterDepartment}
               onChange={(e) => setFilterDepartment(e.target.value)}
-              className="h-11 px-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-bold text-slate-800 focus:ring-2 focus:ring-slate-900/10 outline-none cursor-pointer"
+              className="h-11 px-4 bg-subtle/50 border border-border-default rounded-2xl text-xs font-bold text-text-primary focus:ring-2 focus:ring-slate-900/10 outline-none cursor-pointer"
             >
               <option value="">All Departments</option>
               {WARRANT_DEPARTMENTS.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
@@ -832,7 +832,7 @@ export const WarrantPage: React.FC = () => {
 
             <button 
               onClick={loadData} 
-              className="h-11 w-11 flex items-center justify-center rounded-2xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-500 hover:text-slate-800 transition-colors"
+              className="h-11 w-11 flex items-center justify-center rounded-2xl bg-subtle/50 hover:bg-subtle border border-border-default text-text-muted hover:text-text-primary transition-colors"
             >
               <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
             </button>
@@ -842,7 +842,7 @@ export const WarrantPage: React.FC = () => {
         {/* Elevated Dashboard KPI Metrics Section wrapped in a luxurious white background card */}
         {!isLoading && summary && (
           <div className="space-y-6">
-            <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] border border-slate-200 shadow-xl mb-10 relative z-10">
+            <div className="bg-surface p-6 sm:p-8 rounded-[2.5rem] border border-border-default shadow-xl mb-10 relative z-10">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 
                 {/* Total Allocation */}
@@ -850,16 +850,16 @@ export const WarrantPage: React.FC = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.05 }}
-                  className="bg-emerald-50/50 border-2 border-emerald-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-emerald-50 hover:border-emerald-200 hover:shadow-xl hover:shadow-emerald-100/40 hover:-translate-y-1 transition-all duration-300 cursor-default"
+                  className="bg-emerald-500/10 border-2 border-emerald-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-emerald-500/10 hover:border-emerald-500/20 hover:shadow-xl hover:shadow-emerald-100/40 hover:-translate-y-1 transition-colors duration-150 cursor-default"
                 >
                   <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
                   <div className="flex flex-col gap-4 relative z-10">
-                    <div className="w-12 h-12 bg-emerald-100 border border-emerald-200 rounded-2xl flex items-center justify-center text-emerald-600 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                    <div className="w-12 h-12 bg-emerald-100 border border-emerald-500/20 rounded-2xl flex items-center justify-center text-emerald-600 shadow-sm group-hover:scale-110 transition-transform duration-300">
                       <Wallet className="w-6 h-6" />
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-emerald-900/60 uppercase tracking-widest leading-none">Total Allocation</p>
-                      <h3 className="text-2xl sm:text-3xl xl:text-4xl font-black text-emerald-900 mt-2.5 tracking-tight tabular-nums truncate" title={formatCurrency(summary.total_allocation).replace('MYR', 'RM')}>
+                      <p className="text-xs font-bold text-emerald-400 dark:text-emerald-300 font-bold/60 uppercase tracking-widest leading-none">Total Allocation</p>
+                      <h3 className="text-2xl sm:text-3xl xl:text-4xl font-black text-emerald-400 dark:text-emerald-300 font-bold mt-2.5 tracking-tight tabular-nums truncate" title={formatCurrency(summary.total_allocation).replace('MYR', 'RM')}>
                         {formatCurrency(summary.total_allocation).replace('MYR', 'RM')}
                       </h3>
                       <p className="text-[11px] font-bold text-emerald-600 mt-2 flex items-center gap-1.5 pt-0.5">
@@ -875,16 +875,16 @@ export const WarrantPage: React.FC = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.1 }}
-                  className="bg-rose-50/50 border-2 border-rose-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-rose-50 hover:border-rose-200 hover:shadow-xl hover:shadow-rose-100/40 hover:-translate-y-1 transition-all duration-300 cursor-default"
+                  className="bg-rose-500/10 border-2 border-rose-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-rose-500/10 hover:border-rose-500/20 hover:shadow-xl hover:shadow-rose-100/40 hover:-translate-y-1 transition-colors duration-150 cursor-default"
                 >
                   <div className="absolute top-0 right-0 w-32 h-32 bg-rose-500/10 rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
                   <div className="flex flex-col gap-4 relative z-10">
-                    <div className="w-12 h-12 bg-rose-100 border border-rose-200 rounded-2xl flex items-center justify-center text-rose-600 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                    <div className="w-12 h-12 bg-rose-100 border border-rose-500/20 rounded-2xl flex items-center justify-center text-rose-600 shadow-sm group-hover:scale-110 transition-transform duration-300">
                       <DollarSign className="w-6 h-6" />
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-rose-900/60 uppercase tracking-widest leading-none">Total Expenses</p>
-                      <h3 className="text-2xl sm:text-3xl xl:text-4xl font-black text-rose-900 mt-2.5 tracking-tight tabular-nums truncate" title={formatCurrency(summary.total_expenses).replace('MYR', 'RM')}>
+                      <p className="text-xs font-bold text-rose-400 dark:text-rose-300 font-bold/60 uppercase tracking-widest leading-none">Total Expenses</p>
+                      <h3 className="text-2xl sm:text-3xl xl:text-4xl font-black text-rose-400 dark:text-rose-300 font-bold mt-2.5 tracking-tight tabular-nums truncate" title={formatCurrency(summary.total_expenses).replace('MYR', 'RM')}>
                         {formatCurrency(summary.total_expenses).replace('MYR', 'RM')}
                       </h3>
                       <p className="text-[11px] font-bold text-rose-600 mt-2 flex items-center gap-1.5 pt-0.5">
@@ -900,16 +900,16 @@ export const WarrantPage: React.FC = () => {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: 0.15 }}
-                  className="bg-blue-50/50 border-2 border-blue-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-blue-50 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-100/40 hover:-translate-y-1 transition-all duration-300 cursor-default"
+                  className="bg-blue-500/10 border-2 border-blue-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-blue-500/10 hover:border-blue-500/20 hover:shadow-xl hover:shadow-blue-100/40 hover:-translate-y-1 transition-colors duration-150 cursor-default"
                 >
                   <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
                   <div className="flex flex-col gap-4 relative z-10">
-                    <div className="w-12 h-12 bg-blue-100 border border-blue-200 rounded-2xl flex items-center justify-center text-blue-600 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                    <div className="w-12 h-12 bg-blue-100 border border-blue-500/20 rounded-2xl flex items-center justify-center text-blue-600 shadow-sm group-hover:scale-110 transition-transform duration-300">
                       <TrendingUp className="w-6 h-6" />
                     </div>
                     <div>
-                      <p className="text-xs font-bold text-blue-900/60 uppercase tracking-widest leading-none">Available Balance</p>
-                      <h3 className="text-2xl sm:text-3xl xl:text-4xl font-black text-blue-900 mt-2.5 tracking-tight tabular-nums truncate" title={formatCurrency(summary.total_balance).replace('MYR', 'RM')}>
+                      <p className="text-xs font-bold text-blue-400 dark:text-blue-300 font-bold/60 uppercase tracking-widest leading-none">Available Balance</p>
+                      <h3 className="text-2xl sm:text-3xl xl:text-4xl font-black text-blue-400 dark:text-blue-300 font-bold mt-2.5 tracking-tight tabular-nums truncate" title={formatCurrency(summary.total_balance).replace('MYR', 'RM')}>
                         {formatCurrency(summary.total_balance).replace('MYR', 'RM')}
                       </h3>
                       <p className="text-[11px] font-bold text-blue-600 mt-2 flex items-center gap-1.5 pt-0.5">
@@ -925,18 +925,18 @@ export const WarrantPage: React.FC = () => {
               </div>
 
               {/* Sub-metrics Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 pt-8 border-t border-slate-100">
-                <div className="bg-amber-50/50 border-2 border-amber-100 p-5 rounded-[2rem] flex items-center gap-4 group hover:bg-amber-50 hover:border-amber-200 hover:shadow-xl transition-all duration-300 cursor-default">
-                  <div className="w-10 h-10 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center border border-amber-200 shadow-sm group-hover:scale-110 transition-transform duration-200">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8 pt-8 border-t border-border-subtle">
+                <div className="bg-amber-500/10 border-2 border-amber-100 p-5 rounded-[2rem] flex items-center gap-4 group hover:bg-amber-500/10 hover:border-amber-500/20 hover:shadow-xl transition-colors duration-150 cursor-default">
+                  <div className="w-10 h-10 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center border border-amber-500/20 shadow-sm group-hover:scale-110 transition-transform duration-200">
                     <AlertTriangle className="w-5 h-5" />
                   </div>
                   <div>
-                    <p className="text-[9px] font-black text-amber-900/80 uppercase tracking-widest leading-none">Total Liabilities</p>
-                    <h4 className="text-lg font-black text-amber-900 mt-1.5 tabular-nums">{formatCurrency(summary.total_liabilities).replace('MYR', 'RM')}</h4>
+                    <p className="text-[9px] font-black text-amber-400 dark:text-amber-300 font-bold/80 uppercase tracking-widest leading-none">Total Liabilities</p>
+                    <h4 className="text-lg font-black text-amber-400 dark:text-amber-300 font-bold mt-1.5 tabular-nums">{formatCurrency(summary.total_liabilities).replace('MYR', 'RM')}</h4>
                   </div>
                 </div>
 
-                <div className="bg-sky-50/50 border-2 border-sky-100 p-5 rounded-[2rem] flex items-center gap-4 group hover:bg-sky-50 hover:border-sky-200 hover:shadow-xl transition-all duration-300 cursor-default">
+                <div className="bg-sky-50/50 border-2 border-sky-100 p-5 rounded-[2rem] flex items-center gap-4 group hover:bg-sky-50 hover:border-sky-200 hover:shadow-xl transition-colors duration-150 cursor-default">
                   <div className="w-10 h-10 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center border border-sky-200 shadow-sm group-hover:scale-110 transition-transform duration-200">
                     <BarChart2 className="w-5 h-5" />
                   </div>
@@ -946,8 +946,8 @@ export const WarrantPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="bg-teal-50/50 border-2 border-teal-100 p-5 rounded-[2rem] flex items-center gap-4 group hover:bg-teal-50 hover:border-teal-200 hover:shadow-xl transition-all duration-300 cursor-default">
-                  <div className="w-10 h-10 bg-teal-100 text-teal-700 rounded-2xl flex items-center justify-center border border-teal-200 shadow-sm group-hover:scale-110 transition-transform duration-200">
+                <div className="bg-accent-base/10 border-2 border-teal-100 p-5 rounded-[2rem] flex items-center gap-4 group hover:bg-accent-base/10 hover:border-accent-base/20 hover:shadow-xl transition-colors duration-150 cursor-default">
+                  <div className="w-10 h-10 bg-teal-100 text-teal-700 rounded-2xl flex items-center justify-center border border-accent-base/20 shadow-sm group-hover:scale-110 transition-transform duration-200">
                     <PieChart className="w-5 h-5" />
                   </div>
                   <div className="flex-1">
@@ -955,7 +955,7 @@ export const WarrantPage: React.FC = () => {
                       <p className="text-[9px] font-black text-teal-900/80 uppercase tracking-widest leading-none">Usage Percentage</p>
                       <span className="text-[10px] font-black text-teal-600">{summary.usage_percentage.toFixed(1)}%</span>
                     </div>
-                    <div className="mt-2 h-1.5 bg-slate-200 rounded-full overflow-hidden">
+                    <div className="mt-2 h-1.5 bg-subtle rounded-full overflow-hidden">
                       <div className="h-full bg-teal-500 rounded-full" style={{ width: `${Math.min(summary.usage_percentage, 100)}%` }} />
                     </div>
                   </div>
@@ -964,21 +964,21 @@ export const WarrantPage: React.FC = () => {
             </div>
 
             {/* Bottom Section: Category Breakdown */}
-            <div className="bg-white rounded-[2rem] border border-slate-200/80 shadow-xl shadow-slate-200/15 overflow-hidden flex flex-col">
+            <div className="bg-surface rounded-[2rem] border border-border-default shadow-xl shadow-slate-200/15 overflow-hidden flex flex-col">
               {/* Header with Title, Search, Expand/Collapse, and View Switcher */}
-              <div className="p-6 lg:p-8 pb-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-100">
+              <div className="p-6 lg:p-8 pb-5 flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-border-subtle">
                 <div className="flex items-center gap-4">
-                  <div className="w-11 h-11 bg-slate-100 rounded-2xl flex items-center justify-center">
-                    <Clock className="w-5.5 h-5.5 text-slate-600" />
+                  <div className="w-11 h-11 bg-subtle rounded-2xl flex items-center justify-center">
+                    <Clock className="w-5.5 h-5.5 text-text-muted" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="text-lg font-black text-slate-900 tracking-tight">Category Breakdown</h3>
-                      <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-slate-100 text-slate-600 border border-slate-200/80">
+                      <h3 className="text-lg font-black text-text-primary tracking-tight">Category Breakdown</h3>
+                      <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-subtle text-text-muted border border-border-default">
                         {summary.by_category.length} Categories
                       </span>
                     </div>
-                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+                    <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">
                       Allocation distribution by pharmaceutical catalog type
                     </p>
                   </div>
@@ -994,12 +994,12 @@ export const WarrantPage: React.FC = () => {
                       value={categorySearch}
                       onChange={(e) => setCategorySearch(e.target.value)}
                       placeholder="Search Category, Dept, Vote..."
-                      className="w-full pl-8.5 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all placeholder:text-slate-400"
+                      className="w-full pl-8.5 pr-3 py-1.5 text-xs bg-subtle/50 border border-border-default rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors placeholder:text-text-muted"
                     />
                     {categorySearch && (
                       <button
                         onClick={() => setCategorySearch('')}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-text-muted"
                       >
                         <X className="w-3 h-3" />
                       </button>
@@ -1008,18 +1008,18 @@ export const WarrantPage: React.FC = () => {
 
                   {/* Expand / Collapse All (active when in table view) */}
                   {breakdownView === 'table' && (
-                    <div className="flex items-center border border-slate-200 rounded-xl bg-slate-50/70 p-0.5">
+                    <div className="flex items-center border border-border-default rounded-xl bg-subtle/50 p-0.5">
                       <button
                         onClick={() => handleExpandAll(summary.by_category)}
-                        className="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-slate-600 hover:text-slate-900 rounded-lg hover:bg-white transition-colors"
+                        className="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-text-muted hover:text-text-primary rounded-lg hover:bg-surface transition-colors"
                         title="Expand all categories and departments"
                       >
                         Expand All
                       </button>
-                      <div className="h-3.5 w-px bg-slate-200 my-auto" />
+                      <div className="h-3.5 w-px bg-subtle my-auto" />
                       <button
                         onClick={() => handleCollapseAll(summary.by_category)}
-                        className="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-slate-600 hover:text-slate-900 rounded-lg hover:bg-white transition-colors"
+                        className="px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-text-muted hover:text-text-primary rounded-lg hover:bg-surface transition-colors"
                         title="Collapse all categories and departments"
                       >
                         Collapse
@@ -1028,14 +1028,14 @@ export const WarrantPage: React.FC = () => {
                   )}
 
                   {/* View Mode Toggle: Table View vs Bento Grid */}
-                  <div className="flex items-center bg-slate-100 p-0.5 rounded-xl border border-slate-200/80">
+                  <div className="flex items-center bg-subtle p-0.5 rounded-xl border border-border-default">
                     <button
                       onClick={() => setBreakdownView('table')}
                       className={cn(
-                        'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all',
+                        'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors',
                         breakdownView === 'table'
-                          ? 'bg-white text-indigo-900 shadow-sm font-black'
-                          : 'text-slate-500 hover:text-slate-800'
+                          ? 'bg-surface text-indigo-400 dark:text-indigo-300 font-bold shadow-sm font-black'
+                          : 'text-text-muted hover:text-text-primary'
                       )}
                     >
                       <TableIcon className="w-3.5 h-3.5" />
@@ -1044,10 +1044,10 @@ export const WarrantPage: React.FC = () => {
                     <button
                       onClick={() => setBreakdownView('bento')}
                       className={cn(
-                        'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all',
+                        'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors',
                         breakdownView === 'bento'
-                          ? 'bg-white text-indigo-900 shadow-sm font-black'
-                          : 'text-slate-500 hover:text-slate-800'
+                          ? 'bg-surface text-indigo-400 dark:text-indigo-300 font-bold shadow-sm font-black'
+                          : 'text-text-muted hover:text-text-primary'
                       )}
                     >
                       <LayoutGrid className="w-3.5 h-3.5" />
@@ -1058,20 +1058,20 @@ export const WarrantPage: React.FC = () => {
               </div>
 
               {/* Macro Allocation Share Ribbon (Executive Composition Bar) */}
-              <div className="px-6 lg:px-8 py-5 bg-gradient-to-b from-slate-50/70 to-white border-b border-slate-100">
+              <div className="px-6 lg:px-8 py-5 bg-gradient-to-b from-slate-50/70 to-white border-b border-border-subtle">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2.5">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-text-muted">
                       Macro Allocation Share
                     </span>
                     <span className="text-slate-300">•</span>
-                    <span className="text-[10px] font-bold text-slate-500 tabular-nums">
+                    <span className="text-[10px] font-bold text-text-muted tabular-nums">
                       Vault Total: {formatCurrency(summary.total_allocation).replace('MYR', 'RM')}
                     </span>
                   </div>
-                  <div className="flex items-center gap-3 text-[10px] font-bold text-slate-500">
+                  <div className="flex items-center gap-3 text-[10px] font-bold text-text-muted">
                     <span>
-                      Burn Rate: <strong className="text-slate-800 tabular-nums">{summary.usage_percentage.toFixed(1)}%</strong>
+                      Burn Rate: <strong className="text-text-primary tabular-nums">{summary.usage_percentage.toFixed(1)}%</strong>
                     </span>
                     <span className="text-slate-300">•</span>
                     <span>
@@ -1081,7 +1081,7 @@ export const WarrantPage: React.FC = () => {
                 </div>
 
                 {/* Proportional Segmented Track */}
-                <div className="h-3 w-full bg-slate-100 rounded-full overflow-hidden flex border border-slate-200/80 shadow-inner">
+                <div className="h-3 w-full bg-subtle rounded-full overflow-hidden flex border border-border-default shadow-inner">
                   {summary.by_category.map((cat, idx) => {
                     const pct = summary.total_allocation > 0 ? (cat.allocation / summary.total_allocation) * 100 : 0
                     if (pct <= 0) return null
@@ -1101,7 +1101,7 @@ export const WarrantPage: React.FC = () => {
                       <div
                         key={cat.category}
                         style={{ width: `${pct}%` }}
-                        className={`${color} h-full border-r border-white/40 transition-all hover:opacity-80 cursor-pointer`}
+                        className={`${color} h-full border-r border-white/40 transition-colors hover:opacity-80 cursor-pointer`}
                         title={`${getCategoryLabel(cat.category)}: ${formatCurrency(cat.allocation).replace('MYR', 'RM')} (${pct.toFixed(1)}%)`}
                         onClick={() => setCategorySearch(getCategoryLabel(cat.category))}
                       />
@@ -1129,11 +1129,11 @@ export const WarrantPage: React.FC = () => {
                       <button
                         key={cat.category}
                         onClick={() => setCategorySearch(categorySearch === getCategoryLabel(cat.category) ? '' : getCategoryLabel(cat.category))}
-                        className="flex items-center gap-1.5 text-slate-600 hover:text-slate-900 transition-colors group"
+                        className="flex items-center gap-1.5 text-text-muted hover:text-text-primary transition-colors group"
                       >
                         <span className={`w-2 h-2 rounded-full ${color}`} />
                         <span className="font-bold">{getCategoryLabel(cat.category)}</span>
-                        <span className="font-mono tabular-nums text-slate-400 group-hover:text-slate-600">{pct.toFixed(1)}%</span>
+                        <span className="font-mono tabular-nums text-slate-400 group-hover:text-text-muted">{pct.toFixed(1)}%</span>
                       </button>
                     )
                   })}
@@ -1150,17 +1150,17 @@ export const WarrantPage: React.FC = () => {
                 {filteredCategories.length === 0 ? (
                   <div className="py-12 text-center flex flex-col items-center justify-center gap-3">
                     <AlertCircle className="w-8 h-8 text-slate-300" />
-                    <p className="text-sm font-bold text-slate-600">No categories found matching "{categorySearch}"</p>
+                    <p className="text-sm font-bold text-text-muted">No categories found matching "{categorySearch}"</p>
                     <Button variant="outline" size="sm" onClick={() => setCategorySearch('')}>
                       Clear Search
                     </Button>
                   </div>
                 ) : breakdownView === 'table' ? (
                   <>
-                    <div className="hidden md:block overflow-x-auto border border-slate-200/90 rounded-2xl bg-white shadow-sm">
+                    <div className="hidden md:block overflow-x-auto border border-border-default rounded-2xl bg-surface shadow-sm">
                     <table className="w-full border-collapse text-left">
                       <thead>
-                        <tr className="bg-slate-50/90 border-b border-slate-200 text-[10px] font-black uppercase tracking-wider text-slate-500">
+                        <tr className="bg-subtle/50 border-b border-border-default text-[10px] font-black uppercase tracking-wider text-text-muted">
                           <th className="py-3.5 pl-4 pr-2 font-black">Category / Department / Vote Code</th>
                           <th className="py-3.5 px-3 text-center font-black min-w-[140px]">Document No.</th>
                           <th className="py-3.5 px-4 text-right font-black">Allocation (RM)</th>
@@ -1170,7 +1170,7 @@ export const WarrantPage: React.FC = () => {
                           <th className="py-3.5 pr-4 pl-2 text-center font-black">Status</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100 text-xs">
+                      <tbody className="divide-y divide-border-subtle text-xs">
                         {filteredCategories.map((cat) => {
                           const catExpanded = isCategoryExpanded(cat.category)
                           const catPct = summary.total_allocation > 0 ? (cat.allocation / summary.total_allocation) * 100 : 0
@@ -1184,25 +1184,25 @@ export const WarrantPage: React.FC = () => {
                               {/* 1. Category Row (Parent) */}
                               <tr 
                                 onClick={() => toggleCategory(cat.category)}
-                                className="bg-slate-50/40 hover:bg-slate-100/70 transition-colors cursor-pointer font-bold select-none group"
+                                className="bg-subtle/50 hover:bg-subtle transition-colors cursor-pointer font-bold select-none group"
                               >
                                 <td className="py-3.5 pl-4 pr-2">
                                   <div className="flex items-center gap-2.5">
                                     <button
                                       type="button"
-                                      className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-200/70 transition-colors"
+                                      className="p-1 rounded-md text-slate-400 hover:text-text-secondary hover:bg-subtle transition-colors"
                                     >
                                       {catExpanded ? (
-                                        <ChevronDown className="w-4 h-4 text-slate-600 transition-transform" />
+                                        <ChevronDown className="w-4 h-4 text-text-muted transition-transform" />
                                       ) : (
-                                        <ChevronRight className="w-4 h-4 text-slate-600 transition-transform" />
+                                        <ChevronRight className="w-4 h-4 text-text-muted transition-transform" />
                                       )}
                                     </button>
-                                    <span className="font-mono text-[9px] font-black px-2 py-0.5 rounded bg-slate-200/80 text-slate-700 border border-slate-300/60">
+                                    <span className="font-mono text-[9px] font-black px-2 py-0.5 rounded bg-slate-200/80 text-text-secondary border border-border-default">
                                       {catCode}
                                     </span>
                                     <div>
-                                      <span className="text-sm font-black text-slate-900 group-hover:text-indigo-900 transition-colors">
+                                      <span className="text-sm font-black text-text-primary group-hover:text-indigo-700 dark:group-hover:text-indigo-400 transition-colors">
                                         {getCategoryLabel(cat.category)}
                                       </span>
                                       <span className="text-[10px] font-bold text-slate-400 ml-2">
@@ -1214,26 +1214,26 @@ export const WarrantPage: React.FC = () => {
                                 <td className="py-3.5 px-3 text-center">
                                   {renderDocNos(catDocNos, 2)}
                                 </td>
-                                <td className="py-3.5 px-4 text-right font-mono font-black text-slate-900 tabular-nums">
+                                <td className="py-3.5 px-4 text-right font-mono font-black text-text-primary tabular-nums">
                                   {formatCurrency(cat.allocation).replace('MYR', 'RM')}
                                 </td>
-                                <td className="py-3.5 px-4 text-right font-mono font-bold text-slate-700 tabular-nums">
+                                <td className="py-3.5 px-4 text-right font-mono font-bold text-text-secondary tabular-nums">
                                   {formatCurrency(cat.expenses).replace('MYR', 'RM')}
                                 </td>
                                 <td className="py-3.5 px-4 text-right font-mono font-black tabular-nums">
-                                  <span className={cat.balance < 0 ? 'text-rose-600' : 'text-slate-900'}>
+                                  <span className={cat.balance < 0 ? 'text-rose-600' : 'text-text-primary'}>
                                     {formatCurrency(cat.balance).replace('MYR', 'RM')}
                                   </span>
                                 </td>
                                 <td className="py-3.5 px-4 text-right">
                                   <div className="flex items-center justify-end gap-2.5">
-                                    <div className="w-24 h-2 bg-slate-200 rounded-full overflow-hidden border border-slate-200">
+                                    <div className="w-24 h-2 bg-subtle rounded-full overflow-hidden border border-border-default">
                                       <div
                                         className={`h-full rounded-full ${catHealth.barClass}`}
                                         style={{ width: `${Math.min(catUsage, 100)}%` }}
                                       />
                                     </div>
-                                    <span className="font-mono font-black text-[11px] tabular-nums w-12 text-right text-slate-800">
+                                    <span className="font-mono font-black text-[11px] tabular-nums w-12 text-right text-text-primary">
                                       {catUsage.toFixed(1)}%
                                     </span>
                                   </div>
@@ -1258,22 +1258,22 @@ export const WarrantPage: React.FC = () => {
                                     {/* Department Row */}
                                     <tr 
                                       onClick={() => toggleDepartment(deptKey)}
-                                      className="bg-white hover:bg-slate-50/80 transition-colors cursor-pointer select-none group border-t border-slate-100"
+                                      className="bg-surface hover:bg-subtle/50 transition-colors cursor-pointer select-none group border-t border-border-subtle"
                                     >
                                       <td className="py-2.5 pl-10 pr-2">
                                         <div className="flex items-center gap-2">
                                           <button
                                             type="button"
-                                            className="p-0.5 rounded text-slate-400 hover:text-slate-600"
+                                            className="p-0.5 rounded text-slate-400 hover:text-text-muted"
                                           >
                                             {deptExpanded ? (
-                                              <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
+                                              <ChevronDown className="w-3.5 h-3.5 text-text-muted" />
                                             ) : (
-                                              <ChevronRight className="w-3.5 h-3.5 text-slate-500" />
+                                              <ChevronRight className="w-3.5 h-3.5 text-text-muted" />
                                             )}
                                           </button>
                                           <div className="w-1.5 h-1.5 rounded-full bg-slate-400" />
-                                          <span className="font-extrabold text-slate-800 text-xs tracking-tight uppercase">
+                                          <span className="font-extrabold text-text-primary text-xs tracking-tight uppercase">
                                             {getDepartmentLabel(dept.department)}
                                           </span>
                                         </div>
@@ -1281,26 +1281,26 @@ export const WarrantPage: React.FC = () => {
                                       <td className="py-2.5 px-3 text-center">
                                         {renderDocNos(deptDocNos, 2)}
                                       </td>
-                                      <td className="py-2.5 px-4 text-right font-mono font-bold text-slate-700 tabular-nums">
+                                      <td className="py-2.5 px-4 text-right font-mono font-bold text-text-secondary tabular-nums">
                                         {formatCurrency(dept.allocation).replace('MYR', 'RM')}
                                       </td>
-                                      <td className="py-2.5 px-4 text-right font-mono font-semibold text-slate-600 tabular-nums">
+                                      <td className="py-2.5 px-4 text-right font-mono font-semibold text-text-muted tabular-nums">
                                         {formatCurrency(dept.expenses).replace('MYR', 'RM')}
                                       </td>
-                                      <td className="py-2.5 px-4 text-right font-mono font-bold text-slate-800 tabular-nums">
-                                        <span className={dept.balance < 0 ? 'text-rose-600' : 'text-slate-800'}>
+                                      <td className="py-2.5 px-4 text-right font-mono font-bold text-text-primary tabular-nums">
+                                        <span className={dept.balance < 0 ? 'text-rose-600' : 'text-text-primary'}>
                                           {formatCurrency(dept.balance).replace('MYR', 'RM')}
                                         </span>
                                       </td>
                                       <td className="py-2.5 px-4 text-right">
                                         <div className="flex items-center justify-end gap-2.5">
-                                          <div className="w-20 h-1.5 bg-slate-100 rounded-full overflow-hidden border border-slate-200">
+                                          <div className="w-20 h-1.5 bg-subtle rounded-full overflow-hidden border border-border-default">
                                             <div
                                               className={`h-full rounded-full ${deptHealth.barClass}`}
                                               style={{ width: `${Math.min(deptUsage, 100)}%` }}
                                             />
                                           </div>
-                                          <span className="font-mono text-[10px] font-bold tabular-nums w-10 text-right text-slate-600">
+                                          <span className="font-mono text-[10px] font-bold tabular-nums w-10 text-right text-text-muted">
                                             {deptUsage.toFixed(0)}%
                                           </span>
                                         </div>
@@ -1320,21 +1320,21 @@ export const WarrantPage: React.FC = () => {
                                         const vcDocNos = getDocumentNumbers(cat.category, dept.department, vc.vote_code)
 
                                         return (
-                                          <tr key={vcKey} className="bg-slate-50/20 hover:bg-slate-50/80 transition-colors text-[11px] border-l-2 border-indigo-200">
+                                          <tr key={vcKey} className="bg-subtle/50 hover:bg-subtle/50 transition-colors text-[11px] border-l-2 border-indigo-500/20">
                                             <td className="py-2 pl-14 pr-2">
                                               <div className="flex items-center gap-2">
                                                 <FileText className="w-3 h-3 text-slate-400" />
-                                                <span className="font-mono font-bold text-slate-700 bg-white px-1.5 py-0.5 rounded border border-slate-200 text-[10px]">
+                                                <span className="font-mono font-bold text-text-secondary bg-surface px-1.5 py-0.5 rounded border border-border-default text-[10px]">
                                                   {vc.vote_code}
                                                 </span>
-                                                <span className="text-slate-500 text-[10px]">({vc.count} warrants)</span>
+                                                <span className="text-text-muted text-[10px]">({vc.count} warrants)</span>
                                               </div>
                                             </td>
                                             <td className="py-2 px-3 text-center">
                                               {vcDocNos.length > 0 ? (
                                                 <div className="flex flex-wrap gap-1 justify-center max-w-[180px] mx-auto">
                                                   {vcDocNos.map(doc => (
-                                                    <span key={doc} className="font-mono text-[9px] bg-white text-indigo-700 px-1 py-0.2 rounded border border-indigo-100 font-bold">
+                                                    <span key={doc} className="font-mono text-[9px] bg-surface text-indigo-700 px-1 py-0.2 rounded border border-indigo-100 font-bold">
                                                       {doc}
                                                     </span>
                                                   ))}
@@ -1343,18 +1343,18 @@ export const WarrantPage: React.FC = () => {
                                                 <span className="text-slate-300 font-mono text-[10px]">-</span>
                                               )}
                                             </td>
-                                            <td className="py-2 px-4 text-right font-mono tabular-nums text-slate-700">
+                                            <td className="py-2 px-4 text-right font-mono tabular-nums text-text-secondary">
                                               {formatCurrency(vc.allocation).replace('MYR', 'RM')}
                                             </td>
-                                            <td className="py-2 px-4 text-right font-mono tabular-nums text-slate-500">
+                                            <td className="py-2 px-4 text-right font-mono tabular-nums text-text-muted">
                                               {formatCurrency(vc.expenses).replace('MYR', 'RM')}
                                             </td>
-                                            <td className={cn('py-2 px-4 text-right font-mono tabular-nums font-semibold', vc.balance < 0 ? 'text-rose-600' : 'text-slate-700')}>
+                                            <td className={cn('py-2 px-4 text-right font-mono tabular-nums font-semibold', vc.balance < 0 ? 'text-rose-600' : 'text-text-secondary')}>
                                               {formatCurrency(vc.balance).replace('MYR', 'RM')}
                                             </td>
                                             <td className="py-2 px-4">
                                               <div className="flex items-center gap-2">
-                                                <div className="flex-1 h-1 bg-slate-100 rounded-full overflow-hidden">
+                                                <div className="flex-1 h-1 bg-subtle rounded-full overflow-hidden">
                                                   <div className={`h-full rounded-full ${vcHealth.barClass}`} style={{ width: `${Math.min(vcUsage, 100)}%` }} />
                                                 </div>
                                                 <span className="font-mono text-[9px] font-bold text-slate-400 w-10 text-right tabular-nums">
@@ -1392,14 +1392,14 @@ export const WarrantPage: React.FC = () => {
             </div>
           </div>
         )}        {/* Main Records Table Registry Card Wrapper */}
-        <div className="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/30 border border-slate-200/80 overflow-hidden relative z-10">
-          <div className="p-6 lg:p-8 border-b border-slate-100 flex items-center justify-between">
+        <div className="bg-surface rounded-[2.5rem] shadow-xl shadow-slate-200/30 border border-border-default overflow-hidden relative z-10">
+          <div className="p-6 lg:p-8 border-b border-border-subtle flex items-center justify-between">
             <div>
-              <h3 className="text-lg font-black text-slate-900 tracking-tight flex items-center gap-2">
-                <FileText className="w-5 h-5 text-indigo-950" />
+              <h3 className="text-lg font-black text-text-primary tracking-tight flex items-center gap-2">
+                <FileText className="w-5 h-5 text-indigo-400 dark:text-indigo-300 font-bold" />
                 Warrant Records
               </h3>
-              <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-0.5">{filteredWarrants.length} items logged</p>
+              <p className="text-xs text-text-muted font-bold uppercase tracking-widest mt-0.5">{filteredWarrants.length} items logged</p>
             </div>
           </div>
           
@@ -1408,28 +1408,28 @@ export const WarrantPage: React.FC = () => {
             <div className="hidden lg:block">
               <table className="w-full border-collapse">
                 <thead>
-                  <tr className="bg-gradient-to-r from-slate-50 to-indigo-50/10 border-b border-slate-200/80">
+                  <tr className="bg-subtle/50 border-b border-border-default">
                     <th className="w-1.5 p-0" />
-                    <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">Date</th>
-                    <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">Document No</th>
-                    <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">Vote</th>
-                    <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">Category</th>
-                    <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">Department</th>
-                    <th className="px-6 py-4 text-right text-[10px] font-black uppercase tracking-[0.2em] text-slate-600">Amount</th>
+                    <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">Date</th>
+                    <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">Document No</th>
+                    <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">Vote</th>
+                    <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">Category</th>
+                    <th className="px-6 py-4 text-left text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">Department</th>
+                    <th className="px-6 py-4 text-right text-[10px] font-black uppercase tracking-[0.2em] text-text-muted">Amount</th>
                     <th className="w-10 px-3 py-4" />
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-border-subtle">
                   {isLoading ? (
                     <tr>
-                      <td colSpan={8} className="py-8 text-center text-slate-400">
+                      <td colSpan={8} className="py-8 text-center text-text-muted font-medium">
                         <Spinner size="md" className="mx-auto mb-2 text-indigo-650" />
                         <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Synchronizing records...</span>
                       </td>
                     </tr>
                   ) : paginatedWarrants.length === 0 ? (
                     <tr>
-                      <td colSpan={8} className="py-12 text-center text-slate-400 font-bold uppercase tracking-widest text-[10px]">
+                      <td colSpan={8} className="py-12 text-center text-text-muted font-medium font-bold uppercase tracking-widest text-[10px]">
                         No warrants matching parameters
                       </td>
                     </tr>
@@ -1438,36 +1438,36 @@ export const WarrantPage: React.FC = () => {
                       <tr 
                         key={w.id} 
                         onClick={() => handleRowClick(w)}
-                        className="hover:bg-slate-50/50 transition-colors duration-200 group cursor-pointer relative h-16"
+                        className="hover:bg-subtle/50 transition-colors duration-200 group cursor-pointer relative h-16"
                       >
                         {/* Slide-in Hover Accent Indicator */}
                         <td className="w-1.5 p-0 relative">
                           <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-indigo-650 scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-center rounded-r" />
                         </td>
                         <td className="px-6 py-4">
-                          <span className="font-semibold text-xs text-slate-700 tabular-nums">{formatDate(w.warrant_date)}</span>
+                          <span className="font-semibold text-xs text-text-secondary tabular-nums">{formatDate(w.warrant_date)}</span>
                         </td>
                         <td className="px-6 py-4">
-                          <span className="font-mono text-xs text-slate-900 font-black group-hover:text-indigo-600 transition-colors tabular-nums">{w.document_no}</span>
+                          <span className="font-mono text-xs text-text-primary font-black group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors tabular-nums">{w.document_no}</span>
                         </td>
                         <td className="px-6 py-4">
-                          <Badge variant="outline" className="font-mono text-[10px] font-bold px-2.5 py-0.5 rounded-lg bg-slate-100/90 border-slate-200 text-slate-800">{w.vote_code}</Badge>
+                          <Badge variant="outline" className="font-mono text-[10px] font-bold px-2.5 py-0.5 rounded-lg bg-subtle border-border-default text-text-primary">{w.vote_code}</Badge>
                         </td>
                         <td className="px-6 py-4">
-                          <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider border", CATEGORY_COLORS[w.category] || 'bg-slate-100 text-slate-700 border-slate-200')}>
+                          <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider border", CATEGORY_COLORS[w.category] || 'bg-subtle text-text-secondary border-border-default')}>
                             {getCategoryLabel(w.category)}
                           </span>
                         </td>
                         <td className="px-6 py-4">
-                          <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider border", DEPARTMENT_COLORS[w.department] || 'bg-slate-100 text-slate-700 border-slate-200')}>
+                          <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-lg text-[10px] font-black uppercase tracking-wider border", DEPARTMENT_COLORS[w.department] || 'bg-subtle text-text-secondary border-border-default')}>
                             {getDepartmentLabel(w.department)}
                           </span>
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <span className="font-black text-slate-900 tabular-nums">{formatCurrency(Number(w.amount))}</span>
+                          <span className="font-black text-text-primary tabular-nums">{formatCurrency(Number(w.amount))}</span>
                         </td>
                         <td className="w-10 px-3 py-4 text-right">
-                          <ChevronRight className="w-4 h-4 text-slate-400 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" />
+                          <ChevronRight className="w-4 h-4 text-slate-400 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0 transition-colors duration-150" />
                         </td>
                       </tr>
                     ))
@@ -1484,20 +1484,20 @@ export const WarrantPage: React.FC = () => {
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Synchronizing records...</p>
                 </div>
               ) : paginatedWarrants.length === 0 ? (
-                <div className="text-center py-16 bg-slate-50/50 rounded-3xl border border-dashed border-slate-200">
+                <div className="text-center py-16 bg-subtle/50 rounded-3xl border border-dashed border-border-default">
                   <p className="text-slate-400 font-bold uppercase tracking-widest text-[10px]">No warrants matching parameters</p>
                 </div>
               ) : (
                 paginatedWarrants.map((w) => (
                   <div 
                     key={w.id} 
-                    className="bg-white border-2 border-slate-100 rounded-[2rem] p-5 shadow-sm hover:shadow-md hover:border-slate-200 transition-all duration-200 cursor-pointer"
+                    className="bg-surface border-2 border-border-subtle rounded-[2rem] p-5 shadow-sm hover:shadow-md hover:border-border-default transition-colors duration-150 cursor-pointer"
                     onClick={() => handleRowClick(w)}
                   >
                     <div className="flex justify-between items-start mb-4">
                       <div className="space-y-1">
                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Document ID</span>
-                        <h4 className="text-xs font-mono font-black text-slate-900">{w.document_no}</h4>
+                        <h4 className="text-xs font-mono font-black text-text-primary">{w.document_no}</h4>
                       </div>
                       <div className="text-right">
                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Amount</span>
@@ -1508,21 +1508,21 @@ export const WarrantPage: React.FC = () => {
                     <div className="grid grid-cols-2 gap-4 mb-4 pt-3 border-t border-slate-50">
                       <div className="space-y-1">
                         <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Date</span>
-                        <p className="text-xs font-bold text-slate-700">{formatDate(w.warrant_date)}</p>
+                        <p className="text-xs font-bold text-text-secondary">{formatDate(w.warrant_date)}</p>
                       </div>
                       <div className="space-y-1">
-                        <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">Vote Code</span>
+                        <span className="text-[9px] font-black text-text-muted uppercase tracking-widest">Vote Code</span>
                         <div>
-                          <Badge variant="outline" className="font-mono text-[9px] font-bold px-2.5 py-0.5 h-5 rounded-lg border-slate-200 bg-slate-100 text-slate-800">{w.vote_code}</Badge>
+                          <Badge variant="outline" className="font-mono text-[9px] font-bold px-2.5 py-0.5 h-5 rounded-lg border-border-default bg-subtle text-text-primary">{w.vote_code}</Badge>
                         </div>
                       </div>
                     </div>
 
                     <div className="flex items-center gap-2 pt-3 border-t border-slate-50">
-                      <span className={cn("px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider border", CATEGORY_COLORS[w.category] || 'bg-slate-100 text-slate-700 border-slate-200')}>
+                      <span className={cn("px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider border", CATEGORY_COLORS[w.category] || 'bg-subtle text-text-secondary border-border-default')}>
                         {getCategoryLabel(w.category)}
                       </span>
-                      <span className={cn("px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider border", DEPARTMENT_COLORS[w.department] || 'bg-slate-100 text-slate-700 border-slate-200')}>
+                      <span className={cn("px-2 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider border", DEPARTMENT_COLORS[w.department] || 'bg-subtle text-text-secondary border-border-default')}>
                         {getDepartmentLabel(w.department)}
                       </span>
                     </div>
@@ -1533,22 +1533,22 @@ export const WarrantPage: React.FC = () => {
 
             {/* Pagination Controls */}
             {!isLoading && filteredWarrants.length > 0 && (
-              <div className="mt-8 pt-6 pb-6 px-8 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="mt-8 pt-6 pb-6 px-8 border-t border-border-subtle flex flex-col sm:flex-row items-center justify-between gap-4">
                 {/* Count Summary */}
-                <div className="text-xs font-semibold text-slate-500 flex items-center gap-1.5 uppercase tracking-wider">
-                  Showing <span className="text-slate-900 font-bold">{(currentPage - 1) * pageSize + 1}</span> to <span className="text-slate-900 font-bold">{Math.min(currentPage * pageSize, filteredWarrants.length)}</span> of <span className="text-slate-900 font-bold">{filteredWarrants.length}</span> entries
+                <div className="text-xs font-semibold text-text-muted flex items-center gap-1.5 uppercase tracking-wider">
+                  Showing <span className="text-text-primary font-bold">{(currentPage - 1) * pageSize + 1}</span> to <span className="text-text-primary font-bold">{Math.min(currentPage * pageSize, filteredWarrants.length)}</span> of <span className="text-text-primary font-bold">{filteredWarrants.length}</span> entries
                 </div>
 
                 {/* Page Controls */}
                 <div className="flex flex-wrap items-center gap-3">
                   {/* Jump-to dropdown */}
                   {totalPages > 1 && (
-                    <div className="flex items-center gap-1.5 text-xs text-slate-500 font-semibold bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200/50">
+                    <div className="flex items-center gap-1.5 text-xs text-text-muted font-semibold bg-subtle/50 px-3 py-1.5 rounded-xl border border-border-default">
                       <span>Jump to</span>
                       <select 
                         value={currentPage}
                         onChange={(e) => setCurrentPage(Number(e.target.value))}
-                        className="bg-white border border-slate-200/80 rounded-lg px-1.5 py-0.5 font-bold text-slate-700 outline-none focus:border-indigo-500 cursor-pointer"
+                        className="bg-surface border border-border-default rounded-lg px-1.5 py-0.5 font-bold text-text-secondary outline-none focus:border-indigo-500 cursor-pointer"
                       >
                         {Array.from({ length: totalPages }).map((_, i) => (
                           <option key={i + 1} value={i + 1}>{i + 1}</option>
@@ -1558,18 +1558,18 @@ export const WarrantPage: React.FC = () => {
                   )}
 
                   {/* Standard Pill Controls with Chevron/Chevron Double */}
-                  <div className="flex items-center gap-1 bg-slate-100/60 p-1 rounded-2xl border border-slate-200/20">
+                  <div className="flex items-center gap-1 bg-subtle p-1 rounded-2xl border border-border-default">
                     <button
                       onClick={() => setCurrentPage(1)}
                       disabled={currentPage === 1}
-                      className="w-9 h-9 flex items-center justify-center rounded-xl transition-all disabled:opacity-20 disabled:cursor-not-allowed hover:bg-white hover:shadow-sm text-slate-600 active:scale-95"
+                      className="w-9 h-9 flex items-center justify-center rounded-xl transition-colors disabled:opacity-20 disabled:cursor-not-allowed hover:bg-surface hover:shadow-sm text-text-muted active:scale-95"
                     >
                       <ChevronsLeft className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                       disabled={currentPage === 1}
-                      className="w-9 h-9 flex items-center justify-center rounded-xl transition-all disabled:opacity-20 disabled:cursor-not-allowed hover:bg-white hover:shadow-sm text-slate-600 active:scale-95"
+                      className="w-9 h-9 flex items-center justify-center rounded-xl transition-colors disabled:opacity-20 disabled:cursor-not-allowed hover:bg-surface hover:shadow-sm text-text-muted active:scale-95"
                     >
                       <ChevronLeft className="w-4 h-4" />
                     </button>
@@ -1580,10 +1580,10 @@ export const WarrantPage: React.FC = () => {
                         key={pageNum}
                         onClick={() => setCurrentPage(pageNum)}
                         className={cn(
-                          "h-9 w-9 rounded-xl font-bold text-xs active:scale-95 transition-all border",
+                          "h-9 w-9 rounded-xl font-bold text-xs active:scale-95 transition-colors border",
                           currentPage === pageNum 
                             ? 'bg-slate-900 text-white border-slate-900 shadow-md shadow-slate-900/10' 
-                            : 'border-slate-200/30 text-slate-500 bg-white hover:bg-slate-50'
+                            : 'border-border-default text-text-muted bg-surface hover:bg-subtle/50'
                         )}
                       >
                         {pageNum}
@@ -1593,14 +1593,14 @@ export const WarrantPage: React.FC = () => {
                     <button
                       onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                       disabled={currentPage >= totalPages}
-                      className="w-9 h-9 flex items-center justify-center rounded-xl transition-all disabled:opacity-20 disabled:cursor-not-allowed hover:bg-white hover:shadow-sm text-slate-600 active:scale-95"
+                      className="w-9 h-9 flex items-center justify-center rounded-xl transition-colors disabled:opacity-20 disabled:cursor-not-allowed hover:bg-surface hover:shadow-sm text-text-muted active:scale-95"
                     >
                       <ChevronRight className="w-4 h-4" />
                     </button>
                     <button
                       onClick={() => setCurrentPage(totalPages)}
                       disabled={currentPage >= totalPages}
-                      className="w-9 h-9 flex items-center justify-center rounded-xl transition-all disabled:opacity-20 disabled:cursor-not-allowed hover:bg-white hover:shadow-sm text-slate-600 active:scale-95"
+                      className="w-9 h-9 flex items-center justify-center rounded-xl transition-colors disabled:opacity-20 disabled:cursor-not-allowed hover:bg-surface hover:shadow-sm text-text-muted active:scale-95"
                     >
                       <ChevronsRight className="w-4 h-4" />
                     </button>
@@ -1621,47 +1621,47 @@ export const WarrantPage: React.FC = () => {
       >
         {selectedWarrant && (
           <div className="space-y-6 p-2">
-            <div className="flex items-center gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100">
-              <div className="w-10 h-10 bg-indigo-50 border border-indigo-100 rounded-xl flex items-center justify-center text-indigo-650">
+            <div className="flex items-center gap-4 bg-subtle/50 p-4 rounded-2xl border border-border-subtle">
+              <div className="w-10 h-10 bg-indigo-500/10 border border-indigo-100 rounded-xl flex items-center justify-center text-indigo-650">
                 <FileText className="w-5 h-5" />
               </div>
               <div>
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Warrant Record Document</p>
-                <p className="text-sm font-black text-slate-900 font-mono mt-0.5">{selectedWarrant.document_no}</p>
+                <p className="text-sm font-black text-text-primary font-mono mt-0.5">{selectedWarrant.document_no}</p>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-5">
-              <div className="bg-slate-50/40 border border-slate-100 p-4 rounded-2xl">
+              <div className="bg-subtle/50 border border-border-subtle p-4 rounded-2xl">
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Document No</p>
-                <p className="text-xs font-black text-slate-900 font-mono mt-1">{selectedWarrant.document_no}</p>
+                <p className="text-xs font-black text-text-primary font-mono mt-1">{selectedWarrant.document_no}</p>
               </div>
-              <div className="bg-slate-50/40 border border-slate-100 p-4 rounded-2xl">
+              <div className="bg-subtle/50 border border-border-subtle p-4 rounded-2xl">
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Date</p>
-                <p className="text-xs font-bold text-slate-900 mt-1">{formatDate(selectedWarrant.warrant_date)}</p>
+                <p className="text-xs font-bold text-text-primary mt-1">{formatDate(selectedWarrant.warrant_date)}</p>
               </div>
-              <div className="bg-slate-50/40 border border-slate-100 p-4 rounded-2xl">
+              <div className="bg-subtle/50 border border-border-subtle p-4 rounded-2xl">
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Amount</p>
                 <p className="text-base font-black text-indigo-650 tabular-nums mt-1">{formatCurrency(Number(selectedWarrant.amount))}</p>
               </div>
-              <div className="bg-slate-50/40 border border-slate-100 p-4 rounded-2xl">
+              <div className="bg-subtle/50 border border-border-subtle p-4 rounded-2xl">
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Category</p>
                 <div className="mt-1">
-                  <Badge variant="outline" className={cn("px-2.5 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider border", CATEGORY_COLORS[selectedWarrant.category] || 'bg-slate-100 text-slate-700 border-slate-200')}>
+                  <Badge variant="outline" className={cn("px-2.5 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider border", CATEGORY_COLORS[selectedWarrant.category] || 'bg-subtle text-text-secondary border-border-default')}>
                     {getCategoryLabel(selectedWarrant.category)}
                   </Badge>
                 </div>
               </div>
-              <div className="bg-slate-50/40 border border-slate-100 p-4 rounded-2xl">
+              <div className="bg-subtle/50 border border-border-subtle p-4 rounded-2xl">
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Vote Code & Activity</p>
-                <p className="text-xs font-mono font-bold text-slate-700 mt-1">
+                <p className="text-xs font-mono font-bold text-text-secondary mt-1">
                   Vote {selectedWarrant.vote_code} • {selectedWarrant.vote_activity}
                 </p>
               </div>
-              <div className="bg-slate-50/40 border border-slate-100 p-4 rounded-2xl">
+              <div className="bg-subtle/50 border border-border-subtle p-4 rounded-2xl">
                 <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Department</p>
                 <div className="mt-1">
-                  <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider border", DEPARTMENT_COLORS[selectedWarrant.department] || 'bg-slate-100 text-slate-700 border-slate-200')}>
+                  <span className={cn("inline-flex items-center px-2.5 py-0.5 rounded-lg text-[9px] font-black uppercase tracking-wider border", DEPARTMENT_COLORS[selectedWarrant.department] || 'bg-subtle text-text-secondary border-border-default')}>
                     {getDepartmentLabel(selectedWarrant.department)}
                   </span>
                 </div>
@@ -1669,33 +1669,33 @@ export const WarrantPage: React.FC = () => {
             </div>
 
             {selectedWarrant.created_by_user && (
-              <div className="pt-4 border-t border-slate-100 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500">
+              <div className="pt-4 border-t border-border-subtle flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-subtle flex items-center justify-center text-text-muted">
                   <User className="w-4 h-4" />
                 </div>
                 <div className="text-[10px]">
-                  <p className="font-bold text-slate-400 uppercase tracking-wider">Logged By</p>
-                  <p className="font-black text-slate-800">{selectedWarrant.created_by_user.full_name}</p>
+                  <p className="font-bold text-text-secondary font-bold uppercase tracking-wider">Logged By</p>
+                  <p className="font-black text-text-primary">{selectedWarrant.created_by_user.full_name}</p>
                 </div>
               </div>
             )}
 
-            <div className="pt-6 border-t border-slate-100 flex justify-end gap-3">
+            <div className="pt-6 border-t border-border-subtle flex justify-end gap-3">
               <button 
                 onClick={handleDeleteFromDetails} 
-                className="h-10 px-5 rounded-xl border border-rose-200 hover:border-rose-300 bg-white hover:bg-rose-50 text-rose-600 font-bold text-xs flex items-center gap-1.5 transition-all active:scale-95 shadow-sm"
+                className="h-10 px-5 rounded-xl border border-rose-500/20 hover:border-rose-300 bg-surface hover:bg-rose-500/10 text-rose-600 font-bold text-xs flex items-center gap-1.5 transition-colors active:scale-95 shadow-sm"
               >
                 <Trash2 className="w-4 h-4" /> Delete
               </button>
               <button 
                 onClick={handleEdit} 
-                className="h-10 px-5 rounded-xl border border-indigo-200 hover:border-indigo-300 bg-white hover:bg-indigo-50 text-indigo-600 font-bold text-xs flex items-center gap-1.5 transition-all active:scale-95 shadow-sm"
+                className="h-10 px-5 rounded-xl border border-indigo-500/20 hover:border-indigo-300 bg-surface hover:bg-indigo-500/10 text-indigo-600 font-bold text-xs flex items-center gap-1.5 transition-colors active:scale-95 shadow-sm"
               >
                 <Edit className="w-4 h-4" /> Edit
               </button>
               <button 
                 onClick={() => setIsDetailsOpen(false)} 
-                className="h-10 px-5 bg-gradient-to-r from-slate-900 to-indigo-950 hover:from-slate-950 hover:to-black text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-95"
+                className="h-10 px-5 bg-surface border border-border-default hover:from-slate-950 hover:to-black text-white font-bold text-xs rounded-xl shadow-md transition-colors active:scale-95"
               >
                 Close
               </button>
@@ -1714,19 +1714,19 @@ export const WarrantPage: React.FC = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-2">
-              <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Warrant Date</label>
-              <Input type="date" {...register('warrant_date')} error={errors.warrant_date?.message} className="rounded-xl border-slate-200 h-11 text-sm font-semibold" />
+              <label className="text-xs font-black text-text-muted uppercase tracking-widest">Warrant Date</label>
+              <Input type="date" {...register('warrant_date')} error={errors.warrant_date?.message} className="rounded-xl border-border-default h-11 text-sm font-semibold" />
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Document No</label>
-              <Input {...register('document_no')} placeholder="e.g. W/2024/001" error={errors.document_no?.message} className="rounded-xl border-slate-200 h-11 text-sm font-semibold" />
+              <label className="text-xs font-black text-text-muted uppercase tracking-widest">Document No</label>
+              <Input {...register('document_no')} placeholder="e.g. W/2024/001" error={errors.document_no?.message} className="rounded-xl border-border-default h-11 text-sm font-semibold" />
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Vote Code</label>
+              <label className="text-xs font-black text-text-muted uppercase tracking-widest">Vote Code</label>
               <select 
                 value={selectedVoteCodeOption} 
                 onChange={handleVoteCodeSelectChange}
-                className="w-full h-11 px-4 rounded-xl border border-slate-200 text-sm font-semibold focus:ring-2 focus:ring-slate-900/10 focus:border-slate-300 outline-none bg-white"
+                className="w-full h-11 px-4 rounded-xl border border-border-default text-sm font-semibold focus:ring-2 focus:ring-slate-900/10 focus:border-border-default outline-none bg-surface"
               >
                 <option value="">Select Vote Code</option>
                 {WARRANT_VOTE_CODES.map(v => (
@@ -1754,45 +1754,45 @@ export const WarrantPage: React.FC = () => {
                     value={customVoteCode}
                     onChange={handleCustomVoteCodeChange}
                     placeholder="e.g. 080703 or VOT-KHAS-01"
-                    className="rounded-xl border-indigo-200 focus:border-indigo-500 focus:ring-indigo-500/20 h-11 text-sm font-bold font-mono bg-indigo-50/20"
+                    className="rounded-xl border-indigo-500/20 focus:border-indigo-500 focus:ring-indigo-500/20 h-11 text-sm font-bold font-mono bg-indigo-500/10"
                     error={voteCodeCustomError}
                   />
                 </motion.div>
               )}
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Vote Activity</label>
-              <select {...register('vote_activity')} className="w-full h-11 px-4 rounded-xl border border-slate-200 text-sm font-semibold focus:ring-2 focus:ring-slate-900/10 focus:border-slate-300 outline-none bg-white">
+              <label className="text-xs font-black text-text-muted uppercase tracking-widest">Vote Activity</label>
+              <select {...register('vote_activity')} className="w-full h-11 px-4 rounded-xl border border-border-default text-sm font-semibold focus:ring-2 focus:ring-slate-900/10 focus:border-border-default outline-none bg-surface">
                 <option value="">Select Activity</option>
                 {WARRANT_VOTE_ACTIVITIES.map(a => <option key={a.value} value={a.value}>{a.label} ({a.value})</option>)}
               </select>
               {errors.vote_activity && <p className="text-xs text-rose-500 mt-1">{errors.vote_activity.message}</p>}
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Category</label>
-              <select {...register('category')} className="w-full h-11 px-4 rounded-xl border border-slate-200 text-sm font-semibold focus:ring-2 focus:ring-slate-900/10 focus:border-slate-300 outline-none bg-white">
+              <label className="text-xs font-black text-text-muted uppercase tracking-widest">Category</label>
+              <select {...register('category')} className="w-full h-11 px-4 rounded-xl border border-border-default text-sm font-semibold focus:ring-2 focus:ring-slate-900/10 focus:border-border-default outline-none bg-surface">
                 <option value="">Select Category</option>
                 {WARRANT_CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
               </select>
               {errors.category && <p className="text-xs text-rose-500 mt-1">{errors.category.message}</p>}
             </div>
             <div className="space-y-2">
-              <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Department</label>
-              <select {...register('department')} className="w-full h-11 px-4 rounded-xl border border-slate-200 text-sm font-semibold focus:ring-2 focus:ring-slate-900/10 focus:border-slate-300 outline-none bg-white">
+              <label className="text-xs font-black text-text-muted uppercase tracking-widest">Department</label>
+              <select {...register('department')} className="w-full h-11 px-4 rounded-xl border border-border-default text-sm font-semibold focus:ring-2 focus:ring-slate-900/10 focus:border-border-default outline-none bg-surface">
                 <option value="">Select Department</option>
                 {WARRANT_DEPARTMENTS.map(d => <option key={d.value} value={d.value}>{d.label}</option>)}
               </select>
               {errors.department && <p className="text-xs text-rose-500 mt-1">{errors.department.message}</p>}
             </div>
             <div className="space-y-2 md:col-span-2">
-              <label className="text-xs font-black text-slate-500 uppercase tracking-widest">Amount (MYR)</label>
+              <label className="text-xs font-black text-text-muted uppercase tracking-widest">Amount (MYR)</label>
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">RM</span>
                 <input
                   type="text"
                   value={formattedAmount}
                   onChange={handleAmountChange}
-                  className="w-full h-12 pl-12 pr-4 rounded-xl border border-slate-200 font-bold text-lg text-slate-900 focus:ring-2 focus:ring-slate-900/10 focus:border-slate-300 outline-none bg-white"
+                  className="w-full h-12 pl-12 pr-4 rounded-xl border border-border-default font-bold text-lg text-text-primary focus:ring-2 focus:ring-slate-900/10 focus:border-border-default outline-none bg-surface"
                   placeholder="0.00"
                 />
               </div>
@@ -1800,18 +1800,18 @@ export const WarrantPage: React.FC = () => {
             </div>
           </div>
 
-          <div className="pt-6 border-t border-slate-100 flex justify-end gap-3">
+          <div className="pt-6 border-t border-border-subtle flex justify-end gap-3">
             <button
               type="button"
               onClick={resetModalForm}
-              className="h-10 px-5 rounded-xl border border-slate-200 hover:border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs active:scale-95 transition-all shadow-sm"
+              className="h-10 px-5 rounded-xl border border-border-default hover:border-border-default bg-surface hover:bg-subtle/50 text-text-secondary font-bold text-xs active:scale-95 transition-colors shadow-sm"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="h-10 px-6 bg-gradient-to-r from-slate-900 to-indigo-950 hover:from-slate-950 hover:to-black text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-95 flex items-center justify-center min-w-[120px]"
+              className="h-10 px-6 bg-surface border border-border-default hover:from-slate-950 hover:to-black text-white font-bold text-xs rounded-xl shadow-md transition-colors active:scale-95 flex items-center justify-center min-w-[120px]"
             >
               {isSubmitting ? <Spinner size="sm" /> : isEditing ? 'Update Warrant' : 'Create Warrant'}
             </button>

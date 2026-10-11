@@ -225,7 +225,7 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto animate-fade-in">
-      <div className="bg-white w-full max-w-4xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="bg-surface w-full max-w-4xl rounded-3xl shadow-2xl border border-border-default overflow-hidden flex flex-col max-h-[90vh]">
         {/* Modal Top Header */}
         <div className="bg-gradient-to-r from-slate-900 via-teal-950 to-emerald-950 p-5 sm:p-6 text-white flex items-center justify-between relative overflow-hidden flex-shrink-0">
           <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
@@ -252,43 +252,43 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-300 hover:text-white transition-all cursor-pointer relative z-10"
+            className="p-2 rounded-xl bg-white/10 hover:bg-surface/20 text-slate-300 hover:text-white transition-colors cursor-pointer relative z-10"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Sync Status Banner */}
-        <div className="bg-slate-50 border-b border-slate-200 p-4 px-6 flex flex-wrap items-center justify-between gap-3 text-xs flex-shrink-0">
+        <div className="bg-subtle/50 border-b border-border-default p-4 px-6 flex flex-wrap items-center justify-between gap-3 text-xs flex-shrink-0">
           <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-1.5 text-slate-700">
+            <div className="flex items-center gap-1.5 text-text-secondary">
               <Database className="w-4 h-4 text-emerald-600" />
-              <span>Jumlah Garis Panduan: <strong className="font-bold text-slate-900">{syncMeta.totalGuidelines}</strong></span>
+              <span>Jumlah Garis Panduan: <strong className="font-bold text-text-primary">{syncMeta.totalGuidelines}</strong></span>
             </div>
-            <div className="flex items-center gap-1.5 text-slate-700">
+            <div className="flex items-center gap-1.5 text-text-secondary">
               <Clock className="w-4 h-4 text-teal-600" />
-              <span>Terakhir Disegerakkan: <strong className="font-bold text-slate-900">{new Date(syncMeta.lastSyncedAt).toLocaleString('ms-MY')}</strong></span>
+              <span>Terakhir Disegerakkan: <strong className="font-bold text-text-primary">{new Date(syncMeta.lastSyncedAt).toLocaleString('ms-MY')}</strong></span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className={`w-2 h-2 rounded-full ${syncMeta.status === 'ONLINE' ? 'bg-emerald-500 animate-pulse' : 'bg-blue-500'}`} />
-              <span className="font-extrabold uppercase text-[10px] tracking-wider text-slate-600">{syncMeta.status}</span>
+              <span className="font-extrabold uppercase text-[10px] tracking-wider text-text-muted">{syncMeta.status}</span>
             </div>
           </div>
 
-          <span className="text-[11px] font-mono text-slate-500 bg-white px-2 py-0.5 rounded-md border border-slate-200">
+          <span className="text-[11px] font-mono text-text-muted bg-surface px-2 py-0.5 rounded-md border border-border-default">
             v{syncMeta.version}
           </span>
         </div>
 
         {/* Tab Navigation Ribbon */}
-        <div className="flex border-b border-slate-200 bg-white px-4 sm:px-6 gap-2 overflow-x-auto flex-shrink-0">
+        <div className="flex border-b border-border-default bg-surface px-4 sm:px-6 gap-2 overflow-x-auto flex-shrink-0">
           <button
             type="button"
             onClick={() => setActiveTab('sync')}
-            className={`py-3 px-3.5 text-xs font-black border-b-2 transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+            className={`py-3 px-3.5 text-xs font-black border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap cursor-pointer ${
               activeTab === 'sync'
                 ? 'border-emerald-600 text-emerald-700'
-                : 'border-transparent text-slate-500 hover:text-slate-900'
+                : 'border-transparent text-text-muted hover:text-text-primary'
             }`}
           >
             <Globe className="w-3.5 h-3.5" />
@@ -298,10 +298,10 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('import')}
-            className={`py-3 px-3.5 text-xs font-black border-b-2 transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+            className={`py-3 px-3.5 text-xs font-black border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap cursor-pointer ${
               activeTab === 'import'
                 ? 'border-emerald-600 text-emerald-700'
-                : 'border-transparent text-slate-500 hover:text-slate-900'
+                : 'border-transparent text-text-muted hover:text-text-primary'
             }`}
           >
             <Upload className="w-3.5 h-3.5" />
@@ -311,10 +311,10 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('export')}
-            className={`py-3 px-3.5 text-xs font-black border-b-2 transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+            className={`py-3 px-3.5 text-xs font-black border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap cursor-pointer ${
               activeTab === 'export'
                 ? 'border-emerald-600 text-emerald-700'
-                : 'border-transparent text-slate-500 hover:text-slate-900'
+                : 'border-transparent text-text-muted hover:text-text-primary'
             }`}
           >
             <Download className="w-3.5 h-3.5" />
@@ -324,10 +324,10 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('add')}
-            className={`py-3 px-3.5 text-xs font-black border-b-2 transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+            className={`py-3 px-3.5 text-xs font-black border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap cursor-pointer ${
               activeTab === 'add'
                 ? 'border-emerald-600 text-emerald-700'
-                : 'border-transparent text-slate-500 hover:text-slate-900'
+                : 'border-transparent text-text-muted hover:text-text-primary'
             }`}
           >
             <Plus className="w-3.5 h-3.5" />
@@ -337,10 +337,10 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
           <button
             type="button"
             onClick={() => setActiveTab('reset')}
-            className={`py-3 px-3.5 text-xs font-black border-b-2 transition-all flex items-center gap-2 whitespace-nowrap cursor-pointer ${
+            className={`py-3 px-3.5 text-xs font-black border-b-2 transition-colors flex items-center gap-2 whitespace-nowrap cursor-pointer ${
               activeTab === 'reset'
                 ? 'border-rose-600 text-rose-700'
-                : 'border-transparent text-slate-500 hover:text-slate-900'
+                : 'border-transparent text-text-muted hover:text-text-primary'
             }`}
           >
             <RotateCcw className="w-3.5 h-3.5 text-rose-500" />
@@ -353,12 +353,12 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
           {/* TAB 1: ONLINE AUTO-SYNC */}
           {activeTab === 'sync' && (
             <div className="space-y-6">
-              <div className="p-5 bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-200 rounded-2xl space-y-3">
-                <div className="flex items-center gap-2 text-emerald-950 font-black text-sm">
+              <div className="p-5 bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-500/20 rounded-2xl space-y-3">
+                <div className="flex items-center gap-2 text-emerald-400 dark:text-emerald-300 font-bold font-black text-sm">
                   <Sparkles className="w-5 h-5 text-emerald-600" />
                   <span>Penyegerakan Automatik dari Portal Rasmi NAG KKM</span>
                 </div>
-                <p className="text-xs text-emerald-900 leading-relaxed font-medium">
+                <p className="text-xs text-emerald-400 dark:text-emerald-300 font-bold leading-relaxed font-medium">
                   Sistem berhubung secara terus dengan pelayan Garis Panduan Antimikrobial Kebangsaan (NAG) KKM untuk memuat turun semakan dos terkini, pengelasan kategori A1-A17, indikasi baharu, dan nota Stewardship tanpa memerlukan sebarang penulisan kod semula.
                 </p>
 
@@ -370,7 +370,7 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
                       value={customFeedUrl}
                       onChange={e => setCustomFeedUrl(e.target.value)}
                       placeholder="URL Suapan / Endpoint NAG KKM"
-                      className="w-full pl-10 pr-3 py-2.5 bg-white border border-emerald-300 rounded-xl text-xs text-slate-800 font-medium focus:outline-hidden focus:border-emerald-600"
+                      className="w-full pl-10 pr-3 py-2.5 bg-surface border border-emerald-300 rounded-xl text-xs text-text-primary font-medium focus:outline-hidden focus:border-emerald-600"
                     />
                   </div>
 
@@ -378,7 +378,7 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
                     type="button"
                     onClick={handleOnlineSync}
                     disabled={isSyncing}
-                    className="w-full sm:w-auto px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white text-xs font-black rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer transition-all disabled:opacity-50"
+                    className="w-full sm:w-auto px-6 py-2.5 bg-accent-base hover:bg-accent-hover text-white text-xs font-black rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer transition-colors disabled:opacity-50"
                   >
                     <RefreshCw className={`w-4 h-4 ${isSyncing ? 'animate-spin' : ''}`} />
                     <span>{isSyncing ? 'Menyegerakkan...' : 'Semak & Kemaskini Sekarang'}</span>
@@ -390,8 +390,8 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
               {syncResult && (
                 <div className={`p-4 rounded-2xl border-2 flex items-start gap-3 text-xs ${
                   syncResult.success
-                    ? 'bg-emerald-50 border-emerald-300 text-emerald-950'
-                    : 'bg-rose-50 border-rose-300 text-rose-950'
+                    ? 'bg-emerald-500/10 border-emerald-300 text-emerald-400 dark:text-emerald-300 font-bold'
+                    : 'bg-rose-500/10 border-rose-300 text-rose-400 dark:text-rose-300 font-bold'
                 }`}>
                   {syncResult.success ? (
                     <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
@@ -408,13 +408,13 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
               {/* Recent Changes Log */}
               {syncMeta.recentChanges && syncMeta.recentChanges.length > 0 && (
                 <div className="space-y-2">
-                  <h4 className="text-xs font-black text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                  <h4 className="text-xs font-black text-text-primary uppercase tracking-wider flex items-center gap-1.5">
                     <FileText className="w-4 h-4 text-emerald-600" />
                     <span>Log Kemaskini Terkini:</span>
                   </h4>
-                  <div className="bg-slate-50 border border-slate-200 rounded-2xl p-4 space-y-2">
+                  <div className="bg-subtle/50 border border-border-default rounded-2xl p-4 space-y-2">
                     {syncMeta.recentChanges.map((change, idx) => (
-                      <div key={idx} className="flex items-start gap-2 text-xs text-slate-700 font-medium">
+                      <div key={idx} className="flex items-start gap-2 text-xs text-text-secondary font-medium">
                         <ChevronRight className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0 mt-0.5" />
                         <span>{change}</span>
                       </div>
@@ -428,12 +428,12 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
           {/* TAB 2: IMPORT JSON */}
           {activeTab === 'import' && (
             <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 bg-slate-50 border border-slate-200 rounded-2xl">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-4 bg-subtle/50 border border-border-default rounded-2xl">
                 <div>
-                  <h4 className="text-xs font-black text-slate-900">Muat Naik Fail Garis Panduan JSON (.json)</h4>
-                  <p className="text-[11px] text-slate-500">Pilih fail format piawai NAG JSON yang dieksport dari KKM atau hospital lain.</p>
+                  <h4 className="text-xs font-black text-text-primary">Muat Naik Fail Garis Panduan JSON (.json)</h4>
+                  <p className="text-[11px] text-text-muted">Pilih fail format piawai NAG JSON yang dieksport dari KKM atau hospital lain.</p>
                 </div>
-                <label className="px-4 py-2 bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 text-xs font-bold rounded-xl shadow-xs flex items-center gap-2 cursor-pointer transition-all">
+                <label className="px-4 py-2 bg-surface hover:bg-subtle border border-border-default text-text-secondary text-xs font-bold rounded-xl shadow-xs flex items-center gap-2 cursor-pointer transition-colors">
                   <FileJson className="w-4 h-4 text-emerald-600" />
                   <span>Pilih Fail JSON</span>
                   <input type="file" accept=".json" onChange={handleFileUpload} className="hidden" />
@@ -441,19 +441,19 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-700">Atau Tampal Kod JSON Terus di Sini:</label>
+                <label className="text-xs font-bold text-text-secondary">Atau Tampal Kod JSON Terus di Sini:</label>
                 <textarea
                   rows={8}
                   value={importJsonText}
                   onChange={e => setImportJsonText(e.target.value)}
                   placeholder='[\n  {\n    "id": "NAG-A1-001",\n    "conditionName": "Infective Endocarditis",\n    "firstLineTherapy": { ... }\n  }\n]'
-                  className="w-full p-3 font-mono text-xs bg-slate-50 border-2 border-slate-200 rounded-2xl focus:bg-white focus:outline-hidden focus:border-emerald-500"
+                  className="w-full p-3 font-mono text-xs bg-subtle/50 border-2 border-border-default rounded-2xl focus:bg-surface focus:outline-hidden focus:border-emerald-500"
                 />
               </div>
 
               {importStatus && (
                 <div className={`p-3.5 rounded-xl border text-xs font-medium ${
-                  importStatus.success ? 'bg-emerald-50 border-emerald-300 text-emerald-900' : 'bg-rose-50 border-rose-300 text-rose-900'
+                  importStatus.success ? 'bg-emerald-500/10 border-emerald-300 text-emerald-400 dark:text-emerald-300 font-bold' : 'bg-rose-500/10 border-rose-300 text-rose-400 dark:text-rose-300 font-bold'
                 }`}>
                   {importStatus.message}
                 </div>
@@ -462,7 +462,7 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
               <button
                 type="button"
                 onClick={handleImportJson}
-                className="px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer transition-all"
+                className="px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer transition-colors"
               >
                 <Upload className="w-4 h-4" />
                 <span>Import Kandungan ke Sistem</span>
@@ -473,11 +473,11 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
           {/* TAB 3: EXPORT JSON */}
           {activeTab === 'export' && (
             <div className="space-y-5">
-              <div className="p-5 bg-slate-50 border border-slate-200 rounded-2xl space-y-3">
-                <h4 className="text-xs font-black text-slate-900 uppercase tracking-wider">
+              <div className="p-5 bg-subtle/50 border border-border-default rounded-2xl space-y-3">
+                <h4 className="text-xs font-black text-text-primary uppercase tracking-wider">
                   Sandaran &amp; Eksport Pangkalan Data NAG
                 </h4>
-                <p className="text-xs text-slate-600 leading-relaxed font-medium">
+                <p className="text-xs text-text-muted leading-relaxed font-medium">
                   Muat turun keseluruhan koleksi garis panduan klinikal (17 Kategori Dewasa, Pediatrik, dan Neonat) dalam bentuk fail JSON berstruktur untuk tujuan sandaran luar talian atau perkongsian bersama unit hospital lain.
                 </p>
 
@@ -485,7 +485,7 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
                   <button
                     type="button"
                     onClick={handleExportDownload}
-                    className="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer transition-all"
+                    className="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold rounded-xl shadow-md flex items-center gap-2 cursor-pointer transition-colors"
                   >
                     <Download className="w-4 h-4" />
                     <span>Muat Turun Fail .JSON ({syncMeta.totalGuidelines} Rekod)</span>
@@ -497,9 +497,9 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
                       navigator.clipboard.writeText(exportNAGGuidelinesToJSON())
                       alert('JSON berjaya disalin ke papan klip!')
                     }}
-                    className="px-4 py-2.5 bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 text-xs font-bold rounded-xl shadow-xs flex items-center gap-2 cursor-pointer transition-all"
+                    className="px-4 py-2.5 bg-surface hover:bg-subtle border border-border-default text-text-secondary text-xs font-bold rounded-xl shadow-xs flex items-center gap-2 cursor-pointer transition-colors"
                   >
-                    <Copy className="w-4 h-4 text-slate-500" />
+                    <Copy className="w-4 h-4 text-text-muted" />
                     <span>Salin ke Clipboard</span>
                   </button>
                 </div>
@@ -511,7 +511,7 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
           {activeTab === 'add' && (
             <form onSubmit={handleSaveCustomGuideline} className="space-y-4">
               {formAddSuccess && (
-                <div className="p-3.5 bg-emerald-50 border border-emerald-300 rounded-xl text-xs text-emerald-900 font-bold flex items-center gap-2">
+                <div className="p-3.5 bg-emerald-500/10 border border-emerald-300 rounded-xl text-xs text-emerald-400 dark:text-emerald-300 font-bold font-bold flex items-center gap-2">
                   <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                   <span>Garis panduan berjaya disimpan ke pangkalan data tempatan!</span>
                 </div>
@@ -519,7 +519,7 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700">Kumpulan Umur (Population):</label>
+                  <label className="text-xs font-bold text-text-secondary">Kumpulan Umur (Population):</label>
                   <select
                     value={formPopulation}
                     onChange={e => {
@@ -527,7 +527,7 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
                       setFormPopulation(pop)
                       setFormCategoryCode(pop === 'Adult' ? 'A1' : pop === 'Neonatal' ? 'B6' : 'B1')
                     }}
-                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800"
+                    className="w-full p-2.5 bg-subtle/50 border border-border-default rounded-xl text-xs font-bold text-text-primary"
                   >
                     <option value="Adult">Dewasa (Section A: Adult - 17 Kategori A1-A17)</option>
                     <option value="Paediatric">Pediatrik (Section B: Paediatrics - 14 Kategori B1-B14)</option>
@@ -536,7 +536,7 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700">Kategori NAG Rasmi:</label>
+                  <label className="text-xs font-bold text-text-secondary">Kategori NAG Rasmi:</label>
                   <select
                     value={formCategoryCode}
                     onChange={e => {
@@ -546,7 +546,7 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
                         setFormTopic(cat.topics[0].title)
                       }
                     }}
-                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800"
+                    className="w-full p-2.5 bg-subtle/50 border border-border-default rounded-xl text-xs font-bold text-text-primary"
                   >
                     {activeCategories.map(c => (
                       <option key={c.code} value={c.code}>
@@ -560,11 +560,11 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
               {/* Sub-Topic selection if exists */}
               {currentSelectedCategory && currentSelectedCategory.topics.length > 0 && (
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700">Sub-Kategori / Topik Khusus:</label>
+                  <label className="text-xs font-bold text-text-secondary">Sub-Kategori / Topik Khusus:</label>
                   <select
                     value={formTopic}
                     onChange={e => setFormTopic(e.target.value)}
-                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800"
+                    className="w-full p-2.5 bg-subtle/50 border border-border-default rounded-xl text-xs font-bold text-text-primary"
                   >
                     {currentSelectedCategory.topics.map(t => (
                       <option key={t.number} value={t.title}>
@@ -576,89 +576,89 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
               )}
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Nama Penyakit / Indikasi Klinikal:</label>
+                <label className="text-xs font-bold text-text-secondary">Nama Penyakit / Indikasi Klinikal:</label>
                 <input
                   type="text"
                   required
                   placeholder="Contoh: Acute Infective Endocarditis / Melioidosis..."
                   value={formConditionName}
                   onChange={e => setFormConditionName(e.target.value)}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-medium"
+                  className="w-full p-2.5 bg-subtle/50 border border-border-default rounded-xl text-xs text-text-primary font-medium"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Patogen Utama (Asingkan dengan koma):</label>
+                <label className="text-xs font-bold text-text-secondary">Patogen Utama (Asingkan dengan koma):</label>
                 <input
                   type="text"
                   placeholder="Contoh: Staphylococcus aureus, Streptococcus pneumoniae..."
                   value={formPathogens}
                   onChange={e => setFormPathogens(e.target.value)}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-medium"
+                  className="w-full p-2.5 bg-subtle/50 border border-border-default rounded-xl text-xs text-text-primary font-medium"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700">Rejimen Barisan Pertama (1st-Line):</label>
+                  <label className="text-xs font-bold text-text-secondary">Rejimen Barisan Pertama (1st-Line):</label>
                   <input
                     type="text"
                     required
                     placeholder="Contoh: IV Ampicillin 2g Q4H + IV Cloxacillin 2g Q4H"
                     value={formFirstLineRegimen}
                     onChange={e => setFormFirstLineRegimen(e.target.value)}
-                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-medium"
+                    className="w-full p-2.5 bg-subtle/50 border border-border-default rounded-xl text-xs text-text-primary font-medium"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-bold text-slate-700">Tempoh Rawatan (Duration):</label>
+                  <label className="text-xs font-bold text-text-secondary">Tempoh Rawatan (Duration):</label>
                   <input
                     type="text"
                     placeholder="Contoh: 7 - 14 days"
                     value={formFirstLineDuration}
                     onChange={e => setFormFirstLineDuration(e.target.value)}
-                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-medium"
+                    className="w-full p-2.5 bg-subtle/50 border border-border-default rounded-xl text-xs text-text-primary font-medium"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Rejimen Alternatif / Barisan Kedua (2nd-Line):</label>
+                <label className="text-xs font-bold text-text-secondary">Rejimen Alternatif / Barisan Kedua (2nd-Line):</label>
                 <input
                   type="text"
                   placeholder="Contoh: IV Vancomycin 15-20mg/kg Q12H"
                   value={formSecondLineRegimen}
                   onChange={e => setFormSecondLineRegimen(e.target.value)}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-medium"
+                  className="w-full p-2.5 bg-subtle/50 border border-border-default rounded-xl text-xs text-text-primary font-medium"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Pilihan Alahan Penisilin:</label>
+                <label className="text-xs font-bold text-text-secondary">Pilihan Alahan Penisilin:</label>
                 <input
                   type="text"
                   placeholder="Contoh: IV Vancomycin + Gentamicin"
                   value={formAllergyRegimen}
                   onChange={e => setFormAllergyRegimen(e.target.value)}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-medium"
+                  className="w-full p-2.5 bg-subtle/50 border border-border-default rounded-xl text-xs text-text-primary font-medium"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-700">Nota Antimicrobial Stewardship (AMS):</label>
+                <label className="text-xs font-bold text-text-secondary">Nota Antimicrobial Stewardship (AMS):</label>
                 <textarea
                   rows={2}
                   placeholder="Nota semakan 72 jam, pengambilan kultur sebelum antibiotik..."
                   value={formAmsNotes}
                   onChange={e => setFormAmsNotes(e.target.value)}
-                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-medium"
+                  className="w-full p-2.5 bg-subtle/50 border border-border-default rounded-xl text-xs text-text-primary font-medium"
                 />
               </div>
 
               <button
                 type="submit"
-                className="px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-black rounded-xl shadow-md flex items-center gap-2 cursor-pointer transition-all"
+                className="px-6 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-black rounded-xl shadow-md flex items-center gap-2 cursor-pointer transition-colors"
               >
                 <Plus className="w-4 h-4" />
                 <span>Simpan Garis Panduan ke Pangkalan Data</span>
@@ -668,19 +668,19 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
 
           {/* TAB 5: RESET DEFAULTS */}
           {activeTab === 'reset' && (
-            <div className="p-6 bg-rose-50 border-2 border-rose-200 rounded-3xl space-y-4">
-              <div className="flex items-center gap-2.5 text-rose-950 font-black text-sm">
+            <div className="p-6 bg-rose-500/10 border-2 border-rose-500/20 rounded-3xl space-y-4">
+              <div className="flex items-center gap-2.5 text-rose-400 dark:text-rose-300 font-bold font-black text-sm">
                 <AlertCircle className="w-5 h-5 text-rose-600" />
                 <span>Tetapkan Semula Pangkalan Data ke Piawaian Rasmi KKM</span>
               </div>
-              <p className="text-xs text-rose-900 leading-relaxed font-medium">
+              <p className="text-xs text-rose-400 dark:text-rose-300 font-bold leading-relaxed font-medium">
                 Tindakan ini akan memadam semua data cache tempatan dan menetapkan semula garis panduan kepada dataset rasmi KKM NAG Edisi Ke-4 (2024) yang merangkumi semua 17 Kategori Dewasa (A1-A17) dan Pediatrik (P1-P10).
               </p>
 
               <button
                 type="button"
                 onClick={handleResetDefaults}
-                className="px-5 py-2.5 bg-rose-700 hover:bg-rose-800 text-white text-xs font-black rounded-xl shadow-md flex items-center gap-2 cursor-pointer transition-all"
+                className="px-5 py-2.5 bg-rose-700 hover:bg-rose-800 text-white text-xs font-black rounded-xl shadow-md flex items-center gap-2 cursor-pointer transition-colors"
               >
                 <RotateCcw className="w-4 h-4" />
                 <span>Set Semula Sekarang</span>
@@ -690,12 +690,12 @@ export const NAGSyncManagerModal: React.FC<NAGSyncManagerModalProps> = ({
         </div>
 
         {/* Modal Footer */}
-        <div className="p-4 px-6 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500 flex-shrink-0">
+        <div className="p-4 px-6 bg-subtle/50 border-t border-border-default flex items-center justify-between text-xs text-text-muted flex-shrink-0">
           <span>Hospital Operation and Management Ecosystem (H.O.M.E.) • MyFormulari</span>
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold rounded-xl cursor-pointer"
+            className="px-4 py-2 bg-surface hover:bg-subtle border border-border-default text-text-secondary font-bold rounded-xl cursor-pointer"
           >
             Tutup
           </button>

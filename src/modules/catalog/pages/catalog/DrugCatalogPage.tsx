@@ -37,10 +37,10 @@ interface KPICardProps {
 
 const KPICard: React.FC<KPICardProps> = ({ title, value, color }) => {
   const colorClasses = {
-    primary: 'bg-teal-50 border-teal-200 text-teal-700',
-    success: 'bg-emerald-50 border-emerald-200 text-emerald-700',
-    warning: 'bg-amber-50 border-amber-200 text-amber-700',
-    error: 'bg-rose-50 border-rose-200 text-rose-700',
+    primary: 'bg-accent-base/10 border-accent-base/20 text-teal-700',
+    success: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-700',
+    warning: 'bg-amber-500/10 border-amber-500/20 text-amber-700',
+    error: 'bg-rose-500/10 border-rose-500/20 text-rose-700',
   }
 
   return (
@@ -189,12 +189,12 @@ const DrugFormModal: React.FC<DrugFormModalProps> = ({
       <form onSubmit={handleSubmit} className="space-y-6 max-h-[calc(90vh-120px)] overflow-y-auto pr-2">
         {/* Basic Information Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+          <h3 className="text-lg font-semibold text-text-primary border-b border-border-default pb-2">
             Basic Information
           </h3>
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Item Code *</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Item Code *</label>
               <Input
                 value={formData.drug_code || ''}
                 onChange={(e) => setFormData({ ...formData, drug_code: e.target.value })}
@@ -202,7 +202,7 @@ const DrugFormModal: React.FC<DrugFormModalProps> = ({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Drug Name *</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Drug Name *</label>
               <Input
                 value={formData.drug_name || ''}
                 onChange={(e) => setFormData({ ...formData, drug_name: e.target.value })}
@@ -210,14 +210,14 @@ const DrugFormModal: React.FC<DrugFormModalProps> = ({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Generic Name</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Generic Name</label>
               <Input
                 value={formData.generic_name || ''}
                 onChange={(e) => setFormData({ ...formData, generic_name: e.target.value })}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Brand Name</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Brand Name</label>
               <Input
                 value={formData.brand_name || ''}
                 onChange={(e) => setFormData({ ...formData, brand_name: e.target.value })}
@@ -228,19 +228,19 @@ const DrugFormModal: React.FC<DrugFormModalProps> = ({
 
         {/* Catalog Information Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+          <h3 className="text-lg font-semibold text-text-primary border-b border-border-default pb-2">
             Catalog Information
           </h3>
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Item Sub Class</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Item Sub Class</label>
               <Input
                 value={(formData as any).item_sub_class || ''}
                 onChange={(e) => setFormData({ ...formData, item_sub_class: e.target.value })}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Drug Category</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Drug Category</label>
               <Select
                 value={formData.category_id || ''}
                 onChange={(e) => setFormData({ ...formData, category_id: e.target.value })}
@@ -254,7 +254,7 @@ const DrugFormModal: React.FC<DrugFormModalProps> = ({
               </Select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Packaging Description</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Packaging Description</label>
               <Input
                 value={(formData as any).packaging_description || ''}
                 onChange={(e) => setFormData({ ...formData, packaging_description: e.target.value })}
@@ -262,21 +262,21 @@ const DrugFormModal: React.FC<DrugFormModalProps> = ({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">SKU</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">SKU</label>
               <Input
                 value={formData.sku || ''}
                 onChange={(e) => setFormData({ ...formData, sku: e.target.value })}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">PKU</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">PKU</label>
               <Input
                 value={formData.pku || ''}
                 onChange={(e) => setFormData({ ...formData, pku: e.target.value })}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Supplier</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Supplier</label>
               <Select
                 value={formData.supplier_id || ''}
                 onChange={(e) => setFormData({ ...formData, supplier_id: e.target.value })}
@@ -290,7 +290,7 @@ const DrugFormModal: React.FC<DrugFormModalProps> = ({
               </Select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Procurement Vote</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Procurement Vote</label>
               <Select
                 value={formData.procurement_vote || ''}
                 onChange={(e) =>
@@ -308,7 +308,7 @@ const DrugFormModal: React.FC<DrugFormModalProps> = ({
               </Select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Status</label>
               <Select
                 value={formData.status || 'active'}
                 onChange={(e) =>
@@ -323,7 +323,7 @@ const DrugFormModal: React.FC<DrugFormModalProps> = ({
               </Select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Price (RM)</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Price (RM)</label>
               <Input
                 type="number"
                 step="0.01"
@@ -336,12 +336,12 @@ const DrugFormModal: React.FC<DrugFormModalProps> = ({
 
         {/* Contract Information Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+          <h3 className="text-lg font-semibold text-text-primary border-b border-border-default pb-2">
             Contract Details
           </h3>
           <div className="grid grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Contract Number</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Contract Number</label>
               <Input
                 value={(formData as any).cc_contract_number || ''}
                 onChange={(e) => setFormData({ ...formData, cc_contract_number: e.target.value })}
@@ -349,7 +349,7 @@ const DrugFormModal: React.FC<DrugFormModalProps> = ({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Contract Status</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Contract Status</label>
               <Select
                 value={(formData as any).cc_contract_status || 'active'}
                 onChange={(e) => setFormData({ ...formData, cc_contract_status: e.target.value })}
@@ -361,7 +361,7 @@ const DrugFormModal: React.FC<DrugFormModalProps> = ({
               </Select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Contract Start Date</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Contract Start Date</label>
               <Input
                 type="date"
                 value={(formData as any).cc_contract_start_date || ''}
@@ -369,7 +369,7 @@ const DrugFormModal: React.FC<DrugFormModalProps> = ({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Contract End Date</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Contract End Date</label>
               <Input
                 type="date"
                 value={(formData as any).cc_contract_end_date || ''}
@@ -381,12 +381,12 @@ const DrugFormModal: React.FC<DrugFormModalProps> = ({
 
         {/* Drug Details Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+          <h3 className="text-lg font-semibold text-text-primary border-b border-border-default pb-2">
             Drug Details
           </h3>
           <div className="grid grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Dosage Form</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Dosage Form</label>
               <Select
                 value={formData.dosage_form || 'tablet'}
                 onChange={(e) =>
@@ -413,14 +413,14 @@ const DrugFormModal: React.FC<DrugFormModalProps> = ({
               </Select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Strength</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Strength</label>
               <Input
                 value={formData.strength || ''}
                 onChange={(e) => setFormData({ ...formData, strength: e.target.value })}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Unit of Measure</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Unit of Measure</label>
               <Input
                 value={formData.unit_of_measure || ''}
                 onChange={(e) => setFormData({ ...formData, unit_of_measure: e.target.value })}
@@ -431,12 +431,12 @@ const DrugFormModal: React.FC<DrugFormModalProps> = ({
 
         {/* Stock Management Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+          <h3 className="text-lg font-semibold text-text-primary border-b border-border-default pb-2">
             Stock Management
           </h3>
           <div className="grid grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Min Stock Level</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Min Stock Level</label>
               <Input
                 type="number"
                 value={formData.min_stock_level || 0}
@@ -446,7 +446,7 @@ const DrugFormModal: React.FC<DrugFormModalProps> = ({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Max Stock Level</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Max Stock Level</label>
               <Input
                 type="number"
                 value={formData.max_stock_level || 0}
@@ -456,7 +456,7 @@ const DrugFormModal: React.FC<DrugFormModalProps> = ({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Reorder Level</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Reorder Level</label>
               <Input
                 type="number"
                 value={formData.reorder_level || 0}
@@ -466,7 +466,7 @@ const DrugFormModal: React.FC<DrugFormModalProps> = ({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Lead Time (Days)</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Lead Time (Days)</label>
               <Input
                 type="number"
                 value={formData.lead_time_days || 7}
@@ -480,7 +480,7 @@ const DrugFormModal: React.FC<DrugFormModalProps> = ({
 
         {/* Additional Settings Section */}
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+          <h3 className="text-lg font-semibold text-text-primary border-b border-border-default pb-2">
             Additional Settings
           </h3>
           <div className="space-y-4">
@@ -490,9 +490,9 @@ const DrugFormModal: React.FC<DrugFormModalProps> = ({
                   type="checkbox"
                   checked={formData.is_controlled || false}
                   onChange={(e) => setFormData({ ...formData, is_controlled: e.target.checked })}
-                  className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
+                  className="w-4 h-4 text-teal-600 border-border-default rounded focus:ring-teal-500"
                 />
-                <span className="text-sm text-gray-700">Controlled Substance</span>
+                <span className="text-sm text-text-secondary">Controlled Substance</span>
               </label>
               <label className="flex items-center gap-2">
                 <input
@@ -501,13 +501,13 @@ const DrugFormModal: React.FC<DrugFormModalProps> = ({
                   onChange={(e) =>
                     setFormData({ ...formData, requires_prescription: e.target.checked })
                   }
-                  className="w-4 h-4 text-teal-600 border-gray-300 rounded focus:ring-teal-500"
+                  className="w-4 h-4 text-teal-600 border-border-default rounded focus:ring-teal-500"
                 />
-                <span className="text-sm text-gray-700">Requires Prescription</span>
+                <span className="text-sm text-text-secondary">Requires Prescription</span>
               </label>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Storage Conditions</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Storage Conditions</label>
               <Input
                 value={formData.storage_conditions || ''}
                 onChange={(e) => setFormData({ ...formData, storage_conditions: e.target.value })}
@@ -517,7 +517,7 @@ const DrugFormModal: React.FC<DrugFormModalProps> = ({
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t sticky bottom-0 bg-white">
+        <div className="flex justify-end gap-3 pt-4 border-t sticky bottom-0 bg-surface">
           <Button type="button" variant="outline" onClick={onClose} disabled={isSaving}>
             Cancel
           </Button>
@@ -991,7 +991,7 @@ export const DrugCatalogPage: React.FC = () => {
           type="checkbox"
           checked={sortedDrugs.length > 0 && selectedIds.length === sortedDrugs.length}
           onChange={handleSelectAll}
-          className="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"
+          className="w-4 h-4 text-indigo-600 border-border-default rounded focus:ring-indigo-500 cursor-pointer"
         />
       ),
       sortable: false,
@@ -1003,7 +1003,7 @@ export const DrugCatalogPage: React.FC = () => {
             e.stopPropagation()
             handleSelectRow(drug.id)
           }}
-          className="w-4 h-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500 cursor-pointer"
+          className="w-4 h-4 text-indigo-600 border-border-default rounded focus:ring-indigo-500 cursor-pointer"
         />
       ),
     },
@@ -1120,10 +1120,10 @@ export const DrugCatalogPage: React.FC = () => {
               handleToggleSingleStatus(drug)
             }}
             title={isAct ? 'Click to deactivate' : 'Click to activate'}
-            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold transition-all shadow-sm ${
+            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold transition-colors shadow-sm ${
               isAct
-                ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200'
-                : 'bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200'
+                ? 'bg-emerald-500/10 text-emerald-700 hover:bg-emerald-100 border border-emerald-500/20'
+                : 'bg-amber-500/10 text-amber-700 hover:bg-amber-100 border border-amber-500/20'
             }`}
           >
             <span className={`w-1.5 h-1.5 rounded-full ${isAct ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`} />
@@ -1180,20 +1180,20 @@ export const DrugCatalogPage: React.FC = () => {
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
           <span className="text-slate-400">Catalog</span>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-          <span className="text-slate-800 font-extrabold tracking-wide">Drug Catalog</span>
+          <span className="text-text-primary font-extrabold tracking-wide">Drug Catalog</span>
         </nav>
 
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative z-20">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-gradient-to-tr from-slate-900 to-indigo-950 border border-slate-800/80 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/10 hover:rotate-2 transition-transform duration-300">
+            <div className="w-14 h-14 bg-surface border border-border-default rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/10 hover:rotate-2 transition-transform duration-300">
               <Pill className="h-6 w-6 text-white" />
             </div>
             <div className="space-y-0.5">
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900">
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-transparent bg-clip-text bg-surface border border-border-default">
                 Drug Catalog
               </h1>
-              <p className="text-slate-500 font-semibold text-[11px] flex items-center gap-1.5">
+              <p className="text-text-muted font-semibold text-[11px] flex items-center gap-1.5">
                 <Sparkles className="w-3 h-3 text-indigo-500" />
                 Comprehensive Pharmacy Formulary & Med Database
               </p>
@@ -1203,7 +1203,7 @@ export const DrugCatalogPage: React.FC = () => {
           <div className="flex flex-wrap items-center gap-2.5">
             <button
               onClick={() => setShowImportModal(true)}
-              className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-bold uppercase tracking-wider text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm flex items-center gap-2"
+              className="px-4 py-2.5 rounded-xl border border-border-default bg-surface text-xs font-bold uppercase tracking-wider text-text-secondary hover:bg-subtle/50 hover:border-border-default transition-colors shadow-sm flex items-center gap-2"
             >
               <FileUp className="w-4 h-4" />
               Import Document
@@ -1211,7 +1211,7 @@ export const DrugCatalogPage: React.FC = () => {
             <button
               onClick={handleExport}
               disabled={isExporting}
-              className="px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-bold uppercase tracking-wider text-slate-700 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm flex items-center gap-2 disabled:opacity-50"
+              className="px-4 py-2.5 rounded-xl border border-border-default bg-surface text-xs font-bold uppercase tracking-wider text-text-secondary hover:bg-subtle/50 hover:border-border-default transition-colors shadow-sm flex items-center gap-2 disabled:opacity-50"
             >
               <Download className="w-4 h-4" />
               {isExporting ? 'Exporting...' : 'Export Data'}
@@ -1221,7 +1221,7 @@ export const DrugCatalogPage: React.FC = () => {
                 setSelectedDrug(null)
                 setShowAddModal(true)
               }}
-              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-slate-900 to-indigo-950 text-white text-xs font-bold uppercase tracking-wider hover:from-slate-800 hover:to-indigo-900 transition-all shadow-md shadow-slate-900/10 flex items-center gap-2"
+              className="px-4 py-2.5 rounded-xl bg-surface border border-border-default text-white text-xs font-bold uppercase tracking-wider hover:from-slate-800 hover:to-indigo-900 transition-colors shadow-md shadow-slate-900/10 flex items-center gap-2"
             >
               <Plus className="w-4 h-4" />
               Add New Drug
@@ -1230,48 +1230,48 @@ export const DrugCatalogPage: React.FC = () => {
         </div>
 
         {/* Elevated Dashboard KPI Metrics Section wrapped in a luxurious white background card */}
-        <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] border border-slate-200 shadow-xl mb-6 relative z-10">
+        <div className="bg-surface p-6 sm:p-8 rounded-[2.5rem] border border-border-default shadow-xl mb-6 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Total Drugs */}
-            <div className="bg-blue-50/50 border-2 border-blue-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-blue-50 hover:border-blue-200 hover:shadow-lg transition-all duration-300">
+            <div className="bg-blue-500/10 border-2 border-blue-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-blue-500/10 hover:border-blue-500/20 hover:shadow-lg transition-colors duration-150">
               <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform" />
               <div className="flex flex-col gap-4 relative z-10">
-                <div className="w-12 h-12 bg-blue-100 border border-blue-200 rounded-2xl flex items-center justify-center text-blue-600 shadow-sm group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 bg-blue-100 border border-blue-500/20 rounded-2xl flex items-center justify-center text-blue-600 shadow-sm group-hover:scale-110 transition-transform">
                   <Pill className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-xs font-black text-blue-900/60 uppercase tracking-widest">Total Formulary</p>
-                  <h3 className="text-2xl sm:text-3xl font-black text-blue-900 mt-1">{kpis.total}</h3>
+                  <p className="text-xs font-black text-blue-400 dark:text-blue-300 font-bold/60 uppercase tracking-widest">Total Formulary</p>
+                  <h3 className="text-2xl sm:text-3xl font-black text-blue-400 dark:text-blue-300 font-bold mt-1">{kpis.total}</h3>
                   <p className="text-xs font-bold text-blue-600 mt-2">Total drugs in catalog</p>
                 </div>
               </div>
             </div>
 
             {/* Active Drugs */}
-            <div className="bg-emerald-50/50 border-2 border-emerald-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-emerald-50 hover:border-emerald-200 hover:shadow-lg transition-all duration-300">
+            <div className="bg-emerald-500/10 border-2 border-emerald-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-emerald-500/10 hover:border-emerald-500/20 hover:shadow-lg transition-colors duration-150">
               <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/10 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform" />
               <div className="flex flex-col gap-4 relative z-10">
-                <div className="w-12 h-12 bg-emerald-100 border border-emerald-200 rounded-2xl flex items-center justify-center text-emerald-600 shadow-sm group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 bg-emerald-100 border border-emerald-500/20 rounded-2xl flex items-center justify-center text-emerald-600 shadow-sm group-hover:scale-110 transition-transform">
                   <TrendingUp className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-xs font-black text-emerald-900/60 uppercase tracking-widest">Active Meds</p>
-                  <h3 className="text-2xl sm:text-3xl font-black text-emerald-900 mt-1">{kpis.active}</h3>
+                  <p className="text-xs font-black text-emerald-400 dark:text-emerald-300 font-bold/60 uppercase tracking-widest">Active Meds</p>
+                  <h3 className="text-2xl sm:text-3xl font-black text-emerald-400 dark:text-emerald-300 font-bold mt-1">{kpis.active}</h3>
                   <p className="text-xs font-bold text-emerald-600 mt-2">Available for procurement</p>
                 </div>
               </div>
             </div>
 
             {/* Inactive Drugs */}
-            <div className="bg-amber-50/50 border-2 border-amber-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-amber-50 hover:border-amber-200 hover:shadow-lg transition-all duration-300">
+            <div className="bg-amber-500/10 border-2 border-amber-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:bg-amber-500/10 hover:border-amber-500/20 hover:shadow-lg transition-colors duration-150">
               <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 rounded-full -mr-16 -mt-16 group-hover:scale-110 transition-transform" />
               <div className="flex flex-col gap-4 relative z-10">
-                <div className="w-12 h-12 bg-amber-100 border border-amber-200 rounded-2xl flex items-center justify-center text-amber-600 shadow-sm group-hover:scale-110 transition-transform">
+                <div className="w-12 h-12 bg-amber-100 border border-amber-500/20 rounded-2xl flex items-center justify-center text-amber-600 shadow-sm group-hover:scale-110 transition-transform">
                   <X className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-xs font-black text-amber-900/60 uppercase tracking-widest">Inactive Meds</p>
-                  <h3 className="text-2xl sm:text-3xl font-black text-amber-950 mt-1">{kpis.inactive}</h3>
+                  <p className="text-xs font-black text-amber-400 dark:text-amber-300 font-bold/60 uppercase tracking-widest">Inactive Meds</p>
+                  <h3 className="text-2xl sm:text-3xl font-black text-amber-400 dark:text-amber-300 font-bold mt-1">{kpis.inactive}</h3>
                   <p className="text-xs font-bold text-amber-600 mt-2">Suspended or discontinued</p>
                 </div>
               </div>
@@ -1281,9 +1281,9 @@ export const DrugCatalogPage: React.FC = () => {
 
       {/* Main Catalog Content */}
       <div className="space-y-6 relative z-20">
-        <div className="bg-white rounded-[2.5rem] border border-slate-200 p-6 sm:p-8 shadow-xl overflow-hidden">
+        <div className="bg-surface rounded-[2.5rem] border border-border-default p-6 sm:p-8 shadow-xl">
           {/* Action Bar / Filters */}
-          <div className="bg-slate-50/50 p-4 rounded-3xl border border-slate-200/60 shadow-sm mb-6 space-y-4">
+          <div className="bg-subtle/50 p-4 rounded-3xl border border-border-default shadow-sm mb-6 space-y-4">
             <div className="flex items-center gap-4">
               <div className="flex-1 relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -1302,14 +1302,14 @@ export const DrugCatalogPage: React.FC = () => {
                   onBlur={() => {
                     setTimeout(() => setShowSuggestions(false), 200)
                   }}
-                  className="pl-11 pr-6 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                  className="pl-11 pr-6 py-2.5 bg-surface border border-border-default rounded-xl text-sm font-semibold text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors outline-none"
                 />
                 {showSuggestions && searchSuggestions.length > 0 && (
-                  <div className="absolute z-30 w-full mt-1 bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+                  <div className="absolute z-30 w-full mt-1 bg-surface border border-border-default rounded-xl shadow-lg max-h-60 overflow-y-auto">
                     {searchSuggestions.map((drug) => (
                       <div
                         key={drug.id}
-                        className="p-2 hover:bg-slate-50 cursor-pointer border-b border-slate-100 last:border-0"
+                        className="p-2 hover:bg-subtle/50 cursor-pointer border-b border-border-subtle last:border-0"
                         onClick={() => {
                           setSearchQuery(drug.drug_name)
                           setShowSuggestions(false)
@@ -1325,7 +1325,7 @@ export const DrugCatalogPage: React.FC = () => {
               </div>
               <button
                 onClick={handleSearch}
-                className="px-5 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-800 transition-all flex items-center gap-2"
+                className="px-5 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-slate-800 transition-colors flex items-center gap-2"
               >
                 <Search className="w-4 h-4" />
                 Search
@@ -1340,7 +1340,7 @@ export const DrugCatalogPage: React.FC = () => {
                   setCurrentPage(1)
                   setSortConfig(undefined)
                 }}
-                className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold text-slate-700 outline-none"
+                className="bg-surface border border-border-default rounded-xl px-4 py-2 text-xs font-bold text-text-secondary outline-none"
               >
                 <option value="">All Categories</option>
                 {categories.map((cat) => (
@@ -1357,7 +1357,7 @@ export const DrugCatalogPage: React.FC = () => {
                   setCurrentPage(1)
                   setSortConfig(undefined)
                 }}
-                className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold text-slate-700 outline-none"
+                className="bg-surface border border-border-default rounded-xl px-4 py-2 text-xs font-bold text-text-secondary outline-none"
               >
                 <option value="">All Suppliers</option>
                 {suppliers.map((sup) => (
@@ -1374,7 +1374,7 @@ export const DrugCatalogPage: React.FC = () => {
                   setCurrentPage(1)
                   setSortConfig(undefined)
                 }}
-                className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold text-slate-700 outline-none"
+                className="bg-surface border border-border-default rounded-xl px-4 py-2 text-xs font-bold text-text-secondary outline-none"
               >
                 <option value="">All Votes</option>
                 <option value="appl">APPL</option>
@@ -1390,7 +1390,7 @@ export const DrugCatalogPage: React.FC = () => {
                   setCurrentPage(1)
                   setSortConfig(undefined)
                 }}
-                className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-xs font-bold text-slate-700 outline-none"
+                className="bg-surface border border-border-default rounded-xl px-4 py-2 text-xs font-bold text-text-secondary outline-none"
               >
                 <option value="">All Status</option>
                 <option value="active">Active</option>
@@ -1400,7 +1400,7 @@ export const DrugCatalogPage: React.FC = () => {
               <button
                 onClick={handleClearFilters}
                 disabled={!hasActiveFilters}
-                className="px-4 py-2 bg-white border border-slate-200 hover:border-slate-300 text-slate-700 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                className="px-4 py-2 bg-surface border border-border-default hover:border-border-default text-text-secondary rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 <X className="w-4 h-4" />
                 Clear Filters
@@ -1427,7 +1427,7 @@ export const DrugCatalogPage: React.FC = () => {
                 <button
                   onClick={() => handleBulkStatusChange('active')}
                   disabled={isBulkUpdating}
-                  className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50"
+                  className="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition-colors shadow-sm flex items-center gap-1.5 disabled:opacity-50"
                 >
                   <CheckCircle className="w-4 h-4" />
                   Activate Selected ({selectedIds.length})
@@ -1435,14 +1435,14 @@ export const DrugCatalogPage: React.FC = () => {
                 <button
                   onClick={() => handleBulkStatusChange('inactive')}
                   disabled={isBulkUpdating}
-                  className="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-bold transition-all shadow-sm flex items-center gap-1.5 disabled:opacity-50"
+                  className="px-3.5 py-1.5 bg-amber-600 hover:bg-amber-500 text-white rounded-xl text-xs font-bold transition-colors shadow-sm flex items-center gap-1.5 disabled:opacity-50"
                 >
                   <XCircle className="w-4 h-4" />
                   Deactivate Selected ({selectedIds.length})
                 </button>
                 <button
                   onClick={() => setSelectedIds([])}
-                  className="px-3 py-1.5 text-slate-400 hover:text-white rounded-xl text-xs font-bold transition-all"
+                  className="px-3 py-1.5 text-slate-400 hover:text-white rounded-xl text-xs font-bold transition-colors"
                 >
                   Clear Selection
                 </button>
@@ -1450,7 +1450,7 @@ export const DrugCatalogPage: React.FC = () => {
             </motion.div>
           )}
 
-          <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm overflow-hidden mb-6">
+          <div className="bg-surface rounded-[2rem] border border-border-subtle shadow-sm overflow-hidden mb-6">
             <Table
               data={sortedDrugs}
               columns={columns}
@@ -1519,7 +1519,7 @@ export const DrugCatalogPage: React.FC = () => {
       >
         <div className="space-y-4">
           <p>Are you sure you want to delete "{selectedDrug?.drug_name}"?</p>
-          <p className="text-sm text-gray-600">This action cannot be undone.</p>
+          <p className="text-sm text-text-muted">This action cannot be undone.</p>
           <div className="flex justify-end gap-3">
             <Button
               variant="outline"

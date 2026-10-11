@@ -389,17 +389,17 @@ export default function ExcelUploadModal({
       {isLoading ? (
         <div className="py-24 flex flex-col items-center justify-center gap-6 max-w-md mx-auto">
           <div className="relative flex items-center justify-center">
-            <div className="w-20 h-20 border-4 border-slate-100 border-t-slate-900 rounded-full animate-spin" />
-            <span className="absolute text-xs font-black text-slate-800">{progressPercent}%</span>
+            <div className="w-20 h-20 border-4 border-border-subtle border-t-slate-900 rounded-full animate-spin" />
+            <span className="absolute text-xs font-black text-text-primary">{progressPercent}%</span>
           </div>
           <div className="text-center space-y-3 w-full">
             <div className="space-y-1">
-              <p className="text-sm font-black text-slate-800 uppercase tracking-widest">{progressStatus || 'Parsing Excel & Matching records...'}</p>
+              <p className="text-sm font-black text-text-primary uppercase tracking-widest">{progressStatus || 'Parsing Excel & Matching records...'}</p>
               <p className="text-xs text-slate-400 font-bold uppercase tracking-tight">Cross-referencing LPO numbers & codes with pharmacy registry</p>
             </div>
-            <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden border border-slate-200 shadow-inner">
+            <div className="w-full bg-subtle h-2.5 rounded-full overflow-hidden border border-border-default shadow-inner">
               <div 
-                className="bg-indigo-600 h-full rounded-full transition-all duration-300 ease-out" 
+                className="bg-indigo-600 h-full rounded-full transition-colors duration-150 ease-out" 
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
@@ -408,10 +408,10 @@ export default function ExcelUploadModal({
       ) : step === 'upload' ? (
         <div className="space-y-6">
           {error && (
-            <div className="bg-rose-50 border-l-4 border-rose-500 p-4 rounded-r-xl flex items-start gap-3">
+            <div className="bg-rose-500/10 border-l-4 border-rose-500 p-4 rounded-r-xl flex items-start gap-3">
               <IconAlertCircle className="w-5 h-5 text-rose-600 shrink-0 mt-0.5" />
               <div>
-                <h4 className="text-xs font-black text-rose-800 uppercase tracking-widest">Upload Error</h4>
+                <h4 className="text-xs font-black text-rose-400 uppercase tracking-widest">Upload Error</h4>
                 <p className="text-xs text-rose-600 mt-1 font-bold">{error}</p>
               </div>
             </div>
@@ -424,10 +424,10 @@ export default function ExcelUploadModal({
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
             className={cn(
-              "border-2 border-dashed rounded-3xl p-12 flex flex-col items-center justify-center gap-4 cursor-pointer transition-all duration-300 select-none min-h-[300px]",
+              "border-2 border-dashed rounded-3xl p-12 flex flex-col items-center justify-center gap-4 cursor-pointer transition-colors duration-150 select-none min-h-[300px]",
               dragActive 
-                ? "border-indigo-500 bg-indigo-50/50 scale-98 shadow-inner" 
-                : "border-slate-200 bg-white hover:border-slate-400 hover:bg-slate-50/50"
+                ? "border-indigo-500 bg-indigo-500/10 scale-98 shadow-inner" 
+                : "border-border-default bg-surface hover:border-slate-400 hover:bg-subtle/50"
             )}
           >
             <input
@@ -441,15 +441,15 @@ export default function ExcelUploadModal({
               <IconUpload className="w-6 h-6" />
             </div>
             <div className="text-center space-y-1.5">
-              <h3 className="text-lg font-black text-slate-900 tracking-tight uppercase italic">Drag & Drop Supplier Excel</h3>
-              <p className="text-xs text-slate-500 font-bold uppercase tracking-wider">or click to browse local files</p>
+              <h3 className="text-lg font-black text-text-primary tracking-tight uppercase italic">Drag & Drop Supplier Excel</h3>
+              <p className="text-xs text-text-muted font-bold uppercase tracking-wider">or click to browse local files</p>
             </div>
             <Badge variant="gray" className="font-mono text-[9px] tracking-widest px-3 py-1 mt-2 border">
               SUPPORTED FORMATS: .XLSX, .XLS
             </Badge>
           </div>
 
-          <div className="bg-slate-50 border border-slate-200/60 p-6 rounded-2xl space-y-4">
+          <div className="bg-subtle/50 border border-border-default p-6 rounded-2xl space-y-4">
             <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Expected Columns in Excel File</h4>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {[
@@ -462,9 +462,9 @@ export default function ExcelUploadModal({
                 'Supplier Name',
                 'Receipt No.'
               ].map((col, idx) => (
-                <div key={idx} className="flex items-center gap-2 px-3 py-2 bg-white border border-slate-100 rounded-lg shadow-sm">
+                <div key={idx} className="flex items-center gap-2 px-3 py-2 bg-surface border border-border-subtle rounded-lg shadow-sm">
                   <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  <span className="text-[10px] font-black text-slate-700 tracking-tight uppercase">{col}</span>
+                  <span className="text-[10px] font-black text-text-secondary tracking-tight uppercase">{col}</span>
                 </div>
               ))}
             </div>
@@ -482,12 +482,12 @@ export default function ExcelUploadModal({
             </div>
             <div className="flex items-center gap-3">
               <div className="px-4 py-2 bg-slate-800 border border-slate-700 rounded-xl text-center min-w-[100px]">
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">APPROVED</p>
+                <p className="text-[9px] font-black text-text-secondary font-bold uppercase tracking-wider">APPROVED</p>
                 <p className="text-sm font-black text-emerald-400">{approvedGroups.length} / {matchedGroupsOnly.length}</p>
               </div>
               {skippedGroups.length > 0 && (
                 <div className="px-4 py-2 bg-slate-800 border border-slate-700 rounded-xl text-center min-w-[100px]">
-                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-wider">SKIPPED</p>
+                  <p className="text-[9px] font-black text-text-secondary font-bold uppercase tracking-wider">SKIPPED</p>
                   <p className="text-sm font-black text-amber-400">{skippedGroups.length}</p>
                 </div>
               )}
@@ -497,14 +497,14 @@ export default function ExcelUploadModal({
           {/* Side-by-Side Review Workspace */}
           <div className="flex gap-6 h-[70vh] overflow-hidden items-stretch">
             {/* Left Column: Compact Queue List */}
-            <div className="w-[360px] shrink-0 flex flex-col gap-4 border-r border-slate-200 pr-5 overflow-y-auto h-full">
+            <div className="w-[360px] shrink-0 flex flex-col gap-4 border-r border-border-default pr-5 overflow-y-auto h-full">
               {/* Authorize All Pending Button */}
               {matchedGroupsOnly.some(g => !approvedGroups.includes(g.lpoNumber) && !skippedGroups.includes(g.lpoNumber) && !g.alreadyProcessed) && (
                 <button
                   type="button"
                   disabled={isBulkAuthorizing}
                   onClick={handleAuthorizeAllQueue}
-                  className="w-full py-2.5 bg-emerald-600 border border-emerald-500 text-xs font-black text-white hover:bg-emerald-500 rounded-xl uppercase tracking-wider transition-all active:scale-98 shadow-sm flex items-center justify-center gap-1.5 disabled:opacity-50 shrink-0"
+                  className="w-full py-2.5 bg-emerald-600 border border-emerald-500 text-xs font-black text-white hover:bg-emerald-500 rounded-xl uppercase tracking-wider transition-colors active:scale-98 shadow-sm flex items-center justify-center gap-1.5 disabled:opacity-50 shrink-0"
                 >
                   {isBulkAuthorizing ? (
                     <div className="flex flex-col items-center gap-0.5 py-0.5">
@@ -543,12 +543,12 @@ export default function ExcelUploadModal({
                     setSearchQuery(e.target.value)
                     setCurrentPage(1)
                   }}
-                  className="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
+                  className="w-full pl-9 pr-3 py-2 bg-surface border border-border-default rounded-xl text-xs font-semibold text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-colors"
                 />
               </div>
 
               {/* Status Tab Filters */}
-              <div className="flex bg-slate-100 p-0.5 rounded-xl border border-slate-200 overflow-x-auto whitespace-nowrap scrollbar-none shrink-0">
+              <div className="flex bg-subtle p-0.5 rounded-xl border border-border-default overflow-x-auto whitespace-nowrap scrollbar-none shrink-0">
                 {(['all', 'ready', 'approved', 'skipped'] as const).map((tab) => (
                   <button
                     key={tab}
@@ -556,10 +556,10 @@ export default function ExcelUploadModal({
                       setStatusFilter(tab)
                       setCurrentPage(1)
                     }}
-                    className={`flex-1 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-all ${
+                    className={`flex-1 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider transition-colors ${
                       statusFilter === tab
-                        ? 'bg-white text-slate-900 shadow-sm font-black'
-                        : 'text-slate-500 hover:text-slate-900'
+                        ? 'bg-surface text-text-primary shadow-sm font-black'
+                        : 'text-text-muted hover:text-text-primary'
                     }`}
                   >
                     {tab === 'all' ? 'All' : tab}
@@ -569,7 +569,7 @@ export default function ExcelUploadModal({
 
               {/* Stepper Card List */}
               {paginatedGroups.length === 0 ? (
-                <div className="py-12 text-center bg-white border border-slate-200 rounded-2xl shadow-sm">
+                <div className="py-12 text-center bg-surface border border-border-default rounded-2xl shadow-sm">
                   <IconFileText className="w-10 h-10 mx-auto text-slate-350 opacity-40 mb-2" />
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">No matched records</p>
                 </div>
@@ -587,15 +587,15 @@ export default function ExcelUploadModal({
                         key={group.lpoNumber} 
                         onClick={() => group.poId && handleReviewPO(originalIdx)}
                         className={cn(
-                          "bg-white border p-4 rounded-xl hover:shadow-md cursor-pointer transition-all flex flex-col gap-2.5 relative overflow-hidden select-none",
+                          "bg-surface border p-4 rounded-xl hover:shadow-md cursor-pointer transition-colors flex flex-col gap-2.5 relative overflow-hidden select-none",
                           isSelected 
                             ? "border-slate-900 ring-1 ring-slate-900" 
-                            : "border-slate-200 hover:border-slate-300",
-                          (isApproved || isSkipped) && "bg-slate-50/50 opacity-60"
+                            : "border-border-default hover:border-border-default",
+                          (isApproved || isSkipped) && "bg-subtle/50 opacity-60"
                         )}
                       >
                         <div className="flex justify-between items-start gap-2">
-                          <span className="text-[10px] font-mono font-black text-slate-900 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded">
+                          <span className="text-[10px] font-mono font-black text-text-primary bg-subtle border border-border-default px-2 py-0.5 rounded">
                             LPO: {group.lpoNumber}
                           </span>
                           <div className="shrink-0">
@@ -614,7 +614,7 @@ export default function ExcelUploadModal({
                         </div>
 
                         <div>
-                          <h4 className="text-xs font-black text-slate-800 uppercase truncate" title={group.supplierName}>
+                          <h4 className="text-xs font-black text-text-primary uppercase truncate" title={group.supplierName}>
                             {group.supplierName}
                           </h4>
                           <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest mt-1">
@@ -623,16 +623,16 @@ export default function ExcelUploadModal({
                         </div>
 
                         {!isApproved && !isSkipped && !group.alreadyProcessed && (
-                          <div className="flex justify-end gap-2 mt-1 border-t border-slate-100 pt-2" onClick={e => e.stopPropagation()}>
+                          <div className="flex justify-end gap-2 mt-1 border-t border-border-subtle pt-2" onClick={e => e.stopPropagation()}>
                             <button
                               onClick={() => handleSkipPO(group.lpoNumber)}
-                              className="px-2.5 py-1 border border-slate-200 hover:border-slate-350 text-slate-650 hover:bg-slate-50 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all"
+                              className="px-2.5 py-1 border border-border-default hover:border-slate-350 text-slate-650 hover:bg-subtle/50 text-[9px] font-black uppercase tracking-wider rounded-lg transition-colors"
                             >
                               Skip
                             </button>
                             <button
                               onClick={() => handleReviewPO(originalIdx)}
-                              className="px-3 py-1 bg-slate-900 text-white hover:bg-slate-800 text-[9px] font-black uppercase tracking-wider rounded-lg transition-all flex items-center gap-1 shadow-sm active:scale-95"
+                              className="px-3 py-1 bg-slate-900 text-white hover:bg-slate-800 text-[9px] font-black uppercase tracking-wider rounded-lg transition-colors flex items-center gap-1 shadow-sm active:scale-95"
                             >
                               Review <IconArrowRight className="w-2.5 h-2.5" />
                             </button>
@@ -646,7 +646,7 @@ export default function ExcelUploadModal({
 
               {/* Stepper Pagination Controls */}
               {totalPages > 1 && (
-                <div className="flex items-center justify-between bg-white p-3 rounded-xl border border-slate-200 shadow-sm shrink-0">
+                <div className="flex items-center justify-between bg-surface p-3 rounded-xl border border-border-default shadow-sm shrink-0">
                   <span className="text-[9px] font-black text-slate-400 uppercase">
                     Pg {currentPage} of {totalPages}
                   </span>
@@ -654,7 +654,7 @@ export default function ExcelUploadModal({
                     <button
                       onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                       disabled={currentPage === 1}
-                      className="px-2.5 py-1 rounded-lg border border-slate-200 text-[9px] font-black uppercase disabled:opacity-20 hover:border-slate-800"
+                      className="px-2.5 py-1 rounded-lg border border-border-default text-[9px] font-black uppercase disabled:opacity-20 hover:border-slate-800"
                     >
                       Prev
                     </button>
@@ -671,7 +671,7 @@ export default function ExcelUploadModal({
             </div>
 
             {/* Right Column: Embedded Review Form Workspace */}
-            <div className="flex-1 bg-white border border-slate-250 rounded-2xl overflow-y-auto shadow-inner relative h-full">
+            <div className="flex-1 bg-surface border border-slate-250 rounded-2xl overflow-y-auto shadow-inner relative h-full">
               {activeGroupIndex !== null ? (
                 <GoodsReceivingForm
                   key={matchedGroups[activeGroupIndex].poId}
@@ -690,11 +690,11 @@ export default function ExcelUploadModal({
                 />
               ) : (
                 <div className="h-full flex flex-col items-center justify-center text-slate-400 gap-3 p-8">
-                  <div className="w-16 h-16 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-center text-slate-350 shadow-sm">
+                  <div className="w-16 h-16 bg-subtle/50 border border-border-subtle rounded-2xl flex items-center justify-center text-slate-350 shadow-sm">
                     <IconPackage className="w-6 h-6 animate-pulse" />
                   </div>
                   <div className="text-center space-y-1">
-                    <p className="text-xs font-black text-slate-800 uppercase tracking-widest">Select PO to Review</p>
+                    <p className="text-xs font-black text-text-primary uppercase tracking-widest">Select PO to Review</p>
                     <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight">Click review on any LPO in the queue on the left side</p>
                   </div>
                 </div>
@@ -704,17 +704,17 @@ export default function ExcelUploadModal({
 
           {/* Unmatched LPOs Section */}
           {unmatchedGroups.length > 0 && (
-            <div className="bg-amber-50/50 border border-amber-200/60 rounded-2xl p-5 space-y-2">
+            <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-5 space-y-2">
               <div className="flex items-center gap-2">
                 <IconAlertCircle className="w-4 h-4 text-amber-600" />
-                <h4 className="text-[10px] font-black text-amber-800 uppercase tracking-[0.2em]">Unmatched LPOs in Excel ({unmatchedGroups.length})</h4>
+                <h4 className="text-[10px] font-black text-amber-400 uppercase tracking-[0.2em]">Unmatched LPOs in Excel ({unmatchedGroups.length})</h4>
               </div>
               <p className="text-[10px] font-bold text-amber-700 uppercase tracking-tight pl-6">
                 The LPO numbers below were found in the uploaded file but do not exist in the database.
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5 pl-6 mt-2">
                 {unmatchedGroups.map((group, idx) => (
-                  <div key={idx} className="bg-white border border-amber-100 p-2.5 rounded-xl shadow-xs flex items-center justify-between">
+                  <div key={idx} className="bg-surface border border-amber-100 p-2.5 rounded-xl shadow-xs flex items-center justify-between">
                     <span className="text-[10px] font-mono font-black text-slate-850">
                       {group.lpoNumber}
                     </span>
@@ -725,10 +725,10 @@ export default function ExcelUploadModal({
             </div>
           )}
           
-          <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+          <div className="flex justify-end gap-3 pt-4 border-t border-border-subtle">
             <button
               onClick={handleClose}
-              className="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs font-black uppercase tracking-wider rounded-xl transition-all"
+              className="px-6 py-2.5 bg-subtle hover:bg-subtle text-text-primary text-xs font-black uppercase tracking-wider rounded-xl transition-colors"
             >
               Close
             </button>

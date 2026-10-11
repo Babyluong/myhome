@@ -39,7 +39,7 @@ import { cn, formatDate, formatFileSize, getRelativeTime } from '@/lib/utils'
 import type { SystemBackup, BackupStatus, BackupType } from '@/types'
 
 const statusConfig: Record<BackupStatus, { color: string; bgColor: string; icon: React.ElementType; label: string }> = {
-  pending: { color: 'text-slate-600', bgColor: 'bg-slate-100', icon: Clock, label: 'Pending' },
+  pending: { color: 'text-text-muted', bgColor: 'bg-subtle', icon: Clock, label: 'Pending' },
   in_progress: { color: 'text-primary-600', bgColor: 'bg-primary-100', icon: RefreshCw, label: 'In Progress' },
   completed: { color: 'text-success-600', bgColor: 'bg-success-100', icon: CheckCircle, label: 'Completed' },
   failed: { color: 'text-error-600', bgColor: 'bg-error-100', icon: XCircle, label: 'Failed' },
@@ -225,7 +225,7 @@ export const BackupManagementPage: React.FC = () => {
                 variant="outline"
                 onClick={fetchBackups}
                 disabled={isLoading}
-                className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
+                className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-surface/20"
                 leftIcon={<RefreshCw className={cn('w-4 h-4', isLoading && 'animate-spin')} />}
               >
                 Refresh
@@ -234,7 +234,7 @@ export const BackupManagementPage: React.FC = () => {
                 variant="primary"
                 onClick={() => setShowCreateModal(true)}
                 disabled={isCreating}
-                className="bg-white text-blue-600 hover:bg-blue-50 shadow-lg"
+                className="bg-surface text-blue-600 hover:bg-blue-500/10 shadow-lg"
                 leftIcon={<Play className="w-4 h-4" />}
               >
                 Create Backup
@@ -303,7 +303,7 @@ export const BackupManagementPage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15 }}
-        className="bg-white rounded-xl border border-slate-200 shadow-sm p-4"
+        className="bg-surface rounded-xl border border-border-default shadow-sm p-4"
       >
         <div className="flex items-center gap-4">
           <Select
@@ -341,10 +341,10 @@ export const BackupManagementPage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden"
+        className="bg-surface rounded-xl border border-border-default shadow-sm overflow-hidden"
       >
-        <div className="p-6 border-b border-slate-100">
-          <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+        <div className="p-6 border-b border-border-subtle">
+          <h3 className="text-lg font-semibold text-text-primary flex items-center gap-2">
             <FileArchive className="w-5 h-5 text-primary-600" />
             Backup History
           </h3>
@@ -362,7 +362,7 @@ export const BackupManagementPage: React.FC = () => {
                 return (
                   <div
                     key={backup.id}
-                    className="p-4 hover:bg-slate-50 transition-colors"
+                    className="p-4 hover:bg-subtle/50 transition-colors"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4 flex-1">
@@ -377,7 +377,7 @@ export const BackupManagementPage: React.FC = () => {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-3 mb-1">
-                            <p className="font-semibold text-slate-900">
+                            <p className="font-semibold text-text-primary">
                               {formatDate(backup.created_at, {
                                 year: 'numeric',
                                 month: 'short',
@@ -413,7 +413,7 @@ export const BackupManagementPage: React.FC = () => {
                               {config.label}
                             </Badge>
                           </div>
-                          <div className="flex items-center gap-4 text-sm text-slate-600">
+                          <div className="flex items-center gap-4 text-sm text-text-muted">
                             {backup.file_path && (
                               <span className="font-mono text-xs">{backup.file_path.split('/').pop()}</span>
                             )}
@@ -485,8 +485,8 @@ export const BackupManagementPage: React.FC = () => {
         ) : (
           <div className="p-12 text-center">
             <FileArchive className="w-16 h-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-slate-900 mb-2">No Backups Found</h3>
-            <p className="text-slate-600 mb-4">Create your first backup to get started</p>
+            <h3 className="text-lg font-semibold text-text-primary mb-2">No Backups Found</h3>
+            <p className="text-text-muted mb-4">Create your first backup to get started</p>
             <Button variant="primary" onClick={() => setShowCreateModal(true)} leftIcon={<Play className="w-4 h-4" />}>
               Create Backup
             </Button>
@@ -499,13 +499,13 @@ export const BackupManagementPage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="bg-blue-50 border border-blue-200 rounded-xl p-6"
+        className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-6"
       >
         <div className="flex items-start gap-3">
           <Info className="w-5 h-5 text-blue-600 mt-0.5" />
           <div className="flex-1">
-            <h3 className="font-semibold text-blue-900 mb-2">Backup Information</h3>
-            <ul className="text-sm text-blue-800 space-y-1">
+            <h3 className="font-semibold text-blue-400 dark:text-blue-300 font-bold mb-2">Backup Information</h3>
+            <ul className="text-sm text-blue-400 space-y-1">
               <li>â€¢ Scheduled backups run daily at 2:00 AM</li>
               <li>â€¢ Backups are retained for 30 days</li>
               <li>â€¢ Manual backups can be created at any time</li>
@@ -523,12 +523,12 @@ export const BackupManagementPage: React.FC = () => {
         title="Create Manual Backup"
       >
         <div className="space-y-4">
-          <p className="text-slate-700">
+          <p className="text-text-secondary">
             This will create a manual backup of the entire system database. The backup process may take a few minutes.
           </p>
-          <div className="bg-slate-50 rounded-lg p-4">
-            <p className="text-sm font-medium text-slate-900 mb-2">What will be backed up:</p>
-            <ul className="text-sm text-slate-600 space-y-1">
+          <div className="bg-subtle/50 rounded-lg p-4">
+            <p className="text-sm font-medium text-text-primary mb-2">What will be backed up:</p>
+            <ul className="text-sm text-text-muted space-y-1">
               <li>â€¢ All database tables and data</li>
               <li>â€¢ System configuration</li>
               <li>â€¢ User accounts and permissions</li>
@@ -556,17 +556,17 @@ export const BackupManagementPage: React.FC = () => {
         title="Delete Backup"
       >
         <div className="space-y-4">
-          <p className="text-slate-700">
+          <p className="text-text-secondary">
             Are you sure you want to delete this backup? This action cannot be undone.
           </p>
           {backupToDelete && (
-            <div className="bg-slate-50 rounded-lg p-4">
-              <p className="text-sm font-medium text-slate-900">Backup Details:</p>
-              <p className="text-sm text-slate-600 mt-1">
+            <div className="bg-subtle/50 rounded-lg p-4">
+              <p className="text-sm font-medium text-text-primary">Backup Details:</p>
+              <p className="text-sm text-text-muted mt-1">
                 Created: {formatDate(backupToDelete.created_at)}
               </p>
               {backupToDelete.file_path && (
-                <p className="text-sm text-slate-600">{backupToDelete.file_path}</p>
+                <p className="text-sm text-text-muted">{backupToDelete.file_path}</p>
               )}
             </div>
           )}
@@ -629,8 +629,8 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, subtitle, icon: Icon,
       icon: 'bg-info-100 text-info-600',
     },
     gray: {
-      bg: 'bg-slate-50',
-      icon: 'bg-slate-100 text-slate-600',
+      bg: 'bg-subtle/50',
+      icon: 'bg-subtle text-text-muted',
     },
   }
 
@@ -643,9 +643,9 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, subtitle, icon: Icon,
           <Icon className="w-6 h-6" />
         </div>
       </div>
-      <h3 className="text-2xl font-bold text-slate-900 mb-1">{value}</h3>
-      <p className="text-sm text-slate-600">{title}</p>
-      {subtitle && <p className="text-xs text-slate-500 mt-1">{subtitle}</p>}
+      <h3 className="text-2xl font-bold text-text-primary mb-1">{value}</h3>
+      <p className="text-sm text-text-muted">{title}</p>
+      {subtitle && <p className="text-xs text-text-muted mt-1">{subtitle}</p>}
     </div>
   )
 }

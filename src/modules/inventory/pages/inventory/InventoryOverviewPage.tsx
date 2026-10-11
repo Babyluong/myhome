@@ -340,9 +340,9 @@ export const InventoryOverviewPage: React.FC = () => {
         <div className="bg-surface border border-border-default rounded-xl p-4 shadow-xs flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">{language === 'ms' ? 'TOTAL ITEMS' : 'TOTAL ITEMS'}</span>
-            <span className="text-2xl font-bold text-text-primary">{metrics.totalItems}</span>
+            <span className="text-2xl font-bold font-mono text-text-primary tabular-nums">{metrics.totalItems}</span>
           </div>
-          <div className="p-2 bg-slate-50 text-slate-600 rounded-xl">
+          <div className="p-2 bg-subtle text-text-muted rounded-xl">
             <Layers className="w-5 h-5" />
           </div>
         </div>
@@ -351,9 +351,9 @@ export const InventoryOverviewPage: React.FC = () => {
         <div className="bg-surface border border-border-default rounded-xl p-4 shadow-xs flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">{language === 'ms' ? 'HAMPIR LUPUT (< 6B)' : 'NEAR EXPIRY (< 6M)'}</span>
-            <span className="text-2xl font-black text-orange-600">{metrics.nearExpiryCount}</span>
+            <span className="text-2xl font-bold font-mono text-amber-500 tabular-nums">{metrics.nearExpiryCount}</span>
           </div>
-          <div className="p-2 bg-orange-50 text-orange-500 rounded-xl">
+          <div className="p-2 bg-subtle text-amber-500 rounded-xl">
             <Clock className="w-5 h-5" />
           </div>
         </div>
@@ -362,9 +362,9 @@ export const InventoryOverviewPage: React.FC = () => {
         <div className="bg-surface border border-border-default rounded-xl p-4 shadow-xs flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">{language === 'ms' ? 'KURANG STOK' : 'LOW STOCK'}</span>
-            <span className="text-2xl font-black text-amber-600">{metrics.lowStockCount}</span>
+            <span className="text-2xl font-bold font-mono text-rose-600 dark:text-rose-400 tabular-nums">{metrics.lowStockCount}</span>
           </div>
-          <div className="p-2 bg-amber-50 text-amber-600 rounded-xl">
+          <div className="p-2 bg-subtle text-rose-500 rounded-xl">
             <AlertCircle className="w-5 h-5" />
           </div>
         </div>
@@ -373,9 +373,9 @@ export const InventoryOverviewPage: React.FC = () => {
         <div className="bg-surface border border-border-default rounded-xl p-4 shadow-xs flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">{language === 'ms' ? 'LAMBAT BERGERAK' : 'SLOW MOVING'}</span>
-            <span className="text-2xl font-black text-indigo-600">{metrics.slowMovingCount}</span>
+            <span className="text-2xl font-bold font-mono text-text-muted tabular-nums">{metrics.slowMovingCount}</span>
           </div>
-          <div className="p-2 bg-indigo-50 text-indigo-600 rounded-xl">
+          <div className="p-2 bg-subtle text-text-muted rounded-xl">
             <TrendingUp className="w-5 h-5 rotate-180" />
           </div>
         </div>
@@ -384,9 +384,9 @@ export const InventoryOverviewPage: React.FC = () => {
         <div className="bg-surface border border-border-default rounded-xl p-4 shadow-xs flex items-center justify-between">
           <div className="space-y-1">
             <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block">{language === 'ms' ? 'CEPAT BERGERAK' : 'FAST MOVING'}</span>
-            <span className="text-2xl font-black text-teal-600">{metrics.fastMovingCount}</span>
+            <span className="text-2xl font-bold font-mono text-emerald-600 dark:text-emerald-400 tabular-nums">{metrics.fastMovingCount}</span>
           </div>
-          <div className="p-2 bg-teal-50 text-teal-600 rounded-xl">
+          <div className="p-2 bg-subtle text-emerald-600 dark:text-emerald-400 rounded-xl">
             <TrendingUp className="w-5 h-5" />
           </div>
         </div>
@@ -429,7 +429,7 @@ export const InventoryOverviewPage: React.FC = () => {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`px-4 py-2 text-xs font-bold rounded-xl transition-all border ${
+                  className={`px-4 py-2 text-xs font-bold rounded-xl transition-colors border ${
                     activeTab === tab.id 
                       ? 'bg-accent-base border-accent-base text-white shadow-xs' 
                       : 'bg-subtle hover:bg-subtle/80 text-text-secondary border-border-default'
@@ -448,7 +448,7 @@ export const InventoryOverviewPage: React.FC = () => {
             )}
 
             {!isLoading && error && (
-              <div className="p-6 text-center text-rose-600 text-xs font-bold bg-rose-50 rounded-2xl border border-rose-100">
+              <div className="p-6 text-center text-rose-600 text-xs font-bold bg-rose-500/10 rounded-2xl border border-rose-100">
                 {error}
               </div>
             )}
@@ -463,16 +463,16 @@ export const InventoryOverviewPage: React.FC = () => {
                       <Table.Row className="bg-subtle/50 border-b border-border-default">
                         <Table.Cell as="th" className="text-text-muted font-semibold text-xs py-3">{language === 'ms' ? 'KOD' : 'CODE'}</Table.Cell>
                         <Table.Cell as="th" className="text-text-muted font-semibold text-xs py-3">{language === 'ms' ? 'NAMA ITEM' : 'ITEM NAME'}</Table.Cell>
-                        <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5 text-right">{language === 'ms' ? 'CURRENT BALANCE' : 'CURRENT BALANCE'}</Table.Cell>
-                        <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5 text-right font-mono">AMC</Table.Cell>
-                        <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5 text-right font-mono">MOS</Table.Cell>
-                        <Table.Cell as="th" className="text-slate-500 font-bold text-xs py-3.5 text-center">STATUS</Table.Cell>
+                        <Table.Cell as="th" className="text-text-muted font-semibold text-xs py-3 text-right">{language === 'ms' ? 'CURRENT BALANCE' : 'CURRENT BALANCE'}</Table.Cell>
+                        <Table.Cell as="th" className="text-text-muted font-semibold text-xs py-3 text-right font-mono">AMC</Table.Cell>
+                        <Table.Cell as="th" className="text-text-muted font-semibold text-xs py-3 text-right font-mono">MOS</Table.Cell>
+                        <Table.Cell as="th" className="text-text-muted font-semibold text-xs py-3 text-center">STATUS</Table.Cell>
                       </Table.Row>
                     </Table.Header>
                     <Table.Body className="divide-y divide-border-default">
                       {filteredItemsList.length === 0 ? (
                         <Table.Row>
-                          <Table.Cell colSpan={6} className="text-center text-slate-400 py-12 text-sm font-medium">
+                          <Table.Cell colSpan={6} className="text-center text-text-muted py-12 text-sm font-medium">
                             {language === 'ms' 
                               ? 'Tiada item inventori ditemui sepadan dengan tapisan anda.'
                               : 'No inventory items found matching your filters.'}
@@ -485,28 +485,28 @@ export const InventoryOverviewPage: React.FC = () => {
                           
                           return (
                             <Table.Row key={`${item.item_type}-${item.item_id}`} className="hover:bg-subtle/30 transition-colors">
-                              <Table.Cell className="font-mono text-xs font-bold text-slate-500">{item.item_code}</Table.Cell>
-                              <Table.Cell className="py-3 text-sm font-black text-slate-800">
+                              <Table.Cell className="font-mono text-xs font-semibold text-text-muted">{item.item_code}</Table.Cell>
+                              <Table.Cell className="py-3 text-sm font-semibold text-text-primary">
                                 <div className="flex flex-col">
                                   <span>{item.item_name}</span>
-                                  <span className="text-[10px] text-slate-400 font-bold uppercase mt-0.5 tracking-wider">
+                                  <span className="text-[10px] text-text-muted font-medium uppercase mt-0.5 tracking-wider">
                                     {item.item_type} • {item.unit_of_measure}
                                   </span>
                                 </div>
                               </Table.Cell>
-                              <Table.Cell className="text-right font-mono font-black text-sm text-slate-700">
+                              <Table.Cell className="text-right font-mono font-bold text-sm text-text-primary">
                                 {item.current_stock}
                               </Table.Cell>
-                              <Table.Cell className="text-right font-mono text-xs text-slate-500 font-bold">
+                              <Table.Cell className="text-right font-mono text-xs text-text-muted">
                                 {amcVal > 0 ? `${amcVal}/${language === 'ms' ? 'bln' : 'mo'}` : `0/${language === 'ms' ? 'bln' : 'mo'}`}
                               </Table.Cell>
-                              <Table.Cell className="text-right font-mono text-xs font-black">
+                              <Table.Cell className="text-right font-mono text-xs font-semibold">
                                 {mosVal !== null ? (
-                                  <span className={mosVal < 1.0 ? 'text-rose-600' : mosVal < 2.0 ? 'text-amber-600' : 'text-emerald-600'}>
+                                  <span className={mosVal < 1.0 ? 'text-rose-600 dark:text-rose-400' : mosVal < 2.0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}>
                                     {mosVal} {language === 'ms' ? 'bln' : 'mo'}
                                   </span>
                                 ) : (
-                                  <span className="text-slate-300">—</span>
+                                  <span className="text-text-muted">—</span>
                                 )}
                               </Table.Cell>
                               <Table.Cell className="text-center">
@@ -523,7 +523,7 @@ export const InventoryOverviewPage: React.FC = () => {
                 {/* Mobile View: Native App Responsive Cards (Zero Horizontal Scrolling) */}
                 <div className="md:hidden divide-y divide-border-default bg-surface">
                   {filteredItemsList.length === 0 ? (
-                    <div className="text-center text-slate-400 py-12 px-4 text-xs font-medium">
+                    <div className="text-center text-text-muted py-12 px-4 text-xs font-medium">
                       {language === 'ms' 
                         ? 'Tiada item inventori ditemui sepadan dengan tapisan anda.'
                         : 'No inventory items found matching your filters.'}
@@ -536,11 +536,11 @@ export const InventoryOverviewPage: React.FC = () => {
                       return (
                         <div 
                           key={`${item.item_type}-${item.item_id}`} 
-                          className="p-4 space-y-3 hover:bg-slate-50/50 transition-colors"
+                          className="p-4 space-y-3 hover:bg-subtle/30 transition-colors"
                         >
                           {/* Top Row: Code & Status */}
                           <div className="flex items-center justify-between gap-2">
-                            <span className="font-mono text-xs font-bold text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-md border border-slate-200">
+                            <span className="font-mono text-xs font-semibold text-text-secondary bg-subtle px-2.5 py-0.5 rounded-md border border-border-default">
                               {item.item_code}
                             </span>
                             {renderStatusBadge(item.status)}
@@ -548,21 +548,21 @@ export const InventoryOverviewPage: React.FC = () => {
 
                           {/* Item Name & Details */}
                           <div>
-                            <h4 className="text-sm font-bold text-slate-900 leading-snug break-words">
+                            <h4 className="text-sm font-semibold text-text-primary leading-snug break-words">
                               {item.item_name}
                             </h4>
-                            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mt-0.5">
+                            <span className="text-[10px] text-text-muted font-medium uppercase tracking-wider block mt-0.5">
                               {item.item_type} • {item.unit_of_measure}
                             </span>
                           </div>
 
                           {/* Metrics Grid Chip */}
-                          <div className="grid grid-cols-3 gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100 text-center">
+                          <div className="grid grid-cols-3 gap-2 bg-subtle/40 p-2.5 rounded-lg border border-border-default text-center">
                             <div>
                               <span className="text-[9px] font-bold text-text-muted uppercase tracking-wider block">
                                 {language === 'ms' ? 'Baki Semasa' : 'Balance'}
                               </span>
-                              <span className="font-mono font-black text-xs text-slate-800">
+                              <span className="font-mono font-bold text-xs text-text-primary">
                                 {item.current_stock}
                               </span>
                             </div>
@@ -570,7 +570,7 @@ export const InventoryOverviewPage: React.FC = () => {
                               <span className="text-[9px] font-bold text-text-muted uppercase tracking-wider block">
                                 AMC
                               </span>
-                              <span className="font-mono font-bold text-xs text-slate-600">
+                              <span className="font-mono font-semibold text-xs text-text-secondary">
                                 {amcVal > 0 ? `${amcVal}` : '0'}
                               </span>
                             </div>
@@ -579,11 +579,11 @@ export const InventoryOverviewPage: React.FC = () => {
                                 MOS
                               </span>
                               {mosVal !== null ? (
-                                <span className={`font-mono font-bold text-xs ${mosVal < 1.0 ? 'text-rose-600' : mosVal < 2.0 ? 'text-amber-600' : 'text-emerald-600'}`}>
+                                <span className={`font-mono font-semibold text-xs ${mosVal < 1.0 ? 'text-rose-600 dark:text-rose-400' : mosVal < 2.0 ? 'text-amber-600 dark:text-amber-400' : 'text-emerald-600 dark:text-emerald-400'}`}>
                                   {mosVal} {language === 'ms' ? 'bln' : 'mo'}
                                 </span>
                               ) : (
-                                <span className="text-slate-300 text-xs">—</span>
+                                <span className="text-text-muted text-xs">—</span>
                               )}
                             </div>
                           </div>
@@ -614,25 +614,25 @@ export const InventoryOverviewPage: React.FC = () => {
               </Badge>
             </h4>
             
-            <p className="text-[10px] text-slate-500 font-medium leading-relaxed">
+            <p className="text-[10px] text-text-muted font-medium leading-relaxed">
               {language === 'ms' 
                 ? 'Senarai item di bawah paras keselamatan minimum. Segera mulakan perolehan pembekal untuk menjamin kesinambungan penjagaan pesakit.'
                 : 'List of items below minimum safety stock. Initiate supplier procurement immediately to ensure patient care continuity.'}
             </p>
             
             {recommendedPurchases.length === 0 ? (
-              <div className="p-6 text-center text-xs text-slate-400 font-bold bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+              <div className="p-6 text-center text-xs text-text-muted font-medium bg-subtle/30 rounded-xl border border-dashed border-border-default">
                 {language === 'ms' 
                   ? 'Stok mencukupi. Tiada saranan pembelian baru buat masa ini.'
                   : 'Sufficient stock. No purchase suggestions at this time.'}
               </div>
             ) : (
-              <div className="space-y-4 pt-1">
+              <div className="space-y-3 pt-1">
                 {recommendedPurchases.map(p => (
-                  <div key={`${p.item_type}-${p.item_id}`} className="bg-subtle/30 border border-border-default rounded-lg p-3 space-y-2 transition-all">
+                  <div key={`${p.item_type}-${p.item_id}`} className="bg-surface border border-border-default rounded-lg p-3 space-y-2 shadow-elevation-1 transition-colors">
                     <div className="flex items-start justify-between gap-2">
                       <div className="space-y-1 max-w-[70%]">
-                        <span className="font-black text-slate-800 text-[11px] block leading-tight">{p.item_name}</span>
+                        <span className="font-semibold text-text-primary text-[11px] block leading-tight">{p.item_name}</span>
                         <div className="flex items-center gap-1.5 flex-wrap">
                           {p.isCritical ? (
                             <Badge variant="danger" className="text-[8px] px-1.5 py-0.5 font-bold uppercase tracking-wide">
@@ -643,20 +643,20 @@ export const InventoryOverviewPage: React.FC = () => {
                               {language === 'ms' ? 'Stok Rendah' : 'Low Stock'}
                             </Badge>
                           )}
-                          <span className="text-[10px] text-slate-400 font-mono">
+                          <span className="text-[10px] text-text-muted font-mono">
                             {language === 'ms' ? 'Baki' : 'Bal'}: {p.current_stock} / Min: {p.min_stock}
                           </span>
                         </div>
                       </div>
                       <div className="text-right flex-shrink-0">
-                        <span className="text-[9px] font-black text-slate-400 block uppercase tracking-wider">
+                        <span className="text-[9px] font-semibold text-text-muted block uppercase tracking-wider">
                           {language === 'ms' ? 'Saran Beli' : 'Suggested Buy'}
                         </span>
-                        <span className="font-mono font-black text-xs text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-lg block mt-0.5">+{p.suggestedQty} unit</span>
+                        <span className="font-mono font-bold text-xs text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded-lg block mt-0.5">+{p.suggestedQty} unit</span>
                       </div>
                     </div>
                     
-                    <div className="text-[9.5px] text-slate-500 bg-slate-50 p-2 rounded-xl font-medium leading-normal border border-slate-100/50 flex items-start gap-1">
+                    <div className="text-[9.5px] text-text-muted bg-subtle/50 p-2 rounded-lg font-medium leading-normal border border-border-default flex items-start gap-1">
                       <AlertTriangle className="w-3.5 h-3.5 text-amber-500 flex-shrink-0 mt-0.5" />
                       <span>{p.reason}</span>
                     </div>

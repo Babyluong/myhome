@@ -169,7 +169,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onTabChange 
               variants={itemVariants}
               onClick={card.action}
               whileTap={{ scale: 0.98 }}
-              className="p-3.5 sm:p-5 rounded-xl bg-slate-900/60 hover:bg-slate-900/90 border border-slate-800 hover:border-slate-700 cursor-pointer transition-all duration-150 flex flex-col justify-between group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/50"
+              className="p-3.5 sm:p-5 rounded-xl bg-slate-900/60 hover:bg-slate-900/90 border border-slate-800 hover:border-slate-700 cursor-pointer transition-colors duration-150 flex flex-col justify-between group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/50"
               role="button"
               tabIndex={0}
               onKeyDown={(e) => {
@@ -187,7 +187,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onTabChange 
                   <span className="hidden sm:inline-block text-[11px] font-semibold text-slate-400 px-2 py-0.5 rounded bg-slate-800/80 border border-slate-700/60">
                     {card.badge}
                   </span>
-                  <ChevronRight className="w-4 h-4 text-slate-500 sm:hidden" />
+                  <ChevronRight className="w-4 h-4 text-text-muted sm:hidden" />
                 </div>
                 <div className="space-y-0.5">
                   {isLoading ? (
@@ -238,7 +238,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onTabChange 
                 <div className="h-5 bg-slate-800 rounded w-10/12 animate-pulse" />
               </div>
             ) : recentLogs.length === 0 ? (
-              <div className="text-center py-10 text-slate-500 text-sm">
+              <div className="text-center py-10 text-text-muted text-sm">
                 Tiada aktiviti audit terkini direkodkan.
               </div>
             ) : (
@@ -291,7 +291,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onTabChange 
                 <div className="h-16 bg-slate-800/60 rounded-lg animate-pulse" />
               </div>
             ) : recentLogs.length === 0 ? (
-              <div className="text-center py-8 text-slate-500 text-xs">
+              <div className="text-center py-8 text-text-muted text-xs">
                 Tiada aktiviti audit terkini direkodkan.
               </div>
             ) : (
@@ -305,7 +305,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onTabChange 
                       {log.user?.full_name || 'Sistem / Automasi'}
                     </span>
                     <span className="text-[11px] text-slate-400 font-mono flex items-center gap-1">
-                      <Clock className="w-3 h-3 text-slate-500" />
+                      <Clock className="w-3 h-3 text-text-muted" />
                       {formatDate(log.created_at)}
                     </span>
                   </div>
@@ -333,7 +333,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onTabChange 
             <div className="space-y-3">
               <button
                 onClick={() => onTabChange('approvals')}
-                className="w-full flex items-center justify-between p-3.5 rounded-lg bg-slate-950/60 border border-slate-800 hover:border-slate-700 hover:bg-slate-800/40 transition-all text-left group min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/50"
+                className="w-full flex items-center justify-between p-3.5 rounded-lg bg-slate-950/60 border border-slate-800 hover:border-slate-700 hover:bg-slate-800/40 transition-colors text-left group min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-400/50"
               >
                 <div>
                   <div className="text-white text-xs sm:text-sm font-semibold group-hover:text-teal-400 transition-colors">
@@ -343,12 +343,12 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onTabChange 
                     Semak dan sahkan permohonan akaun baru
                   </div>
                 </div>
-                <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-teal-400 transition-colors group-hover:translate-x-0.5" />
+                <ArrowRight className="w-4 h-4 text-text-muted group-hover:text-teal-400 transition-colors group-hover:translate-x-0.5" />
               </button>
 
               <button
                 onClick={() => onTabChange('rbac')}
-                className="w-full flex items-center justify-between p-3.5 rounded-lg bg-slate-950/60 border border-slate-800 hover:border-slate-700 hover:bg-slate-800/40 transition-all text-left group min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/50"
+                className="w-full flex items-center justify-between p-3.5 rounded-lg bg-slate-950/60 border border-slate-800 hover:border-slate-700 hover:bg-slate-800/40 transition-colors text-left group min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/50"
               >
                 <div>
                   <div className="text-white text-xs sm:text-sm font-semibold group-hover:text-emerald-400 transition-colors">
@@ -358,12 +358,12 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onTabChange 
                     Konfigurasi kebenaran akses mengikut peranan
                   </div>
                 </div>
-                <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-emerald-400 transition-colors group-hover:translate-x-0.5" />
+                <ArrowRight className="w-4 h-4 text-text-muted group-hover:text-emerald-400 transition-colors group-hover:translate-x-0.5" />
               </button>
 
               <button
                 onClick={() => onTabChange('users')}
-                className="w-full flex items-center justify-between p-3.5 rounded-lg bg-slate-950/60 border border-slate-800 hover:border-slate-700 hover:bg-slate-800/40 transition-all text-left group min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/50"
+                className="w-full flex items-center justify-between p-3.5 rounded-lg bg-slate-950/60 border border-slate-800 hover:border-slate-700 hover:bg-slate-800/40 transition-colors text-left group min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/50"
               >
                 <div>
                   <div className="text-white text-xs sm:text-sm font-semibold group-hover:text-sky-400 transition-colors">
@@ -373,7 +373,7 @@ export const AdminOverviewTab: React.FC<AdminOverviewTabProps> = ({ onTabChange 
                     Tetapan jabatan, jawatan dan status akaun
                   </div>
                 </div>
-                <ArrowRight className="w-4 h-4 text-slate-500 group-hover:text-sky-400 transition-colors group-hover:translate-x-0.5" />
+                <ArrowRight className="w-4 h-4 text-text-muted group-hover:text-sky-400 transition-colors group-hover:translate-x-0.5" />
               </button>
             </div>
           </div>

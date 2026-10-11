@@ -642,7 +642,7 @@ export const AdminSystemLogsTab: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-3 border-t border-slate-800">
           {/* Module Filter */}
           <div>
-            <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+            <label className="block text-[11px] font-semibold text-text-secondary font-bold uppercase tracking-wider mb-1.5">
               Module / Menu Filter
             </label>
             <select
@@ -664,7 +664,7 @@ export const AdminSystemLogsTab: React.FC = () => {
 
           {/* Action Filter */}
           <div>
-            <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+            <label className="block text-[11px] font-semibold text-text-secondary font-bold uppercase tracking-wider mb-1.5">
               Activity / Action Type
             </label>
             <select
@@ -688,7 +688,7 @@ export const AdminSystemLogsTab: React.FC = () => {
 
           {/* User Filter */}
           <div>
-            <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+            <label className="block text-[11px] font-semibold text-text-secondary font-bold uppercase tracking-wider mb-1.5">
               Staff / User
             </label>
             <select
@@ -710,7 +710,7 @@ export const AdminSystemLogsTab: React.FC = () => {
 
           {/* Date Presets */}
           <div>
-            <label className="block text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+            <label className="block text-[11px] font-semibold text-text-secondary font-bold uppercase tracking-wider mb-1.5">
               Time Period
             </label>
             <div className="flex items-center gap-1 bg-slate-950/80 border border-slate-800 rounded-lg p-1">
@@ -754,7 +754,7 @@ export const AdminSystemLogsTab: React.FC = () => {
         {(search || moduleFilter !== 'all' || actionFilter !== 'all' || userFilter !== 'all' || datePreset !== 'all') && (
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-2 text-xs">
             <div className="flex items-center gap-1.5 flex-wrap">
-              <span className="text-slate-500 font-medium">Active Filters:</span>
+              <span className="text-text-muted font-medium">Active Filters:</span>
               {search && (
                 <span className="px-2.5 py-0.5 rounded-full bg-teal-500/10 text-teal-400 border border-teal-500/30 text-xs">
                   Search: &quot;{search}&quot;
@@ -814,11 +814,11 @@ export const AdminSystemLogsTab: React.FC = () => {
           </div>
         ) : logs.length === 0 ? (
           <div className="text-center py-16 px-4 space-y-3">
-            <div className="w-12 h-12 rounded-xl bg-slate-800 text-slate-500 flex items-center justify-center mx-auto border border-slate-700">
+            <div className="w-12 h-12 rounded-xl bg-slate-800 text-text-muted flex items-center justify-center mx-auto border border-slate-700">
               <Search className="w-6 h-6" />
             </div>
             <h4 className="text-base font-semibold text-slate-300">No Records Found</h4>
-            <p className="text-xs text-slate-500 max-w-sm mx-auto">
+            <p className="text-xs text-text-muted max-w-sm mx-auto">
               No activities match the search or filter criteria.
             </p>
             <button
@@ -931,7 +931,7 @@ export const AdminSystemLogsTab: React.FC = () => {
                             {log.ip_address || '192.168.1.100'}
                           </div>
                           <div className="text-[11px] text-slate-400 flex items-center gap-1 mt-0.5">
-                            <Laptop className="w-3 h-3 text-slate-500 shrink-0" />
+                            <Laptop className="w-3 h-3 text-text-muted shrink-0" />
                             <span className="truncate max-w-[120px]" title={log.user_agent}>
                               {log.user_agent?.includes('Macintosh')
                                 ? 'macOS'
@@ -1029,7 +1029,7 @@ export const AdminSystemLogsTab: React.FC = () => {
                     {/* Bottom row: Device / IP + View button */}
                     <div className="flex items-center justify-between pt-1 border-t border-slate-800/80 text-[11px] text-slate-400">
                       <div className="flex items-center gap-1.5 font-mono text-[11px]">
-                        <Laptop className="w-3 h-3 text-slate-500 shrink-0" />
+                        <Laptop className="w-3 h-3 text-text-muted shrink-0" />
                         <span>{log.ip_address || '192.168.1.100'}</span>
                       </div>
                       <button
@@ -1139,20 +1139,20 @@ export const AdminSystemLogsTab: React.FC = () => {
                     </div>
                     <div className="space-y-1.5 text-xs">
                       <div>
-                        <span className="text-slate-500 block text-[11px]">Full Name:</span>
+                        <span className="text-text-muted block text-[11px]">Full Name:</span>
                         <span className="text-white font-bold text-sm">
                           {selectedLog.user?.full_name || 'Pegawai Sistem (System/Auto)'}
                         </span>
                       </div>
                       <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-800">
                         <div>
-                          <span className="text-slate-500 block text-[11px]">IC / Staff ID:</span>
+                          <span className="text-text-muted block text-[11px]">IC / Staff ID:</span>
                           <span className="text-slate-300 font-mono">
                             {selectedLog.user?.ic_number || selectedLog.user?.employee_id || selectedLog.user_id}
                           </span>
                         </div>
                         <div>
-                          <span className="text-slate-500 block text-[11px]">Designation:</span>
+                          <span className="text-text-muted block text-[11px]">Designation:</span>
                           <span className="text-slate-300">
                             {selectedLog.user?.jawatan || 'Duty Officer'}
                           </span>
@@ -1160,7 +1160,7 @@ export const AdminSystemLogsTab: React.FC = () => {
                       </div>
                       {selectedLog.user?.email && (
                         <div>
-                          <span className="text-slate-500 block text-[11px]">Email Address:</span>
+                          <span className="text-text-muted block text-[11px]">Email Address:</span>
                           <span className="text-slate-400">{selectedLog.user.email}</span>
                         </div>
                       )}
@@ -1175,23 +1175,23 @@ export const AdminSystemLogsTab: React.FC = () => {
                     </div>
                     <div className="space-y-1.5 text-xs">
                       <div>
-                        <span className="text-slate-500 block text-[11px]">Module / Section:</span>
+                        <span className="text-text-muted block text-[11px]">Module / Section:</span>
                         <span className="text-indigo-300 font-bold">
                           {MODULE_VISUALS[selectedLog.module?.toLowerCase()]?.label || selectedLog.module?.toUpperCase()}
                         </span>
                       </div>
                       <div className="grid grid-cols-2 gap-2 pt-1 border-t border-slate-800">
                         <div>
-                          <span className="text-slate-500 block text-[11px]">Action Type:</span>
+                          <span className="text-text-muted block text-[11px]">Action Type:</span>
                           <span className="text-slate-300 font-semibold">{selectedLog.action}</span>
                         </div>
                         <div>
-                          <span className="text-slate-500 block text-[11px]">IP Address:</span>
+                          <span className="text-text-muted block text-[11px]">IP Address:</span>
                           <span className="text-slate-300 font-mono">{selectedLog.ip_address || '192.168.1.100'}</span>
                         </div>
                       </div>
                       <div>
-                        <span className="text-slate-500 block text-[11px]">Device Used:</span>
+                        <span className="text-text-muted block text-[11px]">Device Used:</span>
                         <span className="text-slate-400">
                           {selectedLog.user_agent?.includes('Macintosh')
                             ? 'Apple Mac (macOS)'
@@ -1233,7 +1233,7 @@ export const AdminSystemLogsTab: React.FC = () => {
                             ))}
                           </div>
                         ) : (
-                          <p className="text-xs text-slate-500 italic py-2">
+                          <p className="text-xs text-text-muted italic py-2">
                             No prior record (New Record Creation)
                           </p>
                         )}
@@ -1257,7 +1257,7 @@ export const AdminSystemLogsTab: React.FC = () => {
                             ))}
                           </div>
                         ) : (
-                          <p className="text-xs text-slate-500 italic py-2">
+                          <p className="text-xs text-text-muted italic py-2">
                             No additional details
                           </p>
                         )}

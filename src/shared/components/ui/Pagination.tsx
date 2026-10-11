@@ -63,20 +63,20 @@ export function Pagination({
   }
 
   return (
-    <div className={cn('flex items-center justify-between px-4 py-3 border-t border-slate-200 bg-white', className)}>
+    <div className={cn('flex items-center justify-between px-4 py-3 border-t border-border-default bg-surface', className)}>
       <div className="flex items-center gap-4">
-        <div className="text-sm text-slate-700">
+        <div className="text-sm text-text-secondary">
           Showing <span className="font-medium">{start}</span> to{' '}
           <span className="font-medium">{end}</span> of{' '}
           <span className="font-medium">{total}</span> results
         </div>
         {onPageSizeChange && (
           <div className="flex items-center gap-2">
-            <span className="text-sm text-slate-700">Show:</span>
+            <span className="text-sm text-text-secondary">Show:</span>
             <select
               value={pageSize}
               onChange={(e) => onPageSizeChange(Number(e.target.value))}
-              className="px-3 py-1.5 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
+              className="px-3 py-1.5 text-sm border border-border-default rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
             >
               {pageSizeOptions.map((size) => (
                 <option key={size} value={size}>
@@ -112,7 +112,7 @@ export function Pagination({
           {getPageNumbers().map((page, index) => {
             if (page === '...') {
               return (
-                <span key={`ellipsis-${index}`} className="px-2 text-slate-500">
+                <span key={`ellipsis-${index}`} className="px-2 text-text-muted">
                   ...
                 </span>
               )
@@ -127,7 +127,7 @@ export function Pagination({
                   'px-3 py-1.5 text-sm font-medium rounded-lg transition-colors',
                   currentPage === pageNum
                     ? 'bg-teal-600 text-white'
-                    : 'text-slate-700 hover:bg-slate-100'
+                    : 'text-text-secondary hover:bg-subtle'
                 )}
               >
                 {pageNum}

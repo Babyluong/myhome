@@ -37,7 +37,7 @@ export const DrugCard: React.FC<DrugCardProps> = ({ drug, onSelect }) => {
   return (
     <div
       onClick={handleCardClick}
-      className={`group bg-surface rounded-xl border transition-all duration-150 hover:border-border-strong hover:bg-subtle/30 shadow-2xs cursor-pointer flex flex-col justify-between overflow-hidden relative ${
+      className={`group bg-surface rounded-xl border transition-colors duration-150 hover:border-border-strong hover:bg-subtle/30 shadow-elevation-1 cursor-pointer flex flex-col justify-between overflow-hidden relative ${
         drug.isHAM 
           ? 'border-rose-500/30' 
           : drug.isLASA

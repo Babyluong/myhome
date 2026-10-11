@@ -109,7 +109,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
   return (
     <div className={cn('w-full', className)}>
       {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-1.5">
+        <label className="block text-sm font-medium text-text-secondary mb-1.5">
           {label}
           {required && <span className="text-red-500 ml-1">*</span>}
         </label>
@@ -117,7 +117,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 
       {previewUrl || value ? (
         <div className="relative group">
-          <div className="w-32 h-32 rounded-xl overflow-hidden bg-gray-100 border-2 border-gray-200">
+          <div className="w-32 h-32 rounded-xl overflow-hidden bg-subtle border-2 border-border-default">
             {previewUrl ? (
               <img
                 src={previewUrl}
@@ -138,7 +138,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
             <X className="w-4 h-4" />
           </button>
           {value && (
-            <p className="mt-2 text-xs text-gray-500 truncate max-w-[128px]">
+            <p className="mt-2 text-xs text-text-muted truncate max-w-[128px]">
               {value.name} ({formatFileSize(value.size)})
             </p>
           )}
@@ -151,13 +151,13 @@ export const FileUpload: React.FC<FileUploadProps> = ({
           onDrop={handleDrop}
           onClick={() => inputRef.current?.click()}
           className={cn(
-            'relative border-2 border-dashed rounded-xl p-6 cursor-pointer transition-all',
+            'relative border-2 border-dashed rounded-xl p-6 cursor-pointer transition-colors',
             'hover:border-primary-400 hover:bg-primary-50/50',
             dragActive
               ? 'border-primary-500 bg-primary-50'
               : error
               ? 'border-error-300 bg-error-50'
-              : 'border-gray-300 bg-gray-50'
+              : 'border-border-default bg-subtle/50'
           )}
         >
           <input
@@ -172,7 +172,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
             <div
               className={cn(
                 'w-12 h-12 rounded-full flex items-center justify-center mb-3',
-                dragActive ? 'bg-primary-100' : 'bg-gray-100'
+                dragActive ? 'bg-primary-100' : 'bg-subtle'
               )}
             >
               <Upload
@@ -183,10 +183,10 @@ export const FileUpload: React.FC<FileUploadProps> = ({
               />
             </div>
             
-            <p className="text-sm font-medium text-gray-700">
+            <p className="text-sm font-medium text-text-secondary">
               {dragActive ? 'Drop file here' : 'Click to upload or drag and drop'}
             </p>
-            <p className="mt-1 text-xs text-gray-500">
+            <p className="mt-1 text-xs text-text-muted">
               PNG, JPG, WEBP up to {maxSize / (1024 * 1024)}MB
             </p>
           </div>
@@ -201,7 +201,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       )}
 
       {helperText && !error && (
-        <p className="mt-1.5 text-sm text-gray-500">{helperText}</p>
+        <p className="mt-1.5 text-sm text-text-muted">{helperText}</p>
       )}
     </div>
   )

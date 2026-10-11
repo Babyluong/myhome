@@ -418,21 +418,21 @@ export const IssueCounterPage: React.FC = () => {
               </div>
 
               <div className="relative">
-                <Search className="w-4 h-4 text-slate-500 absolute left-3 top-2.5" />
+                <Search className="w-4 h-4 text-text-muted absolute left-3 top-2.5" />
                 <Input
                   placeholder="Cari no. indent / jabatan..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="pl-9 bg-slate-950 border-slate-800 text-xs text-slate-200 placeholder:text-slate-600 rounded-xl"
+                  className="pl-9 bg-slate-950 border-slate-800 text-xs text-slate-200 placeholder:text-text-muted rounded-xl"
                 />
               </div>
 
               <div className="space-y-2.5 max-h-[580px] overflow-y-auto custom-scrollbar pr-1">
                 {filteredQueue.length === 0 ? (
-                  <div className="py-16 text-center text-xs text-slate-500 border border-dashed border-slate-800/80 rounded-2xl p-6">
+                  <div className="py-16 text-center text-xs text-text-muted border border-dashed border-slate-800/80 rounded-2xl p-6">
                     <ClipboardList className="w-8 h-8 mx-auto mb-2 opacity-30 text-teal-400" />
                     <p className="font-medium text-slate-400">Tiada Indent Menunggu</p>
-                    <p className="text-[11px] text-slate-600 mt-1">Semua pesanan indent yang diluluskan telah selesai dikeluarkan.</p>
+                    <p className="text-[11px] text-text-muted mt-1">Semua pesanan indent yang diluluskan telah selesai dikeluarkan.</p>
                   </div>
                 ) : (
                   filteredQueue.map((req) => {
@@ -441,7 +441,7 @@ export const IssueCounterPage: React.FC = () => {
                       <div
                         key={req.id}
                         onClick={() => void selectRequestForIssuing(req)}
-                        className={`p-4 rounded-xl border transition-all cursor-pointer relative overflow-hidden ${
+                        className={`p-4 rounded-xl border transition-colors cursor-pointer relative overflow-hidden ${
                           isSelected
                             ? 'bg-gradient-to-r from-teal-950/60 to-slate-900 border-teal-500/50 shadow-lg shadow-teal-950/50 ring-1 ring-teal-500/20'
                             : 'bg-slate-950/60 border-slate-800/80 hover:bg-slate-800/40 hover:border-slate-700'
@@ -468,10 +468,10 @@ export const IssueCounterPage: React.FC = () => {
 
                         <div className="flex items-center justify-between text-[11px] text-slate-400 mt-3 pt-2.5 border-t border-slate-800/60">
                           <span className="text-slate-400 flex items-center gap-1">
-                            <Layers className="w-3 h-3 text-slate-500" />
+                            <Layers className="w-3 h-3 text-text-muted" />
                             <strong className="text-slate-300">{req.items?.length || 0}</strong> baris item
                           </span>
-                          <span className="font-mono text-[10px] text-slate-500">
+                          <span className="font-mono text-[10px] text-text-muted">
                             {new Date(req.request_date).toLocaleDateString('en-MY')}
                           </span>
                         </div>
@@ -486,10 +486,10 @@ export const IssueCounterPage: React.FC = () => {
           {/* Right Column: Workstation (8.5 cols) */}
           <div className="lg:col-span-8 space-y-5">
             {!selectedRequest ? (
-              <div className="p-16 rounded-2xl bg-slate-900/90 border border-slate-800/90 text-center text-slate-500 shadow-xl space-y-3">
-                <Package className="w-12 h-12 mx-auto text-slate-700" />
+              <div className="p-16 rounded-2xl bg-slate-900/90 border border-slate-800/90 text-center text-text-muted shadow-xl space-y-3">
+                <Package className="w-12 h-12 mx-auto text-text-secondary" />
                 <h3 className="text-sm font-semibold text-slate-400">Pilih Indent daripada Giliran</h3>
-                <p className="text-xs text-slate-600 max-w-sm mx-auto">
+                <p className="text-xs text-text-muted max-w-sm mx-auto">
                   Sila klik pada salah satu indent yang diluluskan di sebelah kiri untuk menyemak dan memulakan pengeluaran stok.
                 </p>
               </div>
@@ -524,11 +524,11 @@ export const IssueCounterPage: React.FC = () => {
 
                     <div className="grid grid-cols-2 gap-4 text-xs text-slate-400 sm:text-right">
                       <div>
-                        <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Pemohon</span>
+                        <span className="text-[10px] text-text-muted uppercase tracking-wider block">Pemohon</span>
                         <span className="text-slate-200 font-medium">{selectedRequest.requester?.full_name || 'Staff Nurse'}</span>
                       </div>
                       <div>
-                        <span className="text-[10px] text-slate-500 uppercase tracking-wider block">Tarikh Diperlukan</span>
+                        <span className="text-[10px] text-text-muted uppercase tracking-wider block">Tarikh Diperlukan</span>
                         <span className="text-slate-200 font-medium font-mono">
                           {selectedRequest.required_date || 'Segera'}
                         </span>
@@ -575,7 +575,7 @@ export const IssueCounterPage: React.FC = () => {
                       <Layers className="w-4 h-4 text-teal-400" /> Senarai Item Pengeluaran ({totalItemsCount})
                     </h3>
                     <span className="text-[11px] text-slate-400 flex items-center gap-1">
-                      <Lock className="w-3 h-3 text-slate-500" /> Mod Terpelihara (Read-Only)
+                      <Lock className="w-3 h-3 text-text-muted" /> Mod Terpelihara (Read-Only)
                     </span>
                   </div>
 
@@ -611,7 +611,7 @@ export const IssueCounterPage: React.FC = () => {
                       return (
                         <div
                           key={item.id}
-                          className={`p-4 rounded-2xl border transition-all duration-200 relative overflow-hidden ${
+                          className={`p-4 rounded-2xl border transition-colors duration-150 relative overflow-hidden ${
                             isPicked
                               ? 'bg-slate-900/60 border-emerald-500/40 ring-1 ring-emerald-500/20 shadow-md'
                               : 'bg-slate-900/95 border-slate-800 hover:border-slate-700 shadow-sm'
@@ -628,7 +628,7 @@ export const IssueCounterPage: React.FC = () => {
                               {/* Physical Pick Checkbox Button */}
                               <button
                                 onClick={() => togglePicked(item.id)}
-                                className={`mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition-all ${
+                                className={`mt-0.5 w-6 h-6 rounded-lg flex items-center justify-center transition-colors ${
                                   isPicked
                                     ? 'bg-emerald-500 text-slate-950 font-bold shadow-lg shadow-emerald-500/30 ring-2 ring-emerald-400/40'
                                     : 'bg-slate-950 border border-slate-700 text-transparent hover:border-teal-400 hover:text-teal-400/30'
@@ -641,7 +641,7 @@ export const IssueCounterPage: React.FC = () => {
                               <div>
                                 <div className="flex items-center gap-2 flex-wrap">
                                   <span
-                                    className={`text-xs font-bold tracking-tight transition-all duration-200 ${
+                                    className={`text-xs font-bold tracking-tight transition-colors duration-150 ${
                                       isPicked ? 'line-through text-slate-400 opacity-75' : 'text-slate-100'
                                     }`}
                                   >
@@ -664,13 +664,13 @@ export const IssueCounterPage: React.FC = () => {
                                 </div>
 
                                 <div
-                                  className={`flex items-center gap-2 text-[11px] font-mono mt-1 flex-wrap transition-all duration-200 ${
-                                    isPicked ? 'line-through opacity-60 text-slate-500' : 'text-slate-400'
+                                  className={`flex items-center gap-2 text-[11px] font-mono mt-1 flex-wrap transition-colors duration-150 ${
+                                    isPicked ? 'line-through opacity-60 text-text-muted' : 'text-slate-400'
                                   }`}
                                 >
                                   <span className="text-teal-400 font-semibold">Kod: {item.item_code || 'N/A'}</span>
                                   <span>•</span>
-                                  <span className="uppercase text-slate-500">{item.item_type || 'DRUG'}</span>
+                                  <span className="uppercase text-text-muted">{item.item_type || 'DRUG'}</span>
                                   <span>•</span>
                                   <span className="text-slate-300">{item.unit}</span>
                                 </div>
@@ -703,14 +703,14 @@ export const IssueCounterPage: React.FC = () => {
                           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-3">
                             {/* Column 1: Qty Issued */}
                             <div
-                              className={`p-2.5 rounded-xl border flex items-center justify-between transition-all ${
+                              className={`p-2.5 rounded-xl border flex items-center justify-between transition-colors ${
                                 isPicked
                                   ? 'bg-slate-950/40 border-slate-800/60 opacity-80'
                                   : 'bg-slate-950/80 border-slate-800/80'
                               }`}
                             >
                               <div>
-                                <span className="text-[10px] text-slate-500 uppercase tracking-wider block">
+                                <span className="text-[10px] text-text-muted uppercase tracking-wider block">
                                   Kuantiti Keluar
                                 </span>
                                 <div className="text-sm font-bold text-slate-100 font-mono tabular-nums mt-0.5">
@@ -727,7 +727,7 @@ export const IssueCounterPage: React.FC = () => {
 
                             {/* Column 2: Storage Location (NEW) */}
                             <div
-                              className={`p-2.5 rounded-xl border flex items-center justify-between transition-all ${
+                              className={`p-2.5 rounded-xl border flex items-center justify-between transition-colors ${
                                 isPicked
                                   ? 'bg-slate-950/40 border-slate-800/60 opacity-80'
                                   : 'bg-slate-950/80 border-slate-800/80'
@@ -746,14 +746,14 @@ export const IssueCounterPage: React.FC = () => {
 
                             {/* Column 3: Batch Number */}
                             <div
-                              className={`p-2.5 rounded-xl border flex items-center justify-between transition-all ${
+                              className={`p-2.5 rounded-xl border flex items-center justify-between transition-colors ${
                                 isPicked
                                   ? 'bg-slate-950/40 border-slate-800/60 opacity-80'
                                   : 'bg-slate-950/80 border-slate-800/80'
                               }`}
                             >
                               <div>
-                                <span className="text-[10px] text-slate-500 uppercase tracking-wider block">
+                                <span className="text-[10px] text-text-muted uppercase tracking-wider block">
                                   No. Batch (Lot)
                                 </span>
                                 <div className="text-xs font-bold text-emerald-300 font-mono mt-0.5">
@@ -765,14 +765,14 @@ export const IssueCounterPage: React.FC = () => {
 
                             {/* Column 4: Expiry Date */}
                             <div
-                              className={`p-2.5 rounded-xl border flex items-center justify-between transition-all ${
+                              className={`p-2.5 rounded-xl border flex items-center justify-between transition-colors ${
                                 isPicked
                                   ? 'bg-slate-950/40 border-slate-800/60 opacity-80'
                                   : 'bg-slate-950/80 border-slate-800/80'
                               }`}
                             >
                               <div>
-                                <span className="text-[10px] text-slate-500 uppercase tracking-wider block">
+                                <span className="text-[10px] text-text-muted uppercase tracking-wider block">
                                   Tarikh Luput
                                 </span>
                                 <div className="text-xs font-bold text-slate-200 font-mono mt-0.5">
@@ -805,7 +805,7 @@ export const IssueCounterPage: React.FC = () => {
                   <Button
                     onClick={handleIssueSubmit}
                     disabled={isSubmitting || !allItemsPicked}
-                    className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs px-7 py-3 rounded-xl shadow-xl shadow-emerald-600/25 transition-all duration-200 flex items-center justify-center gap-2 self-stretch sm:self-auto disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs px-7 py-3 rounded-xl shadow-xl shadow-emerald-600/25 transition-colors duration-150 flex items-center justify-center gap-2 self-stretch sm:self-auto disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? (
                       <>
@@ -903,7 +903,7 @@ export const IssueCounterPage: React.FC = () => {
               placeholder="Contoh: Stok fizikal batch berbeza di rak stor / Pelarasan kuantiti atas baki fizikal terhad..."
               value={editReason}
               onChange={(e) => setEditReason(e.target.value)}
-              className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-teal-500"
+              className="w-full p-2.5 rounded-xl bg-slate-900 border border-slate-700 text-xs text-slate-100 placeholder:text-text-muted focus:outline-none focus:border-teal-500"
             />
           </div>
 
@@ -941,7 +941,7 @@ export const IssueCounterPage: React.FC = () => {
           )}
 
           {historyItem && (!auditLogs[historyItem.id] || auditLogs[historyItem.id].length === 0) ? (
-            <div className="py-8 text-center text-xs text-slate-500">
+            <div className="py-8 text-center text-xs text-text-muted">
               Tiada sejarah pindaan direkodkan untuk item ini.
             </div>
           ) : (
@@ -957,14 +957,14 @@ export const IssueCounterPage: React.FC = () => {
                         <UserCheck className="w-3.5 h-3.5 text-teal-400" />
                         {log.officer}
                       </span>
-                      <span className="font-mono text-slate-500 text-[10px]">
+                      <span className="font-mono text-text-muted text-[10px]">
                         {new Date(log.timestamp).toLocaleString('en-MY')}
                       </span>
                     </div>
 
                     <div className="grid grid-cols-2 gap-2 text-[11px]">
                       <div className="p-2 rounded bg-slate-950 border border-slate-800/80">
-                        <span className="text-[9px] text-slate-500 uppercase block">Sebelum</span>
+                        <span className="text-[9px] text-text-muted uppercase block">Sebelum</span>
                         <div className="font-mono text-slate-400 mt-0.5">
                           Qty: {log.previousValues.qty} | Batch: {log.previousValues.batch} | Exp: {log.previousValues.expiry}
                         </div>

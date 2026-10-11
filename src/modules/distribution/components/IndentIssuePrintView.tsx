@@ -615,27 +615,27 @@ export const IndentIssuePrintView: React.FC<IndentIssuePrintViewProps> = ({
               <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div>
-                    <span className="text-[10px] uppercase font-semibold text-slate-500">No. Indent</span>
+                    <span className="text-[10px] uppercase font-semibold text-text-muted">No. Indent</span>
                     <p className="font-mono text-base font-bold text-emerald-400">{request.indent_number}</p>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase font-semibold text-slate-500">Wad / Unit Pemohon (Dari)</span>
+                    <span className="text-[10px] uppercase font-semibold text-text-muted">Wad / Unit Pemohon (Dari)</span>
                     <p className="text-xs font-bold text-slate-200">
                       {request.requesting_department?.department_name || 'Nephrology'}
                     </p>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase font-semibold text-slate-500">Unit / Stor Penerima (Kepada)</span>
+                    <span className="text-[10px] uppercase font-semibold text-text-muted">Unit / Stor Penerima (Kepada)</span>
                     <p className="text-xs font-bold text-emerald-300">
                       {request.fulfilling_department?.department_name || 'Pharmacy logistic'}
                     </p>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase font-semibold text-slate-500">Status</span>
+                    <span className="text-[10px] uppercase font-semibold text-text-muted">Status</span>
                     <p className="text-xs font-bold uppercase text-slate-200">{request.status}</p>
                   </div>
                   <div>
-                    <span className="text-[10px] uppercase font-semibold text-slate-500">Jumlah Item</span>
+                    <span className="text-[10px] uppercase font-semibold text-text-muted">Jumlah Item</span>
                     <p className="text-xs font-bold text-slate-200">{request.items?.length || 0} Baris</p>
                   </div>
                 </div>

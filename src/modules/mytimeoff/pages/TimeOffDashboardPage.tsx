@@ -187,7 +187,7 @@ export const TimeOffDashboardPage: React.FC = () => {
           {/* Card 1: Pending Claims */}
           <div
             onClick={() => navigate(ROUTES.TIMEOFF_MY_CLAIMS)}
-            className="p-5 rounded-xl bg-surface border border-border-default shadow-xs hover:border-accent-base/40 transition-all cursor-pointer flex flex-col justify-between group"
+            className="p-5 rounded-xl bg-surface border border-border-default shadow-xs hover:border-accent-base/40 transition-colors cursor-pointer flex flex-col justify-between group"
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-text-muted">
@@ -218,7 +218,7 @@ export const TimeOffDashboardPage: React.FC = () => {
           {/* Card 2: Approved Claims */}
           <div
             onClick={() => navigate(ROUTES.TIMEOFF_MY_CLAIMS)}
-            className="p-5 rounded-xl bg-surface border border-border-default shadow-xs hover:border-accent-base/40 transition-all cursor-pointer flex flex-col justify-between group"
+            className="p-5 rounded-xl bg-surface border border-border-default shadow-xs hover:border-accent-base/40 transition-colors cursor-pointer flex flex-col justify-between group"
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-text-muted">
@@ -249,7 +249,7 @@ export const TimeOffDashboardPage: React.FC = () => {
           {/* Card 3: Pending Redemptions */}
           <div
             onClick={() => navigate(ROUTES.TIMEOFF_HISTORY)}
-            className="p-5 rounded-xl bg-surface border border-border-default shadow-xs hover:border-accent-base/40 transition-all cursor-pointer flex flex-col justify-between group"
+            className="p-5 rounded-xl bg-surface border border-border-default shadow-xs hover:border-accent-base/40 transition-colors cursor-pointer flex flex-col justify-between group"
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-semibold text-text-muted">
@@ -305,7 +305,7 @@ export const TimeOffDashboardPage: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
         <button
           onClick={() => navigate(ROUTES.TIMEOFF_CLAIM_NEW)}
-          className="p-4 rounded-xl bg-surface border border-border-default shadow-xs hover:border-accent-base/40 transition-all text-left flex items-center gap-3.5 group"
+          className="p-4 rounded-xl bg-surface border border-border-default shadow-xs hover:border-accent-base/40 transition-colors text-left flex items-center gap-3.5 group"
         >
           <div className="p-2.5 rounded-lg bg-subtle text-accent-base group-hover:bg-accent-base group-hover:text-white transition-colors">
             <Plus className="w-5 h-5" />
@@ -322,7 +322,7 @@ export const TimeOffDashboardPage: React.FC = () => {
 
         <button
           onClick={() => navigate(ROUTES.TIMEOFF_REDEEM)}
-          className="p-4 rounded-xl bg-surface border border-border-default shadow-xs hover:border-accent-base/40 transition-all text-left flex items-center gap-3.5 group"
+          className="p-4 rounded-xl bg-surface border border-border-default shadow-xs hover:border-accent-base/40 transition-colors text-left flex items-center gap-3.5 group"
         >
           <div className="p-2.5 rounded-lg bg-subtle text-accent-base group-hover:bg-accent-base group-hover:text-white transition-colors">
             <CalendarDays className="w-5 h-5" />
@@ -339,7 +339,7 @@ export const TimeOffDashboardPage: React.FC = () => {
 
         <button
           onClick={() => navigate(ROUTES.TIMEOFF_MY_CLAIMS)}
-          className="p-4 rounded-xl bg-surface border border-border-default shadow-xs hover:border-accent-base/40 transition-all text-left flex items-center gap-3.5 group"
+          className="p-4 rounded-xl bg-surface border border-border-default shadow-xs hover:border-accent-base/40 transition-colors text-left flex items-center gap-3.5 group"
         >
           <div className="p-2.5 rounded-lg bg-subtle text-accent-base group-hover:bg-accent-base group-hover:text-white transition-colors">
             <FileText className="w-5 h-5" />
@@ -356,7 +356,7 @@ export const TimeOffDashboardPage: React.FC = () => {
 
         <button
           onClick={() => navigate(ROUTES.TIMEOFF_HISTORY)}
-          className="p-4 rounded-xl bg-surface border border-border-default shadow-xs hover:border-accent-base/40 transition-all text-left flex items-center gap-3.5 group"
+          className="p-4 rounded-xl bg-surface border border-border-default shadow-xs hover:border-accent-base/40 transition-colors text-left flex items-center gap-3.5 group"
         >
           <div className="p-2.5 rounded-lg bg-subtle text-accent-base group-hover:bg-accent-base group-hover:text-white transition-colors">
             <Layers className="w-5 h-5" />

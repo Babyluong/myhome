@@ -665,14 +665,14 @@ export const MyPhisDashboardPage: React.FC = () => {
     if (log) {
       if (log.status === 'completed') {
         return {
-          bgColor: 'bg-emerald-50 hover:bg-emerald-100 border-emerald-200 text-emerald-800',
+          bgColor: 'bg-emerald-500/10 hover:bg-emerald-100 border-emerald-500/20 text-emerald-400',
           badgeColor: 'success',
           statusText: 'Completed',
           icon: <Check className="w-5 h-5 text-emerald-600" />
         }
       }
       return {
-        bgColor: 'bg-rose-50 hover:bg-rose-100 border-rose-200 text-rose-800',
+        bgColor: 'bg-rose-500/10 hover:bg-rose-100 border-rose-500/20 text-rose-400',
         badgeColor: 'error',
         statusText: 'Failed',
         icon: <AlertCircle className="w-5 h-5 text-rose-600" />
@@ -682,7 +682,7 @@ export const MyPhisDashboardPage: React.FC = () => {
     // Weekend with NO log: always render neutral "Weekend" with no warning icon
     if (isWeekend) {
       return {
-        bgColor: 'bg-slate-50/50 hover:bg-slate-100/70 border-slate-200/60 text-slate-400',
+        bgColor: 'bg-subtle/50 hover:bg-subtle border-border-default text-slate-400',
         badgeColor: 'gray',
         statusText: 'Weekend',
         icon: null
@@ -692,14 +692,14 @@ export const MyPhisDashboardPage: React.FC = () => {
     if (isToday) {
       if (isHoliday) {
         return {
-          bgColor: 'bg-indigo-50/40 hover:bg-indigo-100/50 border-indigo-150 text-indigo-700',
+          bgColor: 'bg-indigo-500/10 hover:bg-indigo-100/50 border-indigo-150 text-indigo-700',
           badgeColor: 'indigo',
           statusText: 'Pending (Holiday)',
           icon: <AlertTriangle className="w-5 h-5 text-indigo-400 animate-pulse" />
         }
       }
       return {
-        bgColor: 'bg-amber-50 hover:bg-amber-100 border-amber-200 text-amber-800',
+        bgColor: 'bg-amber-500/10 hover:bg-amber-100 border-amber-500/20 text-amber-400',
         badgeColor: 'warning',
         statusText: 'Pending Today',
         icon: <Clock className="w-5 h-5 text-amber-500 animate-pulse" />
@@ -709,14 +709,14 @@ export const MyPhisDashboardPage: React.FC = () => {
     if (isPast) {
       if (isHoliday) {
         return {
-          bgColor: 'bg-indigo-50/40 hover:bg-indigo-100/50 border-indigo-200 text-indigo-700',
+          bgColor: 'bg-indigo-500/10 hover:bg-indigo-100/50 border-indigo-500/20 text-indigo-700',
           badgeColor: 'indigo',
           statusText: 'Missed (Holiday)',
           icon: <AlertTriangle className="w-5 h-5 text-indigo-400" />
         }
       }
       return {
-        bgColor: 'bg-rose-50 hover:bg-rose-100 border-rose-200 text-rose-800',
+        bgColor: 'bg-rose-500/10 hover:bg-rose-100 border-rose-500/20 text-rose-400',
         badgeColor: 'error',
         statusText: 'Missed Log',
         icon: <AlertTriangle className="w-5 h-5 text-rose-500" />
@@ -725,7 +725,7 @@ export const MyPhisDashboardPage: React.FC = () => {
 
     if (isHoliday) {
       return {
-        bgColor: 'bg-indigo-50/20 border-indigo-100 text-indigo-400',
+        bgColor: 'bg-indigo-500/10 border-indigo-100 text-indigo-400',
         badgeColor: 'indigo',
         statusText: 'Weekend / Holiday',
         icon: null
@@ -733,7 +733,7 @@ export const MyPhisDashboardPage: React.FC = () => {
     }
 
     return {
-      bgColor: 'bg-slate-50/45 border-slate-100 text-slate-300',
+      bgColor: 'bg-subtle/50 border-border-subtle text-slate-300',
       badgeColor: 'gray',
       statusText: 'Future',
       icon: null
@@ -864,12 +864,12 @@ export const MyPhisDashboardPage: React.FC = () => {
           ].map(portal => (
             <div 
               key={portal.name}
-              className="group flex flex-col justify-between p-5 rounded-xl border border-border-default bg-subtle/30 hover:bg-surface hover:border-accent-base/40 hover:shadow-xs transition-all duration-200"
+              className="group flex flex-col justify-between p-5 rounded-xl border border-border-default bg-subtle/30 hover:bg-surface hover:border-accent-base/40 hover:shadow-xs transition-colors duration-150"
             >
               <div>
                 <div className="flex items-center justify-between mb-2.5">
                   <span className="text-[10px] font-semibold tracking-wide uppercase px-2 py-0.5 rounded-md bg-surface border border-border-default text-text-muted">{portal.badge}</span>
-                  <ExternalLink className="w-4 h-4 text-text-muted group-hover:text-accent-base group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                  <ExternalLink className="w-4 h-4 text-text-muted group-hover:text-accent-base group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-colors" />
                 </div>
                 <h3 className="font-bold text-text-primary text-base mb-1 group-hover:text-accent-base transition-colors">{portal.name}</h3>
                 <p className="text-text-muted text-xs leading-relaxed">{portal.desc}</p>
@@ -930,7 +930,7 @@ export const MyPhisDashboardPage: React.FC = () => {
                 variant="outline"
                 size="sm"
                 onClick={handleAutoPlotLogs}
-                className="flex items-center justify-center gap-1.5 shadow-xs font-semibold border-border-default text-text-primary hover:bg-subtle h-9 transition-all px-3.5 whitespace-nowrap flex-1 sm:flex-initial rounded-lg"
+                className="flex items-center justify-center gap-1.5 shadow-xs font-semibold border-border-default text-text-primary hover:bg-subtle h-9 transition-colors px-3.5 whitespace-nowrap flex-1 sm:flex-initial rounded-lg"
               >
                 <RefreshCw className="w-4 h-4" />
                 Auto Plot
@@ -976,7 +976,7 @@ export const MyPhisDashboardPage: React.FC = () => {
                 key={day.dateStr}
                 disabled={day.isFuture}
                 onClick={() => handleOpenLogModal(day.dateStr, log)}
-                className={`relative flex flex-col items-center justify-between p-3 rounded-xl border text-center transition-all ${styles.bgColor} min-h-[92px] ${day.isFuture ? 'cursor-not-allowed pointer-events-none opacity-60' : ''}`}
+                className={`relative flex flex-col items-center justify-between p-3 rounded-xl border text-center transition-colors ${styles.bgColor} min-h-[92px] ${day.isFuture ? 'cursor-not-allowed pointer-events-none opacity-60' : ''}`}
               >
                 {day.isToday && (
                   <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-accent-base rounded-full ring-2 ring-surface" title="Today" />
@@ -1077,7 +1077,7 @@ export const MyPhisDashboardPage: React.FC = () => {
                 variant="outline"
                 size="sm"
                 onClick={handleGeneratePdfReport}
-                className="flex items-center gap-1.5 shadow-xs font-semibold border-border-default text-text-primary hover:bg-subtle h-9 transition-all px-4 whitespace-nowrap rounded-lg"
+                className="flex items-center gap-1.5 shadow-xs font-semibold border-border-default text-text-primary hover:bg-subtle h-9 transition-colors px-4 whitespace-nowrap rounded-lg"
               >
                 <FileText className="w-4 h-4 text-accent-base" />
                 Export PDF
@@ -1196,7 +1196,7 @@ export const MyPhisDashboardPage: React.FC = () => {
       >
         <form onSubmit={handleSaveLog} className="space-y-4">
           {formError && (
-            <div className="bg-rose-50 border border-rose-200 text-rose-800 rounded-lg p-3 text-xs flex gap-2">
+            <div className="bg-rose-500/10 border border-rose-500/20 text-rose-400 rounded-lg p-3 text-xs flex gap-2">
               <AlertCircle className="w-4 h-4 text-rose-500 flex-shrink-0" />
               <span>{formError}</span>
             </div>
@@ -1204,36 +1204,36 @@ export const MyPhisDashboardPage: React.FC = () => {
 
           {/* Readonly Date display */}
           <div>
-            <label className="block text-xs font-semibold text-slate-500 mb-1">Backup Date</label>
+            <label className="block text-xs font-semibold text-text-muted mb-1">Backup Date</label>
             <Input
               type="date"
               value={formDate}
               disabled
-              className="bg-slate-50 text-slate-500 cursor-not-allowed"
+              className="bg-subtle/50 text-text-muted cursor-not-allowed"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             {/* Swap Time input */}
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1">Swap Time</label>
+              <label className="block text-xs font-semibold text-text-muted mb-1">Swap Time</label>
               <Input
                 type="time"
                 value={formTime}
                 disabled
-                className="bg-slate-50 text-slate-500 cursor-not-allowed"
+                className="bg-subtle/50 text-text-muted cursor-not-allowed"
                 required
               />
             </div>
             
             {/* Responsible officer display (Prefilled & Readonly) */}
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1">Responsible Officer</label>
+              <label className="block text-xs font-semibold text-text-muted mb-1">Responsible Officer</label>
               <Input
                 type="text"
                 value={petugasNama}
                 disabled
-                className="bg-slate-50 text-slate-500 cursor-not-allowed"
+                className="bg-subtle/50 text-text-muted cursor-not-allowed"
               />
             </div>
           </div>
@@ -1241,11 +1241,11 @@ export const MyPhisDashboardPage: React.FC = () => {
           <div className="grid grid-cols-2 gap-4">
             {/* Disk Label selection dropdown */}
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1">Disk Label Preset</label>
+              <label className="block text-xs font-semibold text-text-muted mb-1">Disk Label Preset</label>
               <select
                 value={formDiskLabel}
                 onChange={e => setFormDiskLabel(e.target.value)}
-                className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full h-10 px-3 border border-border-default rounded-lg text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="DISK-MON">DISK-MON</option>
                 <option value="DISK-TUE">DISK-TUE</option>
@@ -1260,11 +1260,11 @@ export const MyPhisDashboardPage: React.FC = () => {
 
             {/* Rotation swap status selection */}
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1">Rotational Status</label>
+              <label className="block text-xs font-semibold text-text-muted mb-1">Rotational Status</label>
               <select
                 value={formStatus}
                 onChange={e => setFormStatus(e.target.value as any)}
-                className="w-full h-10 px-3 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full h-10 px-3 border border-border-default rounded-lg text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="completed">Completed Successfully</option>
                 <option value="failed">Swap Failure / Alert</option>
@@ -1275,7 +1275,7 @@ export const MyPhisDashboardPage: React.FC = () => {
           {/* Conditional Custom Disk Label text input */}
           {formDiskLabel === 'custom' && (
             <div>
-              <label className="block text-xs font-semibold text-slate-500 mb-1">Custom Label Name</label>
+              <label className="block text-xs font-semibold text-text-muted mb-1">Custom Label Name</label>
               <Input
                 type="text"
                 placeholder="e.g. DISK-WEEK-1A"
@@ -1288,18 +1288,18 @@ export const MyPhisDashboardPage: React.FC = () => {
 
           {/* Rotation remarks notes */}
           <div>
-            <label className="block text-xs font-semibold text-slate-500 mb-1">Remarks & Swapping Notes</label>
+            <label className="block text-xs font-semibold text-text-muted mb-1">Remarks & Swapping Notes</label>
             <textarea
               placeholder="Provide a short description of the rotation (e.g. disk swap complete, server checked, any warnings)."
               value={formNota}
               onChange={e => setFormNota(e.target.value)}
               rows={3}
-              className="w-full p-3 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full p-3 border border-border-default rounded-lg text-sm bg-surface focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           {/* Modal Footer buttons */}
-          <div className="flex justify-end items-center gap-2 pt-4 border-t border-slate-100">
+          <div className="flex justify-end items-center gap-2 pt-4 border-t border-border-subtle">
             <Button
               type="button"
               variant="ghost"

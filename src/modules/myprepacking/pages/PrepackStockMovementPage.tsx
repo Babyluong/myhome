@@ -128,7 +128,7 @@ export const PrepackStockMovementPage: React.FC = () => {
           <div className="flex items-center flex-wrap gap-2">
             <button
               onClick={() => setTransferModalOpen(true)}
-              className="min-h-[36px] px-3.5 py-1.5 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-teal-500/40"
+              className="min-h-[36px] px-3.5 py-1.5 bg-teal-700 hover:bg-teal-600 active:scale-[0.98] text-white rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer focus-visible:ring-2 focus-visible:ring-teal-500/40"
             >
               <ArrowRightLeft className="w-3.5 h-3.5" />
               <span>Transfer Store to Counter</span>
@@ -136,7 +136,7 @@ export const PrepackStockMovementPage: React.FC = () => {
 
             <button
               onClick={() => setBatchModalOpen(true)}
-              className="min-h-[36px] px-3 py-1.5 bg-surface hover:bg-subtle active:scale-[0.98] text-text-primary rounded-lg text-xs font-medium border border-border-default hover:border-border-strong transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+              className="min-h-[36px] px-3 py-1.5 bg-surface hover:bg-subtle active:scale-[0.98] text-text-primary rounded-lg text-xs font-medium border border-border-default hover:border-border-strong transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
             >
               <PackageCheck className="w-3.5 h-3.5 text-text-muted" />
               <span>Pack UOD</span>
@@ -144,7 +144,7 @@ export const PrepackStockMovementPage: React.FC = () => {
 
             <button
               onClick={() => setUsageModalOpen(true)}
-              className="min-h-[36px] px-3 py-1.5 bg-surface hover:bg-subtle active:scale-[0.98] text-text-primary rounded-lg text-xs font-medium border border-border-default hover:border-border-strong transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+              className="min-h-[36px] px-3 py-1.5 bg-surface hover:bg-subtle active:scale-[0.98] text-text-primary rounded-lg text-xs font-medium border border-border-default hover:border-border-strong transition-colors flex items-center gap-1.5 cursor-pointer shadow-xs"
             >
               <Send className="w-3.5 h-3.5 text-text-muted" />
               <span>Counter Distribution</span>
@@ -153,7 +153,7 @@ export const PrepackStockMovementPage: React.FC = () => {
             <button
               onClick={loadData}
               title="Refresh Movement Data"
-              className="min-h-[36px] min-w-[36px] p-2 bg-surface hover:bg-subtle active:scale-[0.98] text-text-muted hover:text-text-primary rounded-lg border border-border-default hover:border-border-strong transition-all cursor-pointer shadow-xs flex items-center justify-center"
+              className="min-h-[36px] min-w-[36px] p-2 bg-surface hover:bg-subtle active:scale-[0.98] text-text-muted hover:text-text-primary rounded-lg border border-border-default hover:border-border-strong transition-colors cursor-pointer shadow-xs flex items-center justify-center"
             >
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             </button>
@@ -193,7 +193,7 @@ export const PrepackStockMovementPage: React.FC = () => {
         <div className="flex items-center p-0.5 bg-subtle rounded-lg border border-border-subtle">
           <button
             onClick={() => setActiveTab('transfers')}
-            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer active:scale-[0.98] ${
+            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer active:scale-[0.98] ${
               activeTab === 'transfers'
                 ? 'bg-surface text-text-primary shadow-xs'
                 : 'text-text-muted hover:text-text-primary'
@@ -205,7 +205,7 @@ export const PrepackStockMovementPage: React.FC = () => {
 
           <button
             onClick={() => setActiveTab('dispensing')}
-            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer active:scale-[0.98] ${
+            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer active:scale-[0.98] ${
               activeTab === 'dispensing'
                 ? 'bg-surface text-text-primary shadow-xs'
                 : 'text-text-muted hover:text-text-primary'
@@ -223,7 +223,7 @@ export const PrepackStockMovementPage: React.FC = () => {
             placeholder="Search reference no., batch, item..."
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 text-xs bg-subtle/70 hover:bg-subtle border border-border-default hover:border-border-strong focus:border-border-strong rounded-lg text-text-primary placeholder:text-text-muted outline-none transition-all"
+            className="w-full pl-9 pr-3 py-1.5 text-xs bg-subtle/70 hover:bg-subtle border border-border-default hover:border-border-strong focus:border-border-strong rounded-lg text-text-primary placeholder:text-text-muted outline-none transition-colors"
           />
         </div>
       </div>

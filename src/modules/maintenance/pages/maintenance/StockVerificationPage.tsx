@@ -104,11 +104,11 @@ export const StockVerificationPage: React.FC = () => {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-text-primary flex items-center gap-2">
             <ClipboardCheck className="w-6 h-6 text-teal-600" />
             Stock Verification
           </h1>
-          <p className="text-sm text-gray-600 mt-1">
+          <p className="text-sm text-text-muted mt-1">
             Schedule and conduct physical inventory counts to ensure accuracy.
           </p>
         </div>
@@ -121,14 +121,14 @@ export const StockVerificationPage: React.FC = () => {
 
       {/* Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+        <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
           <span className="text-sm font-medium text-blue-700">Scheduled</span>
-          <p className="text-2xl font-bold text-blue-800 mt-1">{scheduled}</p>
+          <p className="text-2xl font-bold text-blue-400 mt-1">{scheduled}</p>
         </div>
 
-        <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+        <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4">
           <span className="text-sm font-medium text-amber-700">In Progress</span>
-          <p className="text-2xl font-bold text-amber-800 mt-1">{inProgress}</p>
+          <p className="text-2xl font-bold text-amber-400 mt-1">{inProgress}</p>
         </div>
 
         <div className="bg-green-50 border border-green-200 rounded-xl p-4">
@@ -143,9 +143,9 @@ export const StockVerificationPage: React.FC = () => {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col md:flex-row md:items-end gap-4 bg-gray-50 p-4 rounded-xl border border-gray-200">
+      <div className="flex flex-col md:flex-row md:items-end gap-4 bg-subtle/50 p-4 rounded-xl border border-border-default">
         <div className="w-full md:w-44">
-          <label className="block text-xs font-medium text-gray-600 mb-1">Verification Type</label>
+          <label className="block text-xs font-medium text-text-muted mb-1">Verification Type</label>
           <Select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value as VerificationType | 'all')}>
             <option value="all">All Types</option>
             <option value="full">Full Count</option>
@@ -155,7 +155,7 @@ export const StockVerificationPage: React.FC = () => {
         </div>
 
         <div className="w-full md:w-44">
-          <label className="block text-xs font-medium text-gray-600 mb-1">Status</label>
+          <label className="block text-xs font-medium text-text-muted mb-1">Status</label>
           <Select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as VerificationStatus | 'all')}>
             <option value="all">All Status</option>
             <option value="scheduled">Scheduled</option>
@@ -165,14 +165,14 @@ export const StockVerificationPage: React.FC = () => {
           </Select>
         </div>
 
-        <div className="flex items-center gap-1 text-xs text-gray-500 ml-auto">
+        <div className="flex items-center gap-1 text-xs text-text-muted ml-auto">
           <ClipboardCheck className="w-3 h-3" />
           <span>{filteredVerifications.length} verifications</span>
         </div>
       </div>
 
       {/* Table */}
-      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+      <div className="bg-surface border border-border-default rounded-2xl shadow-sm overflow-hidden">
         <Table>
           <Table.Head>
             <Table.Row>
@@ -189,7 +189,7 @@ export const StockVerificationPage: React.FC = () => {
           <Table.Body>
             {filteredVerifications.length === 0 && (
               <Table.Row>
-                <Table.Cell colSpan={8} className="text-center text-sm text-gray-500 py-8">
+                <Table.Cell colSpan={8} className="text-center text-sm text-text-muted py-8">
                   No stock verifications found.
                 </Table.Cell>
               </Table.Row>
@@ -203,13 +203,13 @@ export const StockVerificationPage: React.FC = () => {
                 <Table.Cell>
                   {renderTypeBadge(verification.verification_type)}
                 </Table.Cell>
-                <Table.Cell className="text-sm text-gray-900">
+                <Table.Cell className="text-sm text-text-primary">
                   {verification.location_name}
                 </Table.Cell>
-                <Table.Cell className="text-sm text-gray-600">
+                <Table.Cell className="text-sm text-text-muted">
                   {formatDate(verification.scheduled_date)}
                 </Table.Cell>
-                <Table.Cell className="text-sm text-gray-600">
+                <Table.Cell className="text-sm text-text-muted">
                   {formatDate(verification.completed_at)}
                 </Table.Cell>
                 <Table.Cell className="text-right text-sm">
@@ -232,7 +232,7 @@ export const StockVerificationPage: React.FC = () => {
       </div>
 
       {/* Info Box */}
-      <div className="bg-teal-50 border border-teal-200 rounded-xl p-4">
+      <div className="bg-accent-base/10 border border-accent-base/20 rounded-xl p-4">
         <h3 className="font-medium text-teal-800 mb-2">📋 Verification Types</h3>
         <ul className="text-sm text-teal-700 space-y-1 list-disc list-inside">
           <li><strong>Full Count:</strong> Complete physical inventory of all items in a location (typically annual)</li>

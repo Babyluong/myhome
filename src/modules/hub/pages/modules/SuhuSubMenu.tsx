@@ -84,14 +84,14 @@ export const SuhuSubMenu: React.FC = () => {
       ) : stats.activeBreaches > 0 ? (
         'Action Required'
       ) : null,
-      badgeColor: 'bg-amber-500 text-slate-900 border-transparent'
+      badgeColor: 'bg-amber-500 text-text-primary border-transparent'
     },
     {
       title: 'Unit Registry & Configuration',
       description: 'Register new cooling units, assign ward physical locations, and configure threshold ranges (Min/Max °C).',
       icon: Settings,
       path: ROUTES.HUB_SUHU_ADMIN,
-      color: 'text-slate-500 bg-slate-500/10 border-slate-500/20',
+      color: 'text-text-muted bg-slate-500/10 border-slate-500/20',
       badge: null
     }
   ]
@@ -131,47 +131,47 @@ export const SuhuSubMenu: React.FC = () => {
       {/* Quick stats panel */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
         <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
-          <div className="flex justify-between items-start text-slate-500">
+          <div className="flex justify-between items-start text-text-muted">
             <span className="text-xs sm:text-sm font-medium">Total Units</span>
             <Activity className="w-4 h-4 text-slate-400 flex-shrink-0" />
           </div>
           <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-white min-h-[36px] flex items-center">
             {stats.loading ? <Skeleton className="h-8 w-16 bg-slate-800/80 rounded-lg inline-block" /> : stats.totalUnits}
           </div>
-          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">Actively monitored</p>
+          <p className="text-[11px] sm:text-xs text-text-muted mt-1">Actively monitored</p>
         </div>
 
         <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
-          <div className="flex justify-between items-start text-slate-500">
+          <div className="flex justify-between items-start text-text-muted">
             <span className="text-xs sm:text-sm font-medium">Active Breaches</span>
             <AlertTriangle className="w-4 h-4 text-rose-400 flex-shrink-0" />
           </div>
           <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-rose-400 min-h-[36px] flex items-center">
             {stats.loading ? <Skeleton className="h-8 w-16 bg-slate-800/80 rounded-lg inline-block" /> : stats.activeBreaches}
           </div>
-          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">Requires action</p>
+          <p className="text-[11px] sm:text-xs text-text-muted mt-1">Requires action</p>
         </div>
 
         <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
-          <div className="flex justify-between items-start text-slate-500">
+          <div className="flex justify-between items-start text-text-muted">
             <span className="text-xs sm:text-sm font-medium">Warnings</span>
             <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0" />
           </div>
           <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-amber-400 min-h-[36px] flex items-center">
             {stats.loading ? <Skeleton className="h-8 w-16 bg-slate-800/80 rounded-lg inline-block" /> : stats.warningUnits}
           </div>
-          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">Near threshold limit</p>
+          <p className="text-[11px] sm:text-xs text-text-muted mt-1">Near threshold limit</p>
         </div>
 
         <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
-          <div className="flex justify-between items-start text-slate-500">
+          <div className="flex justify-between items-start text-text-muted">
             <span className="text-xs sm:text-sm font-medium">Normal Status</span>
             <CheckCircle className="w-4 h-4 text-emerald-400 flex-shrink-0" />
           </div>
           <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-emerald-400 min-h-[36px] flex items-center">
             {stats.loading ? <Skeleton className="h-8 w-16 bg-slate-800/80 rounded-lg inline-block" /> : stats.normalUnits}
           </div>
-          <p className="text-[11px] sm:text-xs text-slate-500 mt-1">Within safe range</p>
+          <p className="text-[11px] sm:text-xs text-text-muted mt-1">Within safe range</p>
         </div>
       </div>
 
@@ -187,7 +187,7 @@ export const SuhuSubMenu: React.FC = () => {
               <button 
                 key={index}
                 onClick={() => navigate(item.path)}
-                className="text-left bg-slate-900/40 backdrop-blur-md hover:bg-slate-800/40 border border-slate-800/80 hover:border-slate-700/80 active:scale-[0.98] rounded-2xl p-4 sm:p-6 cursor-pointer transition-all duration-200 flex flex-col justify-between min-h-[170px] shadow-xl group"
+                className="text-left bg-slate-900/40 backdrop-blur-md hover:bg-slate-800/40 border border-slate-800/80 hover:border-slate-700/80 active:scale-[0.98] rounded-2xl p-4 sm:p-6 cursor-pointer transition-colors duration-150 flex flex-col justify-between min-h-[170px] shadow-xl group"
               >
                 <div>
                   <div className="flex justify-between items-center mb-4">

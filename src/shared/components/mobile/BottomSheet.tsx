@@ -99,7 +99,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-subtle active:scale-95 transition-all"
+                    className="p-1.5 rounded-lg text-text-muted hover:text-text-primary hover:bg-subtle active:scale-95 transition-colors"
                     aria-label="Close"
                   >
                     <X className="w-4 h-4" />

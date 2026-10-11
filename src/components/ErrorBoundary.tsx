@@ -82,29 +82,29 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, errorInfo, onReset
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-4">
-      <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl border border-slate-200 p-8">
+      <div className="max-w-2xl w-full bg-surface rounded-2xl shadow-xl border border-border-default p-8">
         <div className="flex items-start gap-4 mb-6">
           <div className="w-16 h-16 bg-error-50 rounded-full flex items-center justify-center flex-shrink-0">
             <AlertTriangle className="w-8 h-8 text-error-600" />
           </div>
           <div className="flex-1">
-            <h1 className="text-2xl font-bold text-slate-900 mb-2">Something went wrong</h1>
-            <p className="text-slate-600">
+            <h1 className="text-2xl font-bold text-text-primary mb-2">Something went wrong</h1>
+            <p className="text-text-secondary">
               We're sorry, but something unexpected happened. Our team has been notified and is working on a fix.
             </p>
           </div>
         </div>
 
         {isDevelopment && error && (
-          <div className="mb-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
-            <h3 className="text-sm font-semibold text-slate-900 mb-2">Error Details (Development Only)</h3>
+          <div className="mb-6 p-4 bg-subtle/50 rounded-lg border border-border-default">
+            <h3 className="text-sm font-semibold text-text-primary mb-2">Error Details (Development Only)</h3>
             <p className="text-sm font-mono text-error-600 mb-2">{error.message}</p>
             {errorInfo && (
               <details className="mt-2">
-                <summary className="text-sm text-slate-600 cursor-pointer hover:text-slate-900">
+                <summary className="text-sm text-text-secondary cursor-pointer hover:text-text-primary">
                   Stack Trace
                 </summary>
-                <pre className="mt-2 text-xs text-slate-600 overflow-auto max-h-48 p-2 bg-slate-100 rounded">
+                <pre className="mt-2 text-xs text-text-secondary overflow-auto max-h-48 p-2 bg-subtle rounded">
                   {errorInfo.componentStack}
                 </pre>
               </details>
@@ -121,8 +121,8 @@ const ErrorFallback: React.FC<ErrorFallbackProps> = ({ error, errorInfo, onReset
           </Button>
         </div>
 
-        <div className="mt-6 pt-6 border-t border-slate-200">
-          <p className="text-xs text-slate-500">
+        <div className="mt-6 pt-6 border-t border-border-default">
+          <p className="text-xs text-text-muted">
             If this problem persists, please contact your system administrator or{' '}
             <a href="/inquiry" className="text-primary-600 hover:text-primary-700 underline">
               submit a support request

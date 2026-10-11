@@ -125,7 +125,7 @@ export const MsdsTableRow: React.FC<MsdsTableRowProps> = ({ item, onViewClick })
       <td className="py-3 px-4 align-middle text-right whitespace-nowrap">
         <button
           onClick={() => onViewClick(item)}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-subtle hover:bg-hover text-text-primary font-semibold text-xs transition-all border border-border-default shadow-2xs"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-subtle hover:bg-hover text-text-primary font-semibold text-xs transition-colors border border-border-default shadow-elevation-1"
         >
           <Eye className="w-3.5 h-3.5 text-text-muted" />
           Semak MSDS

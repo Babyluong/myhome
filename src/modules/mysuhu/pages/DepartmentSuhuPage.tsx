@@ -925,8 +925,8 @@ export const DepartmentSuhuPage: React.FC = () => {
     return (
       <div className="p-8 text-center max-w-md mx-auto space-y-4">
         <AlertTriangle className="w-12 h-12 text-rose-500 mx-auto" />
-        <h2 className="text-lg font-bold text-slate-800">Department Not Found</h2>
-        <p className="text-sm text-slate-500">The specified department is not active or enrolled in the temperature monitoring module.</p>
+        <h2 className="text-lg font-bold text-text-primary">Department Not Found</h2>
+        <p className="text-sm text-text-muted">The specified department is not active or enrolled in the temperature monitoring module.</p>
         <button 
           onClick={() => navigate('/suhu/dashboard')}
           className="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-black"
@@ -960,7 +960,7 @@ export const DepartmentSuhuPage: React.FC = () => {
           <>
             <button 
               onClick={() => navigate('/suhu/dashboard')}
-              className="p-2.5 bg-subtle hover:bg-hover border border-border-default text-text-primary rounded-lg transition-all shadow-2xs flex items-center gap-1.5 text-xs font-semibold"
+              className="p-2.5 bg-subtle hover:bg-hover border border-border-default text-text-primary rounded-lg transition-colors shadow-elevation-1 flex items-center gap-1.5 text-xs font-semibold"
               title="Return to departments list"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -968,14 +968,14 @@ export const DepartmentSuhuPage: React.FC = () => {
             </button>
             <button 
               onClick={() => setIsSettingsOpen(true)}
-              className="p-2.5 bg-subtle hover:bg-hover border border-border-default text-text-muted hover:text-text-primary rounded-lg transition-all shadow-2xs"
+              className="p-2.5 bg-subtle hover:bg-hover border border-border-default text-text-muted hover:text-text-primary rounded-lg transition-colors shadow-elevation-1"
               title="Department Settings"
             >
               <Settings className="w-4 h-4" />
             </button>
             <button 
               onClick={() => setIsRegisterOpen(true)}
-              className="flex items-center gap-1.5 px-3.5 py-2.5 bg-accent-base hover:bg-accent-hover text-accent-foreground rounded-lg text-xs font-semibold shadow-2xs transition-all"
+              className="flex items-center gap-1.5 px-3.5 py-2.5 bg-accent-base hover:bg-accent-hover text-accent-foreground rounded-lg text-xs font-semibold shadow-elevation-1 transition-colors"
             >
               <Plus className="w-4 h-4" />
               <span>Add Equipment</span>
@@ -986,32 +986,32 @@ export const DepartmentSuhuPage: React.FC = () => {
 
       {/* KPI Cards Section */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3.5">
-        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-2xs">
+        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-elevation-1">
           <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wider">Total Units</span>
           <p className="text-2xl sm:text-3xl font-bold font-mono text-text-primary mt-1 tabular-nums">{stats.total}</p>
         </div>
-        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-2xs">
+        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-elevation-1">
           <span className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
             Normal
           </span>
           <p className="text-2xl sm:text-3xl font-bold font-mono text-emerald-600 dark:text-emerald-400 mt-1 tabular-nums">{stats.normal}</p>
         </div>
-        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-2xs">
+        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-elevation-1">
           <span className="text-[11px] font-semibold text-amber-600 dark:text-amber-400 uppercase tracking-wider flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
             Warning
           </span>
           <p className="text-2xl sm:text-3xl font-bold font-mono text-amber-600 dark:text-amber-400 mt-1 tabular-nums">{stats.warning}</p>
         </div>
-        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-2xs">
+        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-elevation-1">
           <span className="text-[11px] font-semibold text-rose-600 dark:text-rose-400 uppercase tracking-wider flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
             Breach
           </span>
           <p className="text-2xl sm:text-3xl font-bold font-mono text-rose-600 dark:text-rose-400 mt-1 tabular-nums">{stats.breach}</p>
         </div>
-        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-2xs">
+        <div className="bg-surface border border-border-default p-4 sm:p-5 rounded-xl shadow-elevation-1">
           <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wider flex items-center gap-1">
             <span className="w-1.5 h-1.5 rounded-full bg-text-muted" />
             No Readings
@@ -1022,7 +1022,7 @@ export const DepartmentSuhuPage: React.FC = () => {
 
       {/* Locations and Monitoring Points List */}
       {locations.length === 0 ? (
-        <div className="text-center py-16 bg-surface rounded-xl border border-dashed border-border-strong shadow-2xs p-8">
+        <div className="text-center py-16 bg-surface rounded-xl border border-dashed border-border-strong shadow-elevation-1 p-8">
           <MapPin className="w-12 h-12 text-text-muted opacity-40 mx-auto mb-3" />
           <h3 className="text-base font-semibold text-text-primary mb-1">No Locations Configured</h3>
           <p className="text-xs text-text-muted max-w-sm mx-auto leading-relaxed mb-4">
@@ -1030,7 +1030,7 @@ export const DepartmentSuhuPage: React.FC = () => {
           </p>
           <button 
             onClick={() => setIsSettingsOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-accent-base hover:bg-accent-hover text-accent-foreground text-xs font-semibold rounded-lg transition-all shadow-2xs"
+            className="inline-flex items-center gap-2 px-4 py-2 bg-accent-base hover:bg-accent-hover text-accent-foreground text-xs font-semibold rounded-lg transition-colors shadow-elevation-1"
           >
             <Settings className="w-4 h-4" />
             <span>Configure Locations</span>
@@ -1043,11 +1043,11 @@ export const DepartmentSuhuPage: React.FC = () => {
 
             return (
               <div key={locId} className="space-y-4">
-                <div className="flex items-center gap-2.5 border-b border-slate-100 pb-2">
-                  <Badge variant="gray" className="bg-slate-100 border-transparent text-slate-600 font-mono text-[9px] px-2 py-0.5 rounded-md">
+                <div className="flex items-center gap-2.5 border-b border-border-subtle pb-2">
+                  <Badge variant="gray" className="bg-subtle border-transparent text-text-muted font-mono text-[9px] px-2 py-0.5 rounded-md">
                     {group.code}
                   </Badge>
-                  <h3 className="text-base font-extrabold text-slate-800">{group.name}</h3>
+                  <h3 className="text-base font-extrabold text-text-primary">{group.name}</h3>
                   <span className="text-xs text-slate-400 font-bold">({group.units.length} Equipment)</span>
                 </div>
 
@@ -1061,25 +1061,25 @@ export const DepartmentSuhuPage: React.FC = () => {
                     const isWarning = unit.status_pemantauan === 'warning'
                     const isInactive = unit.status === 'inactive'
 
-                    let cardBorder = 'border-slate-100 hover:border-[#00a68a]/30'
-                    let badgeClass = 'bg-emerald-50 text-emerald-700 border-emerald-100'
+                    let cardBorder = 'border-border-subtle hover:border-[#00a68a]/30'
+                    let badgeClass = 'bg-emerald-500/10 text-emerald-700 border-emerald-100'
                     let statusBadgeText = 'Normal'
 
                     if (isInactive) {
-                      cardBorder = 'border-slate-100 opacity-60'
-                      badgeClass = 'bg-slate-100 text-slate-500 border-slate-200'
+                      cardBorder = 'border-border-subtle opacity-60'
+                      badgeClass = 'bg-subtle text-text-muted border-border-default'
                       statusBadgeText = 'Inactive'
                     } else if (isBreach) {
                       cardBorder = 'border-rose-100 hover:border-rose-300 ring-2 ring-rose-500/5'
-                      badgeClass = 'bg-rose-50 text-rose-700 border-rose-100'
+                      badgeClass = 'bg-rose-500/10 text-rose-700 border-rose-100'
                       statusBadgeText = 'Breach'
                     } else if (isWarning) {
                       cardBorder = 'border-amber-100 hover:border-amber-300 ring-2 ring-amber-500/5'
-                      badgeClass = 'bg-amber-50 text-amber-700 border-amber-100'
+                      badgeClass = 'bg-amber-500/10 text-amber-700 border-amber-100'
                       statusBadgeText = 'Warning'
                     } else if (isNoReading) {
-                      cardBorder = 'border-slate-100 hover:border-slate-300'
-                      badgeClass = 'bg-slate-100 text-slate-600 border-slate-200'
+                      cardBorder = 'border-border-subtle hover:border-border-default'
+                      badgeClass = 'bg-subtle text-text-muted border-border-default'
                       statusBadgeText = 'No Log'
                     }
 
@@ -1104,18 +1104,18 @@ export const DepartmentSuhuPage: React.FC = () => {
                           
                           fetchDetailReadings(unit.id, currentMonthStr);
                         }}
-                        className={`bg-white border rounded-3xl shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between group relative overflow-hidden cursor-pointer ${cardBorder}`}
+                        className={`bg-surface border rounded-3xl shadow-sm hover:shadow-lg transition-colors duration-150 flex flex-col justify-between group relative overflow-hidden cursor-pointer ${cardBorder}`}
                       >
                         {/* TOP HERO PHOTO SECTION - PORTRAIT VIEW (3:4) TO CLEARLY DISPLAY UPRIGHT FREEZERS */}
                         <div 
                           onClick={(e) => e.stopPropagation()} 
-                          className="relative w-full aspect-[3/4] bg-slate-100 overflow-hidden flex-shrink-0"
+                          className="relative w-full aspect-[3/4] bg-subtle overflow-hidden flex-shrink-0"
                           style={{ aspectRatio: '3/4' }}
                         >
                           {uploadingUnitId === unit.id ? (
-                            <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-slate-100">
+                            <div className="w-full h-full flex flex-col items-center justify-center gap-2 bg-subtle">
                               <Spinner size="md" />
-                              <span className="text-xs font-bold text-slate-500">Menyimpan Foto...</span>
+                              <span className="text-xs font-bold text-text-muted">Menyimpan Foto...</span>
                             </div>
                           ) : unit.photo_url ? (
                             <div className="relative w-full h-full group/photo">
@@ -1170,12 +1170,12 @@ export const DepartmentSuhuPage: React.FC = () => {
                           ) : (
                             /* No Photo Attached State - Full Width Prominent Dropzone in Portrait View */
                             <label 
-                              className="w-full h-full border-b-2 border-dashed border-slate-200 hover:border-[#00a68a] bg-slate-50/80 hover:bg-emerald-50/40 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all text-slate-400 hover:text-[#00a68a] p-6 text-center group/btn relative"
+                              className="w-full h-full border-b-2 border-dashed border-border-default hover:border-[#00a68a] bg-subtle/50 hover:bg-emerald-500/10 flex flex-col items-center justify-center gap-3 cursor-pointer transition-colors text-slate-400 hover:text-[#00a68a] p-6 text-center group/btn relative"
                               title="Click to upload or capture a photo of this chiller/room"
                             >
                               {/* Floating Top Badges */}
                               <div className="absolute top-3.5 left-3.5 right-3.5 flex justify-between items-center pointer-events-none">
-                                <span className="bg-slate-200/80 text-slate-600 text-[10px] font-mono font-bold px-2 py-0.5 rounded-md">
+                                <span className="bg-slate-200/80 text-text-muted text-[10px] font-mono font-bold px-2 py-0.5 rounded-md">
                                   {unit.unit_id}
                                 </span>
                                 <Badge className={`${badgeClass} text-[8px] font-black px-2 py-0.5 border rounded-lg`}>
@@ -1183,11 +1183,11 @@ export const DepartmentSuhuPage: React.FC = () => {
                                 </Badge>
                               </div>
 
-                              <div className="w-14 h-14 rounded-2xl bg-white shadow-sm border border-slate-200 flex items-center justify-center group-hover/btn:border-[#00a68a] group-hover/btn:scale-105 transition-all mt-4">
+                              <div className="w-14 h-14 rounded-2xl bg-surface shadow-sm border border-border-default flex items-center justify-center group-hover/btn:border-[#00a68a] group-hover/btn:scale-105 transition-colors mt-4">
                                 <Camera className="w-7 h-7 text-slate-400 group-hover/btn:text-[#00a68a] transition-colors" />
                               </div>
                               <div>
-                                <span className="text-xs font-extrabold text-slate-700 block">Attach Photo</span>
+                                <span className="text-xs font-extrabold text-text-secondary block">Attach Photo</span>
                                 <span className="text-[10px] text-slate-400 font-medium">Capture or upload chiller / room photo</span>
                               </div>
                               <input 
@@ -1208,11 +1208,11 @@ export const DepartmentSuhuPage: React.FC = () => {
                         <div className="p-4 sm:p-5 flex flex-col justify-between flex-1">
                           {/* Equipment Name & Location */}
                           <div className="mb-3">
-                            <h4 className="text-base font-extrabold text-slate-800 group-hover:text-[#00a68a] transition-colors line-clamp-1">
+                            <h4 className="text-base font-extrabold text-text-primary group-hover:text-[#00a68a] transition-colors line-clamp-1">
                               {unit.nama_unit}
                             </h4>
                             <div className="flex items-center gap-1.5 text-[11px] text-slate-400 font-semibold mt-0.5">
-                              <span className="uppercase font-mono bg-slate-100 text-slate-600 px-1.5 py-0.2 rounded font-bold text-[10px]">{unit.jenis_unit}</span>
+                              <span className="uppercase font-mono bg-subtle text-text-muted px-1.5 py-0.2 rounded font-bold text-[10px]">{unit.jenis_unit}</span>
                               {unit.lokasi?.nama_lokasi && (
                                 <>
                                   <span>•</span>
@@ -1225,7 +1225,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                           {/* Temperature Reading Display */}
                           <div className="mb-4">
                             <div className="flex items-baseline gap-1">
-                              <span className="text-3xl font-black font-mono tracking-tight text-slate-800 tabular-nums">
+                              <span className="text-3xl font-black font-mono tracking-tight text-text-primary tabular-nums">
                                 {isNoReading || latestTemp === undefined ? '—' : `${latestTemp.toFixed(1)}`}
                               </span>
                               {!isNoReading && latestTemp !== undefined && (
@@ -1233,12 +1233,12 @@ export const DepartmentSuhuPage: React.FC = () => {
                               )}
                             </div>
                             <div className="text-[11px] text-slate-400 font-bold mt-1">
-                              Limits: <span className="font-mono text-slate-600">{unit.active_threshold?.min_suhu}°C to {unit.active_threshold?.max_suhu}°C</span>
+                              Limits: <span className="font-mono text-text-muted">{unit.active_threshold?.min_suhu}°C to {unit.active_threshold?.max_suhu}°C</span>
                             </div>
                           </div>
 
                           {/* Footer & Quick Actions */}
-                          <div className="border-t border-slate-100 pt-3 flex items-center justify-between text-[11px] text-slate-400 mt-auto">
+                          <div className="border-t border-border-subtle pt-3 flex items-center justify-between text-[11px] text-slate-400 mt-auto">
                             <div className="flex items-center gap-1.5 font-semibold">
                               <Clock className="w-3.5 h-3.5 text-slate-300" />
                               <span>
@@ -1255,7 +1255,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                                     e.stopPropagation();
                                     setLoggingUnit(unit);
                                   }}
-                                  className="px-3 py-1.5 bg-slate-900 hover:bg-[#00a68a] text-white font-bold rounded-xl text-xs transition-all shadow-sm"
+                                  className="px-3 py-1.5 bg-slate-900 hover:bg-[#00a68a] text-white font-bold rounded-xl text-xs transition-colors shadow-sm"
                                 >
                                   Log Temp
                                 </button>
@@ -1265,7 +1265,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                                   e.stopPropagation();
                                   navigate(`/suhu/unit/${unit.id}`);
                                 }}
-                                className="px-2.5 py-1.5 border border-slate-200 text-slate-600 hover:text-slate-800 hover:border-slate-300 font-bold rounded-xl text-xs transition-all"
+                                className="px-2.5 py-1.5 border border-border-default text-text-muted hover:text-text-primary hover:border-border-default font-bold rounded-xl text-xs transition-colors"
                               >
                                 Detail &rarr;
                               </button>
@@ -1300,7 +1300,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                 value={unitLocId}
                 onChange={(e) => setUnitLocId(e.target.value)}
                 required
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-xs text-slate-700 font-semibold focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-all"
+                className="w-full bg-subtle/50 border border-border-default rounded-2xl px-4 py-2.5 text-xs text-text-secondary font-semibold focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-colors"
               >
                 <option value="" disabled>Select Location...</option>
                 {locations.map(loc => (
@@ -1321,7 +1321,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                 placeholder="E.g. Main Freezer, Top Loading Fridge, Room Temperature"
                 value={unitName}
                 onChange={(e) => setUnitName(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-xs text-slate-700 placeholder-slate-400 focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-all font-semibold"
+                className="w-full bg-subtle/50 border border-border-default rounded-2xl px-4 py-2.5 text-xs text-text-secondary placeholder-slate-400 focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-colors font-semibold"
               />
             </div>
 
@@ -1333,7 +1333,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                 <select
                   value={unitType}
                   onChange={(e) => setUnitType(e.target.value as any)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3 py-2.5 text-xs text-slate-700 font-semibold focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-all"
+                  className="w-full bg-subtle/50 border border-border-default rounded-2xl px-3 py-2.5 text-xs text-text-secondary font-semibold focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-colors"
                 >
                   <option value="refrigerator">Refrigerator</option>
                   <option value="freezer">Freezer</option>
@@ -1346,13 +1346,13 @@ export const DepartmentSuhuPage: React.FC = () => {
                 <label className="block text-[10px] font-bold text-slate-400 uppercase tracking-wide mb-1.5">
                   Default limits
                 </label>
-                <div className="text-[10px] text-slate-500 bg-slate-100/60 border border-slate-200/50 rounded-2xl py-2.5 px-3 flex items-center justify-center font-bold h-[38px] text-center select-none">
+                <div className="text-[10px] text-text-muted bg-subtle border border-border-default rounded-2xl py-2.5 px-3 flex items-center justify-center font-bold h-[38px] text-center select-none">
                   Auto-applied
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 bg-slate-50/50 p-4 border border-slate-200/65 rounded-2xl">
+            <div className="grid grid-cols-2 gap-4 bg-subtle/50 p-4 border border-border-default rounded-2xl">
               <div>
                 <label className="block text-[9px] font-bold text-slate-400 uppercase tracking-wide mb-1">
                   Min Temp (°C)
@@ -1363,7 +1363,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                   required
                   value={minSuhu}
                   onChange={(e) => setMinSuhu(e.target.value)}
-                  className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-all font-semibold"
+                  className="w-full bg-surface border border-border-default rounded-xl px-3 py-2 text-xs text-text-secondary focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-colors font-semibold"
                 />
               </div>
               <div>
@@ -1376,7 +1376,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                   required
                   value={maxSuhu}
                   onChange={(e) => setMaxSuhu(e.target.value)}
-                  className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-all font-semibold"
+                  className="w-full bg-surface border border-border-default rounded-xl px-3 py-2 text-xs text-text-secondary focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-colors font-semibold"
                 />
               </div>
             </div>
@@ -1389,7 +1389,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                 placeholder="E.g. Sanyo Biomedical Freezer model MDF-U5312, SN: 849204"
                 value={unitNota}
                 onChange={(e) => setUnitNota(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2 text-xs text-slate-700 h-20 resize-none focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-all font-semibold"
+                className="w-full bg-subtle/50 border border-border-default rounded-2xl px-4 py-2 text-xs text-text-secondary h-20 resize-none focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-colors font-semibold"
               />
             </div>
 
@@ -1412,14 +1412,14 @@ export const DepartmentSuhuPage: React.FC = () => {
               </label>
 
               {registerPhotoPreview ? (
-                <div className="relative w-full aspect-[3/4] max-h-72 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 mx-auto" style={{ aspectRatio: '3/4' }}>
+                <div className="relative w-full aspect-[3/4] max-h-72 rounded-2xl overflow-hidden border border-border-default bg-subtle mx-auto" style={{ aspectRatio: '3/4' }}>
                   <img 
                     src={registerPhotoPreview} 
                     alt="Preview" 
                     className="w-full h-full object-cover"
                   />
                   <label 
-                    className="absolute bottom-2.5 right-2.5 px-3 py-1.5 bg-white/95 hover:bg-white text-slate-700 text-[10px] font-bold rounded-xl shadow cursor-pointer transition-colors backdrop-blur-sm"
+                    className="absolute bottom-2.5 right-2.5 px-3 py-1.5 bg-white/95 hover:bg-surface text-text-secondary text-[10px] font-bold rounded-xl shadow cursor-pointer transition-colors backdrop-blur-sm"
                   >
                     Change Photo
                     <input 
@@ -1439,7 +1439,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                 </div>
               ) : (
                 <label 
-                  className="w-full h-28 border-2 border-dashed border-slate-200 hover:border-[#00a68a] bg-slate-50/70 hover:bg-emerald-50/30 rounded-2xl flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-all text-slate-400 hover:text-[#00a68a]"
+                  className="w-full h-28 border-2 border-dashed border-border-default hover:border-[#00a68a] bg-subtle/50 hover:bg-emerald-500/10 rounded-2xl flex flex-col items-center justify-center gap-1.5 cursor-pointer transition-colors text-slate-400 hover:text-[#00a68a]"
                 >
                   <Camera className="w-6 h-6 text-slate-300" />
                   <span className="text-xs font-bold">Snap or Upload Equipment Photo</span>
@@ -1465,7 +1465,7 @@ export const DepartmentSuhuPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setIsRegisterOpen(false)}
-                className="flex-1 py-2.5 border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-2xl text-xs font-black transition-colors"
+                className="flex-1 py-2.5 border border-border-default text-text-secondary hover:bg-subtle/50 rounded-2xl text-xs font-black transition-colors"
               >
                 Cancel
               </button>
@@ -1492,11 +1492,11 @@ export const DepartmentSuhuPage: React.FC = () => {
         <div className="p-6 space-y-8 overflow-y-auto max-h-[85vh]">
           {/* Add Placement Location Form */}
           <div className="space-y-4">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5 pb-2 border-b border-slate-100">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5 pb-2 border-b border-border-subtle">
               <MapPin className="w-3.5 h-3.5" />
               <span>Add Physical Location / Ward room</span>
             </h3>
-            <form onSubmit={handleAddLocation} className="space-y-4 bg-slate-50/50 p-4 border border-slate-200/50 rounded-2xl">
+            <form onSubmit={handleAddLocation} className="space-y-4 bg-subtle/50 p-4 border border-border-default rounded-2xl">
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[9px] font-bold text-slate-400 uppercase mb-1">
@@ -1508,7 +1508,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                     placeholder="E.g. LOK-ROOM1"
                     value={newLocCode}
                     onChange={(e) => setNewLocCode(e.target.value)}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 font-semibold focus:outline-none focus:border-[#00a68a] focus:ring-1 focus:ring-[#00a68a] transition-all"
+                    className="w-full bg-surface border border-border-default rounded-xl px-3 py-2 text-xs text-text-secondary font-semibold focus:outline-none focus:border-[#00a68a] focus:ring-1 focus:ring-[#00a68a] transition-colors"
                   />
                 </div>
                 <div>
@@ -1521,7 +1521,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                     placeholder="E.g. Storage Room A"
                     value={newLocName}
                     onChange={(e) => setNewLocName(e.target.value)}
-                    className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 font-semibold focus:outline-none focus:border-[#00a68a] focus:ring-1 focus:ring-[#00a68a] transition-all"
+                    className="w-full bg-surface border border-border-default rounded-xl px-3 py-2 text-xs text-text-secondary font-semibold focus:outline-none focus:border-[#00a68a] focus:ring-1 focus:ring-[#00a68a] transition-colors"
                   />
                 </div>
               </div>
@@ -1534,13 +1534,13 @@ export const DepartmentSuhuPage: React.FC = () => {
                   placeholder="Additional description of location"
                   value={newLocDesc}
                   onChange={(e) => setNewLocDesc(e.target.value)}
-                  className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-700 font-semibold focus:outline-none focus:border-[#00a68a] focus:ring-1 focus:ring-[#00a68a] transition-all"
+                  className="w-full bg-surface border border-border-default rounded-xl px-3 py-2 text-xs text-text-secondary font-semibold focus:outline-none focus:border-[#00a68a] focus:ring-1 focus:ring-[#00a68a] transition-colors"
                 />
               </div>
               <button
                 type="submit"
                 disabled={submitting}
-                className="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-black shadow-md transition-all"
+                className="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-black shadow-md transition-colors"
               >
                 Add Location
               </button>
@@ -1549,10 +1549,10 @@ export const DepartmentSuhuPage: React.FC = () => {
 
           {/* Edit Threshold limits modal (Embedded in settings) */}
           {editingUnit ? (
-            <div className="space-y-4 bg-amber-50/50 p-5 border border-amber-100 rounded-3xl">
+            <div className="space-y-4 bg-amber-500/10 p-5 border border-amber-100 rounded-3xl">
               <div className="flex justify-between items-start">
                 <div>
-                  <h4 className="text-xs font-extrabold text-amber-800">
+                  <h4 className="text-xs font-extrabold text-amber-400">
                     Edit Threshold Limits
                   </h4>
                   <p className="text-[10px] text-amber-600 font-medium">
@@ -1561,7 +1561,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                 </div>
                 <button 
                   onClick={() => setEditingUnit(null)}
-                  className="text-xs font-bold text-slate-400 hover:text-slate-600"
+                  className="text-xs font-bold text-slate-400 hover:text-text-muted"
                 >
                   Cancel
                 </button>
@@ -1579,7 +1579,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                       required
                       value={editMinTemp}
                       onChange={(e) => setEditMinTemp(e.target.value)}
-                      className="w-full bg-white border border-amber-200 rounded-xl px-3 py-2 text-xs text-slate-700 focus:outline-none focus:border-amber-500 font-bold"
+                      className="w-full bg-surface border border-amber-500/20 rounded-xl px-3 py-2 text-xs text-text-secondary focus:outline-none focus:border-amber-500 font-bold"
                     />
                   </div>
                   <div>
@@ -1592,14 +1592,14 @@ export const DepartmentSuhuPage: React.FC = () => {
                       required
                       value={editMaxTemp}
                       onChange={(e) => setEditMaxTemp(e.target.value)}
-                      className="w-full bg-white border border-amber-200 rounded-xl px-3 py-2 text-xs text-slate-700 focus:outline-none focus:border-amber-500 font-bold"
+                      className="w-full bg-surface border border-amber-500/20 rounded-xl px-3 py-2 text-xs text-text-secondary focus:outline-none focus:border-amber-500 font-bold"
                     />
                   </div>
                 </div>
                 <button 
                   type="submit"
                   disabled={submitting}
-                  className="w-full py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-black shadow-md transition-all"
+                  className="w-full py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-black shadow-md transition-colors"
                 >
                   Save Limits Configuration
                 </button>
@@ -1608,7 +1608,7 @@ export const DepartmentSuhuPage: React.FC = () => {
           ) : (
             /* Configure Registered Equipment List */
             <div className="space-y-4">
-              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5 pb-2 border-b border-slate-100">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5 pb-2 border-b border-border-subtle">
                 <Thermometer className="w-3.5 h-3.5" />
                 <span>Configure Equipment & Threshold Ranges</span>
               </h3>
@@ -1616,12 +1616,12 @@ export const DepartmentSuhuPage: React.FC = () => {
               {units.length === 0 ? (
                 <p className="text-xs text-slate-400 italic">No equipment registered yet.</p>
               ) : (
-                <div className="divide-y divide-slate-100">
+                <div className="divide-y divide-border-subtle">
                   {units.map(unit => (
                     <div key={unit.id} className="py-3.5 flex items-center justify-between gap-4">
                       <div>
                         <div className="flex items-center gap-2">
-                          <span className="text-xs font-extrabold text-slate-800">{unit.nama_unit}</span>
+                          <span className="text-xs font-extrabold text-text-primary">{unit.nama_unit}</span>
                           <span className="text-[10px] font-mono text-slate-400">({unit.unit_id})</span>
                           <Badge variant={unit.status === 'active' ? 'success' : 'gray'} className="text-[8px] px-1.5 py-0">
                             {unit.status}
@@ -1640,17 +1640,17 @@ export const DepartmentSuhuPage: React.FC = () => {
                             setEditMinTemp(String(unit.active_threshold?.min_suhu ?? defaults.min_suhu))
                             setEditMaxTemp(String(unit.active_threshold?.max_suhu ?? defaults.max_suhu))
                           }}
-                          className="p-2 hover:bg-slate-100 text-slate-500 hover:text-slate-800 rounded-lg transition-all border border-slate-200"
+                          className="p-2 hover:bg-subtle text-text-muted hover:text-text-primary rounded-lg transition-colors border border-border-default"
                           title="Edit Threshold Limits"
                         >
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => handleToggleUnitStatus(unit)}
-                          className={`px-2 py-1 text-[9px] font-bold rounded-lg border transition-all ${
+                          className={`px-2 py-1 text-[9px] font-bold rounded-lg border transition-colors ${
                             unit.status === 'active' 
-                              ? 'bg-rose-50 text-rose-600 border-rose-100 hover:bg-rose-100' 
-                              : 'bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-100'
+                              ? 'bg-rose-500/10 text-rose-600 border-rose-100 hover:bg-rose-100' 
+                              : 'bg-emerald-500/10 text-emerald-600 border-emerald-100 hover:bg-emerald-100'
                           }`}
                         >
                           {unit.status === 'active' ? 'Deactivate' : 'Activate'}
@@ -1680,10 +1680,10 @@ export const DepartmentSuhuPage: React.FC = () => {
           {breachInfo ? (
             /* Warning/Breach Confirmation Interstitial */
             <div className="space-y-6">
-              <div className="p-4 bg-rose-50 border border-rose-100 rounded-2xl flex items-start gap-3">
+              <div className="p-4 bg-rose-500/10 border border-rose-100 rounded-2xl flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-rose-500 flex-shrink-0 mt-0.5" />
                 <div>
-                  <h3 className="text-sm font-black text-rose-900">
+                  <h3 className="text-sm font-black text-rose-400 dark:text-rose-300 font-bold">
                     {breachInfo.status === 'breach' ? 'Out-of-Range Temperature Breach!' : 'Caution: Near Safe Limits'}
                   </h3>
                   <p className="text-xs text-rose-700 mt-1 leading-relaxed">
@@ -1693,7 +1693,7 @@ export const DepartmentSuhuPage: React.FC = () => {
               </div>
 
               <div className="space-y-3">
-                <p className="text-xs text-slate-500 font-medium">
+                <p className="text-xs text-text-muted font-medium">
                   {breachInfo.status === 'breach' 
                     ? 'Entering this reading will trigger an incident breach alert on logs. Please supply corrective actions comments if required.' 
                     : 'Continuing will log this reading. It is close to safe thresholds.'}
@@ -1701,7 +1701,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                 <div className="pt-2 flex gap-3">
                   <button
                     onClick={() => setBreachInfo(null)}
-                    className="flex-1 py-2.5 border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-2xl text-xs font-black transition-colors"
+                    className="flex-1 py-2.5 border border-border-default text-text-secondary hover:bg-subtle/50 rounded-2xl text-xs font-black transition-colors"
                   >
                     Adjust Reading
                   </button>
@@ -1718,13 +1718,13 @@ export const DepartmentSuhuPage: React.FC = () => {
           ) : (
             <form onSubmit={handleQuickLogPreSubmit} className="space-y-5">
               {/* Equipment Photo & Identification Verification */}
-              <div className="p-3.5 bg-gradient-to-r from-slate-50 to-slate-100/70 border border-slate-200/80 rounded-2xl flex items-center gap-3 shadow-sm">
+              <div className="p-3.5 bg-gradient-to-r from-slate-50 to-slate-100/70 border border-border-default rounded-2xl flex items-center gap-3 shadow-sm">
                 {loggingUnit?.photo_url ? (
                   <div className="relative group/logimg flex-shrink-0">
                     <img 
                       src={loggingUnit.photo_url} 
                       alt={loggingUnit.nama_unit} 
-                      className="w-14 h-[74px] sm:w-16 sm:h-[85px] rounded-xl object-cover border border-slate-200 shadow-sm cursor-pointer hover:opacity-95 transition-opacity"
+                      className="w-14 h-[74px] sm:w-16 sm:h-[85px] rounded-xl object-cover border border-border-default shadow-sm cursor-pointer hover:opacity-95 transition-opacity"
                       style={{ aspectRatio: '3/4' }}
                       onClick={() => setPreviewPhotoUrl(loggingUnit.photo_url!)}
                       title="Click to view full photo"
@@ -1739,7 +1739,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                   </div>
                 ) : (
                   <label 
-                    className="w-14 h-[74px] sm:w-16 sm:h-[85px] rounded-xl border-2 border-dashed border-slate-300 hover:border-[#00a68a] bg-white flex flex-col items-center justify-center gap-1 cursor-pointer flex-shrink-0 text-slate-400 hover:text-[#00a68a] transition-all"
+                    className="w-14 h-[74px] sm:w-16 sm:h-[85px] rounded-xl border-2 border-dashed border-border-default hover:border-[#00a68a] bg-surface flex flex-col items-center justify-center gap-1 cursor-pointer flex-shrink-0 text-slate-400 hover:text-[#00a68a] transition-colors"
                     style={{ aspectRatio: '3/4' }}
                     title="Attach photo for this freezer or room"
                   >
@@ -1763,23 +1763,23 @@ export const DepartmentSuhuPage: React.FC = () => {
                     <span className="text-[10px] font-mono font-bold text-slate-400">
                       {loggingUnit?.unit_id}
                     </span>
-                    <span className="text-[9px] px-1.5 py-0.2 bg-emerald-50 text-emerald-700 font-bold rounded-md border border-emerald-100 uppercase">
+                    <span className="text-[9px] px-1.5 py-0.2 bg-emerald-500/10 text-emerald-700 font-bold rounded-md border border-emerald-100 uppercase">
                       {loggingUnit?.jenis_unit}
                     </span>
                   </div>
-                  <h4 className="text-sm font-extrabold text-slate-800 truncate">
+                  <h4 className="text-sm font-extrabold text-text-primary truncate">
                     {loggingUnit?.nama_unit}
                   </h4>
-                  <p className="text-[11px] text-slate-500 font-medium truncate flex items-center gap-1 mt-0.5">
+                  <p className="text-[11px] text-text-muted font-medium truncate flex items-center gap-1 mt-0.5">
                     <MapPin className="w-3 h-3 text-slate-400 flex-shrink-0" />
                     <span>{loggingUnit?.lokasi?.nama_lokasi}</span>
                   </p>
                 </div>
               </div>
 
-              <div className="p-4 bg-slate-50 rounded-2xl flex justify-between items-center text-xs font-bold text-slate-500">
+              <div className="p-4 bg-subtle/50 rounded-2xl flex justify-between items-center text-xs font-bold text-text-muted">
                 <span>Required Range</span>
-                <span className="font-mono text-slate-700">
+                <span className="font-mono text-text-secondary">
                   {loggingUnit?.active_threshold?.min_suhu}°C to {loggingUnit?.active_threshold?.max_suhu}°C
                 </span>
               </div>
@@ -1796,7 +1796,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                   placeholder="E.g. 4.2, -18.5"
                   value={logTemp}
                   onChange={(e) => setLogTemp(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-xs text-slate-700 focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-all font-semibold"
+                  className="w-full bg-subtle/50 border border-border-default rounded-2xl px-4 py-2.5 text-xs text-text-secondary focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-colors font-semibold"
                 />
               </div>
 
@@ -1810,7 +1810,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                   required
                   value={logDateTime}
                   onChange={(e) => setLogDateTime(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2.5 text-xs text-slate-700 focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-all font-semibold"
+                  className="w-full bg-subtle/50 border border-border-default rounded-2xl px-4 py-2.5 text-xs text-text-secondary focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-colors font-semibold"
                 />
               </div>
 
@@ -1823,7 +1823,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                   placeholder="Describe status of defrost cycles, stock movements, or deviations"
                   value={logNota}
                   onChange={(e) => setLogNota(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-2xl px-4 py-2 text-xs text-slate-700 h-24 resize-none focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-all font-semibold"
+                  className="w-full bg-subtle/50 border border-border-default rounded-2xl px-4 py-2 text-xs text-text-secondary h-24 resize-none focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-colors font-semibold"
                 />
               </div>
 
@@ -1831,7 +1831,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setLoggingUnit(null)}
-                  className="flex-1 py-2.5 border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-2xl text-xs font-black transition-colors"
+                  className="flex-1 py-2.5 border border-border-default text-text-secondary hover:bg-subtle/50 rounded-2xl text-xs font-black transition-colors"
                 >
                   Cancel
                 </button>
@@ -1963,15 +1963,15 @@ export const DepartmentSuhuPage: React.FC = () => {
             return (
               <div className="space-y-6">
                 {/* Visual Action Bar */}
-                <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div className="flex items-center justify-between pb-4 border-b border-border-subtle">
                   <div className="flex gap-2">
                     <button
                       type="button"
                       onClick={handleDownloadPdf}
                       disabled={submitting}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-slate-200 text-slate-700 hover:bg-slate-50 font-medium rounded-lg text-xs transition-colors shadow-sm disabled:opacity-50"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-border-default text-text-secondary hover:bg-subtle/50 font-medium rounded-lg text-xs transition-colors shadow-sm disabled:opacity-50"
                     >
-                      <Download className="w-3.5 h-3.5 text-slate-500" />
+                      <Download className="w-3.5 h-3.5 text-text-muted" />
                       <span>Download PDF Report</span>
                     </button>
                   </div>
@@ -1979,19 +1979,19 @@ export const DepartmentSuhuPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => setIsEditingDetails(!isEditingDetails)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-slate-200 text-slate-700 hover:bg-slate-50 font-medium rounded-lg text-xs transition-colors shadow-sm"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-border-default text-text-secondary hover:bg-subtle/50 font-medium rounded-lg text-xs transition-colors shadow-sm"
                   >
-                    <Edit2 className="w-3.5 h-3.5 text-slate-500" />
+                    <Edit2 className="w-3.5 h-3.5 text-text-muted" />
                     <span>{isEditingDetails ? 'Cancel Editing' : 'Edit Name & Limits'}</span>
                   </button>
                 </div>
 
                 {/* 3. Unit Identity Header Bar (Phase 3) */}
-                <div className="bg-white border border-slate-200/80 rounded-2xl p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-sm">
+                <div className="bg-surface border border-border-default rounded-2xl p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-sm">
                   <div className="flex items-start gap-3.5">
                     {/* Equipment Photo or Icon in Portrait Ratio (3:4) */}
                     {activeDetailUnit.photo_url ? (
-                      <div className="relative group/detailphoto w-16 h-[85px] rounded-2xl overflow-hidden border border-slate-200 shadow-sm flex-shrink-0 bg-slate-50" style={{ aspectRatio: '3/4' }}>
+                      <div className="relative group/detailphoto w-16 h-[85px] rounded-2xl overflow-hidden border border-border-default shadow-sm flex-shrink-0 bg-subtle/50" style={{ aspectRatio: '3/4' }}>
                         <img 
                           src={activeDetailUnit.photo_url} 
                           alt={activeDetailUnit.nama_unit} 
@@ -2003,12 +2003,12 @@ export const DepartmentSuhuPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => setPreviewPhotoUrl(activeDetailUnit.photo_url!)}
-                            className="p-1 bg-white/90 text-slate-700 rounded-md"
+                            className="p-1 bg-surface text-text-secondary rounded-md"
                             title="View Full"
                           >
                             <Eye className="w-3 h-3" />
                           </button>
-                          <label className="p-1 bg-white/90 text-[#00a68a] rounded-md cursor-pointer" title="Change Photo">
+                          <label className="p-1 bg-surface text-[#00a68a] rounded-md cursor-pointer" title="Change Photo">
                             <Camera className="w-3 h-3" />
                             <input 
                               type="file" 
@@ -2024,7 +2024,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => handleDeletePhotoForUnit(activeDetailUnit.id)}
-                            className="p-1 bg-white/90 text-rose-600 rounded-md"
+                            className="p-1 bg-surface text-rose-600 rounded-md"
                             title="Remove Photo"
                           >
                             <Trash2 className="w-3 h-3" />
@@ -2037,13 +2037,13 @@ export const DepartmentSuhuPage: React.FC = () => {
                           "w-12 h-12 rounded-2xl flex items-center justify-center shadow-inner",
                           activeDetailUnit.status_pemantauan === 'breach' ? 'bg-rose-100 text-rose-600' :
                           activeDetailUnit.status_pemantauan === 'warning' ? 'bg-amber-100 text-amber-600' :
-                          activeDetailUnit.status_pemantauan === 'no_reading' ? 'bg-slate-100 text-slate-400' :
+                          activeDetailUnit.status_pemantauan === 'no_reading' ? 'bg-subtle text-slate-400' :
                           'bg-emerald-100 text-emerald-600'
                         )}>
                           <Thermometer className="w-6 h-6" />
                         </div>
                         <label 
-                          className="h-12 px-2.5 rounded-xl border border-dashed border-slate-300 hover:border-[#00a68a] bg-slate-50 hover:bg-emerald-50/40 flex items-center gap-1.5 cursor-pointer text-slate-500 hover:text-[#00a68a] transition-colors"
+                          className="h-12 px-2.5 rounded-xl border border-dashed border-border-default hover:border-[#00a68a] bg-subtle/50 hover:bg-emerald-500/10 flex items-center gap-1.5 cursor-pointer text-text-muted hover:text-[#00a68a] transition-colors"
                           title="Attach photo of this freezer or room"
                         >
                           <Camera className="w-4 h-4" />
@@ -2063,43 +2063,43 @@ export const DepartmentSuhuPage: React.FC = () => {
                     )}
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-base font-semibold text-slate-800 tracking-tight">
+                        <span className="text-base font-semibold text-text-primary tracking-tight">
                           {activeDetailUnit.nama_unit}
                         </span>
                         <span className={cn(
                           "text-[9px] font-bold uppercase tracking-wider py-0.5 px-2 rounded-md border",
-                          activeDetailUnit.status_pemantauan === 'breach' ? 'bg-rose-50 text-rose-700 border-rose-100' :
-                          activeDetailUnit.status_pemantauan === 'warning' ? 'bg-amber-50 text-amber-700 border-amber-100' :
-                          activeDetailUnit.status_pemantauan === 'no_reading' ? 'bg-slate-50 text-slate-500 border-slate-200' :
-                          'bg-emerald-50 text-emerald-700 border-emerald-100'
+                          activeDetailUnit.status_pemantauan === 'breach' ? 'bg-rose-500/10 text-rose-700 border-rose-100' :
+                          activeDetailUnit.status_pemantauan === 'warning' ? 'bg-amber-500/10 text-amber-700 border-amber-100' :
+                          activeDetailUnit.status_pemantauan === 'no_reading' ? 'bg-subtle/50 text-text-muted border-border-default' :
+                          'bg-emerald-500/10 text-emerald-700 border-emerald-100'
                         )}>
                           {activeDetailUnit.status_pemantauan === 'breach' ? 'Breach Alert' :
                            activeDetailUnit.status_pemantauan === 'warning' ? 'Warning Alert' :
                            activeDetailUnit.status_pemantauan === 'no_reading' ? 'No Reading' : 'Normal / Safe'}
                         </span>
                       </div>
-                      <div className="flex items-center gap-1.5 text-xs text-slate-500 mt-1">
-                        <span className="bg-slate-100 text-slate-600 border border-slate-200/60 font-mono text-[9px] font-semibold px-1.5 py-0.5 rounded uppercase">
+                      <div className="flex items-center gap-1.5 text-xs text-text-muted mt-1">
+                        <span className="bg-subtle text-text-muted border border-border-default font-mono text-[9px] font-semibold px-1.5 py-0.5 rounded uppercase">
                           {activeDetailUnit.jenis_unit}
                         </span>
                         <span>•</span>
                         <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                        <span className="font-medium text-slate-600">{activeDetailUnit.lokasi?.nama_lokasi || 'Department'}</span>
+                        <span className="font-medium text-text-muted">{activeDetailUnit.lokasi?.nama_lokasi || 'Department'}</span>
                       </div>
                     </div>
                   </div>
 
                   <div className="flex items-center gap-3 flex-wrap">
-                    <div className="bg-slate-50 border border-slate-200/60 py-1.5 px-4 rounded-xl shadow-sm text-left min-w-[120px]">
+                    <div className="bg-subtle/50 border border-border-default py-1.5 px-4 rounded-xl shadow-sm text-left min-w-[120px]">
                       <span className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Safe Bounds</span>
                       <span className="text-xs font-semibold font-mono text-emerald-600">
                         {minLimit}°C to {maxLimit}°C
                       </span>
                     </div>
 
-                    <div className="bg-slate-50 border border-slate-200/60 py-1.5 px-4 rounded-xl shadow-sm text-left min-w-[120px]">
+                    <div className="bg-subtle/50 border border-border-default py-1.5 px-4 rounded-xl shadow-sm text-left min-w-[120px]">
                       <span className="block text-[9px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Last Logging</span>
-                      <span className="text-xs font-semibold font-mono text-slate-700">
+                      <span className="text-xs font-semibold font-mono text-text-secondary">
                         {activeDetailUnit.latest_reading 
                           ? format(new Date(activeDetailUnit.latest_reading.tarikh_masa), 'dd/MM/yyyy HH:mm')
                           : 'Never Recorded'}
@@ -2114,7 +2114,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                   <div className="col-span-12 md:col-span-3 order-2 md:order-1 space-y-6">
                     {/* Inline Editing Form */}
                     {isEditingDetails && (
-                      <form onSubmit={handleSaveUnitDetailEdits} className="p-4 bg-slate-50/50 border border-slate-100 rounded-3xl space-y-4">
+                      <form onSubmit={handleSaveUnitDetailEdits} className="p-4 bg-subtle/50 border border-border-subtle rounded-3xl space-y-4">
                         <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">Edit Equipment Settings</h4>
                         
                         <div>
@@ -2126,7 +2126,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                             required
                             value={editUnitName}
                             onChange={(e) => setEditUnitName(e.target.value)}
-                            className="w-full bg-white border border-slate-200 rounded-2xl px-4 py-2 text-xs text-slate-700 focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-all font-semibold"
+                            className="w-full bg-surface border border-border-default rounded-2xl px-4 py-2 text-xs text-text-secondary focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-colors font-semibold"
                           />
                         </div>
 
@@ -2141,7 +2141,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                               required
                               value={editUnitMinLimit}
                               onChange={(e) => setEditUnitMinLimit(e.target.value)}
-                              className="w-full bg-white border border-slate-200 rounded-2xl px-4 py-2 text-xs text-slate-700 focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-all font-semibold"
+                              className="w-full bg-surface border border-border-default rounded-2xl px-4 py-2 text-xs text-text-secondary focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-colors font-semibold"
                             />
                           </div>
                           <div>
@@ -2154,7 +2154,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                               required
                               value={editUnitMaxLimit}
                               onChange={(e) => setEditUnitMaxLimit(e.target.value)}
-                              className="w-full bg-white border border-slate-200 rounded-2xl px-4 py-2 text-xs text-slate-700 focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-all font-semibold"
+                              className="w-full bg-surface border border-border-default rounded-2xl px-4 py-2 text-xs text-text-secondary focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-colors font-semibold"
                             />
                           </div>
                         </div>
@@ -2163,7 +2163,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => setIsEditingDetails(false)}
-                            className="flex-1 py-2 border border-slate-200 text-slate-700 hover:bg-slate-100 rounded-2xl text-xs font-black transition-colors"
+                            className="flex-1 py-2 border border-border-default text-text-secondary hover:bg-subtle rounded-2xl text-xs font-black transition-colors"
                           >
                             Cancel
                           </button>
@@ -2179,9 +2179,9 @@ export const DepartmentSuhuPage: React.FC = () => {
                     )}
 
                     {/* Last Recorded Readings Gauge Card (Phase 4) */}
-                    <div className="bg-white border border-slate-200/80 rounded-xl p-4 space-y-3 shadow-sm">
+                    <div className="bg-surface border border-border-default rounded-xl p-4 space-y-3 shadow-sm">
                       <div className="flex justify-between items-center">
-                        <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-widest">
+                        <span className="text-[10px] font-semibold text-text-muted uppercase tracking-widest">
                           Last Recorded Reading
                         </span>
                         {activeDetailUnit.latest_reading && (
@@ -2191,10 +2191,10 @@ export const DepartmentSuhuPage: React.FC = () => {
                         )}
                       </div>
 
-                      <div className="grid grid-cols-3 gap-2 bg-slate-50 border border-slate-100 p-2.5 rounded-lg">
+                      <div className="grid grid-cols-3 gap-2 bg-subtle/50 border border-border-subtle p-2.5 rounded-lg">
                         {/* Min Gauge */}
                         <div className="text-center py-1">
-                          <span className="text-[8px] font-bold text-slate-400 uppercase tracking-wider block">Min Logged</span>
+                          <span className="text-[8px] font-bold text-text-secondary font-bold uppercase tracking-wider block">Min Logged</span>
                           <span className="text-sm font-semibold font-mono text-slate-655 block mt-0.5">
                             {activeDetailUnit.latest_reading?.suhu_min !== undefined && activeDetailUnit.latest_reading?.suhu_min !== null
                               ? `${activeDetailUnit.latest_reading.suhu_min.toFixed(1)}°`
@@ -2205,9 +2205,9 @@ export const DepartmentSuhuPage: React.FC = () => {
                         </div>
 
                         {/* Current/Middle Gauge */}
-                        <div className="text-center py-1 border-x border-slate-200/60">
+                        <div className="text-center py-1 border-x border-border-default">
                           <span className="text-[8px] font-bold text-[#00a68a] uppercase tracking-wider block">Current</span>
-                          <span className="text-base font-bold font-mono text-slate-800 block mt-0.5">
+                          <span className="text-base font-bold font-mono text-text-primary block mt-0.5">
                             {activeDetailUnit.latest_reading?.suhu !== undefined 
                               ? `${activeDetailUnit.latest_reading.suhu.toFixed(1)}°` 
                               : '—'}
@@ -2216,7 +2216,7 @@ export const DepartmentSuhuPage: React.FC = () => {
 
                         {/* Max Gauge */}
                         <div className="text-center py-1">
-                          <span className="text-[8px] font-bold text-slate-400 uppercase tracking-wider block">Max Logged</span>
+                          <span className="text-[8px] font-bold text-text-secondary font-bold uppercase tracking-wider block">Max Logged</span>
                           <span className="text-sm font-semibold font-mono text-slate-655 block mt-0.5">
                             {activeDetailUnit.latest_reading?.suhu_max !== undefined && activeDetailUnit.latest_reading?.suhu_max !== null
                               ? `${activeDetailUnit.latest_reading.suhu_max.toFixed(1)}°`
@@ -2227,22 +2227,22 @@ export const DepartmentSuhuPage: React.FC = () => {
                         </div>
                       </div>
                       
-                      <div className="text-[9px] text-slate-500 font-medium text-center flex items-center justify-center gap-1.5 bg-slate-50/50 border border-slate-150/60 py-1.5 rounded-lg">
+                      <div className="text-[9px] text-text-muted font-medium text-center flex items-center justify-center gap-1.5 bg-subtle/50 border border-slate-150/60 py-1.5 rounded-lg">
                         <span>Device Threshold Config:</span>
-                        <span className="text-slate-700 font-mono font-bold">{minLimit}°C to {maxLimit}°C</span>
+                        <span className="text-text-secondary font-mono font-bold">{minLimit}°C to {maxLimit}°C</span>
                       </div>
                     </div>
 
                     {/* Record Temperature Form */}
-                    <div className="space-y-4 pt-4 border-t border-slate-100">
-                      <h4 className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">Record Temperature Reading</h4>
+                    <div className="space-y-4 pt-4 border-t border-border-subtle">
+                      <h4 className="text-[10px] font-semibold uppercase tracking-widest text-text-muted">Record Temperature Reading</h4>
                       
                       {detailBreachInfo ? (
                         <div className="space-y-5">
-                          <div className="p-4 bg-rose-50 border border-rose-100 rounded-xl flex items-start gap-3">
+                          <div className="p-4 bg-rose-500/10 border border-rose-100 rounded-xl flex items-start gap-3">
                             <AlertCircle className="w-5 h-5 text-rose-500 flex-shrink-0 mt-0.5" />
                             <div>
-                              <h3 className="text-sm font-bold text-rose-900">
+                              <h3 className="text-sm font-bold text-rose-400 dark:text-rose-300 font-bold">
                                 {detailBreachInfo.status === 'breach' ? 'Out-of-Range Temperature Breach!' : 'Caution: Near Safe Limits'}
                               </h3>
                               <p className="text-xs text-rose-700 mt-1 leading-relaxed">
@@ -2252,7 +2252,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                           </div>
 
                           <div className="space-y-3">
-                            <p className="text-xs text-slate-500 font-medium">
+                            <p className="text-xs text-text-muted font-medium">
                               {detailBreachInfo.status === 'breach' 
                                 ? 'This will log a breach incident. Please make sure the annotations note details the reason.' 
                                 : 'Continuing will log this temperature reading.'}
@@ -2261,7 +2261,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                               <button
                                 type="button"
                                 onClick={() => setDetailBreachInfo(null)}
-                                className="flex-1 py-2 border border-slate-205 text-slate-700 hover:bg-slate-50 rounded-lg text-xs font-semibold transition-colors"
+                                className="flex-1 py-2 border border-slate-205 text-text-secondary hover:bg-subtle/50 rounded-lg text-xs font-semibold transition-colors"
                               >
                                 Adjust Value
                               </button>
@@ -2279,20 +2279,20 @@ export const DepartmentSuhuPage: React.FC = () => {
                       ) : (
                         <form onSubmit={handleDetailLogPreSubmit} className="space-y-4">
                           {/* Custom Slider Form Rows for Min, Current, and Max */}
-                          <div className="bg-slate-50 border border-slate-200/60 rounded-xl p-4.5 space-y-5">
+                          <div className="bg-subtle/50 border border-border-default rounded-xl p-4.5 space-y-5">
                             {/* Min Temp Slider Row */}
                             <div className="space-y-2">
                               <div className="flex justify-between items-center">
-                                <span className="text-[10px] font-bold text-blue-700 bg-blue-50 border border-blue-100/80 rounded-md py-0.5 px-2 uppercase tracking-wider">
+                                <span className="text-[10px] font-bold text-blue-700 bg-blue-500/10 border border-blue-100/80 rounded-md py-0.5 px-2 uppercase tracking-wider">
                                   Min Temp
                                 </span>
-                                <div className="flex items-center gap-1.5 bg-white border border-slate-200 py-1 px-2.5 rounded-lg shadow-sm focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-all">
+                                <div className="flex items-center gap-1.5 bg-surface border border-border-default py-1 px-2.5 rounded-lg shadow-sm focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-100 transition-colors">
                                   <input
                                     type="number"
                                     step="0.1"
                                     value={detailLogTempMin}
                                     onChange={(e) => setDetailLogTempMin(e.target.value)}
-                                    className="w-14 text-right font-bold font-mono text-sm text-slate-800 focus:outline-none bg-transparent"
+                                    className="w-14 text-right font-bold font-mono text-sm text-text-primary focus:outline-none bg-transparent"
                                   />
                                   <span className="text-xs font-semibold text-slate-400">°C</span>
                                 </div>
@@ -2304,23 +2304,23 @@ export const DepartmentSuhuPage: React.FC = () => {
                                 step="0.1"
                                 value={detailLogTempMin || '5.0'}
                                 onChange={(e) => setDetailLogTempMin(e.target.value)}
-                                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600 focus:outline-none"
+                                className="w-full h-1.5 bg-subtle rounded-lg appearance-none cursor-pointer accent-blue-600 focus:outline-none"
                               />
                             </div>
 
                             {/* Current Temp Slider Row */}
                             <div className="space-y-2">
                               <div className="flex justify-between items-center">
-                                <span className="text-[10px] font-bold text-[#00a68a] bg-emerald-50 border border-emerald-100 rounded-md py-0.5 px-2 uppercase tracking-wider">
+                                <span className="text-[10px] font-bold text-[#00a68a] bg-emerald-500/10 border border-emerald-100 rounded-md py-0.5 px-2 uppercase tracking-wider">
                                   Current
                                 </span>
-                                <div className="flex items-center gap-1.5 bg-white border border-slate-200 py-1 px-2.5 rounded-lg shadow-sm focus-within:border-[#00a68a] focus-within:ring-2 focus-within:ring-[#00a68a]/10 transition-all">
+                                <div className="flex items-center gap-1.5 bg-surface border border-border-default py-1 px-2.5 rounded-lg shadow-sm focus-within:border-[#00a68a] focus-within:ring-2 focus-within:ring-[#00a68a]/10 transition-colors">
                                   <input
                                     type="number"
                                     step="0.1"
                                     value={detailLogTemp}
                                     onChange={(e) => setDetailLogTemp(e.target.value)}
-                                    className="w-14 text-right font-bold font-mono text-sm text-slate-800 focus:outline-none bg-transparent"
+                                    className="w-14 text-right font-bold font-mono text-sm text-text-primary focus:outline-none bg-transparent"
                                   />
                                   <span className="text-xs font-semibold text-slate-400">°C</span>
                                 </div>
@@ -2332,23 +2332,23 @@ export const DepartmentSuhuPage: React.FC = () => {
                                 step="0.1"
                                 value={detailLogTemp || '5.0'}
                                 onChange={(e) => setDetailLogTemp(e.target.value)}
-                                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#00a68a] focus:outline-none"
+                                className="w-full h-1.5 bg-subtle rounded-lg appearance-none cursor-pointer accent-[#00a68a] focus:outline-none"
                               />
                             </div>
 
                             {/* Max Temp Slider Row */}
                             <div className="space-y-2">
                               <div className="flex justify-between items-center">
-                                <span className="text-[10px] font-bold text-amber-700 bg-amber-50 border border-amber-100 rounded-md py-0.5 px-2 uppercase tracking-wider">
+                                <span className="text-[10px] font-bold text-amber-700 bg-amber-500/10 border border-amber-100 rounded-md py-0.5 px-2 uppercase tracking-wider">
                                   Max Temp
                                 </span>
-                                <div className="flex items-center gap-1.5 bg-white border border-slate-200 py-1 px-2.5 rounded-lg shadow-sm focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-100 transition-all">
+                                <div className="flex items-center gap-1.5 bg-surface border border-border-default py-1 px-2.5 rounded-lg shadow-sm focus-within:border-amber-500 focus-within:ring-2 focus-within:ring-amber-100 transition-colors">
                                   <input
                                     type="number"
                                     step="0.1"
                                     value={detailLogTempMax}
                                     onChange={(e) => setDetailLogTempMax(e.target.value)}
-                                    className="w-14 text-right font-bold font-mono text-sm text-slate-800 focus:outline-none bg-transparent"
+                                    className="w-14 text-right font-bold font-mono text-sm text-text-primary focus:outline-none bg-transparent"
                                   />
                                   <span className="text-xs font-semibold text-slate-400">°C</span>
                                 </div>
@@ -2360,17 +2360,17 @@ export const DepartmentSuhuPage: React.FC = () => {
                                 step="0.1"
                                 value={detailLogTempMax || '5.0'}
                                 onChange={(e) => setDetailLogTempMax(e.target.value)}
-                                className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-500 focus:outline-none"
+                                className="w-full h-1.5 bg-subtle rounded-lg appearance-none cursor-pointer accent-amber-500 focus:outline-none"
                               />
                             </div>
                             
-                            <div className="text-[10px] text-slate-500 font-medium uppercase tracking-wider text-center bg-white border border-slate-200/60 rounded-lg py-1.5 shadow-sm">
+                            <div className="text-[10px] text-text-muted font-medium uppercase tracking-wider text-center bg-surface border border-border-default rounded-lg py-1.5 shadow-sm">
                               Safe Bounds: <span className="text-emerald-600 font-mono font-bold">{minLimit} to {maxLimit} °C</span>
                             </div>
                           </div>
 
                           <div>
-                             <label className="block text-[10px] font-semibold text-slate-500 uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
+                             <label className="block text-[10px] font-semibold text-text-muted uppercase tracking-widest mb-1.5 flex items-center gap-1.5">
                                <Info className="w-3.5 h-3.5 text-slate-400" />
                                <span>Annotations / Notes</span>
                              </label>
@@ -2378,7 +2378,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                                placeholder="E.g., Defrost cycle, replenishment"
                                value={detailLogNota}
                                onChange={(e) => setDetailLogNota(e.target.value)}
-                               className="w-full bg-slate-50 border border-slate-200 focus:bg-white rounded-lg px-3 py-2 text-sm text-slate-700 h-28 resize-none focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 font-medium transition-all"
+                               className="w-full bg-subtle/50 border border-border-default focus:bg-surface rounded-lg px-3 py-2 text-sm text-text-secondary h-28 resize-none focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 font-medium transition-colors"
                              />
                            </div>
 
@@ -2394,7 +2394,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                     </div>
 
                     {/* Auto-Plot Section */}
-                    <div className="pt-4 border-t border-slate-100">
+                    <div className="pt-4 border-t border-border-subtle">
                       <button
                         type="button"
                         onClick={() => {
@@ -2402,25 +2402,25 @@ export const DepartmentSuhuPage: React.FC = () => {
                           setAutoPlotPassword('');
                           setAutoPlotPasswordError(false);
                         }}
-                        className="w-full flex items-center justify-between px-3 py-2 bg-slate-50 border border-slate-200/80 rounded-xl hover:bg-slate-100/70 transition-all group"
+                        className="w-full flex items-center justify-between px-3 py-2 bg-subtle/50 border border-border-default rounded-xl hover:bg-subtle transition-colors group"
                       >
                         <div className="flex items-center gap-2">
-                          <div className="w-6 h-6 rounded-lg bg-slate-200/60 flex items-center justify-center text-slate-600">
+                          <div className="w-6 h-6 rounded-lg bg-slate-200/60 flex items-center justify-center text-text-muted">
                             <Activity className="w-3.5 h-3.5" />
                           </div>
                           <div className="text-left">
-                            <span className="text-xs font-semibold text-slate-800 block">Auto-Plot Missing Gaps</span>
-                            <span className="text-[9px] text-slate-500 font-medium">Auto-generate compliance values in safe range</span>
+                            <span className="text-xs font-semibold text-text-primary block">Auto-Plot Missing Gaps</span>
+                            <span className="text-[9px] text-text-muted font-medium">Auto-generate compliance values in safe range</span>
                           </div>
                         </div>
-                        <span className="text-xs text-slate-500 font-semibold group-hover:text-slate-800 transition-colors">
+                        <span className="text-xs text-text-muted font-semibold group-hover:text-text-primary transition-colors">
                           {showAutoPlotForm ? 'Close' : 'Open'}
                         </span>
                       </button>
                       
                       {showAutoPlotForm && (
-                        <div className="mt-3 p-4 bg-slate-50 border border-slate-200/60 rounded-xl space-y-3.5">
-                          <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Generate Compliance Temperature Readings</h4>
+                        <div className="mt-3 p-4 bg-subtle/50 border border-border-default rounded-xl space-y-3.5">
+                          <h4 className="text-[10px] font-bold uppercase tracking-wider text-text-muted">Generate Compliance Temperature Readings</h4>
                           
                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                             <div>
@@ -2428,7 +2428,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                               <select
                                 value={autoPlotRange}
                                 onChange={(e) => setAutoPlotRange(e.target.value)}
-                                className="w-full bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs font-semibold text-slate-700 focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-all cursor-pointer"
+                                className="w-full bg-surface border border-border-default rounded-lg px-2.5 py-1.5 text-xs font-semibold text-text-secondary focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-colors cursor-pointer"
                               >
                                 {(() => {
                                   const options = [];
@@ -2450,14 +2450,14 @@ export const DepartmentSuhuPage: React.FC = () => {
                             </div>
                             
                             <div className="text-[10px] text-slate-550 flex flex-col justify-end">
-                              <span className="font-semibold text-slate-500">Safe Boundaries:</span>
+                              <span className="font-semibold text-text-muted">Safe Boundaries:</span>
                               <span className="text-emerald-600 font-mono font-bold mt-0.5">
                                 {(minLimit + (maxLimit - minLimit) * 0.15).toFixed(1)}°C to {(maxLimit - (maxLimit - minLimit) * 0.15).toFixed(1)}°C
                               </span>
                             </div>
                           </div>
 
-                          <div className="pt-2 border-t border-slate-100">
+                          <div className="pt-2 border-t border-border-subtle">
                             <label className="block text-[9px] font-semibold text-slate-400 uppercase tracking-wide mb-1.5">
                               Verification Password
                             </label>
@@ -2469,10 +2469,10 @@ export const DepartmentSuhuPage: React.FC = () => {
                                 setAutoPlotPasswordError(false);
                               }}
                               placeholder="Enter password to run auto-plot"
-                              className={`w-full bg-white border rounded-lg px-2.5 py-1.5 text-xs font-semibold focus:outline-none transition-all ${
+                              className={`w-full bg-surface border rounded-lg px-2.5 py-1.5 text-xs font-semibold focus:outline-none transition-colors ${
                                 autoPlotPasswordError 
                                   ? 'border-rose-500 focus:ring-2 focus:ring-rose-100' 
-                                  : 'border-slate-200 focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10'
+                                  : 'border-border-default focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10'
                               }`}
                             />
                             {autoPlotPasswordError && (
@@ -2486,7 +2486,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                             <button
                               type="button"
                               onClick={() => setShowAutoPlotForm(false)}
-                              className="flex-1 py-1.5 border border-slate-200 text-slate-700 hover:bg-slate-100 rounded-lg text-xs font-semibold transition-colors"
+                              className="flex-1 py-1.5 border border-border-default text-text-secondary hover:bg-subtle rounded-lg text-xs font-semibold transition-colors"
                             >
                               Cancel
                             </button>
@@ -2505,10 +2505,10 @@ export const DepartmentSuhuPage: React.FC = () => {
                   </div>
 
                   {/* RIGHT COLUMN: Interactive Trend Chart only (col-span-8) */}
-                  <div className="col-span-12 md:col-span-9 order-1 md:order-2 space-y-4 bg-white border border-slate-200/80 p-6 rounded-xl shadow-sm">
+                  <div className="col-span-12 md:col-span-9 order-1 md:order-2 space-y-4 bg-surface border border-border-default p-6 rounded-xl shadow-sm">
                     {/* Month Dropdown Selector */}
-                    <div className="flex justify-between items-center bg-slate-50 p-2 rounded-xl border border-slate-200/60 shadow-sm">
-                      <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider pl-2 select-none">
+                    <div className="flex justify-between items-center bg-subtle/50 p-2 rounded-xl border border-border-default shadow-sm">
+                      <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider pl-2 select-none">
                         Filter by Month
                       </span>
                       <select
@@ -2518,7 +2518,7 @@ export const DepartmentSuhuPage: React.FC = () => {
                           setDetailDateRange(val);
                           await fetchDetailReadings(activeDetailUnit.id, val);
                         }}
-                        className="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-semibold text-slate-700 focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-all cursor-pointer shadow-sm"
+                        className="bg-surface border border-border-default rounded-lg px-3 py-1.5 text-xs font-semibold text-text-secondary focus:outline-none focus:border-[#00a68a] focus:ring-2 focus:ring-[#00a68a]/10 transition-colors cursor-pointer shadow-sm"
                       >
                         {(() => {
                           const options = [];
@@ -2540,17 +2540,17 @@ export const DepartmentSuhuPage: React.FC = () => {
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <h4 className="text-[10px] font-semibold uppercase tracking-widest text-slate-500">
+                      <h4 className="text-[10px] font-semibold uppercase tracking-widest text-text-muted">
                         Temperature Trend ({getReportingPeriodText()})
                       </h4>
                       {detailReadings.length > 0 && (
-                        <span className="text-[9px] text-slate-400 bg-slate-50 border border-slate-200/60 rounded-full px-2 py-0.5 font-semibold">
+                        <span className="text-[9px] text-slate-400 bg-subtle/50 border border-border-default rounded-full px-2 py-0.5 font-semibold">
                           {detailReadings.length} logs found
                         </span>
                       )}
                     </div>
 
-                    <div className={`bg-slate-50/50 border border-slate-200/60 p-4 rounded-xl shadow-inner h-[550px] overflow-y-hidden ${
+                    <div className={`bg-subtle/50 border border-border-default p-4 rounded-xl shadow-inner h-[550px] overflow-y-hidden ${
                       (detailLoading || detailReadings.length === 0) 
                         ? 'flex items-center justify-center' 
                         : 'overflow-x-auto scrollbar-thin scrollbar-thumb-slate-250 scrollbar-track-transparent'
@@ -2681,40 +2681,40 @@ export const DepartmentSuhuPage: React.FC = () => {
                     </div>
 
                     {/* Custom Accessible Color Legend Row (Phase 5) */}
-                    <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 py-3 border-y border-slate-200/60 my-4 select-none bg-slate-50/60 rounded-xl px-4">
+                    <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 py-3 border-y border-border-default my-4 select-none bg-subtle/50 rounded-xl px-4">
                       {/* Current Temp */}
                       <div className="flex items-center gap-2">
                         <span className="w-2.5 h-2.5 rounded-full bg-[#1e40af]" />
-                        <span className="text-[10px] font-semibold text-slate-600">Current Temp</span>
+                        <span className="text-[10px] font-semibold text-text-muted">Current Temp</span>
                       </div>
                       
                       {/* Min Recorded */}
                       <div className="flex items-center gap-2">
                         <span className="w-2.5 h-2.5 rounded-full bg-[#15803d]" />
-                        <span className="text-[10px] font-semibold text-slate-600">Min Logged</span>
+                        <span className="text-[10px] font-semibold text-text-muted">Min Logged</span>
                       </div>
 
                       {/* Max Recorded */}
                       <div className="flex items-center gap-2">
                         <span className="w-2.5 h-2.5 rounded-full bg-[#b91c1c]" />
-                        <span className="text-[10px] font-semibold text-slate-600">Max Logged</span>
+                        <span className="text-[10px] font-semibold text-text-muted">Max Logged</span>
                       </div>
 
                       {/* Safe Area Fill */}
                       <div className="flex items-center gap-2">
                         <span className="w-4 h-2.5 rounded bg-[#dcfce7] border border-[#bbf7d0] opacity-80" />
-                        <span className="text-[10px] font-semibold text-slate-600">Safe Range Zone</span>
+                        <span className="text-[10px] font-semibold text-text-muted">Safe Range Zone</span>
                       </div>
 
                       {/* Safe Limits Line */}
                       <div className="flex items-center gap-2">
                         <span className="w-4 border-t-2 border-dashed border-[#ef4444]" />
-                        <span className="text-[10px] font-semibold text-slate-600">Threshold Bounds</span>
+                        <span className="text-[10px] font-semibold text-text-muted">Threshold Bounds</span>
                       </div>
                     </div>
 
                     {/* Centered Date Range Display */}
-                    <div className="text-center bg-white border border-slate-200 py-1.5 px-4 rounded-full text-[10px] font-semibold text-slate-500 tracking-wide font-mono max-w-sm mx-auto shadow-sm flex items-center justify-center gap-1.5">
+                    <div className="text-center bg-surface border border-border-default py-1.5 px-4 rounded-full text-[10px] font-semibold text-text-muted tracking-wide font-mono max-w-sm mx-auto shadow-sm flex items-center justify-center gap-1.5">
                       <Calendar className="w-3.5 h-3.5 text-slate-400" />
                       <span>Period: {getReportingPeriodText()}</span>
                     </div>

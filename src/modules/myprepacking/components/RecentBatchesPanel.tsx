@@ -135,7 +135,7 @@ export const RecentBatchesPanel: React.FC<RecentBatchesPanelProps> = ({
                   <button
                     onClick={() => onPrintLabel(batch)}
                     title="Print Thermal / Sheet Label"
-                    className="px-2.5 py-1.5 bg-subtle hover:bg-muted-surface text-text-secondary hover:text-text-primary active:scale-[0.98] border border-border-subtle rounded-lg transition-all cursor-pointer flex items-center gap-1 text-[11px] font-medium shadow-xs"
+                    className="px-2.5 py-1.5 bg-subtle hover:bg-muted-surface text-text-secondary hover:text-text-primary active:scale-[0.98] border border-border-subtle rounded-lg transition-colors cursor-pointer flex items-center gap-1 text-[11px] font-medium shadow-xs"
                   >
                     <Printer className="w-3.5 h-3.5 text-text-muted" />
                     <span className="hidden sm:inline">Print</span>

@@ -208,6 +208,72 @@ class OfflinePreloader {
             await offlineAdapter.setCache('pharmacy_warrants', warRes.data)
             await mergeTableRecords('pharmacy_warrants', warRes.data)
           }
+        })(),
+
+        // 2h. Prepack Module (items, batches, ledger)
+        (async () => {
+          const [itemsRes, batchesRes, ledgerRes] = await Promise.all([
+            supabase.from('prepack_items').select('*').eq('hospital_id', hospitalId).limit(300),
+            supabase.from('prepack_batches').select('*, prepack_item:prepack_items(*)').eq('hospital_id', hospitalId).order('created_at', { ascending: false }).limit(300),
+            supabase.from('prepack_kewps4_ledger').select('*').eq('hospital_id', hospitalId).order('transaction_date', { ascending: false }).limit(200)
+          ])
+
+          if (itemsRes.data && itemsRes.data.length > 0) {
+            await offlineAdapter.setCache('prepack_items', itemsRes.data)
+            await mergeTableRecords('prepack_items', itemsRes.data)
+          }
+          if (batchesRes.data && batchesRes.data.length > 0) {
+            await offlineAdapter.setCache('prepack_batches', batchesRes.data)
+            await mergeTableRecords('prepack_batches', batchesRes.data)
+          }
+          if (ledgerRes.data && ledgerRes.data.length > 0) {
+            await offlineAdapter.setCache('prepack_kewps4_ledger', ledgerRes.data)
+            await mergeTableRecords('prepack_kewps4_ledger', ledgerRes.data)
+          }
+        })(),
+
+        // 2i. Transporter & Tempahan (Bookings & Logistics)
+        (async () => {
+          const [transRes, vehRes, roomRes, bookRes] = await Promise.all([
+            supabase.from('transporter_requests').select('*').eq('hospital_id', hospitalId).limit(200),
+            supabase.from('transporter_vehicles').select('*').eq('hospital_id', hospitalId).limit(100),
+            supabase.from('tempahan_rooms').select('*').eq('hospital_id', hospitalId),
+            supabase.from('tempahan_bookings').select('*').eq('hospital_id', hospitalId).limit(200)
+          ])
+
+          if (transRes.data && transRes.data.length > 0) {
+            await offlineAdapter.setCache('transporter_requests', transRes.data)
+            await mergeTableRecords('transporter_requests', transRes.data)
+          }
+          if (vehRes.data && vehRes.data.length > 0) {
+            await offlineAdapter.setCache('transporter_vehicles', vehRes.data)
+            await mergeTableRecords('transporter_vehicles', vehRes.data)
+          }
+          if (roomRes.data && roomRes.data.length > 0) {
+            await offlineAdapter.setCache('tempahan_rooms', roomRes.data)
+            await mergeTableRecords('tempahan_rooms', roomRes.data)
+          }
+          if (bookRes.data && bookRes.data.length > 0) {
+            await offlineAdapter.setCache('tempahan_bookings', bookRes.data)
+            await mergeTableRecords('tempahan_bookings', bookRes.data)
+          }
+        })(),
+
+        // 2j. MSDS & Crossborder Referrals
+        (async () => {
+          const [msdsRes, crossRes] = await Promise.all([
+            supabase.from('msds_records').select('*').limit(200),
+            supabase.from('crossborder_referrals').select('*').eq('hospital_id', hospitalId).limit(150)
+          ])
+
+          if (msdsRes.data && msdsRes.data.length > 0) {
+            await offlineAdapter.setCache('msds_records', msdsRes.data)
+            await mergeTableRecords('msds_records', msdsRes.data)
+          }
+          if (crossRes.data && crossRes.data.length > 0) {
+            await offlineAdapter.setCache('crossborder_referrals', crossRes.data)
+            await mergeTableRecords('crossborder_referrals', crossRes.data)
+          }
         })()
       ])
 

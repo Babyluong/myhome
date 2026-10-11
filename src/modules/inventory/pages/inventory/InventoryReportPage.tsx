@@ -137,11 +137,11 @@ export const InventoryReportPage: React.FC = () => {
   // Skim Badge renderer
   const renderSkimBadge = (vote?: string) => {
     const v = (vote || 'APPL').toUpperCase()
-    if (v === 'APPL') return <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-800 border border-blue-200">APPL</span>
-    if (v === 'CC') return <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-800 border border-purple-200">CC</span>
-    if (v === 'LP') return <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">LP</span>
-    if (v === 'DP') return <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">DP</span>
-    return <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-slate-100 text-slate-700">{v}</span>
+    if (v === 'APPL') return <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-400 border border-blue-500/20">APPL</span>
+    if (v === 'CC') return <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-indigo-400 border border-indigo-500/20">CC</span>
+    if (v === 'LP') return <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-400 border border-amber-500/20">LP</span>
+    if (v === 'DP') return <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-400 border border-emerald-500/20">DP</span>
+    return <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-subtle text-text-secondary">{v}</span>
   }
 
   // Chart data setup
@@ -311,7 +311,7 @@ export const InventoryReportPage: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 self-start md:self-auto shrink-0">
-            <Button variant="outline" onClick={exportCSV} className="bg-white/10 text-white hover:bg-white/20 border-white/20">
+            <Button variant="outline" onClick={exportCSV} className="bg-white/10 text-white hover:bg-surface/20 border-white/20">
               <FileSpreadsheet className="w-4 h-4 mr-2 text-emerald-400" /> Export CSV
             </Button>
             <Button onClick={exportPDF} className="bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/30">
@@ -322,15 +322,15 @@ export const InventoryReportPage: React.FC = () => {
       </div>
 
       {/* Period & Filter Selection Controls */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm space-y-4 w-full">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-gray-100 pb-4">
+      <div className="bg-surface border border-border-default rounded-2xl p-5 shadow-sm space-y-4 w-full">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border-subtle pb-4">
           {/* Period Tabs */}
-          <div className="flex items-center gap-1 bg-gray-100 p-1 rounded-xl">
+          <div className="flex items-center gap-1 bg-subtle p-1 rounded-xl">
             <button
               onClick={() => handlePeriodChange('monthly')}
               className={cn(
-                'px-4 py-2 text-xs font-semibold rounded-lg transition-all',
-                period === 'monthly' ? 'bg-white text-blue-700 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+                'px-4 py-2 text-xs font-semibold rounded-lg transition-colors',
+                period === 'monthly' ? 'bg-surface text-blue-700 shadow-sm' : 'text-text-muted hover:text-text-primary'
               )}
             >
               Bulanan (Monthly)
@@ -338,8 +338,8 @@ export const InventoryReportPage: React.FC = () => {
             <button
               onClick={() => handlePeriodChange('quarterly')}
               className={cn(
-                'px-4 py-2 text-xs font-semibold rounded-lg transition-all',
-                period === 'quarterly' ? 'bg-white text-blue-700 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+                'px-4 py-2 text-xs font-semibold rounded-lg transition-colors',
+                period === 'quarterly' ? 'bg-surface text-blue-700 shadow-sm' : 'text-text-muted hover:text-text-primary'
               )}
             >
               Suku Tahun (Quarterly)
@@ -347,8 +347,8 @@ export const InventoryReportPage: React.FC = () => {
             <button
               onClick={() => handlePeriodChange('half-yearly')}
               className={cn(
-                'px-4 py-2 text-xs font-semibold rounded-lg transition-all',
-                period === 'half-yearly' ? 'bg-white text-blue-700 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+                'px-4 py-2 text-xs font-semibold rounded-lg transition-colors',
+                period === 'half-yearly' ? 'bg-surface text-blue-700 shadow-sm' : 'text-text-muted hover:text-text-primary'
               )}
             >
               6-Bulanan (Half-Yearly)
@@ -356,8 +356,8 @@ export const InventoryReportPage: React.FC = () => {
             <button
               onClick={() => handlePeriodChange('yearly')}
               className={cn(
-                'px-4 py-2 text-xs font-semibold rounded-lg transition-all',
-                period === 'yearly' ? 'bg-white text-blue-700 shadow-sm' : 'text-gray-600 hover:text-gray-900'
+                'px-4 py-2 text-xs font-semibold rounded-lg transition-colors',
+                period === 'yearly' ? 'bg-surface text-blue-700 shadow-sm' : 'text-text-muted hover:text-text-primary'
               )}
             >
               Tahunan (Yearly)
@@ -367,8 +367,8 @@ export const InventoryReportPage: React.FC = () => {
           {/* Date Selector Selectors */}
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-gray-500" />
-              <span className="text-xs font-medium text-gray-700">Tahun:</span>
+              <Calendar className="w-4 h-4 text-text-muted" />
+              <span className="text-xs font-medium text-text-secondary">Tahun:</span>
               <Select value={year.toString()} onChange={e => setYear(Number(e.target.value))} className="w-28 text-xs">
                 <option value="2026">2026</option>
                 <option value="2025">2025</option>
@@ -378,7 +378,7 @@ export const InventoryReportPage: React.FC = () => {
 
             {period === 'monthly' && (
               <div className="flex items-center gap-2">
-                <span className="text-xs font-medium text-gray-700">Bulan:</span>
+                <span className="text-xs font-medium text-text-secondary">Bulan:</span>
                 <Select value={subPeriod.toString()} onChange={e => setSubPeriod(Number(e.target.value))} className="w-36 text-xs">
                   <option value="1">Januari</option>
                   <option value="2">Februari</option>
@@ -398,7 +398,7 @@ export const InventoryReportPage: React.FC = () => {
 
             {period === 'quarterly' && (
               <div className="flex items-center gap-2">
-                <span className="text-xs font-medium text-gray-700">Suku Tahun:</span>
+                <span className="text-xs font-medium text-text-secondary">Suku Tahun:</span>
                 <Select value={subPeriod.toString()} onChange={e => setSubPeriod(Number(e.target.value))} className="w-36 text-xs">
                   <option value="1">Q1 (Jan - Mac)</option>
                   <option value="2">Q2 (Apr - Jun)</option>
@@ -410,7 +410,7 @@ export const InventoryReportPage: React.FC = () => {
 
             {period === 'half-yearly' && (
               <div className="flex items-center gap-2">
-                <span className="text-xs font-medium text-gray-700">Tempoh 6-Bulan:</span>
+                <span className="text-xs font-medium text-text-secondary">Tempoh 6-Bulan:</span>
                 <Select value={subPeriod.toString()} onChange={e => setSubPeriod(Number(e.target.value))} className="w-40 text-xs">
                   <option value="1">H1 (Jan - Jun)</option>
                   <option value="2">H2 (Jul - Dis)</option>
@@ -433,7 +433,7 @@ export const InventoryReportPage: React.FC = () => {
               placeholder="Cari kod atau nama item..."
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-xs border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+              className="w-full pl-9 pr-4 py-2 text-xs border border-border-default rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
             />
           </div>
 
@@ -441,8 +441,8 @@ export const InventoryReportPage: React.FC = () => {
             {/* Skim / Procurement Vote Filter */}
             <div className="flex items-center gap-2">
               <Filter className="w-3.5 h-3.5 text-blue-600" />
-              <span className="text-xs font-semibold text-gray-700">Skim Pembekalan:</span>
-              <Select value={procurementVote} onChange={e => setProcurementVote(e.target.value as any)} className="w-44 text-xs font-medium border-blue-200 bg-blue-50/50">
+              <span className="text-xs font-semibold text-text-secondary">Skim Pembekalan:</span>
+              <Select value={procurementVote} onChange={e => setProcurementVote(e.target.value as any)} className="w-44 text-xs font-medium border-blue-500/20 bg-blue-500/10">
                 <option value="all">Semua Skim (APPL / CC / LP / DP)</option>
                 <option value="appl">APPL (Kontrak Pusat)</option>
                 <option value="cc">CC (Cost Centre / Kontrak)</option>
@@ -453,7 +453,7 @@ export const InventoryReportPage: React.FC = () => {
 
             {/* Category Filter */}
             <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-600">Kategori:</span>
+              <span className="text-xs text-text-muted">Kategori:</span>
               <Select value={itemType} onChange={e => setItemType(e.target.value as any)} className="w-36 text-xs">
                 <option value="all">Semua Item</option>
                 <option value="drug">Ubat (Drug)</option>
@@ -471,25 +471,25 @@ export const InventoryReportPage: React.FC = () => {
       {/* KPI Cards Summary */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
         {/* Card 1: Receipts from Supplier */}
-        <div className="bg-white border border-emerald-100 rounded-2xl p-4 shadow-sm relative overflow-hidden group hover:border-emerald-300 transition-all">
-          <div className="absolute right-3 top-3 bg-emerald-50 p-2.5 rounded-xl text-emerald-600">
+        <div className="bg-surface border border-emerald-100 rounded-2xl p-4 shadow-sm relative overflow-hidden group hover:border-emerald-300 transition-colors">
+          <div className="absolute right-3 top-3 bg-emerald-500/10 p-2.5 rounded-xl text-emerald-600">
             <ArrowDownRight className="w-5 h-5" />
           </div>
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Terima (Supplier)</p>
-          <p className="text-2xl font-extrabold text-slate-900 mt-2">{formatCurrency(totals.receiptValue)}</p>
-          <div className="flex items-center justify-between text-xs text-emerald-700 mt-2 bg-emerald-50/60 p-2 rounded-lg">
+          <p className="text-xs font-semibold text-text-muted uppercase tracking-wider">Terima (Supplier)</p>
+          <p className="text-2xl font-extrabold text-text-primary mt-2">{formatCurrency(totals.receiptValue)}</p>
+          <div className="flex items-center justify-between text-xs text-emerald-700 mt-2 bg-emerald-500/10 p-2 rounded-lg">
             <span>Kuantiti Diterima:</span>
             <span className="font-bold">{totals.receiptQty.toLocaleString()} unit</span>
           </div>
         </div>
 
         {/* Card 2: Inter-facility Transfers */}
-        <div className="bg-white border border-sky-100 rounded-2xl p-4 shadow-sm relative overflow-hidden group hover:border-sky-300 transition-all">
+        <div className="bg-surface border border-sky-100 rounded-2xl p-4 shadow-sm relative overflow-hidden group hover:border-sky-300 transition-colors">
           <div className="absolute right-3 top-3 bg-sky-50 p-2.5 rounded-xl text-sky-600">
             <TrendingUp className="w-5 h-5" />
           </div>
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Pindahan (Fasiliti)</p>
-          <p className="text-2xl font-extrabold text-slate-900 mt-2">{formatCurrency(totals.transferInValue)}</p>
+          <p className="text-xs font-semibold text-text-muted uppercase tracking-wider">Pindahan (Fasiliti)</p>
+          <p className="text-2xl font-extrabold text-text-primary mt-2">{formatCurrency(totals.transferInValue)}</p>
           <div className="flex items-center justify-between text-xs text-sky-700 mt-2 bg-sky-50/60 p-2 rounded-lg">
             <span>Masuk: {totals.transferInQty} u</span>
             <span>Keluar: {totals.transferOutQty} u</span>
@@ -497,26 +497,26 @@ export const InventoryReportPage: React.FC = () => {
         </div>
 
         {/* Card 3: Issues to Dept */}
-        <div className="bg-white border border-amber-100 rounded-2xl p-4 shadow-sm relative overflow-hidden group hover:border-amber-300 transition-all">
-          <div className="absolute right-3 top-3 bg-amber-50 p-2.5 rounded-xl text-amber-600">
+        <div className="bg-surface border border-amber-100 rounded-2xl p-4 shadow-sm relative overflow-hidden group hover:border-amber-300 transition-colors">
+          <div className="absolute right-3 top-3 bg-amber-500/10 p-2.5 rounded-xl text-amber-600">
             <ArrowUpRight className="w-5 h-5" />
           </div>
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Agihan (Department / Wad)</p>
-          <p className="text-2xl font-extrabold text-slate-900 mt-2">{formatCurrency(totals.issueValue)}</p>
-          <div className="flex items-center justify-between text-xs text-amber-700 mt-2 bg-amber-50/60 p-2 rounded-lg">
+          <p className="text-xs font-semibold text-text-muted uppercase tracking-wider">Agihan (Department / Wad)</p>
+          <p className="text-2xl font-extrabold text-text-primary mt-2">{formatCurrency(totals.issueValue)}</p>
+          <div className="flex items-center justify-between text-xs text-amber-700 mt-2 bg-amber-500/10 p-2 rounded-lg">
             <span>Kuantiti Diagih:</span>
             <span className="font-bold">{totals.issueQty.toLocaleString()} unit</span>
           </div>
         </div>
 
         {/* Card 4: Closing Holding Value */}
-        <div className="bg-white border border-indigo-100 rounded-2xl p-4 shadow-sm relative overflow-hidden group hover:border-indigo-300 transition-all">
-          <div className="absolute right-3 top-3 bg-indigo-50 p-2.5 rounded-xl text-indigo-600">
+        <div className="bg-surface border border-indigo-100 rounded-2xl p-4 shadow-sm relative overflow-hidden group hover:border-indigo-300 transition-colors">
+          <div className="absolute right-3 top-3 bg-indigo-500/10 p-2.5 rounded-xl text-indigo-600">
             <DollarSign className="w-5 h-5" />
           </div>
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Nilai Baki Pegangan Akhir</p>
-          <p className="text-2xl font-extrabold text-indigo-900 mt-2">{formatCurrency(totals.closingValue)}</p>
-          <div className="flex items-center justify-between text-xs text-indigo-700 mt-2 bg-indigo-50/60 p-2 rounded-lg">
+          <p className="text-xs font-semibold text-text-muted uppercase tracking-wider">Nilai Baki Pegangan Akhir</p>
+          <p className="text-2xl font-extrabold text-indigo-400 dark:text-indigo-300 font-bold mt-2">{formatCurrency(totals.closingValue)}</p>
+          <div className="flex items-center justify-between text-xs text-indigo-700 mt-2 bg-indigo-500/10 p-2 rounded-lg">
             <span>Baki Akhir Unit:</span>
             <span className="font-bold">{totals.closingQty.toLocaleString()} unit</span>
           </div>
@@ -524,11 +524,11 @@ export const InventoryReportPage: React.FC = () => {
       </div>
 
       {/* Visual Analytics Chart */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm w-full">
-        <h3 className="text-sm font-bold text-gray-900 mb-1 flex items-center gap-2">
+      <div className="bg-surface border border-border-default rounded-2xl p-5 shadow-sm w-full">
+        <h3 className="text-sm font-bold text-text-primary mb-1 flex items-center gap-2">
           <TrendingUp className="w-4 h-4 text-blue-600" /> Analisis Ringkas Pergerakan Stok ({getPeriodTitle()}) {procurementVote !== 'all' && `[Skim: ${procurementVote.toUpperCase()}]`}
         </h3>
-        <p className="text-xs text-gray-500 mb-4">Perbandingan Nilai Ringgit (RM) Mengikut Jenis Pergerakan Stok Real-time</p>
+        <p className="text-xs text-text-muted mb-4">Perbandingan Nilai Ringgit (RM) Mengikut Jenis Pergerakan Stok Real-time</p>
         <div className="h-64 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={chartData} margin={{ top: 10, right: 30, left: 20, bottom: 20 }}>
@@ -543,11 +543,11 @@ export const InventoryReportPage: React.FC = () => {
       </div>
 
       {/* Main Table */}
-      <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden w-full">
-        <div className="p-4 border-b border-gray-100 flex items-center justify-between">
+      <div className="bg-surface border border-border-default rounded-2xl shadow-sm overflow-hidden w-full">
+        <div className="p-4 border-b border-border-subtle flex items-center justify-between">
           <div>
-            <h2 className="text-base font-bold text-gray-900">Jadual Pergerakan & Nilai Stok Terperinci</h2>
-            <p className="text-xs text-gray-500">Menunjukkan perbandingan Kuantiti (Qty) dan Nilai Ringgit (RM) bagi tempoh {getPeriodTitle()} {procurementVote !== 'all' && `(Skim: ${procurementVote.toUpperCase()})`}</p>
+            <h2 className="text-base font-bold text-text-primary">Jadual Pergerakan & Nilai Stok Terperinci</h2>
+            <p className="text-xs text-text-muted">Menunjukkan perbandingan Kuantiti (Qty) dan Nilai Ringgit (RM) bagi tempoh {getPeriodTitle()} {procurementVote !== 'all' && `(Skim: ${procurementVote.toUpperCase()})`}</p>
           </div>
           <Badge variant="outline" className="text-xs">
             Menunjukkan {filteredRows.length} item
@@ -566,68 +566,68 @@ export const InventoryReportPage: React.FC = () => {
           <div className="overflow-x-auto w-full">
             <Table>
               <Table.Head>
-                <Table.Row className="bg-gray-50/80">
-                  <Table.Cell as="th" className="text-xs font-bold text-gray-700 whitespace-nowrap">Kod Item</Table.Cell>
-                  <Table.Cell as="th" className="text-xs font-bold text-gray-700 whitespace-nowrap min-w-[200px]">Nama Item</Table.Cell>
-                  <Table.Cell as="th" className="text-xs font-bold text-gray-700 text-center whitespace-nowrap">Skim</Table.Cell>
-                  <Table.Cell as="th" className="text-xs font-bold text-gray-700 text-right whitespace-nowrap">Harga Unit (RM)</Table.Cell>
+                <Table.Row className="bg-subtle/50">
+                  <Table.Cell as="th" className="text-xs font-bold text-text-secondary whitespace-nowrap">Kod Item</Table.Cell>
+                  <Table.Cell as="th" className="text-xs font-bold text-text-secondary whitespace-nowrap min-w-[200px]">Nama Item</Table.Cell>
+                  <Table.Cell as="th" className="text-xs font-bold text-text-secondary text-center whitespace-nowrap">Skim</Table.Cell>
+                  <Table.Cell as="th" className="text-xs font-bold text-text-secondary text-right whitespace-nowrap">Harga Unit (RM)</Table.Cell>
 
-                  <Table.Cell as="th" className="text-xs font-bold text-gray-700 text-right whitespace-nowrap bg-slate-100/70">Opening Balance (Qty)</Table.Cell>
-                  <Table.Cell as="th" className="text-xs font-bold text-gray-700 text-right whitespace-nowrap bg-slate-100/70">Nilai Awal (RM)</Table.Cell>
+                  <Table.Cell as="th" className="text-xs font-bold text-text-secondary text-right whitespace-nowrap bg-subtle">Opening Balance (Qty)</Table.Cell>
+                  <Table.Cell as="th" className="text-xs font-bold text-text-secondary text-right whitespace-nowrap bg-subtle">Nilai Awal (RM)</Table.Cell>
 
-                  <Table.Cell as="th" className="text-xs font-bold text-emerald-800 text-right whitespace-nowrap bg-emerald-50/60">Terima Supplier (Qty)</Table.Cell>
-                  <Table.Cell as="th" className="text-xs font-bold text-emerald-800 text-right whitespace-nowrap bg-emerald-50/60">Nilai Supplier (RM)</Table.Cell>
+                  <Table.Cell as="th" className="text-xs font-bold text-emerald-400 text-right whitespace-nowrap bg-emerald-500/10">Terima Supplier (Qty)</Table.Cell>
+                  <Table.Cell as="th" className="text-xs font-bold text-emerald-400 text-right whitespace-nowrap bg-emerald-500/10">Nilai Supplier (RM)</Table.Cell>
 
                   <Table.Cell as="th" className="text-xs font-bold text-sky-800 text-right whitespace-nowrap bg-sky-50/60">Terima Fasiliti (Qty)</Table.Cell>
 
-                  <Table.Cell as="th" className="text-xs font-bold text-amber-800 text-right whitespace-nowrap bg-amber-50/60">Agihan Dept (Qty)</Table.Cell>
-                  <Table.Cell as="th" className="text-xs font-bold text-amber-800 text-right whitespace-nowrap bg-amber-50/60">Nilai Agihan (RM)</Table.Cell>
+                  <Table.Cell as="th" className="text-xs font-bold text-amber-400 text-right whitespace-nowrap bg-amber-500/10">Agihan Dept (Qty)</Table.Cell>
+                  <Table.Cell as="th" className="text-xs font-bold text-amber-400 text-right whitespace-nowrap bg-amber-500/10">Nilai Agihan (RM)</Table.Cell>
 
                   <Table.Cell as="th" className="text-xs font-bold text-orange-800 text-right whitespace-nowrap bg-orange-50/60">Pindahan Keluar (Qty)</Table.Cell>
-                  <Table.Cell as="th" className="text-xs font-bold text-purple-800 text-right whitespace-nowrap bg-purple-50/60">Pelarasan / Pulangan</Table.Cell>
+                  <Table.Cell as="th" className="text-xs font-bold text-indigo-400 text-right whitespace-nowrap bg-indigo-500/10">Pelarasan / Pulangan</Table.Cell>
 
-                  <Table.Cell as="th" className="text-xs font-bold text-indigo-900 text-right whitespace-nowrap bg-indigo-50/80">Closing Balance (Qty)</Table.Cell>
-                  <Table.Cell as="th" className="text-xs font-bold text-indigo-900 text-right whitespace-nowrap bg-indigo-50/80">Nilai Akhir (RM)</Table.Cell>
+                  <Table.Cell as="th" className="text-xs font-bold text-indigo-400 dark:text-indigo-300 font-bold text-right whitespace-nowrap bg-indigo-500/10">Closing Balance (Qty)</Table.Cell>
+                  <Table.Cell as="th" className="text-xs font-bold text-indigo-400 dark:text-indigo-300 font-bold text-right whitespace-nowrap bg-indigo-500/10">Nilai Akhir (RM)</Table.Cell>
                 </Table.Row>
               </Table.Head>
               <Table.Body>
                 {filteredRows.length === 0 ? (
                   <Table.Row>
-                    <Table.Cell colSpan={15} className="text-center py-12 text-sm text-gray-500">
+                    <Table.Cell colSpan={15} className="text-center py-12 text-sm text-text-muted">
                       Tiada rekod pergerakan inventori ditemui bagi kriteria carian.
                     </Table.Cell>
                   </Table.Row>
                 ) : (
                   <>
                     {filteredRows.map((r) => (
-                      <Table.Row key={r.item_id} className="hover:bg-blue-50/30 transition-colors text-xs">
-                        <Table.Cell className="font-mono text-gray-700 font-medium">{r.item_code}</Table.Cell>
-                        <Table.Cell className="font-semibold text-gray-900">
+                      <Table.Row key={r.item_id} className="hover:bg-blue-500/10 transition-colors text-xs">
+                        <Table.Cell className="font-mono text-text-secondary font-medium">{r.item_code}</Table.Cell>
+                        <Table.Cell className="font-semibold text-text-primary">
                           <div>{r.item_name}</div>
                           <span className="text-[10px] text-gray-400 uppercase">{r.item_type === 'drug' ? 'Ubat' : 'Bukan Ubat'}</span>
                         </Table.Cell>
                         <Table.Cell className="text-center">{renderSkimBadge(r.procurement_vote)}</Table.Cell>
-                        <Table.Cell className="text-right text-gray-600">{r.unit_price.toFixed(2)}</Table.Cell>
+                        <Table.Cell className="text-right text-text-muted">{r.unit_price.toFixed(2)}</Table.Cell>
 
-                        <Table.Cell className="text-right font-medium bg-slate-50/50">{r.opening_qty.toLocaleString()}</Table.Cell>
-                        <Table.Cell className="text-right text-slate-700 bg-slate-50/50">{formatCurrency(r.opening_value)}</Table.Cell>
+                        <Table.Cell className="text-right font-medium bg-subtle/50">{r.opening_qty.toLocaleString()}</Table.Cell>
+                        <Table.Cell className="text-right text-text-secondary bg-subtle/50">{formatCurrency(r.opening_value)}</Table.Cell>
 
-                        <Table.Cell className="text-right font-medium bg-emerald-50/30 text-emerald-700">{r.receipt_qty > 0 ? `+${r.receipt_qty}` : '-'}</Table.Cell>
-                        <Table.Cell className="text-right bg-emerald-50/30 text-emerald-800 font-medium">{r.receipt_value > 0 ? formatCurrency(r.receipt_value) : '-'}</Table.Cell>
+                        <Table.Cell className="text-right font-medium bg-emerald-500/10 text-emerald-700">{r.receipt_qty > 0 ? `+${r.receipt_qty}` : '-'}</Table.Cell>
+                        <Table.Cell className="text-right bg-emerald-500/10 text-emerald-400 font-medium">{r.receipt_value > 0 ? formatCurrency(r.receipt_value) : '-'}</Table.Cell>
 
                         <Table.Cell className="text-right font-medium bg-sky-50/30 text-sky-700">{r.transfer_in_qty > 0 ? `+${r.transfer_in_qty}` : '-'}</Table.Cell>
 
-                        <Table.Cell className="text-right font-medium bg-amber-50/30 text-amber-700">{r.issue_qty > 0 ? `-${r.issue_qty}` : '-'}</Table.Cell>
-                        <Table.Cell className="text-right bg-amber-50/30 text-amber-800 font-medium">{r.issue_value > 0 ? formatCurrency(r.issue_value) : '-'}</Table.Cell>
+                        <Table.Cell className="text-right font-medium bg-amber-500/10 text-amber-700">{r.issue_qty > 0 ? `-${r.issue_qty}` : '-'}</Table.Cell>
+                        <Table.Cell className="text-right bg-amber-500/10 text-amber-400 font-medium">{r.issue_value > 0 ? formatCurrency(r.issue_value) : '-'}</Table.Cell>
 
                         <Table.Cell className="text-right font-medium bg-orange-50/30 text-orange-700">{r.transfer_out_qty > 0 ? `-${r.transfer_out_qty}` : '-'}</Table.Cell>
 
-                        <Table.Cell className="text-right font-medium bg-purple-50/30 text-purple-700">
+                        <Table.Cell className="text-right font-medium bg-indigo-500/10 text-purple-700">
                           {r.adjustment_qty !== 0 ? (r.adjustment_qty > 0 ? `+${r.adjustment_qty}` : r.adjustment_qty) : (r.return_qty > 0 ? `+${r.return_qty} (R)` : '-')}
                         </Table.Cell>
 
-                        <Table.Cell className="text-right font-bold bg-indigo-50/50 text-indigo-950">{r.closing_qty.toLocaleString()}</Table.Cell>
-                        <Table.Cell className="text-right font-bold bg-indigo-50/50 text-indigo-900">{formatCurrency(r.closing_value)}</Table.Cell>
+                        <Table.Cell className="text-right font-bold bg-indigo-500/10 text-indigo-400 dark:text-indigo-300 font-bold">{r.closing_qty.toLocaleString()}</Table.Cell>
+                        <Table.Cell className="text-right font-bold bg-indigo-500/10 text-indigo-400 dark:text-indigo-300 font-bold">{formatCurrency(r.closing_value)}</Table.Cell>
                       </Table.Row>
                     ))}
 

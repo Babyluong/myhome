@@ -36,8 +36,8 @@ export const AntidoteStockBadge: React.FC<AntidoteStockBadgeProps> = ({
         }
       case 'List C':
         return {
-          bg: 'bg-indigo-500/10 border-indigo-500/30 text-indigo-600 dark:text-indigo-400',
-          dot: 'bg-indigo-500',
+          bg: 'bg-accent-base/10 border-accent-base/30 text-accent-base',
+          dot: 'bg-accent-base',
           icon: Building2,
           label: 'List C: Depot Negeri (< 4-6 jam)',
           fullDesc: 'Depot Rujukan Negeri / Hospital Tertier Utama',
@@ -45,8 +45,8 @@ export const AntidoteStockBadge: React.FC<AntidoteStockBadgeProps> = ({
         }
       default:
         return {
-          bg: 'bg-slate-500/10 border-slate-500/30 text-slate-400',
-          dot: 'bg-slate-400',
+          bg: 'bg-subtle border-border-default text-text-muted',
+          dot: 'bg-text-muted',
           icon: ShieldAlert,
           label: 'Antidot Berdaftar',
           fullDesc: 'Simpanan hospital berjadual',
@@ -80,7 +80,7 @@ export const AntidoteStockBadge: React.FC<AntidoteStockBadgeProps> = ({
         <span>{config.label}</span>
       </span>
       {showDescription && (
-        <span className="text-[10px] text-slate-500 dark:text-slate-400 pl-1 font-normal">
+        <span className="text-[10px] text-text-muted pl-1 font-normal">
           {config.fullDesc}
         </span>
       )}

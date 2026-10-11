@@ -43,7 +43,7 @@ export const DrugInteractionModal: React.FC<DrugInteractionModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
-      <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div className="bg-surface rounded-3xl border border-border-default shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         {/* Header */}
         <div className="p-6 bg-gradient-to-r from-violet-700 via-purple-700 to-indigo-800 text-white flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -57,7 +57,7 @@ export const DrugInteractionModal: React.FC<DrugInteractionModalProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-colors"
+            className="p-2 rounded-xl text-white/80 hover:text-white hover:bg-surface/10 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -67,12 +67,12 @@ export const DrugInteractionModal: React.FC<DrugInteractionModalProps> = ({
         <div className="p-6 overflow-y-auto space-y-6 flex-1">
           {/* Drug Selector */}
           <div>
-            <label className="text-xs font-bold uppercase tracking-wider text-slate-700 block mb-2">
+            <label className="text-xs font-bold uppercase tracking-wider text-text-secondary block mb-2">
               Pilih Ubat untuk Pemeriksaan Silang ({selectedDrugs.length} dipilih):
             </label>
 
             {/* Selected Pills */}
-            <div className="flex flex-wrap gap-2 mb-3 min-h-[40px] p-2.5 bg-slate-50 rounded-2xl border border-slate-200">
+            <div className="flex flex-wrap gap-2 mb-3 min-h-[40px] p-2.5 bg-subtle/50 rounded-2xl border border-border-default">
               {selectedDrugs.length === 0 ? (
                 <span className="text-xs text-slate-400 italic self-center">
                   Sila pilih sekurang-kurangnya 2 ubat di bawah untuk melihat interaksi.
@@ -81,7 +81,7 @@ export const DrugInteractionModal: React.FC<DrugInteractionModalProps> = ({
                 selectedDrugs.map(drug => (
                   <span
                     key={drug.id}
-                    className="inline-flex items-center gap-1.5 bg-violet-100 text-violet-900 border border-violet-300 text-xs font-semibold px-3 py-1.5 rounded-xl shadow-2xs"
+                    className="inline-flex items-center gap-1.5 bg-violet-100 text-violet-900 border border-violet-300 text-xs font-semibold px-3 py-1.5 rounded-xl shadow-elevation-1"
                   >
                     <span>{drug.genericName}</span>
                     <button
@@ -104,23 +104,23 @@ export const DrugInteractionModal: React.FC<DrugInteractionModalProps> = ({
                   placeholder="Cari ubat untuk ditambah (cth: Meropenem, Valproate, Morphine, Heparin)..."
                   value={searchTerm}
                   onChange={e => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-300 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-hidden focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
+                  className="w-full pl-10 pr-4 py-2.5 bg-surface border border-border-default rounded-xl text-xs text-text-primary placeholder-slate-400 focus:outline-hidden focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20"
                 />
               </div>
 
               {searchTerm.trim() && (
-                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-2xl shadow-xl max-h-48 overflow-y-auto z-20 p-2 space-y-1">
+                <div className="absolute top-full left-0 right-0 mt-1 bg-surface border border-border-default rounded-2xl shadow-xl max-h-48 overflow-y-auto z-20 p-2 space-y-1">
                   {availableToAdd.length === 0 ? (
-                    <div className="p-3 text-center text-xs text-slate-500">Tiada ubat ditemui</div>
+                    <div className="p-3 text-center text-xs text-text-muted">Tiada ubat ditemui</div>
                   ) : (
                     availableToAdd.map(drug => (
                       <div
                         key={drug.id}
                         onClick={() => handleAddDrug(drug.id)}
-                        className="p-2.5 hover:bg-violet-50 rounded-xl cursor-pointer flex items-center justify-between text-xs text-slate-800 transition-colors"
+                        className="p-2.5 hover:bg-violet-50 rounded-xl cursor-pointer flex items-center justify-between text-xs text-text-primary transition-colors"
                       >
                         <span className="font-semibold">{drug.genericName}</span>
-                        <span className="text-[11px] text-slate-500">{drug.therapeuticClass}</span>
+                        <span className="text-[11px] text-text-muted">{drug.therapeuticClass}</span>
                       </div>
                     ))
                   )}
@@ -131,23 +131,23 @@ export const DrugInteractionModal: React.FC<DrugInteractionModalProps> = ({
 
           {/* Results Analysis */}
           <div className="space-y-4 pt-2">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-              <h3 className="text-sm font-bold text-slate-900">
+            <div className="flex items-center justify-between border-b border-border-subtle pb-2">
+              <h3 className="text-sm font-bold text-text-primary">
                 Keputusan Interaksi ({interactions.length} dikesan)
               </h3>
               {interactions.length > 0 && (
-                <span className="text-xs font-bold bg-rose-100 text-rose-800 px-2.5 py-0.5 rounded-full border border-rose-200">
+                <span className="text-xs font-bold bg-rose-100 text-rose-400 px-2.5 py-0.5 rounded-full border border-rose-500/20">
                   Amaran Interaksi Klinikal Wujud
                 </span>
               )}
             </div>
 
             {selectedDrugs.length < 2 ? (
-              <div className="p-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-300 text-slate-500 text-xs">
+              <div className="p-8 text-center bg-subtle/50 rounded-2xl border border-dashed border-border-default text-text-muted text-xs">
                 Sila tambah sekurang-kurangnya 2 ubat untuk menjalankan semakan keselamatan silang.
               </div>
             ) : interactions.length === 0 ? (
-              <div className="p-6 bg-emerald-50 rounded-2xl border border-emerald-200 flex items-center gap-3 text-emerald-900 text-xs">
+              <div className="p-6 bg-emerald-500/10 rounded-2xl border border-emerald-500/20 flex items-center gap-3 text-emerald-400 dark:text-emerald-300 font-bold text-xs">
                 <CheckCircle2 className="w-6 h-6 text-emerald-600 shrink-0" />
                 <div>
                   <strong className="text-sm font-bold block">Tiada Interaksi Kritikal Dikesan</strong>
@@ -165,17 +165,17 @@ export const DrugInteractionModal: React.FC<DrugInteractionModalProps> = ({
                       key={idx}
                       className={`p-4 rounded-2xl border ${
                         isCrit 
-                          ? 'bg-rose-50/80 border-rose-300 shadow-xs' 
+                          ? 'bg-rose-500/10 border-rose-300 shadow-xs' 
                           : isMaj
-                          ? 'bg-amber-50/80 border-amber-300 shadow-xs'
-                          : 'bg-slate-50 border-slate-200'
+                          ? 'bg-amber-500/10 border-amber-300 shadow-xs'
+                          : 'bg-subtle/50 border-border-default'
                       }`}
                     >
                       <div className="flex items-center justify-between gap-2 mb-2">
-                        <div className="flex items-center gap-2 text-xs font-bold text-slate-900">
-                          <span className="bg-white px-2 py-0.5 rounded border border-slate-200">{res.drugA.genericName}</span>
+                        <div className="flex items-center gap-2 text-xs font-bold text-text-primary">
+                          <span className="bg-surface px-2 py-0.5 rounded border border-border-default">{res.drugA.genericName}</span>
                           <span className="text-slate-400">↔</span>
-                          <span className="bg-white px-2 py-0.5 rounded border border-slate-200">{res.drugB.genericName}</span>
+                          <span className="bg-surface px-2 py-0.5 rounded border border-border-default">{res.drugB.genericName}</span>
                         </div>
 
                         <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-full ${
@@ -185,12 +185,12 @@ export const DrugInteractionModal: React.FC<DrugInteractionModalProps> = ({
                         </span>
                       </div>
 
-                      <div className="text-xs space-y-1.5 text-slate-700">
+                      <div className="text-xs space-y-1.5 text-text-secondary">
                         <p>
-                          <strong className="text-slate-900">Kesan Interaksi: </strong>
+                          <strong className="text-text-primary">Kesan Interaksi: </strong>
                           {res.interaction.effect}
                         </p>
-                        <p className="bg-white/80 p-2.5 rounded-lg border border-slate-200/80 text-slate-800">
+                        <p className="bg-surface p-2.5 rounded-lg border border-border-default text-text-primary">
                           <strong className="text-violet-900 font-semibold">Tindakan Klinikal / Pengurusan: </strong>
                           {res.interaction.management}
                         </p>
@@ -204,7 +204,7 @@ export const DrugInteractionModal: React.FC<DrugInteractionModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+        <div className="p-4 bg-subtle/50 border-t border-border-default flex items-center justify-between text-xs text-text-muted">
           <span>Rujukan: Pangkalan Data FUKKM, Lexicomp & Micromedex KKM</span>
           <button
             onClick={onClose}

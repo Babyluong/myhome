@@ -267,43 +267,43 @@ export const StaffReminderPage: React.FC = () => {
       label: 'Sesi CME / CPD Hospital',
       desc: 'Pembentangan klinikal, perkongsian kes, & kredit CPD',
       icon: <GraduationCap className="w-4 h-4 text-purple-600" />,
-      color: 'border-purple-500 bg-purple-50/50 text-purple-900',
-      badgeBg: 'bg-purple-100 text-purple-800 border-purple-200'
+      color: 'border-purple-500 bg-indigo-500/10 text-indigo-400 dark:text-indigo-300 font-bold',
+      badgeBg: 'bg-purple-100 text-indigo-400 border-indigo-500/20'
     },
     meeting: {
       label: 'Mesyuarat / Perjumpaan',
       desc: 'Mesyuarat bulanan, taklimat pagi & perjumpaan khas',
       icon: <Briefcase className="w-4 h-4 text-indigo-600" />,
-      color: 'border-indigo-500 bg-indigo-50/50 text-indigo-900',
-      badgeBg: 'bg-indigo-100 text-indigo-800 border-indigo-200'
+      color: 'border-indigo-500 bg-indigo-500/10 text-indigo-400 dark:text-indigo-300 font-bold',
+      badgeBg: 'bg-indigo-100 text-indigo-400 border-indigo-500/20'
     },
     course: {
       label: 'Kursus & Latihan',
       desc: 'Bengkel kemahiran, seminar dan latihan jabatan',
       icon: <Stethoscope className="w-4 h-4 text-teal-600" />,
-      color: 'border-teal-500 bg-teal-50/50 text-teal-900',
-      badgeBg: 'bg-teal-100 text-teal-800 border-teal-200'
+      color: 'border-teal-500 bg-accent-base/10 text-teal-900',
+      badgeBg: 'bg-teal-100 text-teal-800 border-accent-base/20'
     },
     deadline: {
       label: 'Submission Deadline',
       desc: 'Deadlines audit, stok opname, atau data KPI',
       icon: <Clock className="w-4 h-4 text-amber-600" />,
-      color: 'border-amber-500 bg-amber-50/50 text-amber-900',
-      badgeBg: 'bg-amber-100 text-amber-800 border-amber-200'
+      color: 'border-amber-500 bg-amber-500/10 text-amber-400 dark:text-amber-300 font-bold',
+      badgeBg: 'bg-amber-100 text-amber-400 border-amber-500/20'
     },
     submission: {
       label: 'Penyerahan Laporan',
       desc: 'Penghantaran laporan kewangan / stok bulanan',
       icon: <AlertCircle className="w-4 h-4 text-rose-600" />,
-      color: 'border-rose-500 bg-rose-50/50 text-rose-900',
-      badgeBg: 'bg-rose-100 text-rose-800 border-rose-200'
+      color: 'border-rose-500 bg-rose-500/10 text-rose-400 dark:text-rose-300 font-bold',
+      badgeBg: 'bg-rose-100 text-rose-400 border-rose-500/20'
     },
     other: {
       label: 'Peringatan Umum',
       desc: 'Hebahan peribadi atau memo dalaman jabatan',
-      icon: <Bell className="w-4 h-4 text-slate-600" />,
-      color: 'border-slate-500 bg-slate-50 text-slate-900',
-      badgeBg: 'bg-slate-100 text-slate-800 border-slate-200'
+      icon: <Bell className="w-4 h-4 text-text-muted" />,
+      color: 'border-slate-500 bg-subtle/50 text-text-primary',
+      badgeBg: 'bg-subtle text-text-primary border-border-default'
     }
   }
 
@@ -314,10 +314,10 @@ export const StaffReminderPage: React.FC = () => {
     low: {
       label: 'Rendah',
       sub: 'Hebahan umum & makluman santai',
-      badge: 'bg-slate-100 text-slate-900 border-slate-300 font-bold',
+      badge: 'bg-subtle text-text-primary border-border-default font-bold',
       border: 'border-slate-400',
       dot: 'bg-slate-500',
-      icon: <Info className="w-3.5 h-3.5 text-slate-600" />
+      icon: <Info className="w-3.5 h-3.5 text-text-muted" />
     },
     medium: {
       label: 'Biasa',
@@ -330,7 +330,7 @@ export const StaffReminderPage: React.FC = () => {
     high: {
       label: 'Tinggi',
       sub: 'Kehadiran diwajibkan / Sasaran utama',
-      badge: 'bg-amber-100 text-amber-950 border-amber-300 font-black',
+      badge: 'bg-amber-100 text-amber-400 dark:text-amber-300 font-bold border-amber-300 font-black',
       border: 'border-amber-500',
       dot: 'bg-amber-600',
       icon: <Flame className="w-3.5 h-3.5 text-amber-700" />
@@ -338,7 +338,7 @@ export const StaffReminderPage: React.FC = () => {
     critical: {
       label: 'Kritikal',
       sub: 'Mandatory / Urgent Action & Audit',
-      badge: 'bg-rose-100 text-rose-950 border-rose-300 font-black animate-pulse',
+      badge: 'bg-rose-100 text-rose-400 dark:text-rose-300 font-bold border-rose-300 font-black animate-pulse',
       border: 'border-rose-500',
       dot: 'bg-rose-600',
       icon: <ShieldAlert className="w-3.5 h-3.5 text-rose-700" />
@@ -399,28 +399,28 @@ export const StaffReminderPage: React.FC = () => {
   }, [reminders, statusFilter, selectedType, selectedPriority, searchQuery])
 
   return (
-    <div className="p-6 md:p-8 w-full space-y-6 text-slate-800">
+    <div className="p-6 md:p-8 w-full space-y-6 text-text-primary">
       {/* Header Panel */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-white border border-slate-100 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-surface border border-border-subtle rounded-3xl p-6 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-purple-400 via-purple-500 to-indigo-500" />
         
         <div className="flex items-center gap-4">
           <button
             onClick={() => navigate(ROUTES.STAFF_DASHBOARD)}
-            className="p-3 hover:bg-slate-50 border border-slate-100 rounded-2xl text-slate-400 hover:text-slate-700 transition-all shadow-sm"
+            className="p-3 hover:bg-subtle/50 border border-border-subtle rounded-2xl text-slate-400 hover:text-text-secondary transition-colors shadow-sm"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-black tracking-tight text-slate-800">
+              <h1 className="text-2xl font-black tracking-tight text-text-primary">
                 Log Event & Jadual CME Jabatan
               </h1>
-              <Badge variant="gray" className="font-mono text-[10px] font-bold py-0.5 px-2 text-purple-700 bg-purple-50 border-purple-200">
+              <Badge variant="gray" className="font-mono text-[10px] font-bold py-0.5 px-2 text-purple-700 bg-indigo-500/10 border-indigo-500/20">
                 SENARAI LOG & AKTIVITI
               </Badge>
             </div>
-            <p className="text-sm text-slate-500 mt-0.5 font-medium">
+            <p className="text-sm text-text-muted mt-0.5 font-medium">
               Senarai Rasmi Sesi CME / CPD, Mesyuarat Jabatan, Pautan Pantas & Dokumen Rujukan
             </p>
           </div>
@@ -430,7 +430,7 @@ export const StaffReminderPage: React.FC = () => {
           <button
             type="button"
             onClick={() => setIsAuditDrawerOpen(true)}
-            className="px-4 py-2.5 rounded-2xl border border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-slate-300 text-slate-700 font-bold text-xs flex items-center gap-2 transition-all shadow-xs"
+            className="px-4 py-2.5 rounded-2xl border border-border-default bg-subtle/50 hover:bg-subtle hover:border-border-default text-text-secondary font-bold text-xs flex items-center gap-2 transition-colors shadow-xs"
           >
             <History className="w-4 h-4 text-purple-600" />
             <span>Log Audit & Pindaan</span>
@@ -438,7 +438,7 @@ export const StaffReminderPage: React.FC = () => {
 
           <Button
             onClick={handleOpenCreate}
-            className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-2xl shadow-md hover:shadow-lg font-bold flex items-center gap-2 px-5 py-2.5 transition-all text-sm group"
+            className="bg-accent-base hover:bg-accent-hover text-white rounded-2xl shadow-md hover:shadow-lg font-bold flex items-center gap-2 px-5 py-2.5 transition-colors text-sm group"
           >
             <Plus className="w-4 h-4 group-hover:rotate-90 transition-transform duration-200" />
             <span>Jadual Event Baru</span>
@@ -451,26 +451,26 @@ export const StaffReminderPage: React.FC = () => {
         {/* Tab 1: Belum Selesai (Aktif) */}
         <button
           onClick={() => setStatusFilter('pending')}
-          className={`p-4 rounded-2xl border transition-all text-left flex items-center justify-between ${
+          className={`p-4 rounded-2xl border transition-colors text-left flex items-center justify-between ${
             statusFilter === 'pending'
-              ? 'bg-amber-50/90 border-2 border-amber-500 ring-2 ring-amber-400/20 shadow-md'
-              : 'bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50/70 shadow-xs'
+              ? 'bg-amber-500/10 border-2 border-amber-500 ring-2 ring-amber-400/20 shadow-md'
+              : 'bg-surface border border-border-default hover:border-border-default hover:bg-subtle/50 shadow-xs'
           }`}
         >
           <div className="flex items-center gap-3.5">
             <div className={`w-11 h-11 rounded-xl flex items-center justify-center font-black shrink-0 ${
-              statusFilter === 'pending' ? 'bg-amber-500 text-white shadow-sm' : 'bg-amber-100 text-amber-800'
+              statusFilter === 'pending' ? 'bg-amber-500 text-white shadow-sm' : 'bg-amber-100 text-amber-400'
             }`}>
               <Clock className="w-5 h-5" />
             </div>
             <div>
               <div className={`text-xs font-black uppercase tracking-wider ${
-                statusFilter === 'pending' ? 'text-amber-950' : 'text-slate-800'
+                statusFilter === 'pending' ? 'text-amber-400 dark:text-amber-300 font-bold' : 'text-text-primary'
               }`}>
                 Belum Selesai (Aktif)
               </div>
               <div className={`text-xs font-medium mt-0.5 ${
-                statusFilter === 'pending' ? 'text-amber-800' : 'text-slate-500'
+                statusFilter === 'pending' ? 'text-amber-400' : 'text-text-muted'
               }`}>
                 Perlu tindakan / Sesi akan datang
               </div>
@@ -479,7 +479,7 @@ export const StaffReminderPage: React.FC = () => {
           <span className={`text-xl font-black px-3 py-0.5 rounded-xl border tabular-nums ${
             statusFilter === 'pending'
               ? 'bg-amber-500 text-white border-amber-600 shadow-xs'
-              : 'bg-slate-100 text-slate-800 border-slate-200'
+              : 'bg-subtle text-text-primary border-border-default'
           }`}>
             {counts.pending}
           </span>
@@ -488,26 +488,26 @@ export const StaffReminderPage: React.FC = () => {
         {/* Tab 2: Telah Selesai */}
         <button
           onClick={() => setStatusFilter('completed')}
-          className={`p-4 rounded-2xl border transition-all text-left flex items-center justify-between ${
+          className={`p-4 rounded-2xl border transition-colors text-left flex items-center justify-between ${
             statusFilter === 'completed'
-              ? 'bg-emerald-50/90 border-2 border-emerald-500 ring-2 ring-emerald-400/20 shadow-md'
-              : 'bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50/70 shadow-xs'
+              ? 'bg-emerald-500/10 border-2 border-emerald-500 ring-2 ring-emerald-400/20 shadow-md'
+              : 'bg-surface border border-border-default hover:border-border-default hover:bg-subtle/50 shadow-xs'
           }`}
         >
           <div className="flex items-center gap-3.5">
             <div className={`w-11 h-11 rounded-xl flex items-center justify-center font-black shrink-0 ${
-              statusFilter === 'completed' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-emerald-100 text-emerald-800'
+              statusFilter === 'completed' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-emerald-100 text-emerald-400'
             }`}>
               <CheckCircle2 className="w-5 h-5" />
             </div>
             <div>
               <div className={`text-xs font-black uppercase tracking-wider ${
-                statusFilter === 'completed' ? 'text-emerald-950' : 'text-slate-800'
+                statusFilter === 'completed' ? 'text-emerald-400 dark:text-emerald-300 font-bold' : 'text-text-primary'
               }`}>
                 {isMs ? 'Telah Selesai' : 'Completed'}
               </div>
               <div className={`text-xs font-medium mt-0.5 ${
-                statusFilter === 'completed' ? 'text-emerald-800' : 'text-slate-500'
+                statusFilter === 'completed' ? 'text-emerald-400' : 'text-text-muted'
               }`}>
                 {isMs ? 'Selesai / Laporan dihantar' : 'Completed / Report submitted'}
               </div>
@@ -516,7 +516,7 @@ export const StaffReminderPage: React.FC = () => {
           <span className={`text-xl font-black px-3 py-0.5 rounded-xl border tabular-nums ${
             statusFilter === 'completed'
               ? 'bg-emerald-600 text-white border-emerald-700 shadow-xs'
-              : 'bg-slate-100 text-slate-800 border-slate-200'
+              : 'bg-subtle text-text-primary border-border-default'
           }`}>
             {counts.completed}
           </span>
@@ -525,26 +525,26 @@ export const StaffReminderPage: React.FC = () => {
         {/* Tab 3: Semua Rekod */}
         <button
           onClick={() => setStatusFilter('all')}
-          className={`p-4 rounded-2xl border transition-all text-left flex items-center justify-between ${
+          className={`p-4 rounded-2xl border transition-colors text-left flex items-center justify-between ${
             statusFilter === 'all'
-              ? 'bg-purple-50/90 border-2 border-purple-600 ring-2 ring-purple-400/20 shadow-md'
-              : 'bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50/70 shadow-xs'
+              ? 'bg-indigo-500/10 border-2 border-purple-600 ring-2 ring-purple-400/20 shadow-md'
+              : 'bg-surface border border-border-default hover:border-border-default hover:bg-subtle/50 shadow-xs'
           }`}
         >
           <div className="flex items-center gap-3.5">
             <div className={`w-11 h-11 rounded-xl flex items-center justify-center font-black shrink-0 ${
-              statusFilter === 'all' ? 'bg-purple-600 text-white shadow-sm' : 'bg-purple-100 text-purple-800'
+              statusFilter === 'all' ? 'bg-purple-600 text-white shadow-sm' : 'bg-purple-100 text-indigo-400'
             }`}>
               <Bell className="w-5 h-5" />
             </div>
             <div>
               <div className={`text-xs font-black uppercase tracking-wider ${
-                statusFilter === 'all' ? 'text-purple-950' : 'text-slate-800'
+                statusFilter === 'all' ? 'text-indigo-400 dark:text-indigo-300 font-bold' : 'text-text-primary'
               }`}>
                 {isMs ? 'Semua Rekod' : 'All Records'}
               </div>
               <div className={`text-xs font-medium mt-0.5 ${
-                statusFilter === 'all' ? 'text-purple-800' : 'text-slate-500'
+                statusFilter === 'all' ? 'text-indigo-400' : 'text-text-muted'
               }`}>
                 {isMs ? 'Keseluruhan aktiviti jabatan' : 'All department activities'}
               </div>
@@ -553,7 +553,7 @@ export const StaffReminderPage: React.FC = () => {
           <span className={`text-xl font-black px-3 py-0.5 rounded-xl border tabular-nums ${
             statusFilter === 'all'
               ? 'bg-purple-600 text-white border-purple-700 shadow-xs'
-              : 'bg-slate-100 text-slate-800 border-slate-200'
+              : 'bg-subtle text-text-primary border-border-default'
           }`}>
             {counts.total}
           </span>
@@ -561,7 +561,7 @@ export const StaffReminderPage: React.FC = () => {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="bg-white border border-slate-100 p-5 rounded-3xl shadow-lg space-y-4">
+      <div className="bg-surface border border-border-subtle p-5 rounded-3xl shadow-lg space-y-4">
         <div className="flex flex-col lg:flex-row gap-4 justify-between items-center">
           {/* Search Input */}
           <div className="relative w-full lg:w-96">
@@ -571,7 +571,7 @@ export const StaffReminderPage: React.FC = () => {
               placeholder={isMs ? "Cari tajuk program, kategori, penceramah, dokumen..." : "Search event title, category, speaker, document..."}
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 font-medium placeholder:text-slate-400"
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-border-default text-sm focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 font-medium placeholder:text-text-muted"
             />
           </div>
 
@@ -589,10 +589,10 @@ export const StaffReminderPage: React.FC = () => {
               <button
                 key={cat.id}
                 onClick={() => setSelectedType(cat.id)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-colors ${
                   selectedType === cat.id
                     ? 'bg-slate-900 text-white shadow-sm'
-                    : 'bg-slate-100/80 text-slate-600 hover:bg-slate-200/80'
+                    : 'bg-subtle text-text-muted hover:bg-subtle'
                 }`}
               >
                 {cat.label}
@@ -602,8 +602,8 @@ export const StaffReminderPage: React.FC = () => {
         </div>
 
         {/* Priority Filter Sub-Row */}
-        <div className="flex items-center gap-2 pt-2 border-t border-slate-100 flex-wrap text-xs">
-          <span className="text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+        <div className="flex items-center gap-2 pt-2 border-t border-border-subtle flex-wrap text-xs">
+          <span className="text-text-secondary font-bold font-bold uppercase tracking-wider text-[10px]">
             {isMs ? 'Tapis Keutamaan:' : 'Priority Filter:'}
           </span>
           {[
@@ -616,10 +616,10 @@ export const StaffReminderPage: React.FC = () => {
             <button
               key={p.id}
               onClick={() => setSelectedPriority(p.id)}
-              className={`px-2.5 py-1 rounded-lg font-bold flex items-center gap-1.5 transition-all text-xs ${
+              className={`px-2.5 py-1 rounded-lg font-bold flex items-center gap-1.5 transition-colors text-xs ${
                 selectedPriority === p.id
-                  ? 'bg-purple-100 text-purple-900 border border-purple-300'
-                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100 border border-slate-200'
+                  ? 'bg-purple-100 text-indigo-400 dark:text-indigo-300 font-bold border border-purple-300'
+                  : 'bg-subtle/50 text-text-muted hover:bg-subtle border border-border-default'
               }`}
             >
               {p.dot && <span className={`w-2 h-2 rounded-full ${p.dot}`} />}
@@ -630,10 +630,10 @@ export const StaffReminderPage: React.FC = () => {
       </div>
 
       {/* Reminder Records Table (List with Columns) */}
-      <div className="bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-xl">
+      <div className="bg-surface border border-border-default rounded-3xl overflow-hidden shadow-xl">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-800">
-            <thead className="bg-slate-100 border-b border-slate-200 text-xs uppercase font-black text-slate-800 tracking-wider font-mono">
+          <table className="w-full text-left text-sm text-text-primary">
+            <thead className="bg-subtle border-b border-border-default text-xs uppercase font-black text-text-primary tracking-wider font-mono">
               <tr>
                 <th className="px-6 py-4">{isMs ? 'Kategori & Keutamaan' : 'Category & Priority'}</th>
                 <th className="px-6 py-4">{isMs ? 'Tajuk Acara / Sesi & Sinopsis' : 'Event / Session Title & Synopsis'}</th>
@@ -645,12 +645,12 @@ export const StaffReminderPage: React.FC = () => {
                 <th className="px-6 py-4 text-right">{isMs ? 'Tindakan' : 'Actions'}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 font-medium">
+            <tbody className="divide-y divide-border-subtle font-medium">
               {filteredReminders.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-16 text-slate-400">
+                  <td colSpan={8} className="text-center py-16 text-text-muted font-medium">
                     <Bell className="w-9 h-9 text-slate-300 mx-auto mb-2" />
-                    <p className="font-bold text-slate-600">Tiada rekod acara atau sesi CME dijumpai</p>
+                    <p className="font-bold text-text-muted">Tiada rekod acara atau sesi CME dijumpai</p>
                     <p className="text-xs text-slate-400 mt-0.5">
                       {statusFilter === 'pending'
                         ? 'Semua acara / program telah diselesaikan! Klik tab "Telah Selesai" untuk melihat arkib.'
@@ -669,7 +669,7 @@ export const StaffReminderPage: React.FC = () => {
                     <tr
                       key={rem.id}
                       className={`transition-colors group ${
-                        isDone ? 'bg-slate-50/40 hover:bg-slate-50/80 opacity-80' : 'hover:bg-slate-50/70'
+                        isDone ? 'bg-subtle/50 hover:bg-subtle/50 opacity-80' : 'hover:bg-subtle/50'
                       }`}
                     >
                       {/* Column 1: Category & Priority */}
@@ -691,21 +691,21 @@ export const StaffReminderPage: React.FC = () => {
                       {/* Column 2: Title & Synopsis */}
                       <td className="px-6 py-4 min-w-[280px]">
                         <h4 className={`font-extrabold text-sm transition-colors leading-snug ${
-                          isDone ? 'text-slate-600 line-through' : 'text-slate-900 group-hover:text-purple-700'
+                          isDone ? 'text-text-muted line-through' : 'text-text-primary group-hover:text-purple-700'
                         }`}>
                           {rem.tajuk}
                         </h4>
                         {rem.penerangan && (
-                          <p className="text-xs text-slate-500 line-clamp-2 mt-1 leading-relaxed">
+                          <p className="text-xs text-text-muted line-clamp-2 mt-1 leading-relaxed">
                             {rem.penerangan}
                           </p>
                         )}
                         <div className="flex items-center gap-2 mt-2 flex-wrap">
-                          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">
+                          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-subtle text-text-muted">
                             WAD & JABATAN
                           </span>
                           {rem.last_edited_by_name && (
-                            <span className="text-[10px] text-amber-900 font-bold bg-amber-100/80 border border-amber-300 px-2 py-0.5 rounded flex items-center gap-1" title={rem.last_edit_reason || 'Pindaan data'}>
+                            <span className="text-[10px] text-amber-400 dark:text-amber-300 font-bold font-bold bg-amber-100/80 border border-amber-300 px-2 py-0.5 rounded flex items-center gap-1" title={rem.last_edit_reason || 'Pindaan data'}>
                               <Edit3 className="w-3 h-3 text-amber-700 shrink-0" />
                               <span>Dipinda: {rem.last_edited_by_name}</span>
                             </span>
@@ -715,7 +715,7 @@ export const StaffReminderPage: React.FC = () => {
 
                       {/* Column 3: Date & Time */}
                       <td className="px-6 py-4 whitespace-nowrap font-mono text-xs">
-                        <div className="flex items-center gap-1.5 font-bold text-slate-900">
+                        <div className="flex items-center gap-1.5 font-bold text-text-primary">
                           <Calendar className="w-3.5 h-3.5 text-purple-600 shrink-0" />
                           <span>
                             {remDate.toLocaleDateString('ms-MY', {
@@ -726,7 +726,7 @@ export const StaffReminderPage: React.FC = () => {
                             })}
                           </span>
                         </div>
-                        <div className="flex items-center gap-1.5 text-slate-500 mt-1">
+                        <div className="flex items-center gap-1.5 text-text-muted mt-1">
                           <Clock className="w-3.5 h-3.5 text-purple-500 shrink-0" />
                           <span>
                             {remDate.toLocaleTimeString('ms-MY', {
@@ -740,12 +740,12 @@ export const StaffReminderPage: React.FC = () => {
                       {/* Column 4: Status Selesai Badge */}
                       <td className="px-6 py-4 whitespace-nowrap">
                         {isDone ? (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-2xs">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 shadow-elevation-1">
                             <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                             <span>Telah Selesai</span>
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-900 border border-amber-200 shadow-2xs">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500/10 text-amber-400 dark:text-amber-300 font-bold border border-amber-500/20 shadow-elevation-1">
                             <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse shrink-0" />
                             <span>Belum Selesai</span>
                           </span>
@@ -759,7 +759,7 @@ export const StaffReminderPage: React.FC = () => {
                             href={rem.meeting_link.startsWith('http') ? rem.meeting_link : `https://${rem.meeting_link}`}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-purple-50 border border-purple-200 text-purple-700 hover:bg-purple-600 hover:text-white transition-all shadow-xs text-xs font-bold group/link"
+                            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-indigo-500/10 border border-indigo-500/20 text-purple-700 hover:bg-purple-600 hover:text-white transition-colors shadow-xs text-xs font-bold group/link"
                           >
                             <Globe className="w-3.5 h-3.5 text-purple-600 group-hover/link:text-white shrink-0" />
                             <span>
@@ -788,7 +788,7 @@ export const StaffReminderPage: React.FC = () => {
                             download={rem.attachment_name || 'Dokumen_Rujukan'}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 hover:bg-emerald-600 hover:text-white transition-all shadow-xs text-xs font-bold max-w-[200px] group/doc"
+                            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 hover:bg-emerald-600 hover:text-white transition-colors shadow-xs text-xs font-bold max-w-[200px] group/doc"
                           >
                             <FileText className="w-3.5 h-3.5 text-emerald-600 group-hover/doc:text-white shrink-0" />
                             <span className="truncate">
@@ -806,11 +806,11 @@ export const StaffReminderPage: React.FC = () => {
                       {/* Column 7: Submitter Profile */}
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center gap-2.5">
-                          <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-700 border border-purple-200 flex items-center justify-center font-bold text-xs shrink-0">
+                          <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-700 border border-indigo-500/20 flex items-center justify-center font-bold text-xs shrink-0">
                             {rem.user?.full_name?.charAt(0) || user?.full_name?.charAt(0) || 'P'}
                           </div>
                           <div>
-                            <div className="font-bold text-slate-900 text-xs">
+                            <div className="font-bold text-text-primary text-xs">
                               {rem.user?.full_name || user?.full_name || 'AMRI AMIT'}
                             </div>
                             <div className="text-[10px] text-slate-400">
@@ -827,7 +827,7 @@ export const StaffReminderPage: React.FC = () => {
                             <button
                               onClick={(e) => handleToggleDone(rem.id, true, e)}
                               title="Tanda acara/sesi ini sebagai Selesai"
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-bold shadow-xs hover:shadow transition-all"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-bold shadow-xs hover:shadow transition-colors"
                             >
                               <Check className="w-3.5 h-3.5" />
                               <span>Tanda Selesai</span>
@@ -836,9 +836,9 @@ export const StaffReminderPage: React.FC = () => {
                             <button
                               onClick={(e) => handleToggleDone(rem.id, false, e)}
                               title="Kembalikan status kepada Belum Selesai"
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 active:scale-95 text-slate-700 text-xs font-semibold border border-slate-200 transition-all"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-subtle hover:bg-subtle active:scale-95 text-text-secondary text-xs font-semibold border border-border-default transition-colors"
                             >
-                              <Clock className="w-3.5 h-3.5 text-slate-500" />
+                              <Clock className="w-3.5 h-3.5 text-text-muted" />
                               <span>Buka Semula</span>
                             </button>
                           )}
@@ -846,7 +846,7 @@ export const StaffReminderPage: React.FC = () => {
                           <button
                             onClick={(e) => handleOpenEdit(rem, e)}
                             title="Kemaskini Rekod & Rekod Log Pindaan"
-                            className="p-2 text-slate-500 hover:text-purple-700 hover:bg-purple-50 rounded-xl transition-all border border-slate-200 shadow-2xs hover:shadow-xs"
+                            className="p-2 text-text-muted hover:text-purple-700 hover:bg-indigo-500/10 rounded-xl transition-colors border border-border-default shadow-elevation-1 hover:shadow-xs"
                           >
                             <Pencil className="w-3.5 h-3.5" />
                           </button>
@@ -854,7 +854,7 @@ export const StaffReminderPage: React.FC = () => {
                           <button
                             onClick={(e) => handleOpenDelete(rem, e)}
                             title="Padam Peringatan & Rekod Sebab Pemadaman"
-                            className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-all border border-slate-200 shadow-2xs hover:shadow-xs"
+                            className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-500/10 rounded-xl transition-colors border border-border-default shadow-elevation-1 hover:shadow-xs"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -880,7 +880,7 @@ export const StaffReminderPage: React.FC = () => {
         title={editingReminder ? 'Kemaskini Rekod Acara / Sesi CME' : 'Jadualkan Log Event & Sesi CME'}
         description={editingReminder ? 'Pindaan rasmi rekod program jabatan dengan catatan jejak audit mandatori' : 'Pendaftaran Sesi CME, Mesyuarat Rasmi, Pautan Pantas & Dokumen Rujukan'}
       >
-        <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-6 pb-28 text-slate-800">
+        <form onSubmit={handleSubmit} className="p-6 md:p-8 space-y-6 pb-28 text-text-primary">
           {/* Submitter & Department Context Pill */}
           <div className="p-4 rounded-2xl bg-gradient-to-r from-purple-50/80 via-indigo-50/40 to-slate-50 border border-purple-100 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -888,31 +888,31 @@ export const StaffReminderPage: React.FC = () => {
                 {user?.full_name ? user.full_name.charAt(0) : 'P'}
               </div>
               <div>
-                <p className="text-[11px] font-bold text-purple-800 uppercase tracking-wider">
+                <p className="text-[11px] font-bold text-indigo-400 uppercase tracking-wider">
                   {editingReminder ? 'Pegawai Yang Meminda' : 'Didaftarkan Oleh'}
                 </p>
-                <h4 className="text-sm font-extrabold text-slate-900 leading-tight">
+                <h4 className="text-sm font-extrabold text-text-primary leading-tight">
                   {user?.full_name || 'Pegawai Jabatan'}
                 </h4>
-                <p className="text-xs text-slate-500 font-medium">
+                <p className="text-xs text-text-muted font-medium">
                   {user?.jawatan || 'Pegawai Bertugas'} • {user?.department?.department_name || 'Jabatan Farmasi'}
                 </p>
               </div>
             </div>
-            <span className="inline-flex items-center px-3 py-1 rounded-xl text-xs font-mono font-bold bg-white border border-purple-200 text-purple-700 shadow-xs">
+            <span className="inline-flex items-center px-3 py-1 rounded-xl text-xs font-mono font-bold bg-surface border border-indigo-500/20 text-purple-700 shadow-xs">
               {editingReminder ? 'MOD PINDAAN' : 'KONGSI JABATAN'}
             </span>
           </div>
 
           {/* Mandatory Edit Reason Box if Editing */}
           {editingReminder && (
-            <div className="p-4 rounded-2xl bg-amber-50/90 border-2 border-amber-400 space-y-3 shadow-xs">
+            <div className="p-4 rounded-2xl bg-amber-500/10 border-2 border-amber-400 space-y-3 shadow-xs">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-black text-amber-950 uppercase tracking-wider flex items-center gap-1.5">
+                <label className="text-xs font-black text-amber-400 dark:text-amber-300 font-bold uppercase tracking-wider flex items-center gap-1.5">
                   <ShieldCheck className="w-4 h-4 text-amber-700" />
                   <span>Sebab / Justifikasi Pindaan (Mandatori Rekod Audit) <span className="text-rose-600">*</span></span>
                 </label>
-                <span className="text-[10px] font-mono font-bold text-amber-800 bg-amber-200/80 px-2 py-0.5 rounded">
+                <span className="text-[10px] font-mono font-bold text-amber-400 bg-amber-200/80 px-2 py-0.5 rounded">
                   AUDIT LOG
                 </span>
               </div>
@@ -930,10 +930,10 @@ export const StaffReminderPage: React.FC = () => {
                     type="button"
                     key={idx}
                     onClick={() => setEditReason(chip)}
-                    className={`text-xs px-2.5 py-1 rounded-lg border font-medium transition-all ${
+                    className={`text-xs px-2.5 py-1 rounded-lg border font-medium transition-colors ${
                       editReason === chip
                         ? 'bg-amber-500 text-white border-amber-600 font-bold shadow-xs'
-                        : 'bg-white text-slate-700 border-amber-200 hover:bg-amber-100/60'
+                        : 'bg-surface text-text-secondary border-amber-500/20 hover:bg-amber-100/60'
                     }`}
                   >
                     {chip}
@@ -947,14 +947,14 @@ export const StaffReminderPage: React.FC = () => {
                 value={editReason}
                 onChange={e => setEditReason(e.target.value)}
                 placeholder="Cth: Dipinda atas arahan Dr. Penyelaras CME kerana pertindihan bilik mesyuarat..."
-                className="w-full p-3 rounded-xl border border-amber-300 bg-white text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500/30"
+                className="w-full p-3 rounded-xl border border-amber-300 bg-surface text-xs font-medium text-text-primary focus:outline-none focus:ring-2 focus:ring-amber-500/30"
               />
             </div>
           )}
 
           {/* Category Selector with Interactive Visual Tiles */}
           <div className="space-y-2.5">
-            <label className="block text-xs font-bold text-slate-900 uppercase tracking-wider">
+            <label className="block text-xs font-bold text-text-primary uppercase tracking-wider">
               Kategori Acara / Program <span className="text-rose-500">*</span>
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -966,20 +966,20 @@ export const StaffReminderPage: React.FC = () => {
                     key={key}
                     type="button"
                     onClick={() => setFormType(key)}
-                    className={`p-3.5 rounded-2xl border text-left transition-all flex items-start gap-3 relative ${
+                    className={`p-3.5 rounded-2xl border text-left transition-colors flex items-start gap-3 relative ${
                       isSelected
-                        ? 'border-purple-600 bg-purple-50/80 shadow-sm ring-2 ring-purple-500/20'
-                        : 'border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50/60'
+                        ? 'border-purple-600 bg-indigo-500/10 shadow-sm ring-2 ring-purple-500/20'
+                        : 'border-border-default bg-surface hover:border-border-default hover:bg-subtle/50'
                     }`}
                   >
-                    <div className="p-2 rounded-xl bg-white shadow-xs border border-slate-100 shrink-0">
+                    <div className="p-2 rounded-xl bg-surface shadow-xs border border-border-subtle shrink-0">
                       {conf.icon}
                     </div>
                     <div className="flex-1 min-w-0 pr-4">
-                      <div className="font-extrabold text-xs text-slate-900 leading-snug">
+                      <div className="font-extrabold text-xs text-text-primary leading-snug">
                         {conf.label}
                       </div>
-                      <div className="text-[11px] text-slate-500 font-medium leading-tight mt-0.5 line-clamp-1">
+                      <div className="text-[11px] text-text-muted font-medium leading-tight mt-0.5 line-clamp-1">
                         {conf.desc}
                       </div>
                     </div>
@@ -996,7 +996,7 @@ export const StaffReminderPage: React.FC = () => {
 
           {/* Priority Level Selector */}
           <div className="space-y-2.5">
-            <label className="block text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center justify-between">
+            <label className="block text-xs font-bold text-text-primary uppercase tracking-wider flex items-center justify-between">
               <span>Tahap Keutamaan (Priority Level) <span className="text-rose-500">*</span></span>
               <span className="text-[10px] text-slate-400 font-medium">Tentukan tahap urgensi</span>
             </label>
@@ -1009,15 +1009,15 @@ export const StaffReminderPage: React.FC = () => {
                     key={pKey}
                     type="button"
                     onClick={() => setFormPriority(pKey)}
-                    className={`p-3 rounded-2xl border text-center transition-all flex flex-col items-center justify-center gap-1.5 relative ${
+                    className={`p-3 rounded-2xl border text-center transition-colors flex flex-col items-center justify-center gap-1.5 relative ${
                       isSelected
-                        ? `${pConf.border} bg-white shadow-md ring-2 ring-purple-500/20 font-black`
-                        : 'border-slate-200 bg-slate-50/60 hover:bg-white hover:border-slate-300'
+                        ? `${pConf.border} bg-surface shadow-md ring-2 ring-purple-500/20 font-black`
+                        : 'border-border-default bg-subtle/50 hover:bg-surface hover:border-border-default'
                     }`}
                   >
                     <div className="flex items-center gap-1.5">
                       {pConf.icon}
-                      <span className={`text-xs font-extrabold ${isSelected ? 'text-slate-900' : 'text-slate-600'}`}>
+                      <span className={`text-xs font-extrabold ${isSelected ? 'text-text-primary' : 'text-text-muted'}`}>
                         {pConf.label}
                       </span>
                     </div>
@@ -1037,7 +1037,7 @@ export const StaffReminderPage: React.FC = () => {
 
           {/* Title Field */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-bold text-slate-900 uppercase tracking-wider">
+            <label className="block text-xs font-bold text-text-primary uppercase tracking-wider">
               Tajuk Sesi CME / Nama Acara <span className="text-rose-500">*</span>
             </label>
             <div className="relative">
@@ -1047,7 +1047,7 @@ export const StaffReminderPage: React.FC = () => {
                 value={formTitle}
                 onChange={e => setFormTitle(e.target.value)}
                 required
-                className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-purple-600 transition-all shadow-xs"
+                className="w-full px-4 py-3 rounded-2xl border border-border-default bg-surface text-sm font-medium text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-purple-600 transition-colors shadow-xs"
               />
             </div>
           </div>
@@ -1055,7 +1055,7 @@ export const StaffReminderPage: React.FC = () => {
           {/* Date & Time Grid with Quick Presets */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center justify-between">
+              <label className="block text-xs font-bold text-text-primary uppercase tracking-wider flex items-center justify-between">
                 <span>Tarikh Program <span className="text-rose-500">*</span></span>
                 <span className="text-[10px] font-medium text-slate-400">YYYY-MM-DD</span>
               </label>
@@ -1065,7 +1065,7 @@ export const StaffReminderPage: React.FC = () => {
                   value={formDate}
                   onChange={e => setFormDate(e.target.value)}
                   required
-                  className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-purple-600 transition-all shadow-xs"
+                  className="w-full px-4 py-3 rounded-2xl border border-border-default bg-surface text-sm font-medium text-text-primary focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-purple-600 transition-colors shadow-xs"
                 />
               </div>
               {/* Quick Date Presets */}
@@ -1073,7 +1073,7 @@ export const StaffReminderPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setFormDate(new Date().toISOString().split('T')[0])}
-                  className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-slate-100 text-slate-600 hover:bg-purple-100 hover:text-purple-800 transition-colors"
+                  className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-subtle text-text-muted hover:bg-purple-100 hover:text-indigo-400 transition-colors"
                 >
                   Hari Ini
                 </button>
@@ -1084,7 +1084,7 @@ export const StaffReminderPage: React.FC = () => {
                     d.setDate(d.getDate() + 1)
                     setFormDate(d.toISOString().split('T')[0])
                   }}
-                  className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-slate-100 text-slate-600 hover:bg-purple-100 hover:text-purple-800 transition-colors"
+                  className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-subtle text-text-muted hover:bg-purple-100 hover:text-indigo-400 transition-colors"
                 >
                   Esok
                 </button>
@@ -1095,7 +1095,7 @@ export const StaffReminderPage: React.FC = () => {
                     d.setDate(d.getDate() + 7)
                     setFormDate(d.toISOString().split('T')[0])
                   }}
-                  className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-slate-100 text-slate-600 hover:bg-purple-100 hover:text-purple-800 transition-colors"
+                  className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-subtle text-text-muted hover:bg-purple-100 hover:text-indigo-400 transition-colors"
                 >
                   +1 Minggu
                 </button>
@@ -1103,7 +1103,7 @@ export const StaffReminderPage: React.FC = () => {
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center justify-between">
+              <label className="block text-xs font-bold text-text-primary uppercase tracking-wider flex items-center justify-between">
                 <span>Masa Mula <span className="text-rose-500">*</span></span>
                 <span className="text-[10px] font-medium text-slate-400">24-Hour</span>
               </label>
@@ -1113,7 +1113,7 @@ export const StaffReminderPage: React.FC = () => {
                   value={formTime}
                   onChange={e => setFormTime(e.target.value)}
                   required
-                  className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-purple-600 transition-all shadow-xs"
+                  className="w-full px-4 py-3 rounded-2xl border border-border-default bg-surface text-sm font-medium text-text-primary focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-purple-600 transition-colors shadow-xs"
                 />
               </div>
               {/* Quick Time Presets */}
@@ -1121,21 +1121,21 @@ export const StaffReminderPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setFormTime('08:30')}
-                  className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-slate-100 text-slate-600 hover:bg-purple-100 hover:text-purple-800 transition-colors"
+                  className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-subtle text-text-muted hover:bg-purple-100 hover:text-indigo-400 transition-colors"
                 >
                   08:30 AM
                 </button>
                 <button
                   type="button"
                   onClick={() => setFormTime('11:00')}
-                  className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-slate-100 text-slate-600 hover:bg-purple-100 hover:text-purple-800 transition-colors"
+                  className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-subtle text-text-muted hover:bg-purple-100 hover:text-indigo-400 transition-colors"
                 >
                   11:00 AM
                 </button>
                 <button
                   type="button"
                   onClick={() => setFormTime('14:30')}
-                  className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-slate-100 text-slate-600 hover:bg-purple-100 hover:text-purple-800 transition-colors"
+                  className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-subtle text-text-muted hover:bg-purple-100 hover:text-indigo-400 transition-colors"
                 >
                   02:30 PM
                 </button>
@@ -1145,7 +1145,7 @@ export const StaffReminderPage: React.FC = () => {
 
           {/* Quick Meeting Link Input */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center justify-between">
+            <label className="block text-xs font-bold text-text-primary uppercase tracking-wider flex items-center justify-between">
               <span className="flex items-center gap-1.5">
                 <Globe className="w-3.5 h-3.5 text-purple-600" />
                 <span>Pautan Sesi / Video Meeting (Pilihan)</span>
@@ -1161,7 +1161,7 @@ export const StaffReminderPage: React.FC = () => {
                 placeholder="cth. https://meet.google.com/abc-defg-hij atau https://zoom.us/j/..."
                 value={formLink}
                 onChange={e => setFormLink(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm font-medium text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-purple-600 transition-all shadow-xs"
+                className="w-full pl-10 pr-4 py-3 rounded-2xl border border-border-default bg-surface text-sm font-medium text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-purple-600 transition-colors shadow-xs"
               />
             </div>
             {/* Quick URL Prefix Helpers */}
@@ -1169,7 +1169,7 @@ export const StaffReminderPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setFormLink('https://meet.google.com/')}
-                className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-purple-50 text-purple-700 hover:bg-purple-100 transition-colors"
+                className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-indigo-500/10 text-purple-700 hover:bg-purple-100 transition-colors"
               >
                 + Google Meet
               </button>
@@ -1183,7 +1183,7 @@ export const StaffReminderPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setFormLink('https://teams.microsoft.com/')}
-                className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 transition-colors"
+                className="px-2.5 py-1 text-[11px] font-bold rounded-lg bg-indigo-500/10 text-indigo-700 hover:bg-indigo-100 transition-colors"
               >
                 + Teams
               </button>
@@ -1191,24 +1191,24 @@ export const StaffReminderPage: React.FC = () => {
           </div>
 
           {/* Document Attachment & Direct Access Section */}
-          <div className="space-y-2.5 p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+          <div className="space-y-2.5 p-4 rounded-2xl bg-subtle/50 border border-border-default">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+              <label className="text-xs font-bold text-text-primary uppercase tracking-wider flex items-center gap-1.5">
                 <Paperclip className="w-3.5 h-3.5 text-emerald-600" />
                 <span>Dokumen Rujukan / Slaid Lampiran (Pilihan)</span>
               </label>
-              <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-slate-200 text-[10px] font-bold">
+              <div className="flex items-center gap-1 bg-surface p-0.5 rounded-lg border border-border-default text-[10px] font-bold">
                 <button
                   type="button"
                   onClick={() => setDocInputMode('upload')}
-                  className={`px-2 py-0.5 rounded ${docInputMode === 'upload' ? 'bg-purple-600 text-white' : 'text-slate-600'}`}
+                  className={`px-2 py-0.5 rounded ${docInputMode === 'upload' ? 'bg-purple-600 text-white' : 'text-text-muted'}`}
                 >
                   Muat Naik Fail
                 </button>
                 <button
                   type="button"
                   onClick={() => setDocInputMode('url')}
-                  className={`px-2 py-0.5 rounded ${docInputMode === 'url' ? 'bg-purple-600 text-white' : 'text-slate-600'}`}
+                  className={`px-2 py-0.5 rounded ${docInputMode === 'url' ? 'bg-purple-600 text-white' : 'text-text-muted'}`}
                 >
                   Pautan Dokumen
                 </button>
@@ -1229,10 +1229,10 @@ export const StaffReminderPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="w-full border-2 border-dashed border-slate-300 hover:border-purple-500 rounded-2xl p-4 text-center transition-all bg-white hover:bg-purple-50/30 group"
+                    className="w-full border-2 border-dashed border-border-default hover:border-purple-500 rounded-2xl p-4 text-center transition-colors bg-surface hover:bg-indigo-500/10 group"
                   >
                     <UploadCloud className="w-7 h-7 text-slate-400 group-hover:text-purple-600 mx-auto mb-1.5 transition-colors" />
-                    <p className="text-xs font-bold text-slate-700 group-hover:text-purple-900">
+                    <p className="text-xs font-bold text-text-secondary group-hover:text-indigo-400 dark:text-indigo-300 font-bold">
                       Klik untuk Pilih Dokumen / Slaid CME
                     </p>
                     <p className="text-[10px] text-slate-400 mt-0.5">
@@ -1240,20 +1240,20 @@ export const StaffReminderPage: React.FC = () => {
                     </p>
                   </button>
                 ) : (
-                  <div className="flex items-center justify-between p-3 rounded-xl bg-white border border-emerald-200 shadow-xs">
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-surface border border-emerald-500/20 shadow-xs">
                     <div className="flex items-center gap-2.5 min-w-0">
                       <div className="p-2 rounded-lg bg-emerald-100 text-emerald-700 shrink-0">
                         <FileText className="w-4 h-4" />
                       </div>
                       <div className="min-w-0">
-                        <p className="text-xs font-bold text-slate-900 truncate">{formDocName}</p>
+                        <p className="text-xs font-bold text-text-primary truncate">{formDocName}</p>
                         <p className="text-[10px] text-emerald-700 font-medium">Fail sedia untuk akses segera staf</p>
                       </div>
                     </div>
                     <button
                       type="button"
                       onClick={handleRemoveDoc}
-                      className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                      className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-500/10 rounded-lg transition-colors"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -1267,14 +1267,14 @@ export const StaffReminderPage: React.FC = () => {
                   placeholder="Nama Dokumen (cth. Garis Panduan Antibiotik 2026.pdf)"
                   value={formDocName}
                   onChange={e => setFormDocName(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-500/30"
+                  className="w-full px-3.5 py-2 rounded-xl border border-border-default bg-surface text-xs font-medium text-text-primary focus:outline-none focus:ring-2 focus:ring-purple-500/30"
                 />
                 <input
                   type="url"
                   placeholder="URL Dokumen Google Drive / Portal KKM (cth. https://drive.google.com/...)"
                   value={formDocUrl}
                   onChange={e => setFormDocUrl(e.target.value)}
-                  className="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-xs font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-purple-500/30"
+                  className="w-full px-3.5 py-2 rounded-xl border border-border-default bg-surface text-xs font-medium text-text-primary focus:outline-none focus:ring-2 focus:ring-purple-500/30"
                 />
               </div>
             )}
@@ -1282,7 +1282,7 @@ export const StaffReminderPage: React.FC = () => {
 
           {/* Description & Synopsis */}
           <div className="space-y-1.5">
-            <label className="block text-xs font-bold text-slate-900 uppercase tracking-wider">
+            <label className="block text-xs font-bold text-text-primary uppercase tracking-wider">
               Butiran / Sinopsis Sesi
             </label>
             <textarea
@@ -1290,12 +1290,12 @@ export const StaffReminderPage: React.FC = () => {
               placeholder="Masukkan sinopsis topik pembentangan, senarai jemputan, lokasi bilik seminar, atau arahan persiapan sebelum sesi..."
               value={formDesc}
               onChange={e => setFormDesc(e.target.value)}
-              className="w-full px-4 py-3 rounded-2xl border border-slate-200 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-purple-600 transition-all shadow-xs resize-none"
+              className="w-full px-4 py-3 rounded-2xl border border-border-default bg-surface text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-purple-500/30 focus:border-purple-600 transition-colors shadow-xs resize-none"
             />
           </div>
 
           {/* Sticky Bottom Action Buttons */}
-          <div className="flex items-center justify-end gap-3 pt-6 border-t border-slate-200">
+          <div className="flex items-center justify-end gap-3 pt-6 border-t border-border-default">
             <Button
               type="button"
               variant="outline"
@@ -1303,14 +1303,14 @@ export const StaffReminderPage: React.FC = () => {
                 setIsSlideOverOpen(false)
                 setEditingReminder(null)
               }}
-              className="border-slate-200 hover:bg-slate-100 text-slate-700 font-bold px-5 py-2.5 rounded-2xl"
+              className="border-border-default hover:bg-subtle text-text-secondary font-bold px-5 py-2.5 rounded-2xl"
             >
               Batal
             </Button>
             <Button
               type="submit"
               disabled={submitting}
-              className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-extrabold px-7 py-2.5 rounded-2xl shadow-md hover:shadow-lg transition-all"
+              className="bg-accent-base hover:bg-accent-hover text-white font-extrabold px-7 py-2.5 rounded-2xl shadow-md hover:shadow-lg transition-colors"
             >
               {submitting ? 'Menyimpan...' : editingReminder ? 'Simpan Pindaan & Log Audit' : 'Jadualkan Peringatan'}
             </Button>

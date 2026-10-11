@@ -377,7 +377,7 @@ export const PorterDashboardPage: React.FC = () => {
               cat: 'mortuary', 
               label: 'Mortuary', 
               icon: Shield, 
-              color: 'text-slate-500 bg-slate-500/10 border-slate-500/20' 
+              color: 'text-text-muted bg-slate-500/10 border-slate-500/20' 
             },
             { 
               cat: 'medical_records', 
@@ -397,7 +397,7 @@ export const PorterDashboardPage: React.FC = () => {
               <button
                 key={item.cat}
                 onClick={() => navigate(`/porter/requests/new?category=${item.cat}`)}
-                className={`min-h-[64px] p-3 sm:p-4 rounded-xl border ${item.color} flex flex-col items-center justify-center gap-2 hover:scale-[1.02] hover:bg-subtle transition-all duration-200 active:scale-98 shadow-xs text-center`}
+                className={`min-h-[64px] p-3 sm:p-4 rounded-xl border ${item.color} flex flex-col items-center justify-center gap-2 hover:scale-[1.02] hover:bg-subtle transition-colors duration-150 active:scale-98 shadow-xs text-center`}
               >
                 <Icon className="w-5 h-5" />
                 <span className="text-xs font-medium text-text-primary">{item.label}</span>
@@ -435,7 +435,7 @@ export const PorterDashboardPage: React.FC = () => {
               recentJobs.map((job) => (
                 <div
                   key={job.id}
-                  className="p-5 bg-surface hover:bg-subtle/30 border border-border-default hover:border-accent-base/30 rounded-xl shadow-xs transition-all space-y-4"
+                  className="p-5 bg-surface hover:bg-subtle/30 border border-border-default hover:border-accent-base/30 rounded-xl shadow-xs transition-colors space-y-4"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border-default pb-3">
                     <div className="flex items-center gap-2.5">

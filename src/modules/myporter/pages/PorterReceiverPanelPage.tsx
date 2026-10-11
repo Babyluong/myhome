@@ -113,7 +113,7 @@ export const PorterReceiverPanelPage: React.FC = () => {
             <button
               key={tab.key}
               onClick={() => setFilterCategory(tab.key)}
-              className={`px-3 py-1.5 rounded-lg font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-lg font-bold transition-colors ${
                 filterCategory === tab.key ? 'bg-emerald-600 text-white shadow-md' : 'text-slate-400 hover:text-white'
               }`}
             >
@@ -123,7 +123,7 @@ export const PorterReceiverPanelPage: React.FC = () => {
         </div>
 
         <div className="relative flex-1 sm:max-w-xs">
-          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
           <input
             type="text"
             placeholder="Search Deliveries..."
@@ -142,10 +142,10 @@ export const PorterReceiverPanelPage: React.FC = () => {
         </h2>
 
         {filteredIncoming.length === 0 ? (
-          <div className="p-12 text-center text-slate-500 bg-slate-900/40 rounded-3xl border border-slate-800">
-            <CheckCircle2 className="w-10 h-10 mx-auto text-slate-700 mb-2" />
+          <div className="p-12 text-center text-text-muted bg-slate-900/40 rounded-3xl border border-slate-800">
+            <CheckCircle2 className="w-10 h-10 mx-auto text-text-secondary mb-2" />
             <p className="font-bold text-slate-400">No incoming deliveries awaiting verification.</p>
-            <p className="text-xs text-slate-500">All incoming cargo and patients have been safely acknowledged.</p>
+            <p className="text-xs text-text-muted">All incoming cargo and patients have been safely acknowledged.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -155,7 +155,7 @@ export const PorterReceiverPanelPage: React.FC = () => {
               return (
                 <div
                   key={job.id}
-                  className={`bg-slate-900 border rounded-3xl p-5 shadow-xl space-y-4 transition-all ${
+                  className={`bg-slate-900 border rounded-3xl p-5 shadow-xl space-y-4 transition-colors ${
                     isReadyForSign
                       ? 'border-emerald-500/80 bg-slate-900/95 ring-2 ring-emerald-500/20'
                       : 'border-slate-800'
@@ -194,7 +194,7 @@ export const PorterReceiverPanelPage: React.FC = () => {
                         setSelectedJobForVerification(job)
                         setIsVerificationModalOpen(true)
                       }}
-                      className="w-full py-3 bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white font-extrabold shadow-lg rounded-xl flex items-center justify-center gap-2 text-xs"
+                      className="w-full py-3 bg-accent-base hover:bg-accent-hover text-white font-extrabold shadow-lg rounded-xl flex items-center justify-center gap-2 text-xs"
                     >
                       <PenTool className="w-4 h-4" />
                       <span>Verify Receipt & Sign Handover</span>

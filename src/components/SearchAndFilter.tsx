@@ -41,7 +41,7 @@ export default function SearchAndFilter({ onSearch, onFilter, placeholder = "Sea
     <div className="flex gap-3">
       <div className="relative">
         <input 
-          className="w-80 rounded-xl border border-slate-300 bg-slate-50 px-4 py-3 pl-10 text-slate-900 placeholder-slate-500 focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 transition-all duration-200" 
+          className="w-80 rounded-xl border border-border-default bg-subtle/50 px-4 py-3 pl-10 text-text-primary placeholder-slate-500 focus:border-blue-500 focus:bg-surface focus:ring-4 focus:ring-blue-100 transition-[transform,opacity,box-shadow,border-color] duration-200" 
           placeholder={placeholder}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -53,10 +53,10 @@ export default function SearchAndFilter({ onSearch, onFilter, placeholder = "Sea
       
       <button 
         onClick={() => setShowFilters(!showFilters)}
-        className={`inline-flex items-center rounded-xl border px-6 py-3 transition-all duration-200 font-medium ${
+        className={`inline-flex items-center rounded-xl border px-6 py-3 transition-[transform,opacity,box-shadow,border-color] duration-200 font-medium ${
           showFilters 
-            ? 'border-blue-500 bg-blue-50 text-blue-700' 
-            : 'border-slate-300 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-400'
+            ? 'border-blue-500 bg-blue-500/10 text-blue-700' 
+            : 'border-border-default bg-surface text-text-secondary hover:bg-subtle/50 hover:border-slate-400'
         }`}
       >
         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -71,16 +71,16 @@ export default function SearchAndFilter({ onSearch, onFilter, placeholder = "Sea
       </button>
 
       {showFilters && (
-        <div className="absolute top-full left-0 mt-2 w-96 rounded-xl border border-slate-200 bg-white p-6 shadow-xl z-50">
+        <div className="absolute top-full left-0 mt-2 w-96 rounded-xl border border-border-default bg-surface p-6 shadow-xl z-50">
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-slate-900">Filter Options</h3>
+            <h3 className="text-lg font-semibold text-text-primary">Filter Options</h3>
             
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Stock Status</label>
+              <label className="block text-sm font-medium text-text-secondary mb-2">Stock Status</label>
               <select 
                 value={filters.stockStatus}
                 onChange={(e) => handleFilterChange('stockStatus', e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="w-full rounded-lg border border-border-default px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               >
                 <option value="all">All Items</option>
                 <option value="in-stock">In Stock</option>
@@ -91,11 +91,11 @@ export default function SearchAndFilter({ onSearch, onFilter, placeholder = "Sea
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Category</label>
+              <label className="block text-sm font-medium text-text-secondary mb-2">Category</label>
               <select 
                 value={filters.category}
                 onChange={(e) => handleFilterChange('category', e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="w-full rounded-lg border border-border-default px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               >
                 <option value="all">All Categories</option>
                 <option value="drug">Drugs</option>
@@ -104,11 +104,11 @@ export default function SearchAndFilter({ onSearch, onFilter, placeholder = "Sea
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Sort By</label>
+              <label className="block text-sm font-medium text-text-secondary mb-2">Sort By</label>
               <select 
                 value={filters.sortBy}
                 onChange={(e) => handleFilterChange('sortBy', e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="w-full rounded-lg border border-border-default px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               >
                 <option value="name">Name</option>
                 <option value="code">Drug Code</option>
@@ -118,11 +118,11 @@ export default function SearchAndFilter({ onSearch, onFilter, placeholder = "Sea
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Sort Order</label>
+              <label className="block text-sm font-medium text-text-secondary mb-2">Sort Order</label>
               <select 
                 value={filters.sortOrder}
                 onChange={(e) => handleFilterChange('sortOrder', e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="w-full rounded-lg border border-border-default px-3 py-2 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
               >
                 <option value="asc">Ascending (A-Z)</option>
                 <option value="desc">Descending (Z-A)</option>
@@ -140,7 +140,7 @@ export default function SearchAndFilter({ onSearch, onFilter, placeholder = "Sea
                   });
                   setSearchQuery('');
                 }}
-                className="flex-1 rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                className="flex-1 rounded-lg border border-border-default px-4 py-2 text-sm text-text-secondary hover:bg-subtle/50"
               >
                 Clear All
               </button>

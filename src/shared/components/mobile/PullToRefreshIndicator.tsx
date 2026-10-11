@@ -18,7 +18,7 @@ export const PullToRefreshIndicator: React.FC<PullToRefreshIndicatorProps> = ({
   return (
     <div
       style={{ height: `${pullDistance}px` }}
-      className="w-full flex items-center justify-center overflow-hidden transition-all duration-75"
+      className="w-full flex items-center justify-center overflow-hidden transition-colors duration-75"
     >
       <motion.div
         animate={isRefreshing ? { rotate: 360 } : { rotate: pullProgress * 180 }}

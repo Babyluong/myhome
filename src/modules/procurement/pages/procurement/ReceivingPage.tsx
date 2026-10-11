@@ -489,20 +489,20 @@ const ReceivingPage = () => {
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
           <span className="text-slate-400">Procurement</span>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-          <span className="text-slate-800 font-extrabold tracking-wide">Goods Receiving</span>
+          <span className="text-text-primary font-extrabold tracking-wide">Goods Receiving</span>
         </nav>
 
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 relative z-20">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 bg-gradient-to-tr from-slate-900 to-indigo-950 border border-slate-800/80 rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/10 hover:rotate-2 transition-transform duration-300">
+            <div className="w-14 h-14 bg-surface border border-border-default rounded-2xl flex items-center justify-center shadow-lg shadow-slate-900/10 hover:rotate-2 transition-transform duration-300">
               <IconPackage className="h-6 w-6 text-white" />
             </div>
             <div className="space-y-0.5">
-              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900">
+              <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-transparent bg-clip-text bg-surface border border-border-default">
                 Goods Receiving
               </h1>
-              <p className="text-slate-500 font-semibold text-[11px] flex items-center gap-1.5">
+              <p className="text-text-muted font-semibold text-[11px] flex items-center gap-1.5">
                 <Sparkles className="w-3 h-3 text-indigo-500" />
                 Audit-Ready Inventory Intake Management System
               </p>
@@ -513,7 +513,7 @@ const ReceivingPage = () => {
             <button
               onClick={handleAutoFillAssessments}
               disabled={isAutoFilling}
-              className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg active:scale-95 shrink-0"
+              className="flex items-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors shadow-lg active:scale-95 shrink-0"
             >
               <Sparkles className="w-4 h-4 text-indigo-200 animate-pulse" />
               {isAutoFilling ? 'Memproses...' : 'Auto-Fill Penilaian'}
@@ -521,14 +521,14 @@ const ReceivingPage = () => {
             <button
               onClick={handleBulkProceedToPayment}
               disabled={isProcessingPayment}
-              className="flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg active:scale-95 shrink-0"
+              className="flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-400 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors shadow-lg active:scale-95 shrink-0"
             >
               <IconCheckCircle className="w-4 h-4 text-emerald-250 animate-pulse" />
               {isProcessingPayment ? 'Memproses...' : 'Proses Bayaran (Bulk)'}
             </button>
             <button
               onClick={() => setIsExcelUploadOpen(true)}
-              className="flex items-center gap-2 px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg active:scale-95 shrink-0"
+              className="flex items-center gap-2 px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors shadow-lg active:scale-95 shrink-0"
             >
               <IconUpload className="w-4 h-4" />
               Upload Excel
@@ -537,48 +537,48 @@ const ReceivingPage = () => {
         </div>
 
         {/* Elevated Dashboard KPI Metrics Section wrapped in a luxurious white background card */}
-        <div className="bg-white p-6 sm:p-8 rounded-[2.5rem] border border-slate-200 shadow-xl mb-10 relative z-10">
+        <div className="bg-surface p-6 sm:p-8 rounded-2xl border border-border-default shadow-xl mb-10 relative z-10">
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             {/* Total Receipts */}
-            <div className="bg-slate-50/50 border-2 border-slate-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:border-slate-200 hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-all duration-300">
+            <div className="bg-surface border border-border-default hover:border-slate-500/40 p-6 rounded-2xl relative overflow-hidden group hover:border-border-default hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-colors duration-150">
               <div className="absolute top-0 right-0 w-32 h-32 bg-slate-500/[0.03] rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
               <div className="flex items-start gap-4 relative z-10">
-                <div className="w-12 h-12 bg-slate-100 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-700 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <div className="w-11 h-11 bg-slate-500/10 border border-slate-500/20 rounded-xl flex items-center justify-center text-slate-300 shadow-xs shrink-0 group-hover:scale-110 transition-transform duration-300">
                   <IconClipboardList className="w-6 h-6" />
                 </div>
                 <div className="space-y-1 flex-1">
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Total Registry</p>
-                  <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">{counts.totalReceipts}</h3>
+                  <h3 className="text-2xl sm:text-3xl font-black text-text-primary tracking-tight">{counts.totalReceipts}</h3>
                   <p className="text-[11px] font-semibold text-slate-400">Total intake records</p>
                 </div>
               </div>
             </div>
 
             {/* Fully Received */}
-            <div className="bg-slate-50/50 border-2 border-slate-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:border-slate-200 hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-all duration-300">
+            <div className="bg-surface border border-border-default hover:border-slate-500/40 p-6 rounded-2xl relative overflow-hidden group hover:border-border-default hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-colors duration-150">
               <div className="absolute top-0 right-0 w-32 h-32 bg-emerald-500/[0.03] rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
               <div className="flex items-start gap-4 relative z-10">
-                <div className="w-12 h-12 bg-emerald-50 border border-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <div className="w-11 h-11 bg-emerald-500/10 border border-emerald-500/20 rounded-xl flex items-center justify-center text-emerald-400 shadow-xs shrink-0 group-hover:scale-110 transition-transform duration-300">
                   <IconShieldCheck className="w-6 h-6" />
                 </div>
                 <div className="space-y-1 flex-1">
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Fully Fulfilled</p>
-                  <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">{counts.fullyReceived}</h3>
+                  <h3 className="text-2xl sm:text-3xl font-black text-text-primary tracking-tight">{counts.fullyReceived}</h3>
                   <p className="text-[11px] font-semibold text-emerald-600">Audit verified intake</p>
                 </div>
               </div>
             </div>
 
             {/* Assessed LPOs (Penilaian Prestasi) */}
-            <div className="bg-slate-50/50 border-2 border-slate-100 p-6 rounded-[2.5rem] relative overflow-hidden group hover:border-slate-200 hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-all duration-300">
+            <div className="bg-surface border border-border-default hover:border-slate-500/40 p-6 rounded-2xl relative overflow-hidden group hover:border-border-default hover:shadow-xl hover:shadow-slate-100/40 hover:-translate-y-1 transition-colors duration-150">
               <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/[0.03] rounded-full -mr-12 -mt-12 group-hover:scale-110 transition-transform duration-300" />
               <div className="flex items-start gap-4 relative z-10">
-                <div className="w-12 h-12 bg-indigo-50 border border-indigo-100 rounded-2xl flex items-center justify-center text-indigo-600 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                <div className="w-12 h-12 bg-indigo-500/10 border border-indigo-100 rounded-2xl flex items-center justify-center text-indigo-600 shadow-sm group-hover:scale-110 transition-transform duration-300">
                   <IconCheckCircle className="w-6 h-6 text-indigo-600" />
                 </div>
                 <div className="space-y-1 flex-1">
                   <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Penilaian Prestasi</p>
-                  <h3 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">{counts.assessedLpos || 0}</h3>
+                  <h3 className="text-2xl sm:text-3xl font-black text-text-primary tracking-tight">{counts.assessedLpos || 0}</h3>
                   <p className="text-[11px] font-semibold text-indigo-600">LPO selesai dinilai</p>
                 </div>
               </div>
@@ -588,9 +588,9 @@ const ReceivingPage = () => {
 
       {/* Main Registry Content */}
       <div className="space-y-6 relative z-20">
-        <div className="bg-white rounded-[2.5rem] border border-slate-200 p-6 sm:p-8 shadow-xl overflow-hidden">
+        <div className="bg-surface rounded-2xl border border-border-default p-6 sm:p-8 shadow-xl overflow-hidden">
           {/* Action Bar */}
-          <div className="bg-slate-50/50 p-4 rounded-3xl border border-slate-200/60 shadow-sm mb-6">
+          <div className="bg-subtle/50 p-4 rounded-3xl border border-border-default shadow-sm mb-6">
             <div className="flex flex-col xl:flex-row gap-6 items-center">
               <div className="relative flex-1 w-full">
                 <div className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none">
@@ -601,20 +601,20 @@ const ReceivingPage = () => {
                   placeholder="Search Registry by PO, DO or Supplier..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full pl-11 pr-6 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                  className="w-full pl-11 pr-6 py-2.5 bg-surface border border-border-default rounded-xl text-sm font-semibold text-text-primary placeholder:text-text-muted focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-colors outline-none"
                 />
               </div>
               
               <div className="flex items-center gap-4 w-full xl:w-auto">
-                <div className="flex bg-slate-100 p-1 rounded-2xl w-full xl:w-auto border border-slate-200">
+                <div className="flex bg-subtle p-1 rounded-2xl w-full xl:w-auto border border-border-default">
                   {(['all', 'partial_received', 'completed'] as const).map((s) => (
                     <button
                       key={s}
                       onClick={() => setStatusFilter(s)}
-                      className={`px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
+                      className={`px-5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors ${
                         statusFilter === s
-                          ? 'bg-white text-slate-900 shadow-md font-bold'
-                          : 'text-slate-500 hover:text-slate-900'
+                          ? 'bg-surface text-text-primary shadow-md font-bold'
+                          : 'text-text-muted hover:text-text-primary'
                       }`}
                     >
                       {s === 'all' ? 'FULL REGISTRY' : s.replace('_', ' ').toUpperCase()}
@@ -630,40 +630,40 @@ const ReceivingPage = () => {
             {isLoading ? (
               <div className="py-40 flex flex-col items-center gap-6">
                 <div className="relative">
-                  <div className="w-16 h-16 border-4 border-slate-100 border-t-slate-900 rounded-full animate-spin" />
-                  <IconPackage className="absolute inset-0 m-auto w-6 h-6 text-slate-900 animate-pulse" />
+                  <div className="w-16 h-16 border-4 border-border-subtle border-t-slate-900 rounded-full animate-spin" />
+                  <IconPackage className="absolute inset-0 m-auto w-6 h-6 text-text-primary animate-pulse" />
                 </div>
                 <p className="text-slate-400 font-black text-[10px] uppercase tracking-[0.4em]">Decrypting Official Records...</p>
               </div>
             ) : error ? (
               <div className="py-32 flex flex-col items-center text-center px-8">
-                <div className="w-24 h-24 bg-rose-50 rounded-full flex items-center justify-center mb-6">
+                <div className="w-24 h-24 bg-rose-500/10 rounded-full flex items-center justify-center mb-6">
                   <IconAlertCircle className="w-12 h-12 text-rose-600" />
                 </div>
-                <h3 className="text-2xl font-black text-slate-900 tracking-tight uppercase">Registry Access Failure</h3>
-                <p className="text-slate-500 mt-2 max-w-sm font-bold">{error}</p>
-                <button onClick={() => void loadOrders()} className="mt-8 px-10 py-4 bg-slate-900 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-800 transition-all shadow-xl">Re-Authenticate Registry</button>
+                <h3 className="text-2xl font-black text-text-primary tracking-tight uppercase">Registry Access Failure</h3>
+                <p className="text-text-muted mt-2 max-w-sm font-bold">{error}</p>
+                <button onClick={() => void loadOrders()} className="mt-8 px-10 py-4 bg-slate-900 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-800 transition-colors shadow-xl">Re-Authenticate Registry</button>
               </div>
             ) : (
-              <div className="overflow-x-auto rounded-[2rem] border border-slate-100 shadow-sm">
+              <div className="overflow-x-auto rounded-xl border border-border-subtle shadow-sm">
                 <Table className="w-full border-collapse table-fixed">
-                  <Table.Head className="bg-slate-50/80">
+                  <Table.Head className="bg-subtle/50">
                     <Table.Row>
-                      <Table.Cell as="th" className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] py-5 pl-6 border-r border-slate-100 w-[180px]">Receive Date</Table.Cell>
-                      <Table.Cell as="th" className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] py-5 border-r border-slate-100 w-[150px] text-center">DO Identifier</Table.Cell>
-                      <Table.Cell as="th" className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] py-5 border-r border-slate-100 w-[200px]">Reference Chain</Table.Cell>
-                      <Table.Cell as="th" className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] py-5 border-r border-slate-100 text-center w-[110px]">Vote Code</Table.Cell>
-                      <Table.Cell as="th" className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] py-5 border-r border-slate-100 w-[130px] text-center">Department</Table.Cell>
-                      <Table.Cell as="th" className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] py-5 border-r border-slate-100">Supplier Entity</Table.Cell>
-                      <Table.Cell as="th" className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] py-5 border-r border-slate-100 text-center w-[140px]">Payment Status</Table.Cell>
-                      <Table.Cell as="th" className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] py-5 border-r border-slate-100 text-center w-[150px]">Penilaian Prestasi</Table.Cell>
+                      <Table.Cell as="th" className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] py-5 pl-6 border-r border-border-subtle w-[180px]">Receive Date</Table.Cell>
+                      <Table.Cell as="th" className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] py-5 border-r border-border-subtle w-[150px] text-center">DO Identifier</Table.Cell>
+                      <Table.Cell as="th" className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] py-5 border-r border-border-subtle w-[200px]">Reference Chain</Table.Cell>
+                      <Table.Cell as="th" className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] py-5 border-r border-border-subtle text-center w-[110px]">Vote Code</Table.Cell>
+                      <Table.Cell as="th" className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] py-5 border-r border-border-subtle w-[130px] text-center">Department</Table.Cell>
+                      <Table.Cell as="th" className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] py-5 border-r border-border-subtle">Supplier Entity</Table.Cell>
+                      <Table.Cell as="th" className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] py-5 border-r border-border-subtle text-center w-[140px]">Payment Status</Table.Cell>
+                      <Table.Cell as="th" className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] py-5 border-r border-border-subtle text-center w-[150px]">Penilaian Prestasi</Table.Cell>
                       <Table.Cell as="th" className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] py-5 text-center pr-6 w-[130px]">Status</Table.Cell>
                     </Table.Row>
                   </Table.Head>
                   <Table.Body>
                     {orders.length === 0 ? (
                       <Table.Row>
-                        <Table.Cell colSpan={9} className="text-center py-40 bg-slate-50/50">
+                        <Table.Cell colSpan={9} className="text-center py-40 bg-subtle/50">
                           <div className="flex flex-col items-center opacity-30">
                             <IconClipboardList className="w-20 h-20 text-slate-300 mb-4" />
                             <p className="text-slate-400 font-black text-xs uppercase tracking-[0.3em]">No registry entries found</p>
@@ -680,13 +680,13 @@ const ReceivingPage = () => {
                           <Table.Row
                             key={order.id}
                             onClick={() => handleViewDetails(order.id)}
-                            className="group transition-all hover:bg-slate-50 border-b border-slate-100 last:border-0 cursor-pointer"
+                            className="group transition-colors hover:bg-subtle/50 border-b border-border-subtle last:border-0 cursor-pointer"
                           >
                             <Table.Cell className="py-8 pl-6 border-r border-slate-50 w-[180px]">
                               <div className="flex flex-col gap-1.5">
                                 <div className="flex items-center gap-3">
                                   <div className="w-2 h-2 rounded-full bg-emerald-500 ring-4 ring-emerald-50" />
-                                  <span className="text-sm font-black text-slate-900 tracking-tight">
+                                  <span className="text-sm font-black text-text-primary tracking-tight">
                                     {formatDateTime(latestReceipt?.date || order.actual_delivery_date).date}
                                   </span>
                                 </div>
@@ -705,13 +705,13 @@ const ReceivingPage = () => {
                                   doNumbers.map((doNum, idx) => (
                                     <div
                                       key={idx}
-                                      className="inline-block px-4 py-2 bg-slate-100 border border-slate-200 rounded text-[11px] font-black text-slate-900 group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 transition-all duration-300 uppercase tracking-wider"
+                                      className="inline-block px-4 py-2 bg-subtle border border-border-default rounded text-[11px] font-black text-text-primary group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 transition-colors duration-150 uppercase tracking-wider"
                                     >
                                       {doNum}
                                     </div>
                                   ))
                                 ) : (
-                                  <div className="inline-block px-4 py-2 bg-slate-100 border border-slate-200 rounded text-[11px] font-black text-slate-900 group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 transition-all duration-300 uppercase tracking-wider">
+                                  <div className="inline-block px-4 py-2 bg-subtle border border-border-default rounded text-[11px] font-black text-text-primary group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 transition-colors duration-150 uppercase tracking-wider">
                                     {latestReceipt ? 'NOT RECORDED' : 'PENDING DELIVERY'}
                                   </div>
                                 )}
@@ -722,7 +722,7 @@ const ReceivingPage = () => {
                               <div className="flex flex-col gap-3">
                                 <div className="flex items-center gap-3">
                                   <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest w-8">PO</span>
-                                  <span className="font-mono text-xs font-black text-slate-900 bg-white border-b-2 border-slate-900 px-2 py-0.5">
+                                  <span className="font-mono text-xs font-black text-text-primary bg-surface border-b-2 border-slate-900 px-2 py-0.5">
                                     {order.po_number}
                                   </span>
                                 </div>
@@ -731,7 +731,7 @@ const ReceivingPage = () => {
                                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest w-8">LPO</span>
                                     <div className="flex flex-wrap gap-1">
                                       {lpoNumbers.slice(0, 2).map((num, i) => (
-                                        <span key={i} className="text-[10px] font-bold text-slate-600 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded">
+                                        <span key={i} className="text-[10px] font-bold text-text-muted bg-subtle/50 border border-border-default px-2 py-0.5 rounded">
                                           {num}
                                         </span>
                                       ))}
@@ -745,7 +745,7 @@ const ReceivingPage = () => {
                             </Table.Cell>
 
                             <Table.Cell className="py-8 border-r border-slate-50 text-center w-[110px]">
-                              <span className="font-mono text-xs font-black text-slate-800 bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg shadow-sm">
+                              <span className="font-mono text-xs font-black text-text-primary bg-subtle/50 border border-border-default px-2.5 py-1.5 rounded-lg shadow-sm">
                                 {order.vote_code || '—'}
                               </span>
                             </Table.Cell>
@@ -758,11 +758,11 @@ const ReceivingPage = () => {
 
                             <Table.Cell className="py-8 border-r border-slate-50">
                               <div className="flex items-center gap-4">
-                                <div className="w-10 h-10 bg-slate-50 rounded border border-slate-200 flex items-center justify-center text-slate-400 shrink-0">
+                                <div className="w-10 h-10 bg-subtle/50 rounded border border-border-default flex items-center justify-center text-slate-400 shrink-0">
                                   <IconFileText className="w-5 h-5" />
                                 </div>
                                 <div className="flex flex-col min-w-0">
-                                  <span className="text-sm font-black text-slate-900 tracking-tight leading-tight mb-1 uppercase group-hover:text-blue-600 transition-colors truncate" title={order.supplier?.company_name}>
+                                  <span className="text-sm font-black text-text-primary tracking-tight leading-tight mb-1 uppercase group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate" title={order.supplier?.company_name}>
                                     {order.supplier?.company_name || '—'}
                                   </span>
                                   <div className="flex items-center gap-2">
@@ -782,11 +782,11 @@ const ReceivingPage = () => {
                               {(() => {
                                 const hasAssessments = order.lpo?.some((l: any) => l.assessments && l.assessments.length > 0)
                                 return hasAssessments ? (
-                                  <span className="inline-block px-3 py-1 bg-emerald-50 border border-emerald-200 text-emerald-700 text-[10px] font-black uppercase tracking-wider rounded-lg shadow-sm">
+                                  <span className="inline-block px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 text-[10px] font-black uppercase tracking-wider rounded-lg shadow-sm">
                                     Selesai
                                   </span>
                                 ) : (
-                                  <span className="inline-block px-3 py-1 bg-amber-50 border border-amber-200 text-amber-700 text-[10px] font-black uppercase tracking-wider rounded-lg shadow-sm">
+                                  <span className="inline-block px-3 py-1 bg-amber-500/10 border border-amber-500/20 text-amber-700 text-[10px] font-black uppercase tracking-wider rounded-lg shadow-sm">
                                     Belum
                                   </span>
                                 )
@@ -809,18 +809,18 @@ const ReceivingPage = () => {
 
         {/* Audit Pagination */}
         {!isLoading && totalPages > 1 && (
-          <div className="flex items-center justify-between bg-white p-6 rounded-[2.5rem] border border-slate-200 shadow-xl mt-6">
+          <div className="flex items-center justify-between bg-surface p-6 rounded-2xl border border-border-default shadow-xl mt-6">
             <div className="flex items-center gap-4">
               <div className="w-2 h-10 bg-slate-900 rounded-full" />
-              <span className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
-                Page <span className="text-slate-900">{page}</span> / <span className="text-slate-900">{totalPages}</span>
+              <span className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em]">
+                Page <span className="text-text-primary">{page}</span> / <span className="text-text-primary">{totalPages}</span>
               </span>
             </div>
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="group flex items-center gap-2 px-6 py-3 rounded-xl border border-slate-200 bg-white text-[10px] font-black uppercase tracking-widest text-slate-600 hover:border-slate-900 hover:text-slate-900 disabled:opacity-20 transition-all"
+                className="group flex items-center gap-2 px-6 py-3 rounded-xl border border-border-default bg-surface text-[10px] font-black uppercase tracking-widest text-text-muted hover:border-slate-900 hover:text-text-primary disabled:opacity-20 transition-colors"
               >
                 <IconChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
                 Previous
@@ -828,7 +828,7 @@ const ReceivingPage = () => {
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page === totalPages}
-                className="group flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-900 text-[10px] font-black uppercase tracking-widest text-white hover:bg-slate-800 disabled:opacity-20 transition-all shadow-lg shadow-slate-900/10"
+                className="group flex items-center gap-2 px-6 py-3 rounded-xl bg-slate-900 text-[10px] font-black uppercase tracking-widest text-white hover:bg-slate-800 disabled:opacity-20 transition-colors shadow-lg shadow-slate-900/10"
               >
                 Next
                 <IconChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />

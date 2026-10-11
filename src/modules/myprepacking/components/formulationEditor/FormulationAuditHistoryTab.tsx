@@ -117,7 +117,7 @@ export const FormulationAuditHistoryTab: React.FC<FormulationAuditHistoryTabProp
           return (
             <div
               key={log.id}
-              className="rounded-xl border border-border-default bg-surface p-3.5 shadow-2xs hover:border-border-strong transition-all"
+              className="rounded-xl border border-border-default bg-surface p-3.5 shadow-elevation-1 hover:border-border-strong transition-colors"
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-start gap-3">

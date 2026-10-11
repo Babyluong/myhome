@@ -92,7 +92,7 @@ export const AccessRequestListPage: React.FC = () => {
             alt={row.full_name}
             fallback={row.full_name.charAt(0)}
             size="md"
-            className="ring-2 ring-slate-200"
+            className="ring-2 ring-border-default"
           />
         </div>
       ),
@@ -104,8 +104,8 @@ export const AccessRequestListPage: React.FC = () => {
       sortable: true,
       render: (_: unknown, row: AccessRequestWithRelations) => (
         <div className="space-y-1">
-          <div className="font-semibold text-slate-900">{row.full_name}</div>
-          <div className="text-sm text-slate-500 flex items-center gap-1">
+          <div className="font-semibold text-text-primary">{row.full_name}</div>
+          <div className="text-sm text-text-muted flex items-center gap-1">
             <Mail className="w-3 h-3" />
             {row.email}
           </div>
@@ -118,7 +118,7 @@ export const AccessRequestListPage: React.FC = () => {
       render: (_: unknown, row: AccessRequestWithRelations) => (
         <div className="flex items-center gap-2">
           <Building2 className="w-4 h-4 text-slate-400" />
-          <span className="text-sm font-medium text-slate-700">{row.hospital?.hospital_name || 'N/A'}</span>
+          <span className="text-sm font-medium text-text-secondary">{row.hospital?.hospital_name || 'N/A'}</span>
         </div>
       ),
     },
@@ -128,7 +128,7 @@ export const AccessRequestListPage: React.FC = () => {
       render: (_: unknown, row: AccessRequestWithRelations) => (
         <div className="flex items-center gap-2">
           <Briefcase className="w-4 h-4 text-slate-400" />
-          <span className="text-sm font-medium text-slate-700">{row.department?.department_name || 'N/A'}</span>
+          <span className="text-sm font-medium text-text-secondary">{row.department?.department_name || 'N/A'}</span>
         </div>
       ),
     },
@@ -136,7 +136,7 @@ export const AccessRequestListPage: React.FC = () => {
       key: 'jawatan',
       label: 'Position',
       render: (_: unknown, row: AccessRequestWithRelations) => (
-        <span className="text-sm font-medium text-slate-700">{row.jawatan || 'N/A'}</span>
+        <span className="text-sm font-medium text-text-secondary">{row.jawatan || 'N/A'}</span>
       ),
     },
     {
@@ -173,7 +173,7 @@ export const AccessRequestListPage: React.FC = () => {
       label: 'Requested',
       sortable: true,
       render: (_: unknown, row: AccessRequestWithRelations) => (
-        <span className="text-sm text-slate-500">
+        <span className="text-sm text-text-muted">
           {formatDate(row.created_at)}
         </span>
       ),
@@ -182,7 +182,7 @@ export const AccessRequestListPage: React.FC = () => {
       key: 'reviewed_at',
       label: 'Reviewed',
       render: (_: unknown, row: AccessRequestWithRelations) => (
-        <span className="text-sm text-slate-500">
+        <span className="text-sm text-text-muted">
           {row.reviewed_at ? formatDate(row.reviewed_at) : '-'}
         </span>
       ),
@@ -231,7 +231,7 @@ export const AccessRequestListPage: React.FC = () => {
               variant="outline"
               onClick={fetchRequests}
               disabled={isLoading}
-              className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-white/20"
+              className="bg-white/10 backdrop-blur-sm border-white/30 text-white hover:bg-surface/20"
               leftIcon={<RefreshCw className={cn('w-4 h-4', isLoading && 'animate-spin')} />}
             >
               Refresh
@@ -250,7 +250,7 @@ export const AccessRequestListPage: React.FC = () => {
         transition={{ delay: 0.1 }}
         className="grid grid-cols-1 md:grid-cols-4 gap-4"
       >
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-shadow">
+        <div className="bg-surface rounded-xl border border-border-default shadow-sm p-6 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
               <Clock className="w-6 h-6 text-amber-600" />
@@ -258,13 +258,13 @@ export const AccessRequestListPage: React.FC = () => {
             <TrendingUp className="w-5 h-5 text-slate-400" />
           </div>
           <div className="space-y-1">
-            <p className="text-3xl font-bold text-slate-900">{stats.pending}</p>
-            <p className="text-sm font-medium text-slate-600">Pending Requests</p>
-            <p className="text-xs text-slate-500">Awaiting review</p>
+            <p className="text-3xl font-bold text-text-primary">{stats.pending}</p>
+            <p className="text-sm font-medium text-text-muted">Pending Requests</p>
+            <p className="text-xs text-text-muted">Awaiting review</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-shadow">
+        <div className="bg-surface rounded-xl border border-border-default shadow-sm p-6 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-success-100 rounded-xl flex items-center justify-center">
               <CheckCircle className="w-6 h-6 text-success-600" />
@@ -272,13 +272,13 @@ export const AccessRequestListPage: React.FC = () => {
             <TrendingUp className="w-5 h-5 text-slate-400" />
           </div>
           <div className="space-y-1">
-            <p className="text-3xl font-bold text-slate-900">{stats.approved}</p>
-            <p className="text-sm font-medium text-slate-600">Approved</p>
-            <p className="text-xs text-slate-500">Access granted</p>
+            <p className="text-3xl font-bold text-text-primary">{stats.approved}</p>
+            <p className="text-sm font-medium text-text-muted">Approved</p>
+            <p className="text-xs text-text-muted">Access granted</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-shadow">
+        <div className="bg-surface rounded-xl border border-border-default shadow-sm p-6 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-error-100 rounded-xl flex items-center justify-center">
               <XCircle className="w-6 h-6 text-error-600" />
@@ -286,13 +286,13 @@ export const AccessRequestListPage: React.FC = () => {
             <TrendingUp className="w-5 h-5 text-slate-400" />
           </div>
           <div className="space-y-1">
-            <p className="text-3xl font-bold text-slate-900">{stats.rejected}</p>
-            <p className="text-sm font-medium text-slate-600">Rejected</p>
-            <p className="text-xs text-slate-500">Access denied</p>
+            <p className="text-3xl font-bold text-text-primary">{stats.rejected}</p>
+            <p className="text-sm font-medium text-text-muted">Rejected</p>
+            <p className="text-xs text-text-muted">Access denied</p>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 hover:shadow-md transition-shadow">
+        <div className="bg-surface rounded-xl border border-border-default shadow-sm p-6 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between mb-4">
             <div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center">
               <Users className="w-6 h-6 text-primary-600" />
@@ -300,9 +300,9 @@ export const AccessRequestListPage: React.FC = () => {
             <FileText className="w-5 h-5 text-slate-400" />
           </div>
           <div className="space-y-1">
-            <p className="text-3xl font-bold text-slate-900">{total}</p>
-            <p className="text-sm font-medium text-slate-600">Total Requests</p>
-            <p className="text-xs text-slate-500">All time</p>
+            <p className="text-3xl font-bold text-text-primary">{total}</p>
+            <p className="text-sm font-medium text-text-muted">Total Requests</p>
+            <p className="text-xs text-text-muted">All time</p>
           </div>
         </div>
       </motion.div>
@@ -312,7 +312,7 @@ export const AccessRequestListPage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.15 }}
-        className="bg-white rounded-xl border border-slate-200 shadow-sm p-6"
+        className="bg-surface rounded-xl border border-border-default shadow-sm p-6"
       >
         <div className="flex items-center gap-4">
           <div className="flex-1 relative">
@@ -324,18 +324,18 @@ export const AccessRequestListPage: React.FC = () => {
                 setSearch(e.target.value)
                 setCurrentPage(1)
               }}
-              className="pl-12 h-11 border-slate-300 focus:border-primary-500 focus:ring-primary-500"
+              className="pl-12 h-11 border-border-default focus:border-primary-500 focus:ring-primary-500"
             />
           </div>
           <div className="flex items-center gap-2">
-            <Filter className="w-5 h-5 text-slate-500" />
+            <Filter className="w-5 h-5 text-text-muted" />
             <Select
               value={statusFilter}
               onChange={(e) => {
                 setStatusFilter(e.target.value)
                 setCurrentPage(1)
               }}
-              className="w-48 h-11 border-slate-300 focus:border-primary-500"
+              className="w-48 h-11 border-border-default focus:border-primary-500"
             >
               <option value="all">All Status</option>
               <option value={ACCESS_REQUEST_STATUS.PENDING}>Pending</option>
@@ -351,11 +351,11 @@ export const AccessRequestListPage: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden"
+        className="bg-surface rounded-xl border border-border-default shadow-sm overflow-hidden"
       >
-        <div className="p-6 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
+        <div className="p-6 border-b border-border-default bg-gradient-to-r from-slate-50 to-white">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+            <h2 className="text-lg font-semibold text-text-primary flex items-center gap-2">
               <FileText className="w-5 h-5 text-primary-600" />
               Access Requests
             </h2>
@@ -383,14 +383,14 @@ export const AccessRequestListPage: React.FC = () => {
             emptyMessage={
               <div className="flex flex-col items-center justify-center py-12">
                 <AlertCircle className="w-12 h-12 text-slate-400 mb-4" />
-                <p className="text-slate-600 font-medium">No access requests found</p>
-                <p className="text-sm text-slate-500 mt-1">Try adjusting your filters</p>
+                <p className="text-text-muted font-medium">No access requests found</p>
+                <p className="text-sm text-text-muted mt-1">Try adjusting your filters</p>
               </div>
             }
             onRowClick={(row) => navigate(`${ROUTES.ADMIN_ACCESS_REQUESTS}/${row.id}`)}
           />
         </div>
-        <div className="border-t border-slate-200 bg-slate-50/50">
+        <div className="border-t border-border-default bg-subtle/50">
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}

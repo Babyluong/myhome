@@ -16,7 +16,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         {label && (
           <label 
             htmlFor={id} 
-            className="block text-sm font-semibold text-slate-700 mb-2"
+            className="block text-sm font-semibold text-text-secondary mb-2"
           >
             {label}
             {required && <span className="text-red-500 ml-1">*</span>}
@@ -26,10 +26,10 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           ref={ref}
           id={id}
           rows={rows}
-          className={`w-full rounded-xl border bg-white px-4 py-3 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 ${
+          className={`w-full rounded-xl border bg-surface px-4 py-3 text-sm text-text-primary placeholder:text-slate-400 focus:outline-none focus:ring-2 ${
             error
               ? "border-red-300 focus:border-red-500 focus:ring-red-500/20"
-              : "border-slate-300 focus:border-blue-500 focus:ring-blue-500/20 hover:border-slate-400"
+              : "border-border-default focus:border-blue-500 focus:ring-blue-500/20 hover:border-slate-400"
           } ${className}`}
           {...props}
         />

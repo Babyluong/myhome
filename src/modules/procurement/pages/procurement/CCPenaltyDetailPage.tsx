@@ -423,10 +423,10 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
     }
   }
   const statusColors: Record<string, string> = {
-    pending: 'bg-slate-50 text-slate-500 border-slate-200',      // Draft
-    enforced: 'bg-amber-50 text-amber-700 border-amber-200',    // Pending
-    approved: 'bg-emerald-50 text-emerald-700 border-emerald-200', // Approved
-    waived: 'bg-rose-50 text-rose-700 border-rose-200'            // Rejected
+    pending: 'bg-subtle/50 text-text-muted border-border-default',      // Draft
+    enforced: 'bg-amber-500/10 text-amber-700 border-amber-500/20',    // Pending
+    approved: 'bg-emerald-500/10 text-emerald-700 border-emerald-500/20', // Approved
+    waived: 'bg-rose-500/10 text-rose-700 border-rose-500/20'            // Rejected
   }
 
   const mapStatusLabel = (status: string) => {
@@ -439,7 +439,7 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100/70 relative font-sans selection:bg-slate-900 selection:text-white">
+    <div className="min-h-screen bg-subtle relative font-sans selection:bg-slate-900 selection:text-white">
       {/* Ambient decorative blur background elements */}
       <div className="absolute top-0 right-0 w-[700px] h-[700px] bg-gradient-to-br from-indigo-500/[0.04] to-violet-500/[0.02] rounded-full blur-[160px] pointer-events-none -z-10" />
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-gradient-to-tr from-sky-500/[0.03] to-emerald-500/[0.03] rounded-full blur-[140px] pointer-events-none -z-10" />
@@ -449,40 +449,40 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
         <nav className="flex items-center gap-2 text-[10px] font-extrabold text-slate-400 uppercase tracking-widest">
           <span>Procurement</span>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-          <button onClick={() => navigate(-1)} className="hover:text-slate-600 transition-colors">Penalty Registry</button>
+          <button onClick={() => navigate(-1)} className="hover:text-text-muted transition-colors">Penalty Registry</button>
           <ChevronRight className="w-3.5 h-3.5 text-slate-300" />
-          <span className="text-slate-800 font-black">CC Penalty Detail</span>
+          <span className="text-text-primary font-black">CC Penalty Detail</span>
         </nav>
 
         {/* Global Action Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-md shadow-slate-100/80">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-surface p-6 rounded-2xl border border-border-default shadow-md shadow-slate-100/80">
           <div className="flex items-center gap-4">
-            <button onClick={() => navigate(-1)} className="w-11 h-11 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center transition-all shadow-sm group">
-              <ArrowLeft className="w-4 h-4 text-slate-600 group-hover:-translate-x-0.5 transition-transform" />
+            <button onClick={() => navigate(-1)} className="w-11 h-11 bg-subtle/50 hover:bg-subtle border border-border-default rounded-xl flex items-center justify-center transition-colors shadow-sm group">
+              <ArrowLeft className="w-4 h-4 text-text-muted group-hover:-translate-x-0.5 transition-transform" />
             </button>
             <div className="space-y-1">
               <div className="flex items-center gap-3">
-                <h1 className="text-2xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900">
+                <h1 className="text-2xl font-black tracking-tight text-transparent bg-clip-text bg-surface border border-border-default">
                   CC Penalty Assessment Worksheet
                 </h1>
                 <span className={`px-3 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg border ${statusColors[penalty.status] || statusColors.pending}`}>
                   {mapStatusLabel(penalty.status)}
                 </span>
               </div>
-              <p className="text-slate-500 font-semibold text-xs flex items-center gap-1.5">
+              <p className="text-text-muted font-semibold text-xs flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-indigo-500 animate-pulse" />
                 KKM Contract & LPO Penalty Worksheet â€¢ <span className="text-indigo-600 font-black">CC PENALTY (080702)</span>
               </p>
             </div>
           </div>
           <div className="flex items-center gap-3 w-full md:w-auto">
-            <button onClick={handlePrint} className="flex items-center justify-center gap-2 flex-1 md:flex-initial px-4 py-2.5 text-xs font-black bg-white text-slate-700 hover:bg-slate-50 rounded-xl border border-slate-200 transition-all shadow-sm">
+            <button onClick={handlePrint} className="flex items-center justify-center gap-2 flex-1 md:flex-initial px-4 py-2.5 text-xs font-black bg-surface text-text-secondary hover:bg-subtle/50 rounded-xl border border-border-default transition-colors shadow-sm">
               <Printer className="w-3.5 h-3.5" /> Print Document
             </button>
             <button 
               onClick={handleTogglePaid} 
               disabled={saving}
-              className={`flex items-center justify-center gap-2 flex-1 md:flex-initial px-4 py-2.5 text-xs font-black rounded-xl transition-all shadow-md disabled:opacity-50 ${
+              className={`flex items-center justify-center gap-2 flex-1 md:flex-initial px-4 py-2.5 text-xs font-black rounded-xl transition-colors shadow-md disabled:opacity-50 ${
                 penaltyPaid 
                   ? 'bg-rose-600 text-white hover:bg-rose-700 shadow-rose-600/10' 
                   : 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-emerald-600/10'
@@ -492,16 +492,16 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
               {penaltyPaid ? 'Mark as Unpaid' : 'Mark as Paid'}
             </button>
             {isReadOnly ? (
-              <button onClick={() => setIsUnlockModalOpen(true)} className="flex items-center justify-center gap-2 flex-1 md:flex-initial px-4 py-2.5 text-xs font-black bg-indigo-600 text-white hover:bg-indigo-700 rounded-xl shadow-md shadow-indigo-600/10 transition-all">
+              <button onClick={() => setIsUnlockModalOpen(true)} className="flex items-center justify-center gap-2 flex-1 md:flex-initial px-4 py-2.5 text-xs font-black bg-indigo-600 text-white hover:bg-indigo-700 rounded-xl shadow-md shadow-indigo-600/10 transition-colors">
                 <Unlock className="w-3.5 h-3.5" /> Unlock to Edit
               </button>
             ) : (
               <>
-                <button onClick={handleSave} disabled={saving} className="flex items-center justify-center gap-2 flex-1 md:flex-initial px-4 py-2.5 text-xs font-black bg-indigo-600 text-white hover:bg-indigo-700 rounded-xl transition-all shadow-md shadow-indigo-600/10 disabled:opacity-50">
+                <button onClick={handleSave} disabled={saving} className="flex items-center justify-center gap-2 flex-1 md:flex-initial px-4 py-2.5 text-xs font-black bg-indigo-600 text-white hover:bg-indigo-700 rounded-xl transition-colors shadow-md shadow-indigo-600/10 disabled:opacity-50">
                   {saving ? <Spinner size="sm" /> : <Save className="w-3.5 h-3.5" />} Save Changes
                 </button>
                 {penalty.status !== 'approved' && (
-                  <button onClick={handleApprove} disabled={saving} className="flex items-center justify-center gap-2 flex-1 md:flex-initial px-4 py-2.5 text-xs font-black bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl transition-all shadow-md shadow-emerald-600/10 disabled:opacity-50">
+                  <button onClick={handleApprove} disabled={saving} className="flex items-center justify-center gap-2 flex-1 md:flex-initial px-4 py-2.5 text-xs font-black bg-emerald-600 text-white hover:bg-emerald-700 rounded-xl transition-colors shadow-md shadow-emerald-600/10 disabled:opacity-50">
                     <CheckCircle2 className="w-3.5 h-3.5" /> Approve
                   </button>
                 )}
@@ -515,35 +515,35 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
           {/* Left Column: occupies 2 spans on large screens, holds info and configurations */}
           <div className="lg:col-span-2 space-y-8">
             {/* SECTION 1: CONTRACT & ORDER CONTEXT */}
-            <div className="bg-white rounded-2xl border border-slate-200 border-l-4 border-l-blue-600 shadow-md shadow-slate-100 overflow-hidden space-y-6 p-6 transition-all hover:shadow-lg hover:shadow-slate-200/50 duration-300">
-              <div className="flex items-center gap-3 pb-4 border-b border-slate-200">
-                <div className="w-8 h-8 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center font-black text-xs text-blue-600 shadow-sm">
+            <div className="bg-surface rounded-2xl border border-border-default border-l-4 border-l-blue-600 shadow-md shadow-slate-100 overflow-hidden space-y-6 p-6 transition-colors hover:shadow-lg hover:shadow-slate-200/50 duration-300">
+              <div className="flex items-center gap-3 pb-4 border-b border-border-default">
+                <div className="w-8 h-8 rounded-xl bg-blue-500/10 border border-blue-100 flex items-center justify-center font-black text-xs text-blue-600 shadow-sm">
                   01
                 </div>
                 <div>
-                  <h2 className="text-sm font-black text-slate-800 uppercase tracking-wider">MAKLUMAT KONTRAK & PESANAN (CONTRACT & LPO CONTEXT)</h2>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Supplier agreement credentials and purchase orders</p>
+                  <h2 className="text-sm font-black text-text-primary uppercase tracking-wider">MAKLUMAT KONTRAK & PESANAN (CONTRACT & LPO CONTEXT)</h2>
+                  <p className="text-[10px] text-text-secondary font-bold font-bold uppercase tracking-wider">Supplier agreement credentials and purchase orders</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 text-sm">
                 {/* Supplier Meta */}
-                <div className="lg:col-span-2 space-y-4 bg-slate-50/80 p-5 rounded-xl border border-slate-200 shadow-sm">
+                <div className="lg:col-span-2 space-y-4 bg-subtle/50 p-5 rounded-xl border border-border-default shadow-sm">
                   <div className="space-y-1">
                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">SUPPLIER COMPANY NAME</span>
-                    <p className="font-black text-slate-900 text-base flex items-center gap-2">
+                    <p className="font-black text-text-primary text-base flex items-center gap-2">
                       <Building2 className="w-5 h-5 text-indigo-500" />
                       {supplier?.company_name || 'â€”'}
                     </p>
                   </div>
                   <div className="space-y-1 pt-2 border-t border-slate-250">
                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">REGISTERED SUPPLIER ADDRESS</span>
-                    <p className="font-bold text-slate-600 text-xs leading-relaxed">{supplier?.address || 'â€”'}</p>
+                    <p className="font-bold text-text-muted text-xs leading-relaxed">{supplier?.address || 'â€”'}</p>
                   </div>
                 </div>
 
                 {/* Contract & LPO details */}
-                <div className="space-y-3 bg-slate-50/80 p-5 rounded-xl border border-slate-200 shadow-sm">
+                <div className="space-y-3 bg-subtle/50 p-5 rounded-xl border border-border-default shadow-sm">
                   <div className="space-y-1">
                     <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">KKM CONTRACT NUMBER</label>
                     <input 
@@ -551,7 +551,7 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
                       onChange={e => setKkmContract(e.target.value)}
                       disabled={isReadOnly}
                       placeholder="Contract No."
-                      className="w-full px-3 py-2 text-xs font-bold bg-white border border-slate-250 rounded-lg focus:border-indigo-500 outline-none transition-all disabled:opacity-75 disabled:cursor-not-allowed" 
+                      className="w-full px-3 py-2 text-xs font-bold bg-surface border border-slate-250 rounded-lg focus:border-indigo-500 outline-none transition-colors disabled:opacity-75 disabled:cursor-not-allowed" 
                     />
                   </div>
                   <div className="space-y-1 pt-1.5">
@@ -574,31 +574,31 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
                     {po?.id || penalty.po_id ? (
                       <button
                         onClick={() => setIsPoDrawerOpen(true)}
-                        className="font-bold text-slate-800 hover:text-indigo-750 hover:underline transition-colors inline-flex items-center gap-1.5 text-xs text-left cursor-pointer focus:outline-none"
+                        className="font-bold text-text-primary hover:text-indigo-750 hover:underline transition-colors inline-flex items-center gap-1.5 text-xs text-left cursor-pointer focus:outline-none"
                         title="Click to view Purchase Order details"
                       >
                         <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 shrink-0" />
                         {po?.po_number || 'View PO Details'}
                       </button>
                     ) : (
-                      <p className="font-bold text-slate-800 text-xs">{po?.po_number || 'â€”'}</p>
+                      <p className="font-bold text-text-primary text-xs">{po?.po_number || 'â€”'}</p>
                     )}
                   </div>
-                  <div className="space-y-1 pt-1.5 border-t border-slate-200">
+                  <div className="space-y-1 pt-1.5 border-t border-border-default">
                     <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">DO NUMBER REFERENCE</span>
-                    <p className="font-bold text-slate-800 text-xs">
+                    <p className="font-bold text-text-primary text-xs">
                       {penalty.goods_receipt?.delivery_note_number || penalty.receiving?.do_number || penalty.do_number || 'â€”'}
                     </p>
                   </div>
                 </div>
 
                 {/* Delivery Timelines */}
-                <div className="space-y-3 bg-slate-50/80 p-5 rounded-xl border border-slate-200 shadow-sm">
+                <div className="space-y-3 bg-subtle/50 p-5 rounded-xl border border-border-default shadow-sm">
                   <div className="flex items-start gap-3">
                     <Calendar className="w-4 h-4 text-slate-400 mt-0.5 shrink-0" />
                     <div className="space-y-0.5">
                       <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">LPO ISSUED DATE</span>
-                      <p className="font-black text-slate-900 text-xs">{formatDate(lpo?.document_date)}</p>
+                      <p className="font-black text-text-primary text-xs">{formatDate(lpo?.document_date)}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3 pt-2.5 border-t border-slate-250">
@@ -620,15 +620,15 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
             </div>
 
             {/* SECTION 2: ITEMS & DELIVERIES WORKSHEET */}
-            <div className="bg-white rounded-2xl border border-slate-200 border-l-4 border-l-amber-500 shadow-md shadow-slate-100 overflow-hidden p-6 space-y-6 transition-all hover:shadow-lg hover:shadow-slate-200/50 duration-300">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-200">
+            <div className="bg-surface rounded-2xl border border-border-default border-l-4 border-l-amber-500 shadow-md shadow-slate-100 overflow-hidden p-6 space-y-6 transition-colors hover:shadow-lg hover:shadow-slate-200/50 duration-300">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-border-default">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center font-black text-xs text-amber-600 shadow-sm">
+                  <div className="w-8 h-8 rounded-xl bg-amber-500/10 border border-amber-100 flex items-center justify-center font-black text-xs text-amber-600 shadow-sm">
                     02
                   </div>
                   <div>
-                    <h2 className="text-sm font-black text-slate-800 uppercase tracking-wider">MAKLUMAT ITEM & JADUAL PENGHANTARAN (ITEMS & DELIVERIES WORKSHEET)</h2>
-                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Baseline catalog constants and partial delivery logs for each LPO item</p>
+                    <h2 className="text-sm font-black text-text-primary uppercase tracking-wider">MAKLUMAT ITEM & JADUAL PENGHANTARAN (ITEMS & DELIVERIES WORKSHEET)</h2>
+                    <p className="text-[10px] text-text-secondary font-bold font-bold uppercase tracking-wider">Baseline catalog constants and partial delivery logs for each LPO item</p>
                   </div>
                 </div>
               </div>
@@ -652,36 +652,36 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
                   const itemTotalQtyReceived = itemDeliveries.reduce((sum, del) => sum + Number(del.quantity || 0), 0)
 
                   return (
-                    <div key={item.item_code || itemIdx} className="bg-slate-50/50 border border-slate-200 rounded-2xl p-5 space-y-4 hover:shadow-md transition-all duration-300">
+                    <div key={item.item_code || itemIdx} className="bg-subtle/50 border border-border-default rounded-2xl p-5 space-y-4 hover:shadow-md transition-colors duration-150">
                       {/* Card Title & Catalog Constants Banner */}
-                      <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between border-b border-slate-200 pb-4">
+                      <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between border-b border-border-default pb-4">
                         <div className="space-y-1 max-w-xl">
-                          <span className="inline-flex px-2 py-0.5 text-[8px] font-black uppercase bg-indigo-50 text-indigo-700 border border-indigo-150 rounded tracking-wider">ITEM {itemIdx + 1}</span>
-                          <h3 className="font-extrabold text-slate-900 text-sm tracking-tight leading-snug">{item.item_name || 'â€”'}</h3>
-                          <p className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">KKM Code: <span className="font-mono text-slate-800">{item.item_code || 'â€”'}</span></p>
+                          <span className="inline-flex px-2 py-0.5 text-[8px] font-black uppercase bg-indigo-500/10 text-indigo-700 border border-indigo-150 rounded tracking-wider">ITEM {itemIdx + 1}</span>
+                          <h3 className="font-extrabold text-text-primary text-sm tracking-tight leading-snug">{item.item_name || 'â€”'}</h3>
+                          <p className="text-[10px] text-text-muted font-bold uppercase tracking-wider">KKM Code: <span className="font-mono text-text-primary">{item.item_code || 'â€”'}</span></p>
                         </div>
                         
-                        <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-slate-600 bg-white px-4 py-2.5 rounded-xl border border-slate-200 shadow-sm w-full lg:w-auto">
+                        <div className="flex flex-wrap items-center gap-4 text-xs font-semibold text-text-muted bg-surface px-4 py-2.5 rounded-xl border border-border-default shadow-sm w-full lg:w-auto">
                           <div className="space-y-0.5">
                             <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block">UNIT PRICE</span>
-                            <span className="font-mono font-black text-slate-900">RM {itemPrice.toFixed(2)}</span>
+                            <span className="font-mono font-black text-text-primary">RM {itemPrice.toFixed(2)}</span>
                           </div>
-                          <div className="w-px h-6 bg-slate-200 hidden sm:block" />
+                          <div className="w-px h-6 bg-subtle hidden sm:block" />
                           <div className="space-y-0.5">
                             <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block">QTY ORDERED</span>
                             <span className="font-bold text-slate-850">{itemQtyOrdered.toLocaleString()}</span>
                           </div>
-                          <div className="w-px h-6 bg-slate-200 hidden sm:block" />
+                          <div className="w-px h-6 bg-subtle hidden sm:block" />
                           <div className="space-y-0.5">
                             <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest block">TOTAL VALUE</span>
-                            <span className="font-mono font-black text-slate-900">RM {itemTotalValue.toFixed(2)}</span>
+                            <span className="font-mono font-black text-text-primary">RM {itemTotalValue.toFixed(2)}</span>
                           </div>
-                          <div className="w-px h-6 bg-slate-200 hidden sm:block" />
+                          <div className="w-px h-6 bg-subtle hidden sm:block" />
                           <button
                             type="button"
                             onClick={() => !isReadOnly && addDeliveryRowForItem(item.item_code)}
                             disabled={isReadOnly}
-                            className="flex items-center gap-1 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-750 text-white text-[10px] font-black rounded-lg transition-all ml-auto shrink-0 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="flex items-center gap-1 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-750 text-white text-[10px] font-black rounded-lg transition-colors ml-auto shrink-0 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             <Plus className="w-3 h-3" /> Add Batch
                           </button>
@@ -689,10 +689,10 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
                       </div>
 
                       {/* Interactive Deliveries Table for this item */}
-                      <div className="overflow-x-auto border border-slate-200 rounded-xl shadow-sm bg-white">
+                      <div className="overflow-x-auto border border-border-default rounded-xl shadow-sm bg-surface">
                         <table className="w-full text-xs">
                           <thead>
-                            <tr className="text-[9px] font-black text-slate-500 uppercase tracking-wider border-b border-slate-200 bg-slate-50/80">
+                            <tr className="text-[9px] font-black text-text-muted uppercase tracking-wider border-b border-border-default bg-subtle/50">
                               <th className="p-3 text-left">Delivery Batch No.</th>
                               <th className="p-3 text-left w-36">Date Received</th>
                               <th className="p-3 text-right w-24">Qty Received</th>
@@ -702,10 +702,10 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
                               <th className="p-3 text-center w-12"></th>
                             </tr>
                           </thead>
-                          <tbody className="divide-y divide-slate-200">
+                          <tbody className="divide-y divide-border-default">
                             {itemDeliveries.length === 0 ? (
                               <tr>
-                                <td colSpan={7} className="p-8 text-center text-slate-400 font-semibold text-xs bg-slate-50/20">
+                                <td colSpan={7} className="p-8 text-center text-text-muted font-medium font-semibold text-xs bg-subtle/50">
                                   <Package className="w-8 h-8 text-slate-300 mx-auto mb-2" />
                                   No delivery batches registered. Click "Add Batch" to log a delivery.
                                 </td>
@@ -719,16 +719,16 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
                                 return (
                                   <tr 
                                     key={del.id} 
-                                    className={`hover:bg-slate-50/30 transition-colors ${
+                                    className={`hover:bg-subtle/50 transition-colors ${
                                       del.days_late > 0 ? 'bg-red-50/[0.02] border-l-4 border-l-red-500' : 'border-l-4 border-l-emerald-500'
                                     }`}
                                   >
-                                    <td className="p-3 font-bold text-slate-900">
+                                    <td className="p-3 font-bold text-text-primary">
                                       <input
                                         value={del.delivery_number}
                                         onChange={e => updateDelivery(del.id, 'delivery_number', e.target.value)}
                                         disabled={isReadOnly}
-                                        className="w-full px-2 py-1 text-xs font-bold bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:border-indigo-500 outline-none transition-all disabled:opacity-75 disabled:cursor-not-allowed"
+                                        className="w-full px-2 py-1 text-xs font-bold bg-subtle/50 border border-border-default rounded-lg focus:bg-surface focus:border-indigo-500 outline-none transition-colors disabled:opacity-75 disabled:cursor-not-allowed"
                                       />
                                     </td>
                                     <td className="p-3">
@@ -737,7 +737,7 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
                                         value={del.date}
                                         onChange={e => updateDelivery(del.id, 'date', e.target.value)}
                                         disabled={isReadOnly}
-                                        className="px-2 py-1 bg-slate-50 border border-slate-200 rounded-lg text-xs font-bold outline-none cursor-pointer hover:bg-slate-100/50 transition-colors w-full disabled:opacity-75 disabled:cursor-not-allowed"
+                                        className="px-2 py-1 bg-subtle/50 border border-border-default rounded-lg text-xs font-bold outline-none cursor-pointer hover:bg-subtle transition-colors w-full disabled:opacity-75 disabled:cursor-not-allowed"
                                       />
                                     </td>
                                     <td className="p-3">
@@ -747,7 +747,7 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
                                         value={del.quantity}
                                         onChange={e => updateDelivery(del.id, 'quantity', Number(e.target.value))}
                                         disabled={isReadOnly}
-                                        className="w-20 px-2 py-1 text-xs font-mono font-black text-right bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:border-indigo-500 outline-none transition-all disabled:opacity-75 disabled:cursor-not-allowed"
+                                        className="w-20 px-2 py-1 text-xs font-mono font-black text-right bg-subtle/50 border border-border-default rounded-lg focus:bg-surface focus:border-indigo-500 outline-none transition-colors disabled:opacity-75 disabled:cursor-not-allowed"
                                       />
                                     </td>
                                     <td className="p-3">
@@ -757,7 +757,7 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
                                         value={del.days_late}
                                         onChange={e => updateDelivery(del.id, 'days_late', Number(e.target.value))}
                                         disabled={isReadOnly}
-                                        className="w-20 px-2 py-1 text-xs font-mono font-black text-right bg-slate-50 border border-slate-200 rounded-lg focus:bg-white focus:border-indigo-500 outline-none transition-all disabled:opacity-75 disabled:cursor-not-allowed"
+                                        className="w-20 px-2 py-1 text-xs font-mono font-black text-right bg-subtle/50 border border-border-default rounded-lg focus:bg-surface focus:border-indigo-500 outline-none transition-colors disabled:opacity-75 disabled:cursor-not-allowed"
                                       />
                                     </td>
                                     <td className="p-3 text-center">
@@ -766,7 +766,7 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
                                           Late Delivery
                                         </span>
                                       ) : (
-                                        <span className="inline-flex px-2 py-0.5 text-[8px] font-black uppercase tracking-wider rounded-full bg-emerald-100 text-emerald-700 border border-emerald-200">
+                                        <span className="inline-flex px-2 py-0.5 text-[8px] font-black uppercase tracking-wider rounded-full bg-emerald-100 text-emerald-700 border border-emerald-500/20">
                                           On Time
                                         </span>
                                       )}
@@ -792,7 +792,7 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
                                         type="button"
                                         onClick={() => !isReadOnly && removeDeliveryRow(del.id)}
                                         disabled={isReadOnly}
-                                        className="p-1.5 hover:bg-red-50 hover:text-red-600 text-slate-400 hover:scale-[1.05] rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                        className="p-1.5 hover:bg-red-50 hover:text-red-600 text-slate-400 hover:scale-[1.05] rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                       >
                                         <Trash2 className="w-3.5 h-3.5" />
                                       </button>
@@ -804,14 +804,14 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
                           </tbody>
                           {itemDeliveries.length > 0 && (
                             <tfoot>
-                              <tr className="border-t border-slate-200 bg-slate-50/50 font-black text-xs text-slate-800">
-                                <td colSpan={2} className="p-3 text-left text-slate-400 uppercase tracking-widest text-[8px]">
+                              <tr className="border-t border-border-default bg-subtle/50 font-black text-xs text-text-primary">
+                                <td colSpan={2} className="p-3 text-left text-text-muted font-medium uppercase tracking-widest text-[8px]">
                                   SUBTOTAL ({item.item_code})
                                 </td>
-                                <td className="p-3 text-right font-mono font-black text-slate-900 text-xs">
+                                <td className="p-3 text-right font-mono font-black text-text-primary text-xs">
                                   {itemTotalQtyReceived} Qty
                                 </td>
-                                <td className="p-3 text-right font-mono font-black text-slate-900 text-xs">
+                                <td className="p-3 text-right font-mono font-black text-text-primary text-xs">
                                   {itemMaxDaysLate} Days
                                 </td>
                                 <td className="p-3 text-center text-slate-400">
@@ -840,17 +840,17 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
                 
                 <div className="flex flex-wrap items-center gap-6 text-sm font-semibold text-slate-400">
                   <div className="space-y-0.5 text-right">
-                    <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest block">TOTAL RECEIVED QTY</span>
+                    <span className="text-[8px] font-black text-text-muted uppercase tracking-widest block">TOTAL RECEIVED QTY</span>
                     <span className="font-mono font-black text-slate-100 text-base">{partialDeliveries.reduce((sum, item) => sum + Number(item.quantity || 0), 0)} Qty</span>
                   </div>
                   <div className="w-px h-8 bg-slate-800" />
                   <div className="space-y-0.5 text-right">
-                    <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest block">MAX DAYS DELAYED</span>
+                    <span className="text-[8px] font-black text-text-muted uppercase tracking-widest block">MAX DAYS DELAYED</span>
                     <span className="font-mono font-black text-slate-100 text-base">{calculation.maxDaysLate} Days</span>
                   </div>
                   <div className="w-px h-8 bg-slate-800" />
                   <div className="space-y-0.5 text-right">
-                    <span className="text-[8px] font-black text-slate-500 uppercase tracking-widest block">AGGREGATED CALCULATED PENALTY</span>
+                    <span className="text-[8px] font-black text-text-muted uppercase tracking-widest block">AGGREGATED CALCULATED PENALTY</span>
                     <span className="font-mono font-black text-red-400 text-lg">RM {calculation.calculated.toFixed(2)}</span>
                   </div>
                 </div>
@@ -858,26 +858,26 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
             </div>
 
             {/* SECTION 3A: PENALTY ENGINE CONFIGURATION */}
-            <div className="bg-white rounded-2xl border border-slate-200 border-l-4 border-l-violet-600 shadow-md shadow-slate-100 p-6 space-y-6 transition-all hover:shadow-lg hover:shadow-slate-200/50 duration-300">
-              <div className="flex items-center gap-3 pb-4 border-b border-slate-200">
+            <div className="bg-surface rounded-2xl border border-border-default border-l-4 border-l-violet-600 shadow-md shadow-slate-100 p-6 space-y-6 transition-colors hover:shadow-lg hover:shadow-slate-200/50 duration-300">
+              <div className="flex items-center gap-3 pb-4 border-b border-border-default">
                 <div className="w-8 h-8 rounded-xl bg-violet-50 border border-violet-100 flex items-center justify-center font-black text-xs text-violet-600 shadow-sm">
                   03A
                 </div>
                 <div>
-                  <h2 className="text-sm font-black text-slate-800 uppercase tracking-wider">PENALTY ENGINE CONFIGURATION</h2>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Configure enforcement thresholds and delay calculations</p>
+                  <h2 className="text-sm font-black text-text-primary uppercase tracking-wider">PENALTY ENGINE CONFIGURATION</h2>
+                  <p className="text-[10px] text-text-secondary font-bold font-bold uppercase tracking-wider">Configure enforcement thresholds and delay calculations</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Penalty settings type */}
-                <div className="space-y-1 bg-slate-50/70 p-4 rounded-xl border border-slate-200 shadow-sm">
+                <div className="space-y-1 bg-subtle/50 p-4 rounded-xl border border-border-default shadow-sm">
                   <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">PENALTY ENFORCEMENT METHOD</label>
                   <select
                     value={selectedPenaltyType}
                     onChange={e => setSelectedPenaltyType(e.target.value)}
                     disabled={isReadOnly}
-                    className="w-full mt-1 px-3 py-2 text-xs font-black bg-white border border-slate-250 rounded-lg focus:border-indigo-500 outline-none transition-all cursor-pointer text-slate-800 disabled:opacity-75 disabled:cursor-not-allowed"
+                    className="w-full mt-1 px-3 py-2 text-xs font-black bg-surface border border-slate-250 rounded-lg focus:border-indigo-500 outline-none transition-colors cursor-pointer text-text-primary disabled:opacity-75 disabled:cursor-not-allowed"
                   >
                     <option value="minimum">Flat Minimum (RM 200.00)</option>
                     <option value="calculated">Calculated Late Penalty</option>
@@ -897,32 +897,32 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
               </div>
 
               {/* Formula documentation details */}
-              <div className="p-4 bg-indigo-50/60 border border-indigo-200 rounded-xl text-[10px] text-indigo-950 font-medium space-y-2 shadow-sm">
+              <div className="p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl text-[10px] text-indigo-400 dark:text-indigo-300 font-bold font-medium space-y-2 shadow-sm">
                 <div className="flex justify-between items-center font-black">
                   <span className="flex items-center gap-1"><HelpCircle className="w-3.5 h-3.5 text-indigo-650" /> KKM CC PENALTY MATHEMATICS (PEKELILING KONTRAK)</span>
                   <span className="text-[8px] font-mono bg-indigo-100 px-2 py-0.5 text-indigo-700 rounded-full">Formula L1.9</span>
                 </div>
                 <p className="leading-relaxed">
                   KKM Contract Circular penalty enforces a charge for late deliveries of partial batches:
-                  <span className="block mt-1 font-extrabold text-indigo-800 font-mono">Row Charge = (Unit Price Ã— Quantity Ã— Days Late Ã· 30) Ã— 10%</span>
-                  If the accumulated calculation sum is below <span className="font-extrabold">RM 200.00</span>, the administrative portal enforces a flat minimum penalty of <span className="font-extrabold text-amber-700 bg-amber-50 px-1 rounded">RM 200.00</span> to ensure compliance overhead is met.
+                  <span className="block mt-1 font-extrabold text-indigo-400 font-mono">Row Charge = (Unit Price Ã— Quantity Ã— Days Late Ã· 30) Ã— 10%</span>
+                  If the accumulated calculation sum is below <span className="font-extrabold">RM 200.00</span>, the administrative portal enforces a flat minimum penalty of <span className="font-extrabold text-amber-700 bg-amber-500/10 px-1 rounded">RM 200.00</span> to ensure compliance overhead is met.
                 </p>
-                <div className="pt-2 border-t border-indigo-200/80 flex justify-between items-center text-[9px] font-black text-indigo-700">
+                <div className="pt-2 border-t border-indigo-500/20 flex justify-between items-center text-[9px] font-black text-indigo-700">
                   <span>TOTAL ACCUMULATED PENALTY CALCULATIONS:</span>
-                  <span className="font-mono text-xs text-indigo-950">RM {calculation.calculated.toFixed(2)}</span>
+                  <span className="font-mono text-xs text-indigo-400 dark:text-indigo-300 font-bold">RM {calculation.calculated.toFixed(2)}</span>
                 </div>
               </div>
             </div>
 
             {/* SECTION 4: DIGITAL SIGNATURES & VERIFICATION FLOW */}
-            <div className="bg-white rounded-2xl border border-slate-200 border-l-4 border-l-indigo-600 shadow-md shadow-slate-100 overflow-hidden p-6 space-y-6 transition-all hover:shadow-lg hover:shadow-slate-200/50 duration-300">
-              <div className="flex items-center gap-3 pb-4 border-b border-slate-200">
+            <div className="bg-surface rounded-2xl border border-border-default border-l-4 border-l-indigo-600 shadow-md shadow-slate-100 overflow-hidden p-6 space-y-6 transition-colors hover:shadow-lg hover:shadow-slate-200/50 duration-300">
+              <div className="flex items-center gap-3 pb-4 border-b border-border-default">
                 <div className="w-8 h-8 rounded-xl bg-violet-50 border border-violet-100 flex items-center justify-center font-black text-xs text-violet-600 shadow-sm">
                   04
                 </div>
                 <div>
-                  <h2 className="text-sm font-black text-slate-800 uppercase tracking-wider">PERAKUAN & KELULUSAN DIGITAL (DIGITAL SIGNATURES & OFFICERS)</h2>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Administrative verification chain and digital signing credentials</p>
+                  <h2 className="text-sm font-black text-text-primary uppercase tracking-wider">PERAKUAN & KELULUSAN DIGITAL (DIGITAL SIGNATURES & OFFICERS)</h2>
+                  <p className="text-[10px] text-text-secondary font-bold font-bold uppercase tracking-wider">Administrative verification chain and digital signing credentials</p>
                 </div>
               </div>
 
@@ -955,19 +955,19 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
                 ].map((sig, i) => (
                   <div 
                     key={i} 
-                    className={`border-2 rounded-xl p-5 text-center space-y-4 flex flex-col justify-between min-h-[270px] transition-all duration-300 ${
+                    className={`border-2 rounded-xl p-5 text-center space-y-4 flex flex-col justify-between min-h-[270px] transition-colors duration-150 ${
                       sig.id 
-                        ? 'bg-emerald-50/60 border-emerald-300 shadow-sm shadow-emerald-100 border-t-4 border-t-emerald-500' 
-                        : 'bg-slate-50 border-slate-200 shadow-inner border-t-4 border-t-amber-500'
+                        ? 'bg-emerald-500/10 border-emerald-300 shadow-sm shadow-emerald-100 border-t-4 border-t-emerald-500' 
+                        : 'bg-subtle/50 border-border-default shadow-inner border-t-4 border-t-amber-500'
                     }`}
                   >
                     <div className="space-y-4">
                       <div className="flex justify-between items-center">
                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{sig.label}</span>
                         {sig.id ? (
-                          <span className="px-2 py-0.5 text-[8px] font-black uppercase bg-emerald-100 text-emerald-700 rounded border border-emerald-200">SIGNED</span>
+                          <span className="px-2 py-0.5 text-[8px] font-black uppercase bg-emerald-100 text-emerald-700 rounded border border-emerald-500/20">SIGNED</span>
                         ) : (
-                          <span className="px-2 py-0.5 text-[8px] font-black uppercase bg-amber-50 text-amber-700 border border-amber-100 rounded">PENDING</span>
+                          <span className="px-2 py-0.5 text-[8px] font-black uppercase bg-amber-500/10 text-amber-700 border border-amber-100 rounded">PENDING</span>
                         )}
                       </div>
                       
@@ -977,28 +977,28 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
                             <CheckCircle2 className="w-6 h-6 text-emerald-600" />
                           </div>
                           <div className="space-y-0.5">
-                            <p className="font-black text-slate-900 text-sm tracking-tight">{sig.name}</p>
-                            {sig.role && <p className="text-[10px] text-slate-500 font-bold leading-tight uppercase">{sig.role}</p>}
+                            <p className="font-black text-text-primary text-sm tracking-tight">{sig.name}</p>
+                            {sig.role && <p className="text-[10px] text-text-muted font-bold leading-tight uppercase">{sig.role}</p>}
                             {sig.date && <p className="text-[9px] text-slate-400 font-mono mt-1">{formatDate(sig.date)} â€¢ {new Date(sig.date).toLocaleTimeString('en-US', {hour: '2-digit', minute:'2-digit'})}</p>}
                           </div>
                         </div>
                       ) : (
                         <div className="space-y-2 py-3">
-                          <div className="w-12 h-12 bg-slate-200 border border-slate-300 rounded-full flex items-center justify-center mx-auto text-slate-400 font-bold text-lg shadow-sm">
+                          <div className="w-12 h-12 bg-subtle border border-border-default rounded-full flex items-center justify-center mx-auto text-slate-400 font-bold text-lg shadow-sm">
                             â€”
                           </div>
-                          <p className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">Awaiting dynamic sign-off</p>
+                          <p className="text-[11px] text-text-secondary font-bold font-bold uppercase tracking-wider">Awaiting dynamic sign-off</p>
                         </div>
                       )}
                     </div>
                     
-                    <div className="pt-3 border-t border-slate-200 space-y-1.5 text-left">
+                    <div className="pt-3 border-t border-border-default space-y-1.5 text-left">
                       <label className="text-[8px] font-black text-slate-400 uppercase tracking-widest block">SELECT AUTHORIZED OFFICER</label>
                       <select
                         value={sig.id}
                         onChange={e => sig.setId(e.target.value)}
                         disabled={isReadOnly}
-                        className="w-full px-3 py-2 text-xs font-extrabold bg-white border border-slate-250 rounded-xl focus:border-indigo-500 outline-none transition-all cursor-pointer text-slate-800 shadow-sm disabled:opacity-75 disabled:cursor-not-allowed"
+                        className="w-full px-3 py-2 text-xs font-extrabold bg-surface border border-slate-250 rounded-xl focus:border-indigo-500 outline-none transition-colors cursor-pointer text-text-primary shadow-sm disabled:opacity-75 disabled:cursor-not-allowed"
                       >
                         <option value="">-- Choose Signatory --</option>
                         {systemUsers.map((u: any) => (
@@ -1017,20 +1017,20 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
           {/* Right Column: occupies 1 span on large screens, holds financial statement and remains sticky as you edit */}
           <div className="lg:col-span-1 lg:sticky lg:top-8 space-y-8">
             {/* SECTION 3B: FINANCIAL LEDGER STATEMENT */}
-            <div className="bg-white rounded-2xl border border-slate-200 border-l-4 border-l-emerald-600 shadow-md shadow-slate-100 p-6 space-y-6 transition-all hover:shadow-lg hover:shadow-slate-200/50 duration-300">
-              <div className="flex items-center gap-3 pb-4 border-b border-slate-200">
-                <div className="w-8 h-8 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center font-black text-xs text-emerald-600 shadow-sm">
+            <div className="bg-surface rounded-2xl border border-border-default border-l-4 border-l-emerald-600 shadow-md shadow-slate-100 p-6 space-y-6 transition-colors hover:shadow-lg hover:shadow-slate-200/50 duration-300">
+              <div className="flex items-center gap-3 pb-4 border-b border-border-default">
+                <div className="w-8 h-8 rounded-xl bg-emerald-500/10 border border-emerald-100 flex items-center justify-center font-black text-xs text-emerald-600 shadow-sm">
                   03B
                 </div>
                 <div>
-                  <h2 className="text-sm font-black text-slate-800 uppercase tracking-wider">FINANCIAL LEDGER STATEMENT</h2>
-                  <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Deductions ledger and net supplier payout calculations</p>
+                  <h2 className="text-sm font-black text-text-primary uppercase tracking-wider">FINANCIAL LEDGER STATEMENT</h2>
+                  <p className="text-[10px] text-text-secondary font-bold font-bold uppercase tracking-wider">Deductions ledger and net supplier payout calculations</p>
                 </div>
               </div>
 
               <div className="space-y-4">
                 {/* Total Order Value */}
-                <div className="space-y-1 bg-slate-50/70 p-4 rounded-xl border border-slate-200 shadow-sm">
+                <div className="space-y-1 bg-subtle/50 p-4 rounded-xl border border-border-default shadow-sm">
                   <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">TOTAL CONTRACT / ORDER VALUE (RM)</label>
                   <input 
                     type="number" 
@@ -1038,18 +1038,18 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
                     value={totalOrderValue} 
                     onChange={e => setTotalOrderValue(Number(e.target.value))}
                     disabled={isReadOnly}
-                    className="w-full mt-1 px-3 py-1.5 text-sm font-black text-slate-900 bg-white border border-slate-200 rounded-lg focus:border-indigo-500 outline-none transition-all text-right font-mono disabled:opacity-75 disabled:cursor-not-allowed" 
+                    className="w-full mt-1 px-3 py-1.5 text-sm font-black text-text-primary bg-surface border border-border-default rounded-lg focus:border-indigo-500 outline-none transition-colors text-right font-mono disabled:opacity-75 disabled:cursor-not-allowed" 
                   />
                 </div>
 
                 {/* Payment Method */}
-                <div className="space-y-1 bg-slate-50/70 p-4 rounded-xl border border-slate-200 shadow-sm">
+                <div className="space-y-1 bg-subtle/50 p-4 rounded-xl border border-border-default shadow-sm">
                   <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">PAYMENT DISBURSEMENT METHOD</label>
                   <select 
                     value={paymentKaedah} 
                     onChange={e => setPaymentKaedah(Number(e.target.value))}
                     disabled={isReadOnly}
-                    className="w-full mt-1 px-3 py-1.5 text-xs font-bold bg-white border border-slate-200 rounded-lg focus:border-indigo-500 outline-none transition-all cursor-pointer text-slate-850 disabled:opacity-75 disabled:cursor-not-allowed"
+                    className="w-full mt-1 px-3 py-1.5 text-xs font-bold bg-surface border border-border-default rounded-lg focus:border-indigo-500 outline-none transition-colors cursor-pointer text-slate-850 disabled:opacity-75 disabled:cursor-not-allowed"
                   >
                     <option value={1}>Kaedah 1 â€” Potongan Baucer Bayaran (With CDC)</option>
                     <option value={2}>Kaedah 2 â€” Bayaran Cek (Deductions Only)</option>
@@ -1057,13 +1057,13 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
                 </div>
 
                 {/* Payment Status */}
-                <div className="space-y-1 bg-slate-50/70 p-4 rounded-xl border border-slate-200 shadow-sm">
+                <div className="space-y-1 bg-subtle/50 p-4 rounded-xl border border-border-default shadow-sm">
                   <label className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">PAYMENT STATUS</label>
                   <select 
                     value={penaltyPaid ? 'true' : 'false'} 
                     onChange={e => setPenaltyPaid(e.target.value === 'true')}
                     disabled={isReadOnly}
-                    className="w-full mt-1 px-3 py-1.5 text-xs font-bold bg-white border border-slate-200 rounded-lg focus:border-indigo-500 outline-none transition-all cursor-pointer text-slate-850 disabled:opacity-75 disabled:cursor-not-allowed"
+                    className="w-full mt-1 px-3 py-1.5 text-xs font-bold bg-surface border border-border-default rounded-lg focus:border-indigo-500 outline-none transition-colors cursor-pointer text-slate-850 disabled:opacity-75 disabled:cursor-not-allowed"
                   >
                     <option value="false">Unpaid / Pending</option>
                     <option value="true">Paid / Settled</option>
@@ -1072,10 +1072,10 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
               </div>
 
               {/* Calculations Breakdown list */}
-              <div className="p-5 bg-slate-50 border border-slate-200 rounded-xl space-y-3 font-semibold text-xs text-slate-700 shadow-sm">
+              <div className="p-5 bg-subtle/50 border border-border-default rounded-xl space-y-3 font-semibold text-xs text-text-secondary shadow-sm">
                 <div className="flex justify-between items-center">
                   <span>Contract LPO Order Value</span>
-                  <span className="font-mono text-slate-900">RM {totalOrderValue.toFixed(2)}</span>
+                  <span className="font-mono text-text-primary">RM {totalOrderValue.toFixed(2)}</span>
                 </div>
                 {paymentKaedah === 2 && totalOrderValue < calculation.final ? (
                   <>
@@ -1097,7 +1097,7 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
                       <span className="font-mono font-black text-red-600">- RM {calculation.final.toFixed(2)}</span>
                     </div>
                     {paymentKaedah === 1 && (
-                      <div className="flex justify-between items-center text-red-650 pt-1.5 border-t border-slate-200">
+                      <div className="flex justify-between items-center text-red-650 pt-1.5 border-t border-border-default">
                         <span className="flex items-center gap-1 font-bold">Less: CDC Levy (0.4% on Balance after Penalty)</span>
                         <span className="font-mono font-black text-red-600">- RM {calculation.cdc.toFixed(2)}</span>
                       </div>
@@ -1140,11 +1140,11 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
         description={`LPO Number Reference: ${lpo?.lpo_number || ''}`}
         size="7xl"
       >
-        <div className="h-full flex flex-col p-6 bg-slate-50/50 overflow-hidden">
+        <div className="h-full flex flex-col p-6 bg-subtle/50 overflow-hidden">
           {lpo?.document_url ? (
             <PDFViewer url={lpo.document_url} title={`LPO ${lpo.lpo_number}`} />
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center p-8 text-slate-400 space-y-3 bg-white rounded-xl border border-slate-100 shadow-sm">
+            <div className="flex-1 flex flex-col items-center justify-center p-8 text-slate-400 space-y-3 bg-surface rounded-xl border border-border-subtle shadow-sm">
               <FileText className="w-12 h-12 text-slate-350" />
               <p className="font-bold text-sm">No LPO Document URL available.</p>
             </div>
@@ -1186,15 +1186,15 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0">
           <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" onClick={() => setIsUnlockModalOpen(false)}></div>
           
-          <div className="bg-white rounded-2xl shadow-xl border border-slate-200 w-full max-w-md relative z-10 overflow-hidden">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
-              <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+          <div className="bg-surface rounded-2xl shadow-xl border border-border-default w-full max-w-md relative z-10 overflow-hidden">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border-subtle bg-subtle/50">
+              <h3 className="text-lg font-semibold text-text-primary flex items-center gap-2">
                 <Lock className="w-5 h-5 text-indigo-650" />
                 Unlock Approved Penalty
               </h3>
               <button 
                 onClick={() => setIsUnlockModalOpen(false)}
-                className="text-slate-400 hover:text-slate-600 transition-colors p-1"
+                className="text-slate-400 hover:text-text-muted transition-colors p-1"
               >
                 <Lock className="w-5 h-5" />
               </button>
@@ -1214,10 +1214,10 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
               className="p-6 space-y-5"
             >
               <div className="space-y-2">
-                <label className="block text-sm font-semibold text-slate-700">
+                <label className="block text-sm font-semibold text-text-secondary">
                   Reason for Editing <span className="text-red-500">*</span>
                 </label>
-                <p className="text-xs text-slate-500 font-medium">
+                <p className="text-xs text-text-muted font-medium">
                   Since this penalty has already been officially approved, you must provide a valid justification to unlock it for changes. This reason will be logged in the audit notes history.
                 </p>
                 <textarea
@@ -1226,21 +1226,21 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
                   value={editReason}
                   onChange={(e) => setEditReason(e.target.value)}
                   placeholder="e.g., Correcting incorrect quantity received after supplier consultation..."
-                  className="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-sm font-bold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-all"
+                  className="w-full px-3 py-2 bg-surface border border-border-default rounded-xl text-sm font-bold focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition-colors"
                 />
               </div>
               
-              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+              <div className="flex justify-end gap-3 pt-4 border-t border-border-subtle">
                 <button
                   type="button"
                   onClick={() => setIsUnlockModalOpen(false)}
-                  className="px-4 py-2 text-xs font-bold bg-white text-slate-700 hover:bg-slate-50 border border-slate-200 rounded-xl transition-all"
+                  className="px-4 py-2 text-xs font-bold bg-surface text-text-secondary hover:bg-subtle/50 border border-border-default rounded-xl transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-700 rounded-xl transition-all shadow-md shadow-indigo-650/10 flex items-center gap-1.5"
+                  className="px-4 py-2 text-xs font-bold bg-indigo-600 text-white hover:bg-indigo-700 rounded-xl transition-colors shadow-md shadow-indigo-650/10 flex items-center gap-1.5"
                 >
                   <Unlock className="w-3.5 h-3.5" /> Confirm Unlock
                 </button>

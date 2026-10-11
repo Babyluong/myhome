@@ -30,11 +30,11 @@ export const TempahanSubMenu: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 text-center">
-        <h2 className="text-xl font-semibold text-slate-700 mb-2">
+      <div className="bg-surface rounded-2xl shadow-sm border border-border-default p-8 text-center">
+        <h2 className="text-xl font-semibold text-text-secondary mb-2">
           Facility Booking Command Center
         </h2>
-        <p className="text-slate-500">
+        <p className="text-text-muted">
           Book meeting rooms, conference halls, and clinical facilities directly through the interactive scheduling portal.
         </p>
         <button 

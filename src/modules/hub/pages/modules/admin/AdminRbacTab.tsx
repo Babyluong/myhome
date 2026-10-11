@@ -596,7 +596,7 @@ export const AdminRbacTab: React.FC = () => {
               <button
                 onClick={handleSaveAll}
                 disabled={isSaving}
-                className="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/40 font-bold transition-all disabled:opacity-50"
+                className="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/40 font-bold transition-colors disabled:opacity-50"
                 title="Simpan semua peranan yang diubah"
               >
                 Simpan ({dirtyRoleIds.length})
@@ -639,7 +639,7 @@ export const AdminRbacTab: React.FC = () => {
                 </div>
                 <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono">
                   <span className="uppercase">{roleCode}</span>
-                  <span className={enabledCount > 0 ? 'text-teal-400 font-semibold' : 'text-slate-500'}>
+                  <span className={enabledCount > 0 ? 'text-teal-400 font-semibold' : 'text-text-muted'}>
                     {enabledCount} modul aktif
                   </span>
                 </div>
@@ -719,7 +719,7 @@ export const AdminRbacTab: React.FC = () => {
         {/* Filters & Search */}
         <div className="flex flex-col sm:flex-row gap-3 items-center justify-between bg-slate-900/70 p-3.5 sm:p-4 rounded-xl border border-slate-800">
           <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none" />
             <input
               type="text"
               placeholder="Carian modul, sub-ciri, kod..."
@@ -754,7 +754,7 @@ export const AdminRbacTab: React.FC = () => {
             <div className="h-24 bg-slate-900/60 border border-slate-800 rounded-2xl animate-pulse" />
           </div>
         ) : filteredModules.length === 0 ? (
-          <div className="p-12 text-center text-slate-500 bg-slate-900/40 rounded-2xl border border-slate-800">
+          <div className="p-12 text-center text-text-muted bg-slate-900/40 rounded-2xl border border-slate-800">
             Tiada modul ditemui yang sepadan dengan carian.
           </div>
         ) : (
@@ -874,8 +874,8 @@ export const AdminRbacTab: React.FC = () => {
                             >
                               <div className="pl-3 border-l-2 border-teal-500/50">
                                 <div className="text-xs font-bold text-slate-200">{feature.name}</div>
-                                <p className="text-[11px] text-slate-500 mt-0.5">{feature.description}</p>
-                                <span className="text-[10px] font-mono text-slate-500 mt-1 block">
+                                <p className="text-[11px] text-text-muted mt-0.5">{feature.description}</p>
+                                <span className="text-[10px] font-mono text-text-muted mt-1 block">
                                   {feature.code}
                                 </span>
                               </div>
