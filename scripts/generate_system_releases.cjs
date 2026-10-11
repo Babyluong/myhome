@@ -389,8 +389,9 @@ const BUILT_IN_RELEASES = [
 let dynamicReleases = [];
 
 if (recentCommits.length > 0) {
-  // Find the commit that established v2.8.0 or baseline
+  // Find the commit that established v2.8.1 or baseline
   const baseIndex = recentCommits.findIndex(c => 
+    c.message.toLowerCase().includes('v2.8.1') ||
     c.message.toLowerCase().includes('v2.8.0') ||
     c.message.toLowerCase().includes('chore: finalize version manifests')
   );
