@@ -11,6 +11,10 @@
     --safe-area-left: env(safe-area-inset-left, 0px);
     --safe-area-right: env(safe-area-inset-right, 0px);
     --header-total-height: calc(var(--header-height) + env(safe-area-inset-top, 0px));
+    --tabbar-height: 3.5rem;
+    --tabbar-total-height: calc(3.5rem + env(safe-area-inset-bottom, 0px));
+    --header-compact-height: 3.25rem;
+    --header-compact-total: calc(3.25rem + env(safe-area-inset-top, 0px));
 
     /* Light Theme — warm ivory (Claude-style) */
     --bg-canvas: #faf9f5;
@@ -409,6 +413,34 @@
   .scrollbar-none {
     -ms-overflow-style: none;
     scrollbar-width: none;
+  }
+
+  .pb-safe {
+    padding-bottom: max(env(safe-area-inset-bottom, 0px), 1rem);
+  }
+
+  .pt-safe {
+    padding-top: max(env(safe-area-inset-top, 0px), 0.75rem);
+  }
+
+  .pl-safe {
+    padding-left: env(safe-area-inset-left, 0px);
+  }
+
+  .pr-safe {
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  .touch-press {
+    transition: transform 120ms cubic-bezier(0.2, 0.8, 0.4, 1);
+  }
+
+  .touch-press:active {
+    transform: scale(0.97);
+  }
+
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
   }
 }
 

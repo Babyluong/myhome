@@ -1,17 +1,17 @@
 {
   "version": "v2.6.1",
-  "buildTime": "2026-10-10T16:53:19.956Z",
-  "commitHash": "1c759f9",
-  "fullCommitHash": "1c759f90e1c9a1bdaecf42ead7f0af6854120d67",
+  "buildTime": "2026-10-10T16:55:56.637Z",
+  "commitHash": "79cb6cd",
+  "fullCommitHash": "79cb6cda15dc6a0cc6fd066eadef1195804356dd",
   "branch": "refactor/module-folders",
-  "latestCommitDate": "2026-10-11T00:53:10+08:00",
-  "latestCommitMessage": "chore(release): system release & production deployment sync v2.6.1",
+  "latestCommitDate": "2026-10-11T00:55:44+08:00",
+  "latestCommitMessage": "build(release): sync v2.6.1 version metadata and cache buster",
   "releases": [
     {
       "id": "release-v2-6-1",
       "version_tag": "v2.6.1",
       "title": "System Release & Production Deployment Sync v2.6.1",
-      "created_at": "2026-10-10T16:53:19.955Z"
+      "created_at": "2026-10-10T16:55:56.636Z"
     },
     {
       "id": "release-v2-6-0",
@@ -51,6 +51,13 @@
     }
   ],
   "recentCommits": [
+    {
+      "hash": "79cb6cda15dc6a0cc6fd066eadef1195804356dd",
+      "shortHash": "79cb6cd",
+      "author": "Lawas@2025",
+      "date": "2026-10-11T00:55:44+08:00",
+      "message": "build(release): sync v2.6.1 version metadata and cache buster"
+    },
     {
       "hash": "1c759f90e1c9a1bdaecf42ead7f0af6854120d67",
       "shortHash": "1c759f9",
@@ -183,13 +190,6 @@
       "author": "Lawas@2025",
       "date": "2026-01-08T23:36:11+08:00",
       "message": "Initial commit: Hospital Operation Management Ecosystem"
-    },
-    {
-      "hash": "884681b96384558184be8bf0118804e40e4e56e0",
-      "shortHash": "884681b",
-      "author": "Lawas@2025",
-      "date": "2025-10-13T14:52:19+08:00",
-      "message": "feat: Add Patient Portal and Complete Offline Deployment System"
     }
   ]
 }
