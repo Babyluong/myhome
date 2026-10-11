@@ -4351,6 +4351,62 @@ export const KKM_GALENICAL_MONOGRAPHS: Record<string, KkmPreparationMonograph> =
     ],
     "container_specs": "Botol Kaca Beralur Fluted / Plastic Ointment Jar."
   },
+  "EXT-TAR-001": {
+    "item_code": "EXT-TAR-001",
+    "item_name": "Coal Tar (LPC) 6% Ointment BP",
+    "generic_name": "Coal Tar Solution BP 6% w/w in Paraffin Ointment Base",
+    "pack_type": "external",
+    "dosage_form": "ointment",
+    "strength": "6% w/w",
+    "units_per_pack": 1,
+    "package_type": "ointment_jar",
+    "shelf_life_months": 3,
+    "beyond_use_date_days": 90,
+    "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight and ignition sources.",
+    "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
+    "indications": "Rawatan dermatologi topikal untuk psoriasis plak kronik, ekzema tebal / lichenified eczema, dan dermatitis seborrhoeic (antipruritik & antikeratolitik rasmi KKM).",
+    "ingredients_formula": "Coal Tar Solution BP (LPC) 60g, Paraffin Ointment BP / White Soft Paraffin BP add 1000g",
+    "pharmacopoeia_ref": "MOH GAEX 2026 (Item 99: Coal Tar 6% Ointment) / British Pharmacopoeia (BP) / Good Preparation Practice (GPP KKM)",
+    "standard_formula_breakdown": [
+      {
+        "name": "Coal Tar Solution BP (LPC / Liquor Picis Carbonis)",
+        "quantity": "6.0 g (6% w/w)",
+        "function": "Active Pharmaceutical Ingredient (API) Antikeratolitik & Antipruritik"
+      },
+      {
+        "name": "Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin Base)",
+        "quantity": "94.0 g (q.s. to 100 g)",
+        "function": "Topical Emollient / Ointment Base Oklusif"
+      }
+    ],
+    "equipment_required": [
+      "Jubin Kaca Salap (Glass Ointment Slab / Tile)",
+      "Spatula Keluli Tahan Karat Fleksibel (Flexible Stainless Steel Spatulas)",
+      "Penimbang Digital Ketepatan Tinggi (High-Precision Digital Balance 0.01 g)",
+      "Balang Salap Plastik Kedap Udara Bertutup Skru (Plastic Ointment Jar 50g / 100g)"
+    ],
+    "preparation_steps": [
+      "1. Bersihkan dan sanitasi jubin kaca salap serta spatula dengan alkohol 70% dan biarkan kering sepenuhnya.",
+      "2. Sifarkan (tare) penimbang analitikal dan timbang tepat Coal Tar Solution (LPC) seberat 6.0 g dan Pangkalan Salap Parafin BP seberat 94.0 g untuk formula standard 100 g (atau 3.0 g LPC + 47.0 g pangkalan untuk balang 50 g).",
+      "3. Letakkan pangkalan salap parafin di atas jubin kaca salap dan asingkan sebahagian kecil (anggaran 10 g) di bahagian tengah jubin.",
+      "4. Tuangkan perlahan-lahan Coal Tar Solution (LPC) ke atas sebahagian kecil asas salap tersebut dan canai (levigate) menggunakan spatula untuk menghasilkan campuran primer pekat yang licin.",
+      "5. Lakukan pencairan geometri (geometric dilution) dengan mencampurkan baki pangkalan salap secara beransur-ansur dalam kuantiti berganda, sambil mengikis dan meratakan dengan gerakan angka lapan ('figure of eight') bagi memastikan serakan tar seragam tanpa pemisahan fasa.",
+      "6. Canai sehingga campuran salap menjadi licin, berkilat (glossy), berwarna coklat kekuningan sekata, dan bebas sepenuhnya daripada tompokan tar atau titisan minyak.",
+      "7. Pindahkan salap siap ke dalam balang salap plastik kering menggunakan spatula, ratakan permukaan, tutup rapat dengan penutup skru, dan tampal Label Merah Rasmi: UNTUK KEGUNAAN LUAR SAHAJA."
+    ],
+    "in_process_qc": [
+      "Kehomogenan Salap: Tekstur licin sekata, sifar titisan tar terpisah (bleeding), warna coklat ambar homogen.",
+      "Ketepatan Berat: Berat bersih balang menepati spesifikasi kelompok (contoh: 50.0 g ± 1%).",
+      "Integriti Bekas: Balang kedap udara bertutup rapat, tiada kebocoran di bebenang skru."
+    ],
+    "cautions_and_warnings": [
+      "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN / JANGAN DIMAKAN.",
+      "Elakkan sentuhan dengan mata, membran mukus, dan luka terbuka yang radang akut atau berdarah.",
+      "Fotopeka (Photosensitivity): Maklumkan pesakit agar mengelakkan pendedahan langsung kepada cahaya matahari terik atau sinaran UV semasa rawatan.",
+      "Boleh mengotorkan pakaian, kain cadar, dan fabrik."
+    ],
+    "container_specs": "Balang Salap Plastik Kedap Udara Bertutup Skru (Plastic Ointment Jar 50 g / 100 g / 500 g)."
+  },
   "EXT-CAL-001": {
     "item_code": "EXT-CAL-001",
     "item_name": "Calamine Lotion BP (Losyen Calamine)",
@@ -4515,6 +4571,19 @@ export const GAEX_TO_CURATED_MAP: Record<string, string> = {
   'EXT-GAEX-324': 'EXT-ZNC-001', // Zinc Oxide Paste BP 25%
   'EXT-GAEX-315': 'EXT-URE-001', // Urea 10% Cream
   'EXT-GAEX-178': 'EXT-LPW-001', // Liquid Paraffin 50:50 Ointment
+  'EXT-GAEX-095': 'EXT-TAR-001', // Coal Tar (LPC) 1% Ointment
+  'EXT-GAEX-096': 'EXT-TAR-001', // Coal Tar (LPC) 2% Ointment
+  'EXT-GAEX-097': 'EXT-TAR-001', // Coal Tar (LPC) 3% Ointment
+  'EXT-GAEX-098': 'EXT-TAR-001', // Coal Tar (LPC) 5% Ointment
+  'EXT-GAEX-099': 'EXT-TAR-001', // Coal Tar (LPC) 6% Ointment
+  'EXT-GAEX-100': 'EXT-TAR-001', // Coal Tar (LPC) 9% Ointment
+  'EXT-GAEX-101': 'EXT-TAR-001', // Coal Tar 1%, Salicylic Acid 2% Ointment
+  'EXT-GAEX-102': 'EXT-TAR-001', // Coal Tar 3%, Salicylic Acid 2% Ointment
+  'EXT-GAEX-103': 'EXT-TAR-001', // Coal Tar 3%, Salicylic Acid 3% Ointment
+  'EXT-GAEX-104': 'EXT-TAR-001', // Coal Tar 6%, Salicylic Acid 2% Ointment
+  'EXT-GAEX-105': 'EXT-TAR-001', // Coal Tar 6%, Salicylic Acid 3% Ointment
+  'EXT-GAEX-106': 'EXT-TAR-001', // Coal Tar 6%, Salicylic Acid 6% Ointment
+  'EXT-GAEX-107': 'EXT-TAR-001', // Coal Tar 9%, Salicylic Acid 2% Ointment
 
   // Internal Oral Extemporaneous Formulations
   'INT-GAEX-001': 'INT-KKM-001', // Acetazolamide 25mg/ml
@@ -4641,36 +4710,43 @@ export function parseMasterFormulaIngredients(
   } else if (formulaStr.includes('+')) {
     rawParts = formulaStr.split('+').map(s => s.trim()).filter(Boolean)
   } else {
-    rawParts = formulaStr.split(/,(?=s*[A-Z0-9])/).map(s => s.trim()).filter(Boolean)
+    rawParts = formulaStr.split(/,(?=\s*[A-Z0-9])/).map(s => s.trim()).filter(Boolean)
     if (rawParts.length <= 1 && formulaStr.includes(',')) {
       rawParts = formulaStr.split(',').map(s => s.trim()).filter(Boolean)
     }
   }
 
-  const results: KkmFormulaIngredient[] = []
+  // Pre-scan for percentage ingredients to calculate base balance
+  let totalApiPct = 0
+  const parsedItems: { raw: string; name: string; qty: string; pct: number | null; role: string }[] = []
 
   for (const part of rawParts) {
     const trimmed = part.trim()
     if (!trimmed) continue
 
-    // Extract quantity (e.g. 737 ml, 1000ml, 2.5g, 150 mg, 8 tablets, 120mL, qs 120ml)
+    // Regex that accurately matches % and metric units without word boundary failure
     const qtyMatch = trimmed.match(
-      /\b(?:q\.?s\.?\s*(?:to|ad)?\s*)?(\d+(?:\.\d+)?\s*(?:ml|mL|l|L|g|mg|mcg|kg|tablets|tablet|tabs|tab|drops|units|%|vol))\b/i
+      /(?:q\.?s\.?\s*(?:to|ad)?\s*)?(\d+(?:\.\d+)?\s*(?:ml|mL|l|L|g|mg|mcg|kg|tablets|tablet|tabs|tab|drops|units|%|vol))(?!\w)/i
     )
 
     let ingName = trimmed
     let ingQty = ''
+    let pctVal: number | null = null
     let ingRole = 'Active Pharmaceutical Ingredient (API)'
 
     if (qtyMatch) {
       ingQty = qtyMatch[0].trim()
-      // Remove quantity from ingredient name
-      ingName = trimmed.replace(qtyMatch[0], '').replace(/\b(?:ad|add|to|dilarutkan dalam|diluted with|sehingga|up to)\b/gi, '').trim()
+      ingName = trimmed.replace(qtyMatch[0], '').replace(/\b(?:ad|add|to|dilarutkan dalam|diluted with|sehingga|up to|q\.?s\.?)\b/gi, '').trim()
+      if (ingQty.includes('%')) {
+        const parsed = parseFloat(ingQty)
+        if (!isNaN(parsed) && parsed > 0) {
+          pctVal = parsed
+          totalApiPct += parsed
+        }
+      }
     } else if (/\b(?:q\.?s\.?|secukupnya)\b/i.test(trimmed)) {
       ingQty = 'q.s. to Target Volume'
       ingName = trimmed.replace(/\b(?:q\.?s\.?|secukupnya|ad|add|to)\b/gi, '').trim()
-    } else {
-      ingQty = 'Per Formula Ratio'
     }
 
     // Clean up punctuation and prepositions in name
@@ -4681,27 +4757,74 @@ export function parseMasterFormulaIngredients(
     const lower = ingName.toLowerCase()
     if (lower.includes('water') || lower.includes('air suling') || lower.includes('purified water')) {
       ingRole = 'Aqueous Diluent / Solvent'
-      if (!ingQty || ingQty === 'Per Formula Ratio') ingQty = 'q.s. to 1000 mL'
+      if (!ingQty) ingQty = 'q.s. to 1000 mL'
     } else if (lower.includes('alcohol') || lower.includes('ims') || lower.includes('etanol') || lower.includes('ethanol') || lower.includes('spirit')) {
       ingRole = 'Alcohol Vehicle / Fast-Drying Bactericide'
     } else if (lower.includes('pembawa') || lower.includes('vehicle') || lower.includes('ora-') || lower.includes('x-temp') || lower.includes('syrup')) {
       ingRole = 'Suspending / Sweetened Vehicle'
-      if (!ingQty || ingQty === 'Per Formula Ratio') ingQty = 'q.s. to Target Volume'
+      if (!ingQty) ingQty = 'q.s. to Target Volume'
     } else if (lower.includes('dye') || lower.includes('pewarna') || lower.includes('amaranth') || lower.includes('merah jambu')) {
       ingRole = 'Visual Indicator Tint'
-      if (!ingQty || ingQty === 'Per Formula Ratio') ingQty = '1.0 mL'
-    } else if (lower.includes('paraffin') || lower.includes('ointment base') || lower.includes('cream base') || lower.includes('wsp')) {
+      if (!ingQty) ingQty = '1.0 mL'
+    } else if (lower.includes('paraffin') || lower.includes('salap') || lower.includes('ointment base') || lower.includes('cream base') || lower.includes('wsp') || lower.includes('krim berair')) {
       ingRole = 'Topical Emollient / Ointment Base'
     } else if (lower.includes('detergent') || lower.includes('surfactant')) {
       ingRole = 'Surfactant / Foaming Agent'
+    } else if (lower.includes('tar') || lower.includes('lpc') || lower.includes('picis')) {
+      ingRole = 'Active Antikeratolytic & Antipruritic API'
+    } else if (lower.includes('salicylic') || lower.includes('salisilik')) {
+      ingRole = 'Active Keratolytic API'
     }
 
-    results.push({
-      name: ingName,
-      quantity: ingQty,
-      function: ingRole
-    })
+    parsedItems.push({ raw: trimmed, name: ingName, qty: ingQty, pct: pctVal, role: ingRole })
   }
+
+  // If no percentage was in the formula text but defaultStrength has a percentage (e.g. 6 %)
+  if (totalApiPct === 0 && defaultStrength && defaultStrength.includes('%')) {
+    const sPct = parseFloat(defaultStrength)
+    if (!isNaN(sPct) && sPct > 0) {
+      totalApiPct = sPct
+      const firstApi = parsedItems.find(i => i.role.includes('Active')) || parsedItems[0]
+      if (firstApi) {
+        firstApi.pct = sPct
+        firstApi.qty = `${sPct}%`
+      }
+    }
+  }
+
+  const results: KkmFormulaIngredient[] = parsedItems.map(item => {
+    let finalQty = item.qty
+    const lower = item.name.toLowerCase()
+
+    if (item.pct !== null) {
+      if (!isInternal) {
+        finalQty = `${item.pct.toFixed(1)} g (${item.qty.replace(/\s+/g, '')} w/w)`
+      } else {
+        finalQty = `${item.pct.toFixed(1)} g (${item.qty.replace(/\s+/g, '')} w/v)`
+      }
+    } else if (
+      lower.includes('paraffin') ||
+      lower.includes('salap') ||
+      lower.includes('ointment base') ||
+      lower.includes('cream base') ||
+      lower.includes('wsp') ||
+      lower.includes('krim berair')
+    ) {
+      if (totalApiPct > 0 && totalApiPct < 100) {
+        finalQty = `${(100 - totalApiPct).toFixed(1)} g (q.s. to 100 g)`
+      } else {
+        finalQty = '90.0 g (q.s. to 100 g)'
+      }
+    } else if (!finalQty || finalQty === 'Per Formula Ratio') {
+      finalQty = 'q.s. to Target Batch'
+    }
+
+    return {
+      name: item.name,
+      quantity: finalQty,
+      function: item.role
+    }
+  })
 
   return results.length > 0 ? results : [
     {
@@ -4712,7 +4835,57 @@ export function parseMasterFormulaIngredients(
   ]
 }
 
-export const getGalenicalMonograph = (
+export const applyCustomMonographOverrides = (
+  base: KkmPreparationMonograph,
+  item: any
+): KkmPreparationMonograph => {
+  if (!item) return base
+
+  const customBreakdown = Array.isArray(item.standard_formula_breakdown) && item.standard_formula_breakdown.length > 0
+    ? item.standard_formula_breakdown
+    : base.standard_formula_breakdown
+
+  const customSteps = Array.isArray(item.preparation_steps) && item.preparation_steps.length > 0
+    ? item.preparation_steps
+    : base.preparation_steps
+
+  const customEquipment = Array.isArray(item.equipment_required) && item.equipment_required.length > 0
+    ? item.equipment_required
+    : base.equipment_required
+
+  const customQc = Array.isArray(item.in_process_qc) && item.in_process_qc.length > 0
+    ? item.in_process_qc
+    : base.in_process_qc
+
+  const customCautions = Array.isArray(item.cautions_and_warnings) && item.cautions_and_warnings.length > 0
+    ? item.cautions_and_warnings
+    : base.cautions_and_warnings
+
+  return {
+    ...base,
+    item_code: item.item_code || base.item_code,
+    item_name: item.item_name || base.item_name,
+    generic_name: (item.generic_name as string) || base.generic_name,
+    dosage_form: item.dosage_form || base.dosage_form,
+    strength: item.strength || base.strength,
+    units_per_pack: Number(item.units_per_pack) || base.units_per_pack,
+    package_type: item.package_type || base.package_type,
+    shelf_life_months: item.shelf_life_months !== undefined ? Number(item.shelf_life_months) : base.shelf_life_months,
+    beyond_use_date_days: item.beyond_use_date_days !== undefined ? Number(item.beyond_use_date_days) : base.beyond_use_date_days,
+    storage_instructions: item.storage_instructions || base.storage_instructions,
+    label_instructions: item.label_instructions || base.label_instructions,
+    indications: item.indications || base.indications,
+    ingredients_formula: item.ingredients_formula || base.ingredients_formula,
+    standard_formula_breakdown: customBreakdown,
+    preparation_steps: customSteps,
+    equipment_required: customEquipment,
+    in_process_qc: customQc,
+    cautions_and_warnings: customCautions,
+    container_specs: item.container_specs || base.container_specs
+  }
+}
+
+const resolveBaselineMonograph = (
   item: PrepackItem | {
     item_code?: string
     item_name?: string
@@ -4724,6 +4897,13 @@ export const getGalenicalMonograph = (
     ingredients_formula?: string
     storage_instructions?: string
     label_instructions?: string
+    standard_formula_breakdown?: any
+    preparation_steps?: any
+    equipment_required?: any
+    in_process_qc?: any
+    cautions_and_warnings?: any
+    beyond_use_date_days?: any
+    container_specs?: any
   }
 ): KkmPreparationMonograph => {
   const code = item.item_code || ''
@@ -4736,11 +4916,27 @@ export const getGalenicalMonograph = (
   // 2. Direct match via GAEX-to-curated mapping index
   if (code && GAEX_TO_CURATED_MAP[code] && KKM_GALENICAL_MONOGRAPHS[GAEX_TO_CURATED_MAP[code]]) {
     const base = KKM_GALENICAL_MONOGRAPHS[GAEX_TO_CURATED_MAP[code]]
+    let breakdown = base.standard_formula_breakdown
+    
+    // Dynamically tailor breakdown for mapped variants (Coal Tar & Salicylic Acid strengths)
+    if (GAEX_TO_CURATED_MAP[code] === 'EXT-TAR-001' || GAEX_TO_CURATED_MAP[code] === 'EXT-SAL-001') {
+      breakdown = parseMasterFormulaIngredients(
+        item.ingredients_formula || `${item.generic_name || item.item_name || 'Active'}, Pangkalan Salap Parafin BP`,
+        (item.generic_name as string) || item.item_name || base.generic_name,
+        item.strength || base.strength,
+        false
+      )
+    }
+
     return {
       ...base,
       item_code: code,
       item_name: item.item_name || base.item_name,
-      generic_name: (item.generic_name as string) || base.generic_name
+      generic_name: (item.generic_name as string) || base.generic_name,
+      strength: item.strength || base.strength,
+      ingredients_formula: item.ingredients_formula || base.ingredients_formula,
+      indications: item.indications || base.indications,
+      standard_formula_breakdown: breakdown
     }
   }
 
@@ -4929,4 +5125,11 @@ export const getGalenicalMonograph = (
     cautions_and_warnings: defaultCautions,
     container_specs: defaultContainer
   }
+}
+
+export const getGalenicalMonograph = (
+  item: PrepackItem | any
+): KkmPreparationMonograph => {
+  const base = resolveBaselineMonograph(item)
+  return applyCustomMonographOverrides(base, item)
 }

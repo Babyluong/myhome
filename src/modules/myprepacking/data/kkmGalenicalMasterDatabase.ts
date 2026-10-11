@@ -3437,8 +3437,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 95, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar (LPC) 1%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base)"
+    "indications": "Rawatan dermatologi topikal untuk psoriasis plak kronik, ekzema tebal / lichenified eczema, dan dermatitis seborrhoeic",
+    "ingredients_formula": "Coal Tar (LPC) 1%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-096",
@@ -3455,8 +3455,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 95, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar (LPC) 1%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base)"
+    "indications": "Rawatan dermatologi topikal untuk psoriasis plak kronik, ekzema tebal / lichenified eczema, dan dermatitis seborrhoeic",
+    "ingredients_formula": "Coal Tar (LPC) 2%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-097",
@@ -3473,8 +3473,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 95, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar (LPC) 1%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base)"
+    "indications": "Rawatan dermatologi topikal untuk psoriasis plak kronik, ekzema tebal / lichenified eczema, dan dermatitis seborrhoeic",
+    "ingredients_formula": "Coal Tar (LPC) 3%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-098",
@@ -3491,8 +3491,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 95, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar (LPC) 1%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base)"
+    "indications": "Rawatan dermatologi topikal untuk psoriasis plak kronik, ekzema tebal / lichenified eczema, dan dermatitis seborrhoeic",
+    "ingredients_formula": "Coal Tar (LPC) 5%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-099",
@@ -3509,8 +3509,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 95, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar (LPC) 1%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base)"
+    "indications": "Rawatan dermatologi topikal untuk psoriasis plak kronik, ekzema tebal / lichenified eczema, dan dermatitis seborrhoeic",
+    "ingredients_formula": "Coal Tar (LPC) 6%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-100",
@@ -3527,8 +3527,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 95, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar (LPC) 1%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base)"
+    "indications": "Rawatan dermatologi topikal untuk psoriasis plak kronik degil, ekzema tebal / lichenified eczema, dan dermatitis seborrhoeic",
+    "ingredients_formula": "Coal Tar (LPC) 9%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-101",
@@ -3545,8 +3545,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 95, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar (LPC) 1%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base)"
+    "indications": "Rawatan psoriasis plak bertompok & ekzema bersisik tebal (kombinasi keratolitik & antipruritik)",
+    "ingredients_formula": "Coal Tar (LPC) 1%, Salicylic Acid BP 2%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-102",
@@ -3563,8 +3563,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 95, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar (LPC) 1%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base)"
+    "indications": "Rawatan psoriasis plak bertompok & ekzema bersisik tebal (kombinasi keratolitik & antipruritik)",
+    "ingredients_formula": "Coal Tar (LPC) 3%, Salicylic Acid BP 2%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-103",
@@ -3581,8 +3581,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 95, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar (LPC) 1%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base)"
+    "indications": "Rawatan psoriasis plak bertompok & ekzema bersisik tebal (kombinasi keratolitik & antipruritik)",
+    "ingredients_formula": "Coal Tar (LPC) 3%, Salicylic Acid BP 3%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-104",
@@ -3599,8 +3599,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 95, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar (LPC) 1%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base)"
+    "indications": "Rawatan psoriasis plak kronik & ekzema hiperkeratotik degil (kombinasi keratolitik & antipruritik)",
+    "ingredients_formula": "Coal Tar (LPC) 6%, Salicylic Acid BP 2%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-105",
@@ -3617,8 +3617,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 95, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar (LPC) 1%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base)"
+    "indications": "Rawatan psoriasis plak kronik & ekzema hiperkeratotik degil (kombinasi keratolitik & antipruritik)",
+    "ingredients_formula": "Coal Tar (LPC) 6%, Salicylic Acid BP 3%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-106",
@@ -3635,8 +3635,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 95, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar (LPC) 1%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base)"
+    "indications": "Rawatan psoriasis plak kronik & ekzema hiperkeratotik degil (kombinasi keratolitik & antipruritik)",
+    "ingredients_formula": "Coal Tar (LPC) 6%, Salicylic Acid BP 6%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-107",
@@ -3653,8 +3653,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 95, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar (LPC) 1%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base)"
+    "indications": "Rawatan psoriasis plak kronik degil & hiperkeratosis teruk (kombinasi keratolitik & antipruritik)",
+    "ingredients_formula": "Coal Tar (LPC) 9%, Salicylic Acid BP 2%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-108",
@@ -4553,8 +4553,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 101, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar 1%, Salicylic Acid 2%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base)"
+    "indications": "Rawatan keratolitik topikal untuk hiperkeratosis, ekzema bersisik, psoriasis & penanggalan sisik keratin (1 %)",
+    "ingredients_formula": "Salicylic Acid BP 1 %, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-271",
@@ -4571,8 +4571,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 101, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar 1%, Salicylic Acid 2%, Pangkalan Krim Berair BP (Aqueous Cream BP Base / Cetomacrogol Cream BP)"
+    "indications": "Rawatan keratolitik topikal untuk hiperkeratosis, ekzema bersisik, psoriasis & penanggalan sisik keratin (10 %)",
+    "ingredients_formula": "Salicylic Acid BP 10 %, Pangkalan Krim Berair BP (Aqueous Cream BP Base / Cetomacrogol Cream BP) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-272",
@@ -4589,8 +4589,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 101, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar 1%, Salicylic Acid 2%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base)"
+    "indications": "Rawatan keratolitik topikal untuk hiperkeratosis, ekzema bersisik, psoriasis & penanggalan sisik keratin (10 %)",
+    "ingredients_formula": "Salicylic Acid BP 10 %, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-273",
@@ -4607,8 +4607,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 101, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar 1%, Salicylic Acid 2%, Pelarut / Pembawa Topikal Rasmi KKM (Purified Water Steril BP)"
+    "indications": "Rawatan keratolitik topikal untuk hiperkeratosis, ekzema bersisik, psoriasis & penanggalan sisik keratin (2 %)",
+    "ingredients_formula": "Salicylic Acid BP 2 %, Pelarut Topikal Rasmi KKM (Industrial Methylated Spirit / Purified Water BP) q.s. ad 100mL"
   },
   {
     "item_code": "EXT-GAEX-274",
@@ -4625,8 +4625,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 101, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar 1%, Salicylic Acid 2%, Pangkalan Krim Berair BP (Aqueous Cream BP Base / Cetomacrogol Cream BP)"
+    "indications": "Rawatan keratolitik topikal untuk hiperkeratosis, ekzema bersisik, psoriasis & penanggalan sisik keratin (2 %)",
+    "ingredients_formula": "Salicylic Acid BP 2 %, Pangkalan Krim Berair BP (Aqueous Cream BP Base / Cetomacrogol Cream BP) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-275",
@@ -4643,8 +4643,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 101, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar 1%, Salicylic Acid 2%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base)"
+    "indications": "Rawatan keratolitik topikal untuk hiperkeratosis, ekzema bersisik, psoriasis & penanggalan sisik keratin (2 %)",
+    "ingredients_formula": "Salicylic Acid BP 2 %, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-276",
@@ -4661,8 +4661,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 101, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar 1%, Salicylic Acid 2%, Pangkalan Krim Berair BP (Aqueous Cream BP Base / Cetomacrogol Cream BP)"
+    "indications": "Rawatan keratolitik topikal untuk hiperkeratosis, ekzema bersisik, psoriasis & penanggalan sisik keratin (20 %)",
+    "ingredients_formula": "Salicylic Acid BP 20 %, Pangkalan Krim Berair BP (Aqueous Cream BP Base / Cetomacrogol Cream BP) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-277",
@@ -4679,8 +4679,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 101, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar 1%, Salicylic Acid 2%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base)"
+    "indications": "Rawatan keratolitik topikal untuk hiperkeratosis, ekzema bersisik, psoriasis & penanggalan sisik keratin (20 %)",
+    "ingredients_formula": "Salicylic Acid BP 20 %, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-278",
@@ -4697,8 +4697,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 101, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar 1%, Salicylic Acid 2%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base)"
+    "indications": "Rawatan keratolitik topikal untuk hiperkeratosis, ekzema bersisik, psoriasis & penanggalan sisik keratin (3 %)",
+    "ingredients_formula": "Salicylic Acid BP 3 %, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-279",
@@ -4715,8 +4715,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 101, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar 1%, Salicylic Acid 2%, Pangkalan Krim Berair BP (Aqueous Cream BP Base / Cetomacrogol Cream BP)"
+    "indications": "Rawatan keratolitik topikal untuk hiperkeratosis, ekzema bersisik, psoriasis & penanggalan sisik keratin (4 %)",
+    "ingredients_formula": "Salicylic Acid BP 4 %, Pangkalan Krim Berair BP (Aqueous Cream BP Base / Cetomacrogol Cream BP) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-280",
@@ -4733,8 +4733,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 101, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar 1%, Salicylic Acid 2%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base)"
+    "indications": "Rawatan keratolitik topikal untuk hiperkeratosis, ekzema bersisik, psoriasis & penanggalan sisik keratin (4 %)",
+    "ingredients_formula": "Salicylic Acid BP 4 %, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-281",
@@ -4751,8 +4751,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 101, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar 1%, Salicylic Acid 2%, Pangkalan Krim Berair BP (Aqueous Cream BP Base / Cetomacrogol Cream BP)"
+    "indications": "Rawatan keratolitik topikal untuk hiperkeratosis, ekzema bersisik, psoriasis & penanggalan sisik keratin (5 %)",
+    "ingredients_formula": "Salicylic Acid BP 5 %, Pangkalan Krim Berair BP (Aqueous Cream BP Base / Cetomacrogol Cream BP) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-282",
@@ -4769,8 +4769,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 101, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar 1%, Salicylic Acid 2%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base)"
+    "indications": "Rawatan keratolitik topikal untuk hiperkeratosis, ekzema bersisik, psoriasis & penanggalan sisik keratin (5 %)",
+    "ingredients_formula": "Salicylic Acid BP 5 %, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-283",
@@ -4787,8 +4787,8 @@ export const KKM_GALENICAL_MASTER_DATABASE: KkmGalenicalMasterItem[] = [
     "storage_instructions": "Store below 25°C in a cool, dry place. Protect from direct sunlight.",
     "label_instructions": "FOR EXTERNAL USE ONLY. NOT TO BE TAKEN. KEEP OUT OF REACH OF CHILDREN.",
     "default_active": false,
-    "indications": "Official MOH Formulation (PhIS Ref: A-GU-107/5 Item 101, Updated 25.2.2026)",
-    "ingredients_formula": "Coal Tar 1%, Salicylic Acid 2%, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base)"
+    "indications": "Rawatan keratolitik topikal untuk hiperkeratosis, ekzema bersisik, psoriasis & penanggalan sisik keratin (6 %)",
+    "ingredients_formula": "Salicylic Acid BP 6 %, Pangkalan Salap Parafin BP (White Soft Paraffin BP / Liquid Paraffin BP Base) q.s. ad 100g"
   },
   {
     "item_code": "EXT-GAEX-287",

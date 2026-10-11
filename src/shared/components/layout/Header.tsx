@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Bell, Search, Settings, Home, Wifi, WifiOff, RefreshCw, Sun, Moon } from 'lucide-react'
+import { Bell, Search, Settings, Home, Wifi, WifiOff, RefreshCw, Sun, Moon, Menu } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useUIStore } from '@/stores/uiStore'
 import { Avatar, Badge } from '@/components/ui'
@@ -49,7 +49,7 @@ interface HeaderProps {
 export const Header: React.FC<HeaderProps> = ({ onOpenSyncDrawer }) => {
   const { isOnline, isSyncing, pendingCount } = useOfflineStatus()
   const { user } = useAuthStore()
-  const { theme, toggleTheme } = useUIStore()
+  const { theme, toggleTheme, setSidebarOpen } = useUIStore()
   const location = useLocation()
   const navigate = useNavigate()
   const { t } = useLanguage()
@@ -84,9 +84,19 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSyncDrawer }) => {
 
   return (
     <header className="fixed top-0 left-0 right-0 bg-surface/90 backdrop-blur-md border-b border-border-default text-text-primary z-30 transition-colors duration-150 header-safe-pt">
-      <div className="h-16 sm:h-20 lg:h-24 px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-2 sm:gap-4">
+      <div className="h-14 sm:h-20 lg:h-24 px-3 sm:px-6 lg:px-8 flex items-center justify-between gap-2 sm:gap-4">
         {/* Left Side - Official Government Branding */}
-        <div className="flex items-center gap-2 sm:gap-4 lg:gap-6 min-w-0">
+        <div className="flex items-center gap-1.5 sm:gap-4 lg:gap-6 min-w-0">
+          {/* Mobile Navigation Drawer Trigger */}
+          <button
+            type="button"
+            onClick={() => setSidebarOpen(true)}
+            className="lg:hidden w-10 h-10 flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-subtle active:scale-95 rounded-lg border border-transparent hover:border-border-default transition-all duration-150 min-h-[44px] min-w-[44px] -ml-1 mr-0.5 flex-shrink-0"
+            aria-label="Open Navigation Menu"
+            title="Open Navigation Menu"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
 
           {/* Jata Negara & Branding - Clickable to return home */}
           <div 
@@ -143,10 +153,10 @@ export const Header: React.FC<HeaderProps> = ({ onOpenSyncDrawer }) => {
 
         {/* Right Side */}
         <div className="flex items-center gap-1 sm:gap-2 lg:gap-3 flex-shrink-0">
-          {/* Home / Landing Page - Accessible on xs and up */}
+          {/* Home / Landing Page - Desktop & Tablet */}
           <button 
             onClick={() => navigate('/')}
-            className="hidden xs:flex w-10 h-10 sm:w-11 sm:h-11 items-center justify-center text-text-muted hover:text-text-primary hover:bg-subtle active:bg-muted-surface border border-transparent hover:border-border-default rounded-lg transition-all duration-150 flex-shrink-0 min-h-[44px] min-w-[44px]"
+            className="hidden sm:flex w-10 h-10 sm:w-11 sm:h-11 items-center justify-center text-text-muted hover:text-text-primary hover:bg-subtle active:bg-muted-surface border border-transparent hover:border-border-default rounded-lg transition-all duration-150 flex-shrink-0 min-h-[44px] min-w-[44px]"
             title="Return to Main Hub"
             aria-label="Return to Main Hub"
           >

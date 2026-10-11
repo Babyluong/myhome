@@ -8,8 +8,10 @@ import type {
   UsageTransactionType,
   DosageForm,
   PackType,
-  PackageType
+  PackageType,
+  PrepackFormulationAuditLog
 } from '../types/prepack'
+import { recordAuditLog } from '@/services/auditLogService'
 import * as XLSX from 'xlsx'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
@@ -23,9 +25,19 @@ const getActiveHospitalId = async (): Promise<string> => {
                      (session?.user?.user_metadata as any)?.hospital_id
   if (hospitalId) return hospitalId
   
+  try {
+    const rawAuth = typeof window !== 'undefined' ? (sessionStorage.getItem('home-auth-storage') || localStorage.getItem('home-auth-storage')) : null
+    if (rawAuth) {
+      const parsed = JSON.parse(rawAuth)
+      if (parsed?.state?.user?.hospital_id) {
+        return parsed.state.user.hospital_id
+      }
+    }
+  } catch {}
+
   // Fallback to first hospital record
   const { data } = await supabase.from('hospitals').select('id').limit(1).single()
-  return data?.id || '00000000-0000-0000-0000-000000000001'
+  return data?.id || '85bb6adc-b868-428b-83f4-e5af2f5cf904'
 }
 
 import { recordPrepackProductionTransaction } from './prepackKewPs4Service'
@@ -176,22 +188,180 @@ export const createPrepackItem = async (itemData: Partial<PrepackItem>): Promise
   }
 }
 
+export interface FormulationEditorInfo {
+  userId?: string | null
+  userName?: string
+  userRole?: string
+  icNumber?: string
+}
+
 /**
- * Update an existing prepack item
+ * Update an existing prepack item with strict revision tracking & audit logging
  */
-export const updatePrepackItem = async (id: string, itemData: Partial<PrepackItem>): Promise<{ data: PrepackItem | null; error: any }> => {
+export const updatePrepackItem = async (
+  id: string, 
+  itemData: Partial<PrepackItem>,
+  editorInfo?: FormulationEditorInfo,
+  customChangeSummary?: string
+): Promise<{ data: PrepackItem | null; error: any }> => {
   try {
+    // 1. Fetch current item state to compute exact revision diff
+    const { data: currentItem } = await supabase
+      .from('prepack_items')
+      .select('*')
+      .eq('id', id)
+      .single()
+
+    const updatePayload = {
+      ...itemData,
+      updated_at: new Date().toISOString()
+    }
+
     const { data, error } = await supabase
       .from('prepack_items')
-      .update(itemData)
+      .update(updatePayload)
       .eq('id', id)
       .select()
       .single()
 
     if (error) throw error
+
+    // 2. Compute modified fields and audit log deltas
+    if (currentItem && data) {
+      const changedFields: string[] = []
+      const oldValues: Record<string, any> = {}
+      const newValues: Record<string, any> = {}
+
+      const keysToTrack: (keyof PrepackItem)[] = [
+        'item_code',
+        'item_name',
+        'generic_name',
+        'pack_type',
+        'dosage_form',
+        'strength',
+        'units_per_pack',
+        'package_type',
+        'min_buffer_level',
+        'optimal_batch_size',
+        'shelf_life_months',
+        'storage_instructions',
+        'label_instructions',
+        'ingredients_formula',
+        'indications',
+        'standard_formula_breakdown',
+        'preparation_steps',
+        'equipment_required',
+        'in_process_qc',
+        'cautions_and_warnings',
+        'beyond_use_date_days',
+        'container_specs',
+        'status'
+      ]
+
+      for (const key of keysToTrack) {
+        if (key in itemData) {
+          const oldVal = (currentItem as any)[key]
+          const newVal = (itemData as any)[key]
+          if (JSON.stringify(oldVal) !== JSON.stringify(newVal)) {
+            changedFields.push(key)
+            oldValues[key] = oldVal ?? null
+            newValues[key] = newVal ?? null
+          }
+        }
+      }
+
+      if (changedFields.length > 0) {
+        // Build human readable clinical change summary
+        const humanLabels: Record<string, string> = {
+          item_code: 'Item Code',
+          item_name: 'Formulation Name',
+          generic_name: 'Generic Name',
+          dosage_form: 'Dosage Form',
+          strength: 'Strength / Concentration',
+          units_per_pack: 'Pack Size / Volume',
+          package_type: 'Packaging Container',
+          min_buffer_level: 'Min Buffer Threshold',
+          optimal_batch_size: 'Optimal Batch Size',
+          shelf_life_months: 'Shelf Life',
+          storage_instructions: 'Storage Conditions',
+          label_instructions: 'Label Instructions',
+          ingredients_formula: 'Master Formula',
+          indications: 'Clinical Indications',
+          standard_formula_breakdown: 'Ingredients Breakdown',
+          preparation_steps: 'Compounding SOP Steps',
+          equipment_required: 'Equipment Required',
+          in_process_qc: 'In-Process QC',
+          cautions_and_warnings: 'Cautions & Warnings',
+          beyond_use_date_days: 'Beyond-Use-Date (BUD)',
+          container_specs: 'Container Specs'
+        }
+
+        const summaryDesc = customChangeSummary || (
+          `Updated formulation: ` + 
+          changedFields.map(f => humanLabels[f] || f).join(', ')
+        )
+
+        const auditRow = {
+          hospital_id: data.hospital_id,
+          prepack_item_id: id,
+          user_id: editorInfo?.userId || null,
+          user_name: editorInfo?.userName || 'Hospital Pharmacist',
+          user_role: editorInfo?.userRole || 'Registered Pharmacist',
+          action: 'UPDATE',
+          changed_fields: changedFields,
+          old_values: oldValues,
+          new_values: newValues,
+          change_summary: summaryDesc,
+          created_at: new Date().toISOString()
+        }
+
+        // Insert into dedicated prepack_formulation_audit_logs table
+        const { error: auditError } = await supabase
+          .from('prepack_formulation_audit_logs')
+          .insert(auditRow)
+
+        if (auditError) {
+          console.warn('Could not record to prepack_formulation_audit_logs:', auditError)
+        }
+
+        // Mirror to central hospital audit_logs
+        recordAuditLog({
+          userId: editorInfo?.userId || undefined,
+          action: 'UPDATE_FORMULATION',
+          module: 'myprepacking',
+          entityType: 'prepack_item',
+          entityId: id,
+          oldValues,
+          newValues,
+          details: summaryDesc
+        }).catch(e => console.warn('Global audit error:', e))
+      }
+    }
+
     return { data, error: null }
   } catch (err: any) {
     console.error('Error in updatePrepackItem:', err)
+    return { data: null, error: err }
+  }
+}
+
+/**
+ * Fetch all revision audit logs for a prepack formulation
+ */
+export const getPrepackItemAuditLogs = async (
+  prepackItemId: string
+): Promise<{ data: PrepackFormulationAuditLog[] | null; error: any }> => {
+  try {
+    const { data, error } = await supabase
+      .from('prepack_formulation_audit_logs')
+      .select('*')
+      .eq('prepack_item_id', prepackItemId)
+      .order('created_at', { ascending: false })
+
+    if (error) throw error
+    return { data: data || [], error: null }
+  } catch (err: any) {
+    console.error('Error in getPrepackItemAuditLogs:', err)
     return { data: null, error: err }
   }
 }

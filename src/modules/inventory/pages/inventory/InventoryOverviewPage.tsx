@@ -32,6 +32,7 @@ import {
 import { useInventoryStore } from '../../context/InventoryStoreContext'
 import { StoreLocationSelector } from '../../components/StoreLocationSelector'
 import { isPharmacyLogisticsUser } from '@/shared/utils/inventoryRbac'
+import { Fab } from '@/shared/components/mobile/Fab'
 import type { StockLevelSummary, ExpiryItem, SlowMovingItem, StockTransaction } from '@/types/pharmacy'
 
 export const InventoryOverviewPage: React.FC = () => {
@@ -665,9 +666,16 @@ export const InventoryOverviewPage: React.FC = () => {
             )}
           </div>
         </div>
-
       </div>
 
+      {/* Mobile Floating Action Button (FAB) for fast QR action */}
+      <div className="sm:hidden">
+        <Fab
+          icon={<QrCode className="w-5 h-5" />}
+          onClick={() => navigate('/pharmacy/inventory/ledger?openScan=true')}
+          ariaLabel="QR Scan & Transaction"
+        />
+      </div>
     </div>
   )
 }

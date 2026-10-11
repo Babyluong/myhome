@@ -22,6 +22,7 @@ import { ROUTES } from '@/lib/constants'
 import { getLeaveQuotas, getLeaveApplications } from '@/modules/mystaff/services/staffService'
 import type { StaffLeaveQuota, StaffLeaveApplication } from '@/shared/types/mystaff'
 import { Button, Badge } from '@/components/ui'
+import { Fab } from '@/shared/components/mobile'
 
 export const StaffLeavePage: React.FC = () => {
   const navigate = useNavigate()
@@ -56,9 +57,9 @@ export const StaffLeavePage: React.FC = () => {
   }, [user?.id])
 
   return (
-    <div className="p-6 md:p-8 w-full space-y-8 text-slate-800">
+    <div className="w-full space-y-4 sm:space-y-6 md:space-y-8 text-slate-800">
       {/* Header Panel */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 bg-white border border-slate-100 rounded-3xl p-6 shadow-xl relative overflow-hidden">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6 bg-white border border-slate-100 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-xl relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-cyan-400 via-teal-500 to-emerald-500" />
         
         <div className="flex items-center gap-4">
@@ -247,6 +248,12 @@ export const StaffLeavePage: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Mobile Floating Action Button */}
+      <Fab 
+        onClick={() => navigate(ROUTES.STAFF_LEAVE_APPLY)} 
+        aria-label="Apply New Leave" 
+      />
     </div>
   )
 }

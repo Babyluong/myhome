@@ -38,6 +38,7 @@ import type {
   StaffReminder
 } from '@/shared/types/mystaff'
 import { Badge, Button, Skeleton, SkeletonMobileCardList, ModulePageHeader } from '@/components/ui'
+import { Fab } from '@/shared/components/mobile'
 
 export const StaffDashboardPage: React.FC = () => {
   const navigate = useNavigate()
@@ -457,6 +458,11 @@ export const StaffDashboardPage: React.FC = () => {
           </div>
         </div>
       </div>
+      {/* Mobile Floating Action Button */}
+      <Fab 
+        onClick={() => navigate(ROUTES.STAFF_MOVEMENT)} 
+        aria-label="Record Movement" 
+      />
     </div>
   )
 }

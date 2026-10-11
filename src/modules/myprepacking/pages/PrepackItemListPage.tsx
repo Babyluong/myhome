@@ -31,6 +31,7 @@ import {
 } from '../services/prepackService'
 import type { PrepackItem, PackType, CatalogCategory } from '../types/prepack'
 import { PrepackItemModal } from '../components/PrepackItemModal'
+import { PrepackItemCard } from '../components/PrepackItemCard'
 import { PrepackBatchCreateModal } from '../components/PrepackBatchCreateModal'
 import { PrepackUsageModal } from '../components/PrepackUsageModal'
 import { GalenicalPreparationMonographModal } from '../components/GalenicalPreparationMonographModal'
@@ -521,7 +522,7 @@ export const PrepackItemListPage: React.FC<PrepackItemListPageProps> = ({ mode: 
             </div>
           </div>
 
-          <div className="flex items-center gap-2 self-stretch md:self-auto justify-end shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-border-subtle">
+          <div className="flex items-center gap-2 flex-wrap self-stretch md:self-auto justify-end shrink-0 pt-2 md:pt-0 border-t md:border-t-0 border-border-subtle">
             <button
               onClick={() => handleBulkStatusChange(activeCategory, 'active')}
               disabled={loading}
@@ -558,18 +559,20 @@ export const PrepackItemListPage: React.FC<PrepackItemListPageProps> = ({ mode: 
       {/* Segmented Category Tabs with Active Count Visibility */}
       <div className="bg-subtle/80 p-1 rounded-xl border border-border-subtle flex flex-wrap gap-1 items-center">
         {[
-          { id: 'all', label: 'All Formulations', countDisplay: String(counts.all), icon: Boxes },
-          { id: 'uod', label: 'Unit of Dose (UOD)', countDisplay: String(counts.uod), icon: Boxes },
-          { id: 'prepack', label: 'Bulk Prepack', countDisplay: String(counts.prepack), icon: Package },
+          { id: 'all', label: 'All Formulations', shortLabel: 'All', countDisplay: String(counts.all), icon: Boxes },
+          { id: 'uod', label: 'Unit of Dose (UOD)', shortLabel: 'UOD', countDisplay: String(counts.uod), icon: Boxes },
+          { id: 'prepack', label: 'Bulk Prepack', shortLabel: 'Bulk Prepack', countDisplay: String(counts.prepack), icon: Package },
           { 
             id: 'internal', 
             label: 'Internal Preparations', 
+            shortLabel: 'Internal',
             countDisplay: `${counts.internalActive}/${counts.internal} Active`, 
             icon: Beaker 
           },
           { 
             id: 'external', 
             label: 'External Preparations', 
+            shortLabel: 'External',
             countDisplay: `${counts.externalActive}/${counts.external} Active`, 
             icon: ShieldAlert 
           },
@@ -580,14 +583,15 @@ export const PrepackItemListPage: React.FC<PrepackItemListPageProps> = ({ mode: 
             <button
               key={tab.id}
               onClick={() => handleSelectCategory(tab.id as CatalogCategoryFilter)}
-              className={`flex-1 min-w-[155px] px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-[0.98] ${
+              className={`flex-1 min-w-[135px] sm:min-w-[155px] px-2.5 sm:px-3.5 py-2 rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 sm:gap-2 transition-all cursor-pointer active:scale-[0.98] ${
                 isActive
                   ? 'bg-surface text-teal-700 dark:text-teal-300 shadow-xs border border-border-default'
                   : 'text-text-muted hover:text-text-primary hover:bg-subtle border border-transparent'
               }`}
             >
               <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-teal-600 dark:text-teal-400' : 'text-text-muted'}`} />
-              <span className="truncate">{tab.label}</span>
+              <span className="truncate hidden sm:inline">{tab.label}</span>
+              <span className="truncate sm:hidden">{tab.shortLabel}</span>
               <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded-full shrink-0 ${
                 isActive
                   ? 'bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/20 font-bold'
@@ -759,8 +763,27 @@ export const PrepackItemListPage: React.FC<PrepackItemListPageProps> = ({ mode: 
             )}
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+          <>
+            {/* Mobile Cards View (Zero Horizontal Scrolling) */}
+            <div className="block md:hidden divide-y divide-border-subtle">
+              {filteredItems.map(item => (
+                <PrepackItemCard
+                  key={item.id}
+                  item={item}
+                  isActive={item.status === 'active'}
+                  isToggling={togglingItemId === item.id}
+                  onToggleStatus={handleToggleItemStatus}
+                  onItemClick={handleItemNameClick}
+                  onStartBatch={handleCreateBatchForItem}
+                  onEditItem={handleEditItem}
+                  renderCategoryBadge={renderCategoryBadge}
+                />
+              ))}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-xs">
               <thead className="bg-subtle text-text-muted uppercase text-[10px] font-semibold tracking-wider border-b border-border-default">
                 <tr>
                   <th className="py-3 px-4">Code &amp; Formulation Name</th>
@@ -939,7 +962,8 @@ export const PrepackItemListPage: React.FC<PrepackItemListPageProps> = ({ mode: 
               </tbody>
             </table>
           </div>
-        )}
+        </>
+      )}
       </div>
 
       {/* Modals */}

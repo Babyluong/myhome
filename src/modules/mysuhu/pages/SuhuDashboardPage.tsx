@@ -112,7 +112,7 @@ export const SuhuDashboardPage: React.FC = () => {
 
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 w-full max-w-full overflow-x-hidden space-y-6">
+    <div className="w-full max-w-full overflow-x-hidden space-y-6">
       {/* Header Panel */}
       <ModulePageHeader
         icon={Thermometer}

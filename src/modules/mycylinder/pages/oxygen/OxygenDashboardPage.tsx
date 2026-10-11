@@ -88,6 +88,7 @@ import { DeleteDispatchConfirmModal } from '@/components/oxygen/DeleteDispatchCo
 import { DeleteCylinderModal } from '@/components/oxygen/DeleteCylinderModal'
 import { EditCylinderModal } from '@/components/oxygen/EditCylinderModal'
 import { CylinderOfflineBanner } from '@/components/oxygen/CylinderOfflineBanner'
+import { Fab } from '@/shared/components/mobile/Fab'
 import { cylinderSyncEngine } from '../../services/cylinderSyncEngine'
 import { CylinderQrTag } from '../../components/CylinderQrTag'
 import {
@@ -9265,6 +9266,19 @@ export const OxygenDashboardPage: React.FC = () => {
           onSuccess={handleEditCylinderSuccess}
           hospitalId={hospitalId}
         />
+      )}
+      {/* Mobile Floating Action Button (FAB) for fast action */}
+      {currentPath === '/pharmacy/oxygen/consumption' && (
+        <div className="sm:hidden">
+          <Fab
+            onClick={() => {
+              setUnitModalInitialMode('internal')
+              setUnitModalLockMode(true)
+              setIsUnitModalOpen(true)
+            }}
+            ariaLabel="Request Cylinders"
+          />
+        </div>
       )}
     </div>
   )

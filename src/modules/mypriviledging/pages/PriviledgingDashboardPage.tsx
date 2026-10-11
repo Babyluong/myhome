@@ -25,6 +25,7 @@ import {
   FileText,
   Award
 } from 'lucide-react';
+import { Fab } from '@/shared/components/mobile';
 
 export const PriviledgingDashboardPage: React.FC = () => {
   const navigate = useNavigate();
@@ -307,6 +308,15 @@ export const PriviledgingDashboardPage: React.FC = () => {
         onClose={() => setReviewingSubmission(null)}
         submission={reviewingSubmission}
         onRecordDecision={handleRecordReviewDecision}
+      />
+
+      {/* Mobile Floating Action Button */}
+      <Fab 
+        onClick={() => {
+          setEditingSubmission(null);
+          setIsSubmitModalOpen(true);
+        }} 
+        aria-label="Submit Clinical Procedure" 
       />
     </div>
   );

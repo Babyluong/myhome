@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useIsMobile } from '@/shared/hooks/useIsMobile'
 
 export interface ModalProps {
   isOpen: boolean
@@ -46,6 +47,7 @@ export const Modal: React.FC<ModalProps> = ({
   contentClassName,
 }) => {
   const isDark = theme === 'dark' || (typeof className === 'string' && (className.includes('dark') || className.includes('bg-[#') || className.includes('bg-gray-900') || className.includes('bg-neutral-900')))
+  const isMobile = useIsMobile(640)
 
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
@@ -73,7 +75,7 @@ export const Modal: React.FC<ModalProps> = ({
   return createPortal(
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[300] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-[300] flex items-end sm:items-center justify-center p-0 sm:p-4">
           {/* Overlay */}
           <motion.div
             initial={{ opacity: 0 }}
@@ -84,15 +86,15 @@ export const Modal: React.FC<ModalProps> = ({
             onClick={closeOnOverlayClick ? onClose : undefined}
           />
 
-          {/* Modal */}
+          {/* Modal / Bottom Sheet */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 20 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
+            initial={isMobile ? { opacity: 0, y: '100%' } : { opacity: 0, scale: 0.95, y: 20 }}
+            animate={isMobile ? { opacity: 1, y: 0 } : { opacity: 1, scale: 1, y: 0 }}
+            exit={isMobile ? { opacity: 0, y: '100%' } : { opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ type: 'spring', damping: 28, stiffness: 350 }}
             className={cn(
-              'relative w-full rounded-2xl shadow-2xl',
-              'max-h-[90vh] overflow-hidden flex flex-col',
+              'relative w-full rounded-t-2xl sm:rounded-2xl shadow-2xl',
+              'max-h-[90vh] overflow-hidden flex flex-col pb-safe sm:pb-0',
               isDark
                 ? 'bg-[#141414] text-white border border-white/[0.12] shadow-[0_20px_50px_rgba(0,0,0,0.8)]'
                 : 'bg-white text-gray-900 dark:bg-[#141414] dark:text-white dark:border dark:border-white/[0.12]',
@@ -100,11 +102,16 @@ export const Modal: React.FC<ModalProps> = ({
               className
             )}
           >
+            {/* Mobile Drag Indicator */}
+            <div className="pt-2.5 pb-1 flex justify-center sm:hidden touch-none">
+              <div className="w-10 h-1 bg-border-strong/60 rounded-full" />
+            </div>
+
             {/* Header */}
             {(title || showCloseButton) && (
               <div
                 className={cn(
-                  'flex items-start justify-between p-6 border-b',
+                  'flex items-start justify-between px-4 py-3.5 sm:p-6 border-b',
                   isDark ? 'border-white/[0.08]' : 'border-gray-100 dark:border-white/[0.08]'
                 )}
               >
@@ -112,7 +119,7 @@ export const Modal: React.FC<ModalProps> = ({
                   {title && (
                     <h2
                       className={cn(
-                        'text-xl font-semibold',
+                        'text-lg sm:text-xl font-semibold',
                         isDark ? 'text-white' : 'text-gray-900 dark:text-white'
                       )}
                     >
@@ -122,7 +129,7 @@ export const Modal: React.FC<ModalProps> = ({
                   {description && (
                     <p
                       className={cn(
-                        'mt-1 text-sm',
+                        'mt-0.5 sm:mt-1 text-xs sm:text-sm',
                         isDark ? 'text-white/50' : 'text-gray-500 dark:text-white/50'
                       )}
                     >
@@ -134,7 +141,7 @@ export const Modal: React.FC<ModalProps> = ({
                   <button
                     onClick={onClose}
                     className={cn(
-                      'p-2 -m-2 rounded-lg transition-colors',
+                      'p-1.5 sm:p-2 -m-1 sm:-m-2 rounded-lg transition-colors',
                       isDark
                         ? 'text-white/40 hover:text-white hover:bg-white/10'
                         : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:text-white/40 dark:hover:text-white dark:hover:bg-white/10'
@@ -147,7 +154,7 @@ export const Modal: React.FC<ModalProps> = ({
             )}
 
             {/* Content */}
-            <div className={cn('flex-1 overflow-y-auto p-6', contentClassName)}>{children}</div>
+            <div className={cn('flex-1 overflow-y-auto p-4 sm:p-6 native-scroll', contentClassName)}>{children}</div>
           </motion.div>
         </div>
       )}

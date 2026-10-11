@@ -520,8 +520,96 @@ export const PrepackKewPs4LedgerPage: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+          <>
+            {/* Mobile Cards View (Zero Horizontal Scrolling) */}
+            <div className="block md:hidden divide-y divide-border-subtle">
+              {filteredTransactions.map((tx, idx) => {
+                const isTransfer = tx.transaction_type === 'store_to_counter'
+                const isProduction = tx.transaction_type === 'production_prepack'
+                const isDispense = tx.transaction_type === 'counter_dispense'
+                const isBF = tx.transaction_type === 'bring_forward'
+                const isCheckFound = tx.transaction_type === 'check_found'
+                const isVerif = tx.transaction_type === 'store_verification'
+
+                return (
+                  <div key={tx.id} className="p-4 space-y-2 bg-surface text-xs">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-[10px] text-text-muted">#{idx + 1}</span>
+                        <div>
+                          <div className="font-bold text-text-primary text-xs">
+                            {new Date(tx.transaction_date).toLocaleDateString('en-GB')}
+                          </div>
+                          <div className="text-[10px] text-text-muted font-mono">
+                            {new Date(tx.transaction_date).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="text-right">
+                        {(tx.receipt_qty || 0) > 0 && (
+                          <div className="font-mono font-bold text-emerald-500 text-sm">
+                            +{tx.receipt_qty}
+                          </div>
+                        )}
+                        {(tx.issue_qty || 0) > 0 && (
+                          <div className="font-mono font-bold text-rose-500 text-sm">
+                            -{tx.issue_qty}
+                          </div>
+                        )}
+                        <div className="text-[10px] text-text-muted">
+                          Bal: <span className="font-mono font-black text-text-primary">{tx.balance_qty}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between gap-2">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-semibold ${
+                        isTransfer ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20' :
+                        isProduction ? 'bg-teal-500/10 text-teal-400 border border-teal-500/20' :
+                        isDispense ? 'bg-purple-500/10 text-purple-400 border border-purple-500/20' :
+                        isBF ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
+                        isCheckFound ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
+                        'bg-subtle text-text-muted border border-border-subtle'
+                      }`}>
+                        {isTransfer ? 'Store Transfer' :
+                         isProduction ? 'Prepack Production' :
+                         isDispense ? 'Counter Dispense' :
+                         isBF ? 'Bring Forward' :
+                         isCheckFound ? 'Check / Found' :
+                         isVerif ? 'Store Verification' : tx.transaction_type}
+                      </span>
+
+                      {tx.reference_no && (
+                        <span className="font-mono text-[11px] text-text-secondary font-semibold">
+                          Ref: {tx.reference_no}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="bg-subtle/30 rounded p-2 border border-border-subtle flex items-center justify-between text-[11px]">
+                      <div>
+                        <span className="text-text-muted">Party: </span>
+                        <span className="font-medium text-text-primary">{tx.source_destination || '-'}</span>
+                      </div>
+                      <div className="text-text-muted">
+                        Officer: <span className="font-medium text-text-primary">{tx.officer_name}</span>
+                      </div>
+                    </div>
+
+                    {(tx.remarks || tx.batch_number) && (
+                      <div className="text-[10px] text-text-muted truncate">
+                        {tx.batch_number ? `Batch: ${tx.batch_number} • ` : ''}{tx.remarks || ''}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-xs">
               <thead className="bg-subtle text-text-muted uppercase text-[10px] font-semibold tracking-wider border-b border-border-default">
                 <tr>
                   <th className="py-3 px-3 text-center">No.</th>
@@ -627,7 +715,8 @@ export const PrepackKewPs4LedgerPage: React.FC = () => {
               </tbody>
             </table>
           </div>
-        )}
+        </>
+      )}
       </div>
 
       {/* Modals */}

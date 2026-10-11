@@ -34,6 +34,7 @@ import {
   Modal 
 } from '@/components/ui'
 import QRCode from 'qrcode'
+import { Fab } from '@/shared/components/mobile'
 
 // Mock list of departments matching database seed values
 const MOCK_DEPARTMENTS = [
@@ -396,11 +397,11 @@ export const KunciRegistryPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+          <h1 className="text-2xl font-bold text-text-primary tracking-tight flex items-center gap-2">
             <Building2 className="w-7 h-7 text-amber-500" />
             Key Registry & Department Inventory
           </h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <p className="text-sm text-text-muted mt-1">
             Master registry of keys, padlocks, storage cabinets, and security clearance levels
           </p>
         </div>
@@ -888,6 +889,12 @@ export const KunciRegistryPage: React.FC = () => {
           </div>
         )}
       </Modal>
+
+      {/* Mobile Floating Action Button */}
+      <Fab 
+        onClick={handleOpenAddModal} 
+        aria-label="Register New Key" 
+      />
     </div>
   )
 }

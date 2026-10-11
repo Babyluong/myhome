@@ -187,8 +187,54 @@ export const PrepackUsageHistoryPage: React.FC = () => {
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+          <>
+            {/* Mobile Cards View (Zero Horizontal Scrolling) */}
+            <div className="block md:hidden divide-y divide-border-subtle">
+              {filteredLogs.map(log => (
+                <div key={log.id} className="p-4 space-y-2 bg-surface text-xs">
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <div className="font-bold text-text-primary text-sm">{log.prepack_item?.item_name || 'Item'}</div>
+                      <div className="text-[10px] text-text-muted mt-0.5">
+                        {new Date(log.created_at).toLocaleDateString('en-GB')} • {new Date(log.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      </div>
+                    </div>
+                    <div className="font-mono font-black text-rose-500 text-sm tabular-nums">
+                      -{log.quantity}
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-2 text-xs">
+                    <span className="font-mono text-teal-600 dark:text-teal-400 font-semibold text-[11px]">
+                      Batch: {log.batch?.batch_number || '-'}
+                    </span>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                      {log.transaction_type === 'ward_supply' ? 'Ward Supply' : log.transaction_type === 'inpatient_trolley' ? 'UOD Trolley' : log.transaction_type}
+                    </span>
+                  </div>
+
+                  <div className="bg-subtle/40 rounded-lg p-2.5 border border-border-subtle flex items-center justify-between text-xs">
+                    <div>
+                      <span className="text-[10px] text-text-muted uppercase font-semibold block">Destination</span>
+                      <span className="font-semibold text-text-primary">{log.ward_name || '-'}</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-[10px] text-text-muted uppercase font-semibold block">Recipient</span>
+                      <span className="text-text-primary font-medium">{log.recipient_name || '-'}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between text-[11px] text-text-muted pt-1 border-t border-border-subtle">
+                    <div>Issued: {log.issued_by_name || 'Pharmacy Staff'}</div>
+                    {log.reference_no && <div className="font-mono">Ref: {log.reference_no}</div>}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-xs">
               <thead className="bg-subtle/80 text-text-muted uppercase text-[10px] tracking-wider font-semibold border-b border-border-default">
                 <tr>
                   <th className="py-2.5 px-4">Date & Time</th>
@@ -259,7 +305,8 @@ export const PrepackUsageHistoryPage: React.FC = () => {
               </tbody>
             </table>
           </div>
-        )}
+        </>
+      )}
       </div>
 
       {/* Modals */}

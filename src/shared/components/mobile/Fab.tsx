@@ -9,6 +9,7 @@ export interface FabProps {
   label?: string
   icon?: React.ReactNode
   ariaLabel?: string
+  'aria-label'?: string
   className?: string
 }
 
@@ -16,10 +17,12 @@ export const Fab: React.FC<FabProps> = ({
   onClick,
   label,
   icon = <Plus className="w-5 h-5" />,
-  ariaLabel = 'Add item',
+  ariaLabel,
+  'aria-label': ariaLabelKebab,
   className,
 }) => {
   const { triggerHaptic } = useHaptic()
+  const resolvedAriaLabel = ariaLabel || ariaLabelKebab || 'Add item'
 
   const handleClick = () => {
     triggerHaptic('light')
@@ -31,9 +34,9 @@ export const Fab: React.FC<FabProps> = ({
       type="button"
       whileTap={{ scale: 0.94 }}
       onClick={handleClick}
-      aria-label={ariaLabel}
+      aria-label={resolvedAriaLabel}
       className={cn(
-        "fixed right-4 z-30 flex items-center justify-center gap-2",
+        "lg:hidden fixed right-4 z-30 flex items-center justify-center gap-2",
         "bottom-[calc(var(--tabbar-total-height)+1rem)]",
         "bg-accent-base text-accent-foreground font-semibold",
         "rounded-full shadow-lg border border-accent-active/20",

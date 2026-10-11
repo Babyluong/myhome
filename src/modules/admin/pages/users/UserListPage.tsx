@@ -33,6 +33,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { ROUTES, USER_STATUS, DEFAULT_PAGE_SIZE, PAGE_SIZE_OPTIONS, SYSTEM_ROLES } from '@/lib/constants'
 import { formatDate, cn } from '@/lib/utils'
 import { ModulePageHeader } from '@/shared/components/ui/ModulePageHeader'
+import { Fab } from '@/shared/components/mobile'
 import type { UserWithRelations, SortConfig, Role, Department, Hospital } from '@/types'
 
 export const UserListPage: React.FC = () => {
@@ -658,6 +659,12 @@ export const UserListPage: React.FC = () => {
           />
         </div>
       </motion.div>
+
+      {/* Mobile Floating Action Button */}
+      <Fab 
+        onClick={() => navigate(`${ROUTES.ADMIN_USERS}/new`)} 
+        aria-label="Add New User" 
+      />
     </div>
   )
 }

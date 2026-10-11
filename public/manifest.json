@@ -1,16 +1,16 @@
 {
   "name": "H.O.M.E. - Hospital Operation & Management Ecosystem",
   "short_name": "H.O.M.E.",
-  "description": "Hospital Operation Management Ecosystem - Kementerian Kesihatan Malaysia",
+  "description": "Hospital Operation Management Ecosystem - Ministry of Health Malaysia",
   "start_url": "/",
   "id": "/",
   "display": "standalone",
   "display_override": ["standalone", "window-controls-overlay", "minimal-ui"],
   "orientation": "portrait-primary",
-  "background_color": "#020617",
-  "theme_color": "#020617",
+  "background_color": "#18191b",
+  "theme_color": "#14b8a6",
   "scope": "/",
-  "lang": "ms",
+  "lang": "en",
   "categories": ["medical", "health", "productivity", "business"],
   "icons": [
     {
@@ -78,29 +78,29 @@
     {
       "name": "Module Hub",
       "short_name": "Hub",
-      "description": "Buka direktori modul utama H.O.M.E.",
+      "description": "Open H.O.M.E. main module directory",
       "url": "/hub",
       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "MyStaff",
       "short_name": "Staff",
-      "description": "Pengurusan Maklumat & Direktori Kakitangan",
+      "description": "Staff directory and organizational hierarchy",
       "url": "/staff",
       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "MyKunci",
       "short_name": "Kunci",
-      "description": "Pengurusan & Log Kunci Hospital",
+      "description": "Hospital key registry and transaction log",
       "url": "/kunci",
       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     },
     {
-      "name": "MyTempahan",
-      "short_name": "Tempahan",
-      "description": "Tempahan Bilik & Fasiliti",
-      "url": "/tempahan",
+      "name": "MyCylinder",
+      "short_name": "Cylinder",
+      "description": "Medical oxygen cylinder management",
+      "url": "/pharmacy/oxygen",
       "icons": [{ "src": "/icons/icon-192.png", "sizes": "192x192" }]
     }
   ]

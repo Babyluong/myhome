@@ -3,7 +3,8 @@ import { Outlet, Navigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Sidebar } from './Sidebar'
 import { Header } from './Header'
-import { BottomNav } from './BottomNav'
+import { TabBar } from '@/shared/components/mobile/TabBar'
+import { MoreSheet } from '@/shared/components/mobile/MoreSheet'
 import { ToastContainer } from '@/components/ui'
 import { OfflineBanner } from '@/shared/components/ui/OfflineBanner'
 import { OfflineSyncDrawer } from '@/shared/components/ui/OfflineSyncDrawer'
@@ -29,7 +30,7 @@ const getModuleCodeFromPath = (pathname: string): { code: string; name: string }
   if (pathname.startsWith('/crossborder')) return { code: 'crossborder', name: 'MyCrossBorder' }
   if (pathname.startsWith('/pharmacy/inventory')) return { code: 'inventory', name: 'MyInventory' }
   if (pathname.startsWith('/pharmacy')) return { code: 'pharmacy', name: 'MyWarrant' }
-  if (pathname === '/hub') return { code: 'hub', name: 'Module Hub Utama' }
+  if (pathname === '/hub') return { code: 'hub', name: 'Module Hub' }
   return { code: 'system', name: 'H.O.M.E. Ecosystem' }
 }
 
@@ -39,6 +40,7 @@ export const MainLayout: React.FC = () => {
   const location = useLocation()
   const lastLoggedPathRef = useRef<string>('')
   const [isSyncDrawerOpen, setIsSyncDrawerOpen] = useState(false)
+  const [isMoreOpen, setIsMoreOpen] = useState(false)
 
   // Background hospital data preloading for offline operational readiness
   useEffect(() => {
@@ -69,7 +71,7 @@ export const MainLayout: React.FC = () => {
         module: mod.code,
         entityType: 'page_route',
         entityId: location.pathname,
-        details: `Kakitangan ${user.full_name} (${user.employee_id || 'ID'}) membuka modul ${mod.name} di ${location.pathname}.`,
+        details: `Staff ${user.full_name} (${user.employee_id || 'ID'}) accessed module ${mod.name} at ${location.pathname}.`,
       }).catch((err) => {
         console.warn('Navigation audit log skipped:', err)
       })
@@ -84,7 +86,7 @@ export const MainLayout: React.FC = () => {
       <div className="min-h-screen flex items-center justify-center bg-canvas">
         <div className="text-center">
           <div className="w-12 h-12 border-3 border-teal-500/20 border-t-teal-600 rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-xs font-semibold text-text-muted tracking-wide uppercase">Memuatkan H.O.M.E. Ecosystem...</p>
+          <p className="text-xs font-semibold text-text-muted tracking-wide uppercase">Loading H.O.M.E. Ecosystem...</p>
         </div>
       </div>
     )
@@ -108,13 +110,20 @@ export const MainLayout: React.FC = () => {
         {/* Offline & Sync Status Banner */}
         <OfflineBanner onOpenDrawer={() => setIsSyncDrawerOpen(true)} />
 
-        <main className="flex-1 w-full max-w-full min-w-0 overflow-x-hidden overflow-y-auto p-3 sm:p-5 md:p-6 pb-24 lg:pb-8 bg-canvas text-primary transition-colors duration-150">
+        <main className="flex-1 w-full max-w-full min-w-0 overflow-x-hidden overflow-y-auto p-3 sm:p-5 md:p-6 pb-[calc(var(--tabbar-total-height)+1.5rem)] lg:pb-8 bg-canvas text-primary transition-colors duration-150">
           <Outlet />
         </main>
       </div>
 
-      {/* Mobile Bottom Navigation Bar (Thumb Zone) */}
-      <BottomNav onOpenSyncDrawer={() => setIsSyncDrawerOpen(true)} />
+      {/* Mobile Bottom Navigation Bar (Contextual Thumb Zone) */}
+      <TabBar onOpenMore={() => setIsMoreOpen(true)} isMoreOpen={isMoreOpen} />
+
+      {/* Mobile More Sheet */}
+      <MoreSheet
+        isOpen={isMoreOpen}
+        onClose={() => setIsMoreOpen(false)}
+        onOpenSyncDrawer={() => setIsSyncDrawerOpen(true)}
+      />
 
       {/* Offline Sync Detailed Drawer */}
       <OfflineSyncDrawer isOpen={isSyncDrawerOpen} onClose={() => setIsSyncDrawerOpen(false)} />

@@ -41,6 +41,7 @@ import { QuotaProgressBar } from '../components/QuotaProgressBar'
 import { ROUTES } from '@/lib/constants'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { ModulePageHeader } from '@/shared/components/ui'
+import { Fab } from '@/shared/components/mobile'
 
 type SortField = 'genericName' | 'prescriberCategory' | 'atcCode'
 type SortOrder = 'asc' | 'desc'
@@ -135,7 +136,7 @@ export const FormulariDashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8 w-full space-y-6">
+    <div className="w-full space-y-6">
       {/* Standardized Module Header */}
       <ModulePageHeader
         icon={Search}
@@ -583,6 +584,12 @@ export const FormulariDashboardPage: React.FC = () => {
         isOpen={isInteractionModalOpen}
         onClose={() => setIsInteractionModalOpen(false)}
         allDrugs={allDrugs}
+      />
+
+      {/* Mobile Floating Action Button */}
+      <Fab 
+        onClick={() => setIsInteractionModalOpen(true)} 
+        aria-label="Check Drug Interactions" 
       />
     </div>
   )

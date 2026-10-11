@@ -32,6 +32,7 @@ import {
 } from '@/modules/mytimeoff/services/toilService'
 import type { ToilClaim, ToilBalance, ToilDashboardStats } from '@/shared/types/mytimeoff'
 import { Button, Badge, Skeleton, SkeletonTable, SkeletonMobileCardList, ModulePageHeader } from '@/components/ui'
+import { Fab } from '@/shared/components/mobile'
 
 export const TimeOffDashboardPage: React.FC = () => {
   const navigate = useNavigate()
@@ -624,6 +625,12 @@ export const TimeOffDashboardPage: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Mobile Floating Action Button */}
+      <Fab 
+        onClick={() => navigate(ROUTES.TIMEOFF_CLAIM_NEW)} 
+        aria-label="Submit Time Off Claim" 
+      />
     </div>
   )
 }

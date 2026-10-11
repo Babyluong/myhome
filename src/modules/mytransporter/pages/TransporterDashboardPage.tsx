@@ -32,6 +32,7 @@ import {
   Badge,
   ModulePageHeader 
 } from '@/components/ui'
+import { Fab } from '@/shared/components/mobile'
 
 const TransporterDashboardPage: React.FC = () => {
   const navigate = useNavigate()
@@ -514,6 +515,12 @@ const TransporterDashboardPage: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Mobile Floating Action Button */}
+      <Fab 
+        onClick={() => navigate('/transporter/requests/new')} 
+        aria-label="New Trip Request" 
+      />
     </div>
   )
 }

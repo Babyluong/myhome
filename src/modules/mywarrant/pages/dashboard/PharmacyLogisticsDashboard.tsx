@@ -334,12 +334,12 @@ export const PharmacyLogisticsDashboard: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8 p-6 pt-10">
+    <div className="space-y-5 sm:space-y-8 p-0 sm:p-4 md:p-6">
       {/* Welcome Header - Photo 2 Target */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative overflow-hidden bg-gradient-to-br from-[#00a68a] via-[#00c2a0] to-[#10b981] rounded-3xl px-8 py-6 text-white shadow-lg border-none"
+        className="relative overflow-hidden bg-gradient-to-br from-[#00a68a] via-[#00c2a0] to-[#10b981] rounded-2xl sm:rounded-3xl p-4 sm:px-8 sm:py-6 text-white shadow-md border-none"
       >
         {/* Background pattern */}
         <div className="absolute inset-0 opacity-10 pointer-events-none">
@@ -390,7 +390,7 @@ export const PharmacyLogisticsDashboard: React.FC = () => {
           </div>
           Key Metrics
         </h2>
-        <div className="bg-white p-8 rounded-[2.5rem] border border-gray-200 shadow-xl">
+        <div className="bg-surface p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border border-border-default shadow-xs">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <StatCard
               title="Total Inventory Items"

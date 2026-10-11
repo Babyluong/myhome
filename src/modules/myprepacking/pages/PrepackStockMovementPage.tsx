@@ -249,8 +249,52 @@ export const PrepackStockMovementPage: React.FC = () => {
               </button>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
+            <>
+              {/* Mobile Cards View (Zero Horizontal Scrolling) */}
+              <div className="block md:hidden divide-y divide-border-subtle">
+                {filteredTransfers.map(trf => (
+                  <div key={trf.id} className="p-4 space-y-2.5 bg-surface text-xs">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <div className="font-mono font-bold text-blue-500 text-sm">{trf.transfer_number}</div>
+                        <div className="text-[10px] text-text-muted mt-0.5">
+                          {new Date(trf.transfer_date).toLocaleDateString('en-GB')} • {new Date(trf.created_at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+                        </div>
+                      </div>
+                      <div className="font-mono font-black text-blue-500 text-sm tabular-nums">
+                        +{trf.quantity_transferred.toLocaleString()} units
+                      </div>
+                    </div>
+
+                    <div className="bg-subtle/40 rounded-lg p-2.5 border border-border-subtle">
+                      <div className="font-bold text-text-primary text-xs">{trf.prepack_item?.item_name || 'Item'}</div>
+                      <div className="text-[11px] text-text-muted mt-0.5">{trf.prepack_item?.dosage_form} • {trf.prepack_item?.strength}</div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2 text-[11px]">
+                      <div className="bg-subtle/30 rounded p-2 border border-border-subtle">
+                        <span className="text-[10px] text-text-muted block font-semibold">Store Stock</span>
+                        <span className="font-mono text-text-muted">{trf.store_stock_before} &rarr; </span>
+                        <span className="font-mono font-bold text-text-primary">{trf.store_stock_after}</span>
+                      </div>
+                      <div className="bg-subtle/30 rounded p-2 border border-border-subtle">
+                        <span className="text-[10px] text-amber-500 block font-semibold">Counter Stock</span>
+                        <span className="font-mono text-amber-500">{trf.counter_stock_before} &rarr; </span>
+                        <span className="font-mono font-bold text-amber-400">{trf.counter_stock_after}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] text-text-secondary pt-1 border-t border-border-subtle">
+                      <div>Officer: <span className="font-medium text-text-primary">{trf.transferred_by_name}</span></div>
+                      {trf.reference_no && <div className="font-mono text-teal-600 dark:text-teal-400 font-bold">{trf.reference_no}</div>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left text-xs">
                 <thead className="bg-subtle/80 text-text-muted uppercase font-semibold border-b border-border-default">
                   <tr>
                     <th className="py-3 px-4">Date & Time</th>
@@ -316,7 +360,8 @@ export const PrepackStockMovementPage: React.FC = () => {
                 </tbody>
               </table>
             </div>
-          )}
+          </>
+        )}
         </div>
       )}
 
@@ -334,8 +379,54 @@ export const PrepackStockMovementPage: React.FC = () => {
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
+            <>
+              {/* Mobile Cards View (Zero Horizontal Scrolling) */}
+              <div className="block md:hidden divide-y divide-border-subtle">
+                {filteredUsage.map(log => (
+                  <div key={log.id} className="p-4 space-y-2.5 bg-surface text-xs">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <div className="font-bold text-text-primary text-sm">{log.prepack_item?.item_name || 'Item'}</div>
+                        <div className="text-[10px] text-text-muted mt-0.5">
+                          {new Date(log.created_at).toLocaleDateString('en-GB')} • {new Date(log.created_at).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}
+                        </div>
+                      </div>
+                      <div className="font-mono font-black text-rose-500 text-sm tabular-nums">
+                        -{log.quantity} packs
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between gap-2 text-xs">
+                      <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                        {log.transaction_type === 'ward_supply' ? 'Ward Supply' : log.transaction_type === 'inpatient_trolley' ? 'UOD Trolley' : log.transaction_type}
+                      </span>
+                      <span className="font-mono text-teal-600 dark:text-teal-400 font-semibold text-[11px]">
+                        Batch: {log.batch?.batch_number || '-'}
+                      </span>
+                    </div>
+
+                    <div className="bg-subtle/30 rounded-lg p-2.5 border border-border-subtle flex items-center justify-between text-xs">
+                      <div>
+                        <span className="text-[10px] text-text-muted uppercase font-semibold block">Destination</span>
+                        <span className="font-semibold text-text-primary">{log.ward_name || '-'}</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[10px] text-text-muted uppercase font-semibold block">Recipient</span>
+                        <span className="text-text-primary font-medium">{log.recipient_name || '-'}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] text-text-muted pt-1 border-t border-border-subtle">
+                      <div>Issued: {log.issued_by_name || 'Pharmacist'}</div>
+                      {log.reference_no && <div className="font-mono">Ref: {log.reference_no}</div>}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Desktop Table View */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left text-xs">
                 <thead className="bg-subtle/80 text-text-muted uppercase font-semibold border-b border-border-default">
                   <tr>
                     <th className="py-3 px-4">Date & Time</th>
@@ -406,7 +497,8 @@ export const PrepackStockMovementPage: React.FC = () => {
                 </tbody>
               </table>
             </div>
-          )}
+          </>
+        )}
         </div>
       )}
 

@@ -48,16 +48,16 @@ export default defineConfig({
       manifest: {
         name: 'H.O.M.E. - Hospital Operation & Management Ecosystem',
         short_name: 'H.O.M.E.',
-        description: 'Hospital Operation Management Ecosystem - Kementerian Kesihatan Malaysia',
+        description: 'Hospital Operation Management Ecosystem - Ministry of Health Malaysia',
         start_url: '/',
         id: '/',
         display: 'standalone',
         display_override: ['standalone', 'window-controls-overlay', 'minimal-ui'],
         orientation: 'portrait-primary',
-        background_color: '#020617',
-        theme_color: '#020617',
+        background_color: '#18191b',
+        theme_color: '#14b8a6',
         scope: '/',
-        lang: 'ms',
+        lang: 'en',
         categories: ['medical', 'health', 'productivity', 'business'],
         icons: [
           {

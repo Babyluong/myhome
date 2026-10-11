@@ -81,6 +81,13 @@ export interface PrepackItem {
   label_instructions?: string | null
   ingredients_formula?: string | null
   indications?: string | null
+  standard_formula_breakdown?: PrepackFormulationIngredient[] | null
+  preparation_steps?: string[] | null
+  equipment_required?: string[] | null
+  in_process_qc?: string[] | null
+  cautions_and_warnings?: string[] | null
+  beyond_use_date_days?: number | null
+  container_specs?: string | null
   counter_raw_stock: number // Loose bulk units transferred from store into counter
   status: 'active' | 'inactive' | 'discontinued'
   created_by?: string | null
@@ -94,6 +101,27 @@ export interface PrepackItem {
   needs_repack?: boolean
   near_expiry_count?: number
   batches?: PrepackBatch[]
+}
+
+export interface PrepackFormulationIngredient {
+  name: string
+  quantity: string
+  function?: string
+}
+
+export interface PrepackFormulationAuditLog {
+  id: string
+  hospital_id: string
+  prepack_item_id: string
+  user_id?: string | null
+  user_name: string
+  user_role?: string | null
+  action: string
+  changed_fields: string[]
+  old_values: Record<string, any>
+  new_values: Record<string, any>
+  change_summary: string
+  created_at: string
 }
 
 export interface PrepackBatch {

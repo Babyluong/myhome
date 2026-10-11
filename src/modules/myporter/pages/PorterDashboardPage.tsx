@@ -28,6 +28,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import { Card, CardHeader, CardTitle, CardContent, Button, Badge, ModulePageHeader } from '@/components/ui'
 import { Skeleton } from '@/shared/components/ui/skeleton'
+import { Fab } from '@/shared/components/mobile'
 import { 
   getPorterStats, 
   getPorterJobs, 
@@ -546,6 +547,12 @@ export const PorterDashboardPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Mobile Floating Action Button */}
+      <Fab 
+        onClick={() => navigate('/porter/requests/new')} 
+        aria-label="Request Porter" 
+      />
     </div>
   )
 }

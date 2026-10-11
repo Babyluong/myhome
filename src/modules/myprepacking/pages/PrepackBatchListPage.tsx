@@ -16,6 +16,7 @@ import {
 import { getPrepackBatches, getPrepackItems } from '../services/prepackService'
 import type { PrepackBatch, PrepackItem } from '../types/prepack'
 import { PrepackBatchCreateModal } from '../components/PrepackBatchCreateModal'
+import { PrepackBatchCard } from '../components/PrepackBatchCard'
 import { PrepackLabelPrintModal } from '../components/PrepackLabelPrintModal'
 import { PrepackUsageModal } from '../components/PrepackUsageModal'
 import { useToast } from '@/stores/toastStore'
@@ -169,8 +170,28 @@ export const PrepackBatchListPage: React.FC = () => {
             </div>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+          <>
+            {/* Mobile Cards View (Zero Horizontal Scrolling) */}
+            <div className="block md:hidden divide-y divide-border-subtle">
+              {filteredBatches.map(batch => (
+                <PrepackBatchCard
+                  key={batch.id}
+                  batch={batch}
+                  onPrintLabel={b => {
+                    setSelectedBatchForLabel(b)
+                    setLabelModalOpen(true)
+                  }}
+                  onIssueStock={b => {
+                    setSelectedBatchForUsage(b)
+                    setUsageModalOpen(true)
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* Desktop Table View */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-xs">
               <thead className="bg-subtle text-text-muted uppercase text-[10px] font-semibold tracking-wider border-b border-border-default">
                 <tr>
                   <th className="py-3 px-4">Prepack Batch No.</th>
@@ -297,7 +318,8 @@ export const PrepackBatchListPage: React.FC = () => {
               </tbody>
             </table>
           </div>
-        )}
+        </>
+      )}
       </div>
 
       {/* Modals */}

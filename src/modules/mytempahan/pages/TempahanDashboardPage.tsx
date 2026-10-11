@@ -42,6 +42,7 @@ import { BookingDetailDrawer } from '../components/BookingDetailDrawer'
 import { cn } from '@/lib/utils'
 import { ModulePageHeader, Button, Badge } from '@/components/ui'
 import { Skeleton, SkeletonCard, SkeletonTable, SkeletonMobileCardList } from '@/shared/components/ui/skeleton'
+import { Fab } from '@/shared/components/mobile'
 
 export const TempahanDashboardPage: React.FC = () => {
   const navigate = useNavigate()
@@ -612,6 +613,12 @@ export const TempahanDashboardPage: React.FC = () => {
         booking={selectedBooking}
         isOpen={drawerOpen}
         onClose={() => setDrawerOpen(false)}
+      />
+
+      {/* Mobile Floating Action Button */}
+      <Fab 
+        onClick={() => navigate(ROUTES.TEMPAHAN_REQUEST_NEW)} 
+        aria-label="New Facility Booking" 
       />
     </div>
   )

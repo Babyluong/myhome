@@ -34,6 +34,7 @@ import { PrepackKpiCards } from '../components/PrepackKpiCards'
 import { CriticalPrepackQueue } from '../components/CriticalPrepackQueue'
 import { RecentBatchesPanel } from '../components/RecentBatchesPanel'
 import { useToast } from '@/stores/toastStore'
+import { Fab } from '@/shared/components/mobile'
 
 export const PrepackDashboardPage: React.FC = () => {
   const navigate = useNavigate()
@@ -275,6 +276,15 @@ export const PrepackDashboardPage: React.FC = () => {
         isOpen={labelModalOpen}
         onClose={() => setLabelModalOpen(false)}
         batch={selectedBatchForLabel}
+      />
+
+      {/* Mobile Floating Action Button */}
+      <Fab 
+        onClick={() => {
+          setPreselectedItemIdForBatch(undefined)
+          setBatchModalOpen(true)
+        }} 
+        aria-label="New Prepack Batch" 
       />
     </div>
   )

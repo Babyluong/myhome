@@ -17,10 +17,13 @@ import {
   BookOpen,
   FlaskConical,
   Scale,
-  Sparkles
+  Sparkles,
+  Calculator,
+  History
 } from 'lucide-react'
 import type { PrepackItem } from '../types/prepack'
 import { getGalenicalMonograph } from '../data/kkmGalenicalMasterDatabase'
+import { FormulationAuditHistoryTab } from './formulationEditor/FormulationAuditHistoryTab'
 
 interface GalenicalPreparationMonographModalProps {
   isOpen: boolean
@@ -30,7 +33,7 @@ interface GalenicalPreparationMonographModalProps {
   onStartBatch?: (item: PrepackItem) => void
 }
 
-type TabKey = 'all' | 'formula' | 'steps' | 'qc'
+type TabKey = 'all' | 'formula' | 'steps' | 'qc' | 'revisions'
 
 export const GalenicalPreparationMonographModal: React.FC<GalenicalPreparationMonographModalProps> = ({
   isOpen,
@@ -41,10 +44,95 @@ export const GalenicalPreparationMonographModal: React.FC<GalenicalPreparationMo
 }) => {
   const [activeTab, setActiveTab] = useState<TabKey>('all')
 
+  const isSemiSolid = useMemo(() => {
+    if (!item) return false
+    const df = (item.dosage_form || '').toLowerCase()
+    return df === 'ointment' || df === 'cream' || df === 'paste' || df === 'gel'
+  }, [item])
+
+  const defaultBatchSize = useMemo(() => {
+    return isSemiSolid ? 50 : 100
+  }, [isSemiSolid])
+
+  const [batchSize, setBatchSize] = useState<number>(50)
+  const batchUnit = isSemiSolid ? 'g' : 'mL'
+
+  React.useEffect(() => {
+    setBatchSize(isSemiSolid ? 50 : 100)
+  }, [item?.id, isSemiSolid])
+
   const monograph = useMemo(() => {
     if (!item) return null
     return getGalenicalMonograph(item)
   }, [item])
+
+  const scaledFormula = useMemo(() => {
+    if (!monograph) return []
+    const breakdown = monograph.standard_formula_breakdown
+    const size = batchSize > 0 ? batchSize : defaultBatchSize
+
+    let totalApiPct = 0
+    const ingredientData = breakdown.map(ing => {
+      const pctMatch = ing.quantity.match(/(\d+(?:\.\d+)?)\s*%/i)
+      const gramsMatch = ing.quantity.match(/(\d+(?:\.\d+)?)\s*g\b/i)
+      const mlMatch = ing.quantity.match(/(\d+(?:\.\d+)?)\s*ml\b/i)
+      let pct: number | null = null
+
+      if (pctMatch) {
+        pct = parseFloat(pctMatch[1])
+        totalApiPct += pct
+      }
+      return { ing, pct, gramsMatch, mlMatch }
+    })
+
+    return ingredientData.map(({ ing, pct, gramsMatch, mlMatch }) => {
+      let scaledQty = ing.quantity
+      const lowerName = ing.name.toLowerCase()
+      const isBase = lowerName.includes('paraffin') || 
+                    lowerName.includes('salap') || 
+                    lowerName.includes('ointment base') || 
+                    lowerName.includes('cream base') || 
+                    lowerName.includes('wsp') || 
+                    lowerName.includes('krim berair') || 
+                    lowerName.includes('purified water') ||
+                    lowerName.includes('air suling') ||
+                    lowerName.includes('vehicle') ||
+                    lowerName.includes('pembawa')
+
+      if (pct !== null) {
+        const calcWeight = (size * (pct / 100))
+        const formatted = calcWeight < 1 ? calcWeight.toFixed(3) : calcWeight.toFixed(2)
+        scaledQty = `${formatted} ${batchUnit}`
+      } else if (isBase) {
+        if (totalApiPct > 0 && totalApiPct < 100) {
+          const baseWeight = (size * ((100 - totalApiPct) / 100))
+          const formatted = baseWeight < 1 ? baseWeight.toFixed(3) : baseWeight.toFixed(2)
+          scaledQty = `${formatted} ${batchUnit} (q.s. to ${size} ${batchUnit})`
+        } else if (gramsMatch) {
+          const baseMaster = parseFloat(gramsMatch[1])
+          const masterYield = baseMaster > 100 ? 1000 : 100
+          const calcWeight = (baseMaster * (size / masterYield))
+          scaledQty = `${calcWeight.toFixed(2)} ${batchUnit} (q.s. to ${size} ${batchUnit})`
+        } else {
+          scaledQty = `q.s. to ${size} ${batchUnit}`
+        }
+      } else if (gramsMatch) {
+        const masterWeight = parseFloat(gramsMatch[1])
+        const masterYield = masterWeight > 50 ? 1000 : 100
+        const calc = (masterWeight * (size / masterYield))
+        scaledQty = `${calc.toFixed(2)} g`
+      } else if (mlMatch) {
+        const masterMl = parseFloat(mlMatch[1])
+        const calc = (masterMl * (size / 1000))
+        scaledQty = `${calc.toFixed(2)} mL`
+      }
+
+      return {
+        ...ing,
+        scaledQuantity: scaledQty
+      }
+    })
+  }, [monograph, batchSize, defaultBatchSize, batchUnit])
 
   if (!isOpen || !item || !monograph) return null
 
@@ -126,7 +214,8 @@ export const GalenicalPreparationMonographModal: React.FC<GalenicalPreparationMo
               { id: 'all', label: 'All Information', icon: Layers },
               { id: 'formula', label: 'Formula & Ingredients', icon: FlaskConical },
               { id: 'steps', label: 'Compounding SOP Steps', icon: BookOpen },
-              { id: 'qc', label: 'Quality Control & Labelling', icon: ShieldAlert }
+              { id: 'qc', label: 'Quality Control & Labelling', icon: ShieldAlert },
+              { id: 'revisions', label: 'Revision History', icon: History }
             ].map(tab => {
               const Icon = tab.icon
               const active = activeTab === tab.id
@@ -187,50 +276,112 @@ export const GalenicalPreparationMonographModal: React.FC<GalenicalPreparationMo
             </div>
           )}
 
-          {/* Section: Master Formula Breakdown */}
+          {/* Section: Master Formula Breakdown & Interactive Batch Scaler */}
           {(activeTab === 'all' || activeTab === 'formula') && (
             <div className="rounded-xl border border-border-default overflow-hidden bg-surface shadow-xs print:border-neutral-400">
-              <div className="bg-subtle px-4 py-2.5 border-b border-border-default flex items-center justify-between">
+              <div className="bg-subtle px-4 py-3 border-b border-border-default flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
                   <FlaskConical className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-text-primary">
-                    Official Master Formula Breakdown (KKM GPP)
-                  </h3>
+                  <div>
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-text-primary">
+                      Official Master Formula & Batch Scaler (KKM GPP)
+                    </h3>
+                    <p className="text-[10px] text-text-muted mt-0.5">
+                      British Pharmacopoeia & MOH Extemporaneous Compounding Guidelines
+                    </p>
+                  </div>
                 </div>
-                <span className="text-[11px] text-text-muted font-medium">
-                  Standard Quantity / Per Batch
-                </span>
+
+                {/* Batch Scaler Controls */}
+                <div className="flex items-center gap-2 print:hidden">
+                  <div className="flex items-center gap-1.5 bg-canvas px-2.5 py-1 rounded-lg border border-border-default">
+                    <span className="text-[11px] text-text-secondary font-semibold flex items-center gap-1">
+                      <Calculator className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                      Target Batch:
+                    </span>
+                    <div className="flex items-center gap-1">
+                      {(isSemiSolid ? [50, 100, 200, 500] : [60, 100, 500, 1000]).map(preset => (
+                        <button
+                          key={preset}
+                          type="button"
+                          onClick={() => setBatchSize(preset)}
+                          className={`px-2 py-0.5 text-[10px] font-mono rounded font-semibold transition-all cursor-pointer ${
+                            batchSize === preset
+                              ? 'bg-teal-700 text-white shadow-xs'
+                              : 'text-text-muted hover:text-text-primary hover:bg-subtle'
+                          }`}
+                        >
+                          {preset}{batchUnit}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="flex items-center gap-1 pl-1 border-l border-border-subtle">
+                      <input
+                        type="number"
+                        min={1}
+                        max={5000}
+                        value={batchSize || ''}
+                        onChange={e => setBatchSize(Math.max(1, parseFloat(e.target.value) || 0))}
+                        className="w-14 px-1.5 py-0.5 text-[11px] font-mono font-bold text-right bg-surface border border-border-default rounded text-text-primary focus:outline-none focus:ring-1 focus:ring-teal-500"
+                        title="Enter custom batch size"
+                      />
+                      <span className="text-[11px] font-mono font-semibold text-text-muted">{batchUnit}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs">
                   <thead className="bg-subtle/80 text-text-muted border-b border-border-default font-semibold uppercase text-[10px] tracking-wider">
                     <tr>
-                      <th className="py-2.5 px-4 w-12 text-center">No</th>
-                      <th className="py-2.5 px-4">Pharmaceutical Ingredient (BP/USP Grade)</th>
-                      <th className="py-2.5 px-4 w-36 font-mono text-right">Formula Quantity</th>
-                      <th className="py-2.5 px-4 w-56">Role / Function</th>
+                      <th className="py-2.5 px-3 w-10 text-center">No</th>
+                      <th className="py-2.5 px-3">Pharmaceutical Ingredient (BP/USP Grade)</th>
+                      <th className="py-2.5 px-3 w-36 font-mono text-right">Master Reference</th>
+                      <th className="py-2.5 px-3 w-44 font-mono text-right bg-teal-500/10 text-teal-800 dark:text-teal-200">
+                        Weighed Amount ({batchSize} {batchUnit})
+                      </th>
+                      <th className="py-2.5 px-3 w-52">Role / Function</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border-subtle font-medium text-text-secondary">
-                    {monograph.standard_formula_breakdown.map((ingredient, idx) => (
+                    {scaledFormula.map((ingredient, idx) => (
                       <tr key={idx} className="hover:bg-subtle/50 transition-colors">
-                        <td className="py-2.5 px-4 text-center font-mono text-text-muted">
+                        <td className="py-2.5 px-3 text-center font-mono text-text-muted">
                           {idx + 1}
                         </td>
-                        <td className="py-2.5 px-4 font-bold text-text-primary">
+                        <td className="py-2.5 px-3 font-bold text-text-primary">
                           {ingredient.name}
                         </td>
-                        <td className="py-2.5 px-4 text-right font-mono font-bold text-teal-600 dark:text-teal-400">
+                        <td className="py-2.5 px-3 text-right font-mono text-text-muted text-[11px]">
                           {ingredient.quantity}
                         </td>
-                        <td className="py-2.5 px-4 text-text-muted text-[11px]">
+                        <td className="py-2.5 px-3 text-right font-mono font-bold text-teal-600 dark:text-teal-400 bg-teal-500/5">
+                          {ingredient.scaledQuantity}
+                        </td>
+                        <td className="py-2.5 px-3 text-text-muted text-[11px]">
                           {ingredient.function || 'Pharmaceutical Excipient'}
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
+              </div>
+
+              {/* Compounding Calculation & Preparation Guidance Callout */}
+              <div className="p-3.5 bg-teal-500/5 border-t border-border-subtle text-xs flex items-start gap-2.5 text-text-secondary">
+                <Info className="w-4 h-4 text-teal-600 dark:text-teal-400 shrink-0 mt-0.5" />
+                <div className="space-y-1 w-full">
+                  <div className="font-semibold text-text-primary text-[11px] flex items-center justify-between">
+                    <span>Extemporaneous Ratio Preparation Law (KKM GPP & British Pharmacopoeia)</span>
+                    <span className="font-mono text-[10px] text-teal-600 dark:text-teal-400 bg-teal-500/10 px-1.5 py-0.5 rounded border border-teal-500/20">
+                      Standard Master Yield: 100 {batchUnit} (100% w/w)
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-text-muted leading-relaxed">
+                    A percentage concentration (e.g. 6% w/w) indicates 6 parts active API per 100 parts total batch. To prepare any target batch of <span className="font-mono font-bold text-teal-600 dark:text-teal-400">{batchSize} {batchUnit}</span>, weigh each component using the exact mathematical equation: <code className="px-1.5 py-0.5 bg-subtle rounded border border-border-default font-mono text-[10px]">Weight = {batchSize}{batchUnit} × (% / 100)</code> and make up the final yield with ointment base to exactly <span className="font-mono font-bold">{batchSize} {batchUnit}</span>.
+                  </p>
+                </div>
               </div>
             </div>
           )}
@@ -353,6 +504,13 @@ export const GalenicalPreparationMonographModal: React.FC<GalenicalPreparationMo
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* Section: Revision History Audit Trail */}
+          {activeTab === 'revisions' && (
+            <div className="space-y-4">
+              <FormulationAuditHistoryTab prepackItemId={item?.id} />
             </div>
           )}
 

@@ -28,6 +28,7 @@ import { supabase } from '@/services/supabase'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Skeleton, SkeletonCard } from '@/shared/components/ui/skeleton'
 import { ModulePageHeader } from '@/components/ui'
+import { Fab } from '@/shared/components/mobile'
 
 // Detail Tabs & Components
 import { PengurusanBudgetTab } from './tabs/PengurusanBudgetTab'
@@ -648,6 +649,12 @@ export const MyPerolehanDashboard: React.FC<MyPerolehanDashboardProps> = ({ init
           onClose={() => setIsAddWarrantOpen(false)}
           onSuccess={fetchDashboardData}
           initialType={warrantInitialType}
+        />
+
+        {/* Mobile Floating Action Button */}
+        <Fab 
+          onClick={() => openCreatePOWithPreset('020200')} 
+          aria-label="New Purchase Order" 
         />
       </div>
   )

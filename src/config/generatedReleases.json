@@ -1,17 +1,23 @@
 {
   "version": "v2.6.1",
-  "buildTime": "2026-10-10T16:55:56.637Z",
-  "commitHash": "79cb6cd",
-  "fullCommitHash": "79cb6cda15dc6a0cc6fd066eadef1195804356dd",
+  "buildTime": "2026-10-11T01:55:36.260Z",
+  "commitHash": "c3250d0",
+  "fullCommitHash": "c3250d0371194f9e8acfad06682ca2658ab5f218",
   "branch": "refactor/module-folders",
-  "latestCommitDate": "2026-10-11T00:55:44+08:00",
-  "latestCommitMessage": "build(release): sync v2.6.1 version metadata and cache buster",
+  "latestCommitDate": "2026-10-11T08:04:14+08:00",
+  "latestCommitMessage": "feat(mobile): add shared mobile components",
   "releases": [
+    {
+      "id": "release-c3250d0",
+      "version_tag": "build-c3250d0",
+      "title": "Latest Production Deployment: feat(mobile): add shared mobile components",
+      "created_at": "2026-10-11T08:04:14+08:00"
+    },
     {
       "id": "release-v2-6-1",
       "version_tag": "v2.6.1",
       "title": "System Release & Production Deployment Sync v2.6.1",
-      "created_at": "2026-10-10T16:55:56.636Z"
+      "created_at": "2026-10-11T01:55:36.260Z"
     },
     {
       "id": "release-v2-6-0",
@@ -51,6 +57,27 @@
     }
   ],
   "recentCommits": [
+    {
+      "hash": "c3250d0371194f9e8acfad06682ca2658ab5f218",
+      "shortHash": "c3250d0",
+      "author": "Lawas@2025",
+      "date": "2026-10-11T08:04:14+08:00",
+      "message": "feat(mobile): add shared mobile components"
+    },
+    {
+      "hash": "326c7b435950ca61da031a43ca9c4b6fc9599554",
+      "shortHash": "326c7b4",
+      "author": "Lawas@2025",
+      "date": "2026-10-11T08:03:58+08:00",
+      "message": "feat(shared): include shared mobile touch hooks and configuration"
+    },
+    {
+      "hash": "f0e54e569b332b7181b34b828b78903b8b238e5d",
+      "shortHash": "f0e54e5",
+      "author": "Lawas@2025",
+      "date": "2026-10-11T08:03:41+08:00",
+      "message": "chore(build): finalize release metadata and cache buster"
+    },
     {
       "hash": "79cb6cda15dc6a0cc6fd066eadef1195804356dd",
       "shortHash": "79cb6cd",
@@ -169,27 +196,6 @@
       "author": "Lawas@2025",
       "date": "2026-06-14T11:31:24+08:00",
       "message": "chore: rollback to pre-cutoff state (June 13, 2026 8:16 PM)"
-    },
-    {
-      "hash": "6c43014e52b9101ffb20be90d79a3afb1274902a",
-      "shortHash": "6c43014",
-      "author": "Lawas@2025",
-      "date": "2026-01-08T23:49:01+08:00",
-      "message": "Update vercel.json for Vite deployment"
-    },
-    {
-      "hash": "b6e1efc2bca507f7ebb52ffdf9f85006f49bebc7",
-      "shortHash": "b6e1efc",
-      "author": "Lawas@2025",
-      "date": "2026-01-08T23:39:19+08:00",
-      "message": "Merge remote repository with local codebase"
-    },
-    {
-      "hash": "2dcef78e1882eed78d0491ac530bab970ef5714d",
-      "shortHash": "2dcef78",
-      "author": "Lawas@2025",
-      "date": "2026-01-08T23:36:11+08:00",
-      "message": "Initial commit: Hospital Operation Management Ecosystem"
     }
   ]
 }

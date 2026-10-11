@@ -42,6 +42,7 @@ import {
 } from '@/components/ui'
 import { ScanKunciMovementModal } from '@/components/kunci/ScanKunciMovementModal'
 import { Skeleton, SkeletonCard, SkeletonTable, SkeletonMobileCardList } from '@/shared/components/ui/skeleton'
+import { Fab } from '@/shared/components/mobile'
 
 export const KunciDashboardPage: React.FC = () => {
   const navigate = useNavigate()
@@ -931,6 +932,12 @@ export const KunciDashboardPage: React.FC = () => {
         isOpen={scanModalOpen}
         onClose={() => setScanModalOpen(false)}
         onSuccess={loadData}
+      />
+
+      {/* Mobile Floating Action Button */}
+      <Fab 
+        onClick={() => setCheckoutModalOpen(true)} 
+        aria-label="Record Loan" 
       />
     </div>
   )
