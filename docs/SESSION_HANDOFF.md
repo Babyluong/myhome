@@ -101,3 +101,25 @@
 - Added "Revision History" tab in the SOP Viewer modal.
 - Shows live formulation audit records and expandable diffs directly without needing to enter edit mode.
 - Verified on live Supabase database with PASS QA Gate report ([TEST_GATE_FORMULATION_EDITOR_2026-10-11.md](file:///c:/Users/60113/Downloads/My%20Home/hospital-operation-management-ecosystem/docs/test-reports/TEST_GATE_FORMULATION_EDITOR_2026-10-11.md)).
+
+---
+
+## 5. Production Release & CI/CD Deployment Sync (v2.6.1)
+
+### 1. Root Cause & Resolution:
+- **Issue**: Deployments were previously triggered without staged/committed Git changes, causing CI/CD release generation to lack new commit metadata and omit release entries.
+- **Fix**: 
+  - Bumped version in `package.json` and canonical release dictionary to **v2.6.1**.
+  - All feature slices (Mobile Phase 1 & 2, Formulation Editor, Supabase Migration 087) committed to Git (`dabd3d8`, `a85372b`).
+  - Synced canonical release `v2.6.1` directly to live Supabase `system_announcements` table with full 100% English parity.
+  - Bumped browser cache buster key to `HOME_CACHE_V202610110202`.
+
+### 2. Live Verification:
+- **Production Build**: `npm run build` compiled cleanly with 0 TypeScript/Vite errors (342 PWA precache entries).
+- **Vercel Production Deployment**: Deployed with exit code 0.
+- **Production Domains**:
+  - `https://my-home-eco.vercel.app` (Verified live serving `version.json` v2.6.1)
+  - `https://hospital-operation-management-ecosystem.vercel.app` (Aliased and verified live serving `version.json` v2.6.1)
+  - `https://hospital-operation-management-ecosystem-ns2dlku56.vercel.app` (Canonical deployment instance)
+- **Modal Parity**: Click on "System Releases & Update Log" on the Hub Page or navigation header in production now displays `System Release & Production Deployment Sync v2.6.1` immediately at the top.
+
