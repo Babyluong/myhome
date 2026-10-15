@@ -1,41 +1,13 @@
 // @ts-nocheck
 import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Search,
-  RefreshCw,
-  Settings,
-  FileText,
-  Calendar,
-  DollarSign,
-  AlertCircle,
-  Building2,
-  CheckCircle2,
-  ExternalLink,
-  Loader2,
-  Save,
-  LayoutGrid,
-  List,
-  ChevronRight,
-  Sparkles,
-  Plus,
-  Edit,
-  UploadCloud,
-  X,
-} from 'lucide-react'
+import { Search, RefreshCw, Settings, FileText, Calendar, AlertCircle, Building2, CheckCircle2, ExternalLink, Loader2, Save, LayoutGrid, List, ChevronRight, Sparkles, Plus, Edit, UploadCloud, X } from 'lucide-react'
 import { Button, Input, Badge, Modal, LoadingOverlay, Spinner, DataTable } from '@/components/ui'
 import { useToastStore } from '@/stores/toastStore'
 import { useAuthStore } from '@/stores/authStore'
-import { cn, formatCurrency } from '@/lib/utils'
+import { formatCurrency } from '@/lib/utils'
 import { supabase, isSupabaseConfigured } from '@/services/supabase'
-import {
-  getSyncConfig,
-  saveSyncConfig,
-  syncContractsFromGoogleSheets,
-  extractSheetId,
-  type GoogleSheetsSyncConfig,
-  type SyncResult,
-} from '@/services/pharmacy/googleSheetsService'
+import { getSyncConfig, saveSyncConfig, syncContractsFromGoogleSheets, extractSheetId, type GoogleSheetsSyncConfig } from '@/services/pharmacy/googleSheetsService'
 
 interface Contract {
   id: string

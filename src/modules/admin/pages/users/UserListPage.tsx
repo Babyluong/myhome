@@ -2,27 +2,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import {
-  Search,
-  Plus,
-  Filter,
-  MoreVertical,
-  Edit,
-  Trash2,
-  UserCheck,
-  UserX,
-  Download,
-  RefreshCw,
-  Users,
-  UserPlus,
-  TrendingUp,
-  FileText,
-  AlertCircle,
-  Mail,
-  Building2,
-  Briefcase,
-  Clock,
-} from 'lucide-react'
+import { Search, Plus, Edit, Trash2, UserCheck, UserX, RefreshCw, Users, TrendingUp, FileText, AlertCircle, Mail, Building2, Briefcase, Clock } from 'lucide-react'
 import { Button, Table, Pagination, Input, Select, Badge, Avatar, LoadingOverlay, Skeleton, SkeletonTable, SkeletonMobileCardList } from '@/components/ui'
 import { getUsers, bulkUpdateUserStatus, bulkDeleteUsers } from '@/services/userService'
 import { getAllRoles } from '@/services/roleService'
@@ -51,17 +31,17 @@ export const UserListPage: React.FC = () => {
   const [totalPages, setTotalPages] = useState(0)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState<string>('all')
-  const [roleFilter, setRoleFilter] = useState<string>('all')
+  const [roleFilter, ] = useState<string>('all')
   const [departmentFilter, setDepartmentFilter] = useState<string>('all')
-  const [hospitalFilter, setHospitalFilter] = useState<string>('all')
+  const [hospitalFilter, ] = useState<string>('all')
   const [sortConfig, setSortConfig] = useState<SortConfig | undefined>()
   const [selectedUsers, setSelectedUsers] = useState<string[]>([])
   const [isBulkActionLoading, setIsBulkActionLoading] = useState(false)
   
   // Filter options
-  const [roles, setRoles] = useState<Role[]>([])
+  const [, setRoles] = useState<Role[]>([])
   const [departments, setDepartments] = useState<Department[]>([])
-  const [hospitals, setHospitals] = useState<Hospital[]>([])
+  const [, setHospitals] = useState<Hospital[]>([])
 
   // Fetch filter options
   useEffect(() => {

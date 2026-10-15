@@ -1,20 +1,5 @@
 import React, { useState, useMemo } from 'react'
-import {
-  Clock,
-  Calendar,
-  Copy,
-  Check,
-  Printer,
-  RotateCcw,
-  Info,
-  ShieldCheck,
-  Pill,
-  Utensils,
-  CheckCircle2,
-  AlertTriangle,
-  Scale,
-  Sparkles
-} from 'lucide-react'
+import { Clock, Calendar, Copy, Check, Printer, RotateCcw, Info, ShieldCheck, Pill, Utensils, CheckCircle2, Scale, Sparkles } from 'lucide-react'
 
 interface ArtemetherScheduleCalculatorProps {
   drugName?: string

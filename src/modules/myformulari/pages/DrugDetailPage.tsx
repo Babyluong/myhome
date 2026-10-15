@@ -1,51 +1,23 @@
-import React, { useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import {
-  ArrowLeft,
-  Flame,
-  AlertTriangle,
-  Droplets,
-  Clock,
-  ShieldCheck,
-  TrendingDown,
-  Layers,
-  FileText,
-  Activity,
-  CheckCircle2,
-  XCircle,
-  Pill,
-  Printer,
-  Sparkles,
-  ExternalLink,
-  Lock,
-  BookmarkCheck,
-  Thermometer,
-  Info,
-  ChevronRight,
-  AlertOctagon,
-  Stethoscope,
-  Building2,
-  Syringe,
-  Package,
-  BookOpen,
-  Calculator,
-  Baby,
-  Scale,
-  RotateCcw,
-  HeartPulse
-} from 'lucide-react'
+import { ArrowLeft, Flame, AlertTriangle, Droplets, Clock, ShieldCheck, Layers, Activity, CheckCircle2, XCircle, Pill, Printer, ExternalLink, Lock, BookmarkCheck, Info, ChevronRight, AlertOctagon, Stethoscope, Package, BookOpen, Calculator, Baby, Scale, RotateCcw, HeartPulse } from 'lucide-react'
 import { getDrugById, getAllFormulariDrugs } from '../services/formulariService'
-import { getGuidelinesForDrug, getDrugRolesInGuideline, NAG_GUIDELINES } from '../data/antimicrobialData'
-import { PrescriberBadge, HAMBadge, LASABadge, PoisonBadge, NAGBadge, PregnancyBadge, LactationBadge } from '../components/DrugBadge'
+import type { DrugEntry } from '../types/formulariTypes'
+import { FormulariAssetError } from '../services/formulariAssetService'
+import type { FacilityDrugItem } from '@/services/pharmacy/facilityDrugInventoryService'
+import { getGuidelinesForDrug, getDrugRolesInGuideline } from '../data/antimicrobialData'
+import { PrescriberBadge, PoisonBadge, NAGBadge, PregnancyBadge, LactationBadge } from '../components/DrugBadge'
 import { TallManLettering } from '../components/TallManLettering'
 import { HamPrecautionsPanel } from '../components/HamPrecautionsPanel'
 import { DilutionCard } from '../components/DilutionCard'
 import { ShelfLifeWidget } from '../components/ShelfLifeWidget'
-import { QuotaProgressBar } from '../components/QuotaProgressBar'
+import '../components/QuotaProgressBar'
 import { DrugInteractionModal } from '../components/DrugInteractionModal'
 import { PaediatricDoseCalculatorModal } from '../components/PaediatricDoseCalculatorModal'
 import { ArtemetherScheduleCalculator } from '../components/ArtemetherScheduleCalculator'
 import { getKkmDilutionProtocol } from '../data/kkmDilutionMasterDatabase'
+
+type DrugDetailTabId = 'overview' | 'dosing' | 'pregnancy' | 'safety' | 'dilution' | 'shelflife' | 'antimicrobial' | 'alternatives'
 
 import { findBestFukkmMatch, synthesizeDrugEntryFromFacility } from '../services/fukkmMatcher'
 
@@ -55,12 +27,12 @@ export const DrugDetailPage: React.FC = () => {
   const location = useLocation()
   const navState = location.state as {
     fromLawasFormulary?: boolean
-    facilityDrug?: any
-    fukkmMatch?: any
+    facilityDrug?: FacilityDrugItem
+    fukkmMatch?: DrugEntry
     backLabel?: string
     backPath?: string
   } | null
-  const [activeTab, setActiveTab] = useState<'overview' | 'dosing' | 'pregnancy' | 'safety' | 'dilution' | 'shelflife' | 'antimicrobial' | 'alternatives'>('overview')
+  const [activeTab, setActiveTab] = useState<DrugDetailTabId>('overview')
   const [isInteractionModalOpen, setIsInteractionModalOpen] = useState(false)
   const [isPaediatricModalOpen, setIsPaediatricModalOpen] = useState(false)
 
@@ -75,20 +47,35 @@ export const DrugDetailPage: React.FC = () => {
   const [paedWeight, setPaedWeight] = useState<string>('12')
   const [showPaedCalculator, setShowPaedCalculator] = useState(true)
 
-  const allDrugs = getAllFormulariDrugs()
+  const [allDrugs, setAllDrugs] = useState<DrugEntry[]>([])
+  const [drug, setDrug] = useState<DrugEntry | undefined>()
+  const [isCatalogLoading, setIsCatalogLoading] = useState(true)
+  const [catalogError, setCatalogError] = useState<FormulariAssetError | null>(null)
+  const loadDrug = useCallback(async () => {
+    setIsCatalogLoading(true)
+    setCatalogError(null)
+    try {
+      const [catalog, idRecord] = await Promise.all([
+        getAllFormulariDrugs(),
+        id ? getDrugById(id) : Promise.resolve(undefined),
+      ])
+      setAllDrugs(catalog)
+      // Preserve resolution order: database ID, route match, matched facility item,
+      // synthesized facility item, then generic-name/code fallback.
+      const q = id?.toLowerCase()
+      setDrug(idRecord || navState?.fukkmMatch || (navState?.facilityDrug
+        ? findBestFukkmMatch(navState.facilityDrug, catalog) || synthesizeDrugEntryFromFacility(navState.facilityDrug)
+        : undefined) || (q
+        ? catalog.find(item => item.genericName.toLowerCase().includes(q) || item.mohDrugCode?.toLowerCase() === q)
+        : undefined))
+    } catch (error) {
+      setCatalogError(error instanceof FormulariAssetError ? error : new FormulariAssetError('The formulary data could not be loaded.', 'unavailable', true))
+    } finally {
+      setIsCatalogLoading(false)
+    }
+  }, [id, navState])
 
-  // Resolve drug: 1. By ID in database, 2. From fukkmMatch state, 3. Matched from facilityDrug, 4. Synthesized
-  let drug = id ? getDrugById(id) : undefined
-  if (!drug && navState?.fukkmMatch) {
-    drug = navState.fukkmMatch
-  }
-  if (!drug && navState?.facilityDrug) {
-    drug = findBestFukkmMatch(navState.facilityDrug, allDrugs) || synthesizeDrugEntryFromFacility(navState.facilityDrug)
-  }
-  if (!drug && id) {
-    const q = id.toLowerCase()
-    drug = allDrugs.find(d => d.genericName.toLowerCase().includes(q) || (d.mohDrugCode && d.mohDrugCode.toLowerCase() === q))
-  }
+  useEffect(() => { void loadDrug() }, [loadDrug])
 
   // Calculate Cockcroft-Gault CrCl
   const calculateCrCl = (): { crcl: number; bracket: string; color: string } | null => {
@@ -197,6 +184,18 @@ export const DrugDetailPage: React.FC = () => {
     }
   }
 
+  if (isCatalogLoading) {
+    return <div className="p-8 text-center text-sm text-text-muted" role="status">Loading formulary record…</div>
+  }
+
+  if (catalogError) {
+    return <div className="mx-auto mt-10 max-w-2xl rounded-2xl border border-border-default bg-surface p-6 text-center" role="alert">
+      <h2 className="font-bold text-text-primary">Formulary data unavailable</h2>
+      <p className="mt-2 text-sm text-text-muted">{catalogError.message}</p>
+      <button type="button" onClick={() => catalogError.retryable ? void loadDrug() : window.location.reload()} className="mt-4 rounded-lg bg-accent-base px-4 py-2 text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-base focus-visible:outline-offset-2">{catalogError.retryable ? 'Retry' : 'Reload formulary'}</button>
+    </div>
+  }
+
   if (!drug) {
     return (
       <div className="p-8 w-full max-w-2xl mx-auto text-center space-y-5 bg-surface rounded-3xl border border-border-default shadow-sm mt-10">
@@ -228,7 +227,7 @@ export const DrugDetailPage: React.FC = () => {
   const kkmDilutionMono = drug && !isDefinitelyNonParenteral ? (getKkmDilutionProtocol(drug.genericName) || (drug.brandNames?.length ? getKkmDilutionProtocol(drug.brandNames[0]) : undefined)) : undefined
   const hasDilutionTab = !isDefinitelyNonParenteral && Boolean(kkmDilutionMono || drug?.dilution?.isApplicable || drug?.reconstitution?.isApplicable)
 
-  const tabs = [
+  const tabs: Array<{ id: DrugDetailTabId; label: string; icon: React.ElementType; badge?: string; disabled?: boolean; count?: number }> = [
     { id: 'overview', label: 'Summary & Indications', icon: BookOpen },
     { id: 'dosing', label: 'Dosing & Administration', icon: Activity },
     { id: 'pregnancy', label: 'Pregnancy & Lactation', icon: HeartPulse, badge: drug.pregnancyAndLactation?.fdaCategory ? `Cat ${drug.pregnancyAndLactation.fdaCategory}` : undefined },
@@ -427,7 +426,7 @@ export const DrugDetailPage: React.FC = () => {
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
+              onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap flex items-center gap-2 transition-colors cursor-pointer ${
                 isActive
                   ? 'bg-surface text-violet-700 shadow-sm border border-border-default'

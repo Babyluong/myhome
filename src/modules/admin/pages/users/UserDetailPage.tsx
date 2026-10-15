@@ -2,23 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import {
-  ArrowLeft,
-  Edit,
-  User,
-  Mail,
-  Hash,
-  Phone,
-  Calendar,
-  MapPin,
-  Building2,
-  Briefcase,
-  Shield,
-  Clock,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-} from 'lucide-react'
+import { ArrowLeft, Edit, User, Hash, Phone, Calendar, MapPin, Building2, Briefcase, Shield, Clock, XCircle, AlertTriangle } from 'lucide-react'
 import { Button, Badge, Avatar, LoadingOverlay, Modal } from '@/components/ui'
 import { getUserById, deleteUser, updateUser } from '@/services/userService'
 import { useToast } from '@/stores/toastStore'

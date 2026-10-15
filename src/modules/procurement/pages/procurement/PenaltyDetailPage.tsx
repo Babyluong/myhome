@@ -1,36 +1,38 @@
-﻿// @ts-nocheck
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getPenaltyById } from '@/services/pharmacy/penaltyService'
 import { Spinner } from '@/components/ui'
 import { CCPenaltyDetailPage } from './CCPenaltyDetailPage'
 import { APPLPenaltyDetailPage } from './APPLPenaltyDetailPage'
 
+type PenaltyRecord = NonNullable<Awaited<ReturnType<typeof getPenaltyById>>['data']>
+const isApplPenalty = (penaltyType: string) => penaltyType === 'appl'
+
 export default function PenaltyDetailPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
-  const [penalty, setPenalty] = useState<any>(null)
+  const [penalty, setPenalty] = useState<PenaltyRecord | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (!id) return
-    loadPenalty()
-  }, [id])
-
-  const loadPenalty = async () => {
+  const loadPenalty = useCallback(async () => {
     if (!id) return
     setLoading(true)
     try {
       const res = await getPenaltyById(id)
       if (res.error) throw new Error(res.error)
       setPenalty(res.data)
-    } catch (err: any) {
-      setError(err.message || 'Failed to load penalty')
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to load penalty')
     } finally {
       setLoading(false)
     }
-  }
+  }, [id])
+
+  useEffect(() => {
+    if (!id) return
+    void loadPenalty()
+  }, [id, loadPenalty])
 
   if (loading) {
     return (
@@ -61,8 +63,8 @@ export default function PenaltyDetailPage() {
   }
 
   // Delegate to the correct detail page based on penalty_type
-  if (penalty.penalty_type === 'appl') {
-    return <APPLPenaltyDetailPage penalty={penalty} onRefresh={loadPenalty} />
+  if (isApplPenalty(penalty.penalty_type)) {
+    return <APPLPenaltyDetailPage penalty={{ ...penalty, goods_receipt: undefined }} onRefresh={loadPenalty} />
   }
 
   // Default to CC for all other types (cc, late_delivery, etc.)

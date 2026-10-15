@@ -1,17 +1,7 @@
 // src/modules/myporter/components/PorterRadarAlertModal.tsx
 import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Bell, 
-  MapPin, 
-  ArrowRight, 
-  Check, 
-  X, 
-  Clock, 
-  AlertTriangle,
-  Shield,
-  Volume2
-} from 'lucide-react'
+import { Bell, Check, X, Shield } from 'lucide-react'
 import type { PorterJobRequest } from '@/shared/types/myporter'
 import { UrgencyBadge } from './PorterStatusBadge'
 import { soundAlert } from './PorterAudioAlert'

@@ -1,19 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  Calendar as CalendarIcon, 
-  Car, 
-  Clock, 
-  MapPin, 
-  User, 
-  FileText, 
-  CheckCircle2, 
-  ArrowLeft,
-  ChevronLeft,
-  ChevronRight,
-  Plus,
-  HelpCircle
-} from 'lucide-react'
+import { Calendar as CalendarIcon, Car, Clock, MapPin, User, FileText, CheckCircle2, ArrowLeft, ChevronLeft, ChevronRight, Plus } from 'lucide-react'
 import { getVehicles, getRequests } from '../services/transporterService'
 import type { TransportVehicle, TransportRequest } from '@/shared/types/mytransporter'
 import { Card, CardHeader, CardTitle, CardContent, Button } from '@/components/ui'

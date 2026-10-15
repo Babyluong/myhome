@@ -1,14 +1,6 @@
-// @ts-nocheck
 import { supabase, isSupabaseConfigured } from '../../../services/supabase'
-import {
-  findUserByEmployeeId,
-  getRoleById,
-  getDepartmentById,
-  getHospitalById,
-  MOCK_PASSWORD,
-} from '../../../services/mockData'
 import { recordAuditLog } from '@/services/auditLogService'
-import type { UserWithRelations } from '@/shared/types'
+import type { UserStatus, UserWithRelations } from '@/shared/types'
 import { MAX_LOGIN_ATTEMPTS, LOCKOUT_DURATION_MINUTES } from '@/shared/lib/constants'
 
 export interface LoginResult {
@@ -26,21 +18,36 @@ export interface ResetPasswordResult {
   error?: string
 }
 
-// Store failed attempts in memory for mock (in production, this would be in Supabase)
-const failedAttempts = new Map<string, { count: number; lockedUntil?: number }>()
+interface LoginAccount {
+  id: string
+  employee_id: string
+  email: string | null
+  status: UserStatus
+  account_locked_until: string | null
+  failed_login_attempts: number | null
+}
+
+function isLoginAccount(value: unknown): value is LoginAccount {
+  if (typeof value !== 'object' || value === null) return false
+  const account = value as Record<string, unknown>
+  return typeof account.id === 'string'
+    && typeof account.employee_id === 'string'
+    && (typeof account.email === 'string' || account.email === null)
+    && (account.status === 'active' || account.status === 'inactive'
+      || account.status === 'pending' || account.status === 'suspended')
+    && (typeof account.account_locked_until === 'string' || account.account_locked_until === null)
+    && (typeof account.failed_login_attempts === 'number' || account.failed_login_attempts === null)
+}
 
 /**
  * Authenticate user with employee ID and password
  */
 export async function login(employeeId: string, password: string): Promise<LoginResult> {
   try {
-    // Check if using Supabase or mock
     if (isSupabaseConfigured()) {
-      // Supabase authentication
       return await loginWithSupabase(employeeId, password)
     } else {
-      // Mock authentication for local development
-      return await loginWithMock(employeeId, password)
+      return { success: false, error: 'Authentication service is unavailable because Supabase is not configured.' }
     }
   } catch (error) {
     console.error('Login error:', error)
@@ -52,138 +59,36 @@ export async function login(employeeId: string, password: string): Promise<Login
 }
 
 /**
- * Mock login for local development
- */
-async function loginWithMock(employeeId: string, password: string): Promise<LoginResult> {
-  // Simulate network delay
-  await new Promise((resolve) => setTimeout(resolve, 800))
-
-  // Find user
-  const user = findUserByEmployeeId(employeeId)
-
-  if (!user) {
-    return {
-      success: false,
-      error: 'Invalid employee ID or password',
-    }
-  }
-
-  // Check account status
-  if (user.status === 'pending') {
-    return {
-      success: false,
-      error: 'Your account is pending approval. Please wait for admin approval.',
-    }
-  }
-
-  if (user.status === 'suspended') {
-    return {
-      success: false,
-      error: 'Your account has been suspended. Please contact administrator.',
-    }
-  }
-
-  if (user.status === 'inactive') {
-    return {
-      success: false,
-      error: 'Your account is inactive. Please contact administrator.',
-    }
-  }
-
-  // Check if account is locked
-  const attempts = failedAttempts.get(user.employee_id)
-  if (attempts?.lockedUntil && Date.now() < attempts.lockedUntil) {
-    const remainingMinutes = Math.ceil((attempts.lockedUntil - Date.now()) / 60000)
-    return {
-      success: false,
-      error: `Account is locked. Please try again in ${remainingMinutes} minutes.`,
-      isLocked: true,
-      requiresPasswordReset: true,
-    }
-  }
-
-  // Verify password (in mock, use the demo password)
-  if (password !== MOCK_PASSWORD) {
-    // Record failed attempt
-    const currentAttempts = (attempts?.count || 0) + 1
-    const attemptsRemaining = MAX_LOGIN_ATTEMPTS - currentAttempts
-
-    if (currentAttempts >= MAX_LOGIN_ATTEMPTS) {
-      // Lock account
-      failedAttempts.set(user.employee_id, {
-        count: currentAttempts,
-        lockedUntil: Date.now() + LOCKOUT_DURATION_MINUTES * 60 * 1000,
-      })
-
-      return {
-        success: false,
-        error: 'Too many failed attempts. Account is now locked.',
-        attemptsRemaining: 0,
-        isLocked: true,
-        requiresPasswordReset: true,
-      }
-    }
-
-    failedAttempts.set(user.employee_id, { count: currentAttempts })
-
-    return {
-      success: false,
-      error: `Invalid employee ID or password. ${attemptsRemaining} attempts remaining.`,
-      attemptsRemaining,
-    }
-  }
-
-  // Clear failed attempts on successful login
-  failedAttempts.delete(user.employee_id)
-
-  // Get related data
-  const role = getRoleById(user.role_id)
-  const department = getDepartmentById(user.department_id)
-  const hospital = getHospitalById(user.hospital_id)
-
-  const userWithRelations: UserWithRelations = {
-    ...user,
-    role,
-    department,
-    hospital,
-  }
-
-  // Record audit log for mock login
-  try {
-    recordAuditLog({
-      userId: user.id,
-      action: 'LOGIN',
-      module: 'auth',
-      entityType: 'session',
-      entityId: user.id,
-      details: `Pengguna ${user.full_name} (${user.employee_id}) berjaya log masuk ke sistem.`,
-    })
-  } catch (logErr) {
-    console.warn('Failed to record mock login audit log:', logErr)
-  }
-
-  return {
-    success: true,
-    user: userWithRelations,
-  }
-}
-
-/**
  * Supabase login (for production)
  */
 async function loginWithSupabase(employeeId: string, password: string): Promise<LoginResult> {
   // First, find user by employee ID to get email
   // We use RPC instead of direct table access to bypass RLS for unauthenticated users
-  const { data: userData, error: userError } = await supabase
+  const { data: accountData, error: userError } = await supabase
     .rpc('get_user_by_employee_id', { p_employee_id: employeeId })
     .maybeSingle()
 
-  if (userError || !userData) {
+  if (userError) {
+    console.error('Employee account lookup failed:', userError)
+    return { success: false, error: 'Unable to verify account. Please try again.' }
+  }
+
+  if (accountData === null || accountData === undefined) {
     return {
       success: false,
       error: 'Invalid employee ID or password',
     }
   }
+
+  if (!isLoginAccount(accountData)) {
+    console.error('Employee account lookup returned an invalid account record')
+    return {
+      success: false,
+      error: 'Account configuration error. Please contact administrator.',
+    }
+  }
+
+  const userData = accountData
 
   // Check account status
   if (userData.status === 'pending') {
@@ -263,19 +168,6 @@ async function loginWithSupabase(employeeId: string, password: string): Promise<
       console.error('Auth login failed. User exists in database but auth credentials are invalid.')
       console.error('This may indicate the password was set incorrectly during account approval.')
       console.error('Solution: Contact your hospital admin to reset your password.')
-      
-      // Check if Auth account exists (for diagnostic purposes)
-      const { checkAuthUserExists } = await import('./authUserService')
-      const authCheck = await checkAuthUserExists(userData.email)
-      if (authCheck.error) {
-        console.warn('DIAGNOSTIC: Could not verify Auth account existence because service role key is not configured.')
-      } else if (!authCheck.exists) {
-        console.error('DIAGNOSTIC: Auth account does not exist for this user!')
-        console.error('This means the Auth account creation failed during approval.')
-        console.error('The hospital admin needs to fix this by resetting the password or re-approving the request.')
-      } else {
-        console.error('DIAGNOSTIC: Auth account exists but password is incorrect.')
-      }
       
       return {
         success: false,
@@ -389,22 +281,14 @@ async function loginWithSupabase(employeeId: string, password: string): Promise<
     .eq('id', userData.id)
     .maybeSingle()
 
-  if (fullUserError) {
-    console.error('Error fetching full user data:', fullUserError)
-    
-    // If we have an error fetching relations, but we have the basic user data,
-    // we should still allow login but maybe with a warning or fallback
-    if (userData) {
-      return {
-        success: true,
-        user: userData as UserWithRelations,
-      }
+  if (fullUserError || !fullUser) {
+    if (fullUserError) console.error('Error fetching full user data:', fullUserError)
+    try {
+      await supabase.auth.signOut({ scope: 'local' })
+    } catch (signOutError) {
+      console.warn('Failed to clear session after profile lookup failure:', signOutError)
     }
-
-    return {
-      success: false,
-      error: `Profile error: ${fullUserError.message}`,
-    }
+    return { success: false, error: 'Unable to load your account profile. Please try again.' }
   }
 
   return {
@@ -427,9 +311,7 @@ export async function requestPasswordReset(email: string): Promise<ResetPassword
 
       return { success: true }
     } else {
-      // Mock - always succeed
-      await new Promise((resolve) => setTimeout(resolve, 800))
-      return { success: true }
+      return { success: false, error: 'Password reset is unavailable because Supabase is not configured.' }
     }
   } catch (error) {
     console.error('Password reset error:', error)
@@ -454,9 +336,7 @@ export async function resetPassword(newPassword: string): Promise<ResetPasswordR
 
       return { success: true }
     } else {
-      // Mock - always succeed
-      await new Promise((resolve) => setTimeout(resolve, 800))
-      return { success: true }
+      return { success: false, error: 'Password update is unavailable because Supabase is not configured.' }
     }
   } catch (error) {
     console.error('Password update error:', error)
@@ -474,6 +354,8 @@ export async function resetPassword(newPassword: string): Promise<ResetPasswordR
  * Handles errors gracefully - even if logout fails, we clear local state
  */
 export async function logout(): Promise<void> {
+  const { clearOfflineIdentity } = await import('@/services/offlineSession')
+  clearOfflineIdentity()
   // Record logout event
   try {
     recordAuditLog({
@@ -515,7 +397,7 @@ export async function logout(): Promise<void> {
     if (typeof window !== 'undefined') {
       // Clear Supabase session from localStorage
       const supabaseKeys = Object.keys(localStorage).filter(key => 
-        key.startsWith('sb-') || key.includes('supabase')
+        key.startsWith('sb-') || key.includes('supabase') || key === 'home-auth-session-v2'
       )
       supabaseKeys.forEach(key => localStorage.removeItem(key))
       

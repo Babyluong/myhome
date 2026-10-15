@@ -1,8 +1,9 @@
-import React, { useEffect, useCallback } from 'react'
+import React from 'react'
 import { createPortal } from 'react-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { X } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { DialogFocusScope } from './Modal'
 
 export interface SlideOverProps {
   isOpen: boolean
@@ -42,26 +43,7 @@ export const SlideOver: React.FC<SlideOverProps> = ({
   closeOnEscape = true,
   className,
 }) => {
-  const handleEscape = useCallback(
-    (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && closeOnEscape) {
-        onClose()
-      }
-    },
-    [closeOnEscape, onClose]
-  )
-
-  useEffect(() => {
-    if (isOpen) {
-      document.addEventListener('keydown', handleEscape)
-      document.body.style.overflow = 'hidden'
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape)
-      document.body.style.overflow = 'unset'
-    }
-  }, [isOpen, handleEscape])
+  const reducedMotion = useReducedMotion()
 
   if (typeof window === 'undefined') return null
 
@@ -74,17 +56,18 @@ export const SlideOver: React.FC<SlideOverProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: reducedMotion ? 0 : 0.2 }}
             className="absolute inset-0 bg-slate-900/40 backdrop-blur-[2px]"
             onClick={closeOnOverlayClick ? onClose : undefined}
           />
 
           {/* Panel */}
+          <DialogFocusScope label={title || 'Dialog'} onClose={onClose} closeOnEscape={closeOnEscape}>
           <motion.div
-            initial={{ x: '100%' }}
+            initial={reducedMotion ? { opacity: 0 } : { x: '100%' }}
             animate={{ x: 0 }}
-            exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+            exit={reducedMotion ? { opacity: 0 } : { x: '100%' }}
+            transition={{ duration: reducedMotion ? 0 : 0.2 }}
             className={cn(
               'relative w-full h-full bg-surface shadow-[-20px_0_50px_-12px_rgba(0,0,0,0.1)] overflow-hidden flex flex-col',
               sizes[size],
@@ -108,6 +91,8 @@ export const SlideOver: React.FC<SlideOverProps> = ({
                 <div className="flex items-center gap-3">
                     {showCloseButton && (
                     <button
+                        type="button"
+                        aria-label="Close dialog"
                         onClick={onClose}
                         className="p-2 text-slate-400 hover:text-text-primary hover:bg-subtle rounded-xl transition-colors group active:scale-95"
                     >
@@ -123,6 +108,7 @@ export const SlideOver: React.FC<SlideOverProps> = ({
                 {children}
             </div>
           </motion.div>
+          </DialogFocusScope>
         </div>
       )}
     </AnimatePresence>,

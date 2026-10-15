@@ -12,7 +12,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { useSidebar } from '@/stores/uiStore'
 import { Avatar } from '@/components/ui'
 import { PendingSyncBadge } from '@/shared/components/ui/PendingSyncBadge'
-import { APP_NAME, ROUTES, SYSTEM_ROLES } from '@/lib/constants'
+import { SYSTEM_ROLES } from '@/lib/constants'
 import { logout } from '@/services/authService'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
 import {
@@ -292,9 +292,7 @@ export const Sidebar: React.FC = () => {
 
   const isExpanded = React.useCallback((href: string) => expandedItems.has(href), [expandedItems])
   
-  const isActiveLink = (href: string) => {
-    return currentPath === href || currentPath.startsWith(href + '/')
-  }
+  
 
   const renderNavItem = React.useCallback((item: NavItem, depth = 0) => {
     const Icon = item.icon
@@ -438,11 +436,11 @@ export const Sidebar: React.FC = () => {
           <AnimatePresence initial={false}>
             {expanded && (
               <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
+                initial={{ scaleY: 0.96, opacity: 0 }}
+                animate={{ scaleY: 1, opacity: 1 }}
+                exit={{ scaleY: 0.96, opacity: 0 }}
                 transition={{ duration: 0.2, ease: 'easeInOut' }}
-                className="overflow-hidden"
+                className="origin-top overflow-hidden"
               >
                 <div className="ml-5 mt-1 space-y-1 border-l border-border-default pl-3">
                   {item.children?.map((child) => renderNavItem(child, depth + 1))}

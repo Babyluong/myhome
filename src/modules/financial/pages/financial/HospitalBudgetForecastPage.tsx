@@ -1,27 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  AlertTriangle,
-  DollarSign,
-  TrendingUp,
-  PieChart,
-  Calendar,
-  Wallet,
-  ArrowUpRight,
-  BarChart3,
-  RefreshCw,
-  Search,
-  FileText,
-  ChevronRight,
-  Sparkles,
-  Layers,
-  X,
-  Save,
-  CheckCircle2,
-  Info,
-  Sliders,
-  AlertCircle
-} from 'lucide-react'
+import { Calendar, RefreshCw, ChevronRight, X, Save, CheckCircle2, Info, Sliders, AlertCircle } from 'lucide-react'
 import {
   ComposedChart,
   CartesianGrid,

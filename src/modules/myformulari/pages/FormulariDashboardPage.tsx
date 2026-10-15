@@ -1,45 +1,16 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import {
-  Search,
-  Filter,
-  Grid,
-  List,
-  Flame,
-  AlertTriangle,
-  Droplets,
-  ShieldCheck,
-  TrendingDown,
-  Sparkles,
-  ArrowLeft,
-  RefreshCw,
-  PlusCircle,
-  FileText,
-  SlidersHorizontal,
-  X,
-  Layers,
-  ArrowUpDown,
-  ArrowUp,
-  ArrowDown,
-  ExternalLink,
-  ChevronRight,
-  ChevronLeft,
-  ChevronsLeft,
-  ChevronsRight,
-  Pill,
-  CheckCircle2,
-  AlertCircle
-} from 'lucide-react'
-import { getAllFormulariDrugs, searchDrugs, getFormulariSummaryStats } from '../services/formulariService'
-import { DrugEntry, PrescriberCategory, HAMCategory } from '../types/formulariTypes'
+import 'framer-motion'
+import { Search, Grid, List, Flame, AlertTriangle, Droplets, ShieldCheck, TrendingDown, RefreshCw, SlidersHorizontal, X, ArrowUpDown, ArrowUp, ArrowDown, ExternalLink, ChevronRight, ChevronLeft, ChevronsLeft, ChevronsRight } from 'lucide-react'
+import { getAllFormulariDrugs, searchDrugs, getFormulariSummaryStats, FormulariAssetError } from '../services/formulariService'
+import { PrescriberCategory, HAMCategory, type DrugEntry } from '../types/formulariTypes'
+import type { FormulariSummaryStats } from '../services/formulariService'
 import { DrugCard } from '../components/DrugCard'
 import { DrugInteractionModal } from '../components/DrugInteractionModal'
-import { TallManLettering } from '../components/TallManLettering'
-import { PrescriberBadge, HAMBadge, LASABadge, NAGBadge, PoisonBadge } from '../components/DrugBadge'
-import { QuotaProgressBar } from '../components/QuotaProgressBar'
-import { ROUTES } from '@/lib/constants'
-import { useLanguage } from '@/shared/contexts/LanguageContext'
+import '../components/TallManLettering'
+import { PrescriberBadge } from '../components/DrugBadge'
+import '../components/QuotaProgressBar'
+import '@/lib/constants'
 import { ModulePageHeader } from '@/shared/components/ui'
 import { Fab } from '@/shared/components/mobile'
 
@@ -48,8 +19,6 @@ type SortOrder = 'asc' | 'desc'
 
 export const FormulariDashboardPage: React.FC = () => {
   const navigate = useNavigate()
-  const { language } = useLanguage()
-
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedPrescriber, setSelectedPrescriber] = useState<PrescriberCategory | 'ALL'>('ALL')
   const [selectedHamCategory, setSelectedHamCategory] = useState<HAMCategory | 'ALL'>('ALL')
@@ -68,21 +37,62 @@ export const FormulariDashboardPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(25)
 
-  const allDrugs = useMemo(() => getAllFormulariDrugs(), [])
-  const stats = useMemo(() => getFormulariSummaryStats(), [allDrugs])
+  const [allDrugs, setAllDrugs] = useState<DrugEntry[]>([])
+  const [stats, setStats] = useState<FormulariSummaryStats | null>(null)
+  const [filteredResults, setFilteredResults] = useState<DrugEntry[]>([])
+  const [isCatalogLoading, setIsCatalogLoading] = useState(true)
+  const [isSearching, setIsSearching] = useState(false)
+  const [hasSearchResults, setHasSearchResults] = useState(false)
+  const [catalogError, setCatalogError] = useState<string | null>(null)
+  const [canRetryCatalog, setCanRetryCatalog] = useState(true)
 
-  const filteredDrugs = useMemo(() => {
-    const results = searchDrugs(searchTerm, {
+  const loadCatalog = useCallback(async () => {
+    setIsCatalogLoading(true)
+    setCatalogError(null)
+    try {
+      const [catalog, summary] = await Promise.all([getAllFormulariDrugs(), getFormulariSummaryStats()])
+      setAllDrugs(catalog)
+      setStats(summary)
+    } catch (error) {
+      setCatalogError(error instanceof FormulariAssetError ? error.message : 'Formulary data is unavailable. Please try again.')
+      setCanRetryCatalog(!(error instanceof FormulariAssetError) || error.retryable)
+    } finally {
+      setIsCatalogLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    void loadCatalog()
+  }, [loadCatalog])
+
+  useEffect(() => {
+    if (!stats) return
+    let isCurrent = true
+    setIsSearching(true)
+    void searchDrugs(searchTerm, {
       prescriberCategory: selectedPrescriber,
       hamOnly,
       hamCategory: selectedHamCategory,
       lasaOnly,
       antimicrobialOnly,
       lowStockOnly
+    }).then(results => {
+      if (isCurrent) {
+        setFilteredResults(results)
+        setHasSearchResults(true)
+      }
+    }).catch(error => {
+      if (isCurrent) {
+        setCatalogError(error instanceof FormulariAssetError ? error.message : 'Formulary search is unavailable. Please try again.')
+        setCanRetryCatalog(!(error instanceof FormulariAssetError) || error.retryable)
+      }
+    }).finally(() => {
+      if (isCurrent) setIsSearching(false)
     })
+    return () => { isCurrent = false }
+  }, [stats, searchTerm, selectedPrescriber, hamOnly, selectedHamCategory, lasaOnly, antimicrobialOnly, lowStockOnly])
 
-    // Sort results
-    return [...results].sort((a, b) => {
+  const filteredDrugs = useMemo(() => [...filteredResults].sort((a, b) => {
       let comparison = 0
       if (sortField === 'genericName') {
         comparison = a.genericName.localeCompare(b.genericName)
@@ -93,8 +103,7 @@ export const FormulariDashboardPage: React.FC = () => {
         comparison = a.atcCode.localeCompare(b.atcCode)
       }
       return sortOrder === 'asc' ? comparison : -comparison
-    })
-  }, [searchTerm, selectedPrescriber, hamOnly, selectedHamCategory, lasaOnly, antimicrobialOnly, lowStockOnly, allDrugs, sortField, sortOrder])
+    }), [filteredResults, sortField, sortOrder])
 
   // Reset page when filters change
   React.useEffect(() => {
@@ -127,6 +136,29 @@ export const FormulariDashboardPage: React.FC = () => {
   }
 
   const hasActiveFilters = searchTerm || selectedPrescriber !== 'ALL' || selectedHamCategory !== 'ALL' || hamOnly || lasaOnly || antimicrobialOnly || lowStockOnly
+
+  if (catalogError) {
+    return (
+      <main className="m-6 rounded-xl border border-border-default bg-surface p-6 text-text-primary" role="alert">
+        <h1 className="text-lg font-semibold">Formulary data could not be loaded</h1>
+        <p className="mt-2 text-sm text-text-secondary">{catalogError}</p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <button type="button" onClick={() => void loadCatalog()} className="rounded-lg bg-accent-base px-4 py-2 text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-base focus-visible:outline-offset-2">
+            Try again
+          </button>
+          {!canRetryCatalog && (
+            <button type="button" onClick={() => window.location.reload()} className="rounded-lg border border-border-default px-4 py-2 text-sm font-semibold text-text-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-base focus-visible:outline-offset-2">
+              Reload app
+            </button>
+          )}
+        </div>
+      </main>
+    )
+  }
+
+  if (isCatalogLoading || !stats || !hasSearchResults) {
+    return <main className="p-6 text-text-secondary" role="status" aria-live="polite">Loading formulary data…</main>
+  }
 
   const renderSortIcon = (field: SortField) => {
     if (sortField !== field) return <ArrowUpDown className="w-3 h-3 text-slate-400 opacity-60 inline-block ml-1" />
@@ -169,6 +201,8 @@ export const FormulariDashboardPage: React.FC = () => {
           </>
         }
       />
+
+      {isSearching && <p className="text-sm text-text-secondary" role="status" aria-live="polite">Updating search results…</p>}
 
       {/* Stats KPI Ribbon */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">

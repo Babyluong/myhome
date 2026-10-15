@@ -1,27 +1,7 @@
 // src/modules/myprepacking/pages/PrepackItemListPage.tsx
 import React, { useState, useEffect, useMemo } from 'react'
 import { useSearchParams, useLocation, useNavigate } from 'react-router-dom'
-import {
-  Boxes,
-  Package,
-  Pill,
-  Plus,
-  Search,
-  CheckCircle2,
-  PackageCheck,
-  Edit2,
-  RefreshCw,
-  TrendingDown,
-  FileText,
-  Beaker,
-  ShieldAlert,
-  AlertTriangle,
-  Check,
-  Power,
-  Layers,
-  Sparkles,
-  BookOpen
-} from 'lucide-react'
+import { Boxes, Package, Plus, Search, Edit2, RefreshCw, TrendingDown, Beaker, ShieldAlert, Check, Power, BookOpen } from 'lucide-react'
 import { 
   getPrepackItems, 
   togglePrepackItemActiveStatus, 
@@ -29,7 +9,7 @@ import {
   syncHospitalGalenicalCatalog,
   formatUnitQuantityDisplay
 } from '../services/prepackService'
-import type { PrepackItem, PackType, CatalogCategory } from '../types/prepack'
+import type { PrepackItem, CatalogCategory } from '../types/prepack'
 import { PrepackItemModal } from '../components/PrepackItemModal'
 import { PrepackItemCard } from '../components/PrepackItemCard'
 import { PrepackBatchCreateModal } from '../components/PrepackBatchCreateModal'

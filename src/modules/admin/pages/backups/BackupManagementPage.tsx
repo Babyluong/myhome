@@ -1,24 +1,8 @@
 ﻿// @ts-nocheck
 import React, { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
-import {
-  Database,
-  RefreshCw,
-  CheckCircle,
-  XCircle,
-  Clock,
-  HardDrive,
-  Calendar,
-  AlertTriangle,
-  FileArchive,
-  Download,
-  Play,
-  Settings,
-  Trash2,
-  TrendingUp,
-  Info,
-} from 'lucide-react'
-import { Button, Badge, Modal, Table, Pagination, LoadingOverlay, Select } from '@/components/ui'
+import { Database, RefreshCw, CheckCircle, XCircle, Clock, HardDrive, AlertTriangle, FileArchive, Download, Play, Trash2, TrendingUp, Info } from 'lucide-react'
+import { Button, Badge, Modal, Pagination, LoadingOverlay, Select } from '@/components/ui'
 import {
   getSystemBackups,
   getLatestBackup,
@@ -36,7 +20,7 @@ import { useToastStore } from '@/stores/toastStore'
 import { SYSTEM_ROLES } from '@/lib/constants'
 import { DEFAULT_PAGE_SIZE, PAGE_SIZE_OPTIONS } from '@/lib/constants'
 import { cn, formatDate, formatFileSize, getRelativeTime } from '@/lib/utils'
-import type { SystemBackup, BackupStatus, BackupType } from '@/types'
+import type { SystemBackup, BackupStatus } from '@/types'
 
 const statusConfig: Record<BackupStatus, { color: string; bgColor: string; icon: React.ElementType; label: string }> = {
   pending: { color: 'text-text-muted', bgColor: 'bg-subtle', icon: Clock, label: 'Pending' },

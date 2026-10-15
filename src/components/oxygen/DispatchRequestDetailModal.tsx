@@ -1,14 +1,7 @@
 // @ts-nocheck
 import React, { useState, useEffect, useRef } from 'react';
 import jsQR from 'jsqr';
-import { 
-  X, CheckCircle, CheckCircle2, Play, Ban, Receipt, Check, FileText, 
-  ChevronRight, User, Camera, Keyboard, Database, QrCode, 
-  AlertCircle, RefreshCw, Volume2, VolumeX, Search, Plus, Trash2, 
-  ShieldAlert, ChevronDown, ChevronUp, PackageCheck, Layers, 
-  Edit3, Share2, Building2, Copy, CheckCheck, Clock, ShieldCheck, 
-  Zap, Flame, AlertTriangle, CornerDownLeft, Barcode, Info
-} from 'lucide-react';
+import { X, CheckCircle2, Ban, Check, User, Camera, Database, QrCode, AlertCircle, RefreshCw, Volume2, VolumeX, Search, Plus, Trash2, ShieldAlert, ChevronDown, ChevronUp, PackageCheck, Layers, Edit3, Share2, Building2, Copy, CheckCheck, Clock, ShieldCheck, Zap, Flame, AlertTriangle, CornerDownLeft, Barcode, Info } from 'lucide-react'
 import { supabase, isSupabaseConfigured } from '../../services/supabase';
 import type { CylinderDispatchRequestWithRelations } from '@/types/pharmacy';
 import type { User as UserType } from '@/types';
@@ -340,9 +333,9 @@ export const DispatchRequestDetailModal: React.FC<DispatchRequestDetailModalProp
   const [showRejectForm, setShowRejectForm] = useState(false);
   const [isIssuing, setIsIssuing] = useState(false);
   const [supplyQuantities, setSupplyQuantities] = useState<{ [itemId: string]: number | string }>({});
-  const [issueData, setIssueData] = useState<{ [itemId: string]: { qty: number; cylinderId: string } }>({});
+  const [, setIssueData] = useState<{ [itemId: string]: { qty: number; cylinderId: string } }>({});
   const [allAvailableCylinders, setAllAvailableCylinders] = useState<any[]>([]);
-  const [isLoadingCylinders, setIsLoadingCylinders] = useState(false);
+  const [, setIsLoadingCylinders] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copiedRef, setCopiedRef] = useState(false);
 

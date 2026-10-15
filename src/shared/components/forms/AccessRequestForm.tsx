@@ -2,21 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
-import {
-  User,
-  Mail,
-  Phone,
-  Calendar,
-  MapPin,
-  Building2,
-  Briefcase,
-  Users,
-  ArrowLeft,
-  ArrowRight,
-  CheckCircle,
-  Send,
-  Lock,
-} from 'lucide-react'
+import { User, Mail, Phone, Calendar, Building2, Briefcase, Users, ArrowLeft, ArrowRight, CheckCircle, Send, Lock } from 'lucide-react'
 import { Button, Input, Select, Textarea, FileUpload } from '@/components/ui'
 import { accessRequestSchema, type AccessRequestFormData } from '@/lib/validators'
 import { getHospitals, getDepartments, submitAccessRequest } from '@/services/accessRequestService'

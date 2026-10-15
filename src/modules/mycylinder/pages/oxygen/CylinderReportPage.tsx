@@ -1,59 +1,77 @@
-// @ts-nocheck
-import React, { useState, useEffect, useMemo } from 'react'
-import { Link } from 'react-router-dom'
-import { ROUTES } from '@/shared/constants/routes'
+import React, { useCallback, useState, useEffect, useMemo } from 'react'
+import 'react-router-dom'
+import '@/shared/constants/routes'
 import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
 import { Spinner } from '@/components/ui'
 import { cn, formatCurrency } from '@/lib/utils'
-import {
-  ChevronRight,
-  Sparkles,
-  FileText,
-  FileSpreadsheet,
-  Calendar,
-  RefreshCw,
-  Download,
-  TrendingUp,
-  TrendingDown,
-  ArrowUpRight,
-  ArrowDownRight,
-  Activity,
-  BarChart3,
-  BarChart2,
-  Layers,
-  Filter,
-  PieChart as PieChartIcon,
-  CheckCircle2,
-  AlertTriangle,
-  Landmark,
-  History,
-  Boxes,
-  Search,
-  SlidersHorizontal,
-  Info,
-  Truck,
-  Clock,
-  Send,
-  PackageCheck,
-  PackageOpen,
-  ShieldAlert
-} from 'lucide-react'
+import { FileText, FileSpreadsheet, Calendar, RefreshCw, Download, TrendingUp, ArrowUpRight, ArrowDownRight, Activity, BarChart3, BarChart2, Layers, Filter, PieChart as PieChartIcon, CheckCircle2, AlertTriangle, Landmark, History, Boxes, Search, SlidersHorizontal, Info, Truck, Clock, type LucideIcon } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
-  RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
-  XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
-  ComposedChart, Line, LineChart
-} from 'recharts'
+import { AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ComposedChart, Line } from 'recharts'
 import * as XLSX from 'xlsx'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
-import { generateCylinderReport, CylinderReportData, WarrantEntry, DeliveryEntry, CylinderDetailEntry } from '../../services/cylinderReportService'
+import { generateCylinderReport, CylinderReportData } from '../../services/cylinderReportService'
 
 // ─── Color Palette ──────────────────────────────────────────────────────────
 const CHART_COLORS = ['#00a68a', '#2563eb', '#8b5cf6', '#f59e0b', '#ec4899', '#06b6d4', '#10b981', '#f97316', '#64748b', '#cbd5e1']
 const PIE_COLORS = ['#00a68a', '#64748b', '#05bca0', '#475569', '#8b9bb4', '#3b82f6', '#cbd5e1', '#e2e8f0']
+
+type DynamicChartDatum = Record<string, string | number | undefined> & {
+  fullLabel?: string
+  label?: string
+  sizeCode?: string
+  color?: string
+  total?: number
+  pending?: number
+  returned?: number
+  received?: number
+  overdue?: number
+}
+
+interface ChartPayloadEntry {
+  name?: string | number
+  dataKey?: string | number
+  value?: string | number
+  color?: string
+  fill?: string
+  payload?: DynamicChartDatum
+}
+
+interface ChartTooltipProps {
+  active?: boolean
+  payload?: ChartPayloadEntry[]
+  label?: string | number
+}
+
+interface WeeklyMatrixRow {
+  type: string
+  weekCounts: Record<string, number>
+  avgWeekly: number
+  total: number
+}
+
+interface DailyMatrixRow {
+  type: string
+  avgDaily: number
+  peakDay: { formattedDate: string; count: number }
+  activeDays: number
+  total: number
+  percentage: number
+}
+
+interface QuarterlyMatrixRow {
+  type: string
+  q1: number
+  q2: number
+  q3: number
+  q4: number
+  total: number
+  avg_q1: number
+  avg_q2: number
+  avg_q3: number
+  avg_q4: number
+}
 
 const STATUS_COLORS: Record<string, string> = {
   'Full': '#10b981',
@@ -135,25 +153,25 @@ const TABS = [
 ]
 
 // ─── Custom Tooltip ──────────────────────────────────────────────────────────
-const CustomTooltip = ({ active, payload, label }: any) => {
+const CustomTooltip = ({ active, payload = [], label }: ChartTooltipProps) => {
   if (!active || !payload?.length) return null
   // Filter out duplicate or technical keys
-  const filteredPayload = payload.filter((entry: any) => entry.name !== 'issued' && entry.name !== 'received')
+  const filteredPayload = payload.filter(entry => entry.name !== 'issued' && entry.name !== 'received')
   if (!filteredPayload.length) return null
   return (
     <div className="bg-white/95 backdrop-blur-md text-text-primary px-3.5 py-3 rounded-xl shadow-lg border border-border-default relative overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-0.5 bg-[#00a68a]" />
       <p className="text-[9.5px] font-bold text-text-secondary font-bold uppercase tracking-wider mb-2 font-mono">{label}</p>
       <div className="space-y-1.5">
-        {filteredPayload.map((entry: any, idx: number) => (
+        {filteredPayload.map((entry, idx) => (
           <div key={idx} className="flex items-center gap-4 text-xs font-semibold">
             <span className="w-2 h-2 rounded-full shrink-0 shadow-sm" style={{ backgroundColor: entry.color }} />
             <span className="text-text-muted font-medium">{entry.name}:</span>
             <span className="text-text-primary font-mono font-bold ml-auto">
               {typeof entry.value === 'number'
-                ? entry.value >= 1000 && !entry.name.includes('Count') && !entry.name.includes('Qty') && !entry.name.includes('Cylinder')
-                  ? formatCurrency(entry.value).replace('MYR', 'RM')
-                  : entry.value.toLocaleString()
+                ? Number(entry.value) >= 1000 && !String(entry.name || '').includes('Count') && !String(entry.name || '').includes('Qty') && !String(entry.name || '').includes('Cylinder')
+                  ? formatCurrency(Number(entry.value)).replace('MYR', 'RM')
+                  : Number(entry.value).toLocaleString()
                 : entry.value}
             </span>
           </div>
@@ -164,18 +182,18 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 }
 
 // ─── Performance Matrix Tooltip (Detailed Cylinder Size Breakdown) ───────────
-const PerformanceMatrixTooltip = ({ active, payload, label }: any) => {
+const PerformanceMatrixTooltip = ({ active, payload = [], label }: ChartTooltipProps) => {
   if (!active || !payload?.length) return null
 
   const rowData = payload[0]?.payload || {}
-  const totalDispatched = rowData.total !== undefined ? Number(rowData.total) : payload.reduce((sum: number, p: any) => sum + Number(p.value || 0), 0)
+  const totalDispatched = rowData.total !== undefined ? Number(rowData.total) : payload.reduce((sum, p) => sum + Number(p.value || 0), 0)
   const fullTitle = rowData.fullLabel || label
 
   // Extract cylinder sizes with count > 0
-  const validEntries = payload.filter((p: any) => {
+  const validEntries = payload.filter(p => {
     if (p.dataKey === 'total' || p.dataKey === 'value' || p.dataKey === 'received' || p.dataKey === 'issued') return false
     return Number(p.value) > 0
-  }).sort((a: any, b: any) => Number(b.value) - Number(a.value))
+  }).sort((a, b) => Number(b.value) - Number(a.value))
 
   return (
     <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-text-primary dark:text-slate-100 px-4 py-3 rounded-xl shadow-xl border border-border-default dark:border-slate-800 min-w-[220px] text-xs">
@@ -191,11 +209,11 @@ const PerformanceMatrixTooltip = ({ active, payload, label }: any) => {
 
       {validEntries.length > 0 ? (
         <div className="space-y-1.5 mt-1">
-          {validEntries.map((entry: any, idx: number) => {
-            const meta = getCylinderMeta(entry.dataKey || entry.name)
+          {validEntries.map((entry, idx) => {
+            const meta = getCylinderMeta(String(entry.dataKey || entry.name || ''))
             const count = Number(entry.value || 0)
             const sharePct = totalDispatched > 0 ? ((count / totalDispatched) * 100).toFixed(1) : '0.0'
-            const color = entry.color || entry.fill || getCylinderColor(entry.dataKey, idx)
+            const color = entry.color || entry.fill || getCylinderColor(String(entry.dataKey || ''), idx)
 
             return (
               <div key={idx} className="flex items-center justify-between gap-3 text-[11px]">
@@ -223,11 +241,11 @@ const PerformanceMatrixTooltip = ({ active, payload, label }: any) => {
 }
 
 // ─── Backorder Matrix Tooltip (Detailed Size Breakdown) ──────────────────────
-const BackorderMatrixTooltip = ({ active, payload, label }: any) => {
+const BackorderMatrixTooltip = ({ active, payload = [], label }: ChartTooltipProps) => {
   if (!active || !payload?.length) return null
 
   const rowData = payload[0]?.payload || {}
-  const sizeName = rowData.label || label || 'Cylinder'
+  const sizeName = String(rowData.label || label || 'Cylinder')
   const meta = getCylinderMeta(rowData.sizeCode || sizeName)
   const pendingCount = rowData.pending !== undefined ? Number(rowData.pending) : Number(payload[0]?.value || 0)
 
@@ -275,68 +293,18 @@ const BackorderMatrixTooltip = ({ active, payload, label }: any) => {
   )
 }
 
-const BackorderComparisonTooltip = ({ active, payload, label }: any) => {
-  if (!active || !payload?.length) return null
-  const data = payload[0]?.payload || {}
-  const meta = getCylinderMeta(data.sizeCode || label)
 
-  return (
-    <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-text-primary dark:text-slate-100 px-4 py-3 rounded-xl shadow-xl border border-border-default dark:border-slate-800 min-w-[200px] text-xs space-y-1.5 font-mono">
-      <div className="flex items-center gap-2 pb-1.5 border-b border-border-subtle dark:border-slate-800 font-sans">
-        <span className="w-3 h-3 rounded-md shrink-0" style={{ backgroundColor: data.color }} />
-        <span className="font-bold text-text-primary dark:text-white">{meta.label}</span>
-      </div>
-      <div className="flex justify-between items-center text-text-muted dark:text-slate-400">
-        <span>Sent to Supplier:</span>
-        <span className="font-bold text-text-primary dark:text-white">{data.returned}</span>
-      </div>
-      <div className="flex justify-between items-center text-emerald-600 dark:text-emerald-400">
-        <span>Received Back:</span>
-        <span className="font-bold">{data.received}</span>
-      </div>
-      <div className="flex justify-between items-center text-amber-600 dark:text-amber-400 font-bold">
-        <span>Pending Backorder:</span>
-        <span>{data.pending}</span>
-      </div>
-    </div>
-  )
-}
 
-const BackorderAgingTooltip = ({ active, payload, label }: any) => {
-  if (!active || !payload?.length) return null
-  const data = payload[0]?.payload || {}
-  const meta = getCylinderMeta(data.sizeCode || label)
 
-  return (
-    <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-text-primary dark:text-slate-100 px-4 py-3 rounded-xl shadow-xl border border-border-default dark:border-slate-800 min-w-[210px] text-xs space-y-1.5 font-mono">
-      <div className="flex items-center gap-2 pb-1.5 border-b border-border-subtle dark:border-slate-800 font-sans">
-        <span className="w-3 h-3 rounded-md shrink-0" style={{ backgroundColor: data.color }} />
-        <span className="font-bold text-text-primary dark:text-white">{meta.label}</span>
-      </div>
-      <div className="flex justify-between items-center text-emerald-600 dark:text-emerald-400">
-        <span>&lt; 7d (Normal):</span>
-        <span className="font-bold">{data.under7}</span>
-      </div>
-      <div className="flex justify-between items-center text-amber-600 dark:text-amber-400">
-        <span>7–14d (Standard):</span>
-        <span className="font-bold">{data.between7And14}</span>
-      </div>
-      <div className="flex justify-between items-center text-rose-600 dark:text-rose-400 font-bold">
-        <span>&gt; 14d (Overdue SLA):</span>
-        <span>{data.over14}</span>
-      </div>
-    </div>
-  )
-}
 
-const BackorderWeeklyPerformanceTooltip = ({ active, payload, label }: any) => {
+const BackorderWeeklyPerformanceTooltip = ({ active, payload = [], label }: ChartTooltipProps) => {
   if (!active || !payload?.length) return null
 
   const rowData = payload[0]?.payload || {}
   const fullTitle = rowData.fullLabel || label || 'Weekly Backorder'
-  const totalPending = rowData.total !== undefined ? Number(rowData.total) : payload.reduce((sum: number, p: any) => sum + Number(p.value || 0), 0)
+  const totalPending = rowData.total !== undefined ? Number(rowData.total) : payload.reduce((sum, p) => sum + Number(p.value || 0), 0)
 
-  const validEntries = payload.filter((p: any) => p.dataKey && p.dataKey !== 'total' && p.dataKey !== 'value' && Number(p.value || 0) > 0)
+  const validEntries = payload.filter(p => p.dataKey && p.dataKey !== 'total' && p.dataKey !== 'value' && Number(p.value || 0) > 0)
 
   return (
     <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-text-primary dark:text-slate-100 px-4 py-3 rounded-xl shadow-xl border border-border-default dark:border-slate-800 min-w-[220px] text-xs">
@@ -352,11 +320,11 @@ const BackorderWeeklyPerformanceTooltip = ({ active, payload, label }: any) => {
 
       {validEntries.length > 0 ? (
         <div className="space-y-1.5 mt-1">
-          {validEntries.map((entry: any, idx: number) => {
-            const meta = getCylinderMeta(entry.dataKey || entry.name)
+          {validEntries.map((entry, idx) => {
+            const meta = getCylinderMeta(String(entry.dataKey || entry.name || ''))
             const count = Number(entry.value || 0)
             const sharePct = totalPending > 0 ? ((count / totalPending) * 100).toFixed(1) : '0.0'
-            const color = entry.color || entry.fill || getCylinderColor(entry.dataKey, idx)
+            const color = entry.color || entry.fill || getCylinderColor(String(entry.dataKey || ''), idx)
 
             return (
               <div key={idx} className="flex items-center justify-between gap-3 text-[11px]">
@@ -383,49 +351,17 @@ const BackorderWeeklyPerformanceTooltip = ({ active, payload, label }: any) => {
   )
 }
 
-const BackorderWeeklyTooltip = ({ active, payload, label }: any) => {
-  if (!active || !payload?.length) return null
-  const data = payload[0]?.payload || {}
 
-  return (
-    <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-text-primary dark:text-slate-100 px-4 py-3 rounded-xl shadow-xl border border-border-default dark:border-slate-800 min-w-[210px] text-xs space-y-1.5 font-mono">
-      <div className="flex items-center justify-between pb-1.5 border-b border-border-subtle dark:border-slate-800 font-sans">
-        <span className="font-bold text-text-primary dark:text-white">{data.fullLabel || label}</span>
-        <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 dark:bg-amber-950/40 px-1.5 py-0.5 rounded">
-          {data.totalPending ?? data.pending ?? 0} Pending
-        </span>
-      </div>
-      <div className="flex justify-between items-center text-text-muted dark:text-slate-400">
-        <span>Sent to Supplier:</span>
-        <span className="font-bold text-text-primary dark:text-white">{data.totalReturned ?? data.returned ?? 0}</span>
-      </div>
-      <div className="flex justify-between items-center text-emerald-600 dark:text-emerald-400">
-        <span>Received Back:</span>
-        <span className="font-bold">{data.totalReceived ?? data.received ?? 0}</span>
-      </div>
-      <div className="flex justify-between items-center text-amber-600 dark:text-amber-400 font-bold">
-        <span>Outstanding Backorder:</span>
-        <span>{data.totalPending ?? data.pending ?? 0}</span>
-      </div>
-      {Number(data.totalOverdue ?? data.overdue ?? 0) > 0 && (
-        <div className="flex justify-between items-center text-rose-600 dark:text-rose-400 font-semibold pt-1 border-t border-border-subtle dark:border-slate-800">
-          <span>Critical Overdue (&gt;14d):</span>
-          <span>{data.totalOverdue ?? data.overdue}</span>
-        </div>
-      )}
-    </div>
-  )
-}
 
 // ─── Balance Weekly Performance Tooltip (Detailed Cylinder Size Breakdown) ───
-const BalanceWeeklyPerformanceTooltip = ({ active, payload, label }: any) => {
+const BalanceWeeklyPerformanceTooltip = ({ active, payload = [], label }: ChartTooltipProps) => {
   if (!active || !payload?.length) return null
 
   const rowData = payload[0]?.payload || {}
   const fullTitle = rowData.fullLabel || label || 'Weekly Balance'
-  const totalBalance = rowData.total !== undefined ? Number(rowData.total) : payload.reduce((sum: number, p: any) => sum + Number(p.value || 0), 0)
+  const totalBalance = rowData.total !== undefined ? Number(rowData.total) : payload.reduce((sum, p) => sum + Number(p.value || 0), 0)
 
-  const validEntries = payload.filter((p: any) => p.dataKey && p.dataKey !== 'total' && p.dataKey !== 'value' && Number(p.value || 0) > 0)
+  const validEntries = payload.filter(p => p.dataKey && p.dataKey !== 'total' && p.dataKey !== 'value' && Number(p.value || 0) > 0)
 
   return (
     <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-md text-text-primary dark:text-slate-100 px-4 py-3 rounded-xl shadow-xl border border-border-default dark:border-slate-800 min-w-[220px] text-xs">
@@ -441,11 +377,11 @@ const BalanceWeeklyPerformanceTooltip = ({ active, payload, label }: any) => {
 
       {validEntries.length > 0 ? (
         <div className="space-y-1.5 mt-1">
-          {validEntries.map((entry: any, idx: number) => {
-            const meta = getCylinderMeta(entry.dataKey || entry.name)
+          {validEntries.map((entry, idx) => {
+            const meta = getCylinderMeta(String(entry.dataKey || entry.name || ''))
             const count = Number(entry.value || 0)
             const sharePct = totalBalance > 0 ? ((count / totalBalance) * 100).toFixed(1) : '0.0'
-            const color = entry.color || entry.fill || getCylinderColor(entry.dataKey, idx)
+            const color = entry.color || entry.fill || getCylinderColor(String(entry.dataKey || ''), idx)
 
             return (
               <div key={idx} className="flex items-center justify-between gap-3 text-[11px]">
@@ -532,7 +468,7 @@ const SPARKLINE_PATHS: Record<string, { path: string, stroke: string }> = {
 
 // ─── KPI Card ───────────────────────────────────────────────────────────────
 function KpiCard({ label, value, prefix, suffix, icon: Icon, color, delay = 0, decimals = 0, trend }: {
-  label: string, value: number, prefix?: string, suffix?: string, icon: any, color: string, delay?: number, decimals?: number, trend?: { val: number; isUp: boolean }
+  label: string, value: number, prefix?: string, suffix?: string, icon: LucideIcon, color: string, delay?: number, decimals?: number, trend?: { val: number; isUp: boolean }
 }) {
   const spark = SPARKLINE_PATHS[color] || SPARKLINE_PATHS.indigo
 
@@ -587,7 +523,7 @@ function KpiCard({ label, value, prefix, suffix, icon: Icon, color, delay = 0, d
 }
 
 // ─── Section Header ─────────────────────────────────────────────────────────
-function SectionHeader({ title, subtitle, icon: Icon, dark }: { title: string, subtitle?: string, icon?: any, dark?: boolean }) {
+function SectionHeader({ title, subtitle, icon: Icon, dark }: { title: string, subtitle?: string, icon?: LucideIcon, dark?: boolean }) {
   return (
     <div className="flex items-center gap-2.5">
       {Icon && (
@@ -622,9 +558,10 @@ function HorizontalBar({ label, value, max, color, suffix = '', delay = 0 }: { l
       </div>
       <div className="h-1.5 bg-subtle rounded-full overflow-hidden relative">
         <motion.div
-          className="h-full rounded-full bg-[#00a68a]"
-          initial={{ width: 0 }}
-          animate={{ width: `${pct}%` }}
+          className="h-full w-full rounded-full"
+          style={{ backgroundColor: color, transformOrigin: 'left' }}
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: pct / 100 }}
           transition={{ duration: 0.8, delay, ease: [0.2, 0, 0, 1] }}
         />
       </div>
@@ -646,7 +583,7 @@ export function CylinderReportPage() {
   const [breakdownView, setBreakdownView] = useState<'weekly' | 'daily' | 'quarterly'>('weekly')
   const [matrixChartMode, setMatrixChartMode] = useState<'stacked' | 'grouped' | 'total'>('stacked')
   const [matrixSizeFilter, setMatrixSizeFilter] = useState<string>('all')
-  const [hoveredMatrixType, setHoveredMatrixType] = useState<string | null>(null)
+  const [, setHoveredMatrixType] = useState<string | null>(null)
   
   // Custom Dates (if custom range selected)
   const [customStartDate, setCustomStartDate] = useState(() => {
@@ -659,7 +596,7 @@ export function CylinderReportPage() {
   // Compute actual date objects
   const dateRange = useMemo(() => {
     const end = new Date()
-    let start = new Date()
+    const start = new Date()
 
     if (dateRangePreset === '1month') {
       start.setMonth(end.getMonth() - 1)
@@ -711,7 +648,7 @@ export function CylinderReportPage() {
   const [backorderSizeFilter, setBackorderSizeFilter] = useState<string>('all')
   const [backorderStatusFilter, setBackorderStatusFilter] = useState<'all' | 'pending' | 'overdue' | 'fulfilled'>('all')
   const [backorderSearchQuery, setBackorderSearchQuery] = useState<string>('')
-  const [hoveredBackorderType, setHoveredBackorderType] = useState<string | null>(null)
+  const [, setHoveredBackorderType] = useState<string | null>(null)
   const [backorderPage, setBackorderPage] = useState<number>(1)
   const backorderRowsPerPage = 8
 
@@ -721,7 +658,7 @@ export function CylinderReportPage() {
     if (!raw) {
       return {
         summary: { totalReturned: 0, totalReceived: 0, totalPending: 0, totalOverdue: 0, fulfillmentRate: 0, avgAgingDays: 0 },
-        bySize: [] as any[],
+        bySize: [] as CylinderReportData['backorders']['bySize'],
       }
     }
     return {
@@ -775,7 +712,7 @@ export function CylinderReportPage() {
     const sizes = reportData?.backorders?.bySize || []
 
     return weeks.map(w => {
-      const item: any = {
+      const item: DynamicChartDatum = {
         name: w.shortWeek,
         value: w.totalPending,
         total: w.totalPending,
@@ -861,7 +798,7 @@ export function CylinderReportPage() {
   const [balanceView, setBalanceView] = useState<'weekly' | 'status' | 'ward'>('weekly')
   const [balanceChartMode, setBalanceChartMode] = useState<'stacked' | 'grouped' | 'total'>('stacked')
   const [balanceSizeFilter, setBalanceSizeFilter] = useState<string>('all')
-  const [hoveredBalanceType, setHoveredBalanceType] = useState<string | null>(null)
+  const [, setHoveredBalanceType] = useState<string | null>(null)
 
   // Balance Weekly Matrix Data (mirroring weeklyStats in Card 1 & Card 2)
   const balanceWeeklyStats = useMemo(() => {
@@ -877,7 +814,7 @@ export function CylinderReportPage() {
       
       if (fallbackWeeks.length) {
         activeWeeks = fallbackWeeks.map(fw => ({
-          weekKey: (fw as any).weekKey || fw.shortWeek,
+          weekKey: 'weekKey' in fw && typeof fw.weekKey === 'string' ? fw.weekKey : fw.shortWeek,
           week: fw.week,
           shortWeek: fw.shortWeek,
           startDate: fw.startDate || '',
@@ -888,9 +825,9 @@ export function CylinderReportPage() {
           totalEmpty: reportData?.inventory?.byType?.reduce((sum, t) => sum + t.empty, 0) || 0,
           bySize: invByType.reduce((acc, t) => {
             const tot = t.full + t.inUse + t.empty + t.maintenance
-            acc[t.type] = { balance: tot, full: t.full, inUse: t.inUse, empty: t.empty }
+            acc[t.type] = { balance: tot, full: t.full, inUse: t.inUse, empty: t.empty, maintenance: t.maintenance }
             return acc
-          }, {} as Record<string, any>)
+          }, {} as Record<string, { balance: number; full: number; inUse: number; empty: number; maintenance: number }>)
         }))
       }
     }
@@ -948,7 +885,7 @@ export function CylinderReportPage() {
     if (!weeks.length) return []
 
     return weeks.map(w => {
-      const item: any = {
+      const item: DynamicChartDatum = {
         name: w.shortWeek,
         value: w.totalBalance,
         total: w.totalBalance,
@@ -969,7 +906,7 @@ export function CylinderReportPage() {
   }, [balanceWeeklyStats, reportData?.summary?.totalCylinders])
 
   // Fetch Report Data
-  const fetchReport = async () => {
+  const fetchReport = useCallback(async () => {
     setLoading(true)
     try {
       const hospitalId = user?.hospital_id || 'default_hospital_id'
@@ -984,11 +921,11 @@ export function CylinderReportPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [user?.hospital_id, dateRange, toast])
 
   useEffect(() => {
-    fetchReport()
-  }, [dateRangePreset, customStartDate, customEndDate])
+    void fetchReport()
+  }, [fetchReport])
 
   // Dynamic KPIs for Usage Analytics
   const peakMonthDemandInfo = useMemo(() => {
@@ -998,7 +935,7 @@ export function CylinderReportPage() {
     reportData.usage.monthlyTrend.forEach(m => {
       const sum = Object.entries(m)
         .filter(([key]) => key !== 'month')
-        .reduce((sum, [_, val]) => sum + Number(val || 0), 0)
+        .reduce((sum, [, val]) => sum + Number(val || 0), 0)
       if (sum > maxVal) {
         maxVal = sum
         maxMonth = m.month
@@ -1009,15 +946,15 @@ export function CylinderReportPage() {
 
   const topUsedSize = useMemo(() => {
     if (!reportData?.usage?.byType?.length) return { type: 'N/A', count: 0, percentage: 0 }
-    return reportData.usage.byType[0] as any
+    return reportData.usage.byType[0]
   }, [reportData])
 
   const topDepartmentInfo = useMemo(() => {
     if (!reportData?.usage?.byDepartment?.length) return { department: 'N/A', count: 0 }
-    return reportData.usage.byDepartment[0] as any
+    return reportData.usage.byDepartment[0]
   }, [reportData])
 
-  const quarterlyStats = useMemo(() => {
+  const quarterlyStats = useMemo<QuarterlyMatrixRow[]>(() => {
     if (!reportData?.usage?.monthlyTrend || !reportData?.usage?.byType) return []
     const statsMap: Record<string, { q1: number; q2: number; q3: number; q4: number; total: number }> = {}
     const types = reportData.usage.byType.map(t => t.type)
@@ -1055,21 +992,21 @@ export function CylinderReportPage() {
   const quarterlyOverallTrend = useMemo(() => {
     if (!quarterlyStats.length) return []
     let q1Total = 0, q2Total = 0, q3Total = 0, q4Total = 0
-    quarterlyStats.forEach((s: any) => {
+    quarterlyStats.forEach(s => {
       q1Total += s.q1
       q2Total += s.q2
       q3Total += s.q3
       q4Total += s.q4
     })
     const types = reportData?.usage?.byType?.map(t => t.type) || []
-    const qData: any[] = [
+    const qData: DynamicChartDatum[] = [
       { name: 'Q1', value: q1Total, total: q1Total, fullLabel: 'Q1 (Jan - Mar)' },
       { name: 'Q2', value: q2Total, total: q2Total, fullLabel: 'Q2 (Apr - Jun)' },
       { name: 'Q3', value: q3Total, total: q3Total, fullLabel: 'Q3 (Jul - Sep)' },
       { name: 'Q4', value: q4Total, total: q4Total, fullLabel: 'Q4 (Oct - Dec)' }
     ]
     types.forEach(t => {
-      const s = quarterlyStats.find((qs: any) => qs.type === t)
+      const s = quarterlyStats.find(qs => qs.type === t)
       qData[0][t] = s ? s.q1 : 0
       qData[1][t] = s ? s.q2 : 0
       qData[2][t] = s ? s.q3 : 0
@@ -1087,8 +1024,8 @@ export function CylinderReportPage() {
       const recDaily = reportData.deliveries.receivedDailyTrend || []
 
       return dailyTrend.map(d => {
-        const rec = recDaily.find(r => r.date === d.date) || {}
-        const point: any = {
+        const rec: Partial<(typeof recDaily)[number]> = recDaily.find(r => r.date === d.date) || {}
+        const point: DynamicChartDatum = {
           label: d.formattedDate,
           date: d.date,
           dayOfWeek: d.dayOfWeek,
@@ -1111,8 +1048,8 @@ export function CylinderReportPage() {
       const recWeekly = reportData.deliveries.receivedWeeklyTrend || []
 
       return weeklyTrend.map(w => {
-        const rec = recWeekly.find(r => r.week === w.week) || {}
-        const point: any = {
+        const rec: Partial<(typeof recWeekly)[number]> = recWeekly.find(r => r.week === w.week) || {}
+        const point: DynamicChartDatum = {
           label: w.shortWeek,
           fullLabel: w.week,
           startDate: w.startDate,
@@ -1137,8 +1074,8 @@ export function CylinderReportPage() {
       const recMonthly = reportData.deliveries.receivedMonthlyTrend || []
 
       return monthlyTrend.map(m => {
-        const recM = recMonthly.find(r => r.month === m.month) || {}
-        const point: any = {
+        const recM: Partial<(typeof recMonthly)[number]> = recMonthly.find(r => r.month === m.month) || {}
+        const point: DynamicChartDatum = {
           label: m.month,
         }
         if (selectedTrendSize === 'all') {
@@ -1156,11 +1093,8 @@ export function CylinderReportPage() {
     }
   }, [reportData, usageTrendGranularity, selectedTrendSize])
 
-  // Backward-compatible alias
-  const filteredTrendData = dynamicTrendData
-
   // Weekly Performance Matrix
-  const weeklyStats = useMemo(() => {
+  const weeklyStats = useMemo<{ rows: WeeklyMatrixRow[]; weekKeys: string[] }>(() => {
     if (!reportData?.usage?.weeklyTrend || !reportData?.usage?.byType) return { rows: [], weekKeys: [] }
     const types = reportData.usage.byType.map(t => t.type)
     const weeks = reportData.usage.weeklyTrend.slice(-6)
@@ -1188,19 +1122,19 @@ export function CylinderReportPage() {
 
   const cylinderTypesList = useMemo(() => {
     if (!reportData?.usage?.byType) return []
-    return reportData.usage.byType.map((t: any) => t.type)
+    return reportData.usage.byType.map(t => t.type)
   }, [reportData])
 
   const totalPeriodTanks = useMemo(() => {
     if (!reportData?.usage?.byType) return 0
-    return reportData.usage.byType.reduce((sum: number, t: any) => sum + Number(t.count || 0), 0)
+    return reportData.usage.byType.reduce((sum, t) => sum + Number(t.count || 0), 0)
   }, [reportData])
 
   const weeklyOverallTrend = useMemo(() => {
     if (!reportData?.usage?.weeklyTrend?.length) return []
     const types = reportData?.usage?.byType?.map(t => t.type) || []
     return reportData.usage.weeklyTrend.slice(-6).map(w => {
-      const item: any = {
+      const item: DynamicChartDatum = {
         name: w.shortWeek,
         value: w.issued,
         total: w.issued,
@@ -1215,7 +1149,7 @@ export function CylinderReportPage() {
   }, [reportData])
 
   // Daily Performance Matrix (stats per cylinder size)
-  const dailyStats = useMemo(() => {
+  const dailyStats = useMemo<DailyMatrixRow[]>(() => {
     if (!reportData?.usage?.dailyTrend || !reportData?.usage?.byType) return []
     const types = reportData.usage.byType.map(t => t.type)
     const days = reportData.usage.dailyTrend
@@ -1256,7 +1190,7 @@ export function CylinderReportPage() {
     const types = reportData?.usage?.byType?.map(t => t.type) || []
     const days = reportData.usage.dailyTrend
     return days.slice(-14).map(d => {
-      const item: any = {
+      const item: DynamicChartDatum = {
         name: d.formattedDate,
         value: d.issued,
         total: d.issued,
@@ -1459,13 +1393,13 @@ export function CylinderReportPage() {
         theme: 'plain',
         styles: { fontSize: 8.5, cellPadding: 2, fontStyle: 'normal' },
         columnStyles: {
-          0: { fontStyle: 'bold', width: 50 },
-          1: { width: 35 },
-          2: { fontStyle: 'bold', width: 55 },
-          3: { width: 45 }
+          0: { fontStyle: 'bold', cellWidth: 50 },
+          1: { cellWidth: 35 },
+          2: { fontStyle: 'bold', cellWidth: 55 },
+          3: { cellWidth: 45 }
         }
       })
-      currentY = (doc as any).lastAutoTable.finalY + 10
+      currentY = (doc as jsPDF & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10
 
       // Inventory Distribution Table
       doc.setFont('Helvetica', 'bold')
@@ -1489,7 +1423,7 @@ export function CylinderReportPage() {
         headStyles: { fillColor: [99, 102, 241], fontSize: 8.5 },
         styles: { fontSize: 8, cellPadding: 2.5 }
       })
-      currentY = (doc as any).lastAutoTable.finalY + 10
+      currentY = (doc as jsPDF & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10
 
       // Warrants List Table
       doc.setFont('Helvetica', 'bold')
@@ -1543,7 +1477,7 @@ export function CylinderReportPage() {
 
       doc.setFont('Helvetica', 'italic')
       doc.setFontSize(8)
-      doc.text('* Note: Cylinder Detail Register shows the first 35 records. Full register is available in the Excel export.', startX, (doc as any).lastAutoTable.finalY + 5)
+      doc.text('* Note: Cylinder Detail Register shows the first 35 records. Full register is available in the Excel export.', startX, (doc as jsPDF & { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 5)
 
       doc.save(`Cylinder_Report_Doc_${new Date().toISOString().split('T')[0]}.pdf`)
       toast.success('PDF Export Complete', 'Cylinder report document downloaded.')
@@ -1551,12 +1485,6 @@ export function CylinderReportPage() {
       toast.error('PDF Export Failed', e instanceof Error ? e.message : 'Unknown error')
     }
   }
-
-  // Pre-load layout stats
-  const activeStats = useMemo(() => {
-    if (!reportData) return null
-    return reportData.summary
-  }, [reportData])
 
   return (
     <div className="min-h-screen bg-[#fafafa] bg-[radial-gradient(#e2e8f0_1px,transparent_1px)] [background-size:16px_16px] pb-12 font-sans antialiased text-text-primary relative overflow-hidden">
@@ -2150,7 +2078,7 @@ export function CylinderReportPage() {
                                 >
                                   All Sizes
                                 </button>
-                                {reportData.usage.byType.map((typeObj: any) => (
+                                {reportData.usage.byType.map((typeObj) => (
                                   <button
                                     key={typeObj.type}
                                     onClick={() => setSelectedTrendSize(typeObj.type)}
@@ -2183,7 +2111,7 @@ export function CylinderReportPage() {
                                       iconType="circle" 
                                       wrapperStyle={{ fontSize: '10px', fontWeight: 'bold' }} 
                                     />
-                                    {reportData.usage.byType.map((typeObj: any, idx: number) => {
+                                    {reportData.usage.byType.map((typeObj, idx: number) => {
                                       const color = getCylinderColor(typeObj.type, idx)
                                       return (
                                         <Line 
@@ -2564,12 +2492,12 @@ export function CylinderReportPage() {
                                         </tr>
                                       </thead>
                                       <tbody className="divide-y divide-border-subtle dark:divide-slate-800 bg-surface dark:bg-slate-900/40">
-                                        {weeklyStats.rows.map((row: any, rIdx: number) => {
+                                        {weeklyStats.rows.map((row, rIdx: number) => {
                                           const meta = getCylinderMeta(row.type)
                                           const color = getCylinderColor(row.type, rIdx)
                                           const isSelected = matrixSizeFilter === row.type
                                           const isDimmed = matrixSizeFilter !== 'all' && !isSelected
-                                          const grandTotal = weeklyStats.rows.reduce((sum: number, r: any) => sum + r.total, 0) || 1
+                                          const grandTotal = weeklyStats.rows.reduce((sum: number, r) => sum + r.total, 0) || 1
                                           const pct = ((row.total / grandTotal) * 100).toFixed(1)
 
                                           return (
@@ -2660,7 +2588,7 @@ export function CylinderReportPage() {
                                             Total Dispatched
                                           </td>
                                           {weeklyStats.weekKeys.map(wk => {
-                                            const colTotal = weeklyStats.rows.reduce((sum: number, r: any) => sum + (r.weekCounts[wk] || 0), 0)
+                                            const colTotal = weeklyStats.rows.reduce((sum: number, r) => sum + (r.weekCounts[wk] || 0), 0)
                                             return (
                                               <td key={wk} className="px-2 py-2.5 text-center font-mono font-black text-text-primary dark:text-white tabular-nums">
                                                 {colTotal}
@@ -2671,7 +2599,7 @@ export function CylinderReportPage() {
                                             {(reportData.summary.avgWeeklyUsage || 0).toFixed(1)}
                                           </td>
                                           <td className="px-3 py-2.5 text-right font-black font-mono text-text-primary dark:text-white tabular-nums">
-                                            {weeklyStats.rows.reduce((sum: number, r: any) => sum + r.total, 0)}
+                                            {weeklyStats.rows.reduce((sum: number, r) => sum + r.total, 0)}
                                           </td>
                                         </tr>
                                       </tfoot>
@@ -2811,7 +2739,7 @@ export function CylinderReportPage() {
                                         </tr>
                                       </thead>
                                       <tbody className="divide-y divide-border-subtle dark:divide-slate-800 bg-surface dark:bg-slate-900/40">
-                                        {(dailyStats as any[]).map((d: any, dIdx: number) => {
+                                        {(dailyStats ).map((d, dIdx: number) => {
                                           const meta = getCylinderMeta(d.type)
                                           const color = getCylinderColor(d.type, dIdx)
                                           const isSelected = matrixSizeFilter === d.type
@@ -2886,7 +2814,7 @@ export function CylinderReportPage() {
                                           <td className="px-2.5 py-2.5 text-center font-mono text-text-secondary dark:text-slate-300 tabular-nums">-</td>
                                           <td className="px-2.5 py-2.5 text-center font-mono text-text-secondary dark:text-slate-300 tabular-nums">100%</td>
                                           <td className="px-3 py-2.5 text-right font-black font-mono text-text-primary dark:text-white tabular-nums">
-                                            {(dailyStats as any[]).reduce((sum, d) => sum + d.total, 0)}
+                                            {(dailyStats ).reduce((sum, d) => sum + d.total, 0)}
                                           </td>
                                         </tr>
                                       </tfoot>
@@ -3023,7 +2951,7 @@ export function CylinderReportPage() {
                                         </tr>
                                       </thead>
                                       <tbody className="divide-y divide-border-subtle dark:divide-slate-800 bg-surface dark:bg-slate-900/40">
-                                        {(quarterlyStats as any[]).map((q: any, qIdx: number) => {
+                                        {(quarterlyStats ).map((q, qIdx: number) => {
                                           const meta = getCylinderMeta(q.type)
                                           const color = getCylinderColor(q.type, qIdx)
                                           const isSelected = matrixSizeFilter === q.type
@@ -3086,19 +3014,19 @@ export function CylinderReportPage() {
                                             Total Dispatched
                                           </td>
                                           <td className="px-2.5 py-2.5 text-center font-mono font-black text-text-primary dark:text-white tabular-nums">
-                                            {(quarterlyStats as any[]).reduce((sum, q) => sum + (q.q1 || 0), 0)}
+                                            {(quarterlyStats ).reduce((sum, q) => sum + (q.q1 || 0), 0)}
                                           </td>
                                           <td className="px-2.5 py-2.5 text-center font-mono font-black text-text-primary dark:text-white tabular-nums">
-                                            {(quarterlyStats as any[]).reduce((sum, q) => sum + (q.q2 || 0), 0)}
+                                            {(quarterlyStats ).reduce((sum, q) => sum + (q.q2 || 0), 0)}
                                           </td>
                                           <td className="px-2.5 py-2.5 text-center font-mono font-black text-text-primary dark:text-white tabular-nums">
-                                            {(quarterlyStats as any[]).reduce((sum, q) => sum + (q.q3 || 0), 0)}
+                                            {(quarterlyStats ).reduce((sum, q) => sum + (q.q3 || 0), 0)}
                                           </td>
                                           <td className="px-2.5 py-2.5 text-center font-mono font-black text-text-primary dark:text-white tabular-nums">
-                                            {(quarterlyStats as any[]).reduce((sum, q) => sum + (q.q4 || 0), 0)}
+                                            {(quarterlyStats ).reduce((sum, q) => sum + (q.q4 || 0), 0)}
                                           </td>
                                           <td className="px-3 py-2.5 text-right font-black font-mono text-text-primary dark:text-white tabular-nums">
-                                            {(quarterlyStats as any[]).reduce((sum, q) => sum + (q.total || 0), 0)}
+                                            {(quarterlyStats ).reduce((sum, q) => sum + (q.total || 0), 0)}
                                           </td>
                                         </tr>
                                       </tfoot>
@@ -3411,12 +3339,12 @@ export function CylinderReportPage() {
                                         </tr>
                                       </thead>
                                       <tbody className="divide-y divide-border-subtle dark:divide-slate-800 bg-surface dark:bg-slate-900/40">
-                                        {backorderWeeklyStats.rows.map((row: any, rIdx: number) => {
+                                        {backorderWeeklyStats.rows.map((row, rIdx: number) => {
                                           const meta = getCylinderMeta(row.sizeCode)
                                           const color = getCylinderColor(row.sizeCode, rIdx)
                                           const isSelected = backorderSizeFilter === row.sizeCode
                                           const isDimmed = backorderSizeFilter !== 'all' && !isSelected
-                                          const grandTotal = backorderWeeklyStats.rows.reduce((sum: number, r: any) => sum + r.total, 0) || 1
+                                          const grandTotal = backorderWeeklyStats.rows.reduce((sum: number, r) => sum + r.total, 0) || 1
                                           const pct = ((row.total / grandTotal) * 100).toFixed(1)
 
                                           return (
@@ -3504,7 +3432,7 @@ export function CylinderReportPage() {
                                             Total Outstanding
                                           </td>
                                           {backorderWeeklyStats.weekKeys.map(wk => {
-                                            const totalForWk = backorderWeeklyStats.rows.reduce((sum: number, r: any) => sum + (r.weekCounts[wk] || 0), 0)
+                                            const totalForWk = backorderWeeklyStats.rows.reduce((sum: number, r) => sum + (r.weekCounts[wk] || 0), 0)
                                             return (
                                               <td key={wk} className="px-2 py-2.5 text-center font-mono font-black text-amber-700 dark:text-amber-300 tabular-nums">
                                                 {totalForWk}
@@ -3515,7 +3443,7 @@ export function CylinderReportPage() {
                                             {backorderWeeklyAvg}
                                           </td>
                                           <td className="px-3 py-2.5 text-right font-black font-mono text-amber-700 dark:text-amber-300 tabular-nums text-xs">
-                                            {backorderWeeklyStats.rows.reduce((sum: number, r: any) => sum + r.total, 0)}
+                                            {backorderWeeklyStats.rows.reduce((sum: number, r) => sum + r.total, 0)}
                                           </td>
                                         </tr>
                                       </tfoot>
@@ -4056,7 +3984,7 @@ export function CylinderReportPage() {
                                   >
                                     All Sizes
                                   </button>
-                                  {balanceWeeklyStats.rows.map((row: any, idx: number) => {
+                                  {balanceWeeklyStats.rows.map((row, idx: number) => {
                                     const meta = getCylinderMeta(row.type)
                                     const color = getCylinderColor(row.type, idx)
                                     const isSelected = balanceSizeFilter === row.type
@@ -4137,7 +4065,7 @@ export function CylinderReportPage() {
                                             barSize={22}
                                           />
                                         ) : balanceChartMode === 'grouped' ? (
-                                          balanceWeeklyStats.rows.map((row: any, idx: number) => (
+                                          balanceWeeklyStats.rows.map((row, idx: number) => (
                                             <Bar
                                               key={row.type}
                                               dataKey={row.type}
@@ -4148,7 +4076,7 @@ export function CylinderReportPage() {
                                             />
                                           ))
                                         ) : (
-                                          balanceWeeklyStats.rows.map((row: any, idx: number) => (
+                                          balanceWeeklyStats.rows.map((row, idx: number) => (
                                             <Bar
                                               key={row.type}
                                               dataKey={row.type}
@@ -4166,7 +4094,7 @@ export function CylinderReportPage() {
 
                                   {/* Interactive Size Legend Below Chart */}
                                   <div className="mt-3 pt-2.5 border-t border-border-subtle dark:border-slate-800 flex flex-wrap items-center justify-center gap-2">
-                                    {balanceWeeklyStats.rows.map((row: any, idx: number) => {
+                                    {balanceWeeklyStats.rows.map((row, idx: number) => {
                                       const meta = getCylinderMeta(row.type)
                                       const color = getCylinderColor(row.type, idx)
                                       const isDimmed = balanceSizeFilter !== 'all' && balanceSizeFilter !== row.type
@@ -4215,7 +4143,7 @@ export function CylinderReportPage() {
                                         </tr>
                                       </thead>
                                       <tbody className="divide-y divide-border-subtle dark:divide-slate-800 bg-surface dark:bg-slate-900/40">
-                                        {balanceWeeklyStats.rows.map((row: any, rIdx: number) => {
+                                        {balanceWeeklyStats.rows.map((row, rIdx: number) => {
                                           const meta = getCylinderMeta(row.type)
                                           const color = getCylinderColor(row.type, rIdx)
                                           const isSelected = balanceSizeFilter === row.type
@@ -4306,7 +4234,7 @@ export function CylinderReportPage() {
                                             Total Hospital Balance
                                           </td>
                                           {balanceWeeklyStats.weekKeys.map(wk => {
-                                            const colTotal = balanceWeeklyStats.rows.reduce((sum: number, r: any) => sum + (r.weekCounts[wk] || 0), 0)
+                                            const colTotal = balanceWeeklyStats.rows.reduce((sum: number, r) => sum + (r.weekCounts[wk] || 0), 0)
                                             return (
                                               <td key={wk} className="px-2 py-2.5 text-center font-mono font-black text-text-primary dark:text-white tabular-nums">
                                                 {colTotal}
@@ -4317,7 +4245,7 @@ export function CylinderReportPage() {
                                             {balanceWeeklyAvg}
                                           </td>
                                           <td className="px-3 py-2.5 text-right font-black font-mono text-text-primary dark:text-white tabular-nums">
-                                            {reportData?.summary?.totalCylinders || balanceWeeklyStats.rows.reduce((sum: number, r: any) => sum + r.currentStock, 0)}
+                                            {reportData?.summary?.totalCylinders || balanceWeeklyStats.rows.reduce((sum: number, r) => sum + r.currentStock, 0)}
                                           </td>
                                         </tr>
                                       </tfoot>
@@ -4398,7 +4326,7 @@ export function CylinderReportPage() {
                                         </tr>
                                       </thead>
                                       <tbody className="divide-y divide-border-subtle dark:divide-slate-800 bg-surface dark:bg-slate-900/40">
-                                        {balanceWeeklyStats.rows.map((row: any, rIdx: number) => {
+                                        {balanceWeeklyStats.rows.map((row, rIdx: number) => {
                                           const meta = getCylinderMeta(row.type)
                                           const color = getCylinderColor(row.type, rIdx)
                                           return (
@@ -4441,19 +4369,19 @@ export function CylinderReportPage() {
                                             Hospital Total
                                           </td>
                                           <td className="px-2.5 py-2.5 text-center font-mono font-black text-emerald-600 dark:text-emerald-400 tabular-nums">
-                                            {balanceWeeklyStats.rows.reduce((sum: number, r: any) => sum + r.full, 0)}
+                                            {balanceWeeklyStats.rows.reduce((sum: number, r) => sum + r.full, 0)}
                                           </td>
                                           <td className="px-2.5 py-2.5 text-center font-mono font-black text-teal-600 dark:text-teal-400 tabular-nums">
-                                            {balanceWeeklyStats.rows.reduce((sum: number, r: any) => sum + r.inUse, 0)}
+                                            {balanceWeeklyStats.rows.reduce((sum: number, r) => sum + r.inUse, 0)}
                                           </td>
                                           <td className="px-2.5 py-2.5 text-center font-mono font-black text-amber-600 dark:text-amber-400 tabular-nums">
-                                            {balanceWeeklyStats.rows.reduce((sum: number, r: any) => sum + r.empty, 0)}
+                                            {balanceWeeklyStats.rows.reduce((sum: number, r) => sum + r.empty, 0)}
                                           </td>
                                           <td className="px-2.5 py-2.5 text-center font-mono font-black text-rose-600 dark:text-rose-400 tabular-nums">
-                                            {balanceWeeklyStats.rows.reduce((sum: number, r: any) => sum + r.maintenance, 0)}
+                                            {balanceWeeklyStats.rows.reduce((sum: number, r) => sum + r.maintenance, 0)}
                                           </td>
                                           <td className="px-3 py-2.5 text-right font-black font-mono text-text-primary dark:text-white tabular-nums">
-                                            {reportData?.summary?.totalCylinders || balanceWeeklyStats.rows.reduce((sum: number, r: any) => sum + r.currentStock, 0)}
+                                            {reportData?.summary?.totalCylinders || balanceWeeklyStats.rows.reduce((sum: number, r) => sum + r.currentStock, 0)}
                                           </td>
                                         </tr>
                                       </tfoot>
@@ -4576,7 +4504,7 @@ export function CylinderReportPage() {
                                   outerRadius={70}
                                   paddingAngle={3}
                                 >
-                                  {reportData.usage.byType.map((entry: any, index: number) => {
+                                  {reportData.usage.byType.map((entry, index: number) => {
                                     const colors = ["#00a68a", "#475569", "#3b82f6", "#f59e0b", "#ef4444"]
                                     return <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
                                   })}
@@ -4588,7 +4516,7 @@ export function CylinderReportPage() {
                           
                           {/* Custom Legend */}
                           <div className="mt-4 space-y-1.5 border-t border-slate-50 pt-3">
-                            {reportData.usage.byType.map((entry: any, index: number) => {
+                            {reportData.usage.byType.map((entry, index: number) => {
                               const colors = ["#00a68a", "#475569", "#3b82f6", "#f59e0b", "#ef4444"]
                               const color = colors[index % colors.length]
                               return (
@@ -4610,7 +4538,7 @@ export function CylinderReportPage() {
                         <div className="bg-surface border border-border-default rounded-xl p-5.5 shadow-[0_1px_3px_rgba(0,0,0,0.01),0_1px_2px_rgba(0,0,0,0.02)]">
                           <SectionHeader title="Ward Consumption Rankings" subtitle="Legible Department Issue list" icon={Landmark} />
                           <div className="mt-4 space-y-4">
-                            {reportData.usage.byDepartment.slice(0, 6).map((dept: any, index: number) => {
+                            {reportData.usage.byDepartment.slice(0, 6).map(dept => {
                               // Compute percentage relative to the top department
                               const maxVal = reportData.usage.byDepartment[0]?.count || 1
                               const percent = (dept.count / maxVal) * 100

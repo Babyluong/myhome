@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { IconHome, IconDashboard, IconBox, IconReceipt, IconTruck, IconFile, IconAlert, IconArrows, IconBeaker, IconChart, IconCog, IconMoney, IconMaintenance, IconUsers } from '@/components/ui/Icons';
+import { IconHome, IconBox, IconReceipt, IconTruck, IconAlert, IconBeaker, IconChart, IconCog, IconMoney, IconMaintenance, IconUsers } from '@/components/ui/Icons'
 
 type Props = { collapsed?: boolean };
 

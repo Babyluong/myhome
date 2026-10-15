@@ -1,17 +1,6 @@
 // src/modules/myprepacking/components/StoreToCounterTransferModal.tsx
 import React, { useState, useEffect } from 'react'
-import { 
-  ArrowRightLeft, 
-  Building2, 
-  CheckCircle2, 
-  AlertCircle, 
-  Layers, 
-  Package, 
-  User, 
-  Calendar,
-  Sparkles,
-  ShieldAlert
-} from 'lucide-react'
+import { ArrowRightLeft, ShieldAlert } from 'lucide-react'
 import { Modal, Button } from '@/components/ui'
 import type { PrepackItem } from '../types/prepack'
 import type { PrepackLedgerItemWithBalances } from '../services/prepackKewPs4Service'

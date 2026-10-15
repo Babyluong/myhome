@@ -1,34 +1,16 @@
 // src/modules/mytransporter/pages/TransporterRequestFormPage.tsx
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams, useLocation } from 'react-router-dom'
-import { 
-  ArrowLeft, 
-  Car, 
-  User, 
-  Clipboard, 
-  Calendar,
-  AlertCircle,
-  CheckCircle2,
-  FileText,
-  Truck
-} from 'lucide-react'
+import { ArrowLeft, Car, User, AlertCircle, CheckCircle2, Truck } from 'lucide-react'
 import { Ambulance } from '../components/AmbulanceIcon'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { createRequest, getRequestById, updateRequest, logRequestTransition } from '../services/transporterService'
-import { getUnlinkedCrossborderTransfers } from '@/modules/mycrossborder/services/crossborderService'
-import type { CrossborderTransfer, JenisDokumen, Jantina } from '@/shared/types/mycrossborder'
+import '@/modules/mycrossborder/services/crossborderService'
+import type { JenisDokumen, Jantina } from '@/shared/types/mycrossborder'
 import type { PengiringType, EscortStaff, CrossborderPatientEmbedded, KkmEscortEmbedded, WarisEscortEmbedded } from '@/shared/types/mytransporter'
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardContent, 
-  Button, 
-  Input, 
-  Select
-} from '@/components/ui'
+import { Card, CardContent, Button, Input } from '@/components/ui'
 
 const DOCTOR_OPTIONS = [
   "DR AMIR",

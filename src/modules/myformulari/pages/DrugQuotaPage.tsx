@@ -1,41 +1,7 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  Search,
-  Filter,
-  AlertCircle,
-  Clock,
-  Printer,
-  Building2,
-  PackageCheck,
-  Plus,
-  History,
-  RotateCcw,
-  Users,
-  CheckCircle2,
-  AlertTriangle,
-  Package,
-  Activity,
-  Check,
-  Trash2,
-  FileCheck,
-  Calendar,
-  Layers,
-  ArrowUpRight,
-  TrendingUp,
-  ShieldCheck,
-  Pill,
-  Sparkles,
-  ChevronRight
-} from 'lucide-react'
-import {
-  getAllDrugQuotas,
-  loadRealFacilityQuotas,
-  getQuotaSummaryStats,
-  getUniqueHospitals,
-  resetDrugQuotasToDefault,
-  deleteDrugQuota
-} from '../services/drugQuotaService'
+import { Search, Printer, Plus, History, RotateCcw, Users, CheckCircle2, Package, Activity, Check, Trash2, FileCheck, TrendingUp, Pill, ChevronRight } from 'lucide-react'
+import { getAllDrugQuotas, loadRealFacilityQuotas, getQuotaSummaryStats, getUniqueHospitals, deleteDrugQuota } from '../services/drugQuotaService'
 import { DrugQuotaItem, QuotaCategory } from '../types/drugQuotaTypes'
 import { AddQuotaDrugModal } from '../components/AddQuotaDrugModal'
 import { EditQuotaDrugModal } from '../components/EditQuotaDrugModal'

@@ -1,19 +1,7 @@
 // src/modules/mytransporter/pages/TransporterVehicleRegistryPage.tsx
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  ArrowLeft, 
-  Car, 
-  Plus, 
-  Edit, 
-  Check, 
-  AlertTriangle, 
-  FileText, 
-  Calendar, 
-  Settings, 
-  Truck, 
-  Trash2 
-} from 'lucide-react'
+import { ArrowLeft, Car, Plus, Edit, Calendar, Truck } from 'lucide-react'
 import { Ambulance } from '../components/AmbulanceIcon'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
@@ -24,16 +12,7 @@ import {
   updateVehicle 
 } from '../services/transporterService'
 import type { TransportVehicle, StatusKenderaan, JenisKenderaan } from '@/shared/types/mytransporter'
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardContent, 
-  Button, 
-  Input, 
-  Badge, 
-  Modal 
-} from '@/components/ui'
+import { Card, CardContent, Button, Input, Badge } from '@/components/ui'
 
 const TransporterVehicleRegistryPage: React.FC = () => {
   const navigate = useNavigate()

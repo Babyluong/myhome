@@ -1,15 +1,6 @@
 // @ts-nocheck
 import React, { useState, useEffect } from 'react';
-import {
-  Trash2,
-  AlertTriangle,
-  X,
-  Building2,
-  Package,
-  Layers,
-  CheckCircle2,
-  ShieldAlert
-} from 'lucide-react';
+import { Trash2, AlertTriangle, X, Building2 } from 'lucide-react'
 import { useLanguage } from '@/shared/contexts/LanguageContext';
 import type { OxygenCylinderWithRelations } from '@/types/pharmacy';
 

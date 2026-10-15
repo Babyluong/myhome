@@ -149,38 +149,42 @@ export const StoreLocationSelector: React.FC<StoreLocationSelectorProps> = ({
           disabled={isLoading}
           aria-haspopup="listbox"
           aria-expanded={isOpen}
-          className="group inline-flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-lg border border-slate-700/80 bg-slate-900/90 hover:bg-slate-800 text-slate-100 hover:text-white hover:border-slate-600 transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:opacity-50 disabled:pointer-events-none shadow-sm cursor-pointer"
+          className="group inline-flex items-center justify-between sm:justify-start gap-2.5 px-3 py-2 text-sm font-medium rounded-lg border border-slate-700/80 bg-slate-900/90 hover:bg-slate-800 text-slate-100 hover:text-white hover:border-slate-600 transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500/50 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:opacity-50 disabled:pointer-events-none shadow-sm cursor-pointer w-full sm:w-auto"
         >
-          <div className="flex items-center justify-center w-7 h-7 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 group-hover:bg-emerald-500/20 transition-colors">
-            {isConsolidatedView ? (
-              <Layers className="w-4 h-4" />
-            ) : (
-              <Warehouse className="w-4 h-4" />
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="flex items-center justify-center w-7 h-7 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 group-hover:bg-emerald-500/20 transition-colors shrink-0">
+              {isConsolidatedView ? (
+                <Layers className="w-4 h-4" />
+              ) : (
+                <Warehouse className="w-4 h-4" />
+              )}
+            </div>
+
+            <div className="flex flex-col text-left min-w-0">
+              <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-400 group-hover:text-slate-300">
+                Lokasi Stor Aktif
+              </span>
+              <span className="text-xs sm:text-sm font-semibold text-white max-w-[180px] xs:max-w-[220px] sm:max-w-[280px] truncate">
+                {isConsolidatedView
+                  ? 'Semua Stor (Konsolidasi)'
+                  : activeStore?.location_name || 'Pilih Lokasi Stor'}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1.5 shrink-0 ml-auto sm:ml-0">
+            {!isConsolidatedView && activeStore?.location_code && (
+              <span className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-mono font-medium bg-slate-800 text-slate-300 border border-slate-700">
+                {activeStore.location_code}
+              </span>
             )}
+
+            <ChevronDown
+              className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
+                isOpen ? 'rotate-180' : ''
+              }`}
+            />
           </div>
-
-          <div className="flex flex-col text-left">
-            <span className="text-[10px] uppercase tracking-wider font-semibold text-slate-400 group-hover:text-slate-300">
-              Lokasi Stor Aktif
-            </span>
-            <span className="text-xs sm:text-sm font-semibold text-white max-w-[200px] sm:max-w-[280px] truncate">
-              {isConsolidatedView
-                ? 'Semua Stor (Konsolidasi)'
-                : activeStore?.location_name || 'Pilih Lokasi Stor'}
-            </span>
-          </div>
-
-          {!isConsolidatedView && activeStore?.location_code && (
-            <span className="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded text-[11px] font-mono font-medium bg-slate-800 text-slate-300 border border-slate-700">
-              {activeStore.location_code}
-            </span>
-          )}
-
-          <ChevronDown
-            className={`w-4 h-4 text-slate-400 transition-transform duration-200 ml-1 ${
-              isOpen ? 'rotate-180' : ''
-            }`}
-          />
         </button>
 
         {isOpen && menuCoords && typeof document !== 'undefined' && createPortal(

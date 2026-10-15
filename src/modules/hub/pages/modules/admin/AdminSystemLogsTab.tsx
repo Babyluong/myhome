@@ -1,42 +1,7 @@
 // @ts-nocheck
-import React, { useEffect, useState, useCallback, useMemo } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Shield,
-  Search,
-  Filter,
-  Calendar,
-  User,
-  Download,
-  RefreshCw,
-  Eye,
-  FileText,
-  CheckCircle,
-  XCircle,
-  AlertTriangle,
-  LogIn,
-  LogOut,
-  Compass,
-  Layers,
-  Copy,
-  Check,
-  X,
-  ChevronLeft,
-  ChevronRight,
-  Clock,
-  ArrowRight,
-  ShieldCheck,
-  Activity,
-  Laptop,
-  Globe,
-  Database,
-  SlidersHorizontal,
-  FolderGit2,
-  Code,
-  Info,
-  CheckSquare,
-  Key
-} from 'lucide-react'
+import { Shield, Search, Calendar, User, Download, RefreshCw, Eye, FileText, CheckCircle, XCircle, AlertTriangle, LogIn, LogOut, Compass, Layers, Copy, Check, X, ChevronLeft, ChevronRight, Clock, ShieldCheck, Activity, Laptop, Globe, SlidersHorizontal, FolderGit2, Code, Info, Key } from 'lucide-react'
 import {
   getAuditLogs,
   getAuditLogStats,
@@ -354,7 +319,7 @@ export const AdminSystemLogsTab: React.FC = () => {
 
   // Pagination state
   const [page, setPage] = useState(1)
-  const [pageSize, setPageSize] = useState(15)
+  const [pageSize, ] = useState(15)
   const [totalRecords, setTotalRecords] = useState(0)
   const [totalPages, setTotalPages] = useState(1)
 

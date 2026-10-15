@@ -3,27 +3,8 @@
 
 import React, { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import {
-  CalendarDays,
-  Plus,
-  Calendar,
-  Clock,
-  Building2,
-  Users,
-  CheckCircle2,
-  AlertCircle,
-  TrendingUp,
-  ArrowRight,
-  ArrowLeft,
-  Filter,
-  Search,
-  MapPin,
-  ChevronRight,
-  ShieldCheck,
-  Layers,
-  FileSpreadsheet
-} from 'lucide-react'
+import 'framer-motion'
+import { CalendarDays, Plus, Calendar, Clock, Building2, CheckCircle2, AlertCircle, TrendingUp, ArrowRight, ChevronRight } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import { ROUTES } from '@/lib/constants'
@@ -40,7 +21,7 @@ import {
 import { RoomCard } from '../components/RoomCard'
 import { BookingDetailDrawer } from '../components/BookingDetailDrawer'
 import { cn } from '@/lib/utils'
-import { ModulePageHeader, Button, Badge } from '@/components/ui'
+import { ModulePageHeader, Button } from '@/components/ui'
 import { Skeleton, SkeletonCard, SkeletonTable, SkeletonMobileCardList } from '@/shared/components/ui/skeleton'
 import { Fab } from '@/shared/components/mobile'
 
@@ -55,7 +36,7 @@ export const TempahanDashboardPage: React.FC = () => {
   const [loading, setLoading] = useState(true)
 
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchQuery, ] = useState('')
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)
 

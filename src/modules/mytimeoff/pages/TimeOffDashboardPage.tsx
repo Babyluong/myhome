@@ -2,36 +2,13 @@
 
 import React, { useEffect, useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  Clock,
-  Plus,
-  ArrowRight,
-  CheckCircle2,
-  AlertCircle,
-  Calendar,
-  FileText,
-  ShieldCheck,
-  RotateCcw,
-  Sparkles,
-  TrendingUp,
-  Award,
-  Layers,
-  CalendarDays,
-  UserCheck,
-  ChevronRight,
-  Info
-} from 'lucide-react'
+import { Clock, Plus, ArrowRight, CheckCircle2, AlertCircle, Calendar, FileText, Award, Layers, CalendarDays, ChevronRight, Info } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import { ROUTES } from '@/lib/constants'
-import {
-  getToilBalance,
-  getToilClaims,
-  getToilRedemptions,
-  getToilDashboardStats
-} from '@/modules/mytimeoff/services/toilService'
+import { getToilBalance, getToilClaims, getToilDashboardStats } from '@/modules/mytimeoff/services/toilService'
 import type { ToilClaim, ToilBalance, ToilDashboardStats } from '@/shared/types/mytimeoff'
-import { Button, Badge, Skeleton, SkeletonTable, SkeletonMobileCardList, ModulePageHeader } from '@/components/ui'
+import { Button, Skeleton, SkeletonTable, SkeletonMobileCardList, ModulePageHeader } from '@/components/ui'
 import { Fab } from '@/shared/components/mobile'
 
 export const TimeOffDashboardPage: React.FC = () => {
@@ -47,7 +24,7 @@ export const TimeOffDashboardPage: React.FC = () => {
     pendingRedemptionsCount: 0,
     approvedClaimsCount: 0,
   })
-  const [balance, setBalance] = useState<ToilBalance | null>(null)
+  const [, setBalance] = useState<ToilBalance | null>(null)
   const [recentClaims, setRecentClaims] = useState<ToilClaim[]>([])
   const [isLoading, setIsLoading] = useState(true)
 

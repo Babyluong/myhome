@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { X, Printer, Loader2, FileText, CheckCircle2, User, Building2 } from 'lucide-react'
-import { Button, Input } from '@/components/ui'
+import { X, Printer, Loader2, FileText, User } from 'lucide-react'
+import { Button } from '@/components/ui'
 import { supabase } from '@/services/supabase'
 import {
   getIndentRequestById,

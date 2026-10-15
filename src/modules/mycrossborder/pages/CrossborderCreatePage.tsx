@@ -1,20 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  Save, 
-  Send, 
-  Plus, 
-  Trash2, 
-  User, 
-  Users, 
-  Calendar, 
-  HeartHandshake,
-  CheckSquare,
-  AlertTriangle,
-  Info,
-  ShieldCheck
-} from 'lucide-react';
+import { ArrowLeft, Save, Send, Plus, Trash2, User, Users, Calendar, HeartHandshake, CheckSquare, AlertTriangle, ShieldCheck } from 'lucide-react'
 import { Ambulance } from '@/modules/mytransporter/components/AmbulanceIcon';
 import { useAuthStore } from '@/stores/authStore';
 import { useToast } from '@/stores/toastStore';
@@ -29,7 +15,7 @@ import type {
   Jantina,
   JenisPengiring
 } from '@/shared/types/mycrossborder';
-import { Card, CardContent, Button } from '@/components/ui';
+import { Card, Button } from '@/components/ui'
 
 interface PatientFormState {
   nama: string;
@@ -77,7 +63,7 @@ export const CrossborderCreatePage: React.FC = () => {
   const [pemanduNama, setPemanduNama] = useState('');
   const [pemanduPassport, setPemanduPassport] = useState('');
   const [pemanduPassportExpiry, setPemanduPassportExpiry] = useState('');
-  const [peralatanLain, setPeralatanLain] = useState('');
+  useState('');
   const [selectedEquipment, setSelectedEquipment] = useState<string[]>([]);
   const [customEquipment, setCustomEquipment] = useState('');
   const [doktorPerujukNama, setDoktorPerujukNama] = useState(userName);

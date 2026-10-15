@@ -1,17 +1,7 @@
 // src/modules/hub/pages/modules/SuhuSubMenu.tsx
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  ArrowLeft, 
-  Thermometer, 
-  LayoutDashboard, 
-  AlertTriangle, 
-  Settings, 
-  FileText,
-  Activity,
-  CheckCircle,
-  Plus
-} from 'lucide-react'
+import { ArrowLeft, Thermometer, LayoutDashboard, AlertTriangle, Settings, Activity, CheckCircle } from 'lucide-react'
 import { ROUTES } from '@/lib/constants'
 import { getUnitPemantauan, getBreachLogs } from '@/modules/mysuhu/services/suhuService'
 import { useAuthStore } from '@/stores/authStore'

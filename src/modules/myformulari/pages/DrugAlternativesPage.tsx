@@ -1,38 +1,10 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  Layers,
-  Search,
-  Printer,
-  Sparkles,
-  AlertTriangle,
-  Clock,
-  CheckCircle2,
-  Calendar,
-  Building2,
-  TrendingDown,
-  ShieldAlert,
-  ArrowRight,
-  Plus,
-  RefreshCw,
-  Info,
-  ChevronRight,
-  Filter,
-  Truck,
-  Flame,
-  Pill,
-  Package,
-  Trash2,
-  Check,
-  ShieldCheck
-} from 'lucide-react'
-import { getAllFormulariDrugs } from '../services/formulariService'
+import { Layers, Search, Printer, Sparkles, AlertTriangle, Clock, CheckCircle2, Calendar, Building2, TrendingDown, ShieldAlert, ArrowRight, Plus, Info, Truck, Flame, Pill, Package, Trash2, Check, ShieldCheck } from 'lucide-react'
+import { getAllFormulariDrugs, FormulariAssetError } from '../services/formulariService'
+import type { DrugEntry } from '../types/formulariTypes'
 import { PrescriberBadge, PoisonBadge } from '../components/DrugBadge'
-import {
-  StockDisruptionRecord,
-  DisruptionSeverity,
-  DisruptionItemType
-} from '../types/stockDisruptionTypes'
+import { StockDisruptionRecord, DisruptionSeverity } from '../types/stockDisruptionTypes'
 import {
   getAllStockDisruptions,
   calculateDisruptionStats,
@@ -56,9 +28,32 @@ export const DrugAlternativesPage: React.FC = () => {
 
   // Search for Tab 2 (Directory)
   const [directorySearch, setDirectorySearch] = useState('')
+  const [allDrugs, setAllDrugs] = useState<DrugEntry[]>([])
+  const [isCatalogLoading, setIsCatalogLoading] = useState(false)
+  const [catalogError, setCatalogError] = useState<string | null>(null)
+  const [canRetryCatalog, setCanRetryCatalog] = useState(true)
+  const [hasLoadedCatalog, setHasLoadedCatalog] = useState(false)
 
   // Disruption Modal
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+
+  const loadCatalog = useCallback(async () => {
+    setIsCatalogLoading(true)
+    setCatalogError(null)
+    try {
+      setAllDrugs(await getAllFormulariDrugs())
+      setHasLoadedCatalog(true)
+    } catch (error) {
+      setCatalogError(error instanceof FormulariAssetError ? error.message : 'Formulary data is unavailable. Please try again.')
+      setCanRetryCatalog(!(error instanceof FormulariAssetError) || error.retryable)
+    } finally {
+      setIsCatalogLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (activeTab === 'directory' && !hasLoadedCatalog && !catalogError) void loadCatalog()
+  }, [activeTab, hasLoadedCatalog, catalogError, loadCatalog])
 
   // Data Loading
   const [disruptions, setDisruptions] = useState<StockDisruptionRecord[]>(() => getAllStockDisruptions())
@@ -128,7 +123,6 @@ export const DrugAlternativesPage: React.FC = () => {
   }, [disruptions, itemTypeFilter, lawasSearch, severityFilter, deptFilter])
 
   // Tab 2: Directory Drugs with Alternatives
-  const allDrugs = useMemo(() => getAllFormulariDrugs(), [])
   const drugsWithAlternatives = useMemo(() => {
     return allDrugs.filter(d => d.alternativeDrugs && d.alternativeDrugs.length > 0)
   }, [allDrugs])
@@ -381,7 +375,10 @@ export const DrugAlternativesPage: React.FC = () => {
               <div className="flex items-center gap-2 flex-wrap">
                 <select
                   value={itemTypeFilter}
-                  onChange={e => setItemTypeFilter(e.target.value as any)}
+                  onChange={e => {
+                    const selected = (['ALL', 'DRUG', 'NON_DRUG'] as const).find(value => value === e.currentTarget.value)
+                    if (selected) setItemTypeFilter(selected)
+                  }}
                   className="p-3 bg-subtle/50 border border-border-default rounded-2xl text-xs text-text-secondary font-semibold focus:border-purple-500 focus:outline-hidden"
                 >
                   <option value="ALL">Semua Jenis (Ubat &amp; Bukan Ubat)</option>
@@ -733,6 +730,26 @@ export const DrugAlternativesPage: React.FC = () => {
 
           {/* Alternatives Directory List */}
           <div className="space-y-6">
+            {isCatalogLoading ? (
+              <p className="rounded-xl border border-border-default bg-surface p-5 text-sm text-text-secondary" role="status" aria-live="polite">
+                Loading formulary data…
+              </p>
+            ) : catalogError ? (
+              <div className="rounded-xl border border-border-default bg-surface p-5 text-text-primary" role="alert">
+                <p className="text-sm">{catalogError}</p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button type="button" onClick={() => void loadCatalog()} className="rounded-lg bg-accent-base px-4 py-2 text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-base focus-visible:outline-offset-2">
+                    Try again
+                  </button>
+                  {!canRetryCatalog && (
+                    <button type="button" onClick={() => window.location.reload()} className="rounded-lg border border-border-default px-4 py-2 text-sm font-semibold text-text-secondary focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-base focus-visible:outline-offset-2">
+                      Reload app
+                    </button>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <>
             {filteredDirectoryDrugs.map(drug => (
               <div
                 key={drug.id}
@@ -799,6 +816,8 @@ export const DrugAlternativesPage: React.FC = () => {
               <div className="p-12 text-center bg-surface rounded-3xl border border-dashed border-border-default text-text-muted text-xs">
                 No alternative drugs found matching the search criteria.
               </div>
+            )}
+              </>
             )}
           </div>
         </div>

@@ -1,23 +1,6 @@
 import React, { useState, useMemo } from 'react'
-import {
-  Search,
-  X,
-  ChevronRight,
-  ChevronDown,
-  User,
-  Baby,
-  Sparkles,
-  Layers,
-  CheckCircle2,
-  Filter,
-  Zap,
-  Bookmark
-} from 'lucide-react'
-import {
-  NAGInfectionGuideline,
-  NAGPopulation,
-  NAGCategoryMetadata
-} from '../types/formulariTypes'
+import { Search, X, ChevronRight, ChevronDown, User, Baby, CheckCircle2 } from 'lucide-react'
+import { NAGInfectionGuideline, NAGPopulation } from '../types/formulariTypes'
 import {
   NAG_ADULT_CATEGORIES_METADATA,
   NAG_PAED_CATEGORIES_METADATA

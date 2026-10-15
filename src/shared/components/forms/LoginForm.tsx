@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
 import { LogIn, User, Lock, AlertTriangle, Eye, EyeOff } from 'lucide-react'
-import { Button, Input } from '@/components/ui'
+import { Button } from '@/components/ui'
 import { loginSchema, type LoginFormData } from '@/lib/validators'
 import { login } from '@/services/authService'
 import { useAuthStore } from '@/stores/authStore'
@@ -213,7 +213,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           type="submit"
           disabled={isLoading}
           className={cn(
-            'w-full h-11 text-sm font-semibold rounded-lg transition-all duration-150',
+            'w-full h-11 text-sm font-semibold rounded-lg transition-colors duration-150',
             'bg-accent-base text-accent-foreground hover:bg-accent-hover hover:shadow-elevation-2 active:scale-[0.98]',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-base focus-visible:ring-offset-2 focus-visible:ring-offset-surface',
             'shadow-elevation-1 flex items-center justify-center gap-2 cursor-pointer border border-accent-hover/30',

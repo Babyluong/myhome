@@ -4,28 +4,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  CalendarDays,
-  Plus,
-  Search,
-  Filter,
-  CheckCircle2,
-  AlertCircle,
-  XCircle,
-  Clock,
-  Printer,
-  Calendar,
-  Download,
-  MapPin,
-  Users,
-  QrCode,
-  Layers,
-  ArrowRight,
-  ArrowLeft,
-  ChevronRight,
-  FileSpreadsheet,
-  X
-} from 'lucide-react'
+import { CalendarDays, Plus, Search, AlertCircle, Clock, Printer, Calendar, MapPin, QrCode, ArrowLeft, ChevronRight, X } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import { ROUTES } from '@/lib/constants'
@@ -35,7 +14,7 @@ import {
   updateBookingStatus
 } from '../services/tempahanService'
 import { downloadBookingConfirmationPdf } from '../services/tempahanPdfService'
-import { downloadBookingICS } from '../services/tempahanCalendarService'
+import '../services/tempahanCalendarService'
 import { BookingDetailDrawer } from '../components/BookingDetailDrawer'
 import { cn } from '@/lib/utils'
 
@@ -45,7 +24,7 @@ export const TempahanMyBookingsPage: React.FC = () => {
   const { addToast } = useToast()
 
   const [bookings, setBookings] = useState<Booking[]>([])
-  const [loading, setLoading] = useState(true)
+  const [, setLoading] = useState(true)
   const [statusTab, setStatusTab] = useState<string>('all')
   const [searchQuery, setSearchQuery] = useState('')
 

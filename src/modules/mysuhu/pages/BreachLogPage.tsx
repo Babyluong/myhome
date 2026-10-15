@@ -11,7 +11,7 @@ import {
   Edit2
 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
-import { Badge, Spinner, ModulePageHeader } from '@/components/ui'
+import { Spinner, ModulePageHeader } from '@/components/ui'
 import { getBreachLogs, getLokasi, annotateReading } from '@/modules/mysuhu/services/suhuService'
 import { exportBreachLogsToCsv } from '@/modules/mysuhu/services/suhuReportService'
 import type { BacaanSuhuWithRelations, Lokasi } from '@/types/mysuhu'

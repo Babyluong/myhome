@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ShieldAlert, ArrowLeft, Lock, RefreshCw, KeyRound, Home } from 'lucide-react'
+import { ShieldAlert, KeyRound, Home } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { useAuthStore } from '@/stores/authStore'
 import { ROUTES } from '@/lib/constants'

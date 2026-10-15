@@ -1,17 +1,8 @@
 // src/modules/mytransporter/pages/TransporterReportsPage.tsx
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  ArrowLeft, 
-  TrendingUp, 
-  Printer, 
-  Car, 
-  ClipboardList, 
-  AlertCircle, 
-  FileText, 
-  Shield 
-} from 'lucide-react'
-import { Ambulance } from '../components/AmbulanceIcon'
+import { ArrowLeft, TrendingUp, Printer, Car, ClipboardList, FileText, Shield } from 'lucide-react'
+import '../components/AmbulanceIcon'
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { useAuthStore } from '@/stores/authStore'
@@ -46,7 +37,7 @@ const TransporterReportsPage: React.FC = () => {
 
   const [requests, setRequests] = useState<TransportRequest[]>([])
   const [vehicles, setVehicles] = useState<TransportVehicle[]>([])
-  const [drivers, setDrivers] = useState<UserWithRelations[]>([])
+  const [, setDrivers] = useState<UserWithRelations[]>([])
   const [inspections, setInspections] = useState<VehicleInspection[]>([])
   const [aggregateStats, setAggregateStats] = useState<any>(null)
   const [loading, setLoading] = useState(true)

@@ -1,0 +1,314 @@
+# HOME-FIXES-20261013 — Babyluong handoff
+
+Status: **BLOCKED / rendered acceptance and final lint remain unverified.** Report to: Amri. Only Amri accepts or closes this task.
+
+Baseline revision: `f1d4918084f4b9da515d055471f21acc1525e243`. Manifest: `docs/audits/home-fixes-20261013.manifest.json`; pinned content snapshot SHA-256: `ccec66f87a9c229c5cad9e28cb1d3767fbc405a63dfedd864a6ecfb6aaa5cd3d`. Existing workspace edits are preserved.
+
+## Functional changes
+
+- F1: both facility catalog pickers retain selected item objects across search/scheme responses. Counts derive from those same objects and the complete selection is submitted. Select-all merges records without duplicates. Batch submission has a loading state, catches failed writes/reloads and retains selections on a partial error.
+- F2: both mobile cards provide a native, named edit button and a separate named delete button with visible focus styling. The card container is no longer a click-only control.
+- F3: prepacking has one debounced request lifecycle. Effect cleanup ignores stale results/loading updates after search/store changes or close. Failed requests show a separate error/retry state; medication selection uses a named native button.
+- F4: master catalog pages preserve the existing role predicate and redirect in wrapper components. Their content components call hooks unconditionally and remain unmounted while the wrapper redirects.
+- B8: location detail, item listing and PDF use one common loader that resolves the hospital's facility store and reads drug/non-drug inventory through the scoped service contracts. The page no longer uses hardcoded store UUIDs or unscoped localStorage inventory. Detail cleanup ignores stale responses; read failures appear visibly.
+- Four inventory-picker `transition-all` instances now specify color or color/transform transitions at 150–200ms.
+- Store IDs are passed to five facility-edit calls, including the ledger, and to location bulk assignment. The no-op non-drug clear-scheme export is removed in favor of BabyHien's service contract.
+
+## Checks and evidence
+
+- An initial `tsc --noEmit` invocation was interrupted after a prolonged silent run; completion is **UNVERIFIED**. Existing `@ts-nocheck` directives also limit compilation coverage. Final stable-source compilation remains required.
+- Focused ESLint source diagnostics show the F4 rules-of-hooks failures removed. Remaining legacy typing, unused bindings and `@ts-nocheck` failures are being corrected under the expanded exact frontend roster.
+- An in-memory TypeScript AST pass removes only ESLint-confirmed unused import bindings. It preserves bare value-module imports for side effects. A Windows UNKNOWN write error interrupted the first pass; a fresh-source, bounded-retry continuation is running. No persistent script was added.
+- Rendered evidence: **NOT AVAILABLE / unverified**. BabyAaralyn owns isolated fixture/browser checks for responsive layouts, Enter/Space activation, both-theme focus/contrast, zoom, reduced motion, cross-search selections, request ordering and scoped detail/PDF data.
+
+### Continuation checkpoint
+
+- `src/main.tsx` waits for cache cleanup and service-worker readiness before importing `App`, with visible retry and reload controls if required cleanup fails.
+- `src/shared/utils/cacheBuster.ts` now observes worker installation and activation when replacing an unsafe controller, probes every changed controller, and starts only after the `20261013-v2` capability reply. A controller that already proves safe can start offline even if registration lookup fails; update remains background work. Failure to write the informational localStorage version marker does not block startup, while CacheStorage deletion and unsafe-worker replacement failures remain visible.
+- `DialogFocusScope` in the shared Modal implementation handles initial focus, Tab containment, Escape on the top dialog, nested dialog stack behavior, body scroll restoration and opener focus return; both Modal and SlideOver use it. BabyAaralyn was asked to rerun the affected desktop/mobile, theme and reduced-motion matrix. Rendered result is pending.
+- Direct ESLint CLI on `src/main.tsx`, `src/shared/utils/cacheBuster.ts`, `src/shared/components/ui/Modal.tsx` and `src/shared/components/ui/SlideOver.tsx` passed with zero diagnostics. A broad frontend-roster lint aggregation did not finish; no current total is claimed. Full lint, typecheck, build and rendered browser acceptance remain pending.
+
+## Dependencies and next action
+
+BabyHien owns store resolution, write/read failures, offline session/cache lifecycle and backend result types. The startup handshake uses the agreed `HOME_SAFE_OFFLINE_CACHE_V2` message and `20261013-v2` response. Drug clear-scheme scoping and callers in backend-owned quota services have been reported to Amri. Do not infer authorization or audit acceptance from presentation checks.
+
+Continue the assigned frontend lint/type batches, record changed paths relative to the pinned snapshot, run the required boundary check and provide the final evidence to Amri. No tests, access policy, deployments, staging or commits were authored by this specialist.
+
+## Changed paths relative to pinned snapshot
+
+- `src/modules/inventory/pages/inventory/FacilityDrugInventoryPage.tsx`
+- `src/modules/inventory/pages/inventory/FacilityNonDrugInventoryPage.tsx`
+- `src/modules/inventory/pages/inventory/StoreLocationManagementPage.tsx`
+- `src/modules/inventory/pages/inventory/DrugInventoryPage.tsx`
+- `src/modules/inventory/pages/inventory/NonDrugInventoryPage.tsx`
+- `src/modules/inventory/components/FacilityDrugMobileCard.tsx`
+- `src/modules/inventory/components/FacilityNonDrugMobileCard.tsx`
+- `src/modules/myprepacking/components/PrepackDrugPickerModal.tsx`
+- `src/shared/components/mobile/TabBar.tsx`
+- `src/shared/utils/cacheBuster.ts`
+- `docs/audits/home-fixes-20261013.frontend.md`
+- `src/components/InventorySearchFilter.tsx`
+- `src/components/PhysicalIssuanceModal.tsx`
+- `src/components/SidebarNav.tsx`
+- `src/components/kunci/ScanKunciMovementModal.tsx`
+- `src/components/oxygen/AuditReconciliationSummaryModal.tsx`
+- `src/components/oxygen/CreateReceiveDocumentModal.tsx`
+- `src/components/oxygen/CreateReturnDocumentModal.tsx`
+- `src/components/oxygen/CylinderDispatchTable.tsx`
+- `src/components/oxygen/CylinderKpiCards.tsx`
+- `src/components/oxygen/CylinderOfflineBanner.tsx`
+- `src/components/oxygen/CylinderStockReconciliationModal.tsx`
+- `src/components/oxygen/DeleteCylinderModal.tsx`
+- `src/components/oxygen/DispatchRequestDetailModal.tsx`
+- `src/components/oxygen/EditCylinderModal.tsx`
+- `src/components/oxygen/EmptyCylinderListModal.tsx`
+- `src/components/oxygen/ManualIssueModal.tsx`
+- `src/components/oxygen/ReceiveDocumentPrintView.tsx`
+- `src/components/oxygen/ReceiveInterFacilityModal.tsx`
+- `src/components/oxygen/RegisterAvailableCylindersModal.tsx`
+- `src/components/oxygen/ReturnInterFacilityModal.tsx`
+- `src/components/oxygen/ScanEmptyCylinderModal.tsx`
+- `src/components/oxygen/ScanReconciliationModal.tsx`
+- `src/components/oxygen/StoreBalanceGrid.tsx`
+- `src/components/oxygen/StoreUsageBalanceTable.tsx`
+- `src/components/oxygen/SupplierCylinderTrackingSection.tsx`
+- `src/components/oxygen/SupplierReturnsSection.tsx`
+- `src/components/oxygen/UnitRequestModal.tsx`
+- `src/components/shared/ContactModal.tsx`
+- `src/components/shared/PdfPreviewModal.tsx`
+- `src/modules/admin/pages/accessRequests/AccessRequestDetailPage.tsx`
+- `src/modules/admin/pages/alerts/AlertCenterPage.tsx`
+- `src/modules/admin/pages/auditLogs/AuditLogPage.tsx`
+- `src/modules/admin/pages/backups/BackupManagementPage.tsx`
+- `src/modules/admin/pages/clinics/ClinicDetailPage.tsx`
+- `src/modules/admin/pages/departments/DepartmentDetailPage.tsx`
+- `src/modules/admin/pages/departments/DepartmentListPage.tsx`
+- `src/modules/admin/pages/hospitals/HospitalDetailPage.tsx`
+- `src/modules/admin/pages/hospitals/HospitalListPage.tsx`
+- `src/modules/admin/pages/modules/ModuleAccessControlPage.tsx`
+- `src/modules/admin/pages/monitoring/SystemMonitoringPage.tsx`
+- `src/modules/admin/pages/roles/RoleListPage.tsx`
+- `src/modules/admin/pages/settings/SystemSettingsPage.tsx`
+- `src/modules/admin/pages/systemLogs/SystemLogsPage.tsx`
+- `src/modules/admin/pages/users/UserDetailPage.tsx`
+- `src/modules/admin/pages/users/UserListPage.tsx`
+- `src/modules/auth/pages/LoginPage.tsx`
+- `src/modules/catalog/pages/catalog/ContractCatalogPage.tsx`
+- `src/modules/catalog/pages/catalog/DrugCatalogPage.tsx`
+- `src/modules/catalog/pages/catalog/FacilityCatalogPage.tsx`
+- `src/modules/catalog/pages/catalog/NonDrugCatalogPage.tsx`
+- `src/modules/catalog/pages/catalog/SupplierCatalogPage.tsx`
+- `src/modules/distribution/components/IndentIssuePrintView.tsx`
+- `src/modules/distribution/pages/distribution/IndentEntitlementPage.tsx`
+- `src/modules/distribution/pages/distribution/IndentRequestDetailPage.tsx`
+- `src/modules/distribution/pages/distribution/IndentRequestListPage.tsx`
+- `src/modules/distribution/pages/distribution/IssueCounterPage.tsx`
+- `src/modules/distribution/pages/distribution/TransferRequestListPage.tsx`
+- `src/modules/financial/pages/financial/APPLAllocationPage.tsx`
+- `src/modules/financial/pages/financial/BudgetOverviewPage.tsx`
+- `src/modules/financial/pages/financial/CCAllocationPage.tsx`
+- `src/modules/financial/pages/financial/HospitalBudgetForecastPage.tsx`
+- `src/modules/financial/pages/financial/LPAllocationPage.tsx`
+- `src/modules/financial/pages/financial/WarrantPage.tsx`
+- `src/modules/hospital-admin/pages/memos/MemoListPage.tsx`
+- `src/modules/hospital-admin/pages/sensitiveData/SensitiveDataRequestDetailPage.tsx`
+- `src/modules/hospital-admin/pages/sensitiveData/SensitiveDataRequestListPage.tsx`
+- `src/modules/hub/components/AdminBroadcastModal.tsx`
+- `src/modules/hub/components/SystemBroadcastBanner.tsx`
+- `src/modules/hub/components/SystemUpdateLogModal.tsx`
+- `src/modules/hub/pages/ModuleHubPage.tsx`
+- `src/modules/hub/pages/gallery/AlbumDetailPage.tsx`
+- `src/modules/hub/pages/modules/BorangSubMenu.tsx`
+- `src/modules/hub/pages/modules/CutiSubMenu.tsx`
+- `src/modules/hub/pages/modules/CylinderSubMenu.tsx`
+- `src/modules/hub/pages/modules/FileSubMenu.tsx`
+- `src/modules/hub/pages/modules/InventorySubMenu.tsx`
+- `src/modules/hub/pages/modules/PorterSubMenu.tsx`
+- `src/modules/hub/pages/modules/StaffSubMenu.tsx`
+- `src/modules/hub/pages/modules/SuhuSubMenu.tsx`
+- `src/modules/hub/pages/modules/SuratSubMenu.tsx`
+- `src/modules/hub/pages/modules/TimeOffSubMenu.tsx`
+- `src/modules/hub/pages/modules/TransporterSubMenu.tsx`
+- `src/modules/hub/pages/modules/WarrantSubMenu.tsx`
+- `src/modules/hub/pages/modules/admin/AdminApprovalsTab.tsx`
+- `src/modules/hub/pages/modules/admin/AdminDepartmentsTab.tsx`
+- `src/modules/hub/pages/modules/admin/AdminRbacTab.tsx`
+- `src/modules/hub/pages/modules/admin/AdminSystemLogsTab.tsx`
+- `src/modules/hub/pages/modules/admin/AdminUsersTab.tsx`
+- `src/modules/inventory/pages/inventory/APPLInventoryPage.tsx`
+- `src/modules/inventory/pages/inventory/InventoryOverviewPage.tsx`
+- `src/modules/inventory/pages/inventory/InventoryReportPage.tsx`
+- `src/modules/inventory/pages/inventory/KewPs4LedgerPage.tsx`
+- `src/modules/inventory/pages/inventory/NearExpiryPage.tsx`
+- `src/modules/inventory/pages/inventory/StockMovementScannerPage.tsx`
+- `src/modules/maintenance/pages/maintenance/StockVerificationPage.tsx`
+- `src/modules/maintenance/pages/maintenance/UnitCatalogPage.tsx`
+- `src/modules/mycrossborder/pages/CrossborderCreatePage.tsx`
+- `src/modules/mycrossborder/pages/CrossborderDetailPage.tsx`
+- `src/modules/mycrossborder/pages/CrossborderLogPage.tsx`
+- `src/modules/mycylinder/pages/oxygen/CylinderKewPs4LedgerPage.tsx`
+- `src/modules/mycylinder/pages/oxygen/CylinderMaintenancePage.tsx`
+- `src/modules/mycylinder/pages/oxygen/CylinderReportPage.tsx`
+- `src/modules/mycylinder/pages/oxygen/OxygenDashboardPage.tsx`
+- `src/modules/myformulari/components/AddEditPaediatricProtocolModal.tsx`
+- `src/modules/myformulari/components/AddPatientQuotaModal.tsx`
+- `src/modules/myformulari/components/AddQuotaDrugModal.tsx`
+- `src/modules/myformulari/components/AddStockDisruptionModal.tsx`
+- `src/modules/myformulari/components/AntidoteDetailModal.tsx`
+- `src/modules/myformulari/components/AntimicrobialTable.tsx`
+- `src/modules/myformulari/components/ArtemetherScheduleCalculator.tsx`
+- `src/modules/myformulari/components/DilutionCard.tsx`
+- `src/modules/myformulari/components/DrugBadge.tsx`
+- `src/modules/myformulari/components/DrugCard.tsx`
+- `src/modules/myformulari/components/DrugInteractionModal.tsx`
+- `src/modules/myformulari/components/EditQuotaDrugModal.tsx`
+- `src/modules/myformulari/components/InventoryDrugPickerModal.tsx`
+- `src/modules/myformulari/components/NAGCategoryDirectory.tsx`
+- `src/modules/myformulari/components/NAGClinicalMonograph.tsx`
+- `src/modules/myformulari/components/NAGMasterSidebar.tsx`
+- `src/modules/myformulari/components/NAGSyncManagerModal.tsx`
+- `src/modules/myformulari/components/PRNHotlineCard.tsx`
+- `src/modules/myformulari/components/PaediatricDoseCalculatorModal.tsx`
+- `src/modules/myformulari/components/PatientQuotaDrawer.tsx`
+- `src/modules/myformulari/components/QuotaDispenseHistoryModal.tsx`
+- `src/modules/myformulari/components/RecordQuotaDispenseModal.tsx`
+- `src/modules/myformulari/components/ShelfLifeWidget.tsx`
+- `src/modules/myformulari/pages/AntidoteProtocolPage.tsx`
+- `src/modules/myformulari/pages/AntimicrobialGuidelinePage.tsx`
+- `src/modules/myformulari/pages/DilutionProtocolPage.tsx`
+- `src/modules/myformulari/pages/DrugAlternativesPage.tsx`
+- `src/modules/myformulari/pages/DrugDetailPage.tsx`
+- `src/modules/myformulari/pages/DrugQuotaPage.tsx`
+- `src/modules/myformulari/pages/FormulariDashboardPage.tsx`
+- `src/modules/myformulari/pages/HamListPage.tsx`
+- `src/modules/myformulari/pages/HospitalLawasFormulariPage.tsx`
+- `src/modules/myformulari/pages/LasaListPage.tsx`
+- `src/modules/myformulari/pages/PaediatricCataloguePage.tsx`
+- `src/modules/mykunci/pages/KunciAuditPage.tsx`
+- `src/modules/mykunci/pages/KunciDashboardPage.tsx`
+- `src/modules/mykunci/pages/KunciLogPage.tsx`
+- `src/modules/mykunci/pages/KunciPolicyPage.tsx`
+- `src/modules/mykunci/pages/KunciRegistryPage.tsx`
+- `src/modules/mymsds/components/GhsPictogram.tsx`
+- `src/modules/mymsds/components/MsdsChemicalCard.tsx`
+- `src/modules/mymsds/components/MsdsDetailModal.tsx`
+- `src/modules/mymsds/pages/MyMsdsDashboardPage.tsx`
+- `src/modules/myperolehan/components/AddOrEditPerihalItemModal.tsx`
+- `src/modules/myperolehan/components/AddWarrantModal.tsx`
+- `src/modules/myperolehan/components/BudgetSummaryCards.tsx`
+- `src/modules/myperolehan/pages/MyPerolehanDashboard.tsx`
+- `src/modules/myperolehan/pages/tabs/PengurusanBudgetTab.tsx`
+- `src/modules/myperolehan/pages/tabs/PerihalSuppliersTab.tsx`
+- `src/modules/myperolehan/pages/tabs/PerolehanOverviewTab.tsx`
+- `src/modules/myperolehan/pages/tabs/PurchaseOrdersTab.tsx`
+- `src/modules/myperolehan/pages/tabs/ReceivingPaymentsTab.tsx`
+- `src/modules/myphis/pages/MyPhisDashboardPage.tsx`
+- `src/modules/myporter/components/HandoverVerificationModal.tsx`
+- `src/modules/myporter/components/PorterRadarAlertModal.tsx`
+- `src/modules/myporter/pages/PorterDashboardPage.tsx`
+- `src/modules/myporter/pages/PorterDriverPanelPage.tsx`
+- `src/modules/myporter/pages/PorterManagerDispatchPage.tsx`
+- `src/modules/myporter/pages/PorterMyRequestsPage.tsx`
+- `src/modules/myporter/pages/PorterReceiverPanelPage.tsx`
+- `src/modules/myporter/pages/PorterReportsPage.tsx`
+- `src/modules/myporter/pages/PorterRequestWizardPage.tsx`
+- `src/modules/myporter/pages/PorterRoleAssignmentPage.tsx`
+- `src/modules/myporter/pages/PorterRosterPage.tsx`
+- `src/modules/myprepacking/components/GalenicalPreparationMonographModal.tsx`
+- `src/modules/myprepacking/components/PrepackBatchCreateModal.tsx`
+- `src/modules/myprepacking/components/PrepackLabelPrintModal.tsx`
+- `src/modules/myprepacking/components/PrepackUsageModal.tsx`
+- `src/modules/myprepacking/components/RecentBatchesPanel.tsx`
+- `src/modules/myprepacking/components/StoreToCounterTransferModal.tsx`
+- `src/modules/myprepacking/components/formulationEditor/FormulationAuditHistoryTab.tsx`
+- `src/modules/myprepacking/components/formulationEditor/FormulationGeneralTab.tsx`
+- `src/modules/myprepacking/components/formulationEditor/FormulationIngredientsTab.tsx`
+- `src/modules/myprepacking/pages/PrepackBatchListPage.tsx`
+- `src/modules/myprepacking/pages/PrepackItemListPage.tsx`
+- `src/modules/myprepacking/pages/PrepackKewPs4LedgerPage.tsx`
+- `src/modules/myprepacking/pages/PrepackLabelStudioPage.tsx`
+- `src/modules/myprepacking/pages/PrepackReportsPage.tsx`
+- `src/modules/myprepacking/pages/PrepackStockMovementPage.tsx`
+- `src/modules/myprepacking/pages/PrepackUsageHistoryPage.tsx`
+- `src/modules/mypriviledging/components/CredentialingCriteriaView.tsx`
+- `src/modules/mypriviledging/components/PriviledgingCertificatePrint.tsx`
+- `src/modules/mypriviledging/components/StaffCompetencyMatrix.tsx`
+- `src/modules/mypriviledging/components/SubmitProcedureModal.tsx`
+- `src/modules/mystaff/components/AuditLogDrawer.tsx`
+- `src/modules/mystaff/components/AuditReasonModal.tsx`
+- `src/modules/mystaff/pages/StaffCalendarPage.tsx`
+- `src/modules/mystaff/pages/StaffDashboardPage.tsx`
+- `src/modules/mystaff/pages/StaffDeadlinePage.tsx`
+- `src/modules/mystaff/pages/StaffHodPage.tsx`
+- `src/modules/mystaff/pages/StaffLeaveApplyPage.tsx`
+- `src/modules/mystaff/pages/StaffLeavePage.tsx`
+- `src/modules/mystaff/pages/StaffMovementPage.tsx`
+- `src/modules/mystaff/pages/StaffOrgChartPage.tsx`
+- `src/modules/mystaff/pages/StaffReminderPage.tsx`
+- `src/modules/mysuhu/pages/AdminSetupPage.tsx`
+- `src/modules/mysuhu/pages/BreachLogPage.tsx`
+- `src/modules/mysuhu/pages/DepartmentSuhuPage.tsx`
+- `src/modules/mysuhu/pages/SuhuDashboardPage.tsx`
+- `src/modules/mysuhu/pages/UnitDetailPage.tsx`
+- `src/modules/mytempahan/components/BookingDetailDrawer.tsx`
+- `src/modules/mytempahan/pages/TempahanApprovalQueuePage.tsx`
+- `src/modules/mytempahan/pages/TempahanCalendarPage.tsx`
+- `src/modules/mytempahan/pages/TempahanDashboardPage.tsx`
+- `src/modules/mytempahan/pages/TempahanMyBookingsPage.tsx`
+- `src/modules/mytempahan/pages/TempahanReportsPage.tsx`
+- `src/modules/mytempahan/pages/TempahanRequestFormPage.tsx`
+- `src/modules/mytempahan/pages/TempahanRoomRegistryPage.tsx`
+- `src/modules/mytimeoff/pages/TimeOffClaimPage.tsx`
+- `src/modules/mytimeoff/pages/TimeOffDashboardPage.tsx`
+- `src/modules/mytimeoff/pages/TimeOffHistoryPage.tsx`
+- `src/modules/mytimeoff/pages/TimeOffHodPage.tsx`
+- `src/modules/mytimeoff/pages/TimeOffMyClaimsPage.tsx`
+- `src/modules/mytimeoff/pages/TimeOffRedeemPage.tsx`
+- `src/modules/mytransporter/pages/TransporterAdminApprovalPage.tsx`
+- `src/modules/mytransporter/pages/TransporterAvailabilityPage.tsx`
+- `src/modules/mytransporter/pages/TransporterDashboardPage.tsx`
+- `src/modules/mytransporter/pages/TransporterDriverMonitorPage.tsx`
+- `src/modules/mytransporter/pages/TransporterDriverPanelPage.tsx`
+- `src/modules/mytransporter/pages/TransporterMyRequestsPage.tsx`
+- `src/modules/mytransporter/pages/TransporterReportsPage.tsx`
+- `src/modules/mytransporter/pages/TransporterRequestFormPage.tsx`
+- `src/modules/mytransporter/pages/TransporterRoleAssignmentPage.tsx`
+- `src/modules/mytransporter/pages/TransporterVehicleIssuesPage.tsx`
+- `src/modules/mytransporter/pages/TransporterVehicleMovementPage.tsx`
+- `src/modules/mytransporter/pages/TransporterVehicleRegistryPage.tsx`
+- `src/modules/mywarrant/pages/dashboard/PharmacyLogisticsDashboard.tsx`
+- `src/modules/mywarrant/pages/mywarrant/MyWarrantDashboard.tsx`
+- `src/modules/procurement/pages/procurement/APPLPenaltyDetailPage.tsx`
+- `src/modules/procurement/pages/procurement/CCPenaltyDetailPage.tsx`
+- `src/modules/procurement/pages/procurement/CreditNoteAuditPage.tsx`
+- `src/modules/procurement/pages/procurement/ExcelUploadModal.tsx`
+- `src/modules/procurement/pages/procurement/GoodsReceivingForm.tsx`
+- `src/modules/procurement/pages/procurement/LPOListPage.tsx`
+- `src/modules/procurement/pages/procurement/OrderTrackingPage.tsx`
+- `src/modules/procurement/pages/procurement/PurchaseOrderCreatePage.tsx`
+- `src/modules/procurement/pages/procurement/PurchaseOrderDetailView.tsx`
+- `src/modules/procurement/pages/procurement/PurchaseOrderListPage.tsx`
+- `src/modules/procurement/pages/procurement/ReceivingPage.tsx`
+- `src/modules/procurement/pages/procurement/SupplierPerformancePage.tsx`
+- `src/modules/profile/components/EditProfileModal.tsx`
+- `src/modules/profile/components/ProfileChangeLogCard.tsx`
+- `src/modules/profile/components/ProfilePhotoModal.tsx`
+- `src/modules/profile/pages/profile/ProfilePage.tsx`
+- `src/modules/reports/pages/reports/FinancialReportPage.tsx`
+- `src/modules/reports/pages/reports/ProcurementReportPage.tsx`
+- `src/pages/dashboard/DashboardPage.tsx`
+- `src/pages/dashboard/HospitalAdminDashboard.tsx`
+- `src/pages/dashboard/SystemAdminDashboard.tsx`
+- `src/pages/error/UnauthorizedPage.tsx`
+- `src/routes/routes.tsx`
+- `src/shared/components/forms/AccessRequestForm.tsx`
+- `src/shared/components/forms/ChangePasswordForm.tsx`
+- `src/shared/components/forms/DepartmentForm.tsx`
+- `src/shared/components/forms/HospitalAdminForm.tsx`
+- `src/shared/components/forms/LoginForm.tsx`
+- `src/shared/components/forms/UserForm.tsx`
+- `src/shared/components/layout/Header.tsx`
+- `src/shared/components/layout/MainLayout.tsx`
+- `src/shared/components/layout/Sidebar.tsx`
+- `src/shared/components/ui/ConfirmationDialog.tsx`
+- `src/shared/components/ui/OfflineSyncDrawer.tsx`

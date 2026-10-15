@@ -1,24 +1,12 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  Flame,
-  ShieldAlert,
-  Search,
-  ArrowLeft,
-  Filter,
-  AlertOctagon,
-  Users,
-  Lock,
-  Activity,
-  Printer,
-  ChevronRight,
-  Sparkles
-} from 'lucide-react'
-import { getAllFormulariDrugs } from '../services/formulariService'
-import { HAMCategory, HAMRiskLevel, DrugEntry } from '../types/formulariTypes'
+import { Flame, ShieldAlert, Search, AlertOctagon, Users, Lock, Activity, Printer, ChevronRight } from 'lucide-react'
+import { getAllFormulariDrugs, FormulariAssetError } from '../services/formulariService'
+import type { DrugEntry } from '../types/formulariTypes'
+import { HAMCategory, HAMRiskLevel } from '../types/formulariTypes'
 import { PrescriberBadge, HAMBadge, PoisonBadge } from '../components/DrugBadge'
-import { TallManLettering } from '../components/TallManLettering'
-import { ROUTES } from '@/lib/constants'
+import '../components/TallManLettering'
+import '@/lib/constants'
 
 export const HamListPage: React.FC = () => {
   const navigate = useNavigate()
@@ -26,7 +14,28 @@ export const HamListPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<HAMCategory | 'ALL'>('ALL')
   const [selectedRisk, setSelectedRisk] = useState<HAMRiskLevel | 'ALL'>('ALL')
 
-  const allDrugs = useMemo(() => getAllFormulariDrugs(), [])
+  const [allDrugs, setAllDrugs] = useState<DrugEntry[]>([])
+  const [isCatalogLoading, setIsCatalogLoading] = useState(true)
+  const [catalogError, setCatalogError] = useState<string | null>(null)
+  const [canRetryCatalog, setCanRetryCatalog] = useState(true)
+
+  const loadCatalog = useCallback(async () => {
+    setIsCatalogLoading(true)
+    setCatalogError(null)
+    try {
+      setAllDrugs(await getAllFormulariDrugs())
+    } catch (error) {
+      setCatalogError(error instanceof FormulariAssetError ? error.message : 'Formulary data is unavailable. Please try again.')
+      setCanRetryCatalog(!(error instanceof FormulariAssetError) || error.retryable)
+    } finally {
+      setIsCatalogLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    void loadCatalog()
+  }, [loadCatalog])
+
   const hamDrugs = useMemo(() => allDrugs.filter(d => d.isHAM), [allDrugs])
 
   const categories: HAMCategory[] = [
@@ -56,6 +65,22 @@ export const HamListPage: React.FC = () => {
       return true
     })
   }, [hamDrugs, searchTerm, selectedCategory, selectedRisk])
+
+  if (isCatalogLoading) {
+    return <main className="p-6 text-text-secondary" role="status" aria-live="polite">Loading formulary data…</main>
+  }
+
+  if (catalogError) {
+    return (
+      <main className="m-6 rounded-xl border border-border-default bg-surface p-6 text-text-primary" role="alert">
+        <h1 className="text-lg font-semibold">Formulary data could not be loaded</h1>
+        <p className="mt-2 text-sm text-text-secondary">{catalogError}</p>
+        <button type="button" onClick={() => canRetryCatalog ? void loadCatalog() : window.location.reload()} className="mt-4 rounded-lg bg-accent-base px-4 py-2 text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-base focus-visible:outline-offset-2">
+          {canRetryCatalog ? 'Try again' : 'Reload app'}
+        </button>
+      </main>
+    )
+  }
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 w-full space-y-8">
@@ -148,7 +173,10 @@ export const HamListPage: React.FC = () => {
 
           <select
             value={selectedCategory}
-            onChange={e => setSelectedCategory(e.target.value as any)}
+            onChange={e => {
+              const value = e.currentTarget.value
+              setSelectedCategory(value === 'ALL' ? 'ALL' : categories.find(category => category === value) ?? 'ALL')
+            }}
             className="px-4 py-3 bg-subtle/50 border border-border-default rounded-2xl text-xs font-semibold text-text-secondary"
           >
             <option value="ALL">All HAM Categories</option>
@@ -159,7 +187,10 @@ export const HamListPage: React.FC = () => {
 
           <select
             value={selectedRisk}
-            onChange={e => setSelectedRisk(e.target.value as any)}
+            onChange={e => {
+              const value = e.currentTarget.value
+              setSelectedRisk((['ALL', 'CRITICAL', 'HIGH', 'MODERATE'] as const).find(risk => risk === value) ?? 'ALL')
+            }}
             className="px-4 py-3 bg-subtle/50 border border-border-default rounded-2xl text-xs font-semibold text-text-secondary"
           >
             <option value="ALL">All Risk Levels</option>

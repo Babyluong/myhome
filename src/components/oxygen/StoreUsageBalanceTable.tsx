@@ -9,7 +9,7 @@ import {
   CheckCircle2, 
   Info
 } from 'lucide-react';
-import { useAuthStore } from '@/stores/authStore';
+import '@/stores/authStore'
 import { useLanguage } from '@/shared/contexts/LanguageContext';
 import { isCylinderPinIndex } from './StoreBalanceGrid';
 

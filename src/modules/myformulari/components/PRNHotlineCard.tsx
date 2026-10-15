@@ -1,6 +1,6 @@
 // src/modules/myformulari/components/PRNHotlineCard.tsx
 import React, { useState } from 'react'
-import { PhoneCall, Shield, Send, Clock, Check, Copy, AlertOctagon, HelpCircle } from 'lucide-react'
+import { PhoneCall, Shield, Send, Clock, Check, Copy } from 'lucide-react'
 import { PRN_CONTACT_INFO } from '../data/antidoteDatabase'
 
 export const PRNHotlineCard: React.FC = () => {

@@ -58,10 +58,7 @@ export const UnitDistributionTable: React.FC<UnitDistributionTableProps> = ({ da
   } | null>(null);
 
   // Helper to determine if a cylinder type is a "Personal Cylinder" (hospital asset)
-  const isPersonalCylinder = (name: string): boolean => {
-    const norm = name.toLowerCase();
-    return norm.startsWith('p') || norm.includes('pi');
-  };
+  
 
   // Helper to normalize cylinder type names for clean columns
   const getNormalizedType = (name: string) => {

@@ -1,18 +1,8 @@
 // src/modules/myprepacking/components/PrepackLabelPrintModal.tsx
 import React, { useState, useEffect } from 'react'
-import { 
-  Printer, 
-  Download, 
-  QrCode, 
-  Sliders, 
-  FileText, 
-  Copy, 
-  Check, 
-  ShieldCheck,
-  Package
-} from 'lucide-react'
+import { Printer, Download, Sliders } from 'lucide-react'
 import { Modal, Button } from '@/components/ui'
-import type { PrepackBatch, LabelFormat, LabelPrintConfig } from '../types/prepack'
+import type { PrepackBatch, LabelFormat } from '../types/prepack'
 import QRCode from 'qrcode'
 import jsPDF from 'jspdf'
 import { useToast } from '@/stores/toastStore'

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useEffect, useState, useCallback } from 'react'
-import { AlertTriangle, Database, Search, Filter, RefreshCw, Layers, CheckCircle2, ChevronRight, X, Clock, HelpCircle } from 'lucide-react'
+import { AlertTriangle, Database, Search, Filter, RefreshCw, Layers, CheckCircle2, ChevronRight, X, Clock } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { Table, Spinner, Input, Badge, Select, Modal, Button } from '@/components/ui'
 import { getApplItems, getApplSuppliers, getApplSyncStatus, triggerApplSync, getDrugCategories } from '../../services/inventoryService'

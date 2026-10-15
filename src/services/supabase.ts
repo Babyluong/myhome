@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { offlineSafeFetch } from './offlineFetch'
+import { restoreOfflineIdentity, rememberOfflineIdentity, clearOfflineIdentity, getOfflineGeneration, setOfflineSessionContext, isOfflineSessionRevoked } from './offlineSession'
 
 // For local development without Supabase, we'll use mock data
 // When ready to connect, add your Supabase URL and Anon Key
@@ -17,6 +18,33 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   global: {
     fetch: offlineSafeFetch,
   },
+})
+
+supabase.auth.onAuthStateChange((_event, session) => {
+  if (!session) { clearOfflineIdentity(); setOfflineSessionContext(null); return }
+  let currentSessionId: string | null = null
+  try {
+    const payload = JSON.parse(atob(session.access_token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')))
+    if (typeof payload.session_id === 'string') currentSessionId = payload.session_id
+  } catch { /* Malformed sessions cannot select an offline cache. */ }
+  if (!currentSessionId) { clearOfflineIdentity(); return }
+  setOfflineSessionContext(currentSessionId)
+  if (isOfflineSessionRevoked(currentSessionId)) return
+  restoreOfflineIdentity(session.user.id)
+  const generation = getOfflineGeneration()
+  if (session) setTimeout(() => {
+    void (async () => {
+      try {
+        // POST verification cannot be served by legacy service-worker GET caches.
+        const { data: profiles, error: identityError } = await supabase.rpc('get_my_offline_identity').setHeader('Authorization', `Bearer ${session.access_token}`)
+        const { data: current } = await supabase.auth.getSession()
+        if (current.session?.user.id !== session.user.id || generation !== getOfflineGeneration() || isOfflineSessionRevoked(currentSessionId!)) return
+        if (!identityError && Array.isArray(profiles) && profiles.length === 1 && profiles[0].actor_id === session.user.id && profiles[0].status === 'active') {
+          rememberOfflineIdentity({ actorId: session.user.id, hospitalId: profiles[0].hospital_id }, (session.expires_at || 0) * 1000)
+        } else if (!identityError || ['PGRST301','PGRST302','42501'].includes(identityError.code)) clearOfflineIdentity()
+      } catch { /* A transport failure never renews the previously verified scope. */ }
+    })()
+  }, 0)
 })
 
 // Check if Supabase is configured
@@ -62,10 +90,8 @@ export const uploadFile = async (
 
     const url = getStorageUrl(bucket, path)
     return { url, error: null }
-  } catch (error: any) {
-    console.error('Upload error:', error)
-    const errorMessage = error?.message || 'Failed to upload file'
-    return { url: null, error: errorMessage }
+  } catch {
+    return { url: null, error: 'File upload failed' }
   }
 }
 

@@ -3,20 +3,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  ArrowLeft,
-  Clock,
-  LayoutDashboard,
-  Plus,
-  CalendarDays,
-  FileText,
-  Layers,
-  UserCheck,
-  TrendingUp,
-  CheckCircle2,
-  Sparkles,
-  ShieldCheck
-} from 'lucide-react'
+import { ArrowLeft, Clock, LayoutDashboard, Plus, CalendarDays, FileText, Layers, UserCheck, CheckCircle2 } from 'lucide-react'
 import { ROUTES } from '@/lib/constants'
 import { Badge, Skeleton } from '@/components/ui'
 import { useLanguage } from '@/shared/contexts/LanguageContext'

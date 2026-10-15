@@ -1,30 +1,8 @@
 // @ts-nocheck
 import React, { useState, useEffect, useRef } from 'react';
 import jsQR from 'jsqr';
-import {
-  X,
-  Calendar,
-  Truck,
-  FileText,
-  Search,
-  QrCode,
-  Camera,
-  Check,
-  Plus,
-  Trash2,
-  AlertCircle,
-  CheckCircle2,
-  RefreshCw,
-  Layers,
-  ArrowRight,
-  Barcode,
-  Volume2,
-  VolumeX,
-  Wifi,
-  WifiOff,
-  Loader2,
-} from 'lucide-react';
-import { supabase } from '@/services/supabase';
+import { X, Truck, Search, QrCode, Camera, Check, Plus, Trash2, AlertCircle, CheckCircle2, RefreshCw, Layers, Barcode, Volume2, VolumeX, WifiOff, Loader2 } from 'lucide-react'
+import '@/services/supabase'
 import { useAuthStore } from '@/stores/authStore';
 import { useLanguage } from '@/shared/contexts/LanguageContext';
 import {
@@ -77,7 +55,7 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
 
   // Network & Offline states
   const [isOnline, setIsOnline] = useState(() => isNetworkAvailable());
-  const [isOperatingOffline, setIsOperatingOffline] = useState(false);
+  const [, setIsOperatingOffline] = useState(false);
 
   useEffect(() => {
     const handleOnline = () => setIsOnline(true);
@@ -256,8 +234,8 @@ export const CreateReceiveDocumentModal: React.FC<CreateReceiveDocumentModalProp
       setIsStartingCamera(false);
       setErrorMessage(
         language === 'ms'
-          ? 'Pelayar tidak menyokong akses kamera atau sambungan tidak selamat (HTTPS/localhost diperlukan).'
-          : 'Browser does not support camera access or connection is not secure (HTTPS/localhost required).'
+        ? 'Pelayar tidak menyokong akses kamera atau sambungan tidak selamat. Gunakan sambungan HTTPS untuk mengakses kamera.'
+        : 'This browser cannot access the camera over an insecure connection. Use HTTPS to enable camera access.'
       );
       return;
     }

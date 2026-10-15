@@ -1,30 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Shield,
-  CheckSquare,
-  Square,
-  Save,
-  RefreshCw,
-  Search,
-  Lock,
-  Info,
-  Check,
-  X,
-  ChevronDown,
-  ChevronUp,
-  Eye,
-  PlusCircle,
-  Edit3,
-  CheckCircle2,
-  Trash2,
-  Download,
-  Settings,
-  Sparkles,
-  Sliders,
-  Layers,
-  HelpCircle,
-} from 'lucide-react'
+import { Shield, Save, Search, Info, Check, ChevronDown, ChevronUp, Eye, PlusCircle, Edit3, CheckCircle2, Trash2, Download, Settings, Sparkles, Sliders } from 'lucide-react'
 import {
   getAllRoles,
   getAllPermissions,
@@ -36,13 +12,7 @@ import {
   saveRbacMatrix,
   buildDefaultMatrixForRole,
 } from '@/services/rbacService'
-import {
-  SYSTEM_MODULE_REGISTRY,
-  ACTION_DEFINITIONS,
-  ROLE_CAPABILITY_PRESETS,
-  ActionType,
-  ModuleDefinition,
-} from '@/shared/constants/moduleRegistry'
+import { SYSTEM_MODULE_REGISTRY, ACTION_DEFINITIONS, ROLE_CAPABILITY_PRESETS, ActionType } from '@/shared/constants/moduleRegistry'
 import { useToastStore } from '@/stores/toastStore'
 import { useAuthStore } from '@/stores/authStore'
 import type { Role, Permission } from '@/types'
@@ -854,10 +824,10 @@ export const AdminRbacTab: React.FC = () => {
                   <AnimatePresence>
                     {isExpanded && moduleDef.features.length > 0 && (
                       <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="bg-slate-950/80 divide-y divide-slate-800/80"
+                        initial={{ opacity: 0, scaleY: 0.96 }}
+                        animate={{ opacity: 1, scaleY: 1 }}
+                        exit={{ opacity: 0, scaleY: 0.96 }}
+                        className="origin-top bg-slate-950/80 divide-y divide-slate-800/80"
                       >
                         <div className="px-4 sm:px-6 py-2 bg-slate-900/60 text-[11px] text-slate-400 font-mono flex items-center justify-between border-b border-slate-800">
                           <span>Sub-Ciri & Keupayaan Tindakan Terperinci ({moduleDef.features.length} ciri)</span>

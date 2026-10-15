@@ -3,25 +3,14 @@
 
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  CalendarDays,
-  Plus,
-  ArrowLeft,
-  Calendar,
-  Clock,
-  CheckCircle2,
-  AlertCircle,
-  FileText,
-  ShieldAlert,
-  UserCheck
-} from 'lucide-react'
+import { Plus, ArrowLeft, Clock, CheckCircle2, FileText, ShieldAlert } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { ROUTES } from '@/lib/constants'
 import { getLeaveQuotas, getLeaveApplications } from '@/modules/mystaff/services/staffService'
 import type { StaffLeaveQuota, StaffLeaveApplication } from '@/shared/types/mystaff'
-import { Button, Badge } from '@/components/ui'
+import { Button } from '@/components/ui'
 import { Fab } from '@/shared/components/mobile'
 
 export const StaffLeavePage: React.FC = () => {

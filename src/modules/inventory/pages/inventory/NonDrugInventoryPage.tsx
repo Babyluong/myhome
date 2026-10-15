@@ -1,22 +1,7 @@
-// @ts-nocheck
 import React, { useEffect, useState, useCallback } from 'react'
 import { Navigate } from 'react-router-dom'
 import { isPharmacyLogisticsUser } from '@/shared/utils/inventoryRbac'
-import { 
-  AlertTriangle, 
-  Package, 
-  Search, 
-  Filter, 
-  ChevronLeft, 
-  ChevronRight, 
-  QrCode, 
-  Printer, 
-  RefreshCw, 
-  Edit, 
-  CheckCircle, 
-  XCircle, 
-  ArrowRightLeft 
-} from 'lucide-react'
+import { AlertTriangle, Package, Search, Filter, ChevronLeft, ChevronRight, Printer, RefreshCw, Edit, CheckCircle, XCircle, ArrowRightLeft } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
@@ -39,11 +24,14 @@ import QRCode from 'qrcode'
 
 export const NonDrugInventoryPage: React.FC = () => {
   const { user } = useAuthStore()
-
-  // Master catalog is strictly reserved for Pharmacy Logistics department
   if (user && !isPharmacyLogisticsUser(user)) {
-    return <Navigate to="/pharmacy/inventory" replace />
+    return <Navigate to="/pharmacy/inventory/facility-non-drugs" replace />
   }
+  return <NonDrugInventoryContent />
+}
+
+const NonDrugInventoryContent: React.FC = () => {
+  const { user } = useAuthStore()
 
   const hospitalId = user?.hospital_id
   const { success: showSuccess, error: showError } = useToastStore()
@@ -89,9 +77,9 @@ export const NonDrugInventoryPage: React.FC = () => {
         )
         void loadItems()
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error(err)
-      setSyncError(err.message || (isEn ? 'Failed to synchronize APPL non-drug catalog' : 'Gagal menyelaraskan katalog bukan ubat APPL'))
+      setSyncError((err instanceof Error ? err.message : undefined) || (isEn ? 'Failed to synchronize APPL non-drug catalog' : 'Gagal menyelaraskan katalog bukan ubat APPL'))
     } finally {
       setIsSyncing(false)
     }
@@ -116,9 +104,9 @@ export const NonDrugInventoryPage: React.FC = () => {
         setProcurementVote('lp')
         void loadItems()
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error(err)
-      setSyncError(err.message || (isEn ? 'Failed to synchronize LP non-drug catalog' : 'Gagal menyelaraskan katalog bukan ubat LP'))
+      setSyncError((err instanceof Error ? err.message : undefined) || (isEn ? 'Failed to synchronize LP non-drug catalog' : 'Gagal menyelaraskan katalog bukan ubat LP'))
     } finally {
       setIsLpSyncing(false)
     }
@@ -143,9 +131,9 @@ export const NonDrugInventoryPage: React.FC = () => {
         setProcurementVote('cc')
         void loadItems()
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error(err)
-      setSyncError(err.message || (isEn ? 'Failed to synchronize CC non-drug catalog' : 'Gagal menyelaraskan katalog bukan ubat CC'))
+      setSyncError((err instanceof Error ? err.message : undefined) || (isEn ? 'Failed to synchronize CC non-drug catalog' : 'Gagal menyelaraskan katalog bukan ubat CC'))
     } finally {
       setIsCcSyncing(false)
     }
@@ -153,7 +141,7 @@ export const NonDrugInventoryPage: React.FC = () => {
 
   // Filters
   const [search, setSearch] = useState('')
-  const [categoryId, setCategoryId] = useState('')
+  const [categoryId] = useState('')
   const [status, setStatus] = useState<'all' | 'active' | 'inactive'>('all')
   const [procurementVote, setProcurementVote] = useState<string>('all')
 
@@ -258,8 +246,8 @@ export const NonDrugInventoryPage: React.FC = () => {
       setIsEditModalOpen(false)
       setSelectedItemForEdit(null)
       void loadItems()
-    } catch (err: any) {
-      showError(isEn ? 'Error' : 'Ralat', err.message || (isEn ? 'Failed to save item information' : 'Failed to save non-drug item details'))
+    } catch (err) {
+      showError(isEn ? 'Error' : 'Ralat', (err instanceof Error ? err.message : undefined) || (isEn ? 'Failed to save item information' : 'Failed to save non-drug item details'))
     }
   }
 
@@ -312,14 +300,6 @@ export const NonDrugInventoryPage: React.FC = () => {
     }
   }, [selectedItemForQr])
 
-  const renderStatusBadge = (itemStatus: 'active' | 'inactive') => {
-    return itemStatus === 'active' ? (
-      <Badge variant="success">{isEn ? 'Active' : 'Aktif'}</Badge>
-    ) : (
-      <Badge variant="secondary">{isEn ? 'Inactive' : 'Tidak Aktif'}</Badge>
-    )
-  }
-
   const formatDate = (dateStr?: string) => {
     if (!dateStr || dateStr === '-') return '—'
     const normalized = parseAndNormalizeDate(dateStr)
@@ -349,7 +329,7 @@ export const NonDrugInventoryPage: React.FC = () => {
   }
 
   const renderContractStatusBadge = (contractStatus?: string) => {
-    if (!contractStatus || contractStatus === '-') return <Badge variant="secondary">—</Badge>
+    if (!contractStatus || contractStatus === '-') return <Badge variant="gray">—</Badge>
     const statusLower = contractStatus.toLowerCase()
     if (statusLower.includes('aktif') || statusLower.includes('active')) {
       return <Badge className="bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 font-bold font-mono text-[10px] uppercase">{contractStatus}</Badge>
@@ -361,24 +341,24 @@ export const NonDrugInventoryPage: React.FC = () => {
   }
 
   const renderVoteBadge = (vote?: string) => {
-    if (!vote) return <Badge variant="secondary">—</Badge>
+    if (!vote) return <Badge variant="gray">—</Badge>
     const v = vote.toUpperCase()
     if (v === 'APPL') return <Badge className="bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 font-bold font-mono text-[10px]">APPL</Badge>
     if (v === 'LP') return <Badge className="bg-indigo-500/10 text-purple-700 border border-indigo-500/20 font-bold font-mono text-[10px]">LP</Badge>
     if (v === 'CC') return <Badge className="bg-sky-50 text-sky-700 border border-sky-200 font-bold font-mono text-[10px]">CC</Badge>
     if (v === 'DP') return <Badge className="bg-amber-500/10 text-amber-700 border border-amber-500/20 font-bold font-mono text-[10px]">DP</Badge>
-    return <Badge variant="secondary">{v}</Badge>
+    return <Badge variant="gray">{v}</Badge>
   }
 
   const renderStockBadge = (stockStatus?: string) => {
-    if (!stockStatus) return <Badge variant="secondary">—</Badge>
-    const map: Record<string, { color: 'success' | 'warning' | 'error' | 'secondary'; label: string }> = {
+    if (!stockStatus) return <Badge variant="gray">—</Badge>
+    const map: Record<string, { color: 'success' | 'warning' | 'error' | 'gray'; label: string }> = {
       in_stock: { color: 'success', label: isEn ? 'In Stock' : 'Ada Stok' },
       low_stock: { color: 'warning', label: isEn ? 'Low' : 'Rendah' },
       critical: { color: 'error', label: isEn ? 'Critical' : 'Kritikal' },
-      out_of_stock: { color: 'secondary', label: isEn ? 'Out' : 'Habis' },
+      out_of_stock: { color: 'gray', label: isEn ? 'Out' : 'Habis' },
     }
-    const cfg = map[stockStatus] || { color: 'secondary', label: stockStatus }
+    const cfg = map[stockStatus] || { color: 'gray', label: stockStatus }
     return <Badge variant={cfg.color}>{cfg.label}</Badge>
   }
 
@@ -716,9 +696,10 @@ export const NonDrugInventoryPage: React.FC = () => {
                     }}
                     className="hover:bg-accent-base/10 cursor-pointer transition-colors group"
                   >
-                    <Table.Cell className="py-3 px-3" onClick={(e) => e.stopPropagation()}>
+                    <Table.Cell className="py-3 px-3">
                       <input
                         type="checkbox"
+                        onClick={e => e.stopPropagation()}
                         checked={selectedIds.includes(item.id)}
                         onChange={(e) => {
                           e.stopPropagation()
@@ -740,9 +721,9 @@ export const NonDrugInventoryPage: React.FC = () => {
                         <Table.Cell className="text-sm text-text-muted font-medium">
                           {item.packaging_description || '—'}
                         </Table.Cell>
-                        <Table.Cell className="text-xs text-text-muted font-semibold max-w-[180px] truncate" title={item.cc_supplier_name || item.supplier?.company_name}>
+                        <Table.Cell className="text-xs text-text-muted font-semibold max-w-[180px] truncate"><span title={item.cc_supplier_name || item.supplier?.company_name}>
                           {item.cc_supplier_name || item.supplier?.company_name || '—'}
-                        </Table.Cell>
+                        </span></Table.Cell>
                         <Table.Cell className="text-xs font-bold text-sky-700 font-mono">
                           {item.cc_contract_number ? (
                             <span className="bg-sky-50 px-2 py-1 rounded-md border border-sky-100 inline-block">
@@ -754,7 +735,7 @@ export const NonDrugInventoryPage: React.FC = () => {
                         </Table.Cell>
                         {(() => {
                           const { startDate, endDate } = getFallbackContractDates(item)
-                          const contractStatus = (item as any).cc_contract_status || (item as any).contract_status || computeContractStatus(startDate, endDate)
+                          const contractStatus = item.cc_contract_status || ('contract_status' in item && typeof item.contract_status === 'string' ? item.contract_status : undefined) || computeContractStatus(startDate, endDate)
                           return (
                             <>
                               <Table.Cell className="text-xs font-mono font-medium text-text-muted text-center">
@@ -1000,9 +981,9 @@ export const NonDrugInventoryPage: React.FC = () => {
                         setIsCcSyncing(false)
                       }
                       reader.readAsText(file)
-                    } catch (err: any) {
+                    } catch (err) {
                       console.error(err)
-                      setSyncError(err.message || (isEn ? 'Failed to import CC CSV file' : 'Gagal mengimport fail CSV CC'))
+                      setSyncError((err instanceof Error ? err.message : undefined) || (isEn ? 'Failed to import CC CSV file' : 'Gagal mengimport fail CSV CC'))
                       setIsCcSyncing(false)
                     }
                   }}
@@ -1049,9 +1030,9 @@ export const NonDrugInventoryPage: React.FC = () => {
               category_id: fd.get('category_id') as string,
               supplier_id: supplierId,
               cc_supplier_name: matchedSupplier ? matchedSupplier.company_name : (supplierId ? undefined : null),
-              procurement_vote: fd.get('procurement_vote') as any,
+              procurement_vote: fd.get('procurement_vote') as NonDrugWithRelations['procurement_vote'],
               price: fd.get('price') ? parseFloat(fd.get('price') as string) : 0,
-              status: fd.get('status') as any,
+              status: fd.get('status') as NonDrugWithRelations['status'],
               packaging_description: fd.get('packaging_description') as string,
               sku: fd.get('sku') as string,
               pku: fd.get('pku') as string,
@@ -1060,7 +1041,7 @@ export const NonDrugInventoryPage: React.FC = () => {
               cc_contract_start_date: fd.get('cc_contract_start_date') as string,
               cc_contract_end_date: fd.get('cc_contract_end_date') as string,
             }
-            const updated: Record<string, any> = {}
+            const updated: Record<string, FormDataEntryValue | number | undefined | null> = {}
             Object.entries(rawFields).forEach(([k, v]) => {
               if (v !== null && v !== undefined && v !== '') {
                 updated[k] = typeof v === 'string' ? v.trim() : v
@@ -1126,7 +1107,7 @@ export const NonDrugInventoryPage: React.FC = () => {
                     <option value="">{isEn ? '-- Select Supplier in System --' : '-- Pilih Pembekal Dalam Sistem --'}</option>
                     {suppliers.map((sup) => (
                       <option key={sup.id} value={sup.id}>
-                        {sup.company_name || (sup as any).supplier_name || 'Pembekal'} {sup.supplier_code ? `(${sup.supplier_code})` : ''}
+                        {sup.company_name || ('supplier_name' in sup && typeof sup.supplier_name === 'string' ? sup.supplier_name : undefined) || 'Pembekal'} {sup.supplier_code ? `(${sup.supplier_code})` : ''}
                       </option>
                     ))}
                   </Select>

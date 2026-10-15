@@ -1,5 +1,5 @@
 // src/modules/hub/pages/modules/FormulariSubMenu.tsx
-import React, { useMemo } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   ArrowLeft,
@@ -17,15 +17,28 @@ import {
   Baby
 } from 'lucide-react'
 import { ROUTES } from '@/lib/constants'
-import { useLanguage } from '@/shared/contexts/LanguageContext'
-import { getFormulariSummaryStats } from '@/modules/myformulari/services/formulariService'
+import { getFormulariSummaryStats, FormulariAssetError, type FormulariSummaryStats } from '@/modules/myformulari/services/formulariService'
 import { Badge } from '@/components/ui'
 
 export const FormulariSubMenu: React.FC = () => {
   const navigate = useNavigate()
-  const { language } = useLanguage()
+  const [stats, setStats] = useState<FormulariSummaryStats | null>(null)
+  const [statsError, setStatsError] = useState<string | null>(null)
+  const [canRetryStats, setCanRetryStats] = useState(true)
 
-  const stats = useMemo(() => getFormulariSummaryStats(), [])
+  const loadStats = useCallback(async () => {
+    setStatsError(null)
+    try {
+      setStats(await getFormulariSummaryStats())
+    } catch (error) {
+      setStatsError(error instanceof FormulariAssetError ? error.message : 'Formulary summary is unavailable. Please try again.')
+      setCanRetryStats(!(error instanceof FormulariAssetError) || error.retryable)
+    }
+  }, [])
+
+  useEffect(() => {
+    void loadStats()
+  }, [loadStats])
 
   const menuItems = [
     {
@@ -43,7 +56,7 @@ export const FormulariSubMenu: React.FC = () => {
       icon: Search,
       path: ROUTES.FORMULARI_DASHBOARD,
       color: 'text-violet-400 bg-violet-500/10 border-violet-500/20',
-      badge: `${stats.totalDrugs} Drugs`,
+      badge: stats ? `${stats.totalDrugs} Drugs` : '—',
       badgeColor: 'bg-violet-500/20 text-violet-300 border-violet-500/30'
     },
     {
@@ -52,7 +65,7 @@ export const FormulariSubMenu: React.FC = () => {
       icon: Flame,
       path: ROUTES.FORMULARI_HAM,
       color: 'text-rose-400 bg-rose-500/10 border-rose-500/20',
-      badge: `${stats.hamCount} HAM`,
+      badge: stats ? `${stats.hamCount} HAM` : '—',
       badgeColor: 'bg-rose-500 text-white border-transparent'
     },
     {
@@ -61,7 +74,7 @@ export const FormulariSubMenu: React.FC = () => {
       icon: AlertTriangle,
       path: ROUTES.FORMULARI_LASA,
       color: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
-      badge: `${stats.lasaCount} Pairs`,
+      badge: stats ? `${stats.lasaCount} Pairs` : '—',
       badgeColor: 'bg-amber-500 text-text-primary border-transparent'
     },
     {
@@ -70,7 +83,7 @@ export const FormulariSubMenu: React.FC = () => {
       icon: Droplets,
       path: ROUTES.FORMULARI_DILUTION,
       color: 'text-teal-400 bg-teal-500/10 border-teal-500/20',
-      badge: `${stats.ivDilutionCount} Protocols`,
+      badge: stats ? `${stats.ivDilutionCount} Protocols` : '—',
       badgeColor: 'bg-teal-500/20 text-teal-300 border-teal-500/30'
     },
     {
@@ -88,8 +101,8 @@ export const FormulariSubMenu: React.FC = () => {
       icon: TrendingDown,
       path: ROUTES.FORMULARI_QUOTA,
       color: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/20',
-      badge: stats.lowStockCount > 0 ? `${stats.lowStockCount} Alerts` : 'Stock OK',
-      badgeColor: stats.lowStockCount > 0 ? 'bg-rose-500 text-white border-transparent' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
+      badge: stats ? (stats.lowStockCount > 0 ? `${stats.lowStockCount} Alerts` : 'Stock OK') : '—',
+      badgeColor: stats?.lowStockCount && stats.lowStockCount > 0 ? 'bg-rose-500 text-white border-transparent' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30'
     },
     {
       title: 'Drug Alternatives & Substitution Matrix',
@@ -122,6 +135,15 @@ export const FormulariSubMenu: React.FC = () => {
 
   return (
     <div className="p-4 sm:p-6 md:p-8 max-w-7xl mx-auto min-h-screen text-slate-100">
+      {!stats && !statsError && <p className="mb-4 text-sm text-text-secondary" role="status" aria-live="polite">Loading formulary summary…</p>}
+      {statsError && (
+        <div className="mb-4 rounded-xl border border-border-default bg-surface p-4 text-sm text-text-primary" role="alert">
+          <p>{statsError}</p>
+          <button type="button" onClick={() => canRetryStats ? void loadStats() : window.location.reload()} className="mt-3 rounded-lg bg-accent-base px-4 py-2 font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-base focus-visible:outline-offset-2">
+            {canRetryStats ? 'Try again' : 'Reload app'}
+          </button>
+        </div>
+      )}
       {/* Back navigation */}
       <div className="mb-6 sm:mb-8">
         <button
@@ -159,7 +181,7 @@ export const FormulariSubMenu: React.FC = () => {
             <span className="text-xs sm:text-sm font-medium">Total Drugs</span>
             <Activity className="w-4 h-4 text-slate-400 flex-shrink-0" />
           </div>
-          <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-white min-h-[36px] flex items-center">{stats.totalDrugs}</div>
+          <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-white min-h-[36px] flex items-center">{stats?.totalDrugs ?? '—'}</div>
           <p className="text-[11px] sm:text-xs text-text-muted mt-1">MOH Formulary 2025</p>
         </div>
 
@@ -168,7 +190,7 @@ export const FormulariSubMenu: React.FC = () => {
             <span className="text-xs sm:text-sm font-medium">HAM Items</span>
             <Flame className="w-4 h-4 text-rose-400 flex-shrink-0" />
           </div>
-          <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-rose-400 min-h-[36px] flex items-center">{stats.hamCount}</div>
+          <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-rose-400 min-h-[36px] flex items-center">{stats?.hamCount ?? '—'}</div>
           <p className="text-[11px] sm:text-xs text-text-muted mt-1">High Alert Risk</p>
         </div>
 
@@ -177,17 +199,17 @@ export const FormulariSubMenu: React.FC = () => {
             <span className="text-xs sm:text-sm font-medium">LASA Pairs</span>
             <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0" />
           </div>
-          <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-amber-400 min-h-[36px] flex items-center">{stats.lasaCount}</div>
+          <div className="text-2xl sm:text-3xl font-bold font-mono mt-2 text-amber-400 min-h-[36px] flex items-center">{stats?.lasaCount ?? '—'}</div>
           <p className="text-[11px] sm:text-xs text-text-muted mt-1">TALL-Man Lettering</p>
         </div>
 
         <div className="bg-slate-900/60 backdrop-blur border border-slate-800 p-3.5 sm:p-5 rounded-2xl flex flex-col justify-between">
           <div className="flex justify-between items-start text-text-muted">
             <span className="text-xs sm:text-sm font-medium">Stock Alerts</span>
-            <TrendingDown className={`w-4 h-4 flex-shrink-0 ${stats.lowStockCount > 0 ? 'text-rose-400' : 'text-emerald-400'}`} />
+            <TrendingDown className={`w-4 h-4 flex-shrink-0 ${stats && stats.lowStockCount > 0 ? 'text-rose-400' : 'text-emerald-400'}`} />
           </div>
-          <div className={`text-2xl sm:text-3xl font-bold font-mono mt-2 min-h-[36px] flex items-center ${stats.lowStockCount > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
-            {stats.lowStockCount}
+          <div className={`text-2xl sm:text-3xl font-bold font-mono mt-2 min-h-[36px] flex items-center ${stats && stats.lowStockCount > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
+            {stats?.lowStockCount ?? '—'}
           </div>
           <p className="text-[11px] sm:text-xs text-text-muted mt-1">Low / out of stock</p>
         </div>

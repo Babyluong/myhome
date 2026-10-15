@@ -1,20 +1,7 @@
 // @ts-nocheck
 import React, { useState } from 'react'
-import { motion } from 'framer-motion'
-import {
-  User,
-  Lock,
-  Mail,
-  Hash,
-  Phone,
-  Calendar,
-  MapPin,
-  Building2,
-  Shield,
-  Camera,
-  Edit3,
-  Sparkles,
-} from 'lucide-react'
+import 'framer-motion'
+import { User, Lock, Mail, Hash, Phone, Calendar, MapPin, Building2, Shield, Camera, Edit3 } from 'lucide-react'
 import { Avatar, Badge, Modal } from '@/components/ui'
 import { useToast } from '@/stores/toastStore'
 import { useAuthStore } from '@/stores/authStore'

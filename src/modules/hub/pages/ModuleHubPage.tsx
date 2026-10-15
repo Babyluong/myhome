@@ -1,50 +1,8 @@
 // @ts-nocheck
-import React, { useState, useEffect, useMemo, useRef } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  AirVent, 
-  Package, 
-  FileText, 
-  Mail, 
-  ClipboardList, 
-  Thermometer, 
-  Shield, 
-  ShoppingCart,
-  LogOut,
-  Bell,
-  Megaphone,
-  User,
-  ChevronRight,
-  Image,
-  StickyNote,
-  Files,
-  Search,
-  Truck,
-  Car,
-  PersonStanding,
-  UserCheck,
-  Calendar,
-  Users,
-  Clock,
-  Activity,
-  Key,
-  Pill,
-  FlaskConical,
-  PackageCheck,
-  LayoutGrid,
-  ListFilter,
-  X,
-  Sparkles,
-  Layers,
-  ArrowUpRight,
-  CheckCircle2,
-  Wrench,
-  ShieldCheck,
-  Grid,
-  Sun,
-  Moon
-} from 'lucide-react'
+import { AirVent, Package, FileText, Mail, ClipboardList, Thermometer, Shield, ShoppingCart, LogOut, Megaphone, ChevronRight, Image, StickyNote, Files, Search, Car, PersonStanding, UserCheck, Calendar, Users, Clock, Key, Pill, FlaskConical, PackageCheck, LayoutGrid, ListFilter, X, Sparkles, Layers, ArrowUpRight, Sun, Moon } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useUIStore } from '@/stores/uiStore'
 import { logout } from '@/services/authService'
@@ -60,7 +18,7 @@ import {
 import { SystemBroadcastBanner } from '../components/SystemBroadcastBanner'
 import { SystemUpdateLogModal } from '../components/SystemUpdateLogModal'
 import { AdminBroadcastModal } from '../components/AdminBroadcastModal'
-import { CURRENT_SYSTEM_VERSION } from '@/config/systemReleases'
+import '@/config/systemReleases'
 import { LazyHero3D } from '@/components/three/LazyHero3D'
 
 type ModuleCategory = 'clinical' | 'logistics' | 'governance'
@@ -1128,7 +1086,7 @@ const QuickLaunchCard: React.FC<ModuleCardProps> = ({ module, onClick }) => {
           onClick()
         }
       }}
-      className="group flex items-center gap-3 p-3 rounded-xl bg-surface/95 hover:bg-surface-elevated border border-border-default border-t-white/10 dark:border-t-white/15 hover:border-accent-base/40 shadow-elevation-1 hover:shadow-elevation-2 hover:-translate-y-0.5 active:scale-[0.98] transition-all duration-150 cursor-pointer select-none text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-base"
+      className="group flex items-center gap-3 p-3 rounded-xl bg-surface/95 hover:bg-surface-elevated border border-border-default border-t-white/10 dark:border-t-white/15 hover:border-accent-base/40 shadow-elevation-1 hover:shadow-elevation-2 hover:-translate-y-0.5 active:scale-[0.98] transition-[transform,opacity,background-color,border-color,box-shadow,color] duration-150 cursor-pointer select-none text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-base"
     >
       <div className={`w-9 h-9 rounded-lg bg-surface-subtle border ${style.border} ${style.bg} ${style.hoverBorder} flex items-center justify-center shrink-0 transition-colors shadow-sm`}>
         <Icon className={`w-4.5 h-4.5 ${style.text} group-hover:scale-105 transition-transform duration-150`} />
@@ -1141,7 +1099,7 @@ const QuickLaunchCard: React.FC<ModuleCardProps> = ({ module, onClick }) => {
           {module.shortName || module.description}
         </p>
       </div>
-      <ArrowUpRight className="w-3.5 h-3.5 text-text-muted/50 group-hover:text-accent-base group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all shrink-0" />
+      <ArrowUpRight className="w-3.5 h-3.5 text-text-muted/50 group-hover:text-accent-base group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-[transform,opacity,color] shrink-0" />
     </div>
   )
 }
@@ -1164,16 +1122,16 @@ const ModuleCard: React.FC<ModuleCardProps> = ({ module, onClick }) => {
           onClick()
         }
       }}
-      className="group relative flex flex-col justify-between p-4 rounded-xl bg-surface/95 hover:bg-surface-elevated backdrop-blur-sm border border-border-default border-t-white/10 dark:border-t-white/15 hover:border-accent-base/40 hover:-translate-y-1 active:scale-[0.98] transition-all duration-200 cursor-pointer select-none text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-base shadow-elevation-1 hover:shadow-elevation-2 overflow-hidden"
+      className="group relative flex flex-col justify-between p-4 rounded-xl bg-surface/95 hover:bg-surface-elevated backdrop-blur-sm border border-border-default border-t-white/10 dark:border-t-white/15 hover:border-accent-base/40 hover:-translate-y-1 active:scale-[0.98] transition-[transform,opacity,background-color,border-color,box-shadow,color] duration-200 cursor-pointer select-none text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent-base shadow-elevation-1 hover:shadow-elevation-2 overflow-hidden"
     >
       <div>
         {/* Card Header: Icon & Subtle Launch Cue */}
         <div className="flex items-start justify-between gap-2 mb-3">
-          <div className={`w-11 h-11 rounded-xl bg-surface-subtle border ${style.border} ${style.bg} ${style.hoverBorder} flex items-center justify-center shrink-0 transition-all duration-200 shadow-sm`}>
+          <div className={`w-11 h-11 rounded-xl bg-surface-subtle border ${style.border} ${style.bg} ${style.hoverBorder} flex items-center justify-center shrink-0 transition-[transform,opacity,background-color,border-color,box-shadow,color] duration-200 shadow-sm`}>
             <Icon className={`w-5.5 h-5.5 ${style.text} group-hover:scale-110 transition-transform duration-200`} />
           </div>
 
-          <div className="w-7 h-7 rounded-lg bg-surface-subtle/80 border border-border-default/60 flex items-center justify-center text-text-muted group-hover:text-accent-base group-hover:border-accent-base/40 group-hover:bg-accent-subtle/30 transition-all duration-200">
+          <div className="w-7 h-7 rounded-lg bg-surface-subtle/80 border border-border-default/60 flex items-center justify-center text-text-muted group-hover:text-accent-base group-hover:border-accent-base/40 group-hover:bg-accent-subtle/30 transition-[transform,opacity,background-color,border-color,box-shadow,color] duration-200">
             <ArrowUpRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
           </div>
         </div>

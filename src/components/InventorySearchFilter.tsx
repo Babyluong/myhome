@@ -1,6 +1,6 @@
 ﻿// @ts-nocheck
 "use client";
-import { useState, useEffect } from 'react';
+import { useState } from 'react'
 import SearchAndFilter from './SearchAndFilter';
 
 interface InventorySearchFilterProps {
@@ -14,8 +14,8 @@ export default function InventorySearchFilter({
   onSearchChange,
   onFilterChange 
 }: InventorySearchFilterProps) {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filters, setFilters] = useState({
+  const [, setSearchQuery] = useState('');
+  const [, setFilters] = useState({
     stockStatus: 'all',
     category: 'all',
     sortBy: 'name',

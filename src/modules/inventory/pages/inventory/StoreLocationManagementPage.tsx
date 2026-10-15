@@ -1,54 +1,15 @@
-import React, { useEffect, useState, useMemo } from 'react'
-import {
-  MapPin,
-  Building2,
-  Layers,
-  Search,
-  Plus,
-  Edit,
-  Trash2,
-  Package,
-  ClipboardList,
-  Thermometer,
-  ShieldAlert,
-  CheckCircle,
-  XCircle,
-  Box,
-  Eye,
-  RefreshCw,
-  FolderTree,
-  LayoutGrid,
-  Settings,
-  ArrowLeft,
-  ChevronRight,
-  ChevronDown,
-  Archive,
-  Grid,
-  Tag,
-  Folder,
-  Pill,
-  Printer,
-  FileText,
-  Download,
-  PlusCircle,
-  CheckCircle2,
-  X,
-} from 'lucide-react'
+import React, { useEffect, useState, useMemo, useCallback } from 'react'
+import { MapPin, Building2, Layers, Search, Plus, Edit, Trash2, Package, ClipboardList, Thermometer, CheckCircle, XCircle, Box, Eye, RefreshCw, FolderTree, LayoutGrid, Settings, ArrowLeft, ChevronRight, ChevronDown, Archive, Grid, Tag, Pill, Printer, PlusCircle, CheckCircle2, X } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
 import { Spinner, Modal, Button, SlideOver, Badge } from '@/components/ui'
-import {
-  loadStoreLocations,
-  createStoreLocation,
-  updateStoreLocation,
-  deleteStoreLocation,
-  getStoreLocationsWithOccupancy,
-  formatLocationString,
-  generateLocationCode,
-  generateUniqueLocationCode,
-} from '@/services/pharmacy/storeLocationService'
+import { createStoreLocation, updateStoreLocation, deleteStoreLocation, getStoreLocationsWithOccupancy, generateUniqueLocationCode } from '@/services/pharmacy/storeLocationService'
 import { generateStoreLocationPdf } from '@/services/pharmacy/storeLocationPdfService'
 import { loadFacilityDrugInventory, bulkAssignLocationToFacilityDrugItems } from '@/services/pharmacy/facilityDrugInventoryService'
+import { loadFacilityNonDrugInventory } from '@/services/pharmacy/facilityNonDrugInventoryService'
+import type { FacilityDrugItem } from '@/services/pharmacy/facilityDrugInventoryService'
+import type { FacilityNonDrugItem } from '@/services/pharmacy/facilityNonDrugInventoryService'
+import { resolveFacilityStore } from '@/services/pharmacy/facilityStoreService'
 import { loadStoreSubLocations, syncStoreSubLocations } from '@/services/pharmacy/storeSubLocationService'
 import type { StoreLocationWithOccupancy, StoreLocationFormData, StoreLocationType, StorageCondition } from '@/types/pharmacy'
 
@@ -62,6 +23,23 @@ export interface SubLocationUnit {
   code: string
   parent_name?: string
   notes?: string
+}
+
+type LocationInventoryItem = (FacilityDrugItem | FacilityNonDrugItem) & {
+  generic_name?: string
+  dosage_form?: string
+  current_stock?: number
+  drug_id?: string
+  drug_name?: string
+  drug_code?: string
+  brand_name?: string
+  item_name?: string
+  item_code?: string
+  storage_conditions?: string
+  budget_source?: string
+  procurement_category?: string
+  contract_type?: string
+  budgetSource?: string
 }
 
 const SUB_LOCATION_TYPES: { type: SubLocationType; label: string; sublabel: string; color: string }[] = [
@@ -87,9 +65,44 @@ const DEPARTMENT_OPTIONS = [
   { code: 'GEN', label: 'Pengurusan Stor Am (GEN)', prefix: 'GEN' },
 ]
 
+const resolveLocationStoreId = async (hospitalId: string, loc: StoreLocationWithOccupancy) => {
+  if (!hospitalId) throw new Error('Hospital context is unavailable')
+  const code = (loc.department || loc.location_code.replace(/^LOC-/, '').split('-')[0]).toUpperCase()
+  if (code !== 'LOG' && code !== 'IPD' && code !== 'OPD' && code !== 'ETU') {
+    throw new Error('This location has no supported facility store')
+  }
+  return (await resolveFacilityStore(hospitalId, code)).id
+}
+
+const isLocationItemMatch = (loc: StoreLocationWithOccupancy, str: string) => {
+  if (!str) return false
+  const value = str.trim().toLowerCase()
+  const name = loc.store_name.trim().toLowerCase()
+  const code = loc.location_code.trim().toLowerCase()
+  const formatted = (loc.formatted_location || loc.store_name).trim().toLowerCase()
+  if (value === formatted || value === code) return true
+  if (loc.cabinet_rack && loc.cabinet_rack !== '-') {
+    return value.includes(name) && value.includes(loc.cabinet_rack.trim().toLowerCase())
+  }
+  return value.includes(name) || value.includes(code)
+}
+
+const loadLocationInventory = async (hospitalId: string, loc: StoreLocationWithOccupancy) => {
+  const storeId = await resolveLocationStoreId(hospitalId, loc)
+  const [drugs, nonDrugs] = await Promise.all([
+    loadFacilityDrugInventory(hospitalId, storeId),
+    loadFacilityNonDrugInventory(hospitalId, storeId),
+  ])
+  return {
+    drugs,
+    matchedDrugs: loc.location_type === 'non_drug' ? [] : drugs.filter(item => isLocationItemMatch(loc, item.location || item.storage_conditions || '')),
+    matchedNonDrugs: loc.location_type === 'drug' ? [] : nonDrugs.filter(item => isLocationItemMatch(loc, item.location || '')),
+  }
+}
+
 export const StoreLocationManagementPage: React.FC = () => {
   const { user } = useAuthStore()
-  const hospitalId = user?.hospital_id || 'hosp-lawas-01'
+  const hospitalId = user?.hospital_id || ''
 
   const { success: showSuccess, error: showError } = useToastStore()
 
@@ -100,6 +113,7 @@ export const StoreLocationManagementPage: React.FC = () => {
 
   // Search & Filter state
   const [searchTerm, setSearchTerm] = useState<string>('')
+  const [departmentFilter, setDepartmentFilter] = useState<'ALL' | 'LOG' | 'IPD'>('LOG')
   const [typeFilter, setTypeFilter] = useState<string>('all')
   const [conditionFilter, setConditionFilter] = useState<string>('all')
 
@@ -109,6 +123,14 @@ export const StoreLocationManagementPage: React.FC = () => {
 
   // Selected Store Location Detail View State
   const [selectedStoreLocation, setSelectedStoreLocation] = useState<StoreLocationWithOccupancy | null>(null)
+
+  const [viewItemsModalLocation, setViewItemsModalLocation] = useState<StoreLocationWithOccupancy | null>(null)
+  const [assignedDrugs, setAssignedDrugs] = useState<LocationInventoryItem[]>([])
+  const [assignedNonDrugs, setAssignedNonDrugs] = useState<LocationInventoryItem[]>([])
+  const [isLoadingItems, setIsLoadingItems] = useState<boolean>(false)
+  const [itemsError, setItemsError] = useState<string | null>(null)
+  const [locationsError, setLocationsError] = useState<string | null>(null)
+
 
   // Form states
   const [departmentInput, setDepartmentInput] = useState<string>('LOG')
@@ -124,17 +146,17 @@ export const StoreLocationManagementPage: React.FC = () => {
 
   // Sub-Location (Pallet, Rack, Cabinet, Level, Column) State
   const [subLocations, setSubLocations] = useState<SubLocationUnit[]>([])
-  const [placedDrugItems, setPlacedDrugItems] = useState<any[]>([])
+  const [placedDrugItems, setPlacedDrugItems] = useState<LocationInventoryItem[]>([])
 
   // Modal state for Rack / Level item list inspection
   const [subLocationItemsModalData, setSubLocationItemsModalData] = useState<{
     isOpen: boolean
     title: string
     subtitle: string
-    items: any[]
+    items: LocationInventoryItem[]
   } | null>(null)
 
-  const isSubLocationItemMatch = (item: any, mainUnit: SubLocationUnit, childUnit?: SubLocationUnit): boolean => {
+  const isSubLocationItemMatch = (item: LocationInventoryItem, mainUnit: SubLocationUnit, childUnit?: SubLocationUnit): boolean => {
     if (!item) return false
     const rawLoc = (item.location || item.storage_conditions || '').trim()
     if (!rawLoc) return false
@@ -189,7 +211,7 @@ export const StoreLocationManagementPage: React.FC = () => {
   const [selectedDrugIdsForAssign, setSelectedDrugIdsForAssign] = useState<Set<string>>(new Set())
   const [isSavingBulkAssign, setIsSavingBulkAssign] = useState<boolean>(false)
 
-  const getProcurementCategory = (item: any): 'APPL' | 'CC' | 'LP' | 'DP' => {
+  const getProcurementCategory = (item: LocationInventoryItem): 'APPL' | 'CC' | 'LP' | 'DP' => {
     if (!item) return 'DP'
 
     const rawVal =
@@ -197,8 +219,8 @@ export const StoreLocationManagementPage: React.FC = () => {
       (typeof item.procurement_category === 'string' ? item.procurement_category : '') ||
       (typeof item.contract_type === 'string' ? item.contract_type : '') ||
       (typeof item.budgetSource === 'string' ? item.budgetSource : '') ||
-      (typeof item.category === 'string' ? item.category : item.category?.name || '') ||
-      (typeof item.supplier === 'string' ? item.supplier : item.supplier?.name || '') ||
+      (typeof item.category === 'string' ? item.category : item.category?.category_name || '') ||
+      (typeof item.supplier === 'string' ? item.supplier : item.supplier?.company_name || '') ||
       (typeof item.item_code === 'string' ? item.item_code : '') ||
       (typeof item.drug_code === 'string' ? item.drug_code : '') ||
       ''
@@ -226,7 +248,7 @@ export const StoreLocationManagementPage: React.FC = () => {
 
     const preSelected = new Set<string>()
     placedDrugItems.forEach(item => {
-      const itemId = item.id || item.drug_id
+      const itemId = item.id || item.drug_id || ''
       if (isSubLocationItemMatch(item, mainUnit, childUnit)) {
         if (itemId) preSelected.add(itemId)
       }
@@ -277,7 +299,7 @@ export const StoreLocationManagementPage: React.FC = () => {
   const selectedItemsList = useMemo(() => {
     if (!placedDrugItems) return []
     return placedDrugItems.filter(item => {
-      const itemId = item.id || item.drug_id
+      const itemId = item.id || item.drug_id || ''
       return selectedDrugIdsForAssign.has(itemId)
     })
   }, [placedDrugItems, selectedDrugIdsForAssign])
@@ -311,73 +333,57 @@ export const StoreLocationManagementPage: React.FC = () => {
 
     setIsSavingBulkAssign(true)
     try {
-      const res = await bulkAssignLocationToFacilityDrugItems(hospitalId, selectedIds, targetLocStr)
+      const targetStoreId = await resolveLocationStoreId(hospitalId, selectedStoreLocation)
+      const res = await bulkAssignLocationToFacilityDrugItems(hospitalId, selectedIds, targetLocStr, targetStoreId)
       if (res.success) {
         showSuccess(`Berjaya menetapkan lokasi "${targetLocStr}" untuk ${selectedIds.length} item!`)
         setIsBulkAssignModalOpen(false)
 
         // Reload inventory
-        const drugItems = await loadFacilityDrugInventory(hospitalId)
+        const drugItems = await loadFacilityDrugInventory(hospitalId, targetStoreId)
         setPlacedDrugItems(drugItems || [])
         fetchLocations()
       } else {
         showError(res.error || 'Gagal menetapkan lokasi pukal.')
       }
-    } catch (err: any) {
-      showError(err?.message || 'Gagal menetapkan lokasi pukal.')
+    } catch {
+      showError('Gagal menetapkan lokasi pukal.')
     } finally {
       setIsSavingBulkAssign(false)
     }
   }
 
-  // Load sub-locations & inventory items whenever selectedStoreLocation changes
+  // Ignore detail responses after the selected location changes.
   useEffect(() => {
-    if (selectedStoreLocation) {
-      setIsLoadingItems(true)
-      const isLocationMatch = (str: string) => {
-        if (!str) return false
-        const cleanLoc = str.trim().toLowerCase()
-        const cleanStoreName = selectedStoreLocation.store_name.trim().toLowerCase()
-        const cleanCode = selectedStoreLocation.location_code.trim().toLowerCase()
-        const cleanFormatted = (selectedStoreLocation.formatted_location || selectedStoreLocation.store_name).trim().toLowerCase()
-
-        if (cleanLoc === cleanFormatted || cleanLoc === cleanCode) return true
-
-        if (selectedStoreLocation.cabinet_rack && selectedStoreLocation.cabinet_rack !== '-') {
-          const cleanCab = selectedStoreLocation.cabinet_rack.trim().toLowerCase()
-          return cleanLoc.includes(cleanStoreName) && cleanLoc.includes(cleanCab)
-        }
-
-        return cleanLoc.includes(cleanStoreName) || cleanLoc.includes(cleanCode)
+    let active = true
+    setAssignedDrugs([])
+    setAssignedNonDrugs([])
+    setPlacedDrugItems([])
+    setSubLocations([])
+    setItemsError(null)
+    const location = viewItemsModalLocation || selectedStoreLocation
+    if (!location) return
+    setIsLoadingItems(true)
+    const loadDetail = async () => {
+      try {
+        const [units, inventory] = await Promise.all([
+          loadStoreSubLocations(hospitalId, location.location_code, location.id),
+          loadLocationInventory(hospitalId, location),
+        ])
+        if (!active) return
+        setSubLocations(units)
+        setPlacedDrugItems(inventory.drugs)
+        setAssignedDrugs(inventory.matchedDrugs)
+        setAssignedNonDrugs(inventory.matchedNonDrugs)
+      } catch {
+        if (active) setItemsError('Gagal memuatkan inventori lokasi. Cuba buka lokasi ini semula.')
+      } finally {
+        if (active) setIsLoadingItems(false)
       }
-
-      loadStoreSubLocations(hospitalId, selectedStoreLocation.location_code, selectedStoreLocation.id).then(data => {
-        setSubLocations(data)
-      })
-
-      loadFacilityDrugInventory(hospitalId).then(drugItems => {
-        const items = drugItems || []
-        setPlacedDrugItems(items)
-        const matchedDrugs = (selectedStoreLocation.location_type === 'non_drug')
-          ? []
-          : items.filter(item => isLocationMatch(item.location || item.storage_conditions || ''))
-
-        let matchedNonDrugs: any[] = []
-        try {
-          const raw = localStorage.getItem(`facility_nondrug_items_${hospitalId}`)
-          if (raw && selectedStoreLocation.location_type !== 'drug') {
-            const list = JSON.parse(raw)
-            matchedNonDrugs = list.filter((item: any) => isLocationMatch(item.location || ''))
-          }
-        } catch {}
-
-        setAssignedDrugs(matchedDrugs)
-        setAssignedNonDrugs(matchedNonDrugs)
-      }).finally(() => {
-        setIsLoadingItems(false)
-      })
     }
-  }, [selectedStoreLocation, hospitalId])
+    void loadDetail()
+    return () => { active = false }
+  }, [selectedStoreLocation, viewItemsModalLocation, hospitalId])
 
   const [expandedNodes, setExpandedNodes] = useState<Record<string, boolean>>({})
 
@@ -549,28 +555,27 @@ export const StoreLocationManagementPage: React.FC = () => {
   }
 
   // View Assigned Items Modal state
-  const [viewItemsModalLocation, setViewItemsModalLocation] = useState<StoreLocationWithOccupancy | null>(null)
-  const [assignedDrugs, setAssignedDrugs] = useState<any[]>([])
-  const [assignedNonDrugs, setAssignedNonDrugs] = useState<any[]>([])
-  const [isLoadingItems, setIsLoadingItems] = useState<boolean>(false)
-
   // Load locations on mount
-  const fetchLocations = async () => {
+  const fetchLocations = useCallback(async () => {
     setIsLoading(true)
+    setLocationsError(null)
     try {
+      if (!hospitalId) throw new Error('Hospital context is unavailable')
       const data = await getStoreLocationsWithOccupancy(hospitalId)
       setLocations(data)
     } catch (err) {
       console.error('Failed to load store locations:', err)
+      setLocations([])
+      setLocationsError('Gagal memuatkan senarai lokasi stor. Cuba muat semula.')
       showError('Failed to load store location list')
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [hospitalId, showError])
 
   useEffect(() => {
-    fetchLocations()
-  }, [hospitalId])
+    void fetchLocations()
+  }, [fetchLocations])
 
   // Select location to view detail window
   const handleSelectStoreLocation = (loc: StoreLocationWithOccupancy) => {
@@ -581,29 +586,14 @@ export const StoreLocationManagementPage: React.FC = () => {
   const handleExportPdfForLocation = async (loc: StoreLocationWithOccupancy) => {
     try {
       showSuccess(`Menjana PDF Laporan Lokasi: ${loc.store_name}...`)
-      const drugItems = await loadFacilityDrugInventory(hospitalId)
-      const matchedDrugs = drugItems.filter(item => {
-        const str = item.location || ''
-        return str === loc.formatted_location || (str.includes(loc.store_name) && str.includes(loc.cabinet_rack))
-      })
-
-      let matchedNonDrugs: any[] = []
-      try {
-        const raw = localStorage.getItem(`facility_nondrug_items_${hospitalId}`)
-        if (raw) {
-          const list = JSON.parse(raw)
-          matchedNonDrugs = list.filter((item: any) => {
-            const str = item.location || ''
-            return str === loc.formatted_location || (str.includes(loc.store_name) && str.includes(loc.cabinet_rack))
-          })
-        }
-      } catch {}
-
-      const allMatchedItems = [...matchedDrugs, ...matchedNonDrugs]
+      const inventory = await loadLocationInventory(hospitalId, loc)
+      const allMatchedItems = [...inventory.matchedDrugs, ...inventory.matchedNonDrugs]
       generateStoreLocationPdf(loc, allMatchedItems, {
-        hospitalName: user?.hospital?.hospital_name || (user?.hospital as any)?.name || 'HOSPITAL LAWAS',
-        department: `Jabatan Farmasi / Unit Logistik Stor (${loc.department || 'LOG'})`,
-        preparedBy: user?.full_name || (user as any)?.name || 'Pegawai Farmasi / Storekeeper',
+        hospitalName: user?.hospital?.hospital_name || 'Hospital',
+        department: (loc.department === 'IPD' || loc.location_code?.startsWith('IPD'))
+          ? `Jabatan Farmasi / Farmasi Pesakit Dalam (${loc.department || 'IPD'})`
+          : `Jabatan Farmasi / Unit Logistik Stor (${loc.department || 'LOG'})`,
+        preparedBy: user?.full_name || 'Pegawai Farmasi / Storekeeper',
         preparedByTitle: user?.jawatan || 'Penyelia Stor / Pegawai Farmasi',
         approvedBy: 'Ketua Unit Stor / Pegawai Farmasi Y/M',
         approvedByTitle: 'Ketua Unit Stor / Pegawai Farmasi Y/M',
@@ -617,7 +607,7 @@ export const StoreLocationManagementPage: React.FC = () => {
   // Open Create Modal (Empty fields for user manual input)
   const handleOpenCreateModal = () => {
     setEditingLocation(null)
-    setDepartmentInput('LOG')
+    setDepartmentInput(departmentFilter === 'IPD' ? 'IPD' : 'LOG')
     setStoreNameInput('')
     setCabinetRackInput('')
     setShelfLevelInput('')
@@ -724,53 +714,22 @@ export const StoreLocationManagementPage: React.FC = () => {
   }
 
   // View Items at Location
-  const handleViewItems = async (loc: StoreLocationWithOccupancy) => {
+  const handleViewItems = (loc: StoreLocationWithOccupancy) => {
     setViewItemsModalLocation(loc)
-    setIsLoadingItems(true)
-    try {
-      const isLocationMatch = (str: string) => {
-        if (!str) return false
-        const cleanLoc = str.trim().toLowerCase()
-        const cleanStoreName = loc.store_name.trim().toLowerCase()
-        const cleanCode = loc.location_code.trim().toLowerCase()
-        const cleanFormatted = loc.formatted_location.trim().toLowerCase()
-
-        if (cleanLoc === cleanFormatted || cleanLoc === cleanCode) return true
-
-        if (loc.cabinet_rack && loc.cabinet_rack !== '-') {
-          const cleanCab = loc.cabinet_rack.trim().toLowerCase()
-          return cleanLoc.includes(cleanStoreName) && cleanLoc.includes(cleanCab)
-        }
-
-        return cleanLoc.includes(cleanStoreName) || cleanLoc.includes(cleanCode)
-      }
-
-      const drugItems = await loadFacilityDrugInventory(hospitalId)
-      const matchedDrugs = (loc.location_type === 'non_drug')
-        ? []
-        : drugItems.filter(item => isLocationMatch(item.location || ''))
-
-      let matchedNonDrugs: any[] = []
-      try {
-        const raw = localStorage.getItem(`facility_nondrug_items_${hospitalId}`)
-        if (raw && loc.location_type !== 'drug') {
-          const list = JSON.parse(raw)
-          matchedNonDrugs = list.filter((item: any) => isLocationMatch(item.location || ''))
-        }
-      } catch {}
-
-      setAssignedDrugs(matchedDrugs)
-      setAssignedNonDrugs(matchedNonDrugs)
-    } catch (err) {
-      console.error('Error loading assigned items:', err)
-    } finally {
-      setIsLoadingItems(false)
-    }
   }
+
+  // Department-Scoped Locations
+  const departmentScopedLocations = useMemo(() => {
+    if (departmentFilter === 'ALL') return locations
+    return locations.filter(loc => {
+      const dept = loc.department || (loc.location_code?.split('-')[0]) || 'LOG'
+      return dept.toUpperCase() === departmentFilter
+    })
+  }, [locations, departmentFilter])
 
   // Filtered List
   const filteredLocations = useMemo(() => {
-    return locations.filter(loc => {
+    return departmentScopedLocations.filter(loc => {
       const matchesSearch =
         loc.store_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         loc.cabinet_rack.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -783,7 +742,7 @@ export const StoreLocationManagementPage: React.FC = () => {
 
       return matchesSearch && matchesType && matchesCondition
     })
-  }, [locations, searchTerm, typeFilter, conditionFilter])
+  }, [departmentScopedLocations, searchTerm, typeFilter, conditionFilter])
 
   // Grouped by Store Name for Grid View
   const groupedStores = useMemo(() => {
@@ -871,11 +830,11 @@ export const StoreLocationManagementPage: React.FC = () => {
     return groups
   }, [assignedNonDrugs, subLocations])
 
-  // Summary Metrics
-  const uniqueStoresCount = useMemo(() => new Set(locations.map(l => l.store_name)).size, [locations])
-  const uniqueCabinetsCount = useMemo(() => new Set(locations.map(l => `${l.store_name}-${l.cabinet_rack}`)).size, [locations])
-  const totalOccupiedCount = useMemo(() => locations.filter(l => l.total_items_count > 0).length, [locations])
-  const totalItemsStored = useMemo(() => locations.reduce((sum, l) => sum + l.total_items_count, 0), [locations])
+  // Summary Metrics (Scoped to Active Department)
+  const uniqueStoresCount = useMemo(() => new Set(departmentScopedLocations.map(l => l.store_name)).size, [departmentScopedLocations])
+  const uniqueCabinetsCount = useMemo(() => new Set(departmentScopedLocations.map(l => `${l.store_name}-${l.cabinet_rack}`)).size, [departmentScopedLocations])
+  const totalOccupiedCount = useMemo(() => departmentScopedLocations.filter(l => l.total_items_count > 0).length, [departmentScopedLocations])
+  const totalItemsStored = useMemo(() => departmentScopedLocations.reduce((sum, l) => sum + l.total_items_count, 0), [departmentScopedLocations])
 
   return (
     <div className="p-6 md:p-8 space-y-6 text-text-primary min-h-screen bg-subtle/50">
@@ -926,6 +885,7 @@ export const StoreLocationManagementPage: React.FC = () => {
       {selectedStoreLocation ? (
         /* STORE LOCATION DETAIL VIEW WINDOW */
         <div className="space-y-6">
+        {locationsError && <p role="alert" className="p-4 text-sm text-text-primary">{locationsError}</p>}
           {/* Header Bar */}
           <div className="bg-surface p-6 rounded-2xl border border-border-default shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div className="flex items-center gap-4">
@@ -938,11 +898,17 @@ export const StoreLocationManagementPage: React.FC = () => {
               </button>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono font-bold text-teal-700 bg-accent-base/10 px-2.5 py-0.5 rounded-md border border-accent-base/20">
+                  <span className="text-xs font-mono font-bold text-teal-600 dark:text-teal-400 bg-teal-500/10 px-2.5 py-0.5 rounded-md border border-teal-500/20">
                     {selectedStoreLocation.location_code}
                   </span>
-                  <span className="text-xs font-bold text-text-muted uppercase tracking-wider bg-subtle px-2 py-0.5 rounded-md">
-                    {selectedStoreLocation.department || 'LOG'}
+                  <span className={`text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded-md ${
+                    (selectedStoreLocation.department === 'IPD' || selectedStoreLocation.location_code?.startsWith('IPD'))
+                      ? 'bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20'
+                      : 'bg-subtle text-text-muted border border-border-default'
+                  }`}>
+                    {(selectedStoreLocation.department === 'IPD' || selectedStoreLocation.location_code?.startsWith('IPD'))
+                      ? 'Farmasi Pesakit Dalam (IPD)'
+                      : 'Logistik Farmasi (LOG)'}
                   </span>
                 </div>
                 <h1 className="text-2xl font-black tracking-tight text-text-primary mt-1 flex items-center gap-2">
@@ -989,7 +955,7 @@ export const StoreLocationManagementPage: React.FC = () => {
             </div>
 
             <div className="bg-surface p-4 rounded-2xl border border-border-default shadow-sm flex items-center gap-3 border-l-4 border-l-cyan-500">
-              <div className="p-2.5 bg-cyan-50 text-cyan-600 rounded-xl">
+              <div className="p-2.5 bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 rounded-xl">
                 <Thermometer className="w-5 h-5" />
               </div>
               <div>
@@ -1033,7 +999,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <FolderTree className="w-5 h-5 text-teal-600" />
                   <h2 className="text-base font-bold text-text-primary">Hierarki Lokasi Fizikal (WMS Sub-Locations)</h2>
-                  <span className="text-[10px] font-bold text-teal-700 bg-accent-base/10 px-2.5 py-0.5 rounded-full border border-accent-base/20">
+                  <span className="text-[10px] font-bold text-teal-600 dark:text-teal-400 bg-teal-500/10 px-2.5 py-0.5 rounded-full border border-teal-500/20">
                     {subLocations.length} Unit Fizikal
                   </span>
                 </div>
@@ -1090,7 +1056,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                           <div className="min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
                               <span className="font-extrabold text-xs text-text-primary tracking-tight">{mainUnit.name}</span>
-                              <span className="font-mono text-[11px] font-bold text-teal-700 bg-accent-base/10 px-2 py-0.5 rounded border border-accent-base/20">
+                              <span className="font-mono text-[11px] font-bold text-teal-600 dark:text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded border border-teal-500/20">
                                 {mainUnit.code}
                               </span>
                               <span className="text-[10px] font-mono text-slate-400">
@@ -1111,7 +1077,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                           <button
                             type="button"
                             onClick={(e) => handleOpenRackItemsModal(mainUnit, e)}
-                            className="text-[11px] font-bold text-indigo-700 bg-indigo-500/10 hover:bg-indigo-100 border border-indigo-500/20 px-2.5 py-1 rounded-lg flex items-center gap-1 transition"
+                            className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/20 px-2.5 py-1 rounded-lg flex items-center gap-1 transition"
                             title="Papar Semua Item di Rack"
                           >
                             <Eye className="w-3.5 h-3.5" />
@@ -1124,14 +1090,14 @@ export const StoreLocationManagementPage: React.FC = () => {
                             className="text-[11px] font-extrabold text-emerald-400 bg-emerald-100/90 hover:bg-emerald-200 border border-emerald-300 px-2.5 py-1 rounded-lg flex items-center gap-1 transition cursor-pointer shadow-elevation-1"
                             title={`Tetapkan Item Pukal ke ${mainUnit.name}`}
                           >
-                            <PlusCircle className="w-3.5 h-3.5 text-emerald-700" />
+                            <PlusCircle className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                             <span>+ Assign Item</span>
                           </button>
 
                           <button
                             type="button"
                             onClick={() => handleOpenAddSubLocation('level', mainUnit.name)}
-                            className="text-[11px] font-bold text-teal-700 bg-accent-base/10 hover:bg-teal-100 border border-accent-base/20 px-2.5 py-1 rounded-lg flex items-center gap-1 transition"
+                            className="text-[11px] font-bold text-teal-600 dark:text-teal-400 bg-teal-500/10 hover:bg-teal-500/20 border border-teal-500/20 px-2.5 py-1 rounded-lg flex items-center gap-1 transition"
                             title="Tambah Level"
                           >
                             <Plus className="w-3.5 h-3.5" />
@@ -1185,7 +1151,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                                     </div>
                                     <div>
                                       <div className="flex items-center gap-2">
-                                        <span className="font-bold text-text-primary group-hover:text-teal-900 transition">{child.name}</span>
+                                        <span className="font-bold text-text-primary group-hover:text-teal-600 dark:group-hover:text-teal-400 transition">{child.name}</span>
                                         <span className="text-[10px] text-teal-600 font-semibold opacity-0 group-hover:opacity-100 transition flex items-center gap-0.5">
                                           <Eye className="w-3 h-3" /> Papar Senarai Item
                                         </span>
@@ -1201,7 +1167,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                                       <button
                                         type="button"
                                         onClick={(e) => handleOpenLevelItemsModal(mainUnit, child, e)}
-                                        className="text-[10px] font-bold text-emerald-700 bg-emerald-500/10 hover:bg-emerald-100 border border-emerald-500/20 px-2.5 py-1 rounded-full transition flex items-center gap-1"
+                                        className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/20 px-2.5 py-1 rounded-full transition flex items-center gap-1"
                                       >
                                         <Eye className="w-3 h-3" />
                                         <span>{itemsAtLevel.length} Item</span>
@@ -1218,7 +1184,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                                       className="text-[10px] font-extrabold text-teal-800 bg-teal-100/90 hover:bg-teal-200 border border-teal-300 px-2 py-0.5 rounded-md flex items-center gap-1 transition cursor-pointer shadow-elevation-1"
                                       title={`Tetapkan Item Pukal ke ${mainUnit.name} › ${child.name}`}
                                     >
-                                      <PlusCircle className="w-3 h-3 text-teal-700" />
+                                      <PlusCircle className="w-3 h-3 text-teal-600 dark:text-teal-400" />
                                       <span>+ Assign Item</span>
                                     </button>
 
@@ -1265,7 +1231,9 @@ export const StoreLocationManagementPage: React.FC = () => {
               </div>
             </div>
 
-            {isLoadingItems ? (
+            {itemsError ? (
+              <p role="alert" className="p-4 text-sm text-text-primary">{itemsError}</p>
+            ) : isLoadingItems ? (
               <div className="flex justify-center p-8">
                 <Spinner size="md" />
               </div>
@@ -1277,7 +1245,7 @@ export const StoreLocationManagementPage: React.FC = () => {
               <div className="space-y-6">
                 {assignedDrugs.length > 0 && (
                   <div className="space-y-4">
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-blue-700 mb-3 flex items-center gap-1.5">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-3 flex items-center gap-1.5">
                       <Package className="w-4 h-4 text-blue-600" /> Bekalan Ubat Mengikut Level & Rak ({assignedDrugs.length})
                     </h3>
                     {Object.entries(groupedDrugs).map(([subGroupName, items]) => (
@@ -1287,7 +1255,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                             <Layers className="w-3.5 h-3.5 text-teal-600" />
                             <span>{subGroupName}</span>
                           </span>
-                          <span className="text-[10px] font-bold text-teal-700 bg-accent-base/10 border border-accent-base/20 px-2.5 py-0.5 rounded-full">
+                          <span className="text-[10px] font-bold text-teal-600 dark:text-teal-400 bg-teal-500/10 border border-teal-500/20 px-2.5 py-0.5 rounded-full">
                             {items.length} Item
                           </span>
                         </div>
@@ -1308,7 +1276,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                                   <td className="py-2.5 px-3 font-mono font-bold text-text-secondary">{item.item_code}</td>
                                   <td className="py-2.5 px-3 font-bold text-text-primary">{item.drug_name}</td>
                                   <td className="py-2.5 px-3 text-text-muted">{item.dosage_form || '-'}</td>
-                                  <td className="py-2.5 px-3 text-right font-bold text-teal-700">{item.current_stock} {item.unit_of_measure}</td>
+                                  <td className="py-2.5 px-3 text-right font-bold text-teal-600 dark:text-teal-400">{item.current_stock} {item.unit_of_measure}</td>
                                 </tr>
                               ))}
                             </tbody>
@@ -1321,7 +1289,7 @@ export const StoreLocationManagementPage: React.FC = () => {
 
                 {assignedNonDrugs.length > 0 && (
                   <div className="space-y-4">
-                    <h3 className="text-xs font-bold uppercase tracking-wider text-purple-700 mb-3 flex items-center gap-1.5">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400 mb-3 flex items-center gap-1.5">
                       <ClipboardList className="w-4 h-4 text-purple-600" /> Bekalan Bukan Ubat Mengikut Level & Rak ({assignedNonDrugs.length})
                     </h3>
                     {Object.entries(groupedNonDrugs).map(([subGroupName, items]) => (
@@ -1331,7 +1299,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                             <Layers className="w-3.5 h-3.5 text-purple-600" />
                             <span>{subGroupName}</span>
                           </span>
-                          <span className="text-[10px] font-bold text-purple-700 bg-indigo-500/10 border border-indigo-500/20 px-2.5 py-0.5 rounded-full">
+                          <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 bg-purple-500/10 border border-purple-500/20 px-2.5 py-0.5 rounded-full">
                             {items.length} Item
                           </span>
                         </div>
@@ -1351,8 +1319,8 @@ export const StoreLocationManagementPage: React.FC = () => {
                                 <tr key={item.id}>
                                   <td className="py-2.5 px-3 font-mono font-bold text-text-secondary">{item.item_code}</td>
                                   <td className="py-2.5 px-3 font-bold text-text-primary">{item.item_name}</td>
-                                  <td className="py-2.5 px-3 text-text-muted">{item.category || '-'}</td>
-                                  <td className="py-2.5 px-3 text-right font-bold text-teal-700">{item.current_stock} {item.unit_of_measure}</td>
+                                  <td className="py-2.5 px-3 text-text-muted">{typeof item.category === 'string' ? item.category : item.category?.category_name || '-'}</td>
+                                  <td className="py-2.5 px-3 text-right font-bold text-teal-600 dark:text-teal-400">{item.current_stock} {item.unit_of_measure}</td>
                                 </tr>
                               ))}
                             </tbody>
@@ -1369,10 +1337,69 @@ export const StoreLocationManagementPage: React.FC = () => {
       ) : (
         /* Main Store Locations List & Table View */
         <>
+          {/* Department Navigation Switcher */}
+          <div className="flex flex-wrap items-center justify-between gap-3 bg-surface p-3 rounded-2xl border border-border-default shadow-xs">
+            <div className="flex flex-wrap items-center gap-1.5 p-1 bg-subtle rounded-xl border border-border-default">
+              <button
+                type="button"
+                onClick={() => setDepartmentFilter('LOG')}
+                className={`px-3.5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
+                  departmentFilter === 'LOG'
+                    ? 'bg-teal-500/15 text-teal-600 dark:text-teal-400 border border-teal-500/30 shadow-xs'
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+              >
+                <Building2 className="w-3.5 h-3.5" />
+                <span>Logistik Farmasi (LOG)</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-subtle text-text-secondary font-mono font-bold">
+                  {locations.filter(l => (l.department || l.location_code?.split('-')[0]) === 'LOG').length}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setDepartmentFilter('IPD')}
+                className={`px-3.5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
+                  departmentFilter === 'IPD'
+                    ? 'bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30 shadow-xs'
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+              >
+                <Building2 className="w-3.5 h-3.5" />
+                <span>Farmasi Pesakit Dalam (IPD)</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 font-mono font-bold">
+                  {locations.filter(l => (l.department || l.location_code?.split('-')[0]) === 'IPD').length}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setDepartmentFilter('ALL')}
+                className={`px-3.5 py-2 rounded-lg text-xs font-bold transition flex items-center gap-2 cursor-pointer ${
+                  departmentFilter === 'ALL'
+                    ? 'bg-surface text-teal-600 dark:text-teal-400 shadow-xs border border-border-default'
+                    : 'text-text-muted hover:text-text-primary'
+                }`}
+              >
+                <Layers className="w-3.5 h-3.5" />
+                <span>Semua Jabatan ({locations.length})</span>
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2 px-3 py-1.5 text-xs text-text-muted font-medium">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span>
+                Fasiliti: <strong className="text-text-primary font-bold">
+                  {departmentFilter === 'IPD' ? 'Farmasi Pesakit Dalam (LOC-IPD-01)' : departmentFilter === 'LOG' ? 'Stor Logistik Farmasi (LOC-LOG-01)' : 'Semua Stor Fasiliti'}
+                </strong>
+              </span>
+            </div>
+          </div>
+
           {/* Metrics Row (Light Clean Cards) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="bg-surface p-5 rounded-2xl border border-border-default shadow-sm flex items-center gap-4 border-l-4 border-l-teal-500">
-              <div className="p-3 bg-accent-base/10 text-teal-600 rounded-xl">
+              <div className="p-3 bg-teal-500/10 text-teal-600 dark:text-teal-400 rounded-xl">
                 <Building2 className="w-6 h-6" />
               </div>
               <div>
@@ -1382,7 +1409,7 @@ export const StoreLocationManagementPage: React.FC = () => {
             </div>
 
             <div className="bg-surface p-5 rounded-2xl border border-border-default shadow-sm flex items-center gap-4 border-l-4 border-l-indigo-500">
-              <div className="p-3 bg-indigo-500/10 text-indigo-600 rounded-xl">
+              <div className="p-3 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-xl">
                 <Layers className="w-6 h-6" />
               </div>
               <div>
@@ -1392,7 +1419,7 @@ export const StoreLocationManagementPage: React.FC = () => {
             </div>
 
             <div className="bg-surface p-5 rounded-2xl border border-border-default shadow-sm flex items-center gap-4 border-l-4 border-l-amber-500">
-              <div className="p-3 bg-amber-500/10 text-amber-600 rounded-xl">
+              <div className="p-3 bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-xl">
                 <Box className="w-6 h-6" />
               </div>
               <div>
@@ -1402,7 +1429,7 @@ export const StoreLocationManagementPage: React.FC = () => {
             </div>
 
             <div className="bg-surface p-5 rounded-2xl border border-border-default shadow-sm flex items-center gap-4 border-l-4 border-l-emerald-500">
-              <div className="p-3 bg-emerald-500/10 text-emerald-600 rounded-xl">
+              <div className="p-3 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-xl">
                 <Package className="w-6 h-6" />
               </div>
               <div>
@@ -1456,7 +1483,7 @@ export const StoreLocationManagementPage: React.FC = () => {
               <button
                 onClick={() => setViewMode('table')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
-                  viewMode === 'table' ? 'bg-surface text-teal-700 shadow-sm' : 'text-text-muted hover:text-text-primary'
+                  viewMode === 'table' ? 'bg-surface text-teal-600 dark:text-teal-400 shadow-sm' : 'text-text-muted hover:text-text-primary'
                 }`}
               >
                 <FolderTree className="w-3.5 h-3.5" />
@@ -1465,7 +1492,7 @@ export const StoreLocationManagementPage: React.FC = () => {
               <button
                 onClick={() => setViewMode('grid')}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition ${
-                  viewMode === 'grid' ? 'bg-surface text-teal-700 shadow-sm' : 'text-text-muted hover:text-text-primary'
+                  viewMode === 'grid' ? 'bg-surface text-teal-600 dark:text-teal-400 shadow-sm' : 'text-text-muted hover:text-text-primary'
                 }`}
               >
                 <LayoutGrid className="w-3.5 h-3.5" />
@@ -1519,42 +1546,42 @@ export const StoreLocationManagementPage: React.FC = () => {
                         onClick={() => handleSelectStoreLocation(loc)}
                         className="hover:bg-accent-base/10 cursor-pointer transition group"
                       >
-                        <td className="py-3.5 px-4 font-mono font-bold text-teal-700 group-hover:underline">
+                        <td className="py-3.5 px-4 font-mono font-bold text-teal-600 dark:text-teal-400 group-hover:underline">
                           {loc.location_code}
                         </td>
-                        <td className="py-3.5 px-4 font-bold text-text-primary group-hover:text-teal-900">
+                        <td className="py-3.5 px-4 font-bold text-text-primary group-hover:text-teal-600 dark:group-hover:text-teal-400">
                           {loc.store_name}
                         </td>
                         <td className="py-3.5 px-4">
                           {loc.location_type === 'drug' && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-blue-500/10 text-blue-700 border border-blue-500/20 rounded-lg">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 rounded-lg">
                               <Package className="w-3 h-3" /> Ubat
                             </span>
                           )}
                           {loc.location_type === 'non_drug' && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-indigo-500/10 text-purple-700 border border-indigo-500/20 rounded-lg">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 rounded-lg">
                               <ClipboardList className="w-3 h-3" /> Bukan Ubat
                             </span>
                           )}
                           {loc.location_type === 'both' && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-accent-base/10 text-teal-700 border border-accent-base/20 rounded-lg">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20 rounded-lg">
                               <Layers className="w-3 h-3" /> Ubat & Bukan Ubat
                             </span>
                           )}
                         </td>
                         <td className="py-3.5 px-4">
                           {(loc.storage_condition === 'ambient' || (loc.storage_condition as unknown as string) === 'room_temp') && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-amber-500/10 text-amber-700 border border-amber-500/20 rounded-lg">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 rounded-lg">
                               Suhu Bilik (≤25°C)
                             </span>
                           )}
                           {(loc.storage_condition === 'cold_2_8c' || (loc.storage_condition as unknown as string) === 'chilled') && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-cyan-50 text-cyan-700 border border-cyan-200 rounded-lg">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 rounded-lg">
                               Peti Sejuk (2-8°C)
                             </span>
                           )}
                           {loc.storage_condition === 'frozen' && (
-                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-indigo-500/10 text-indigo-700 border border-indigo-500/20 rounded-lg">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-bold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 rounded-lg">
                               Peti Beku (-20°C)
                             </span>
                           )}
@@ -1598,7 +1625,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <span className="font-mono font-bold text-teal-700 text-xs block">
+                        <span className="font-mono font-bold text-teal-600 dark:text-teal-400 text-xs block">
                           {loc.location_code}
                         </span>
                         <h4 className="font-bold text-text-primary text-sm">
@@ -1606,7 +1633,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                         </h4>
                       </div>
                       {loc.is_active ? (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 flex-shrink-0">
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 flex-shrink-0">
                           <CheckCircle className="w-3 h-3" /> Aktif
                         </span>
                       ) : (
@@ -1618,32 +1645,32 @@ export const StoreLocationManagementPage: React.FC = () => {
 
                     <div className="flex items-center gap-2 flex-wrap">
                       {loc.location_type === 'drug' && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold bg-blue-500/10 text-blue-700 border border-blue-500/20 rounded-md">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 rounded-md">
                           <Package className="w-2.5 h-2.5" /> Ubat
                         </span>
                       )}
                       {loc.location_type === 'non_drug' && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold bg-indigo-500/10 text-purple-700 border border-indigo-500/20 rounded-md">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20 rounded-md">
                           <ClipboardList className="w-2.5 h-2.5" /> Bukan Ubat
                         </span>
                       )}
                       {loc.location_type === 'both' && (
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold bg-accent-base/10 text-teal-700 border border-accent-base/20 rounded-md">
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20 rounded-md">
                           <Layers className="w-2.5 h-2.5" /> Ubat & Bukan Ubat
                         </span>
                       )}
                       {(loc.storage_condition === 'ambient' || (loc.storage_condition as unknown as string) === 'room_temp') && (
-                        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold bg-amber-500/10 text-amber-700 border border-amber-500/20 rounded-md">
+                        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 rounded-md">
                           ≤25°C
                         </span>
                       )}
                       {(loc.storage_condition === 'cold_2_8c' || (loc.storage_condition as unknown as string) === 'chilled') && (
-                        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold bg-cyan-50 text-cyan-700 border border-cyan-200 rounded-md">
+                        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 rounded-md">
                           2-8°C
                         </span>
                       )}
                       {loc.storage_condition === 'frozen' && (
-                        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold bg-indigo-500/10 text-indigo-700 border border-indigo-500/20 rounded-md">
+                        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 rounded-md">
                           -20°C
                         </span>
                       )}
@@ -1676,7 +1703,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                 <div key={storeName} className="bg-surface p-5 rounded-2xl border border-border-default shadow-sm space-y-4">
                   <div className="flex items-center justify-between border-b border-border-subtle pb-3">
                     <div className="flex items-center gap-3">
-                      <div className="p-2 bg-accent-base/10 text-teal-600 rounded-xl border border-teal-100">
+                      <div className="p-2 bg-teal-500/10 text-teal-600 dark:text-teal-400 rounded-xl border border-teal-500/20">
                         <Building2 className="w-5 h-5" />
                       </div>
                       <div>
@@ -1684,7 +1711,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                         <p className="text-xs text-text-muted font-medium">{storeLocs.length} Ruangan Lokasi Berdaftar</p>
                       </div>
                     </div>
-                    <span className="text-xs font-bold px-3 py-1 bg-subtle/50 text-teal-700 border border-border-default rounded-full">
+                    <span className="text-xs font-bold px-3 py-1 bg-subtle/50 text-teal-600 dark:text-teal-400 border border-border-default rounded-full">
                       {storeLocs.reduce((acc, curr) => acc + curr.total_items_count, 0)} Item Tersimpan
                     </span>
                   </div>
@@ -1698,7 +1725,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                       >
                         <div className="flex items-start justify-between">
                           <div>
-                            <span className="text-xs font-mono font-bold text-teal-700">{loc.location_code}</span>
+                            <span className="text-xs font-mono font-bold text-teal-600 dark:text-teal-400">{loc.location_code}</span>
                             <h4 className="text-sm font-bold text-text-primary mt-0.5">
                               {loc.cabinet_rack && loc.cabinet_rack !== '-' ? `${loc.cabinet_rack} → ${loc.shelf_level}` : loc.store_name}
                             </h4>
@@ -1731,14 +1758,14 @@ export const StoreLocationManagementPage: React.FC = () => {
 
                     <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border-default pt-3 text-xs">
                       <div className="flex items-center gap-1.5 font-bold">
-                        {loc.location_type === 'drug' && <span className="text-blue-700">Ubat</span>}
-                        {loc.location_type === 'non_drug' && <span className="text-purple-700">Bukan Ubat</span>}
-                        {loc.location_type === 'both' && <span className="text-teal-700">Ubat & Bukan Ubat</span>}
+                        {loc.location_type === 'drug' && <span className="text-blue-600 dark:text-blue-400">Ubat</span>}
+                        {loc.location_type === 'non_drug' && <span className="text-purple-600 dark:text-purple-400">Bukan Ubat</span>}
+                        {loc.location_type === 'both' && <span className="text-teal-600 dark:text-teal-400">Ubat & Bukan Ubat</span>}
                       </div>
 
                       <button
                         onClick={() => handleViewItems(loc)}
-                        className="text-xs font-bold text-teal-700 hover:underline flex items-center gap-1"
+                        className="text-xs font-bold text-teal-600 dark:text-teal-400 hover:underline flex items-center gap-1"
                       >
                         <Eye className="w-3.5 h-3.5" />
                         <span>{loc.total_items_count} Item</span>
@@ -1768,7 +1795,7 @@ export const StoreLocationManagementPage: React.FC = () => {
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-text-secondary mb-1.5 flex items-center justify-between">
                 <span>Jabatan / Unit <span className="text-red-500">*</span></span>
-                <span className="text-[10px] font-mono text-teal-700 font-bold bg-accent-base/10 px-2 py-0.5 rounded-md border border-accent-base/20">
+                <span className="text-[10px] font-mono text-teal-600 dark:text-teal-400 font-bold bg-teal-500/10 px-2 py-0.5 rounded-md border border-teal-500/20">
                   Prefix: {departmentInput}
                 </span>
               </label>
@@ -1806,14 +1833,14 @@ export const StoreLocationManagementPage: React.FC = () => {
                 <label className="block text-xs font-bold uppercase tracking-wider text-text-secondary">
                   Kod Lokasi (Auto)
                 </label>
-                <span className="text-[10px] font-semibold text-teal-600 bg-accent-base/10 px-2 py-0.5 rounded-md border border-accent-base/20">Format: {departmentInput}-xxx-xxx</span>
+                <span className="text-[10px] font-semibold text-teal-600 dark:text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded-md border border-teal-500/20">Format: {departmentInput}-xxx-xxx</span>
               </div>
               <input
                 type="text"
                 placeholder={`cth: ${departmentInput}-STR-001`}
                 value={locationCodeInput}
                 onChange={e => setLocationCodeInput(e.target.value)}
-                className="w-full bg-subtle border border-border-default font-mono text-teal-700 font-bold rounded-xl px-4 py-3 text-xs shadow-inner focus:bg-surface focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
+                className="w-full bg-subtle border border-border-default font-mono text-teal-600 dark:text-teal-400 font-bold rounded-xl px-4 py-3 text-xs shadow-inner focus:bg-surface focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
               />
             </div>
 
@@ -1914,7 +1941,9 @@ export const StoreLocationManagementPage: React.FC = () => {
         title={`Senarai Item di Lokasi: ${viewItemsModalLocation?.formatted_location || ''}`}
       >
         <div className="space-y-4 text-text-primary max-h-[70vh] overflow-y-auto pr-1">
-          {isLoadingItems ? (
+          {itemsError ? (
+              <p role="alert" className="p-4 text-sm text-text-primary">{itemsError}</p>
+            ) : isLoadingItems ? (
             <div className="flex justify-center p-8">
               <Spinner size="md" />
             </div>
@@ -1928,7 +1957,7 @@ export const StoreLocationManagementPage: React.FC = () => {
               {/* Drugs Section */}
               {assignedDrugs.length > 0 && (
                 <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-blue-700 mb-2 flex items-center gap-1.5">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400 mb-2 flex items-center gap-1.5">
                     <Package className="w-4 h-4" /> Bekalan Ubat ({assignedDrugs.length})
                   </h4>
                   <div className="bg-subtle/50 rounded-xl border border-border-default divide-y divide-border-default">
@@ -1939,7 +1968,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                           <p className="text-text-muted font-mono text-[11px] mt-0.5">{item.drug_code} • Batch: {item.batch_number || 'N/A'}</p>
                         </div>
                         <div className="text-right">
-                          <p className="font-bold text-teal-700">{item.facility_stock ?? 0} {item.unit_of_measure}</p>
+                          <p className="font-bold text-teal-600 dark:text-teal-400">{item.facility_stock ?? 0} {item.unit_of_measure}</p>
                           <p className="text-text-muted text-[11px]">Min Buffer: {item.min_buffer_level ?? 20}</p>
                         </div>
                       </div>
@@ -1951,7 +1980,7 @@ export const StoreLocationManagementPage: React.FC = () => {
               {/* Non-Drugs Section */}
               {assignedNonDrugs.length > 0 && (
                 <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-purple-700 mb-2 flex items-center gap-1.5">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-purple-600 dark:text-purple-400 mb-2 flex items-center gap-1.5">
                     <ClipboardList className="w-4 h-4" /> Bukan Ubat ({assignedNonDrugs.length})
                   </h4>
                   <div className="bg-subtle/50 rounded-xl border border-border-default divide-y divide-border-default">
@@ -1962,7 +1991,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                           <p className="text-text-muted font-mono text-[11px] mt-0.5">{item.item_code}</p>
                         </div>
                         <div className="text-right">
-                          <p className="font-bold text-purple-700">{item.facility_stock ?? 0} {item.unit_of_measure}</p>
+                          <p className="font-bold text-purple-600 dark:text-purple-400">{item.facility_stock ?? 0} {item.unit_of_measure}</p>
                         </div>
                       </div>
                     ))}
@@ -2021,7 +2050,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                 {subLocationItemsModalData.items.map((item, idx) => (
                   <div key={item.id || idx} className="p-3.5 flex items-center justify-between text-xs hover:bg-subtle/50 transition">
                     <div className="flex items-center gap-3">
-                      <span className="w-6 h-6 rounded-lg bg-indigo-500/10 text-indigo-700 font-bold font-mono text-[11px] flex items-center justify-center border border-indigo-500/20">
+                      <span className="w-6 h-6 rounded-lg bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 font-bold font-mono text-[11px] flex items-center justify-center border border-indigo-500/20">
                         {idx + 1}
                       </span>
                       <div>
@@ -2035,7 +2064,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                     </div>
 
                     <div className="text-right">
-                      <span className="font-extrabold text-sm text-teal-700 font-mono">
+                      <span className="font-extrabold text-sm text-teal-600 dark:text-teal-400 font-mono">
                         {item.facility_stock ?? 0}
                       </span>
                       <span className="text-[11px] text-text-muted block">Unit Stok</span>
@@ -2118,7 +2147,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                     }}
                     className={`p-3 rounded-xl border text-left flex flex-col items-center justify-center gap-1 transition cursor-pointer ${
                       subTypeInput === st.type
-                        ? 'bg-accent-base/10 border-teal-500 ring-2 ring-teal-500/20 text-teal-900 font-bold shadow-elevation-1'
+                        ? 'bg-teal-500/10 border-teal-500 ring-2 ring-teal-500/20 text-teal-600 dark:text-teal-400 font-bold shadow-elevation-1'
                         : 'bg-surface border-border-default text-text-muted hover:bg-subtle/50 font-medium'
                     }`}
                   >
@@ -2140,8 +2169,8 @@ export const StoreLocationManagementPage: React.FC = () => {
             {isBulkMode ? (
               <div className="bg-accent-base/10 border border-accent-base/20 p-4 rounded-2xl space-y-4">
                 <div className="flex items-center gap-2 border-b border-accent-base/20 pb-2.5">
-                  <RefreshCw className="w-4 h-4 text-teal-700 animate-spin-slow" />
-                  <h4 className="text-xs font-black uppercase text-teal-900 tracking-wider">
+                  <RefreshCw className="w-4 h-4 text-teal-600 dark:text-teal-400 animate-spin-slow" />
+                  <h4 className="text-xs font-black uppercase text-teal-700 dark:text-teal-300 tracking-wider">
                     Tetapan Penjanaan Pukal (Bulk Generator)
                   </h4>
                 </div>
@@ -2149,7 +2178,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                 {subTypeInput === 'level' ? (
                   <>
                     <div>
-                      <label className="block text-xs font-bold text-teal-900 mb-1.5">
+                      <label className="block text-xs font-bold text-text-primary mb-1.5">
                         Unit Induk / Parent Rack/Cabinet <span className="text-red-500">*</span>
                       </label>
                       <select
@@ -2169,7 +2198,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-teal-900 mb-1.5">
+                      <label className="block text-xs font-bold text-text-primary mb-1.5">
                         Berapa Banyak Level (Tingkat) Untuk Ditambah? <span className="text-red-500">*</span>
                       </label>
                       <input
@@ -2183,8 +2212,8 @@ export const StoreLocationManagementPage: React.FC = () => {
                       />
                     </div>
 
-                    <div className="bg-surface p-3 rounded-xl border border-accent-base/20 text-xs text-teal-800 space-y-1">
-                      <span className="font-bold block text-teal-900">Ringkasan Penjanaan:</span>
+                    <div className="bg-surface p-3 rounded-xl border border-border-default text-xs text-text-secondary space-y-1">
+                      <span className="font-bold block text-text-primary">Ringkasan Penjanaan:</span>
                       <p>
                         Akan menjana <b>{bulkLevelsPerUnit || 0} Level</b> (Level 1 hingga Level {bulkLevelsPerUnit || 1}) di bawah <b>{subParentInput || 'Unit Terpilih'}</b> secara automatik.
                       </p>
@@ -2194,7 +2223,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                   <>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
-                        <label className="block text-xs font-bold text-teal-900 mb-1.5">
+                        <label className="block text-xs font-bold text-text-primary mb-1.5">
                           Format / Prefix Nama Unit <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -2208,7 +2237,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                       </div>
 
                       <div>
-                        <label className="block text-xs font-bold text-teal-900 mb-1.5">
+                        <label className="block text-xs font-bold text-text-primary mb-1.5">
                           Berapa Banyak Unit Utama? <span className="text-red-500">*</span>
                         </label>
                         <input
@@ -2224,7 +2253,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-teal-900 mb-1.5">
+                      <label className="block text-xs font-bold text-text-primary mb-1.5">
                         Berapa Banyak Level (Tingkat) Dalam Setiap Unit?
                       </label>
                       <input
@@ -2237,8 +2266,8 @@ export const StoreLocationManagementPage: React.FC = () => {
                       />
                     </div>
 
-                    <div className="bg-surface p-3.5 rounded-xl border border-accent-base/20 text-xs text-teal-800 space-y-1">
-                      <span className="font-bold block text-teal-900">Ringkasan Penjanaan Pukal:</span>
+                    <div className="bg-surface p-3.5 rounded-xl border border-border-default text-xs text-text-secondary space-y-1">
+                      <span className="font-bold block text-text-primary">Ringkasan Penjanaan Pukal:</span>
                       <p>
                         Akan menjana <b>{bulkCountUnits || 0} {bulkPrefixName || 'Unit'}</b> ({bulkPrefixName} 1 hingga {bulkPrefixName} {bulkCountUnits || 1}) dan <b>{(bulkCountUnits || 0) * (bulkLevelsPerUnit || 0)} Level</b> ({bulkLevelsPerUnit} Level per unit) secara automatik dalam 1 klik!
                       </p>
@@ -2295,7 +2324,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                     placeholder="cth: CAB-A, PAL-01, COL-B3 (Auto-generated jika kosong)"
                     value={subCodeInput}
                     onChange={e => setSubCodeInput(e.target.value)}
-                    className="w-full bg-subtle border border-border-default font-mono text-teal-700 font-bold rounded-xl px-4 py-3 text-xs focus:bg-surface focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
+                    className="w-full bg-subtle border border-border-default font-mono text-teal-600 dark:text-teal-400 font-bold rounded-xl px-4 py-3 text-xs focus:bg-surface focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition"
                   />
                 </div>
 
@@ -2358,8 +2387,8 @@ export const StoreLocationManagementPage: React.FC = () => {
               {/* Target Path Banner */}
               <div className="bg-gradient-to-r from-teal-50 to-emerald-50 border border-accent-base/20 p-4 rounded-2xl flex items-center justify-between shadow-elevation-1">
                 <div>
-                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-teal-700 block">Lokasi Sasaran (Target Location):</span>
-                  <span className="text-base font-black text-teal-950 flex items-center gap-2 mt-0.5">
+                  <span className="text-[11px] font-extrabold uppercase tracking-wider text-teal-600 dark:text-teal-400 block">Lokasi Sasaran (Target Location):</span>
+                  <span className="text-base font-black text-text-primary flex items-center gap-2 mt-0.5">
                     <MapPin className="w-5 h-5 text-teal-600 shrink-0" />
                     {selectedStoreLocation?.store_name} › {bulkAssignTargetUnit.mainUnit.name} {bulkAssignTargetUnit.childUnit ? `› ${bulkAssignTargetUnit.childUnit.name}` : ''}
                   </span>
@@ -2426,7 +2455,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                     type="button"
                     onClick={() => setBulkAssignProcurementFilter('APPL')}
                     className={`px-2.5 py-1 rounded-lg text-xs font-extrabold transition cursor-pointer ${
-                      bulkAssignProcurementFilter === 'APPL' ? 'bg-blue-600 text-white shadow-elevation-1' : 'bg-blue-500/10 text-blue-700 hover:bg-blue-100 border border-blue-500/20'
+                      bulkAssignProcurementFilter === 'APPL' ? 'bg-blue-600 text-white shadow-elevation-1' : 'bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20 border border-blue-500/20'
                     }`}
                   >
                     APPL
@@ -2435,7 +2464,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                     type="button"
                     onClick={() => setBulkAssignProcurementFilter('CC')}
                     className={`px-2.5 py-1 rounded-lg text-xs font-extrabold transition cursor-pointer ${
-                      bulkAssignProcurementFilter === 'CC' ? 'bg-purple-600 text-white shadow-elevation-1' : 'bg-indigo-500/10 text-purple-700 hover:bg-purple-100 border border-indigo-500/20'
+                      bulkAssignProcurementFilter === 'CC' ? 'bg-purple-600 text-white shadow-elevation-1' : 'bg-purple-500/10 text-purple-600 dark:text-purple-400 hover:bg-purple-500/20 border border-purple-500/20'
                     }`}
                   >
                     CC (Central Contract)
@@ -2444,7 +2473,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                     type="button"
                     onClick={() => setBulkAssignProcurementFilter('LP')}
                     className={`px-2.5 py-1 rounded-lg text-xs font-extrabold transition cursor-pointer ${
-                      bulkAssignProcurementFilter === 'LP' ? 'bg-amber-600 text-white shadow-elevation-1' : 'bg-amber-500/10 text-amber-400 hover:bg-amber-100 border border-amber-500/20'
+                      bulkAssignProcurementFilter === 'LP' ? 'bg-amber-600 text-white shadow-elevation-1' : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 border border-amber-500/20'
                     }`}
                   >
                     LP (Local Purchase)
@@ -2453,7 +2482,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                     type="button"
                     onClick={() => setBulkAssignProcurementFilter('DP')}
                     className={`px-2.5 py-1 rounded-lg text-xs font-extrabold transition cursor-pointer ${
-                      bulkAssignProcurementFilter === 'DP' ? 'bg-emerald-600 text-white shadow-elevation-1' : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-100 border border-emerald-500/20'
+                      bulkAssignProcurementFilter === 'DP' ? 'bg-emerald-600 text-white shadow-elevation-1' : 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20'
                     }`}
                   >
                     DP (Direct Purchase)
@@ -2470,8 +2499,8 @@ export const StoreLocationManagementPage: React.FC = () => {
                         <th className="py-3 px-3.5 w-12 text-center">
                           <input
                             type="checkbox"
-                            checked={visibleDrugItemsForAssign.length > 0 && visibleDrugItemsForAssign.every(i => selectedDrugIdsForAssign.has(i.id || i.drug_id))}
-                            onChange={() => handleToggleSelectAllVisible(visibleDrugItemsForAssign.map(i => i.id || i.drug_id))}
+                            checked={visibleDrugItemsForAssign.length > 0 && visibleDrugItemsForAssign.every(i => selectedDrugIdsForAssign.has(i.id || i.drug_id || ''))}
+                            onChange={() => handleToggleSelectAllVisible(visibleDrugItemsForAssign.map(i => i.id || i.drug_id || ''))}
                             className="rounded border-border-default text-teal-600 focus:ring-teal-500 cursor-pointer w-4 h-4"
                           />
                         </th>
@@ -2488,7 +2517,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                         </tr>
                       ) : (
                         visibleDrugItemsForAssign.map(item => {
-                          const itemId = item.id || item.drug_id
+                          const itemId = item.id || item.drug_id || ''
                           const isSelected = selectedDrugIdsForAssign.has(itemId)
                           const currentLoc = item.location || item.storage_conditions || 'Belum Diset'
                           const pCat = getProcurementCategory(item)
@@ -2513,20 +2542,20 @@ export const StoreLocationManagementPage: React.FC = () => {
                                     {item.drug_name || item.brand_name || item.item_name || '-'}
                                   </span>
                                   <div className="flex items-center gap-2 flex-wrap">
-                                    <span className="font-mono text-[10px] font-bold text-teal-700 bg-accent-base/10 border border-accent-base/20 px-1.5 py-0.5 rounded">
+                                    <span className="font-mono text-[10px] font-bold text-teal-600 dark:text-teal-400 bg-teal-500/10 border border-teal-500/20 px-1.5 py-0.5 rounded">
                                       {item.item_code || item.drug_code || '-'}
                                     </span>
                                     <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded border ${
-                                      pCat === 'APPL' ? 'bg-blue-500/10 text-blue-700 border-blue-500/20' :
-                                      pCat === 'CC' ? 'bg-indigo-500/10 text-purple-700 border-indigo-500/20' :
-                                      pCat === 'LP' ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' :
-                                      'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                                      pCat === 'APPL' ? 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20' :
+                                      pCat === 'CC' ? 'bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-500/20' :
+                                      pCat === 'LP' ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20' :
+                                      'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20'
                                     }`}>
                                       {pCat}
                                     </span>
                                     {(item.dosage_form || item.category) && (
                                       <span className="text-[10px] font-semibold text-text-muted bg-subtle px-1.5 py-0.5 rounded">
-                                        {item.dosage_form || item.category}
+                                        {item.dosage_form || (typeof item.category === 'string' ? item.category : item.category?.category_name)}
                                       </span>
                                     )}
                                   </div>
@@ -2534,7 +2563,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                               </td>
                               <td className="py-3.5 px-4 text-right">
                                 <div className="flex flex-col items-end gap-1">
-                                  <span className={`px-2.5 py-0.5 rounded text-[11px] font-bold border ${!currentLoc || currentLoc === 'Belum Diset' ? 'bg-amber-500/10 text-amber-700 border-amber-500/20' : 'bg-subtle text-text-muted border-border-default'}`}>
+                                  <span className={`px-2.5 py-0.5 rounded text-[11px] font-bold border ${!currentLoc || currentLoc === 'Belum Diset' ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20' : 'bg-subtle text-text-muted border-border-default'}`}>
                                     {currentLoc}
                                   </span>
                                   <span className="text-[11px] font-medium text-text-muted">
@@ -2557,7 +2586,7 @@ export const StoreLocationManagementPage: React.FC = () => {
               <div className="bg-surface border border-accent-base/20 rounded-2xl p-4.5 space-y-4 shadow-sm">
                 <div className="flex items-center justify-between border-b border-border-subtle pb-3">
                   <div>
-                    <h3 className="text-xs font-black uppercase text-teal-950 tracking-wider flex items-center gap-2">
+                    <h3 className="text-xs font-black uppercase text-teal-700 dark:text-teal-300 tracking-wider flex items-center gap-2">
                       <CheckCircle2 className="w-4 h-4 text-teal-600 shrink-0" />
                       <span>Ringkasan Item Dipilih</span>
                     </h3>
@@ -2583,7 +2612,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                 ) : (
                   <div className="space-y-2 max-h-[380px] overflow-y-auto pr-1">
                     {selectedItemsList.map(item => {
-                      const itemId = item.id || item.drug_id
+                      const itemId = item.id || item.drug_id || ''
                       const name = item.drug_name || item.brand_name || item.item_name || 'Item'
                       const code = item.item_code || item.drug_code
 
@@ -2594,7 +2623,7 @@ export const StoreLocationManagementPage: React.FC = () => {
                         >
                           <div className="min-w-0 flex-1">
                             <p className="text-xs font-bold text-text-primary leading-snug">{name}</p>
-                            {code && <p className="font-mono text-[10px] font-semibold text-teal-700 mt-0.5">{code}</p>}
+                            {code && <p className="font-mono text-[10px] font-semibold text-teal-600 dark:text-teal-400 mt-0.5">{code}</p>}
                           </div>
                           <button
                             type="button"
@@ -2613,8 +2642,8 @@ export const StoreLocationManagementPage: React.FC = () => {
                 {/* Target Path Box & Action Buttons */}
                 <div className="border-t border-border-subtle pt-3 space-y-3">
                   <div className="bg-accent-base/10 border border-accent-base/20 p-3 rounded-xl text-xs space-y-1">
-                    <span className="font-extrabold text-teal-900 block text-[10px] uppercase tracking-wider">Lokasi Sasaran Akhir:</span>
-                    <p className="font-black text-teal-950 text-xs">
+                    <span className="font-extrabold text-teal-700 dark:text-teal-300 block text-[10px] uppercase tracking-wider">Lokasi Sasaran Akhir:</span>
+                    <p className="font-black text-text-primary text-xs">
                       {selectedStoreLocation?.store_name} › {bulkAssignTargetUnit.mainUnit.name} {bulkAssignTargetUnit.childUnit ? `› ${bulkAssignTargetUnit.childUnit.name}` : ''}
                     </p>
                   </div>

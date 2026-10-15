@@ -1,28 +1,8 @@
-// @ts-nocheck
-import React, { useState, useEffect, useRef } from 'react'
-import { 
-  QrCode, 
-  AlertTriangle, 
-  Camera, 
-  Keyboard, 
-  Search, 
-  Volume2, 
-  VolumeX, 
-  ArrowDownCircle, 
-  ArrowUpCircle,
-  Database,
-  Calendar,
-  Layers,
-  MapPin,
-  Clock,
-  User,
-  Plus,
-  Trash2,
-  DollarSign
-} from 'lucide-react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { QrCode, AlertTriangle, Camera, Search, Volume2, VolumeX, ArrowDownCircle, ArrowUpCircle, Database, Calendar, MapPin, Clock, User, Plus, Trash2 } from 'lucide-react'
 import jsQR from 'jsqr'
 import { useAuthStore } from '@/stores/authStore'
-import { Table, Spinner, Input, Badge, Select, Button } from '@/components/ui'
+import { Spinner, Input, Badge, Select, Button } from '@/components/ui'
 import { 
   getStockLocations, 
   createStockReceipt, 
@@ -34,10 +14,27 @@ import {
 } from '../../services/inventoryService'
 import type { StockLocation, StockLevelSummary, StockBatchWithRelations } from '@/types/pharmacy'
 
+type ScanPayload = Record<string, unknown>
+type AudioWindow = Window & { webkitAudioContext?: typeof AudioContext }
+
+const getPayloadString = (payload: ScanPayload, ...keys: string[]): string | null => {
+  for (const key of keys) {
+    const value = payload[key]
+    if (typeof value === 'string' && value.length > 0) return value
+  }
+  return null
+}
+
+const getLocalDateInputValue = (): string => {
+  const date = new Date()
+  const localOffsetMs = date.getTimezoneOffset() * 60_000
+  return new Date(date.getTime() - localOffsetMs).toISOString().slice(0, 10)
+}
+
 export const StockMovementScannerPage: React.FC = () => {
   const { user } = useAuthStore()
   const hospitalId = user?.hospital_id
-  const loggedUserName = user?.full_name || (user as any)?.name || (user as any)?.username || 'Kakitangan Farmasi'
+  const loggedUserName = user?.full_name || 'Kakitangan Farmasi'
 
   // Tabs: receipt (Penerimaan) or issue (Pengeluaran)
   const [transactionType, setTransactionType] = useState<'receipt' | 'issue'>('receipt')
@@ -52,12 +49,13 @@ export const StockMovementScannerPage: React.FC = () => {
   const [useRealCamera, setUseRealCamera] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
   const [stream, setStream] = useState<MediaStream | null>(null)
+  const streamRef = useRef<MediaStream | null>(null)
 
   // Lookup data
   const [searchQuery, setSearchQuery] = useState('')
   const [catalogItems, setCatalogItems] = useState<StockLevelSummary[]>([])
   const [locations, setLocations] = useState<StockLocation[]>([])
-  const [isLoadingMetadata, setIsLoadingMetadata] = useState(false)
+  const [, setIsLoadingMetadata] = useState(false)
 
   // Scanned / Selected Item
   const [selectedItem, setSelectedItem] = useState<StockLevelSummary | null>(null)
@@ -70,6 +68,7 @@ export const StockMovementScannerPage: React.FC = () => {
 
   // Receipt Form States
   const [receiptBatchNum, setReceiptBatchNum] = useState('')
+  const [receiptDate, setReceiptDate] = useState(getLocalDateInputValue)
   const [receiptExpiryDate, setReceiptExpiryDate] = useState('')
   const [receiptMfgDate, setReceiptMfgDate] = useState('')
   const [receiptQty, setReceiptQty] = useState('')
@@ -78,6 +77,7 @@ export const StockMovementScannerPage: React.FC = () => {
 
   // Issuing Form States
   const [selectedBatchId, setSelectedBatchId] = useState('')
+  const [issueDate, setIssueDate] = useState(getLocalDateInputValue)
   const [issueQty, setIssueQty] = useState('')
   const [issueReason, setIssueReason] = useState('')
   const [issueTargetLocationId, setIssueTargetLocationId] = useState('')
@@ -133,20 +133,12 @@ export const StockMovementScannerPage: React.FC = () => {
     void loadBatches()
   }, [selectedItem])
 
-  // Camera activation side effects
-  useEffect(() => {
-    if (cameraActive && activeScanTab === 'camera') {
-      void startCamera()
-    } else {
-      stopCamera()
-    }
-    return () => stopCamera()
-  }, [cameraActive, activeScanTab])
-
   const playBeep = (type: 'success' | 'error') => {
     if (!soundEnabled) return
     try {
-      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)()
+      const AudioContextConstructor = window.AudioContext || (window as AudioWindow).webkitAudioContext
+      if (!AudioContextConstructor) return
+      const audioCtx = new AudioContextConstructor()
       if (type === 'success') {
         const playTone = (freq: number, startTime: number, duration: number) => {
           const osc = audioCtx.createOscillator()
@@ -183,7 +175,7 @@ export const StockMovementScannerPage: React.FC = () => {
     }
   }
 
-  const startCamera = async () => {
+  const startCamera = useCallback(async () => {
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
       setUseRealCamera(false)
       return
@@ -207,6 +199,7 @@ export const StockMovementScannerPage: React.FC = () => {
     }
 
     if (s) {
+      streamRef.current = s
       setStream(s)
       setUseRealCamera(true)
       if (videoRef.current) {
@@ -216,18 +209,30 @@ export const StockMovementScannerPage: React.FC = () => {
       console.warn('Camera stream failed with all constraints, using fallback scan.')
       setUseRealCamera(false)
     }
-  }
+  }, [])
 
-  const stopCamera = () => {
-    if (stream) {
-      stream.getTracks().forEach(track => track.stop())
+  const stopCamera = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop())
+      streamRef.current = null
       setStream(null)
     }
     setUseRealCamera(false)
-  }
+  }, [])
+
+  // Camera activation side effects
+  useEffect(() => {
+    if (cameraActive && activeScanTab === 'camera') {
+      void startCamera()
+    } else {
+      stopCamera()
+    }
+    return () => stopCamera()
+  }, [cameraActive, activeScanTab, startCamera, stopCamera])
 
   // Camera frame decoder loop
   const lastScannedRef = useRef<{ code: string; ts: number } | null>(null)
+  const handleQrPayloadRef = useRef<(payload: string) => Promise<void>>(() => Promise.resolve())
   useEffect(() => {
     let animFrameId: number
     let running = false
@@ -256,7 +261,7 @@ export const StockMovementScannerPage: React.FC = () => {
               const last = lastScannedRef.current
               if (!last || last.code !== detected.data || now - last.ts > 3000) {
                 lastScannedRef.current = { code: detected.data, ts: now }
-                handleQrPayload(detected.data)
+                void handleQrPayloadRef.current(detected.data)
               }
             }
           }
@@ -285,11 +290,14 @@ export const StockMovementScannerPage: React.FC = () => {
     // 1. Check for JSON format
     if (trimmed.startsWith('{')) {
       try {
-        const parsed = JSON.parse(trimmed)
-        if (parsed.code || parsed.item_code || parsed.drug_code) targetCode = parsed.code || parsed.item_code || parsed.drug_code
-        if (parsed.facility_inventory_id || parsed.id || parsed.item_id || parsed.drug_id) targetId = parsed.facility_inventory_id || parsed.id || parsed.item_id || parsed.drug_id
-        if (parsed.type || parsed.item_type) {
-          const t = String(parsed.type || parsed.item_type).toLowerCase()
+        const parsed: unknown = JSON.parse(trimmed)
+        if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) return
+        const payloadFields = parsed as ScanPayload
+        targetCode = getPayloadString(payloadFields, 'code', 'item_code', 'drug_code') || targetCode
+        targetId = getPayloadString(payloadFields, 'facility_inventory_id', 'id', 'item_id', 'drug_id')
+        const payloadType = getPayloadString(payloadFields, 'type', 'item_type')
+        if (payloadType) {
+          const t = payloadType.toLowerCase()
           targetType = (t === 'drug' || t === 'ubat') ? 'drug' : 'non_drug'
         }
       } catch (e) {
@@ -347,6 +355,8 @@ export const StockMovementScannerPage: React.FC = () => {
       setStatusMessage({ type: 'error', text: `Item tidak dijumpai dalam katalog untuk kod: ${displayCode}` })
     }
   }
+
+  handleQrPayloadRef.current = handleQrPayload
 
   // Handle manual code lookup
   const handleManualSearch = (e: React.FormEvent) => {
@@ -509,7 +519,9 @@ export const StockMovementScannerPage: React.FC = () => {
       try {
         const parsed = JSON.parse(raw)
         return parsed.code || parsed.item_code || ''
-      } catch (e) {}
+      } catch {
+        // Invalid JSON remains a searchable raw item code.
+      }
     } else if (raw.startsWith('MYINV:')) {
       const parts = raw.split(':')
       if (parts.length >= 4) {
@@ -707,7 +719,7 @@ export const StockMovementScannerPage: React.FC = () => {
                           <span className="font-mono font-bold text-slate-400 block">{item.item_code}</span>
                           <span className="font-bold text-text-secondary block mt-0.5">{item.item_name}</span>
                         </div>
-                        <Badge variant={item.item_type === 'drug' ? 'success' : 'secondary'} className="uppercase">
+                        <Badge variant={item.item_type === 'drug' ? 'success' : 'gray'} className="uppercase">
                           {item.item_type}
                         </Badge>
                       </button>
@@ -885,7 +897,7 @@ export const StockMovementScannerPage: React.FC = () => {
                         <option value="">Pilih Lokasi</option>
                         {locations.map(loc => (
                           <option key={loc.id} value={loc.id}>
-                            {loc.location_name} ({loc.aisle_number || 'Aisle —'})
+                            {loc.location_name}
                           </option>
                         ))}
                       </Select>
@@ -902,7 +914,7 @@ export const StockMovementScannerPage: React.FC = () => {
                         className="bg-accent-base hover:bg-accent-hover text-white rounded-xl font-bold px-6 py-2.5 flex items-center gap-1.5"
                       >
                         {isSubmitting ? (
-                          <Spinner size="xs" />
+                          <Spinner size="sm" />
                         ) : (
                           <>
                             <Plus className="w-4 h-4" />
@@ -1041,7 +1053,7 @@ export const StockMovementScannerPage: React.FC = () => {
                         className="bg-gradient-to-r from-teal-500 to-cyan-600 hover:from-teal-600 hover:to-cyan-700 text-white rounded-xl font-bold px-6 py-2.5 flex items-center gap-1.5"
                       >
                         {isSubmitting ? (
-                          <Spinner size="xs" />
+                          <Spinner size="sm" />
                         ) : (
                           <>
                             <Trash2 className="w-4 h-4" />

@@ -2,36 +2,9 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import {
-  Package,
-  Pill,
-  ShoppingCart,
-  AlertTriangle,
-  TrendingUp,
-  TrendingDown,
-  Clock,
-  CheckCircle,
-  XCircle,
-  FileText,
-  ArrowUpRight,
-  ArrowDownRight,
-  Truck,
-  ClipboardList,
-  BarChart3,
-  DollarSign,
-  Wind,
-  Calendar,
-  Activity,
-  RefreshCw,
-  AlertCircle,
-  ChevronRight,
-  Layers,
-  ArrowRightLeft,
-  Timer,
-  Megaphone,
-} from 'lucide-react'
+import { Package, ShoppingCart, AlertTriangle, TrendingDown, Clock, CheckCircle, FileText, ArrowUpRight, ArrowDownRight, Truck, ClipboardList, BarChart3, DollarSign, Wind, Activity, RefreshCw, AlertCircle, ChevronRight, Layers, ArrowRightLeft, Timer } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
-import { Badge, Button, Spinner, Skeleton } from '@/components/ui'
+import { Badge, Button, Skeleton } from '@/components/ui'
 import { cn, formatDate, formatCurrency } from '@/lib/utils'
 import { ROUTES } from '@/lib/constants'
 import { getDashboardStats } from '@/services/pharmacy/pharmacyDashboardService'

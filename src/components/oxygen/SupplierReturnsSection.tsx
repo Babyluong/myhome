@@ -1,32 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { 
-  Plus, 
-  Printer, 
-  FileText, 
-  Truck, 
-  FileCheck, 
-  Edit2, 
-  Trash2, 
-  X, 
-  AlertTriangle, 
-  History as HistoryIcon, 
-  MoreVertical, 
-  PackageCheck, 
-  CheckCircle2, 
-  Eye,
-  Search,
-  Filter,
-  Copy,
-  Check,
-  Calendar,
-  Building2,
-  Layers,
-  RotateCcw,
-  ShieldCheck,
-  QrCode
-} from 'lucide-react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { Plus, Printer, FileText, Truck, FileCheck, Edit2, Trash2, X, AlertTriangle, History as HistoryIcon, MoreVertical, PackageCheck, Eye, Search, Copy, Check, Calendar, Building2, RotateCcw, ShieldCheck, QrCode } from 'lucide-react'
 import { useLanguage } from '@/shared/contexts/LanguageContext';
-import type { OxygenReturnDocumentWithRelations, OxygenRequestDocumentWithRelations, OxygenReceiveDocumentWithRelations } from '@/types/pharmacy';
+import type { OxygenReturnDocumentWithRelations, OxygenRequestDocumentWithRelations, OxygenReceiveDocumentWithRelations, OxygenCylinderWithRelations, SupplierCylinderTrackingSummary } from '@/types/pharmacy';
 import { useAuthStore } from '@/stores/authStore';
 import { supabase } from '@/services/supabase';
 import {
@@ -66,6 +41,43 @@ interface SupplierReturnsSectionProps {
   onSuccess?: () => void;
 }
 
+type SupplierDocument = OxygenReturnDocumentWithRelations | OxygenRequestDocumentWithRelations | OxygenReceiveDocumentWithRelations;
+type DocumentKind = 'returns' | 'requests' | 'received';
+type DisplayCylinder = OxygenCylinderWithRelations & {
+  is_active?: boolean;
+  is_loan?: boolean;
+  combo?: { display_name?: string };
+  current_location?: OxygenCylinderWithRelations['current_location'];
+};
+type CylinderCombo = { id: string; size_id: string; type_id: string; display_name: string | null };
+type ReceivedCylinderEdit = {
+  itemId?: string;
+  cylinderId: string;
+  serialNumber: string;
+  originalSerial: string;
+  typeName: string;
+  sizeCode?: string;
+  valveType?: 'BN' | 'PI';
+  isRemoved?: boolean;
+  isNew?: boolean;
+  combo?: CylinderCombo;
+  cylinder?: DisplayCylinder;
+};
+type HistoryValues = Partial<Record<'returned_date' | 'received_date' | 'requested_date' | 'delivery_order_no' | 'supplier_id' | 'status' | 'remarks' | 'edit_reason' | 'delete_reason' | 'reason', string>> & {
+  cylinder_serial_changes?: { from: string; to: string }[];
+  cylinders_removed?: string[];
+  cylinders_added?: string[];
+};
+type HistoryLog = {
+  id: string;
+  action: string;
+  created_at: string;
+  remarks?: string;
+  old_values?: HistoryValues | null;
+  new_values?: HistoryValues | null;
+  user?: { full_name?: string; jawatan?: string } | null;
+};
+
 export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
   documents,
   requestDocuments = [],
@@ -88,7 +100,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
   const [localSubTab, setLocalSubTab] = useState<'returns' | 'requests' | 'received' | 'tracking'>('returns');
   const subTab = propSubTab !== undefined ? propSubTab : localSubTab;
   const setSubTab = onSubTabChange !== undefined ? onSubTabChange : setLocalSubTab;
-  const [trackingSummary, setTrackingSummary] = useState<any>(null);
+  const [trackingSummary, setTrackingSummary] = useState<SupplierCylinderTrackingSummary | null>(null);
 
   const { user } = useAuthStore();
   const { language } = useLanguage();
@@ -232,10 +244,10 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-  const [selectedDoc, setSelectedDoc] = useState<any>(null);
-  const [docType, setDocType] = useState<'returns' | 'requests' | 'received'>('returns');
+  const [selectedDoc, setSelectedDoc] = useState<SupplierDocument | null>(null);
+  const [docType, setDocType] = useState<DocumentKind>('returns');
   const [isViewCylindersOpen, setIsViewCylindersOpen] = useState(false);
-  const [viewCylindersDoc, setViewCylindersDoc] = useState<any>(null);
+  const [viewCylindersDoc, setViewCylindersDoc] = useState<OxygenReceiveDocumentWithRelations | null>(null);
 
   // Edit form state
   const [editDate, setEditDate] = useState('');
@@ -245,44 +257,34 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
   const [editDeliveryOrderNo, setEditDeliveryOrderNo] = useState('');
   const [editReason, setEditReason] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-  const [emptyCylinders, setEmptyCylinders] = useState<any[]>([]);
-  const [supplierCylinders, setSupplierCylinders] = useState<any[]>([]);
+  const [emptyCylinders, setEmptyCylinders] = useState<DisplayCylinder[]>([]);
+  const [supplierCylinders, setSupplierCylinders] = useState<DisplayCylinder[]>([]);
+  const [supplierCylinderError, setSupplierCylinderError] = useState<string | null>(null);
   const [selectedCylIdList, setSelectedCylIdList] = useState<string[]>([]);
-  const [supplierSizeFilter, setSupplierSizeFilter] = useState<'all' | '101-N' | '101-F'>('101-N');
+  const [supplierSizeFilter, setSupplierSizeFilter] = useState('101-N');
   const [privateSizeFilter, setPrivateSizeFilter] = useState<string>('');
 
   // Edit received cylinders state
-  const [editReceivedCylinders, setEditReceivedCylinders] = useState<Array<{
-    itemId?: string;
-    cylinderId: string;
-    serialNumber: string;
-    originalSerial: string;
-    typeName: string;
-    sizeCode?: string;
-    valveType?: 'BN' | 'PI';
-    isRemoved?: boolean;
-    isNew?: boolean;
-    combo?: any;
-    cylinder?: any;
-  }>>([]);
+  const [editReceivedCylinders, setEditReceivedCylinders] = useState<ReceivedCylinderEdit[]>([]);
   const [receivedCylSearchTerm, setReceivedCylSearchTerm] = useState('');
   const [isLoadingReceivedCyls, setIsLoadingReceivedCyls] = useState(false);
   const [isAddingReceivedCyl, setIsAddingReceivedCyl] = useState(false);
   const [newReceivedCylSerial, setNewReceivedCylSerial] = useState('');
   const [newReceivedCylComboId, setNewReceivedCylComboId] = useState('');
-  const [availableCombos, setAvailableCombos] = useState<any[]>([]);
-  const [dbSearchResults, setDbSearchResults] = useState<any[]>([]);
+  const [availableCombos, setAvailableCombos] = useState<CylinderCombo[]>([]);
+  const [dbSearchResults, setDbSearchResults] = useState<DisplayCylinder[]>([]);
   const [isSearchingDb, setIsSearchingDb] = useState(false);
   const [hasSearchedDb, setHasSearchedDb] = useState(false);
-  const [selectedDbCylinder, setSelectedDbCylinder] = useState<any | null>(null);
+  const [selectedDbCylinder, setSelectedDbCylinder] = useState<DisplayCylinder | null>(null);
 
   // Delete form state
   const [deleteReason, setDeleteReason] = useState('');
   const [isDeleting, setIsDeleting] = useState(false);
 
   // History state
-  const [historyLogs, setHistoryLogs] = useState<any[]>([]);
+  const [historyLogs, setHistoryLogs] = useState<HistoryLog[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(false);
+  const [historyError, setHistoryError] = useState<string | null>(null);
 
   // Dropdown state
   const [activeDropdownId, setActiveDropdownId] = useState<string | null>(null);
@@ -290,7 +292,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
   // Live store empty count state
   const [storeEmptyCount, setStoreEmptyCount] = useState<number>(0);
 
-  const fetchStoreEmptyCount = async () => {
+  const fetchStoreEmptyCount = useCallback(async () => {
     try {
       if (!activeHospitalId) return;
       const res = await getEmptyCylindersInStore(activeHospitalId);
@@ -300,13 +302,13 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
     } catch (err) {
       console.error("Error fetching empty cylinders in store count:", err);
     }
-  };
+  }, [activeHospitalId]);
 
   useEffect(() => {
     if (activeHospitalId) {
       void fetchStoreEmptyCount();
     }
-  }, [activeHospitalId, documents]);
+  }, [activeHospitalId, documents, fetchStoreEmptyCount]);
 
   useEffect(() => {
     const handleOutsideClick = () => {
@@ -343,17 +345,17 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
     void fetchSuppliers();
   }, []);
 
-  const fetchAvailableCylinders = async (hospitalId: string, currentCyls: any[] = []) => {
+  const fetchAvailableCylinders = async (hospitalId: string, currentCyls: DisplayCylinder[] = []) => {
     try {
       // 1. Fetch empty cylinders in store
       const emptyRes = await getEmptyCylindersInStore(hospitalId);
       if (emptyRes.data) {
         // Filter out loan cylinders (standard only)
-        const standardEmpty = emptyRes.data.filter((c: any) => {
+        const standardEmpty = emptyRes.data.filter(c => {
           if (c.supplier_tagged) return false;
           const serial = (c.serial_number || '').toUpperCase();
           const typeName = (c.type_info?.type_name || '').toLowerCase();
-          const isLoan = c.is_loan || 
+          const isLoan = ('is_loan' in c && c.is_loan) ||
                          typeName.includes('loan') || 
                          serial.startsWith('101-N') || 
                          serial.startsWith('101-F') ||
@@ -364,7 +366,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
         });
 
         // Add any standard cylinders currently selected in this document
-        const currentStandardCyls = currentCyls.filter((c: any) => {
+        const currentStandardCyls = currentCyls.filter(c => {
           if (c.supplier_tagged) return false;
           const serial = (c.serial_number || '').toUpperCase();
           const typeName = (c.type_info?.type_name || '').toLowerCase();
@@ -379,7 +381,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
         });
 
         const combinedStandard = [...standardEmpty];
-        currentStandardCyls.forEach((c: any) => {
+        currentStandardCyls.forEach(c => {
           if (!combinedStandard.some(sc => sc.id === c.id)) {
             combinedStandard.push(c);
           }
@@ -387,7 +389,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
 
         setEmptyCylinders(combinedStandard);
         if (combinedStandard.length > 0) {
-          const uniqueSizes = Array.from(new Set(combinedStandard.map((sc: any) => sc.type_info?.type_name || 'Standard')));
+          const uniqueSizes = Array.from(new Set(combinedStandard.map(sc => sc.type_info?.type_name || 'Standard')));
           if (uniqueSizes.length > 0) {
             setPrivateSizeFilter(uniqueSizes[0]);
           }
@@ -396,9 +398,10 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
 
       // 2. Fetch supplier cylinders (loan tags)
       const { isSupabaseConfigured } = await import('@/services/supabase');
-      let supCyls: any[] = [];
+      let supCyls: DisplayCylinder[] = [];
+      setSupplierCylinderError(null);
       if (isSupabaseConfigured()) {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from('pharmacy_oxygen_cylinder_inventory')
           .select(`
             *,
@@ -411,18 +414,16 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
           .neq('status', 'deactivated')
           .eq('is_active', true)
           .order('serial_number', { ascending: true });
+        if (error) throw error;
         supCyls = (data || []).filter(c => c.status !== 'deactivated' && c.is_active !== false);
       } else {
-        const { mockOxygenCylinders } = await import('@/services/pharmacy/mockData');
-        supCyls = mockOxygenCylinders.filter(
-          c => c.supplier_tagged === true && (c.status as string) !== 'returned_to_supplier' && (c.status as string) !== 'deactivated'
-        );
+        setSupplierCylinderError('Supplier cylinder records are unavailable until the secure database connection is restored.');
       }
 
       // Add any supplier cylinders currently selected in this document
-      const currentSupplierCyls = currentCyls.filter((c: any) => c.supplier_tagged && c.status !== 'deactivated' && c.is_active !== false);
+      const currentSupplierCyls = currentCyls.filter(c => c.supplier_tagged && c.status !== 'deactivated' && c.is_active !== false);
       const combinedSupplier = [...supCyls];
-      currentSupplierCyls.forEach((c: any) => {
+      currentSupplierCyls.forEach(c => {
         if (!combinedSupplier.some(sc => sc.id === c.id)) {
           combinedSupplier.push(c);
         }
@@ -431,10 +432,11 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
       setSupplierCylinders(combinedSupplier);
     } catch (err) {
       console.error('Error fetching cylinders for editing:', err);
+      setSupplierCylinderError('Supplier cylinder records could not be loaded. Try again after checking your connection.');
     }
   };
 
-  const handleToggleValveType = async (e: React.MouseEvent, cyl: any) => {
+  const handleToggleValveType = async (e: React.MouseEvent, cyl: DisplayCylinder) => {
     e.stopPropagation();
     e.preventDefault();
     const typeName = cyl.type_info?.type_name || '';
@@ -483,15 +485,15 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
     try {
       const res = await getReceiveDocumentById(docId);
       if (res.data?.items) {
-        const freshCyls = res.data.items.map((it: any) => {
-          const cyl = it.cylinder;
+        const freshCyls = res.data.items.map(it => {
+          const cyl = it.cylinder as DisplayCylinder | undefined;
           const typeName = cyl?.combo?.display_name || cyl?.type_info?.type_name || 'Standard Cylinder';
           const isPI = typeName.includes('PI') || typeName.includes('Pin');
           const isBN = typeName.includes('BN') || typeName.includes('Bull');
           const valveType = isPI ? 'PI' : isBN ? 'BN' : undefined;
           return {
             itemId: it.id,
-            cylinderId: it.cylinder_id || cyl?.id,
+            cylinderId: it.cylinder_id || cyl?.id || '',
             serialNumber: cyl?.serial_number || '',
             originalSerial: cyl?.serial_number || '',
             typeName,
@@ -574,7 +576,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
     return () => clearTimeout(timer);
   }, [newReceivedCylSerial, isAddingReceivedCyl, activeHospitalId]);
 
-  const handleSelectSearchedCylinder = (cyl: any) => {
+  const handleSelectSearchedCylinder = (cyl: DisplayCylinder) => {
     setSelectedDbCylinder(cyl);
     setNewReceivedCylSerial(cyl.serial_number);
     const matchingCombo = availableCombos.find(c => 
@@ -587,7 +589,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
     setHasSearchedDb(false);
   };
 
-  const handleAddNewReceivedCylinder = (explicitCyl?: any) => {
+  const handleAddNewReceivedCylinder = (explicitCyl?: DisplayCylinder) => {
     const targetDbCyl = explicitCyl || selectedDbCylinder;
     const cleanSerial = (targetDbCyl?.serial_number || newReceivedCylSerial).trim().toUpperCase();
     if (!cleanSerial) {
@@ -624,8 +626,8 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
         isRemoved: false,
         isNew,
         combo: selectedCombo,
-        cylinder: targetDbCyl,
-      } as any
+        cylinder: targetDbCyl || undefined,
+      }
     ]);
     setNewReceivedCylSerial('');
     setSelectedDbCylinder(null);
@@ -634,7 +636,10 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
     setIsAddingReceivedCyl(false);
   };
 
-  const openEditModal = (doc: any, type: 'returns' | 'requests' | 'received') => {
+  const openEditModal = (...[doc, type]:
+    | [OxygenReturnDocumentWithRelations, 'returns']
+    | [OxygenRequestDocumentWithRelations, 'requests']
+    | [OxygenReceiveDocumentWithRelations, 'received']) => {
     setSelectedDoc(doc);
     setDocType(type);
     setEditDate(
@@ -647,13 +652,13 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
     setEditSupplierId(doc.supplier_id || '');
     setEditStatus(doc.status || 'completed');
     setEditRemarks(doc.remarks || '');
-    setEditDeliveryOrderNo(doc.delivery_order_no || '');
+    setEditDeliveryOrderNo('delivery_order_no' in doc ? doc.delivery_order_no || '' : '');
     setEditReason('');
 
     if (type === 'returns') {
       const items = doc.items || [];
-      const currentCyls = items.map((x: any) => x.cylinder).filter(Boolean);
-      const cylIds = items.map((x: any) => x.cylinder_id || x.cylinder?.id).filter(Boolean);
+      const currentCyls = items.flatMap(x => x.cylinder ? [x.cylinder] : []);
+      const cylIds = items.map(x => x.cylinder_id || x.cylinder?.id).filter((id): id is string => Boolean(id));
       setSelectedCylIdList(cylIds);
       fetchAvailableCylinders(doc.hospital_id, currentCyls);
     } else if (type === 'received') {
@@ -662,15 +667,15 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
       setSupplierCylinders([]);
 
       const rawItems = doc.items || [];
-      const initialCyls = rawItems.map((it: any) => {
-        const cyl = it.cylinder;
+      const initialCyls = rawItems.map(it => {
+        const cyl = it.cylinder as DisplayCylinder | undefined;
         const typeName = cyl?.combo?.display_name || cyl?.type_info?.type_name || 'Standard Cylinder';
         const isPI = typeName.includes('PI') || typeName.includes('Pin');
         const isBN = typeName.includes('BN') || typeName.includes('Bull');
         const valveType = isPI ? 'PI' : isBN ? 'BN' : undefined;
         return {
           itemId: it.id,
-          cylinderId: it.cylinder_id || cyl?.id,
+          cylinderId: it.cylinder_id || cyl?.id || '',
           serialNumber: cyl?.serial_number || '',
           originalSerial: cyl?.serial_number || '',
           typeName,
@@ -700,18 +705,19 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
     setIsEditOpen(true);
   };
 
-  const openDeleteModal = (doc: any, type: 'returns' | 'requests' | 'received') => {
+  const openDeleteModal = (doc: SupplierDocument, type: DocumentKind) => {
     setSelectedDoc(doc);
     setDocType(type);
     setDeleteReason('');
     setIsDeleteOpen(true);
   };
 
-  const openHistoryModal = async (doc: any, type: 'returns' | 'requests' | 'received') => {
+  const openHistoryModal = async (doc: SupplierDocument, type: DocumentKind) => {
     setSelectedDoc(doc);
     setDocType(type);
     setIsHistoryOpen(true);
     setIsLoadingHistory(true);
+    setHistoryError(null);
     try {
       const { data, error } = await supabase
         .from('audit_logs')
@@ -724,30 +730,21 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
 
       if (error) {
         console.error('Error fetching document history:', error);
+        setHistoryLogs([]);
+        setHistoryError('Audit history could not be loaded. Try again.');
       } else {
-        let logs = data || [];
-        if (logs.length === 0) {
-          // Fallback mock history logs for demo/testing
-          logs = [
-            {
-              id: 'mock-hist-1',
-              action: 'CREATE_DOCUMENT',
-              created_at: doc.created_at || new Date().toISOString(),
-              user: doc.creator || { full_name: 'Pharmacy Officer', jawatan: 'Pharmacist' },
-              new_values: { remarks: doc.remarks }
-            }
-          ];
-        }
-        setHistoryLogs(logs);
+        setHistoryLogs(data || []);
       }
     } catch (err) {
       console.error(err);
+      setHistoryLogs([]);
+      setHistoryError('Audit history could not be loaded. Try again.');
     } finally {
       setIsLoadingHistory(false);
     }
   };
 
-  const renderLogChanges = (log: any) => {
+  const renderLogChanges = (log: HistoryLog) => {
     const changes: string[] = [];
     if (log.old_values && log.new_values) {
       const oldVal = log.old_values;
@@ -775,7 +772,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
         changes.push(`Remarks updated`);
       }
       if (newVal.cylinder_serial_changes && newVal.cylinder_serial_changes.length > 0) {
-        newVal.cylinder_serial_changes.forEach((c: any) => {
+        newVal.cylinder_serial_changes.forEach(c => {
           changes.push(`Nombor siri silinder dikemaskini: ${c.from} ➔ ${c.to}`);
         });
       }
@@ -882,7 +879,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
         } else if (docType === 'received') {
           // Existing items in this document (they have an itemId)
           const existingItemsToUpdate = editReceivedCylinders
-            .filter((c: any) => c.itemId)
+            .filter(c => c.itemId)
             .map(c => ({
               itemId: c.itemId,
               cylinderId: c.cylinderId,
@@ -894,12 +891,12 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
 
           // Cylinders newly added to this document (no itemId, and not removed)
           const newCylindersToInsert = editReceivedCylinders
-            .filter((c: any) => !c.itemId && !c.isRemoved)
-            .map((c: any) => ({
+            .filter(c => !c.itemId && !c.isRemoved)
+            .map(c => ({
               cylinderId: c.cylinder?.id || (c.cylinderId && !c.cylinderId.startsWith('new-') ? c.cylinderId : undefined),
               serialNumber: c.serialNumber.trim().toUpperCase(),
               sizeId: c.combo?.size_id || c.cylinder?.cylinder_size_id,
-              typeId: c.combo?.type_id || c.cylinder?.cylinder_type_id,
+              typeId: c.combo?.type_id || c.cylinder?.cylinder_type_id || undefined,
               valveType: c.valveType,
             }));
 
@@ -2357,8 +2354,8 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
               </div>
 
               <div className="border border-border-default rounded-2xl overflow-hidden divide-y divide-border-subtle max-h-[300px] overflow-y-auto">
-                {(viewCylindersDoc.items || []).map((it: any, idx: number) => {
-                  const cyl = it.cylinder;
+                {(viewCylindersDoc.items || []).map((it, idx) => {
+                  const cyl = it.cylinder as DisplayCylinder | undefined;
                   return (
                     <div key={it.id || idx} className="p-3 flex items-center justify-between hover:bg-subtle/50">
                       <div className="flex items-center gap-2.5">
@@ -2481,7 +2478,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                   </label>
                   <select
                     value={editStatus}
-                    onChange={(e) => setEditStatus(e.target.value as any)}
+                    onChange={(e) => setEditStatus(e.target.value as typeof editStatus)}
                     className="w-full bg-subtle/50 border border-border-default hover:border-slate-350 focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 rounded-xl px-3 py-2 text-sm text-text-primary transition-[transform,opacity,box-shadow,border-color] duration-200 outline-none"
                   >
                     <option value="draft">draft</option>
@@ -2548,7 +2545,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                         Standard / Hospital Owned Cylinders (Private Cylinders)
                       </label>
                       {(() => {
-                        const uniqueSizes = Array.from(new Set(emptyCylinders.map((sc: any) => sc.type_info?.type_name || 'Standard')));
+                        const uniqueSizes = Array.from(new Set(emptyCylinders.map(sc => sc.type_info?.type_name || 'Standard')));
                         if (uniqueSizes.length === 0) return null;
                         return (
                           <div className="flex flex-wrap bg-slate-200/60 p-0.5 rounded-lg text-[9px] font-bold uppercase gap-0.5">
@@ -2664,7 +2661,7 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                 <button
                                   key={filterVal}
                                   type="button"
-                                  onClick={() => setSupplierSizeFilter(filterVal as any)}
+                                  onClick={() => setSupplierSizeFilter(filterVal)}
                                   className={`px-2 py-0.5 rounded-md transition-[transform,opacity,box-shadow,border-color] ${
                                     isSelected
                                       ? 'bg-rose-500 text-white shadow-xs'
@@ -2680,6 +2677,11 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                       })()}
                     </div>
 
+                    {supplierCylinderError && (
+                      <p role="alert" className="mb-3 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-xs font-semibold text-amber-800">
+                        {supplierCylinderError}
+                      </p>
+                    )}
                     {(() => {
                       const displayedCyls = supplierCylinders.filter(c => !supplierSizeFilter || supplierSizeFilter === 'all' || c.size_info?.code === supplierSizeFilter);
                       if (displayedCyls.length === 0) {
@@ -2869,7 +2871,9 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                                       c => !c.isRemoved && (c.cylinderId === cyl.id || c.serialNumber.trim().toUpperCase() === cyl.serial_number.trim().toUpperCase())
                                     );
                                     const typeName = cyl.combo?.display_name || cyl.type_info?.type_name || 'Standard Cylinder';
-                                    const location = cyl.current_location || 'Store';
+                                    const location = typeof cyl.current_location === 'string'
+                                      ? cyl.current_location
+                                      : cyl.current_location?.location_name || cyl.current_location?.name || 'Store';
 
                                     return (
                                       <div
@@ -3298,6 +3302,13 @@ export const SupplierReturnsSection: React.FC<SupplierReturnsSectionProps> = ({
                 <div className="py-12 flex flex-col items-center justify-center space-y-3">
                   <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
                   <span className="text-xs text-slate-450 font-bold">Loading audit logs...</span>
+                </div>
+              ) : historyError ? (
+                <div className="py-8 text-center text-sm font-semibold text-rose-700" role="alert">
+                  <p>{historyError}</p>
+                  <button type="button" onClick={() => openHistoryModal(selectedDoc, docType)} className="mt-3 rounded-lg border border-border-default px-3 py-1.5 text-xs font-bold text-text-primary hover:bg-subtle">
+                    Try again
+                  </button>
                 </div>
               ) : historyLogs.length === 0 ? (
                 <div className="py-12 text-center text-slate-400 text-sm font-semibold">

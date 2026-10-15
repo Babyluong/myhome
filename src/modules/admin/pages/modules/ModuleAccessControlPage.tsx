@@ -1,22 +1,11 @@
 ﻿// @ts-nocheck
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import {
-  Settings,
-  Building2,
-  Search,
-  Save,
-  RefreshCw,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
-  Power,
-  PowerOff,
-} from 'lucide-react'
-import { Button, Input, Select, Badge, Switch, LoadingOverlay, Modal, ConfirmationDialog } from '@/components/ui'
+import { Settings, Building2, Search, Save, RefreshCw, AlertCircle, Power, PowerOff } from 'lucide-react'
+import { Button, Input, Badge, Switch, LoadingOverlay, ConfirmationDialog } from '@/components/ui'
 import { getHospitalsWithAdmin } from '@/services/systemAdminService'
-import { getHospitalModules, updateHospitalModules, enableHospitalModule, disableHospitalModule, syncAllModulesToDepartments } from '@/services/moduleService'
+import { getHospitalModules, updateHospitalModules, syncAllModulesToDepartments } from '@/services/moduleService'
 import { useToastStore } from '@/stores/toastStore'
 import { useAuthStore } from '@/stores/authStore'
 import { MODULE_DEFINITIONS } from '@/lib/constants'

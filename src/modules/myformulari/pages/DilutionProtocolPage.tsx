@@ -1,27 +1,7 @@
 import React, { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  Droplets,
-  Search,
-  Activity,
-  Printer,
-  FileText,
-  ExternalLink,
-  ShieldCheck,
-  AlertTriangle,
-  Syringe,
-  Filter,
-  Layers,
-  Sparkles,
-  BookOpen,
-  CheckCircle2,
-  XCircle,
-  Clock,
-  Thermometer,
-  SlidersHorizontal,
-  X
-} from 'lucide-react'
-import { KKM_DILUTION_MASTER_DATABASE, KkmDilutionMonograph } from '../data/kkmDilutionMasterDatabase'
+import { Droplets, Search, Activity, Printer, ExternalLink, ShieldCheck, X } from 'lucide-react'
+import { KKM_DILUTION_MASTER_DATABASE } from '../data/kkmDilutionMasterDatabase'
 import { DilutionCard } from '../components/DilutionCard'
 
 export const DilutionProtocolPage: React.FC = () => {

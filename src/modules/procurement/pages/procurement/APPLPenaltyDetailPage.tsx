@@ -1,18 +1,84 @@
-// @ts-nocheck
 import React, { useState, useEffect, useMemo } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
-import { ROUTES } from '@/lib/constants'
+import '@/lib/constants'
 import { updatePenaltyDetails, approvePenalty, getPerformanceStandards, PerformanceStandard } from '@/services/pharmacy/penaltyService'
-import { formatCurrency } from '@/lib/utils'
-import { ChevronRight, Sparkles, ArrowLeft, Printer, Save, CheckCircle2, XCircle, FileText, Building2, Calendar, Package, AlertTriangle, Shield, CheckSquare, Square, Lock, Unlock, Plus, Trash2 } from 'lucide-react'
+import '@/lib/utils'
+import { ChevronRight, Sparkles, ArrowLeft, Printer, Save, CheckCircle2, XCircle, FileText, Building2, CheckSquare, Square, Lock, Unlock, Plus, Trash2 } from 'lucide-react'
 import { Spinner, SlideOver } from '@/components/ui'
 import { PdfPreviewModal, PDFViewer } from '@/components/shared'
 import { PurchaseOrderDetailView } from './PurchaseOrderDetailView'
+import type { SupplierPenalty, User } from '@/types'
+
+interface PenaltyDelivery {
+  id: string
+  delivery_number: string
+  quantity_late?: number
+  days_delayed?: number
+  is_penalty_applicable?: boolean
+}
+
+interface PenaltyPurchaseOrderItem {
+  id: string
+  item_code?: string | null
+  item_name?: string | null
+  quantity_ordered?: number
+  unit_price?: number
+  total_price?: number
+  deliveries?: PenaltyDelivery[]
+}
+
+interface PenaltyDetailRecord extends Omit<SupplierPenalty, 'status' | 'purchase_order' | 'supplier' | 'lpo'> {
+  status: string
+  approved_by?: string
+  penalty_paid?: boolean
+  payment_kaedah?: number
+  payment_reference?: string
+  quantity?: number
+  unit_price?: number
+  total_order_value?: number
+  failed_product_value?: number
+  performance_standards_violated?: string[]
+  prepared_by_user_id?: string
+  verified_by_user_id?: string
+  prepared_by_name?: string
+  prepared_by_designation?: string
+  verified_by_name?: string
+  verified_by_designation?: string
+  approved_by_name?: string
+  approved_by_designation?: string
+  prepared_at?: string
+  verified_at?: string
+  approved_at?: string
+  supplier?: { company_name?: string; address?: string | null } | null
+  purchase_order?: { id: string; po_number?: string; total_amount?: number; items?: PenaltyPurchaseOrderItem[] } | null
+  lpo?: { lpo_number?: string; document_url?: string | null; document_date?: string; expected_delivery_date?: string | null } | null
+  order_tracking?: { item_code?: string | null; item_name?: string | null } | null
+  receiving?: { do_number?: string | null; receiving_date?: string } | null
+  prepared_by?: (Pick<User, 'full_name'> & { jawatan: string | null }) | null
+  verified_by?: (Pick<User, 'full_name'> & { jawatan: string | null }) | null
+  approved_by_user?: (Pick<User, 'full_name'> & { jawatan: string | null }) | null
+}
+
+interface PenaltyLineItem extends PenaltyPurchaseOrderItem {
+  deliveries: PenaltyDelivery[]
+}
+
+interface StoredPenaltyLineItem extends Partial<PenaltyLineItem> {
+  quantity_late?: number
+  days_delayed?: number
+  is_penalty_applicable?: boolean
+}
+
+interface SignatoryUser {
+  id: string
+  full_name: string
+  jawatan?: string
+}
 
 interface Props {
-  penalty: any
+  penalty: PenaltyDetailRecord
   onRefresh: () => void
 }
 
@@ -37,7 +103,7 @@ export function APPLPenaltyDetailPage({ penalty, onRefresh }: Props) {
   const [preparedById, setPreparedById] = useState(penalty.prepared_by_user_id || '')
   const [verifiedById, setVerifiedById] = useState(penalty.verified_by_user_id || '')
   const [approvedById, setApprovedById] = useState(penalty.approved_by || '')
-  const [systemUsers, setSystemUsers] = useState<any[]>([])
+  const [systemUsers, setSystemUsers] = useState<SignatoryUser[]>([])
 
   useEffect(() => {
     async function loadUsers() {
@@ -70,27 +136,28 @@ export function APPLPenaltyDetailPage({ penalty, onRefresh }: Props) {
   const matchingPoItem = useMemo(() => {
     const code = penalty.item_code || penalty.order_tracking?.item_code
     const name = penalty.item_name || penalty.order_tracking?.item_name
-    return penalty.purchase_order?.items?.find((i: any) => 
+    return penalty.purchase_order?.items?.find((i: PenaltyPurchaseOrderItem) =>
       (code && i.item_code === code) || (name && i.item_name === name)
     )
   }, [penalty])
 
   // Initialize items from the purchase order, parsing from penalty.notes if stored there as JSON, or fallback
-  const [lpoItems, setLpoItems] = useState<any[]>(() => {
-    let parsedItemsData: any[] = []
+  const [lpoItems, setLpoItems] = useState<PenaltyLineItem[]>(() => {
+    let parsedItemsData: StoredPenaltyLineItem[] = []
     if (penalty.notes) {
       try {
         const jsonMatch = penalty.notes.match(/__LPO_ITEMS_DATA__:(.*)__END_LPO_ITEMS_DATA__/);
         if (jsonMatch && jsonMatch[1]) {
-          parsedItemsData = JSON.parse(jsonMatch[1])
+          const parsed: unknown = JSON.parse(jsonMatch[1])
+          if (Array.isArray(parsed)) parsedItemsData = parsed as StoredPenaltyLineItem[]
         }
       } catch (e) {
         console.error('Failed to parse LPO items data from notes:', e)
       }
     }
 
-    return penalty.purchase_order?.items?.map((item: any) => {
-      const storedItem = parsedItemsData.find((i: any) => i.item_code === item.item_code)
+    return penalty.purchase_order?.items?.map((item): PenaltyLineItem => {
+      const storedItem = parsedItemsData.find(i => i.item_code === item.item_code)
       
       const initialDeliveries = storedItem?.deliveries || [
         {
@@ -111,28 +178,28 @@ export function APPLPenaltyDetailPage({ penalty, onRefresh }: Props) {
 
   const totalQtyLate = useMemo(() => {
     return lpoItems.reduce((sum, item) => {
-      const itemSum = item.deliveries?.reduce((s: number, d: any) => d.is_penalty_applicable ? s + Number(d.quantity_late || 0) : s, 0) || 0
+      const itemSum = item.deliveries?.reduce((s, d) => d.is_penalty_applicable ? s + Number(d.quantity_late || 0) : s, 0) || 0
       return sum + itemSum
     }, 0)
   }, [lpoItems])
 
   const totalFailedValue = useMemo(() => {
     return lpoItems.reduce((sum, item) => {
-      const itemSum = item.deliveries?.reduce((s: number, d: any) => d.is_penalty_applicable ? s + (Number(item.unit_price || 0) * Number(d.quantity_late || 0)) : s, 0) || 0
+      const itemSum = item.deliveries?.reduce((s, d) => d.is_penalty_applicable ? s + (Number(item.unit_price || 0) * Number(d.quantity_late || 0)) : s, 0) || 0
       return sum + itemSum
     }, 0)
   }, [lpoItems])
 
   const maxDaysDelayed = useMemo(() => {
     return lpoItems.reduce((max, item) => {
-      const itemMax = item.deliveries?.reduce((m: number, d: any) => d.is_penalty_applicable ? Math.max(m, Number(d.days_delayed || 0)) : m, 0) || 0
+      const itemMax = item.deliveries?.reduce((m, d) => d.is_penalty_applicable ? Math.max(m, Number(d.days_delayed || 0)) : m, 0) || 0
       return Math.max(max, itemMax)
     }, 0)
   }, [lpoItems])
 
   const addDeliveryRowForItem = (itemCode: string) => {
     setLpoItems(prev => prev.map(item => {
-      if (item.item_code !== itemCode) return item
+      if ((item.item_code || item.id) !== itemCode) return item
       const nextIdx = (item.deliveries?.length || 0) + 1
       const getOrdinalSuffix = (i: number) => {
         const j = i % 10, k = i % 100
@@ -159,33 +226,33 @@ export function APPLPenaltyDetailPage({ penalty, onRefresh }: Props) {
 
   const removeDeliveryRow = (itemCode: string, deliveryId: string) => {
     setLpoItems(prev => prev.map(item => {
-      if (item.item_code !== itemCode) return item
+      if ((item.item_code || item.id) !== itemCode) return item
       return {
         ...item,
-        deliveries: (item.deliveries || []).filter((d: any) => d.id !== deliveryId)
+        deliveries: (item.deliveries || []).filter(d => d.id !== deliveryId)
       }
     }))
   }
 
-  const updateDeliveryField = (itemCode: string, deliveryId: string, field: string, value: any) => {
+  const updateDeliveryField = <K extends keyof PenaltyDelivery>(itemCode: string, deliveryId: string, field: K, value: PenaltyDelivery[K]) => {
     setLpoItems(prev => prev.map(item => {
-      if (item.item_code !== itemCode) return item
+      if ((item.item_code || item.id) !== itemCode) return item
       return {
         ...item,
-        deliveries: (item.deliveries || []).map((d: any) => d.id === deliveryId ? { ...d, [field]: value } : d)
+        deliveries: (item.deliveries || []).map(d => d.id === deliveryId ? { ...d, [field]: value } : d)
       }
     }))
   }
 
   // Editable fields
-  const [itemName, setItemName] = useState(penalty.item_name || penalty.order_tracking?.item_name || '')
-  const [itemCode, setItemCode] = useState(penalty.item_code || penalty.order_tracking?.item_code || '')
+  const [itemName, ] = useState(penalty.item_name || penalty.order_tracking?.item_name || '')
+  const [itemCode, ] = useState(penalty.item_code || penalty.order_tracking?.item_code || '')
   const [quantity, setQuantity] = useState(() => {
     if (penalty.quantity) return Number(penalty.quantity)
     if (matchingPoItem?.quantity_ordered) return Number(matchingPoItem.quantity_ordered)
     return 0
   })
-  const [unitPrice, setUnitPrice] = useState(() => {
+  const [unitPrice, ] = useState(() => {
     if (penalty.unit_price) return Number(penalty.unit_price)
     if (matchingPoItem?.unit_price) return Number(matchingPoItem.unit_price)
     return 0
@@ -195,7 +262,7 @@ export function APPLPenaltyDetailPage({ penalty, onRefresh }: Props) {
     if (penalty.total_order_value) return Number(penalty.total_order_value)
     if (penalty.purchase_order?.total_amount) return Number(penalty.purchase_order.total_amount)
     if (penalty.purchase_order?.items && penalty.purchase_order.items.length > 0) {
-      const sum = penalty.purchase_order.items.reduce((s: number, i: any) => s + Number(i.total_price || 0), 0)
+      const sum = penalty.purchase_order.items.reduce((s, i) => s + Number(i.total_price || 0), 0)
       if (sum > 0) return sum
     }
     if (matchingPoItem?.total_price) return Number(matchingPoItem.total_price)
@@ -233,7 +300,6 @@ export function APPLPenaltyDetailPage({ penalty, onRefresh }: Props) {
   const supplier = penalty.supplier
   const lpo = penalty.lpo
   const po = penalty.purchase_order
-  const tracking = penalty.order_tracking
 
   useEffect(() => {
     loadStandards()
@@ -263,7 +329,7 @@ export function APPLPenaltyDetailPage({ penalty, onRefresh }: Props) {
       let amount = 0
       if (std.penalty_type === 'percentage' && std.penalty_rate) {
         amount = lpoItems.reduce((sum, item) => {
-          const itemDeliveriesSum = (item.deliveries || []).reduce((delSum: number, del: any) => {
+          const itemDeliveriesSum = (item.deliveries || []).reduce((delSum: number, del: PenaltyDelivery) => {
             if (!del.is_penalty_applicable) return delSum
             const delFailedValue = Number(item.unit_price || 0) * Number(del.quantity_late || 0)
             return delSum + (Number(std.penalty_rate) * delFailedValue * Number(del.days_delayed || 0))
@@ -314,8 +380,8 @@ export function APPLPenaltyDetailPage({ penalty, onRefresh }: Props) {
         `Successfully marked penalty as ${nextPaidState ? 'Paid' : 'Unpaid'}.`
       )
       if (onRefresh) onRefresh()
-    } catch (error: any) {
-      toast.error('Error', error.message || 'Failed to update payment status.')
+    } catch (error: unknown) {
+      toast.error('Error', (error instanceof Error ? error.message : 'Failed to update payment status.'))
     } finally {
       setSaving(false)
     }
@@ -352,28 +418,26 @@ export function APPLPenaltyDetailPage({ penalty, onRefresh }: Props) {
         notes: finalNotes,
         
         // Dynamic Signature Blocks
-        prepared_by_user_id: preparedById || null,
-        prepared_by_name: preparedById ? (selectedPreparedUser?.full_name || 'AMRI AMIT') : null,
-        prepared_by_designation: preparedById ? (selectedPreparedUser?.jawatan || 'PENOLONG PEGAWAI FARMASI U5') : null,
-        prepared_at: preparedById ? (penalty.prepared_at || new Date().toISOString()) : null,
+        prepared_by_user_id: preparedById || undefined,
+        prepared_by_name: preparedById ? (selectedPreparedUser?.full_name || 'AMRI AMIT') : undefined,
+        prepared_by_designation: preparedById ? (selectedPreparedUser?.jawatan || 'PENOLONG PEGAWAI FARMASI U5') : undefined,
+        prepared_at: preparedById ? (penalty.prepared_at || new Date().toISOString()) : undefined,
 
-        verified_by_user_id: verifiedById || null,
-        verified_by_name: verifiedById ? (selectedVerifiedUser?.full_name || 'KAMRIAH BT HAJI MAIL') : null,
-        verified_by_designation: verifiedById ? (selectedVerifiedUser?.jawatan || 'PENOLONG PEGAWAI FARMASI U7 TBK 2') : null,
-        verified_at: verifiedById ? (penalty.verified_at || new Date().toISOString()) : null,
+        verified_by_user_id: verifiedById || undefined,
+        verified_by_name: verifiedById ? (selectedVerifiedUser?.full_name || 'KAMRIAH BT HAJI MAIL') : undefined,
+        verified_by_designation: verifiedById ? (selectedVerifiedUser?.jawatan || 'PENOLONG PEGAWAI FARMASI U7 TBK 2') : undefined,
+        verified_at: verifiedById ? (penalty.verified_at || new Date().toISOString()) : undefined,
 
-        approved_by: approvedById || null,
-        approved_by_name: approvedById ? (selectedApprovedUser?.full_name || 'TAN YUAN ZHANG') : null,
-        approved_by_designation: approvedById ? (selectedApprovedUser?.jawatan || 'PEGAWAI FARMASI UF 12') : null,
-        approved_at: approvedById ? (penalty.approved_at || new Date().toISOString()) : null
+        approved_by_name: approvedById ? (selectedApprovedUser?.full_name || 'TAN YUAN ZHANG') : undefined,
+        approved_by_designation: approvedById ? (selectedApprovedUser?.jawatan || 'PEGAWAI FARMASI UF 12') : undefined
       })
       if (res.error) throw new Error(res.error)
       toast.success('Saved', 'APPL Penalty details updated successfully.')
       setIsUnlockedForEditing(false)
       setEditReason('')
       onRefresh()
-    } catch (err: any) {
-      toast.error('Error', err.message || 'Failed to save.')
+    } catch (err: unknown) {
+      toast.error('Error', (err instanceof Error ? err.message : 'Failed to save.'))
     } finally {
       setSaving(false)
     }
@@ -388,8 +452,8 @@ export function APPLPenaltyDetailPage({ penalty, onRefresh }: Props) {
       if (res.error) throw new Error(res.error)
       toast.success('Approved', 'Penalty has been approved.')
       onRefresh()
-    } catch (err: any) {
-      toast.error('Error', err.message || 'Failed to approve.')
+    } catch (err: unknown) {
+      toast.error('Error', (err instanceof Error ? err.message : 'Failed to approve.'))
     } finally {
       setSaving(false)
     }
@@ -439,8 +503,8 @@ export function APPLPenaltyDetailPage({ penalty, onRefresh }: Props) {
       setPreviewUrl(url)
       setIsPreviewOpen(true)
       toast.success('Preview Ready', 'Checklist preview generated.')
-    } catch (err: any) {
-      toast.error('Error', err.message || 'Failed to generate PDF.')
+    } catch (err: unknown) {
+      toast.error('Error', (err instanceof Error ? err.message : 'Failed to generate PDF.'))
     }
   }
 
@@ -555,11 +619,9 @@ export function APPLPenaltyDetailPage({ penalty, onRefresh }: Props) {
                 <div className="sm:col-span-2 space-y-4">
                   <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block">LPO Items & Delivery Batches ({lpoItems.length})</label>
                   <div className="space-y-6">
-                    {lpoItems.map((item: any, idx: number) => {
+                    {lpoItems.map((item: PenaltyLineItem, idx: number) => {
                       const itemPrice = Number(item.unit_price || 0)
                       const itemQtyOrdered = Number(item.quantity_ordered || 0)
-                      
-                      const itemTotalQtyReceived = item.deliveries?.reduce((s: number, d: any) => d.is_penalty_applicable ? s + Number(d.quantity_late || 0) : s, 0) || 0
 
                       return (
                         <div key={item.item_code || idx} className="bg-subtle/50 border border-border-default rounded-2xl p-5 space-y-4 hover:shadow-md transition-colors duration-150">
@@ -584,7 +646,7 @@ export function APPLPenaltyDetailPage({ penalty, onRefresh }: Props) {
                               <div className="w-px h-6 bg-subtle" />
                               <button
                                 type="button"
-                                onClick={() => !isReadOnly && addDeliveryRowForItem(item.item_code)}
+                                onClick={() => !isReadOnly && addDeliveryRowForItem(item.item_code || item.id)}
                                 disabled={isReadOnly}
                                 className="flex items-center gap-1 px-2.5 py-1.5 bg-indigo-600 hover:bg-indigo-750 text-white text-[9px] font-black rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                               >
@@ -612,7 +674,7 @@ export function APPLPenaltyDetailPage({ penalty, onRefresh }: Props) {
                                     <td colSpan={6} className="p-4 text-center text-text-muted font-medium italic">No batches registered. Click "Add Batch" to log a delivery.</td>
                                   </tr>
                                 ) : (
-                                  item.deliveries.map((del: any) => {
+                                  item.deliveries.map((del: PenaltyDelivery) => {
                                     const delFailedValue = itemPrice * Number(del.quantity_late || 0)
                                     return (
                                       <tr key={del.id} className={`hover:bg-subtle/50 transition-colors ${del.is_penalty_applicable ? 'bg-red-50/[0.01]' : 'opacity-70 bg-subtle/50'}`}>
@@ -621,14 +683,14 @@ export function APPLPenaltyDetailPage({ penalty, onRefresh }: Props) {
                                             type="checkbox"
                                             checked={del.is_penalty_applicable}
                                             disabled={isReadOnly}
-                                            onChange={e => updateDeliveryField(item.item_code, del.id, 'is_penalty_applicable', e.target.checked)}
+                                            onChange={e => updateDeliveryField(item.item_code || item.id, del.id, 'is_penalty_applicable', e.target.checked)}
                                             className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 border-border-default cursor-pointer"
                                           />
                                         </td>
                                         <td className="p-2">
                                           <input
                                             value={del.delivery_number}
-                                            onChange={e => updateDeliveryField(item.item_code, del.id, 'delivery_number', e.target.value)}
+                                            onChange={e => updateDeliveryField(item.item_code || item.id, del.id, 'delivery_number', e.target.value)}
                                             disabled={isReadOnly || !del.is_penalty_applicable}
                                             className="w-full px-2 py-1 bg-subtle/50 border border-border-default rounded-lg text-xs font-bold focus:bg-surface focus:border-indigo-500 outline-none transition-colors disabled:opacity-50"
                                           />
@@ -639,7 +701,7 @@ export function APPLPenaltyDetailPage({ penalty, onRefresh }: Props) {
                                             min="0"
                                             max={itemQtyOrdered}
                                             value={del.quantity_late}
-                                            onChange={e => updateDeliveryField(item.item_code, del.id, 'quantity_late', Math.max(0, Number(e.target.value)))}
+                                            onChange={e => updateDeliveryField(item.item_code || item.id, del.id, 'quantity_late', Math.max(0, Number(e.target.value)))}
                                             disabled={isReadOnly || !del.is_penalty_applicable}
                                             className="w-16 px-1.5 py-1 text-right bg-subtle/50 border border-border-default rounded focus:bg-surface focus:border-indigo-500 outline-none transition-colors disabled:opacity-50 font-mono"
                                           />
@@ -649,7 +711,7 @@ export function APPLPenaltyDetailPage({ penalty, onRefresh }: Props) {
                                             type="number"
                                             min="0"
                                             value={del.days_delayed}
-                                            onChange={e => updateDeliveryField(item.item_code, del.id, 'days_delayed', Math.max(0, Number(e.target.value)))}
+                                            onChange={e => updateDeliveryField(item.item_code || item.id, del.id, 'days_delayed', Math.max(0, Number(e.target.value)))}
                                             disabled={isReadOnly || !del.is_penalty_applicable}
                                             className="w-12 px-1.5 py-1 text-right bg-subtle/50 border border-border-default rounded focus:bg-surface focus:border-indigo-500 outline-none transition-colors disabled:opacity-50 font-mono"
                                           />
@@ -660,7 +722,7 @@ export function APPLPenaltyDetailPage({ penalty, onRefresh }: Props) {
                                         <td className="p-2 text-center">
                                           <button
                                             type="button"
-                                            onClick={() => !isReadOnly && removeDeliveryRow(item.item_code, del.id)}
+                                            onClick={() => !isReadOnly && removeDeliveryRow(item.item_code || item.id, del.id)}
                                             disabled={isReadOnly}
                                             className="p-1 text-slate-400 hover:text-red-600 transition-colors disabled:opacity-50 cursor-pointer"
                                           >
@@ -767,7 +829,7 @@ export function APPLPenaltyDetailPage({ penalty, onRefresh }: Props) {
                         // Estimate preview if not currently selected
                         if (std.penalty_type === 'percentage' && std.penalty_rate) {
                           previewAmount = lpoItems.reduce((sum, item) => {
-                            const itemDeliveriesSum = (item.deliveries || []).reduce((delSum: number, del: any) => {
+                            const itemDeliveriesSum = (item.deliveries || []).reduce((delSum: number, del: PenaltyDelivery) => {
                               if (!del.is_penalty_applicable) return delSum
                               const delFailedValue = Number(item.unit_price || 0) * Number(del.quantity_late || 0)
                               return delSum + (Number(std.penalty_rate) * delFailedValue * Number(del.days_delayed || 0))
@@ -978,7 +1040,7 @@ export function APPLPenaltyDetailPage({ penalty, onRefresh }: Props) {
                         className="w-full px-3 py-2 text-xs font-extrabold bg-surface border border-slate-250 rounded-xl focus:border-indigo-500 outline-none transition-colors cursor-pointer text-text-primary shadow-sm disabled:opacity-75 disabled:cursor-not-allowed"
                       >
                         <option value="">-- Choose Signatory --</option>
-                        {systemUsers.map((u: any) => (
+                        {systemUsers.map((u: SignatoryUser) => (
                           <option key={u.id} value={u.id}>
                             {u.full_name} ({u.jawatan || 'Pegawai'})
                           </option>
@@ -1020,7 +1082,7 @@ export function APPLPenaltyDetailPage({ penalty, onRefresh }: Props) {
       >
         {(po?.id || penalty.po_id) && (
           <PurchaseOrderDetailView 
-            id={penalty.po_id || po.id} 
+            id={penalty.po_id || po?.id || ''}
             onClose={() => setIsPoDrawerOpen(false)} 
             isSlideOver={true}
             onMutate={onRefresh}

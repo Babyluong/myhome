@@ -1,16 +1,6 @@
 // src/modules/myprepacking/components/PrepackBatchCreateModal.tsx
 import React, { useState, useEffect } from 'react'
-import { 
-  PackageCheck, 
-  Calendar, 
-  UserCheck, 
-  AlertTriangle, 
-  Printer, 
-  CheckCircle, 
-  Boxes,
-  ShieldCheck,
-  Sparkles
-} from 'lucide-react'
+import { PackageCheck, Printer, ShieldCheck } from 'lucide-react'
 import { Modal, Button } from '@/components/ui'
 import type { PrepackItem, PrepackBatch } from '../types/prepack'
 import { 

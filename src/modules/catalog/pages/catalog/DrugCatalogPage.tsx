@@ -1,11 +1,11 @@
 // @ts-nocheck
 import React, { useState, useEffect, useCallback, useMemo, lazy, Suspense } from 'react'
 import { motion } from 'framer-motion'
-import { Search, Plus, Download, X, Edit, Trash2, Filter, FileUp, ChevronRight, Sparkles, Pill, TrendingUp, CheckCircle, XCircle, CheckSquare, Square } from 'lucide-react'
-import { Button, Input, Select, Badge, Table, Pagination, Modal, LoadingOverlay, Spinner } from '@/components/ui'
+import { Search, Plus, Download, X, Edit, Trash2, FileUp, ChevronRight, Sparkles, Pill, TrendingUp, CheckCircle, XCircle } from 'lucide-react'
+import { Button, Input, Select, Table, Pagination, Modal, Spinner } from '@/components/ui'
 import { useToastStore } from '@/stores/toastStore'
 import { useAuthStore } from '@/stores/authStore'
-import { formatCurrency, parseAndNormalizeDate, getFallbackContractDates } from '@/lib/utils'
+import { formatCurrency, getFallbackContractDates } from '@/lib/utils'
 import {
   getDrugCatalogKPIs,
   getDrugCatalog,
@@ -35,25 +35,7 @@ interface KPICardProps {
   color: 'primary' | 'success' | 'warning' | 'error'
 }
 
-const KPICard: React.FC<KPICardProps> = ({ title, value, color }) => {
-  const colorClasses = {
-    primary: 'bg-accent-base/10 border-accent-base/20 text-teal-700',
-    success: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-700',
-    warning: 'bg-amber-500/10 border-amber-500/20 text-amber-700',
-    error: 'bg-rose-500/10 border-rose-500/20 text-rose-700',
-  }
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className={`rounded-xl border-2 p-4 ${colorClasses[color]}`}
-    >
-      <p className="text-sm font-medium mb-1">{title}</p>
-      <p className="text-3xl font-bold">{value.toLocaleString()}</p>
-    </motion.div>
-  )
-}
 
 // =====================================================
 // DRUG FORM MODAL COMPONENT

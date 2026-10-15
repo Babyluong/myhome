@@ -2,30 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import jsQR from 'jsqr';
-import { 
-  X, 
-  QrCode, 
-  AlertCircle, 
-  CheckCircle2, 
-  Camera, 
-  Volume2, 
-  VolumeX, 
-  Check, 
-  ClipboardCheck,
-  Plus,
-  Trash2,
-  Building2,
-  Layers,
-  Sparkles,
-  ArrowRight,
-  ListPlus,
-  CheckCheck,
-  ExternalLink,
-  Table,
-  Wrench,
-  RefreshCw,
-  Pencil
-} from 'lucide-react';
+import { X, QrCode, AlertCircle, CheckCircle2, Camera, Volume2, VolumeX, Check, Plus, Trash2, Building2, Layers, Sparkles, ArrowRight, ListPlus, CheckCheck, Table, Wrench, RefreshCw, Pencil } from 'lucide-react'
 import { getCylinderByQrOrSerial, registerScannedCylinderOnTheFly, updateCylinderValveType } from '@/services/pharmacy/oxygenService';
 import { useAuthStore } from '@/stores/authStore';
 import { EditCylinderModal } from '@/components/oxygen/EditCylinderModal';

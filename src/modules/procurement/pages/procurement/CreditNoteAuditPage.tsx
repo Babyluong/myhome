@@ -1,51 +1,33 @@
-﻿// @ts-nocheck
-import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { 
-  IconFileText, 
-  IconSearch, 
-  IconFilter, 
-  IconRefreshCw,
-  IconCheckCircle,
-  IconClock,
-  IconAlertCircle,
-  IconEye,
-  IconReceipt,
-  IconMoney
-} from '@/components/ui/Icons'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { IconFileText, IconSearch, IconFilter, IconRefreshCw, IconClock, IconReceipt, IconMoney } from '@/components/ui/Icons'
 import { getCreditNotes, getCreditNoteStats } from '@/services/pharmacy/creditNoteService'
 import type { CreditNoteWithRelations } from '@/types/pharmacy'
 import { useAuthStore } from '@/stores/authStore'
-import { Spinner, Input, Select, Badge, Card } from '@/components/ui'
+import { Spinner, Input, Select } from '@/components/ui'
 import { cn, formatCurrency } from '@/lib/utils'
 import { ChevronRight, Sparkles } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 export default function CreditNoteAuditPage() {
-  const navigate = useNavigate()
   const { user } = useAuthStore()
   const hospitalId = user?.hospital_id
 
   const [notes, setNotes] = useState<CreditNoteWithRelations[]>([])
-  const [stats, setStats] = useState<any>(null)
+  const [stats, setStats] = useState<{ total_value: number; total_count: number; pending_count: number; avg_value: number } | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
+  const searchRef = useRef(search)
+  searchRef.current = search
 
-  useEffect(() => {
-    if (hospitalId) {
-      loadData()
-    }
-  }, [hospitalId, statusFilter])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!hospitalId) return
     setIsLoading(true)
     
     try {
       const filter = {
         status: statusFilter !== 'all' ? statusFilter : undefined,
-        search: search || undefined
+        search: searchRef.current || undefined
       }
 
       const [notesRes, statsRes] = await Promise.all([
@@ -64,7 +46,13 @@ export default function CreditNoteAuditPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [hospitalId, statusFilter])
+
+  useEffect(() => {
+    if (hospitalId) {
+      void loadData()
+    }
+  }, [hospitalId, statusFilter, loadData])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -321,7 +309,6 @@ export default function CreditNoteAuditPage() {
                         </td>
                         <td className="px-8 py-5">
                           <div className="text-sm font-bold text-text-primary group-hover:text-emerald-700 dark:group-hover:text-emerald-400 transition-colors">
-                            {/* @ts-ignore */}
                             {note.supplier?.company_name || 'â€”'}
                           </div>
                         </td>
@@ -399,7 +386,6 @@ export default function CreditNoteAuditPage() {
                       <div className="space-y-1">
                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Supplier</span>
                         <p className="text-sm font-bold text-text-primary leading-tight">
-                           {/* @ts-ignore */}
                           {note.supplier?.company_name || 'â€”'}
                         </p>
                       </div>

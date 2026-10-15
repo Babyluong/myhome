@@ -10,7 +10,7 @@ import { useToast } from '@/stores/toastStore';
 import { useLanguage } from '@/shared/contexts/LanguageContext';
 import { getCrossborderTransfers } from '../services/crossborderService';
 import type { CrossborderTransfer } from '@/shared/types/mycrossborder';
-import { Card, CardContent, Button, Badge } from '@/components/ui';
+import { Card, Button, Badge } from '@/components/ui'
 import { formatDate } from '@/lib/utils';
 
 export const CrossborderLogPage: React.FC = () => {

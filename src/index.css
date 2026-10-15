@@ -18,61 +18,143 @@
 
     /* Light Theme — Apple Cupertino Classic */
     --bg-canvas: #f5f5f7;
+    --bg-canvas-rgb: 245 245 247;
     --bg-surface: #ffffff;
+    --bg-surface-rgb: 255 255 255;
     --bg-subtle: #f0f0f2;
+    --bg-subtle-rgb: 240 240 242;
     --bg-muted: #e5e5ea;
+    --bg-muted-rgb: 229 229 234;
     --bg-inset: #f2f2f7;
+    --bg-inset-rgb: 242 242 247;
     --bg-hover: #ebebed;
+    --bg-hover-rgb: 235 235 237;
+    --bg-elevated: var(--bg-subtle);
+    --bg-elevated-rgb: var(--bg-subtle-rgb);
 
     --border-default: rgba(0, 0, 0, 0.08);
+    --border-default-rgb: 0 0 0;
+    --border-default-alpha: 0.08;
     --border-subtle: rgba(0, 0, 0, 0.04);
+    --border-subtle-rgb: 0 0 0;
+    --border-subtle-alpha: 0.04;
     --border-strong: rgba(0, 0, 0, 0.16);
+    --border-strong-rgb: 0 0 0;
+    --border-strong-alpha: 0.16;
+    --border-interactive: rgba(0, 113, 227, 0.3);
+    --border-interactive-rgb: 0 113 227;
+    --border-interactive-alpha: 0.3;
+    --border-elevated: var(--border-strong);
 
     --text-primary: #1d1d1f;
+    --text-primary-rgb: 29 29 31;
     --text-secondary: #424245;
+    --text-secondary-rgb: 66 66 69;
     --text-muted: #86868b;
+    --text-muted-rgb: 134 134 139;
     --text-disabled: #aeaeb2;
 
     --accent-base: #0071e3;
+    --accent-base-rgb: 0 113 227;
     --accent-hover: #0077ed;
+    --accent-hover-rgb: 0 119 237;
     --accent-active: #0062c4;
+    --accent-active-rgb: 0 98 196;
     --accent-subtle: rgba(0, 113, 227, 0.08);
+    --accent-subtle-rgb: 0 113 227;
+    --accent-subtle-alpha: 0.08;
     --accent-foreground: #ffffff;
+    --accent-foreground-rgb: 255 255 255;
     --accent-decor: #2997ff;
+    --accent-decor-rgb: 41 151 255;
+    --accent-teal: #14b8a6;
+    --accent-teal-rgb: 20 184 166;
 
     --ink-button: #1d1d1f;
+    --ink-button-rgb: 29 29 31;
     --ink-button-hover: #333336;
+    --ink-button-hover-rgb: 51 51 54;
     --ink-button-text: #ffffff;
+    --ink-button-text-rgb: 255 255 255;
+
+    --elevation-1: 0 1px 3px 0 rgba(0, 0, 0, 0.06), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+    --elevation-2: 0 4px 12px -2px rgba(0, 0, 0, 0.1), 0 2px 6px -1px rgba(0, 0, 0, 0.06);
+    --elevation-3: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    --shadow-surface: var(--elevation-1);
+    --shadow-elevated: var(--elevation-2);
+    --shadow-modal: var(--elevation-3);
+    --shadow-card-3d: var(--elevation-2);
   }
 
   .dark {
     /* Dark Theme — Apple Dark Mode (macOS / iOS) */
     --bg-canvas: #000000;
+    --bg-canvas-rgb: 0 0 0;
     --bg-surface: #1c1c1e;
+    --bg-surface-rgb: 28 28 30;
     --bg-subtle: #2c2c2e;
+    --bg-subtle-rgb: 44 44 46;
     --bg-muted: #3a3a3c;
+    --bg-muted-rgb: 58 58 60;
     --bg-inset: #161618;
+    --bg-inset-rgb: 22 22 24;
     --bg-hover: #2c2c2e;
+    --bg-hover-rgb: 44 44 46;
+    --bg-elevated: var(--bg-subtle);
+    --bg-elevated-rgb: var(--bg-subtle-rgb);
 
     --border-default: rgba(255, 255, 255, 0.12);
+    --border-default-rgb: 255 255 255;
+    --border-default-alpha: 0.12;
     --border-subtle: rgba(255, 255, 255, 0.06);
+    --border-subtle-rgb: 255 255 255;
+    --border-subtle-alpha: 0.06;
     --border-strong: rgba(255, 255, 255, 0.2);
+    --border-strong-rgb: 255 255 255;
+    --border-strong-alpha: 0.2;
+    --border-interactive: rgba(41, 151, 255, 0.3);
+    --border-interactive-rgb: 41 151 255;
+    --border-interactive-alpha: 0.3;
+    --border-elevated: var(--border-strong);
 
     --text-primary: #f5f5f7;
+    --text-primary-rgb: 245 245 247;
     --text-secondary: #a1a1a6;
+    --text-secondary-rgb: 161 161 166;
     --text-muted: #86868b;
+    --text-muted-rgb: 134 134 139;
     --text-disabled: #636366;
 
     --accent-base: #2997ff;
+    --accent-base-rgb: 41 151 255;
     --accent-hover: #40a9ff;
+    --accent-hover-rgb: 64 169 255;
     --accent-active: #0071e3;
+    --accent-active-rgb: 0 113 227;
     --accent-subtle: rgba(41, 151, 255, 0.16);
+    --accent-subtle-rgb: 41 151 255;
+    --accent-subtle-alpha: 0.16;
     --accent-foreground: #ffffff;
+    --accent-foreground-rgb: 255 255 255;
     --accent-decor: #2997ff;
+    --accent-decor-rgb: 41 151 255;
+    --accent-teal: #2dd4bf;
+    --accent-teal-rgb: 45 212 191;
 
     --ink-button: #f5f5f7;
+    --ink-button-rgb: 245 245 247;
     --ink-button-hover: #ffffff;
+    --ink-button-hover-rgb: 255 255 255;
     --ink-button-text: #1c1c1e;
+    --ink-button-text-rgb: 29 29 31;
+
+    --elevation-1: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
+    --elevation-2: 0 4px 12px -2px rgba(0, 0, 0, 0.4), 0 2px 6px -1px rgba(0, 0, 0, 0.3);
+    --elevation-3: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+    --shadow-surface: var(--elevation-1);
+    --shadow-elevated: var(--elevation-2);
+    --shadow-modal: var(--elevation-3);
+    --shadow-card-3d: var(--elevation-2);
   }
 
   @media (min-width: 640px) {

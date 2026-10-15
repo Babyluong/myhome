@@ -10,7 +10,7 @@ if (fs.existsSync(envPath)) {
 }
 
 const supabaseUrl = process.env.VITE_SUPABASE_URL;
-const serviceKey = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !serviceKey) {
   console.error('Missing Supabase URL or Key in .env');

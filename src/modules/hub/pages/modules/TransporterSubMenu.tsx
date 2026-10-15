@@ -19,7 +19,7 @@ import { Ambulance } from '../../../mytransporter/components/AmbulanceIcon'
 import { useAuthStore } from '@/stores/authStore'
 import { ROUTES } from '@/lib/constants'
 import { getTransporterRoles, getRequests, getVehicles } from '@/modules/mytransporter/services/transporterService'
-import { Badge, Skeleton } from '@/components/ui'
+import { Skeleton } from '@/components/ui'
 
 import { useLanguage } from '@/shared/contexts/LanguageContext'
 

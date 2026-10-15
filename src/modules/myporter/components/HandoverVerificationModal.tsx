@@ -1,16 +1,7 @@
 // src/modules/myporter/components/HandoverVerificationModal.tsx
 import React, { useRef, useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  CheckCircle2, 
-  X, 
-  PenTool, 
-  RotateCcw, 
-  Star, 
-  ShieldCheck, 
-  User, 
-  FileText 
-} from 'lucide-react'
+import { CheckCircle2, X, PenTool, RotateCcw, Star, ShieldCheck } from 'lucide-react'
 import type { PorterJobRequest, HandoverProof, PorterRating } from '@/shared/types/myporter'
 import { Button, Input } from '@/components/ui'
 import { useLanguage } from '@/shared/contexts/LanguageContext'

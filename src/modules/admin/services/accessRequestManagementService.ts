@@ -1,11 +1,6 @@
-// @ts-nocheck
 import { supabase, isSupabaseConfigured } from '@/services/supabase'
-import { mockAccessRequests, getHospitalById, getDepartmentById, mockUsers, mockRoles } from '@/services/mockData'
-import type { AccessRequest, AccessRequestWithRelations, PaginatedResponse, FilterConfig, SortConfig } from '@/types'
+import type { AccessRequestWithRelations, PaginatedResponse, FilterConfig, SortConfig } from '@/types'
 import { DEFAULT_PAGE_SIZE, SYSTEM_ROLES } from '@/lib/constants'
-import { createUser } from './userService'
-import type { User } from '@/types'
-import { MOCK_PASSWORD } from '@/services/mockData'
 import { createAuthUser } from '@/services/authUserService'
 import { decryptPassword } from '@/lib/encryptionUtils'
 
@@ -29,7 +24,7 @@ async function getCurrentUserInfo(userId: string): Promise<{
   isHospitalAdmin: boolean
 } | null> {
   if (!isSupabaseConfigured()) {
-    return null
+    throw new Error('Access request service is unavailable because Supabase is not configured.')
   }
 
   try {
@@ -42,12 +37,11 @@ async function getCurrentUserInfo(userId: string): Promise<{
       .eq('id', userId)
       .maybeSingle()
 
-    if (error || !user) {
-      console.error('Error fetching current user info:', error)
-      return null
-    }
+    if (error) throw error
+    if (!user) return null
 
-    const roleCode = (user.role as any)?.role_code || null
+    const roleData = Array.isArray(user.role) ? user.role[0] : user.role
+    const roleCode = roleData?.role_code || null
     const hospitalId = user.hospital_id || null
 
     return {
@@ -58,7 +52,7 @@ async function getCurrentUserInfo(userId: string): Promise<{
     }
   } catch (error) {
     console.error('Error in getCurrentUserInfo:', error)
-    return null
+    throw error
   }
 }
 
@@ -69,16 +63,11 @@ async function validateHospitalAccess(
   requestHospitalId: string | null,
   approverUserId: string
 ): Promise<{ valid: boolean; error?: string }> {
-  if (!approverUserId) {
-    return { valid: true }
-  }
+  if (!approverUserId) return { valid: false, error: 'Administrator identity is required.' }
 
   const userInfo = await getCurrentUserInfo(approverUserId)
   
-  if (!userInfo) {
-    // Fallback for active admin session
-    return { valid: true }
-  }
+  if (!userInfo) return { valid: false, error: 'Unable to verify administrator access.' }
 
   // System Admin can access all hospitals
   if (userInfo.isSystemAdmin) {
@@ -115,7 +104,7 @@ async function validateHospitalAccess(
  */
 async function validateRoleAssignment(roleId: string): Promise<{ valid: boolean; error?: string }> {
   if (!isSupabaseConfigured()) {
-    return { valid: true } // Skip validation in mock mode
+    return { valid: false, error: 'Role validation is unavailable because Supabase is not configured.' }
   }
 
   try {
@@ -159,7 +148,6 @@ export async function getAccessRequests(params: GetAccessRequestsParams = {}): P
     page = 1,
     pageSize = DEFAULT_PAGE_SIZE,
     search = '',
-    filters = [],
     sort,
     status,
     hospitalId,
@@ -214,66 +202,7 @@ export async function getAccessRequests(params: GetAccessRequestsParams = {}): P
         totalPages: Math.ceil((count || 0) / pageSize),
       }
     } else {
-      // Mock implementation
-      await new Promise((resolve) => setTimeout(resolve, 500))
-
-      let filteredRequests = [...mockAccessRequests]
-
-      // Apply filters
-      if (hospitalId) {
-        filteredRequests = filteredRequests.filter((r) => r.hospital_id === hospitalId)
-      }
-      if (status) {
-        filteredRequests = filteredRequests.filter((r) => r.status === status)
-      }
-
-      // Apply search
-      if (search) {
-        const searchLower = search.toLowerCase()
-        filteredRequests = filteredRequests.filter(
-          (r) =>
-            r.full_name.toLowerCase().includes(searchLower) ||
-            r.email.toLowerCase().includes(searchLower) ||
-            r.ic_number.includes(searchLower)
-        )
-      }
-
-      // Apply sorting
-      if (sort) {
-        filteredRequests.sort((a, b) => {
-          const aVal = a[sort.key as keyof AccessRequest]
-          const bVal = b[sort.key as keyof AccessRequest]
-          if (aVal === bVal) return 0
-          const comparison = aVal > bVal ? 1 : -1
-          return sort.direction === 'asc' ? comparison : -comparison
-        })
-      } else {
-        filteredRequests.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-      }
-
-      // Apply pagination
-      const total = filteredRequests.length
-      const from = (page - 1) * pageSize
-      const to = from + pageSize
-      const paginatedRequests = filteredRequests.slice(from, to)
-
-      // Add relations
-      const requestsWithRelations: AccessRequestWithRelations[] = paginatedRequests.map((request) => ({
-        ...request,
-        hospital: getHospitalById(request.hospital_id),
-        department: getDepartmentById(request.department_id),
-        reviewed_by_user: request.reviewed_by
-          ? mockUsers.find((u) => u.id === request.reviewed_by)
-          : undefined,
-      }))
-
-      return {
-        data: requestsWithRelations,
-        total,
-        page,
-        pageSize,
-        totalPages: Math.ceil(total / pageSize),
-      }
+      throw new Error('Access request service is unavailable because Supabase is not configured.')
     }
   } catch (error) {
     console.error('Error fetching access requests:', error)
@@ -314,18 +243,7 @@ export async function getAccessRequestById(
       
       return data as AccessRequestWithRelations
     } else {
-      await new Promise((resolve) => setTimeout(resolve, 300))
-      const request = mockAccessRequests.find((r) => r.id === requestId)
-      if (!request) return null
-
-      return {
-        ...request,
-        hospital: getHospitalById(request.hospital_id),
-        department: getDepartmentById(request.department_id),
-        reviewed_by_user: request.reviewed_by
-          ? mockUsers.find((u) => u.id === request.reviewed_by)
-          : undefined,
-      }
+      throw new Error('Access request service is unavailable because Supabase is not configured.')
     }
   } catch (error) {
     console.error('Error fetching access request:', error)
@@ -484,7 +402,7 @@ export async function approveAccessRequest(
       const { success: authSuccess, error: authError, authUserId } = await createAuthUser(
         request.email,
         plainPassword,
-        existingUser?.id
+        existingUser?.id, { hospitalId: request.hospital_id, roleId: actualRoleId }
       )
 
       if (!authSuccess || (!existingUser && !authUserId)) {
@@ -519,7 +437,7 @@ export async function approveAccessRequest(
         updated_at: new Date().toISOString(),
       }
 
-      let newUser: any
+      let newUser: { id: string; employee_id: string }
       if (existingUser) {
         // Update existing user in the same hospital
         const { data: updatedUser, error: updateError } = await supabase
@@ -614,44 +532,7 @@ export async function approveAccessRequest(
         email: request.email
       }
     } else {
-      // Mock implementation
-      await new Promise((resolve) => setTimeout(resolve, 800))
-      const request = mockAccessRequests.find((r) => r.id === requestId)
-      if (!request) {
-        return { success: false, error: 'Access request not found' }
-      }
-
-      // Update request
-      request.status = 'approved'
-      request.reviewed_by = approvedBy
-      request.reviewed_at = new Date().toISOString()
-
-      // Create user account
-      const employeeId = generateEmployeeId(request.hospital_id, request.department_id)
-      const newUser: User = {
-        id: `user-${Date.now()}`,
-        email: request.email,
-        employee_id: employeeId,
-        full_name: request.full_name,
-        ic_number: request.ic_number,
-        phone_number: request.phone_number,
-        date_of_birth: request.date_of_birth,
-        gender: request.gender,
-        address: request.address,
-        profile_photo_url: request.profile_photo_url,
-        hospital_id: request.hospital_id,
-        department_id: request.department_id,
-        role_id: roleId,
-        jawatan: request.jawatan,
-        status: 'active',
-        failed_login_attempts: 0,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      }
-
-      mockUsers.push(newUser)
-
-      return { success: true, userId: newUser.id }
+      return { success: false, error: 'Access request service is unavailable because Supabase is not configured.' }
     }
   } catch (error) {
     console.error('Error approving access request:', error)
@@ -723,15 +604,7 @@ export async function rejectAccessRequest(
       if (error) throw error
       return { success: true }
     } else {
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      const request = mockAccessRequests.find((r) => r.id === requestId)
-      if (request) {
-        request.status = 'rejected'
-        request.reviewed_by = rejectedBy
-        request.reviewed_at = new Date().toISOString()
-        request.rejection_reason = reason
-      }
-      return { success: true }
+      return { success: false, error: 'Access request service is unavailable because Supabase is not configured.' }
     }
   } catch (error) {
     console.error('Error rejecting access request:', error)
@@ -742,59 +615,4 @@ export async function rejectAccessRequest(
   }
 }
 
-/**
- * Generate employee ID based on hospital and department
- */
-function generateEmployeeId(hospitalId: string, departmentId: string, sequenceOverride?: number): string {
-  const hospital = getHospitalById(hospitalId)
-  const department = getDepartmentById(departmentId)
-  
-  if (!hospital || !department) {
-    return `EMP${Date.now().toString().slice(-6)}`
-  }
-
-  const hospitalCode = hospital.hospital_code
-  const deptCode = department.department_code
-  
-  // Use provided sequence number or fall back to mock count
-  const sequenceNum = sequenceOverride !== undefined 
-    ? sequenceOverride 
-    : (mockUsers.filter(u => u.hospital_id === hospitalId && u.department_id === departmentId).length + 1)
-    
-  const sequence = sequenceNum.toString().padStart(3, '0')
-
-  return `${hospitalCode}-${deptCode}-${sequence}`
-}
-
-/**
- * Generate a temporary password for new users
- * In production, this should be more secure and sent via email
- */
-function generateTemporaryPassword(): string {
-  // Generate a secure random password
-  // Format: 12 characters with uppercase, lowercase, numbers, and special characters
-  const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-  const lowercase = 'abcdefghijklmnopqrstuvwxyz'
-  const numbers = '0123456789'
-  const special = '!@#$%^&*'
-  const allChars = uppercase + lowercase + numbers + special
-
-  let password = ''
-  // Ensure at least one of each type
-  password += uppercase[Math.floor(Math.random() * uppercase.length)]
-  password += lowercase[Math.floor(Math.random() * lowercase.length)]
-  password += numbers[Math.floor(Math.random() * numbers.length)]
-  password += special[Math.floor(Math.random() * special.length)]
-
-  // Fill the rest randomly
-  for (let i = password.length; i < 12; i++) {
-    password += allChars[Math.floor(Math.random() * allChars.length)]
-  }
-
-  // Shuffle the password
-  return password
-    .split('')
-    .sort(() => Math.random() - 0.5)
-    .join('')
-}
 

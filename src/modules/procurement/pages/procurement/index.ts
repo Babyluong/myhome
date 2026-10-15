@@ -1,4 +1,3 @@
-﻿// @ts-nocheck
 export { PurchaseOrderListPage } from './PurchaseOrderListPage'
 export { PurchaseOrderCreatePage } from './PurchaseOrderCreatePage'
 export { PurchaseOrderDetailPage } from './PurchaseOrderDetailPage'

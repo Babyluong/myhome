@@ -10,7 +10,7 @@ import {
   CheckCircle2,
   AlertCircle
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import '@/lib/utils'
 import type { StaffPrivilegingProfile } from '../types/priviledgingTypes';
 
 interface StaffCompetencyMatrixProps {

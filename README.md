@@ -85,12 +85,10 @@ A comprehensive, modern hospital management system built with React, TypeScript,
    ```
    VITE_SUPABASE_URL=your_supabase_url
    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-   VITE_SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+   SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
    ```
    
-   **Security Note**: The `VITE_SUPABASE_SERVICE_ROLE_KEY` is used to create Auth users automatically when users are created. 
-   For production, consider using a Supabase Edge Function instead of exposing the service role key in client-side code.
-   If not provided, the system will attempt to use `signUp` as a fallback (requires email confirmation).
+   **Security Architecture**: `SUPABASE_SERVICE_ROLE_KEY` does NOT use the `VITE_` prefix, preventing it from being leaked into client-side bundles. Privileged administrative operations are securely handled server-side via Supabase Edge Functions (e.g., `admin-user-ops`).
 
 4. **Set up email service (Resend - Recommended)**
    
@@ -183,9 +181,9 @@ D:\MY HOME\
 
 - Password strength validation
 - Account lockout after 5 failed attempts
-- Session timeout (60 minutes)
+- Session timeout (30 minutes)
 - Role-based access control (RBAC)
-- Audit logging (coming soon)
+- Audit logging and forensic trail
 - Secure password reset flow
 
 ## 📝 Form Validation

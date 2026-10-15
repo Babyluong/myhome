@@ -3,7 +3,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Search, Plus, RefreshCw, Edit, Trash2, Building2, User, Settings, AlertCircle, Filter, CheckCircle, XCircle } from 'lucide-react'
-import { Button, Table, Pagination, Input, Select, Badge, LoadingOverlay, Modal, StatCard } from '@/components/ui'
+import { Button, Table, Pagination, Input, Select, Badge, Modal, StatCard } from '@/components/ui'
 import { getHospitals, deleteHospital } from '@/services/hospitalService'
 import { getHospitalsWithAdmin } from '@/services/systemAdminService'
 import { useToastStore } from '@/stores/toastStore'
@@ -45,7 +45,7 @@ export const HospitalListPage: React.FC = () => {
     inactive: 0,
     pendingSetup: 0,
   })
-  const [isLoadingStats, setIsLoadingStats] = useState(true)
+  const [, setIsLoadingStats] = useState(true)
 
   const fetchHospitals = useCallback(async () => {
     setIsLoading(true)

@@ -1,28 +1,12 @@
 // @ts-nocheck
 import React, { useEffect, useState, useMemo } from 'react'
-import {
-  FileText,
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  Download,
-  Calendar,
-  Search,
-  Filter,
-  ArrowUpRight,
-  ArrowDownRight,
-  RefreshCw,
-  Package,
-  Layers,
-  Printer,
-  FileSpreadsheet,
-} from 'lucide-react'
+import { TrendingUp, DollarSign, Calendar, Search, Filter, ArrowUpRight, ArrowDownRight, RefreshCw, Layers, Printer, FileSpreadsheet } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
-import { Table, Spinner, Badge, Select, Button, Input } from '@/components/ui'
+import { Table, Spinner, Badge, Select, Button } from '@/components/ui'
 import { getInventoryReport } from '@/services/pharmacy/inventoryService'
 import type { InventoryReportRow, ReportPeriod, InventoryReportFilter } from '@/types/pharmacy'
 import { cn, formatCurrency } from '@/lib/utils'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 

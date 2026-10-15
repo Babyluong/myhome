@@ -1,24 +1,5 @@
 import React, { useState } from 'react'
-import {
-  ShieldCheck,
-  Clock,
-  FileText,
-  CheckCircle2,
-  Baby,
-  User,
-  Calculator,
-  Copy,
-  Check,
-  AlertTriangle,
-  ArrowRightLeft,
-  Printer,
-  Bookmark,
-  Sparkles,
-  Info,
-  Layers,
-  ChevronRight,
-  AlertCircle
-} from 'lucide-react'
+import { ShieldCheck, Clock, FileText, CheckCircle2, Baby, User, Calculator, Copy, Check, AlertTriangle, ArrowRightLeft, Printer, Bookmark, Sparkles, Layers, AlertCircle } from 'lucide-react'
 import { NAGInfectionGuideline } from '../types/formulariTypes'
 
 interface NAGClinicalMonographProps {

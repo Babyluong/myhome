@@ -1,27 +1,9 @@
 // @ts-nocheck
 import React, { useEffect, useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
-import { 
-  AlertTriangle, 
-  DollarSign, 
-  TrendingUp, 
-  PieChart, 
-  Calendar,
-  Wallet,
-  ArrowUpRight,
-  BarChart3,
-  RefreshCw,
-  Search,
-  FileText,
-  ChevronRight,
-  ChevronLeft,
-  ChevronsLeft,
-  ChevronsRight,
-  Sparkles,
-  BarChart2
-} from 'lucide-react'
+import { AlertTriangle, DollarSign, TrendingUp, PieChart, Calendar, Wallet, BarChart3, RefreshCw, FileText, ChevronRight, ChevronLeft, ChevronsLeft, ChevronsRight, Sparkles, BarChart2 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
-import { Spinner, Badge, Button } from '@/components/ui'
+import { Spinner, Badge } from '@/components/ui'
 import { getBudgetSummary, getBudgets } from '@/services/pharmacy/budgetService'
 import type { BudgetSummary, Budget } from '@/types/pharmacy'
 import { cn, formatCurrency } from '@/lib/utils'
@@ -318,9 +300,10 @@ export const BudgetOverviewPage: React.FC = () => {
                         <div className="flex items-center gap-3">
                           <div className="flex-1 h-2 bg-subtle rounded-full overflow-hidden border border-border-subtle">
                             <motion.div
-                              initial={{ width: 0 }}
-                              animate={{ width: `${usage}%` }}
-                              className={`h-full rounded-full ${barColor}`}
+                              initial={{ scaleX: 0 }}
+                              animate={{ scaleX: usage / 100 }}
+                              style={{ transformOrigin: 'left' }}
+                              className={`h-full w-full rounded-full ${barColor}`}
                             />
                           </div>
                           <span className="text-[10px] font-black text-text-secondary w-8 text-right tabular-nums">
@@ -370,9 +353,10 @@ export const BudgetOverviewPage: React.FC = () => {
                         <div className="flex items-center gap-3">
                           <div className="flex-1 h-2 bg-subtle rounded-full overflow-hidden border border-border-subtle">
                             <motion.div
-                              initial={{ width: 0 }}
-                              animate={{ width: `${usage}%` }}
-                              className={`h-full rounded-full ${barColor}`}
+                              initial={{ scaleX: 0 }}
+                              animate={{ scaleX: usage / 100 }}
+                              style={{ transformOrigin: 'left' }}
+                              className={`h-full w-full rounded-full ${barColor}`}
                             />
                           </div>
                           <span className="text-[10px] font-black text-text-secondary w-8 text-right tabular-nums">

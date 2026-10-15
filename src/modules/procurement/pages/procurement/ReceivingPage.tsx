@@ -1,38 +1,21 @@
-// @ts-nocheck
-import { 
-  IconAlertCircle, 
-  IconPackage, 
-  IconSearch, 
-  IconFilter, 
-  IconChevronLeft, 
-  IconChevronRight,
-  IconClock,
-  IconCheckCircle,
-  IconClipboardList,
-  IconFileText,
-  IconShieldCheck,
-  IconUpload
-} from '@/components/ui/Icons'
+import { IconAlertCircle, IconPackage, IconSearch, IconChevronLeft, IconChevronRight, IconClock, IconCheckCircle, IconClipboardList, IconFileText, IconShieldCheck, IconUpload } from '@/components/ui/Icons'
 import { useAuthStore } from '@/stores/authStore'
-import { Table, Spinner, Input, Badge, Select } from '@/components/ui'
+import { Table, Badge } from '@/components/ui'
 import { getPurchaseOrders, getReceivingCounts } from '@/services/pharmacy/procurementService'
 import type { PurchaseOrderWithRelations, POStatus } from '@/types/pharmacy'
-import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, useCallback } from 'react'
 import GoodsReceivingForm from './GoodsReceivingForm'
 import ExcelUploadModal from './ExcelUploadModal'
-import { cn } from '@/lib/utils'
+import '@/lib/utils'
 import { ChevronRight, Sparkles } from 'lucide-react'
 import { supabase } from '@/services/supabase'
 import { createSupplierAssessment, updateLPOPaymentStatus } from '@/services/pharmacy/lpoService'
 import { getGoodsReceiptHistory } from '@/services/pharmacy/receivingService'
 
 const ReceivingPage = () => {
-  const navigate = useNavigate()
   const { user } = useAuthStore()
   const hospitalId = user?.hospital_id
 
-  const [orders, setOrders] = useState<PurchaseOrderWithRelations[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [counts, setCounts] = useState({ fullyReceived: 0, partialReceived: 0, totalReceipts: 0, assessedLpos: 0 })
@@ -52,6 +35,15 @@ const ReceivingPage = () => {
   const [isExcelUploadOpen, setIsExcelUploadOpen] = useState(false)
   const [isAutoFilling, setIsAutoFilling] = useState(false)
   const [isProcessingPayment, setIsProcessingPayment] = useState(false)
+  type ReceivingListOrder = PurchaseOrderWithRelations & {
+    goods_receipts?: Array<Pick<NonNullable<PurchaseOrderWithRelations['goods_receipts']>[number], 'receipt_date' | 'delivery_note_number' | 'created_at'>>
+    lpo?: Array<NonNullable<PurchaseOrderWithRelations['lpo']>[number] & {
+      receiving?: Array<{ receiving_date: string; do_number: string | null; created_at: string }>
+      assessments?: Array<{ id: string }>
+      tracking?: Array<{ expected_delivery_date: string | null }>
+    }>
+  }
+  const [orders, setOrders] = useState<ReceivingListOrder[]>([])
 
   const handleBulkProceedToPayment = async () => {
     if (!hospitalId) return
@@ -115,9 +107,9 @@ const ReceivingPage = () => {
 
       alert(`Proses selesai!\n- Bayaran diproses: ${processedCount} LPO\n- Gagal: ${failedCount}\n- Dilangkau/Sudah diproses: ${skippedCount}`)
       await loadOrders()
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err)
-      alert("Ralat berlaku ketika memproses bayaran: " + (err.message || String(err)))
+      alert("Ralat berlaku ketika memproses bayaran: " + (err instanceof Error ? err.message : String(err)))
     } finally {
       setIsProcessingPayment(false)
     }
@@ -200,7 +192,7 @@ const ReceivingPage = () => {
         if (lpo.expected_delivery_date) {
           expectedDateStr = lpo.expected_delivery_date
         } else if (Array.isArray(lpo.tracking) && lpo.tracking.length > 0) {
-          const track = lpo.tracking.find((t: any) => t.expected_delivery_date)
+          const track = lpo.tracking.find((t) => t.expected_delivery_date)
           if (track) {
             expectedDateStr = track.expected_delivery_date
           }
@@ -272,9 +264,9 @@ const ReceivingPage = () => {
 
       alert(`Proses selesai!\n- Berjaya dinilai: ${processedCount} resit\n- Gagal: ${failedCount}\n- Tiada tindakan diperlukan / dilangkau: ${skippedCount}`)
       await loadOrders()
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err)
-      alert("Ralat berlaku ketika memproses penilaian: " + (err.message || String(err)))
+      alert("Ralat berlaku ketika memproses penilaian: " + (err instanceof Error ? err.message : String(err)))
     } finally {
       setIsAutoFilling(false)
     }
@@ -287,15 +279,13 @@ const ReceivingPage = () => {
     setIsLoading(true)
     setError(null)
 
-    const validStatuses: POStatus[] = statusFilter === 'all' 
-      ? ['partial_received', 'completed'] 
-      : [statusFilter] as POStatus[]
+    const validStatuses: POStatus | 'all' = statusFilter === 'all' ? 'all' : statusFilter
 
     const res = await getPurchaseOrders(
       hospitalId,
       { 
         search: search || undefined,
-        status: validStatuses.join(','),
+        status: validStatuses,
       },
       page,
       pageSize
@@ -317,7 +307,7 @@ const ReceivingPage = () => {
         .in('status', ['partial_received', 'completed'])
 
       assessedLposCount = poList?.filter(po => 
-        po.lpo?.some((l: any) => l.assessments && l.assessments.length > 0)
+        po.lpo?.some(l => Array.isArray(l.assessments) && l.assessments.length > 0)
       ).length || 0
     } catch (e) {
       console.error(e)
@@ -355,8 +345,8 @@ const ReceivingPage = () => {
   }
 
   const renderStatusBadge = (status: POStatus) => {
-    const map: Record<POStatus, { color: 'success' | 'warning' | 'error' | 'info' | 'secondary'; label: string }> = {
-      draft: { color: 'secondary', label: 'DRAFT' },
+    const map: Record<POStatus, { color: 'success' | 'warning' | 'error' | 'info' | 'primary' | 'gray'; label: string }> = {
+      draft: { color: 'gray', label: 'DRAFT' },
       pending_approval: { color: 'warning', label: 'PENDING' },
       approved: { color: 'info', label: 'APPROVED' },
       sent: { color: 'info', label: 'AWAITING DELIVERY' },
@@ -364,7 +354,7 @@ const ReceivingPage = () => {
       completed: { color: 'success', label: 'COMPLETED' },
       cancelled: { color: 'error', label: 'CANCELLED' },
     }
-    const cfg = map[status] || { color: 'secondary', label: status.toUpperCase() }
+    const cfg = map[status] || { color: 'gray', label: status.toUpperCase() }
     return (
       <Badge variant={cfg.color} className="font-black text-[9px] tracking-widest px-3 py-1 border shadow-sm">
         {cfg.label}
@@ -372,19 +362,19 @@ const ReceivingPage = () => {
     )
   }
 
-  const renderPaymentStatusBadge = (order: any) => {
+  const renderPaymentStatusBadge = (order: ReceivingListOrder) => {
     if (!order.lpo || order.lpo.length === 0) {
       return (
-        <Badge variant="secondary" className="font-black text-[9px] tracking-widest px-3 py-1 border shadow-sm">
+        <Badge variant="gray" className="font-black text-[9px] tracking-widest px-3 py-1 border shadow-sm">
           UNPAID
         </Badge>
       )
     }
 
-    const statuses = order.lpo.map((l: any) => l.payment_status || 'pending')
+    const statuses = order.lpo.map((l) => l.payment_status || 'pending')
 
     if (statuses.includes('paid')) {
-      const allPaid = statuses.every((s: string) => s === 'paid')
+      const allPaid = statuses.every((status) => status === 'paid')
       return (
         <Badge variant={allPaid ? 'success' : 'warning'} className="font-black text-[9px] tracking-widest px-3 py-1 border shadow-sm">
           {allPaid ? 'FULLY PAID' : 'PARTIALLY PAID'}
@@ -401,7 +391,7 @@ const ReceivingPage = () => {
     }
 
     return (
-      <Badge variant="secondary" className="font-black text-[9px] tracking-widest px-3 py-1 border shadow-sm">
+      <Badge variant="gray" className="font-black text-[9px] tracking-widest px-3 py-1 border shadow-sm">
         UNPAID
       </Badge>
     )
@@ -425,24 +415,25 @@ const ReceivingPage = () => {
     }
   }
 
-  const getLatestReceipt = (order: any) => {
+  const getLatestReceipt = (order: ReceivingListOrder) => {
     const allReceipts: { date: string; doNumber: string; createdAt: string }[] = []
     if (order.goods_receipts) {
-      order.goods_receipts.forEach((gr: any) => {
+      order.goods_receipts.forEach((gr) => {
         allReceipts.push({
           date: gr.receipt_date,
-          doNumber: gr.delivery_note_number,
+          doNumber: gr.delivery_note_number || '',
           createdAt: gr.created_at
         })
       })
     }
     if (order.lpo) {
-      order.lpo.forEach((l: any) => {
-        if (l.receiving) {
-          l.receiving.forEach((rec: any) => {
+      order.lpo.forEach((l) => {
+        const receiving = 'receiving' in l && Array.isArray(l.receiving) ? l.receiving as Array<{ receiving_date: string; do_number: string | null; created_at: string }> : []
+        if (receiving.length) {
+          receiving.forEach((rec) => {
             allReceipts.push({
               date: rec.receiving_date,
-              doNumber: rec.do_number,
+              doNumber: rec.do_number || '',
               createdAt: rec.created_at
             })
           })
@@ -453,19 +444,20 @@ const ReceivingPage = () => {
     return allReceipts.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0]
   }
 
-  const getAllDoNumbers = (order: any) => {
+  const getAllDoNumbers = (order: ReceivingListOrder) => {
     const doNumbers = new Set<string>()
     if (order.goods_receipts) {
-      order.goods_receipts.forEach((gr: any) => {
+      order.goods_receipts.forEach((gr) => {
         if (gr.delivery_note_number) {
           doNumbers.add(gr.delivery_note_number.trim())
         }
       })
     }
     if (order.lpo) {
-      order.lpo.forEach((l: any) => {
-        if (l.receiving) {
-          l.receiving.forEach((rec: any) => {
+      order.lpo.forEach((l) => {
+        const receiving = 'receiving' in l && Array.isArray(l.receiving) ? l.receiving as Array<{ receiving_date: string; do_number: string | null; created_at: string }> : []
+        if (receiving.length) {
+          receiving.forEach((rec) => {
             if (rec.do_number) {
               doNumbers.add(rec.do_number.trim())
             }
@@ -780,7 +772,7 @@ const ReceivingPage = () => {
 
                             <Table.Cell className="py-8 border-r border-slate-50 text-center w-[150px]">
                               {(() => {
-                                const hasAssessments = order.lpo?.some((l: any) => l.assessments && l.assessments.length > 0)
+                                const hasAssessments = order.lpo?.some((l) => 'assessments' in l && Array.isArray(l.assessments) && l.assessments.length > 0)
                                 return hasAssessments ? (
                                   <span className="inline-block px-3 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 text-[10px] font-black uppercase tracking-wider rounded-lg shadow-sm">
                                     Selesai

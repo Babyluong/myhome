@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
-import { Save, Building2, Hash, User, FileText, Shield } from 'lucide-react'
+import { Save, Building2, Hash } from 'lucide-react'
 import { Button, Input, Select, Textarea } from '@/components/ui'
 import { departmentSchema, type DepartmentFormData } from '@/lib/validators'
 import { createDepartment, updateDepartment } from '@/services/departmentService'
@@ -28,7 +28,7 @@ export const DepartmentForm: React.FC<DepartmentFormProps> = ({ department, onSu
   const isEditMode = !!department
   const [hospitals, setHospitals] = useState<Hospital[]>([])
   const [users, setUsers] = useState<UserWithRelations[]>([])
-  const [selectedHospitalId, setSelectedHospitalId] = useState<string>('')
+  const [, setSelectedHospitalId] = useState<string>('')
 
   const {
     register,

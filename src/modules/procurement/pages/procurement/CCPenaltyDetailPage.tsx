@@ -1,17 +1,77 @@
-// @ts-nocheck
-import { useState, useMemo, useEffect } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useCallback, useState, useMemo, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
-import { ROUTES } from '@/lib/constants'
+import '@/lib/constants'
 import { updatePenaltyDetails, approvePenalty } from '@/services/pharmacy/penaltyService'
-import { ChevronRight, Sparkles, ArrowLeft, Printer, Save, CheckCircle2, XCircle, FileText, Building2, Calendar, Package, AlertTriangle, Shield, Plus, Trash2, Lock, HelpCircle, Unlock } from 'lucide-react'
+import { ChevronRight, Sparkles, ArrowLeft, Printer, Save, CheckCircle2, XCircle, FileText, Building2, Calendar, Package, AlertTriangle, Plus, Trash2, Lock, HelpCircle, Unlock } from 'lucide-react'
 import { Spinner, SlideOver } from '@/components/ui'
 import { PdfPreviewModal, PDFViewer } from '@/components/shared'
 import { PurchaseOrderDetailView } from './PurchaseOrderDetailView'
+import type { SupplierPenalty, User } from '@/types'
+
+interface PenaltyPurchaseOrderItem {
+  id?: string
+  item_code?: string | null
+  item_name?: string | null
+  quantity_ordered?: number
+  unit_price?: number
+  total_price?: number
+}
+
+interface PartialDelivery {
+  id: string
+  item_code?: string
+  delivery_number: string
+  date: string
+  quantity: number
+  days_late: number
+  is_late: boolean
+}
+
+interface PenaltyDetailRecord extends Omit<SupplierPenalty, 'status' | 'partial_deliveries' | 'purchase_order' | 'supplier' | 'lpo' | 'goods_receipt'> {
+  status: string
+  approved_by?: string
+  penalty_paid?: boolean
+  quantity?: number
+  unit_price?: number
+  total_order_value?: number
+  minimum_penalty_amount?: number
+  selected_penalty_type?: string
+  payment_kaedah?: number
+  kkm_contract_number?: string
+  do_number?: string
+  prepared_by_user_id?: string
+  verified_by_user_id?: string
+  prepared_by_name?: string
+  prepared_by_designation?: string
+  verified_by_name?: string
+  verified_by_designation?: string
+  approved_by_name?: string
+  approved_by_designation?: string
+  prepared_at?: string
+  verified_at?: string
+  approved_at?: string
+  partial_deliveries?: PartialDelivery[]
+  supplier?: { company_name?: string; address?: string | null } | null
+  purchase_order?: { id: string; po_number?: string; total_amount?: number; expected_delivery_date?: string; items?: PenaltyPurchaseOrderItem[] } | null
+  lpo?: { lpo_number?: string; document_url?: string | null; document_date?: string; expected_delivery_date?: string | null } | null
+  goods_receipt?: { gr_number?: string; receipt_date?: string; delivery_note_number?: string | null } | null
+  order_tracking?: { item_code?: string | null; item_name?: string | null; kkm_contract_number?: string | null; expected_delivery_date?: string | null; actual_delivery_date?: string | null } | null
+  receiving?: { do_number?: string | null; receiving_date?: string } | null
+  prepared_by?: (Pick<User, 'full_name'> & { jawatan: string | null }) | null
+  verified_by?: (Pick<User, 'full_name'> & { jawatan: string | null }) | null
+  approved_by_user?: (Pick<User, 'full_name'> & { jawatan: string | null }) | null
+}
+
+interface SignatoryUser {
+  id: string
+  full_name: string
+  jawatan?: string
+}
 
 interface Props {
-  penalty: any
+  penalty: PenaltyDetailRecord
   onRefresh: () => void
 }
 
@@ -52,7 +112,7 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
   const matchingPoItem = useMemo(() => {
     const code = penalty.item_code || penalty.order_tracking?.item_code
     const name = penalty.item_name || penalty.order_tracking?.item_name
-    return poItems.find((i: any) => 
+    return poItems.find((i: PenaltyPurchaseOrderItem) =>
       (code && i.item_code === code) || (name && i.item_name === name)
     ) || poItems[0]
   }, [poItems, penalty])
@@ -60,7 +120,7 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
   const [totalOrderValue, setTotalOrderValue] = useState(() => {
     if (penalty.total_order_value) return Number(penalty.total_order_value)
     if (penalty.purchase_order?.total_amount) return Number(penalty.purchase_order.total_amount)
-    const itemsSum = poItems.reduce((sum: number, item: any) => sum + Number(item.total_price || 0), 0)
+    const itemsSum = poItems.reduce((sum, item) => sum + Number(item.total_price || 0), 0)
     if (itemsSum > 0) return itemsSum
     return 0
   })
@@ -72,7 +132,7 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
   const [preparedById, setPreparedById] = useState(penalty.prepared_by_user_id || '')
   const [verifiedById, setVerifiedById] = useState(penalty.verified_by_user_id || '')
   const [approvedById, setApprovedById] = useState(penalty.approved_by || '')
-  const [systemUsers, setSystemUsers] = useState<any[]>([])
+  const [systemUsers, setSystemUsers] = useState<SignatoryUser[]>([])
 
   useEffect(() => {
     async function loadUsers() {
@@ -102,10 +162,10 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
   }, [systemUsers, approvedById, penalty.approved_by_user])
 
   // Partial deliveries list state
-  const [partialDeliveries, setPartialDeliveries] = useState<any[]>(() => {
+  const [partialDeliveries, setPartialDeliveries] = useState<PartialDelivery[]>(() => {
     if (penalty.partial_deliveries && Array.isArray(penalty.partial_deliveries) && penalty.partial_deliveries.length > 0) {
       const firstItemCode = poItems[0]?.item_code || ''
-      return penalty.partial_deliveries.map((del: any) => ({
+      return penalty.partial_deliveries.map(del => ({
         ...del,
         item_code: del.item_code || firstItemCode
       }))
@@ -132,31 +192,27 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
   const po = penalty.purchase_order
   const tracking = penalty.order_tracking
 
-  // Fetch GR history to initialize partial deliveries automatically if not set in DB
-  useEffect(() => {
-    if (penalty.po_id && (!penalty.partial_deliveries || penalty.partial_deliveries.length === 0)) {
-      initializePartialDeliveries()
-    }
-  }, [penalty.po_id])
-
-  const initializePartialDeliveries = async () => {
+  const initializePartialDeliveries = useCallback(async () => {
+    if (!penalty.po_id) return
     try {
       const { getGoodsReceiptHistory } = await import('@/services/pharmacy/receivingService')
       const res = await getGoodsReceiptHistory(penalty.po_id)
       if (res.data && res.data.length > 0) {
         const grs = res.data
-        const matches: any[] = []
+        const matches: PartialDelivery[] = []
         
         // Loop over each item on the PO
-        poItems.forEach((poItem: any) => {
+        poItems.forEach(poItem => {
+          const itemCode = poItem.item_code
+          if (!itemCode) return
           let deliveryCount = 0
           
           // Sort goods receipts by receipt date ascending so that we index deliveries chronologically
-          const sortedGrs = [...grs].sort((a: any, b: any) => new Date(a.receipt_date).getTime() - new Date(b.receipt_date).getTime())
+          const sortedGrs = [...grs].sort((a, b) => new Date(a.receipt_date).getTime() - new Date(b.receipt_date).getTime())
           
-          sortedGrs.forEach((gr: any) => {
+          sortedGrs.forEach(gr => {
             const itemMatch = gr.items?.find(
-              (i: any) => i.po_item?.item_code === poItem.item_code || i.item_code === poItem.item_code
+              i => i.po_item?.item_code === poItem.item_code || i.item_code === poItem.item_code
             )
             if (!itemMatch || !itemMatch.quantity_received) return
 
@@ -174,8 +230,8 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
 
             deliveryCount++
             matches.push({
-              id: `${gr.id || 'gr'}-${poItem.item_code}-${deliveryCount}`,
-              item_code: poItem.item_code,
+              id: `${gr.id || 'gr'}-${itemCode}-${deliveryCount}`,
+              item_code: itemCode,
               delivery_number: `${deliveryCount}${getOrdinalSuffix(deliveryCount)} Delivery`,
               date: gr.receipt_date,
               quantity: itemMatch.quantity_received || 0,
@@ -192,7 +248,14 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
     } catch (err) {
       console.error('Failed to auto-initialize partial deliveries:', err)
     }
-  }
+  }, [penalty.po_id, poItems, penalty.expected_delivery_date, po?.expected_delivery_date])
+
+  // Fetch GR history to initialize partial deliveries automatically if not set in DB
+  useEffect(() => {
+    if (penalty.po_id && (!penalty.partial_deliveries || penalty.partial_deliveries.length === 0)) {
+      void initializePartialDeliveries()
+    }
+  }, [initializePartialDeliveries, penalty.po_id, penalty.partial_deliveries])
 
   const getOrdinalSuffix = (i: number) => {
     const j = i % 10, k = i % 100
@@ -203,11 +266,11 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
   }
 
   // Delivery handlers
-  const updateDelivery = (id: string, field: string, value: any) => {
+  const updateDelivery = (id: string, field: keyof PartialDelivery, value: string | number | boolean) => {
     setPartialDeliveries(prev => prev.map(del => {
       if (del.id !== id) return del
       const updated = { ...del, [field]: value }
-      if (field === 'days_late') {
+      if (field === 'days_late' && typeof value === 'number') {
         updated.is_late = value > 0
       }
       return updated
@@ -242,7 +305,7 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
     let maxDaysLate = 0
 
     partialDeliveries.forEach(del => {
-      const matchingItem = poItems.find((i: any) => i.item_code === del.item_code)
+      const matchingItem = poItems.find(i => i.item_code === del.item_code)
       const price = Number(matchingItem?.unit_price || penalty.unit_price || 0)
       
       if (del.days_late > 0) {
@@ -272,7 +335,7 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
       totalLateQty,
       maxDaysLate
     }
-  }, [poItems, partialDeliveries, totalOrderValue, selectedPenaltyType, penalty.minimum_penalty_amount, penalty.unit_price, paymentKaedah])
+  }, [poItems, partialDeliveries, totalOrderValue, selectedPenaltyType, penalty.minimum_penalty_amount, penalty.unit_price])
 
   const formatDate = (d?: string) => {
     if (!d) return 'â€”'
@@ -293,8 +356,8 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
         `Successfully marked penalty as ${nextPaidState ? 'Paid' : 'Unpaid'}.`
       )
       if (onRefresh) onRefresh()
-    } catch (error: any) {
-      toast.error('Error', error.message || 'Failed to update payment status.')
+    } catch (error: unknown) {
+      toast.error('Error', (error instanceof Error ? error.message : 'Failed to update payment status.'))
     } finally {
       setSaving(false)
     }
@@ -315,38 +378,33 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
         unit_price: Number(firstItem.unit_price || 0),
         days_delayed: calculation.maxDaysLate,
         total_order_value: totalOrderValue,
-        kkm_contract_number: kkmContract,
         payment_kaedah: paymentKaedah,
-        selected_penalty_type: selectedPenaltyType,
-        calculated_penalty_amount: calculation.calculated,
         penalty_amount: calculation.final,
         partial_deliveries: partialDeliveries,
         penalty_paid: penaltyPaid,
         notes: finalNotes,
         
         // Dynamic Signature Blocks
-        prepared_by_user_id: preparedById || null,
-        prepared_by_name: preparedById ? (selectedPreparedUser?.full_name || 'AMRI AMIT') : null,
-        prepared_by_designation: preparedById ? (selectedPreparedUser?.jawatan || 'PENOLONG PEGAWAI FARMASI U5') : null,
-        prepared_at: preparedById ? (penalty.prepared_at || new Date().toISOString()) : null,
+        prepared_by_user_id: preparedById || undefined,
+        prepared_by_name: preparedById ? (selectedPreparedUser?.full_name || 'AMRI AMIT') : undefined,
+        prepared_by_designation: preparedById ? (selectedPreparedUser?.jawatan || 'PENOLONG PEGAWAI FARMASI U5') : undefined,
+        prepared_at: preparedById ? (penalty.prepared_at || new Date().toISOString()) : undefined,
 
-        verified_by_user_id: verifiedById || null,
-        verified_by_name: verifiedById ? (selectedVerifiedUser?.full_name || 'KAMRIAH BT HAJI MAIL') : null,
-        verified_by_designation: verifiedById ? (selectedVerifiedUser?.jawatan || 'PENOLONG PEGAWAI FARMASI U7 TBK 2') : null,
-        verified_at: verifiedById ? (penalty.verified_at || new Date().toISOString()) : null,
+        verified_by_user_id: verifiedById || undefined,
+        verified_by_name: verifiedById ? (selectedVerifiedUser?.full_name || 'KAMRIAH BT HAJI MAIL') : undefined,
+        verified_by_designation: verifiedById ? (selectedVerifiedUser?.jawatan || 'PENOLONG PEGAWAI FARMASI U7 TBK 2') : undefined,
+        verified_at: verifiedById ? (penalty.verified_at || new Date().toISOString()) : undefined,
 
-        approved_by: approvedById || null,
-        approved_by_name: approvedById ? (selectedApprovedUser?.full_name || 'TAN YUAN ZHANG') : null,
-        approved_by_designation: approvedById ? (selectedApprovedUser?.jawatan || 'PEGAWAI FARMASI UF 12') : null,
-        approved_at: approvedById ? (penalty.approved_at || new Date().toISOString()) : null
+        approved_by_name: approvedById ? (selectedApprovedUser?.full_name || 'TAN YUAN ZHANG') : undefined,
+        approved_by_designation: approvedById ? (selectedApprovedUser?.jawatan || 'PEGAWAI FARMASI UF 12') : undefined
       })
       if (res.error) throw new Error(res.error)
       toast.success('Saved', 'Penalty details updated successfully.')
       setIsUnlockedForEditing(false)
       setEditReason('')
       onRefresh()
-    } catch (err: any) {
-      toast.error('Error', err.message || 'Failed to save.')
+    } catch (err: unknown) {
+      toast.error('Error', (err instanceof Error ? err.message : 'Failed to save.'))
     } finally {
       setSaving(false)
     }
@@ -361,8 +419,8 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
       if (res.error) throw new Error(res.error)
       toast.success('Approved', 'Penalty has been approved.')
       onRefresh()
-    } catch (err: any) {
-      toast.error('Error', err.message || 'Failed to approve.')
+    } catch (err: unknown) {
+      toast.error('Error', (err instanceof Error ? err.message : 'Failed to approve.'))
     } finally {
       setSaving(false)
     }
@@ -418,8 +476,8 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
       setPreviewUrl(url)
       setIsPreviewOpen(true)
       toast.success('Preview Ready', 'Document preview generated.')
-    } catch (err: any) {
-      toast.error('Error', err.message || 'Failed to generate PDF.')
+    } catch (err: unknown) {
+      toast.error('Error', (err instanceof Error ? err.message : 'Failed to generate PDF.'))
     }
   }
   const statusColors: Record<string, string> = {
@@ -635,7 +693,7 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
 
               {/* Loop over each PO item */}
               <div className="space-y-8">
-                {poItems.map((item: any, itemIdx: number) => {
+                {poItems.map((item: PenaltyPurchaseOrderItem, itemIdx: number) => {
                   const itemDeliveries = partialDeliveries.filter(del => del.item_code === item.item_code)
                   const itemPrice = Number(item.unit_price || 0)
                   const itemQtyOrdered = Number(item.quantity_ordered || 0)
@@ -679,7 +737,7 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
                           <div className="w-px h-6 bg-subtle hidden sm:block" />
                           <button
                             type="button"
-                            onClick={() => !isReadOnly && addDeliveryRowForItem(item.item_code)}
+                                onClick={() => !isReadOnly && item.item_code && addDeliveryRowForItem(item.item_code)}
                             disabled={isReadOnly}
                             className="flex items-center gap-1 px-3 py-1.5 bg-indigo-600 hover:bg-indigo-750 text-white text-[10px] font-black rounded-lg transition-colors ml-auto shrink-0 shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                           >
@@ -1001,7 +1059,7 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
                         className="w-full px-3 py-2 text-xs font-extrabold bg-surface border border-slate-250 rounded-xl focus:border-indigo-500 outline-none transition-colors cursor-pointer text-text-primary shadow-sm disabled:opacity-75 disabled:cursor-not-allowed"
                       >
                         <option value="">-- Choose Signatory --</option>
-                        {systemUsers.map((u: any) => (
+                        {systemUsers.map((u: SignatoryUser) => (
                           <option key={u.id} value={u.id}>
                             {u.full_name} ({u.jawatan || 'Pegawai'})
                           </option>
@@ -1160,7 +1218,7 @@ export function CCPenaltyDetailPage({ penalty, onRefresh }: Props) {
       >
         {(po?.id || penalty.po_id) && (
           <PurchaseOrderDetailView 
-            id={penalty.po_id || po.id} 
+            id={penalty.po_id || po?.id || ''}
             onClose={() => setIsPoDrawerOpen(false)} 
             isSlideOver={true}
             onMutate={onRefresh}

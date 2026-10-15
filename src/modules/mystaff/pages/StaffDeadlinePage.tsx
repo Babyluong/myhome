@@ -3,20 +3,7 @@
 
 import React, { useEffect, useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  Clock,
-  Plus,
-  ArrowLeft,
-  Calendar,
-  AlertTriangle,
-  CheckCircle2,
-  FileText,
-  DollarSign,
-  Shield,
-  TrendingDown,
-  Search,
-  Filter
-} from 'lucide-react'
+import { Plus, ArrowLeft, CheckCircle2 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
@@ -27,7 +14,7 @@ import {
   updateDeadlineStatus
 } from '@/modules/mystaff/services/staffService'
 import type { StaffDeadline, DeadlineCategory, DeadlinePriority } from '@/shared/types/mystaff'
-import { Button, Modal, Badge } from '@/components/ui'
+import { Button, Modal } from '@/components/ui'
 
 export const StaffDeadlinePage: React.FC = () => {
   const navigate = useNavigate()

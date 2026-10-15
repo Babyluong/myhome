@@ -1,5 +1,4 @@
-// @ts-nocheck
-import { useState, useEffect } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/lib/constants'
 
@@ -12,7 +11,7 @@ import {
   IconFileText
 } from '@/components/ui/Icons'
 import { getPenalties, getPenaltyStats, updatePenaltyStatus, deletePenalty } from '@/services/pharmacy/penaltyService'
-import type { SupplierPenalty } from '@/types/pharmacy'
+import type { SupplierPenalty, PenaltyStatus } from '@/types/pharmacy'
 import { useAuthStore } from '@/stores/authStore'
 import { Spinner, Input, Select, SlideOver } from '@/components/ui'
 import { PurchaseOrderDetailView } from './PurchaseOrderDetailView'
@@ -22,13 +21,14 @@ import { ChevronRight, ChevronLeft, Sparkles, DollarSign, Trash2 } from 'lucide-
 import { motion } from 'framer-motion'
 
 export default function PenaltyPage() {
+  type PenaltyListRecord = SupplierPenalty & { receiving?: { do_number?: string | null } | null; selected_penalty_type?: string }
   const navigate = useNavigate()
   const { user } = useAuthStore()
   const toast = useToast()
   const hospitalId = user?.hospital_id
 
-  const [penalties, setPenalties] = useState<SupplierPenalty[]>([])
-  const [stats, setStats] = useState<any>(null)
+  const [penalties, setPenalties] = useState<PenaltyListRecord[]>([])
+  const [stats, setStats] = useState<Awaited<ReturnType<typeof getPenaltyStats>>['data']>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
@@ -39,21 +39,17 @@ export default function PenaltyPage() {
   const [pageSize, setPageSize] = useState(50)
   const [totalRecords, setTotalRecords] = useState(0)
   const [totalPages, setTotalPages] = useState(0)
+  const searchRef = useRef(search)
+  searchRef.current = search
 
-  useEffect(() => {
-    if (hospitalId) {
-      loadData()
-    }
-  }, [hospitalId, statusFilter, activeTab, page, pageSize])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!hospitalId) return
     setIsLoading(true)
     
     try {
-      const filter: any = {
+      const filter: { status?: string; search?: string; penalty_type?: 'appl' | 'cc' } = {
         status: statusFilter !== 'all' ? statusFilter : undefined,
-        search: search || undefined
+        search: searchRef.current || undefined
       }
 
       if (activeTab !== 'all') {
@@ -78,7 +74,13 @@ export default function PenaltyPage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [hospitalId, statusFilter, activeTab, page, pageSize])
+
+  useEffect(() => {
+    if (hospitalId) {
+      void loadData()
+    }
+  }, [hospitalId, statusFilter, activeTab, page, pageSize, loadData])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -86,7 +88,7 @@ export default function PenaltyPage() {
     loadData()
   }
 
-  const handleStatusUpdate = async (id: string, newStatus: any, event: React.MouseEvent) => {
+  const handleStatusUpdate = async (id: string, newStatus: PenaltyStatus, event: React.MouseEvent) => {
     event.stopPropagation() // Prevent row click navigation
     if (!user?.id) return
     
@@ -104,8 +106,8 @@ export default function PenaltyPage() {
       const friendlyStatus = newStatus === 'enforced' ? 'Submitted' : newStatus === 'waived' ? 'Rejected' : newStatus
       toast.success(`Penalty marked as ${friendlyStatus}`)
       loadData()
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to update penalty')
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Failed to update penalty')
     }
   }
 
@@ -129,8 +131,8 @@ export default function PenaltyPage() {
 
       toast.success('Penalty record deleted successfully')
       loadData()
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to delete penalty')
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : 'Failed to delete penalty')
     }
   }
 
@@ -353,7 +355,7 @@ export default function PenaltyPage() {
             <button
               key={tab.id}
               onClick={() => {
-                setActiveTab(tab.id as any)
+                setActiveTab(tab.id as 'all' | 'appl' | 'cc')
                 setPage(1)
               }}
               className={cn(
@@ -488,11 +490,11 @@ export default function PenaltyPage() {
                           </div>
                         </td>
                         <td className="px-4 py-3.5 whitespace-nowrap">
-                          {(penalty.goods_receipt?.delivery_note_number || (penalty as any).receiving?.do_number) ? (
+                          {(penalty.goods_receipt?.delivery_note_number || penalty.receiving?.do_number) ? (
                             <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-subtle border border-border-default rounded-lg text-xs font-bold text-text-primary shadow-xs">
                               <IconFileText className="w-3.5 h-3.5 text-text-muted" />
                               <span className="font-mono uppercase">
-                                {penalty.goods_receipt?.delivery_note_number || (penalty as any).receiving?.do_number}
+                                {penalty.goods_receipt?.delivery_note_number || penalty.receiving?.do_number}
                               </span>
                             </div>
                           ) : (
@@ -526,7 +528,7 @@ export default function PenaltyPage() {
                             <span className="text-xs font-extrabold text-rose-600 font-mono tracking-tight">
                               {penalty.penalty_amount ? formatCurrency(Number(penalty.penalty_amount)) : 'RM 0.00'}
                             </span>
-                            {(penalty as any).selected_penalty_type === 'minimum' && (
+                            {penalty.selected_penalty_type === 'minimum' && (
                               <span className="text-[10px] font-extrabold text-rose-700 bg-rose-100 border border-rose-300 px-1.5 py-0.5 rounded uppercase tracking-wider">
                                 MIN FINE
                               </span>
@@ -655,7 +657,7 @@ export default function PenaltyPage() {
                         <div>
                           <span className="text-xs font-bold text-text-muted uppercase tracking-wider block leading-none mb-1">DO Number</span>
                           <p className="text-xs font-mono font-bold text-text-primary uppercase">
-                            {penalty.goods_receipt?.delivery_note_number || (penalty as any).receiving?.do_number || '—'}
+                            {penalty.goods_receipt?.delivery_note_number || penalty.receiving?.do_number || '—'}
                           </p>
                         </div>
                         <div>

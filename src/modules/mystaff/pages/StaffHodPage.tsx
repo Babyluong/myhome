@@ -3,20 +3,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  ShieldCheck,
-  CheckCircle2,
-  XCircle,
-  Clock,
-  ArrowLeft,
-  Calendar,
-  UserCheck,
-  Printer,
-  FileText,
-  Users,
-  AlertCircle,
-  Building
-} from 'lucide-react'
+import { CheckCircle2, XCircle, ArrowLeft, UserCheck, Printer } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
@@ -27,7 +14,7 @@ import {
   getStaffDashboardStats
 } from '@/modules/mystaff/services/staffService'
 import type { StaffLeaveApplication, StaffDashboardStats } from '@/shared/types/mystaff'
-import { Button, Badge, Modal } from '@/components/ui'
+import { Button, Modal } from '@/components/ui'
 
 export const StaffHodPage: React.FC = () => {
   const navigate = useNavigate()

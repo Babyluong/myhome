@@ -1,8 +1,8 @@
 // @ts-nocheck
 import React from 'react'
-import { Navigate } from 'react-router-dom'
+import 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
-import { SYSTEM_ROLES, ROUTES } from '@/lib/constants'
+import { SYSTEM_ROLES } from '@/lib/constants'
 import { SystemAdminDashboard } from './SystemAdminDashboard'
 import { HospitalAdminDashboard } from './HospitalAdminDashboard'
 import { PharmacyLogisticsDashboard } from '@/modules/mywarrant/pages/dashboard/PharmacyLogisticsDashboard'

@@ -9,6 +9,8 @@ import { getDrugTherapeuticCategory, getDrugPrescriberCategory } from '@/lib/dru
 import type { FacilityNonDrugItem } from '@/services/pharmacy/facilityNonDrugInventoryService'
 import type { FacilityDrugItem } from '@/services/pharmacy/facilityDrugInventoryService'
 
+type ExcelCell = string | number | boolean | Date | null | undefined
+
 export interface FacilityInventoryExcelOptions {
   hospitalName?: string
   departmentName?: string
@@ -21,7 +23,7 @@ export interface FacilityInventoryExcelOptions {
 /**
  * Calculates optimal column widths for an XLSX worksheet
  */
-function setAutoColumnWidths(ws: XLSX.WorkSheet, data: any[][]) {
+function setAutoColumnWidths(ws: XLSX.WorkSheet, data: ExcelCell[][]) {
   const colWidths: number[] = []
 
   data.forEach(row => {
@@ -74,7 +76,7 @@ export function exportFacilityNonDrugInventoryToExcel(
 
   const totalStockUnits = items.reduce((acc, item) => acc + (Number(item.facility_stock) || 0), 0)
   const totalValuation = items.reduce((acc, item) => {
-    const price = Number(item.price ?? (item as any).unit_price ?? 0)
+    const price = Number(item.price ?? item.unit_price ?? 0)
     const stock = Number(item.facility_stock ?? 0)
     return acc + price * stock
   }, 0)
@@ -82,7 +84,7 @@ export function exportFacilityNonDrugInventoryToExcel(
   // ───────────────────────────────────────────────────────────────────────────
   // SHEET 1: Master Inventory Table
   // ───────────────────────────────────────────────────────────────────────────
-  const masterRows: any[][] = [
+  const masterRows: ExcelCell[][] = [
     ['KERAJAAN MALAYSIA - KEMENTERIAN KESIHATAN MALAYSIA'],
     [`${hospitalName.toUpperCase()}, SARAWAK`],
     [`SENARAI INVENTORI BUKAN UBAT FASILITI - ${skim.toUpperCase()}`],
@@ -119,17 +121,17 @@ export function exportFacilityNonDrugInventoryToExcel(
   items.forEach((item, index) => {
     const code = item.item_code || item.sku || '-'
     const name = item.item_name || '-'
-    const category = item.category?.category_name || (item as any).category_name || 'General'
+    const category = item.category?.category_name || item.category_name || 'General'
     const vote = (item.procurement_vote || 'appl').toUpperCase()
-    const uom = item.unit_of_measure || (item as any).uom || 'PACK'
+    const uom = item.unit_of_measure || item.uom || 'PACK'
     const packaging = item.packaging_description || '-'
     const stock = Number(item.facility_stock) || 0
     const minLevel = Number(item.min_stock_level) || 0
     const maxLevel = Number(item.max_stock_level) || 0
     const bufferLevel = Number(item.min_buffer_level) || 0
-    const batchNo = item.batch_number || (item as any).batch_no || '-'
-    const expDate = formatDisplayDate(item.expiry_date || (item as any).exp_date)
-    const price = Number(item.price ?? (item as any).unit_price ?? 0)
+    const batchNo = item.batch_number || item.batch_no || '-'
+    const expDate = formatDisplayDate(item.expiry_date || item.exp_date)
+    const price = Number(item.price ?? item.unit_price ?? 0)
     const lineTotal = Number((price * stock).toFixed(2))
     
     // Store location
@@ -138,8 +140,8 @@ export function exportFacilityNonDrugInventoryToExcel(
       locationStr = [item.store_code, item.rack_name, item.level_name].filter(Boolean).join(' / ')
     }
 
-    const supplier = item.supplier?.supplier_name || item.cc_supplier_name || (item as any).supplier_name || '-'
-    const contractNo = item.cc_contract_number || (item as any).kkm_contract_number || (item as any).contract_number || '-'
+    const supplier = item.supplier?.company_name || item.cc_supplier_name || item.supplier_name || '-'
+    const contractNo = item.cc_contract_number || item.kkm_contract_number || item.contract_number || '-'
     const contractStart = formatDisplayDate(item.cc_contract_start_date)
     const contractEnd = formatDisplayDate(item.cc_contract_end_date)
     const status = item.is_active !== false ? 'Aktif' : 'Tidak Aktif'
@@ -201,7 +203,7 @@ export function exportFacilityNonDrugInventoryToExcel(
   // SHEET 2: Ringkasan Mengikut Skim
   // ───────────────────────────────────────────────────────────────────────────
   const votes = ['APPL', 'CC', 'LP', 'DP']
-  const skimRows: any[][] = [
+  const skimRows: ExcelCell[][] = [
     ['RINGKASAN INVENTORI BUKAN UBAT MENGIKUT SKIM PEROLEHAN'],
     [`Hospital: ${hospitalName} | Tarikh: ${dateStr}`],
     [],
@@ -213,7 +215,7 @@ export function exportFacilityNonDrugInventoryToExcel(
     const count = vItems.length
     const stock = vItems.reduce((acc, i) => acc + (Number(i.facility_stock) || 0), 0)
     const val = vItems.reduce((acc, i) => {
-      const p = Number(i.price ?? (i as any).unit_price ?? 0)
+      const p = Number(i.price ?? i.unit_price ?? 0)
       const s = Number(i.facility_stock ?? 0)
       return acc + p * s
     }, 0)
@@ -235,9 +237,9 @@ export function exportFacilityNonDrugInventoryToExcel(
   // ───────────────────────────────────────────────────────────────────────────
   const catMap = new Map<string, { count: number; stock: number; value: number }>()
   items.forEach(item => {
-    const cat = item.category?.category_name || (item as any).category_name || 'General'
+    const cat = item.category?.category_name || item.category_name || 'General'
     const stock = Number(item.facility_stock) || 0
-    const price = Number(item.price ?? (item as any).unit_price ?? 0)
+    const price = Number(item.price ?? item.unit_price ?? 0)
     const val = price * stock
 
     const current = catMap.get(cat) || { count: 0, stock: 0, value: 0 }
@@ -250,7 +252,7 @@ export function exportFacilityNonDrugInventoryToExcel(
 
   const sortedCats = Array.from(catMap.entries()).sort((a, b) => b[1].value - a[1].value)
 
-  const catRows: any[][] = [
+  const catRows: ExcelCell[][] = [
     ['RINGKASAN INVENTORI BUKAN UBAT MENGIKUT KATEGORI'],
     [`Hospital: ${hospitalName} | Tarikh: ${dateStr}`],
     [],
@@ -322,7 +324,7 @@ export function exportFacilityDrugInventoryToExcel(
 
   const totalStockUnits = items.reduce((acc, item) => acc + (Number(item.facility_stock) || 0), 0)
   const totalValuation = items.reduce((acc, item) => {
-    const price = Number(item.price ?? (item as any).unit_price ?? 0)
+    const price = Number(item.price ?? item.unit_price ?? 0)
     const stock = Number(item.facility_stock ?? 0)
     return acc + price * stock
   }, 0)
@@ -330,7 +332,7 @@ export function exportFacilityDrugInventoryToExcel(
   // ───────────────────────────────────────────────────────────────────────────
   // SHEET 1: Master Drug Inventory Table
   // ───────────────────────────────────────────────────────────────────────────
-  const masterRows: any[][] = [
+  const masterRows: ExcelCell[][] = [
     ['KERAJAAN MALAYSIA - KEMENTERIAN KESIHATAN MALAYSIA'],
     [`${hospitalName.toUpperCase()}, SARAWAK`],
     [`SENARAI FORMULARI & INVENTORI UBAT FASILITI - ${skim.toUpperCase()}`],
@@ -379,13 +381,13 @@ export function exportFacilityDrugInventoryToExcel(
     const minLevel = Number(item.min_stock_level) || 0
     const maxLevel = Number(item.max_stock_level) || 0
     const bufferLevel = Number(item.min_buffer_level) || 0
-    const batchNo = item.batch_number || (item as any).batch_no || '-'
-    const expDate = formatDisplayDate(item.expiry_date || (item as any).exp_date)
-    const price = Number(item.price ?? (item as any).unit_price ?? 0)
+    const batchNo = item.batch_number || item.batch_no || '-'
+    const expDate = formatDisplayDate(item.expiry_date || item.exp_date)
+    const price = Number(item.price ?? item.unit_price ?? 0)
     const lineTotal = Number((price * stock).toFixed(2))
     const locationStr = item.location || '-'
     const status = item.is_active !== false ? 'Aktif' : 'Tidak Aktif'
-    const notes = (item as any).notes || ''
+    const notes = item.notes || ''
 
     masterRows.push([
       index + 1,
@@ -442,7 +444,7 @@ export function exportFacilityDrugInventoryToExcel(
   // SHEET 2: Ringkasan Mengikut Skim
   // ───────────────────────────────────────────────────────────────────────────
   const votes = ['APPL', 'CC', 'LP', 'DP']
-  const skimRows: any[][] = [
+  const skimRows: ExcelCell[][] = [
     ['RINGKASAN FORMULARI UBAT MENGIKUT SKIM PEROLEHAN'],
     [`Hospital: ${hospitalName} | Tarikh: ${dateStr}`],
     [],
@@ -454,7 +456,7 @@ export function exportFacilityDrugInventoryToExcel(
     const count = vItems.length
     const stock = vItems.reduce((acc, i) => acc + (Number(i.facility_stock) || 0), 0)
     const val = vItems.reduce((acc, i) => {
-      const p = Number(i.price ?? (i as any).unit_price ?? 0)
+      const p = Number(i.price ?? i.unit_price ?? 0)
       const s = Number(i.facility_stock ?? 0)
       return acc + p * s
     }, 0)

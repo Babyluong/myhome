@@ -1,16 +1,16 @@
-// @ts-nocheck
 import { supabase, isSupabaseConfigured } from '@/services/supabase'
 import type { ApiResponse } from '@/types'
 import type {
   BudgetQuery,
   UnifiedBudgetSummary,
   Warrant,
+  PurchaseOrderWithRelations,
   WarrantCategory,
   WarrantDepartment,
   WarrantVoteCode,
   WarrantVoteActivity
 } from '@/types/pharmacy'
-import { getSharedDepartments, getPrimaryDepartment, normalize } from './warrantService'
+import { getSharedDepartments, normalize } from './warrantService'
 
 /**
  * Normalizes voteCode(s) and automatically handles special allocations like Duit Khas.
@@ -71,7 +71,7 @@ export async function getUnifiedBudgetSummary(
     const resolvedVoteCodes = resolveVoteCodes(voteCode, category)
 
     if (!isSupabaseConfigured()) {
-      return { data: null as any, error: 'Supabase not configured' }
+      return { data: null, error: 'Supabase not configured' }
     }
 
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -154,7 +154,7 @@ export async function getUnifiedBudgetSummary(
     // pooledPOs: every PO from the shared department group (for balance calculation)
     const pooledPOs = allPOs.filter(po => {
       if (department && department !== 'all') {
-        const normDept = normalize(po.department)
+        const normDept = normalize(po.department ?? null)
         return sharedDepts.includes(normDept)
       }
       return true
@@ -316,7 +316,7 @@ export async function getUnifiedBudgetSummary(
   } catch (error) {
     console.error('Error in getUnifiedBudgetSummary:', error)
     return {
-      data: null as any,
+      data: null,
       error: error instanceof Error ? error.message : 'Failed to fetch unified budget summary',
     }
   }
@@ -329,7 +329,7 @@ export async function getBudgetForPO(
   hospitalId: string,
   voteCode: WarrantVoteCode,
   voteActivity: WarrantVoteActivity,
-  department: WarrantDepartment,
+  department: WarrantDepartment | 'all',
   category?: WarrantCategory,
   excludePoId?: string,
   asOfDate?: string
@@ -366,7 +366,7 @@ export async function getBudgetForPO(
  */
 export async function getExpenseList(
   query: BudgetQuery
-): Promise<ApiResponse<any[]>> {
+): Promise<ApiResponse<BudgetExpense[]>> {
   try {
     const { hospitalId, fiscalYear, voteCode, voteActivity, category, department } = query
     const startDate = `${fiscalYear}-01-01`
@@ -407,9 +407,10 @@ export async function getExpenseList(
     if (error) throw error
 
     // Filter in-memory with normalization â€” EXACT department match for unit-specific list
-    const filteredData = (data || []).filter(po => {
+    const purchaseOrders = (data || []) as BudgetExpensePurchaseOrder[]
+    const filteredData = purchaseOrders.filter(po => {
       if (department && department !== 'all') {
-        const normDept = normalize(po.department)
+        const normDept = normalize(po.department ?? null)
         return normDept === department // Exact match: only this unit's POs
       }
       return true
@@ -421,36 +422,34 @@ export async function getExpenseList(
       .map(po => po.id)
 
     if (poIdsToLookup.length > 0) {
-      try {
-        const { data: logs } = await supabase
-          .from('approval_logs')
-          .select(`
+      const { data: logs, error: logsError } = await supabase
+        .from('approval_logs')
+        .select(`
             entity_id,
             action,
             users:users!approval_logs_approved_by_fkey1(full_name)
           `)
-          .in('entity_id', poIdsToLookup)
-          .in('action', ['approved', 'auto_approved'])
-          .order('created_at', { ascending: false })
+        .in('entity_id', poIdsToLookup)
+        .in('action', ['approved', 'auto_approved'])
+        .order('created_at', { ascending: false })
 
-        if (logs) {
-          const latestLogsMap = new Map()
-          logs.forEach((log: any) => {
-            if (!latestLogsMap.has(log.entity_id)) {
-              latestLogsMap.set(log.entity_id, log)
-            }
-          })
+      if (logsError) throw logsError
 
-          filteredData.forEach(po => {
+      if (logs) {
+        const latestLogsMap = new Map<string, ApprovalLogApprover>()
+        ;(logs as ApprovalLogApprover[]).forEach(log => {
+          if (!latestLogsMap.has(log.entity_id)) {
+            latestLogsMap.set(log.entity_id, log)
+          }
+        })
+
+        filteredData.forEach(po => {
             // Priority:
             // 1. Database join (po.approver)
             // 2. signature_snapshot.headName
             // 3. approval_logs fallback
             
-            // DUMMY TEST for verification
-            if (po.po_number === 'PO-2026-0382') {
-              po.approver = { full_name: 'TEST APPROVER NAME' }
-            } else if (!po.approver || !po.approver.full_name) {
+            if (!po.approver || !po.approver.full_name) {
               // Try signature snapshot first
               if (po.signature_snapshot?.headName) {
                 po.approver = { full_name: po.signature_snapshot.headName }
@@ -458,17 +457,15 @@ export async function getExpenseList(
               // Then try logs
               else {
                 const log = latestLogsMap.get(po.id)
-                if (log && log.users) {
+                const logUser = Array.isArray(log?.users) ? log.users[0] : log?.users
+                if (logUser?.full_name) {
                   po.approver = {
-                    full_name: log.users.full_name
+                    full_name: logUser.full_name
                   }
                 }
               }
             }
-          })
-        }
-      } catch (fallbackError) {
-        console.warn('Approver fallback failed in getExpenseList:', fallbackError)
+        })
       }
     } else {
       // Still check signature snapshot for those with direct join results
@@ -500,4 +497,30 @@ export async function getExpenseList(
     console.error('Error fetching unified expense list:', error)
     return { data: null, error: error instanceof Error ? error.message : 'Failed to fetch expenses' }
   }
+}
+
+type BudgetExpensePurchaseOrder = PurchaseOrderWithRelations & {
+  approver?: { full_name?: string }
+  signature_snapshot?: { headName?: string }
+  lpo?: Array<{ lpo_number: string }>
+}
+
+interface ApprovalLogApprover {
+  entity_id: string
+  users: { full_name: string } | Array<{ full_name: string }> | null
+}
+
+interface BudgetExpense {
+  id: string
+  po_id: string
+  po_number: string
+  lpo_number: string | null
+  po_type: string
+  expense_date: string
+  amount: number | undefined
+  status: string
+  category: string | undefined
+  vote_activity: string | undefined
+  supplier_name: string
+  purchase_order: BudgetExpensePurchaseOrder
 }

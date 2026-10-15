@@ -1,9 +1,9 @@
 // @ts-nocheck
 import React, { useState, useEffect } from 'react';
-import { X, Calendar, Edit3, CheckSquare, Square, ChevronDown, ChevronRight, AlertCircle, RefreshCw, Trash2, Plus, QrCode, CheckCircle2, ChevronLeft, Search, WifiOff } from 'lucide-react';
+import { X, Calendar, Edit3, CheckSquare, Square, ChevronRight, AlertCircle, RefreshCw, QrCode, ChevronLeft, Search, WifiOff } from 'lucide-react'
 import { supabase } from '@/services/supabase';
 import { useAuthStore } from '@/stores/authStore';
-import { getCylinderByQrOrSerial, markCylinderAsEmpty } from '@/services/pharmacy/oxygenService';
+import '@/services/pharmacy/oxygenService'
 import {
   offlineAwareGetSuppliers,
   offlineAwareGetEmptyCylindersInStore,
@@ -50,8 +50,8 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
   const [selectedSupplier, setSelectedSupplier] = useState('');
   const [returnDate, setReturnDate] = useState(new Date().toISOString().split('T')[0]);
   const [remarks, setRemarks] = useState('');
-  const [selectedCylinders, setSelectedCylinders] = useState<string[]>([]);
-  const [expandedTypes, setExpandedTypes] = useState<{ [key: string]: boolean }>({});
+  const [, setSelectedCylinders] = useState<string[]>([]);
+  useState<{ [key: string]: boolean }>({});
   
   const [supplierCylinders, setSupplierCylinders] = useState<OxygenCylinderWithRelations[]>([]);
   const [supplierSizeFilter, setSupplierSizeFilter] = useState<'all' | '101-N' | '101-F'>('all');
@@ -66,7 +66,7 @@ export const CreateReturnDocumentModal: React.FC<CreateReturnDocumentModalProps>
   const [scannedCylinders, setScannedCylinders] = useState<OxygenCylinderWithRelations[]>([]);
 
   // Tab state for separating loan vs standard empty cylinders (Standardized to standard, loan items added via bulk manual input)
-  const [cylinderTab, setCylinderTab] = useState<'loan' | 'standard'>('standard');
+  const [cylinderTab, ] = useState<'loan' | 'standard'>('standard');
   const [currentPage, setCurrentPage] = useState(1);
   const [innerSearchTerm, setInnerSearchTerm] = useState('');
   const [selectedSizeFilter, setSelectedSizeFilter] = useState('');

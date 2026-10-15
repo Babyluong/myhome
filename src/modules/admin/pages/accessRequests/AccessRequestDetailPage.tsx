@@ -2,24 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import {
-  ArrowLeft,
-  CheckCircle,
-  XCircle,
-  User,
-  Mail,
-  Hash,
-  Phone,
-  Calendar,
-  MapPin,
-  Building2,
-  Briefcase,
-  Shield,
-  Clock,
-  AlertCircle,
-  UserPlus,
-  FileText,
-} from 'lucide-react'
+import { ArrowLeft, CheckCircle, XCircle, User, Hash, Phone, Calendar, MapPin, Building2, Briefcase, Shield, Clock, AlertCircle, FileText } from 'lucide-react'
 import { Button, Badge, Avatar, LoadingOverlay, Modal, Select, Textarea } from '@/components/ui'
 import { getAccessRequestById, approveAccessRequest, rejectAccessRequest } from '@/services/accessRequestManagementService'
 import { getAllRoles } from '@/services/roleService'

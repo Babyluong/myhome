@@ -4,42 +4,12 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Building2,
-  Plus,
-  Search,
-  Filter,
-  Users,
-  MapPin,
-  Clock,
-  Layers,
-  Wrench,
-  Edit3,
-  Calendar,
-  CheckCircle2,
-  AlertTriangle,
-  Phone,
-  Mail,
-  Tv,
-  Check,
-  X,
-  ArrowLeft,
-  CalendarDays
-} from 'lucide-react'
+import { Building2, Plus, Search, MapPin, Edit3, Calendar, Check, X, ArrowLeft } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import { ROUTES } from '@/lib/constants'
-import {
-  Room,
-  RoomCategory,
-  RoomStatus,
-  RoomAmenity
-} from '@/shared/types/mytempahan'
-import {
-  getRooms,
-  saveRoom,
-  deleteRoom
-} from '../services/tempahanService'
+import { Room, RoomAmenity } from '@/shared/types/mytempahan'
+import { getRooms, saveRoom } from '../services/tempahanService'
 import { cn } from '@/lib/utils'
 
 export const TempahanRoomRegistryPage: React.FC = () => {
@@ -48,7 +18,7 @@ export const TempahanRoomRegistryPage: React.FC = () => {
   const { addToast } = useToast()
 
   const [rooms, setRooms] = useState<Room[]>([])
-  const [loading, setLoading] = useState(true)
+  const [, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
 

@@ -7,10 +7,14 @@
   "scripts": {
     "predev": "powershell -NoProfile -Command \"$ErrorActionPreference='SilentlyContinue'; $conn = Get-NetTCPConnection -LocalPort 3000; if ($conn) { $pids = $conn | Select-Object -ExpandProperty OwningProcess -Unique; $pids | ForEach-Object { Stop-Process -Id $_ -Force; Write-Host \"[predev] Killed zombie process PID $_  on port 3000\" } } else { Write-Host '[predev] Port 3000 is free. Starting fresh...' }\"",
     "dev": "vite",
-    "prebuild": "node scripts/generate_system_releases.cjs",
     "build": "tsc && vite build",
-    "release:sync": "node scripts/generate_system_releases.cjs",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "release:preview": "node scripts/generate_system_releases.cjs --preview",
+    "release:generate": "node scripts/generate_system_releases.cjs",
+    "release:sync": "node scripts/generate_system_releases.cjs --publish",
+    "lint": "eslint src --report-unused-disable-directives --max-warnings 0",
+    "agent:check": "node scripts/check-agent-boundaries.cjs",
+    "agents:validate": "node scripts/check-agent-system.cjs",
+    "test:agent-system": "node --test tests/agent-governance.test.cjs tests/agent-rules.test.cjs tests/agent-system.test.cjs tests/design-tokens.test.cjs",
     "preview": "vite preview",
     "token:stats": "node scripts/token-monitor.cjs",
     "killport": "powershell -NoProfile -Command \"$ErrorActionPreference='SilentlyContinue'; $conn = Get-NetTCPConnection -LocalPort 3000; if ($conn) { $pids = $conn | Select-Object -ExpandProperty OwningProcess -Unique; $pids | ForEach-Object { Stop-Process -Id $_ -Force; Write-Host \"Killed PID $_ on port 3000\" } } else { Write-Host 'Port 3000 already free' }\""

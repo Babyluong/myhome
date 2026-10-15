@@ -1,20 +1,7 @@
 // @ts-nocheck
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  ArrowLeft, 
-  ClipboardList, 
-  FileCheck2, 
-  FileSpreadsheet, 
-  FolderDown, 
-  ScrollText, 
-  CheckCircle2, 
-  Clock, 
-  Layers, 
-  ShieldCheck,
-  ChevronRight,
-  Briefcase
-} from 'lucide-react'
+import { ArrowLeft, ClipboardList, FileCheck2, FileSpreadsheet, FolderDown, ScrollText, Briefcase } from 'lucide-react'
 import { ROUTES } from '@/lib/constants'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { Badge, Skeleton } from '@/components/ui'

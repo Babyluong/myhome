@@ -2,27 +2,13 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import {
-  Megaphone,
-  Search,
-  RefreshCw,
-  Eye,
-  CheckCircle,
-  XCircle,
-  Clock,
-  FileText,
-  AlertTriangle,
-  Filter,
-  Send,
-  Calendar,
-  Edit,
-} from 'lucide-react'
+import { Megaphone, Search, RefreshCw, CheckCircle, XCircle, Clock, FileText, AlertTriangle, Filter, Send, Calendar, Edit } from 'lucide-react'
 import { Button, Input, Select, Badge, Pagination, Modal, Textarea } from '@/components/ui'
 import { getMemos, getMemoCountsByStatus, approveMemo, rejectMemo, publishMemo } from '@/services/memoService'
 import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
 import { formatDate, cn } from '@/lib/utils'
-import { MEMO_STATUS, MEMO_TYPES, DEFAULT_PAGE_SIZE, PAGE_SIZE_OPTIONS } from '@/lib/constants'
+import { MEMO_TYPES, DEFAULT_PAGE_SIZE, PAGE_SIZE_OPTIONS } from '@/lib/constants'
 import type { MemoWithRelations, MemoStatus, MemoType, MemoPriority } from '@/types'
 
 const statusConfig: Record<MemoStatus, { color: string; bgColor: string; icon: React.ElementType; variant: 'success' | 'error' | 'warning' | 'gray' | 'primary' }> = {

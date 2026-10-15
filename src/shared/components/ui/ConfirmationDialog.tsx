@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { AlertTriangle, AlertCircle, Info, CheckCircle, X } from 'lucide-react'
+import 'framer-motion'
+import { AlertTriangle, AlertCircle, Info, CheckCircle } from 'lucide-react'
 import { Button } from './button'
 import { Modal } from './Modal'
 import { cn } from '@/lib/utils'

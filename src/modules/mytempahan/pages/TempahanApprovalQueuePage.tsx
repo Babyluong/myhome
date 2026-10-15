@@ -4,26 +4,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  ShieldCheck,
-  Calendar,
-  Clock,
-  MapPin,
-  Users,
-  CheckCircle2,
-  XCircle,
-  AlertCircle,
-  Search,
-  Filter,
-  Layers,
-  Crown,
-  FileText,
-  Utensils,
-  ChevronRight,
-  ArrowLeft,
-  CalendarDays,
-  Sparkles
-} from 'lucide-react'
+import { ShieldCheck, Calendar, Clock, MapPin, Search, Crown, ArrowLeft } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import { ROUTES } from '@/lib/constants'
@@ -41,7 +22,7 @@ export const TempahanApprovalQueuePage: React.FC = () => {
   const { addToast } = useToast()
 
   const [bookings, setBookings] = useState<Booking[]>([])
-  const [loading, setLoading] = useState(true)
+  const [, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [filterType, setFilterType] = useState<string>('pending')
 

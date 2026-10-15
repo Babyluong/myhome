@@ -198,7 +198,7 @@ export async function fixSystemAdminAccount(
     if (diag.fixMethod === 'create') {
       // Create missing Auth account
       console.log('Creating missing Auth account for System Admin...')
-      const result = await createAuthUser(user.email, newPassword, user.id)
+      const result = await createAuthUser(user.email, newPassword, user.id, { hospitalId: user.hospital_id, roleId: user.role_id })
       if (!result.success) {
         return {
           success: false,

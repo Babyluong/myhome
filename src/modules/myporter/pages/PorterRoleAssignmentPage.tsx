@@ -1,8 +1,8 @@
 // src/modules/myporter/pages/PorterRoleAssignmentPage.tsx
 import React, { useEffect, useState } from 'react'
-import { Users, Shield, UserCheck, CheckCircle2 } from 'lucide-react'
+import { Shield } from 'lucide-react'
 import { useToast } from '@/stores/toastStore'
-import { Button, Card, CardHeader, CardTitle, CardContent } from '@/components/ui'
+import '@/components/ui'
 import { getPorterProfiles, getPorterRoles, assignPorterRole } from '../services/porterService'
 import type { PorterProfile } from '@/shared/types/myporter'
 
@@ -10,7 +10,7 @@ export const PorterRoleAssignmentPage: React.FC = () => {
   const toast = useToast()
   const [porters, setPorters] = useState<PorterProfile[]>([])
   const [rolesMap, setRolesMap] = useState<Record<string, string>>({})
-  const [loading, setLoading] = useState(true)
+  const [, setLoading] = useState(true)
 
   const fetchData = async () => {
     setLoading(true)

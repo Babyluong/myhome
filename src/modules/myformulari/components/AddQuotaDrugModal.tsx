@@ -1,24 +1,9 @@
-import React, { useState, useMemo } from 'react'
-import {
-  X,
-  Search,
-  Plus,
-  Building2,
-  Calendar,
-  AlertCircle,
-  FileCheck,
-  DollarSign,
-  Users,
-  Shield,
-  Layers,
-  Sparkles,
-  Info,
-  CheckCircle2
-} from 'lucide-react'
-import { getAllFormulariDrugs } from '../services/formulariService'
+import React, { useState, useMemo, useEffect, useCallback } from 'react'
+import { X, Search, Plus, AlertCircle, Layers, Sparkles, CheckCircle2 } from 'lucide-react'
+import { getAllFormulariDrugs, FormulariAssetError } from '../services/formulariService'
 import { DrugEntry, PrescriberCategory, PoisonCategory, SkimPerolehan } from '../types/formulariTypes'
 import { DrugQuotaItem, QuotaCategory } from '../types/drugQuotaTypes'
-import { addDrugQuota, getUniqueHospitals } from '../services/drugQuotaService'
+import { addDrugQuota } from '../services/drugQuotaService'
 
 interface AddQuotaDrugModalProps {
   isOpen: boolean
@@ -68,8 +53,27 @@ export const AddQuotaDrugModal: React.FC<AddQuotaDrugModalProps> = ({
   const [notes, setNotes] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
 
-  const allFukkmDrugs = useMemo(() => getAllFormulariDrugs(), [])
-  const hospitalList = useMemo(() => getUniqueHospitals(), [])
+  const [allFukkmDrugs, setAllFukkmDrugs] = useState<DrugEntry[]>([])
+  const [catalogStatus, setCatalogStatus] = useState<'idle' | 'loading' | 'ready' | 'error'>('idle')
+  const [catalogError, setCatalogError] = useState<string | null>(null)
+  const [canRetryCatalog, setCanRetryCatalog] = useState(true)
+
+  const loadCatalog = useCallback(async () => {
+    setCatalogStatus('loading')
+    setCatalogError(null)
+    try {
+      setAllFukkmDrugs(await getAllFormulariDrugs())
+      setCatalogStatus('ready')
+    } catch (error) {
+      setCatalogError(error instanceof FormulariAssetError ? error.message : 'Formulary data is unavailable. Please try again.')
+      setCanRetryCatalog(!(error instanceof FormulariAssetError) || error.retryable)
+      setCatalogStatus('error')
+    }
+  }, [])
+
+  useEffect(() => {
+    if (isOpen && mode === 'kkm_fukkm' && catalogStatus === 'idle') void loadCatalog()
+  }, [isOpen, mode, catalogStatus, loadCatalog])
 
   // Filtered FUKKM results
   const filteredFukkm = useMemo(() => {
@@ -272,6 +276,15 @@ export const AddQuotaDrugModal: React.FC<AddQuotaDrugModalProps> = ({
           {/* FUKKM Search Panel */}
           {mode === 'kkm_fukkm' && (
             <div className="bg-indigo-500/10 p-4 rounded-2xl border border-indigo-100 space-y-3">
+              {catalogStatus === 'loading' && <p className="text-xs text-text-secondary" role="status" aria-live="polite">Loading official formulary data…</p>}
+              {catalogError && (
+                <div className="rounded-xl border border-rose-500/20 bg-rose-500/5 p-3 text-xs text-text-primary" role="alert">
+                  <p>{catalogError}</p>
+                  <button type="button" onClick={() => canRetryCatalog ? void loadCatalog() : window.location.reload()} className="mt-2 rounded-lg bg-accent-base px-3 py-1.5 font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-base focus-visible:outline-offset-2">
+                    {canRetryCatalog ? 'Try again' : 'Reload app'}
+                  </button>
+                </div>
+              )}
               <label className="text-xs font-bold text-indigo-400 dark:text-indigo-300 font-bold flex items-center justify-between">
                 <span>Carian Ubat FUKKM Rasmi KKM:</span>
                 <span className="text-[11px] font-normal text-indigo-700">Contoh: Apixaban, Empagliflozin, Entresto, Ciclosporin, Tocilizumab</span>

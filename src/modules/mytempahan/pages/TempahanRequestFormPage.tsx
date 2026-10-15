@@ -3,29 +3,8 @@
 
 import React, { useState, useEffect, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
-import {
-  CalendarDays,
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  Building2,
-  Clock,
-  Calendar,
-  Users,
-  AlertCircle,
-  CheckCircle2,
-  Tv,
-  Mic,
-  Video,
-  Projector,
-  Layers,
-  Utensils,
-  Crown,
-  FileText,
-  Printer,
-  Sparkles
-} from 'lucide-react'
+import { motion } from 'framer-motion'
+import { ArrowLeft, ArrowRight, Check, Building2, Users, AlertCircle, CheckCircle2, Utensils, Crown, Printer } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import { ROUTES } from '@/lib/constants'
@@ -51,7 +30,7 @@ export const TempahanRequestFormPage: React.FC = () => {
   const { addToast } = useToast()
 
   const [rooms, setRooms] = useState<Room[]>([])
-  const [loadingRooms, setLoadingRooms] = useState(true)
+  const [, setLoadingRooms] = useState(true)
   const [submitting, setSubmitting] = useState(false)
   const [submittedBooking, setSubmittedBooking] = useState<Booking | null>(null)
 
@@ -66,7 +45,7 @@ export const TempahanRequestFormPage: React.FC = () => {
   const [layoutType, setLayoutType] = useState<RoomLayoutType>('boardroom')
 
   // Conflict Checking State
-  const [checkingConflict, setCheckingConflict] = useState(false)
+  const [, setCheckingConflict] = useState(false)
   const [conflictResult, setConflictResult] = useState<{
     checked: boolean
     isAvailable: boolean
@@ -79,9 +58,9 @@ export const TempahanRequestFormPage: React.FC = () => {
   const [eventType, setEventType] = useState('Mesyuarat Rasmi')
   const [priority, setPriority] = useState<BookingPriority>('normal')
   const [attendeesCount, setAttendeesCount] = useState<number>(15)
-  const [departmentName, setDepartmentName] = useState(user?.department?.department_name || 'Jabatan Farmasi')
+  const [departmentName, ] = useState(user?.department?.department_name || 'Jabatan Farmasi')
   const [pemohonName, setPemohonName] = useState(user?.full_name || 'Amri Amit')
-  const [pemohonJawatan, setPemohonJawatan] = useState(user?.jawatan || 'Penolong Pegawai Farmasi U5')
+  const [pemohonJawatan, ] = useState(user?.jawatan || 'Penolong Pegawai Farmasi U5')
   const [pemohonPhone, setPemohonPhone] = useState(user?.phone_number || '011-1657713')
   const [pemohonEmail, setPemohonEmail] = useState(user?.email || 'amri.amit@yahoo.com')
 

@@ -1,24 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Clock,
-  CheckCircle,
-  XCircle,
-  Eye,
-  Search,
-  Filter,
-  User,
-  Mail,
-  Hash,
-  Phone,
-  Calendar,
-  MapPin,
-  Building2,
-  Briefcase,
-  AlertCircle,
-  Check,
-  X
-} from 'lucide-react'
+import { Clock, CheckCircle, XCircle, Eye, Search, User, Mail, Phone, Building2, Briefcase, AlertCircle, X } from 'lucide-react'
 import { getAccessRequests, approveAccessRequest, rejectAccessRequest } from '@/services/accessRequestManagementService'
 import { getAllRoles } from '@/services/roleService'
 import { recordAuditLog } from '@/services/auditLogService'

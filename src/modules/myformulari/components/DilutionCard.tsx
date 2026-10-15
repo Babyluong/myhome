@@ -1,30 +1,5 @@
 import React, { useState } from 'react'
-import {
-  Droplets,
-  CheckCircle2,
-  AlertTriangle,
-  Clock,
-  Activity,
-  Sparkles,
-  ShieldCheck,
-  BookOpen,
-  Info,
-  Syringe,
-  FileText,
-  AlertOctagon,
-  ExternalLink,
-  ChevronDown,
-  ChevronUp,
-  Thermometer,
-  Layers,
-  Zap,
-  HelpCircle,
-  Copy,
-  Check,
-  ArrowRight,
-  Stethoscope,
-  HeartPulse
-} from 'lucide-react'
+import { Droplets, CheckCircle2, AlertTriangle, Clock, Activity, ShieldCheck, BookOpen, Syringe, AlertOctagon, ChevronDown, ChevronUp, Thermometer, Layers, Copy, Check } from 'lucide-react'
 import { ReconstitutionProtocol, DilutionProtocol } from '../types/formulariTypes'
 import { getKkmDilutionProtocol, KkmDilutionMonograph } from '../data/kkmDilutionMasterDatabase'
 

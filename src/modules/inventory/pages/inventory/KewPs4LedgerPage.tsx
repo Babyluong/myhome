@@ -1,79 +1,12 @@
 // @ts-nocheck
 import React, { useEffect, useState, useMemo, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  FileText, 
-  ArrowLeft, 
-  Search, 
-  Calendar, 
-  TrendingUp, 
-  User, 
-  MapPin, 
-  Clock, 
-  Printer, 
-  Layers, 
-  ArrowDownCircle, 
-  ArrowUpCircle,
-  Download,
-  Filter,
-  Building2,
-  PackageCheck,
-  PackageMinus,
-  Building,
-  RefreshCw,
-  SlidersHorizontal,
-  ChevronRight,
-  ShieldAlert,
-  BarChart3,
-  QrCode,
-  Camera,
-  X,
-  CheckCircle2,
-  AlertTriangle,
-  Volume2,
-  PlusCircle,
-  MinusCircle,
-  Package,
-  Tag,
-  Truck,
-  Hash,
-  Sparkles,
-  Lock,
-  Pencil,
-  ClipboardCheck,
-  History,
-  RotateCcw,
-  Trash2,
-  FastForward,
-  ShieldCheck,
-  Scale,
-  FileCheck,
-  CheckCheck,
-} from 'lucide-react'
+import { FileText, Search, Calendar, User, MapPin, Clock, Printer, Layers, ArrowDownCircle, ArrowUpCircle, Building2, PackageMinus, Building, SlidersHorizontal, ChevronRight, ShieldAlert, BarChart3, QrCode, Camera, X, CheckCircle2, AlertTriangle, PlusCircle, MinusCircle, Package, Tag, Truck, Hash, Sparkles, Lock, Pencil, ClipboardCheck, History, Trash2, FastForward, ShieldCheck, Scale, FileCheck, CheckCheck } from 'lucide-react'
 import jsQR from 'jsqr'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
 import { Table, Spinner, Input, Badge, Select, Button, Modal } from '@/components/ui'
-import { 
-  getStockLevelSummary, 
-  getStockTransactions,
-  getItemMovementSummary,
-  getDepartmentIssuanceBreakdown,
-  getStockLocations,
-  createStockReceipt,
-  issueStock,
-  performStockCheckAndFound,
-  performStoreVerification,
-  getStoreVerificationHistory,
-  deleteStoreVerificationRecord,
-  bringForwardStock,
-  getStockBatches,
-  updateStockTransaction,
-  matchStockItem,
-  normalizeItemCode,
-  stripItemCode,
-  clearStockTransactions
-} from '../../services/inventoryService'
+import { getStockLevelSummary, getStockTransactions, getItemMovementSummary, getDepartmentIssuanceBreakdown, getStockLocations, createStockReceipt, issueStock, performStockCheckAndFound, performStoreVerification, deleteStoreVerificationRecord, bringForwardStock, getStockBatches, updateStockTransaction, matchStockItem, normalizeItemCode, clearStockTransactions } from '../../services/inventoryService'
 import { getSuppliers } from '@/modules/procurement/services/procurementService'
 import { loadStoreLocations } from '@/services/pharmacy/storeLocationService'
 import { loadStoreSubLocations } from '@/services/pharmacy/storeSubLocationService'
@@ -81,15 +14,7 @@ import { updateFacilityDrugInventoryItem } from '@/services/pharmacy/facilityDru
 import { updateFacilityNonDrugInventoryItem } from '@/services/pharmacy/facilityNonDrugInventoryService'
 import { useInventoryStore } from '../../context/InventoryStoreContext'
 import { StoreLocationSelector } from '../../components/StoreLocationSelector'
-import type { 
-  StockLevelSummary, 
-  StockTransactionWithRelations,
-  MovementSummary,
-  DeptBreakdownRow,
-  StockLocation,
-  StockBatchWithRelations,
-  StoreVerificationRecord
-} from '@/types/pharmacy'
+import type { StockLevelSummary, MovementSummary, DeptBreakdownRow, StockLocation, StockBatchWithRelations, StoreVerificationRecord } from '@/types/pharmacy'
 import { JATA_NEGARA_BASE64 } from '@/modules/mytransporter/pages/jataNegaraBase64'
 
 const DEFAULT_SUPPLIERS = [
@@ -1299,14 +1224,14 @@ export const KewPs4LedgerPage: React.FC = () => {
         updateFacilityDrugInventoryItem(hospitalId, selectedItem.item_id, {
           location: updatedLocation,
           min_buffer_level: newBuffer
-        })
+        }, activeStoreId || undefined)
       } else {
         updateFacilityNonDrugInventoryItem(hospitalId, selectedItem.item_id, {
           location: updatedLocation,
           min_buffer_level: newBuffer,
           min_stock_level: newMin,
           max_stock_level: newMax
-        })
+        }, activeStoreId || undefined)
       }
 
       // Also persist min_stock_level & max_stock_level to drugs / non_drugs catalog tables
@@ -3464,23 +3389,25 @@ export const KewPs4LedgerPage: React.FC = () => {
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-              <StoreLocationSelector />
-              <Button
-                onClick={() => setIsQrModalOpen(true)}
-                className="bg-teal-600 hover:bg-teal-700 text-white rounded-2xl text-xs font-bold px-3.5 py-2.5 shadow-lg gap-1.5"
-              >
-                <QrCode className="w-4 h-4" />
-                Imbas QR
-              </Button>
-              <Button
-                onClick={handlePrintLedger}
-                disabled={!selectedItem || ledgerRows.length === 0}
-                className="bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-2xl font-bold text-xs gap-1.5 px-3.5 py-2.5 shadow-sm border border-slate-700 disabled:opacity-40"
-              >
-                <Printer className="w-4 h-4" />
-                Cetak
-              </Button>
+            <div className="flex flex-col items-start lg:items-end gap-2.5 w-full lg:w-auto shrink-0">
+              <StoreLocationSelector className="w-full sm:w-auto" />
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-start lg:justify-end">
+                <Button
+                  onClick={() => setIsQrModalOpen(true)}
+                  className="bg-teal-600 hover:bg-teal-700 text-white rounded-xl text-xs font-bold px-3.5 py-2 shadow-lg gap-1.5"
+                >
+                  <QrCode className="w-4 h-4" />
+                  Imbas QR
+                </Button>
+                <Button
+                  onClick={handlePrintLedger}
+                  disabled={!selectedItem || ledgerRows.length === 0}
+                  className="bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl font-bold text-xs gap-1.5 px-3.5 py-2 shadow-sm border border-slate-700 disabled:opacity-40"
+                >
+                  <Printer className="w-4 h-4" />
+                  Cetak
+                </Button>
+              </div>
             </div>
           </div>
 

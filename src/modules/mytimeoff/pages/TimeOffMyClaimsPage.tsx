@@ -2,23 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  FileText,
-  Plus,
-  ArrowLeft,
-  Calendar,
-  Clock,
-  CheckCircle2,
-  AlertCircle,
-  XCircle,
-  ExternalLink,
-  Search,
-  Filter,
-  Eye,
-  Trash2,
-  FileCheck,
-  ShieldAlert
-} from 'lucide-react'
+import { FileText, Plus, ArrowLeft, Clock, CheckCircle2, AlertCircle, ExternalLink, Search, Eye, Trash2, FileCheck, ShieldAlert } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
@@ -27,8 +11,8 @@ import {
   getToilClaims,
   cancelToilClaim
 } from '@/modules/mytimeoff/services/toilService'
-import type { ToilClaim, ToilStatus, ToilWorkType } from '@/shared/types/mytimeoff'
-import { Button, Badge } from '@/components/ui'
+import type { ToilClaim } from '@/shared/types/mytimeoff'
+import { Button } from '@/components/ui'
 
 export const TimeOffMyClaimsPage: React.FC = () => {
   const navigate = useNavigate()

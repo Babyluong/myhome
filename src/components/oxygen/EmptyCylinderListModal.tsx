@@ -1,25 +1,7 @@
 // @ts-nocheck
 import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
-import { 
-  X, 
-  Printer, 
-  Search, 
-  CheckSquare, 
-  Square, 
-  FileText, 
-  CheckCircle2, 
-  RotateCcw, 
-  Database, 
-  Truck, 
-  Building2, 
-  Calendar, 
-  Clock, 
-  Copy, 
-  Check,
-  Tag,
-  CircleDot
-} from 'lucide-react';
+import { X, Printer, Search, CheckSquare, Square, FileText, CheckCircle2, RotateCcw, Database, Truck, Building2, Calendar, Clock, Copy, Check } from 'lucide-react'
 import type { OxygenCylinderWithRelations } from '@/types/pharmacy';
 import { getEmptyCylindersInStore } from '@/modules/mycylinder/services/oxygenService';
 import { useLanguage } from '@/shared/contexts/LanguageContext';

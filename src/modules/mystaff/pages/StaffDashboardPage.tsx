@@ -3,27 +3,7 @@
 
 import React, { useEffect, useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  Users,
-  Calendar,
-  Clock,
-  Briefcase,
-  GraduationCap,
-  AlertTriangle,
-  CheckCircle2,
-  Plus,
-  ArrowRight,
-  ChevronRight,
-  Building2,
-  FileText,
-  Bell,
-  Stethoscope,
-  MapPin,
-  TrendingUp,
-  Activity,
-  ArrowLeft,
-  Network
-} from 'lucide-react'
+import { Users, Calendar, Briefcase, GraduationCap, CheckCircle2, Plus, ChevronRight, Bell, MapPin, Activity, Network } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import { ROUTES } from '@/lib/constants'
@@ -37,7 +17,7 @@ import type {
   StaffMovement,
   StaffReminder
 } from '@/shared/types/mystaff'
-import { Badge, Button, Skeleton, SkeletonMobileCardList, ModulePageHeader } from '@/components/ui'
+import { Skeleton, SkeletonMobileCardList, ModulePageHeader } from '@/components/ui'
 import { Fab } from '@/shared/components/mobile'
 
 export const StaffDashboardPage: React.FC = () => {

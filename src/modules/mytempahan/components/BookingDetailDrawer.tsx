@@ -3,28 +3,7 @@
 
 import React from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  X,
-  Calendar,
-  Clock,
-  MapPin,
-  Users,
-  Building2,
-  FileText,
-  Printer,
-  Download,
-  CheckCircle2,
-  AlertCircle,
-  XCircle,
-  Phone,
-  Mail,
-  Utensils,
-  Crown,
-  Layers,
-  Wrench,
-  ShieldCheck,
-  QrCode
-} from 'lucide-react'
+import { X, Calendar, Clock, MapPin, Printer, Download, CheckCircle2, AlertCircle, XCircle, Phone, Mail, Utensils, Crown, Layers, ShieldCheck } from 'lucide-react'
 import { Booking } from '@/shared/types/mytempahan'
 import { downloadBookingConfirmationPdf } from '../services/tempahanPdfService'
 import { downloadBookingICS } from '../services/tempahanCalendarService'

@@ -1,20 +1,11 @@
 // src/modules/mykunci/pages/KunciLogPage.tsx
 import React, { useEffect, useState, useMemo } from 'react'
-import { 
-  FileText, 
-  Search, 
-  Download, 
-  Calendar, 
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Filter
-} from 'lucide-react'
+import { FileText, Search, Download, Calendar } from 'lucide-react'
 import { getKunciLogs, returnKunci } from '@/modules/mykunci/services/kunciService'
 import { getUsers } from '@/services/userService'
 import type { KunciLog } from '@/shared/types/mykunci'
 import type { User } from '@/shared/types'
-import { Card, CardHeader, CardTitle, CardContent, Button, Badge, Modal, FileUpload } from '@/components/ui'
+import { Card, CardContent, Button, Badge, Modal, FileUpload } from '@/components/ui'
 import { SkeletonTable, SkeletonMobileCardList } from '@/shared/components/ui/skeleton'
 import { useToast } from '@/stores/toastStore'
 import { useAuthStore } from '@/stores/authStore'

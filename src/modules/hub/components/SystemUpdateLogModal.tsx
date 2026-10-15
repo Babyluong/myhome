@@ -1,21 +1,7 @@
 // @ts-nocheck
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  X, 
-  Sparkles, 
-  Wrench, 
-  CheckCircle2, 
-  Clock, 
-  Calendar, 
-  Layers, 
-  ShieldCheck, 
-  FileCode, 
-  GitCommit, 
-  ExternalLink,
-  GitBranch,
-  RefreshCw
-} from 'lucide-react'
+import { X, Clock, Calendar, Layers, FileCode, GitCommit, ExternalLink, GitBranch, RefreshCw } from 'lucide-react'
 import { 
   type SystemAnnouncement, 
   getRecentProductionCommits,

@@ -1,35 +1,9 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Search,
-  Sparkles,
-  ChevronRight,
-  Filter,
-  FileText,
-  Compass,
-  CheckCircle2,
-  XCircle,
-  Tag,
-  Activity,
-  Layers,
-  Percent,
-  Plus,
-  Coins,
-  Package,
-  Boxes,
-  Truck,
-  ShieldAlert,
-  ClipboardList,
-  Mail,
-  Phone,
-  MapPin,
-  HelpCircle,
-  Pill,
-} from 'lucide-react'
+import { Search, Sparkles, ChevronRight, Filter, FileText, Compass, CheckCircle2, XCircle, Tag, Activity, Layers, Percent, Plus, Coins, Package, Boxes, Truck, ClipboardList, MapPin, HelpCircle, Pill } from 'lucide-react'
 import { Button, Input, Badge, Modal, Spinner, DataTable, Pagination } from '@/components/ui'
 import { getDrugCatalog, createDrug } from '@/services/pharmacy/drugCatalogService'
 import { getNonDrugCatalog, createNonDrug } from '@/services/pharmacy/nonDrugCatalogService'
-import { mockDrugs, mockNonDrugs } from '@/services/pharmacy/mockData'
 import { supabase, isSupabaseConfigured } from '@/services/supabase'
 import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
@@ -971,62 +945,6 @@ export default function FacilityCatalogPage() {
       })
     }
   }
-
-  // Get master catalog lists combined
-  const masterList = useMemo(() => {
-    const list: UnifiedCatalogItem[] = []
-    
-    mockDrugs.forEach((drug: any) => {
-      list.push({
-        id: drug.id,
-        code: drug.drug_code,
-        name: drug.drug_name,
-        type: 'Drug',
-        category: drug.category?.category_name || 'General Pharmaceutical',
-        uom: drug.unit_of_measure || 'unit',
-        status: drug.status || 'active',
-        price: drug.price || 0,
-        procurement_vote: (drug.procurement_vote?.toUpperCase() as any) || 'APPL',
-        sku: drug.sku || 'N/A',
-        pku: drug.pku || 'N/A',
-        supplierName: drug.supplier?.company_name || 'Pharmaniaga Logistics Sdn Bhd',
-        brandName: drug.brand_name || '',
-        genericName: drug.generic_name || '',
-        strength: drug.strength || '',
-        dosageForm: drug.dosage_form || '',
-        requiresPrescription: drug.requires_prescription ?? false,
-        isControlled: drug.is_controlled ?? false,
-        storageConditions: drug.storage_conditions || '',
-        kkmContractNumber: drug.kkm_contract_number || drug.supplier?.contract_number || '',
-        minStock: drug.min_stock_level || 0,
-        maxStock: drug.max_stock_level || 0,
-        reorderLevel: drug.reorder_level || 0,
-      })
-    })
-    
-    mockNonDrugs.forEach((nd: any) => {
-      list.push({
-        id: nd.id,
-        code: nd.item_code,
-        name: nd.item_name,
-        type: 'Non-Drug',
-        category: nd.category?.category_name || 'Medical Consumables',
-        uom: nd.unit_of_measure || 'piece',
-        status: nd.status || 'active',
-        price: nd.price || 0,
-        procurement_vote: (nd.procurement_vote?.toUpperCase() as any) || 'APPL',
-        sku: nd.sku || 'N/A',
-        pku: nd.pku || 'N/A',
-        supplierName: nd.supplier?.company_name || 'Duopharma (M) Sdn Bhd',
-        kkmContractNumber: nd.kkm_contract_number || nd.supplier?.contract_number || '',
-        minStock: nd.min_stock_level || 0,
-        maxStock: nd.max_stock_level || 0,
-        reorderLevel: nd.reorder_level || 0,
-      })
-    })
-    
-    return list
-  }, [])
 
   // Fetch real master catalog items from live Supabase tables
   useEffect(() => {

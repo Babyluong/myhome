@@ -1,17 +1,6 @@
 // @ts-nocheck
 import React, { useState, useEffect } from 'react';
-import {
-  X,
-  Pencil,
-  Tag,
-  Gauge,
-  CheckCircle2,
-  AlertCircle,
-  RefreshCw,
-  Building2,
-  ShieldAlert,
-  Info
-} from 'lucide-react';
+import { X, Pencil, Tag, Gauge, CheckCircle2, AlertCircle, RefreshCw, Info } from 'lucide-react'
 import { useLanguage } from '@/shared/contexts/LanguageContext';
 import { useAuthStore } from '@/stores/authStore';
 import {

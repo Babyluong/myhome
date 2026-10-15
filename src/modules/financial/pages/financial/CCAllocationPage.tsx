@@ -1,33 +1,10 @@
 // @ts-nocheck
 import React, { useEffect, useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
-  Wallet,
-  AlertTriangle,
-  Calendar,
-  FileText,
-  RefreshCw,
-  Search,
-  Filter,
-  ChevronRight,
-  ChevronLeft,
-  ChevronsLeft,
-  ChevronsRight,
-  Info,
-  BarChart2,
-  PieChart,
-  X,
-  Package,
-  ShoppingCart,
-  Sparkles,
-  Zap
-} from 'lucide-react'
+import { Wallet, AlertTriangle, Calendar, FileText, RefreshCw, Search, ChevronRight, ChevronLeft, ChevronsLeft, ChevronsRight, Info, BarChart2, PieChart, X, ShoppingCart, Sparkles } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
-import { Spinner, Button, Input, Select, Badge, Table } from '@/components/ui'
+import { Spinner, Badge } from '@/components/ui'
 import {
   getUnifiedBudgetSummary,
   getExpenseList

@@ -2,18 +2,10 @@
 // Enterprise-Grade Organizational Chart — Dark Glassmorphic Design
 // Inspired by Linear.app, Vercel, and Stripe design systems
 
-import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Users, Network, Search, ArrowLeft, ChevronRight, Building2,
-  Mail, Phone, Clock, CheckCircle2, Printer, ZoomIn, ZoomOut,
-  RotateCcw, LayoutGrid, GitFork, ListFilter, Layers, Edit3,
-  Plus, Trash2, Save, X, AlertTriangle, UserPlus, Zap, UserX,
-  Crown, ChevronUp, ChevronDown, Palmtree, SlidersHorizontal,
-  BadgeCheck, Dot, MoreHorizontal, ArrowUpRight, Calendar,
-  Briefcase, Cloud, CloudOff, RefreshCw
-} from 'lucide-react'
+import { Users, Network, Search, ArrowLeft, ChevronRight, CheckCircle2, Printer, ZoomIn, ZoomOut, RotateCcw, LayoutGrid, GitFork, ListFilter, Layers, Edit3, Plus, Trash2, Save, X, UserPlus, Zap, UserX, ChevronUp, Palmtree, Calendar, Briefcase, Cloud, CloudOff, RefreshCw } from 'lucide-react'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'

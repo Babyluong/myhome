@@ -1,12 +1,7 @@
 // src/modules/myperolehan/pages/tabs/ReceivingPaymentsTab.tsx
 import React, { useState } from 'react'
-import { motion } from 'framer-motion'
-import {
-  CreditCard,
-  Truck,
-  CheckCircle2,
-  DollarSign
-} from 'lucide-react'
+import 'framer-motion'
+import { CreditCard, Truck, DollarSign } from 'lucide-react'
 import type {
   AdminLPO,
   AdminReceivingRecord,

@@ -1,23 +1,7 @@
 // @ts-nocheck
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  AlertTriangle, 
-  Package, 
-  Search, 
-  TrendingUp, 
-  AlertCircle, 
-  ShoppingBag, 
-  ArrowRight, 
-  Clock, 
-  Layers, 
-  Info,
-  Calendar,
-  AlertOctagon,
-  FileText,
-  QrCode,
-  Database
-} from 'lucide-react'
+import { AlertTriangle, Package, Search, TrendingUp, AlertCircle, ShoppingBag, Clock, Layers, QrCode } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { Table, Spinner, Input, Badge, Button } from '@/components/ui'
 import { ModulePageHeader } from '@/shared/components/ui/ModulePageHeader'
@@ -285,8 +269,9 @@ export const InventoryOverviewPage: React.FC = () => {
         }
         icon={<Package className="w-5 h-5 text-accent-base" />}
         actions={
-          <div className="flex flex-wrap items-center gap-2.5 shrink-0">
-            <StoreLocationSelector />
+          <div className="flex flex-col items-start sm:items-end gap-2.5 w-full sm:w-auto shrink-0">
+            <StoreLocationSelector className="w-full sm:w-auto" />
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
             <Button
               onClick={() => navigate('/pharmacy/inventory/ledger?openScan=true')}
               className="bg-accent-base hover:bg-accent-dark text-white rounded-lg font-semibold text-xs gap-1.5 px-3.5 py-2 shadow-xs"
@@ -329,6 +314,7 @@ export const InventoryOverviewPage: React.FC = () => {
                 </Button>
               </>
             )}
+            </div>
           </div>
         }
       />

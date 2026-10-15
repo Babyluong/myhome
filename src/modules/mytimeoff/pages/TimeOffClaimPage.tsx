@@ -2,20 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  Clock,
-  ArrowLeft,
-  Calendar,
-  UploadCloud,
-  FileText,
-  MapPin,
-  CheckCircle2,
-  AlertCircle,
-  HelpCircle,
-  FileCheck,
-  X,
-  Sparkles
-} from 'lucide-react'
+import { Clock, ArrowLeft, Calendar, UploadCloud, MapPin, CheckCircle2, FileCheck, X } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import { useLanguage } from '@/shared/contexts/LanguageContext'

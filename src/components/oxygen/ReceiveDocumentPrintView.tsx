@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useEffect, useState } from 'react';
-import { X, Printer, Loader2, FileText, Truck, CheckCircle } from 'lucide-react';
+import { X, Printer, Loader2 } from 'lucide-react'
 import { getReceiveDocumentById } from '@/modules/mycylinder/services/oxygenService';
 import type { OxygenReceiveDocumentWithRelations } from '@/types/pharmacy';
 import { supabase } from '@/services/supabase';

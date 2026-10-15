@@ -1,17 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import {
-  X,
-  Edit3,
-  Building2,
-  Calendar,
-  AlertCircle,
-  FileCheck,
-  DollarSign,
-  Users,
-  Layers,
-  CheckCircle2,
-  Trash2
-} from 'lucide-react'
+import { X, Edit3, AlertCircle, CheckCircle2, Trash2 } from 'lucide-react'
 import { DrugQuotaItem, QuotaCategory } from '../types/drugQuotaTypes'
 import { updateDrugQuota, deleteDrugQuota } from '../services/drugQuotaService'
 import { PrescriberCategory, PoisonCategory, SkimPerolehan } from '../types/formulariTypes'

@@ -1,45 +1,6 @@
-// @ts-nocheck
-import React, { useEffect, useState, useMemo, useCallback } from 'react'
+import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import {
-  Building2,
-  Search,
-  Eye,
-  Volume2,
-  Activity,
-  Wind,
-  ShieldAlert,
-  Pill,
-  ShieldCheck,
-  Heart,
-  Flame,
-  Brain,
-  Layers,
-  Droplets,
-  Package,
-  FileSpreadsheet,
-  RefreshCw,
-  Warehouse,
-  ChevronDown,
-  ChevronRight,
-  X,
-  Stethoscope,
-  ArrowRight,
-  LayoutGrid,
-  AlignJustify,
-  Clock,
-  Printer,
-  FlaskConical,
-  CircleDot,
-  Crosshair,
-  Sparkles,
-  Shield,
-  Syringe,
-  PlusCircle,
-  FileText,
-  CheckCircle2,
-  Dna,
-} from 'lucide-react'
+import { Building2, Search, Eye, Volume2, Activity, Wind, ShieldAlert, Pill, ShieldCheck, Heart, Flame, Brain, Layers, Droplets, Package, FileSpreadsheet, RefreshCw, Warehouse, ChevronDown, ChevronRight, X, ArrowRight, AlignJustify, Printer, FlaskConical, CircleDot, Crosshair, Sparkles, Shield, Syringe, PlusCircle, Dna } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
@@ -49,6 +10,8 @@ import { exportFacilityDrugInventoryToExcel } from '@/services/pharmacy/facility
 import { getDrugPrescriberCategory } from '@/lib/drugCategorizer'
 import { getAllFormulariDrugs } from '../services/formulariService'
 import type { DrugEntry } from '../types/formulariTypes'
+import { FormulariAssetError } from '../services/formulariAssetService'
+
 import { findBestFukkmMatch, synthesizeDrugEntryFromFacility } from '../services/fukkmMatcher'
 import {
   LAWAS_FORMULARY_GROUPS,
@@ -80,6 +43,60 @@ const GROUP_ICONS: Record<string, React.ElementType> = {
   Syringe,
   PlusCircle,
   Dna,
+}
+
+type FukkmLoadStatus = 'loading' | 'retrying' | 'ready' | 'error'
+
+function FukkmCatalogStatus({
+  onCatalogLoaded,
+  onStatusChange,
+}: {
+  onCatalogLoaded: (catalog: DrugEntry[]) => void
+  onStatusChange: (status: FukkmLoadStatus, error?: FormulariAssetError) => void
+}) {
+  const [isLoading, setIsLoading] = useState(true)
+  const [isRetrying, setIsRetrying] = useState(false)
+  const [error, setError] = useState<FormulariAssetError | null>(null)
+  const retryInProgress = useRef(false)
+
+  const loadCatalog = useCallback(async (retry = false) => {
+    if (retryInProgress.current) return
+    retryInProgress.current = true
+    onStatusChange(retry ? 'retrying' : 'loading')
+    setIsLoading(true)
+    setIsRetrying(retry)
+    setError(null)
+
+    try {
+      onCatalogLoaded(await getAllFormulariDrugs())
+      onStatusChange('ready')
+    } catch (cause) {
+      const loadError = cause instanceof FormulariAssetError
+        ? cause
+        : new FormulariAssetError('The formulary data could not be loaded.', 'unavailable', true)
+      setError(loadError)
+      onStatusChange('error', loadError)
+    } finally {
+      retryInProgress.current = false
+      setIsLoading(false)
+      setIsRetrying(false)
+    }
+  }, [onCatalogLoaded, onStatusChange])
+
+  useEffect(() => { void loadCatalog() }, [loadCatalog])
+
+  if (!isLoading && !error) return null
+
+  return (
+    <div aria-busy={isLoading} className={`mx-4 mt-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border px-4 py-3 ${error ? 'border-rose-500/30 bg-rose-500/5' : 'border-white/10 bg-white/[0.03]'}`} role={error ? 'alert' : 'status'}>
+      <p className="text-sm text-white/80">{error?.message || (isRetrying ? 'Retrying FUKKM monographs…' : 'Loading FUKKM monographs…')}</p>
+      {(error || isRetrying) && <button type="button" onClick={() => {
+        if (retryInProgress.current) return
+        if (error?.retryable) void loadCatalog(true)
+        else if (error) window.location.reload()
+      }} aria-disabled={isRetrying} aria-busy={isRetrying} className="rounded-md border border-white/15 px-3 py-2 text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-400 focus-visible:outline-offset-2 aria-disabled:cursor-wait aria-disabled:opacity-60">{isRetrying ? 'Retrying…' : error?.retryable ? 'Retry' : 'Reload formulary'}</button>}
+    </div>
+  )
 }
 
 // ─── Prescriber badge ─────────────────────────────────────────────────────────
@@ -123,22 +140,7 @@ function StockPill({ stock, min, compact = false }: { stock: number; min: number
 }
 
 // ─── Skeleton loader ──────────────────────────────────────────────────────────
-function SkeletonCard() {
-  return (
-    <div className="rounded-lg border border-white/[0.07] bg-white/[0.03] p-4 space-y-3 animate-pulse">
-      <div className="flex justify-between">
-        <div className="h-3 w-14 rounded bg-white/10" />
-        <div className="h-3 w-10 rounded bg-white/10" />
-      </div>
-      <div className="h-4 w-3/4 rounded bg-white/10" />
-      <div className="h-3 w-1/2 rounded bg-white/10" />
-      <div className="flex gap-2">
-        <div className="h-5 w-16 rounded bg-white/10" />
-        <div className="h-5 w-12 rounded bg-white/10" />
-      </div>
-    </div>
-  )
-}
+
 
 // ═════════════════════════════════════════════════════════════════════════════
 // MAIN PAGE
@@ -165,7 +167,14 @@ export const HospitalLawasFormulariPage: React.FC = () => {
   const [stockFilter, setStockFilter] = useState<'ALL' | 'IN_STOCK' | 'LOW_STOCK' | 'OUT_OF_STOCK'>('ALL')
   const [viewMode, setViewMode] = useState<'grouped' | 'table'>('grouped')
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({})
-  const fukkmCatalog = useMemo(() => getAllFormulariDrugs(), [])
+  const fukkmCatalog = useRef<DrugEntry[]>([])
+  const fukkmLoadStatus = useRef<{ status: FukkmLoadStatus; error?: FormulariAssetError }>({ status: 'loading' })
+  const handleCatalogLoaded = useCallback((catalog: DrugEntry[]) => {
+    fukkmCatalog.current = catalog
+  }, [])
+  const handleCatalogStatus = useCallback((status: FukkmLoadStatus, error?: FormulariAssetError) => {
+    fukkmLoadStatus.current = { status, error }
+  }, [])
 
   // ── Fetch ──────────────────────────────────────────────────────────────────
   const fetchData = useCallback(async (showToast = false) => {
@@ -200,7 +209,7 @@ export const HospitalLawasFormulariPage: React.FC = () => {
       if (q) {
         const hay = [
           item.drug_name, item.generic_name, item.brand_name,
-          item.drug_code, (item as any).item_code, item.dosage_form, item.location,
+          item.drug_code, item.item_code, item.dosage_form, item.location,
         ].map(s => (s || '').toLowerCase()).join(' ')
         if (!hay.includes(q)) return false
       }
@@ -235,8 +244,14 @@ export const HospitalLawasFormulariPage: React.FC = () => {
     setCollapsedGroups(p => ({ ...p, [id]: !p[id] }))
 
   const handleOpenDetail = (drug: FacilityDrugItem) => {
+    if (fukkmLoadStatus.current.status !== 'ready') {
+      toastError(fukkmLoadStatus.current.status === 'loading' || fukkmLoadStatus.current.status === 'retrying'
+        ? 'Formulary data is still loading.'
+        : 'Formulary data is unavailable. Retry loading before opening a monograph.')
+      return
+    }
     // 1. Find matching official FUKKM monograph entry, or synthesize clinical monograph
-    const matched = findBestFukkmMatch(drug, fukkmCatalog)
+    const matched = findBestFukkmMatch(drug, fukkmCatalog.current)
     const targetDrug = matched || synthesizeDrugEntryFromFacility(drug)
 
     // 2. Always navigate to the rich tabbed monograph page (like the second photo)
@@ -255,8 +270,8 @@ export const HospitalLawasFormulariPage: React.FC = () => {
     exportFacilityDrugInventoryToExcel(items, {
       hospitalName: 'Hospital Lawas',
       departmentName: 'Jabatan Farmasi',
-      generatedBy: user?.name || 'Pegawai Farmasi',
-      generatedByTitle: user?.role || 'Pegawai Farmasi',
+      generatedBy: user?.full_name || 'Pegawai Farmasi',
+      generatedByTitle: user?.role ? String(user.role) : 'Pegawai Farmasi',
       filename: `Formulari_Hospital_Lawas_${new Date().getFullYear()}.xlsx`,
     })
     toastSuccess('Fail Excel Formulari Hospital Lawas berjaya dimuat turun.')
@@ -275,6 +290,7 @@ export const HospitalLawasFormulariPage: React.FC = () => {
   // ── Render ─────────────────────────────────────────────────────────────────
   return (
     <div className="w-full min-h-screen bg-[#0d0d0d] text-white flex flex-col">
+      <FukkmCatalogStatus onCatalogLoaded={handleCatalogLoaded} onStatusChange={handleCatalogStatus} />
 
       {/* ══ TOP HEADER ═══════════════════════════════════════════════════════ */}
       <div className="border-b border-white/[0.08] bg-[#111111]">
@@ -450,7 +466,7 @@ export const HospitalLawasFormulariPage: React.FC = () => {
 
               <select
                 value={stockFilter}
-                onChange={e => setStockFilter(e.target.value as any)}
+                onChange={e => setStockFilter((['ALL', 'IN_STOCK', 'LOW_STOCK', 'OUT_OF_STOCK'] as const).find(filter => filter === e.currentTarget.value) ?? 'ALL')}
                 className="h-8 px-2.5 bg-white/[0.04] border border-white/[0.08] rounded-md text-[12px] text-white/60 focus:outline-none cursor-pointer"
               >
                 <option value="ALL">Semua Status Stok</option>
@@ -594,7 +610,7 @@ export const HospitalLawasFormulariPage: React.FC = () => {
                               const prescriber = getDrugPrescriberCategory(drug)
                               const stock = drug.facility_stock ?? 0
                               const min = drug.min_buffer_level ?? 20
-                              const code = drug.drug_code || (drug as any).item_code || ''
+                               const code = drug.drug_code || drug.item_code || ''
 
                               return (
                                 <div
@@ -736,7 +752,7 @@ export const HospitalLawasFormulariPage: React.FC = () => {
                       const prescriber = getDrugPrescriberCategory(drug)
                       const stock = drug.facility_stock ?? 0
                       const min = drug.min_buffer_level ?? 20
-                      const code = drug.drug_code || (drug as any).item_code || ''
+                       const code = drug.drug_code || drug.item_code || ''
 
                       return (
                         <tr

@@ -2,24 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import {
-  Building2,
-  Users,
-  FileText,
-  AlertTriangle,
-  TrendingUp,
-  Activity,
-  CheckCircle,
-  Clock,
-  XCircle,
-  Settings,
-  Shield,
-  Megaphone,
-  Lock,
-  ScrollText,
-  Database,
-  RefreshCw,
-} from 'lucide-react'
+import { Building2, Users, FileText, AlertTriangle, TrendingUp, Activity, CheckCircle, Settings, Shield, Megaphone, Lock, ScrollText, Database } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { Badge, Button, StatCard } from '@/components/ui'
 import { cn, formatDate } from '@/lib/utils'
@@ -30,7 +13,7 @@ import { getHospitalHealthSummary, ServiceStatus, getServiceStatuses } from '@/s
 import { getUsers } from '@/services/userService'
 import { getDepartments } from '@/services/departmentService'
 import { getAccessRequests } from '@/services/accessRequestManagementService'
-import type { HospitalHealthSummary, HealthStatus, MemoStatus, SensitiveDataRequestStatus } from '@/types'
+import type { HospitalHealthSummary, HealthStatus, MemoStatus } from '@/types'
 
 const statusColors: Record<HealthStatus, { color: string; bgColor: string }> = {
   healthy: { color: 'text-green-600', bgColor: 'bg-green-100' },
@@ -51,7 +34,7 @@ export const HospitalAdminDashboard: React.FC = () => {
   })
   const [healthSummary, setHealthSummary] = useState<HospitalHealthSummary | null>(null)
   const [services, setServices] = useState<ServiceStatus[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [, setIsLoading] = useState(true)
   
   // KPI Data
   const [totalUsers, setTotalUsers] = useState(0)

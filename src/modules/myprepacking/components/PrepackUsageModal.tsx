@@ -1,6 +1,6 @@
 // src/modules/myprepacking/components/PrepackUsageModal.tsx
 import React, { useState, useEffect } from 'react'
-import { Send, Building, FileText, User, AlertCircle, ArrowDownCircle } from 'lucide-react'
+import { ArrowDownCircle } from 'lucide-react'
 import { Modal, Button } from '@/components/ui'
 import type { PrepackItem, PrepackBatch, UsageTransactionType } from '../types/prepack'
 import { recordPrepackUsage, getPrepackBatches } from '../services/prepackService'
@@ -49,7 +49,7 @@ export const PrepackUsageModal: React.FC<PrepackUsageModalProps> = ({
   const [customWard, setCustomWard] = useState<string>('')
   const [recipientName, setRecipientName] = useState<string>('')
   const [referenceNo, setReferenceNo] = useState<string>('')
-  const [remarks, setRemarks] = useState<string>('')
+  const [remarks, ] = useState<string>('')
 
   useEffect(() => {
     if (isOpen) {

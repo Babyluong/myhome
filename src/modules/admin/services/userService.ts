@@ -1,7 +1,5 @@
-// @ts-nocheck
 import { supabase, isSupabaseConfigured } from '@/services/supabase'
-import { withService, paginateMockData } from '@/services/baseService'
-import { mockUsers, getRoleById, getDepartmentById, getHospitalById } from '@/services/mockData'
+import { withService } from '@/services/baseService'
 import type { User, UserWithRelations, PaginatedResponse, FilterConfig, SortConfig } from '@/types'
 import { DEFAULT_PAGE_SIZE } from '@/lib/constants'
 import { createAuthUser, adminResetUserPassword } from '@/services/authUserService'
@@ -29,7 +27,6 @@ export async function getUsers(params: GetUsersParams = {}): Promise<PaginatedRe
     page = 1,
     pageSize = DEFAULT_PAGE_SIZE,
     search = '',
-    filters = [],
     sort,
     hospitalId,
     departmentId,
@@ -89,40 +86,7 @@ export async function getUsers(params: GetUsersParams = {}): Promise<PaginatedRe
       }
     },
     async () => {
-      // Mock implementation
-      await new Promise((resolve) => setTimeout(resolve, 500))
-
-      let filteredUsers = [...mockUsers]
-
-      // Apply filters
-      if (hospitalId) {
-        filteredUsers = filteredUsers.filter((u) => u.hospital_id === hospitalId)
-      }
-      if (departmentId) {
-        filteredUsers = filteredUsers.filter((u) => u.department_id === departmentId)
-      }
-      if (status) {
-        filteredUsers = filteredUsers.filter((u) => u.status === status)
-      }
-
-      const paginatedResponse = paginateMockData<User>(
-        filteredUsers,
-        params,
-        ['full_name', 'employee_id', 'email']
-      )
-
-      // Add relations
-      const usersWithRelations: UserWithRelations[] = paginatedResponse.data.map((user) => ({
-        ...user,
-        role: getRoleById(user.role_id),
-        department: getDepartmentById(user.department_id),
-        hospital: getHospitalById(user.hospital_id),
-      }))
-
-      return {
-        ...paginatedResponse,
-        data: usersWithRelations,
-      }
+      throw new Error('User service is unavailable because Supabase is not configured.')
     }
   )
 }
@@ -148,16 +112,7 @@ export async function getUserById(userId: string): Promise<UserWithRelations | n
       if (error) throw error
       return data as UserWithRelations
     } else {
-      await new Promise((resolve) => setTimeout(resolve, 300))
-      const user = mockUsers.find((u) => u.id === userId)
-      if (!user) return null
-
-      return {
-        ...user,
-        role: getRoleById(user.role_id),
-        department: getDepartmentById(user.department_id),
-        hospital: getHospitalById(user.hospital_id),
-      }
+      throw new Error('User service is unavailable because Supabase is not configured.')
     }
   } catch (error) {
     console.error('Error fetching user:', error)
@@ -198,7 +153,7 @@ export async function createUser(userData: Partial<User>): Promise<UserWithRelat
   try {
     if (isSupabaseConfigured()) {
       let finalUserId = userData.id || crypto.randomUUID()
-      let tempPassword = generateTemporaryPassword()
+      const tempPassword = generateTemporaryPassword()
 
       // Create Supabase Auth user first if email is provided
       // This ensures public.users.id strictly matches auth.users.id
@@ -206,7 +161,7 @@ export async function createUser(userData: Partial<User>): Promise<UserWithRelat
         const { success: authSuccess, error: authError, authUserId } = await createAuthUser(
           userData.email,
           tempPassword,
-          finalUserId
+          finalUserId, { hospitalId: userData.hospital_id!, roleId: userData.role_id! }
         )
 
         if (!authSuccess) {
@@ -241,7 +196,8 @@ export async function createUser(userData: Partial<User>): Promise<UserWithRelat
         const emailResult = await sendWelcomeEmail(
           data.email,
           data.employee_id,
-          data.full_name
+          data.full_name,
+          tempPassword
         )
 
         if (!emailResult.success) {
@@ -252,23 +208,7 @@ export async function createUser(userData: Partial<User>): Promise<UserWithRelat
 
       return data as UserWithRelations
     } else {
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      const newUser: User = {
-        id: `user-${Date.now()}`,
-        ...userData,
-        failed_login_attempts: 0,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      } as User
-
-      mockUsers.push(newUser)
-
-      return {
-        ...newUser,
-        role: getRoleById(newUser.role_id),
-        department: getDepartmentById(newUser.department_id),
-        hospital: getHospitalById(newUser.hospital_id),
-      }
+      throw new Error('User service is unavailable because Supabase is not configured.')
     }
   } catch (error) {
     console.error('Error creating user:', error)
@@ -297,23 +237,7 @@ export async function updateUser(userId: string, updates: Partial<User>): Promis
       if (error) throw error
       return data as UserWithRelations
     } else {
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      const userIndex = mockUsers.findIndex((u) => u.id === userId)
-      if (userIndex === -1) throw new Error('User not found')
-
-      mockUsers[userIndex] = {
-        ...mockUsers[userIndex],
-        ...updates,
-        updated_at: new Date().toISOString(),
-      }
-
-      const updatedUser = mockUsers[userIndex]
-      return {
-        ...updatedUser,
-        role: getRoleById(updatedUser.role_id),
-        department: getDepartmentById(updatedUser.department_id),
-        hospital: getHospitalById(updatedUser.hospital_id),
-      }
+      throw new Error('User service is unavailable because Supabase is not configured.')
     }
   } catch (error) {
     console.error('Error updating user:', error)
@@ -330,11 +254,7 @@ export async function deleteUser(userId: string): Promise<void> {
       const { error } = await supabase.from('users').delete().eq('id', userId)
       if (error) throw error
     } else {
-      await new Promise((resolve) => setTimeout(resolve, 300))
-      const userIndex = mockUsers.findIndex((u) => u.id === userId)
-      if (userIndex !== -1) {
-        mockUsers.splice(userIndex, 1)
-      }
+      throw new Error('User service is unavailable because Supabase is not configured.')
     }
   } catch (error) {
     console.error('Error deleting user:', error)
@@ -355,14 +275,7 @@ export async function bulkUpdateUserStatus(userIds: string[], status: string): P
 
       if (error) throw error
     } else {
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      userIds.forEach((userId) => {
-        const user = mockUsers.find((u) => u.id === userId)
-        if (user) {
-          user.status = status as User['status']
-          user.updated_at = new Date().toISOString()
-        }
-      })
+      throw new Error('User service is unavailable because Supabase is not configured.')
     }
   } catch (error) {
     console.error('Error bulk updating users:', error)
@@ -379,13 +292,7 @@ export async function bulkDeleteUsers(userIds: string[]): Promise<void> {
       const { error } = await supabase.from('users').delete().in('id', userIds)
       if (error) throw error
     } else {
-      await new Promise((resolve) => setTimeout(resolve, 500))
-      userIds.forEach((userId) => {
-        const index = mockUsers.findIndex((u) => u.id === userId)
-        if (index !== -1) {
-          mockUsers.splice(index, 1)
-        }
-      })
+      throw new Error('User service is unavailable because Supabase is not configured.')
     }
   } catch (error) {
     console.error('Error bulk deleting users:', error)

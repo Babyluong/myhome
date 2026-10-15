@@ -2,26 +2,10 @@
 import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
-import {
-  Building2,
-  Users,
-  Shield,
-  Settings,
-  FileText,
-  AlertTriangle,
-  TrendingUp,
-  Activity,
-  Globe,
-  CheckCircle,
-  Clock,
-  XCircle,
-  Database,
-  HardDrive,
-  Bell,
-} from 'lucide-react'
+import { Building2, Users, Shield, Settings, AlertTriangle, Activity, Globe, CheckCircle, Clock, XCircle, Database, Bell } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { Badge, Button, Spinner, StatCard } from '@/components/ui'
-import { cn, formatDate, formatCurrency, getRelativeTime } from '@/lib/utils'
+import { cn, formatDate, getRelativeTime } from '@/lib/utils'
 import { ROUTES } from '@/lib/constants'
 import { getSystemStatistics, getSystemAlerts, getLatestHealthStatus } from '@/services'
 import type { SystemStatistics, SystemAlert, SystemHealthLog } from '@/types'

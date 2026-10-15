@@ -2,25 +2,9 @@
 // Comprehensive Audit Trail & History Viewer for MyStaff Module (Reminders & Movements)
 
 import React, { useState, useEffect, useMemo } from 'react'
-import {
-  History,
-  Search,
-  Calendar,
-  Clock,
-  User,
-  Trash2,
-  Edit3,
-  PlusCircle,
-  CheckCircle2,
-  Filter,
-  ShieldCheck,
-  FileText,
-  Briefcase,
-  Bell,
-  X
-} from 'lucide-react'
+import { History, Search, Clock, Trash2, Edit3, PlusCircle, CheckCircle2, ShieldCheck, FileText, Briefcase, Bell } from 'lucide-react'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
-import { SlideOver, Badge } from '@/components/ui'
+import { SlideOver } from '@/components/ui'
 import { getStaffAuditLogs } from '@/modules/mystaff/services/staffService'
 import type { StaffAuditLog, AuditModuleType, AuditActionType } from '@/shared/types/mystaff'
 

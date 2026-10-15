@@ -1,99 +1,91 @@
-# H.O.M.E. Modern Depth Design System
+# H.O.M.E. Design System
 
 **Status:** Active  
-**Standard:** Modern Clinical Depth + Hybrid 3D  
-**Target:** Hospital Operation Management Ecosystem (H.O.M.E.)
+**Standard:** Maintained gray/blue operational shell with scoped identity heroes  
+**Token source:** `src/index.css`, mapped by `tailwind.config.js`
 
----
+## 1. Page purpose and authority
 
-## 1. Core Philosophy & Architectural Boundaries
+Root `AGENTS.md`, this system and the user's approved visual brief govern UI work. Supporting design skills adapt to that purpose. A successful static check does not establish visual quality or authentication security.
 
-H.O.M.E. is a mission-critical hospital operation platform requiring **high information density (TasteSkill Density 7–8)**, clinical precision, and instant responsiveness.
+Operational modules use the established application shell, predictable navigation, compact actions and readable data-dense layouts. Density 7–8 is an operational starting point; readability, keyboard access and the task take precedence over packing more content into a page.
 
-### The Hybrid 3D Principle
-1. **Isolated WebGL Heroes**: Real-time 3D (React Three Fiber / Three.js) is strictly confined to:
-   - Pengesahan & Log Masuk (`/login`)
-   - Module Hub & Landing (`/hub`)
-2. **Lazy-Loaded Boundaries**: 3D components must be lazy-loaded (`React.lazy`) behind dynamic imports to prevent bloat in enterprise module bundles.
-3. **Graceful Fallbacks**: When WebGL is unavailable or when `prefers-reduced-motion: reduce` is active, the system automatically falls back to lightweight multi-layered CSS depth surfaces.
-4. **CSS Depth Across All Modules**: All 21 functional operational modules (MyKunci, MySuhu, MyCylinder, MyStaff, etc.) use high-performance CSS elevation, crisp hairline borders, and tactile micro-interactions with **zero WebGL overhead**.
+Login (`/login`) and hub (`/hub`) are the approved locations for a lazy-loaded WebGL identity hero. An approved composition may use larger display typography, purposeful lighting, material depth and continuous hero movement. Credential fields, labels, validation and primary actions stay stationary and readable. Operational type scales and density targets do not impose a ceiling on an identity hero.
 
----
+The [premium 3D login brief](tasks/LOGIN-DESIGN-BRIEF-20261013.md) records a future review direction. The current token repair does not implement that redesign or select a new visual composition. Navy/slate foundations and cyan/teal identity lighting are optional scoped directions only after visual-brief approval; they must not silently recolor operational modules.
 
-## 2. Token Architecture & Theme Mapping
+Keep WebGL within the approved hero boundary and behind dynamic imports. Feature modules use CSS surfaces and elevation. When reduced motion, unavailable WebGL or a scene-load/render failure prevents the hero, provide a static visual with a complete usable form. Verify lazy-chunk isolation and fallback behavior rather than assuming them from file placement.
 
-Tokens are defined in `src/index.css` via CSS Custom Properties and integrated into Tailwind configuration.
+## 2. Maintained palette and theme contract
 
-### 2.1 Color Palette
-- **Foundation Base**: Dark Navy/Slate (`#0b0f19` dark / `#f8fafc` light).
-- **Surface Layer 1**: Card / Panel (`#111827` dark / `#ffffff` light).
-- **Elevated Layer 2**: Modals / Popovers (`#1e293b` dark / `#f1f5f9` light).
-- **Clinical Accent**: Precision Cyan / Teal (`#0ea5e9` sky / `#14b8a6` teal) for focal primary actions.
-- **Status Accents**:
-  - Emerald (`#10b981`) — Success / Online / Ready
-  - Amber (`#f59e0b`) — Caution / Pending / Maintenance
-  - Rose (`#f43f5e`) — Critical / Overdue / Alarm
-  - Indigo/Sky (`#38bdf8`) — Informational / Audit
+The existing neutral and System Blue palette remains the operational source of truth. `.dark` selects the dark token overrides, matching Tailwind's class-based theme configuration.
 
-### 2.2 Elevation Scale
-```css
-/* Level 0: Canvas */
---bg-canvas: #0b0f19;
+| Token | Light | Dark | Use |
+| --- | --- | --- | --- |
+| `--bg-canvas` | `#f5f5f7` | `#000000` | Page canvas |
+| `--bg-surface` | `#ffffff` | `#1c1c1e` | Panels and controls |
+| `--bg-subtle` | `#f0f0f2` | `#2c2c2e` | Secondary surfaces |
+| `--bg-elevated` | `var(--bg-subtle)` | `var(--bg-subtle)` | Floating surface fill |
+| `--text-primary` | `#1d1d1f` | `#f5f5f7` | Primary text |
+| `--text-secondary` | `#424245` | `#a1a1a6` | Secondary text |
+| `--text-muted` | `#86868b` | `#86868b` | Supporting text; verify actual contrast |
+| `--accent-base` | `#0071e3` | `#2997ff` | Primary actions |
+| `--border-default` | Black at 8% | White at 12% | Resting hairline borders |
+| `--border-interactive` | System Blue at 30% | System Blue at 30% | Interactive border emphasis |
 
-/* Level 1: Standard Surface (Cards, Tables, Panels) */
---bg-surface: #111827;
---border-subtle: rgba(255, 255, 255, 0.08);
---shadow-surface: 0 1px 3px 0 rgba(0, 0, 0, 0.3), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
+`--accent-teal` is a supplementary existing-palette hue (`#14b8a6` light / `#2dd4bf` dark), not a replacement primary action color. Reserve success, caution and critical colors for real status. Use the existing sans stack for operational text, tabular numerals for comparable values and a coherent display hierarchy for approved identity surfaces.
 
-/* Level 2: Interactive Lift (Hover, Focus) */
---border-interactive: rgba(14, 165, 233, 0.3);
---shadow-elevated: 0 4px 12px -2px rgba(0, 0, 0, 0.4), 0 2px 6px -1px rgba(0, 0, 0, 0.3);
+### Semantic opacity utilities
 
-/* Level 3: Floating Overlay (Modals, Drawers, Dropdowns) */
---bg-elevated: #1e293b;
---border-elevated: rgba(255, 255, 255, 0.14);
---shadow-modal: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
-```
+Keep complete color variables such as `--bg-surface` and `--border-default` usable by existing CSS consumers. Their parallel `-rgb` variables hold space-separated RGB channels in each theme; translucent tokens also have an `-alpha` value. Update these pairs together when a palette change is approved.
 
----
+The `semanticColor` helper preserves the complete variable for a base utility. Slash modifiers use the channel variable and attenuate the token's original alpha:
 
-## 3. Motion & Micro-Interactions (Emil Kowalski Standard)
+- `bg-surface` remains `var(--bg-surface)`; `bg-surface/90` uses 90% surface opacity.
+- `border-border-default/60` uses 60% of the token's existing opacity: 4.8% black in light and 7.2% white in dark. It does not become a 60%-opaque border.
+- `bg-accent-subtle/50` halves the existing 8% light / 16% dark accent wash.
+- `focus:ring-accent-base/20`, gradient stops and dark/pseudo-class variants use the same contract.
+- The `8` opacity step supports existing `bg-accent-decor/8`; arbitrary slash values remain available.
 
-1. **Duration**: 150ms – 250ms max.
-2. **Easing**: `cubic-bezier(0.16, 1, 0.3, 1)` (fluid spring/ease-out deceleration).
-3. **Properties**: ONLY animate `transform` and `opacity`. Never animate width, height, margin, or padding.
-4. **Tactile Feedback**:
-   - Card Hover: `transform: translateY(-1px)` with subtle border highlight.
-   - Button Press: `transform: scale(0.98)` with instant visual confirmation.
-5. **Reduced Motion**: Under `@media (prefers-reduced-motion: reduce)`, all transitions drop to `duration: 0.01ms` or immediate state toggle.
+This attenuation contract applies to semantic tokens. Built-in Tailwind literal colors retain Tailwind's normal opacity behavior. Prefer explicit slash modifiers over separate legacy color-opacity utilities for semantic colors.
 
----
+## 3. CSS elevation
 
-## 4. Required 6 Microstates on All Interactive Controls
+Both themes define `--elevation-1`, `--elevation-2` and `--elevation-3`. Light shadows remain restrained; dark shadows use the documented stronger depth values. The exact values live in `src/index.css`.
 
-Every interactive element (buttons, inputs, select triggers, table rows) must explicitly style:
-1. `default`: Clean surface, legible text, hairline border.
-2. `hover`: Subdued lift, subtle border illumination.
-3. `focus-visible`: 2px offset focus ring (`ring-2 ring-cyan-500/50 outline-none`).
-4. `active / pressed`: Tactile scale depression (`scale-[0.98]`).
-5. `disabled`: Opacity 40%, cursor-not-allowed, no hover lift.
-6. `loading`: Non-layout-shifting skeleton or smooth spinner with accessible aria announcement.
+| Level | Tailwind utility | Compatibility alias | Purpose |
+| --- | --- | --- | --- |
+| 1 | `shadow-elevation-1` | `--shadow-surface` | Resting panels and controls |
+| 2 | `shadow-elevation-2` | `--shadow-elevated` | Interactive lift and emphasis |
+| 3 | `shadow-elevation-3` | `--shadow-modal` | Floating overlays |
 
----
+`--shadow-card-3d` aliases level 2 for existing consumers. `--border-elevated` aliases the stronger theme border. Shadows and hairline borders may coexist where they clarify the surface hierarchy; there is no universal ban on resting shadows. Scene lighting/materials provide hero depth independently of CSS panel shadows.
 
-## 5. UI Primitives Suite
+## 4. Control motion and interaction states
 
-All screens consume these foundational primitives located in `src/components/ui/`:
-- `Surface`: Layered container with elevation levels 1–3, hairline border, and optional subtle interactive tilt/lift.
-- `Button`: Compact clinical button styling all 6 microstates with primary, secondary, outline, and destructive variants.
-- `DataTable`: High-density tabular layout with sticky headers, tabular figures (`font-mono` / `tabular-nums`), and structured empty/loading states.
-- `PageHeader`: Standardized operational header with breadcrumbs, title, clinical status indicator, and primary action slot.
-- `ThemeToggle`: Accessible toggle supporting dark, light, and system themes.
+Use 150–250ms control transitions, with `cubic-bezier(0.16, 1, 0.3, 1)` for deceleration where appropriate. Animate `transform` and `opacity` for movement; do not animate width, height, margins or padding. Subtle hover lift and `scale(0.98)` press feedback should clarify a real interaction without shifting surrounding content.
 
----
+Approved continuous hero movement is a separate category: choose its pace to reveal volume or respond to attention, provide an accessible pause control and stop movement under reduced motion. Reduced-motion handling must cover JavaScript animation as well as CSS; the CSS duration override alone does not stop a WebGL/Framer animation loop.
 
-## 6. Verification Checklist
-- [ ] No hardcoded hex values in `.tsx` files.
-- [ ] React Three Fiber and Drei packages are only imported under `src/components/three/`.
-- [ ] Bundle analysis confirms 3D code is isolated in a split chunk.
-- [ ] `npm run build` and `scripts/check-rules.cjs` pass cleanly.
+Style the states each control actually has:
+
+1. Default: clear surface, legible label and appropriate border.
+2. Hover: restrained emphasis for pointer users.
+3. Focus-visible: visible keyboard focus with sufficient contrast and offset; verify the rendered ring in both themes.
+4. Active/pressed: immediate feedback without moving adjacent content.
+5. Disabled, where applicable: clear unavailable state, no active hover effect and correct semantics.
+6. Loading, where applicable: stable dimensions and an accessible announcement; a labeled spinner is valid for an action, a skeleton for loading content.
+
+Do not invent disabled/loading states merely to satisfy a checklist. Preserve explicit loading, empty, error and success feedback in data-facing screens.
+
+## 5. Existing primitives and evidence
+
+Reuse the established application shell and existing UI entry points. `Surface` supplies elevation levels, `Button` supplies action variants, `DataTable` supports operational density, `PageHeader` supplies page hierarchy and `ThemeToggle` supplies theme presentation. Extend these within their assigned ownership rather than introducing a parallel design system.
+
+Acceptance checks follow the affected behavior:
+
+- Compile semantic base/alpha/gradient/focus utilities and resolve color/shadow variables in both themes. Preserve existing base palette values when fixing the contract.
+- Retain actual browser evidence tied to revision or working-tree snapshot, theme, CSS viewport, zoom/device scale and motion setting. Capture relevant responsive layouts, keyboard focus and computed contrast. Missing evidence is unverified.
+- For hero changes, demonstrate motion/pause, reduced motion, WebGL/scene failure and lazy-chunk isolation. Use the approved brief's viewport and visual criteria.
+- Run applicable static checks and build/test gates; record skipped checks with a reason. The build workflow generates release files, so coordinate its outputs under the task's allowed paths.
+- Static rule checks and screenshots do not certify authentication, tenant boundaries, RLS or audit behavior. Backend and QA owners provide those acceptance checks when affected.

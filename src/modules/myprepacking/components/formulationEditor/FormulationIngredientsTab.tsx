@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Plus, Trash2, RotateCcw, Sparkles, Beaker, Info } from 'lucide-react'
+import { Plus, Trash2, RotateCcw, Beaker, Info } from 'lucide-react'
 import type { PrepackFormulationIngredient } from '../../types/prepack'
 
 interface FormulationIngredientsTabProps {

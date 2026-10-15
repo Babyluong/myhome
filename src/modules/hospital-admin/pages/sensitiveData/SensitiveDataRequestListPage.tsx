@@ -16,7 +16,7 @@ import {
   FileText,
   TrendingUp,
 } from 'lucide-react'
-import { Button, Input, Select, Badge, Pagination, Avatar } from '@/components/ui'
+import { Button, Input, Select, Badge, Pagination } from '@/components/ui'
 import { getSensitiveDataRequests, getPendingRequestsCount } from '@/services/sensitiveDataRequestService'
 import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'

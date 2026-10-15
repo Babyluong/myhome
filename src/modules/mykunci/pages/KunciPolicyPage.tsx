@@ -1,16 +1,6 @@
 // src/modules/mykunci/pages/KunciPolicyPage.tsx
 import React, { useState } from 'react'
-import { 
-  ScrollText, 
-  ShieldAlert, 
-  FileText, 
-  Clipboard, 
-  Check, 
-  Key, 
-  Lock, 
-  AlertTriangle,
-  ClipboardList
-} from 'lucide-react'
+import { ScrollText, ShieldAlert, FileText, Check, Key, Lock, AlertTriangle, ClipboardList } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardContent, Button } from '@/components/ui'
 import { useToast } from '@/stores/toastStore'
 import { useLanguage } from '@/shared/contexts/LanguageContext'

@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { DepartmentRequest, RequestItem, RequestStatus } from '@/features/pharmacy-logistics/types/RequestWorkflow';
+import { DepartmentRequest } from '@/features/pharmacy-logistics/types/RequestWorkflow'
 
 interface PhysicalIssuanceModalProps {
   isOpen: boolean;

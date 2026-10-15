@@ -1,5 +1,5 @@
 import React from 'react'
-import { Eye, Building2, Layers, FlaskConical } from 'lucide-react'
+import { Eye, Building2, FlaskConical } from 'lucide-react'
 import { MSDSEntry } from '../data/msdsData'
 import { GhsPictogram } from './GhsPictogram'
 

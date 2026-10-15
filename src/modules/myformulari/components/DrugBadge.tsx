@@ -1,5 +1,5 @@
 import React from 'react'
-import { AlertTriangle, ShieldAlert, Sparkles, Droplets, Info, Lock, Flame } from 'lucide-react'
+import { AlertTriangle, ShieldAlert, Lock, Flame } from 'lucide-react'
 import { PrescriberCategory, PoisonCategory, HAMRiskLevel } from '../types/formulariTypes'
 
 interface PrescriberBadgeProps {

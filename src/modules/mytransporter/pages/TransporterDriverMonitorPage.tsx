@@ -1,17 +1,7 @@
 // src/modules/mytransporter/pages/TransporterDriverMonitorPage.tsx
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  ArrowLeft, 
-  Users, 
-  Printer, 
-  Calendar, 
-  Clock, 
-  UserCheck, 
-  Shield, 
-  Activity, 
-  MapPin 
-} from 'lucide-react'
+import { ArrowLeft, Users, Printer, MapPin } from 'lucide-react'
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { useAuthStore } from '@/stores/authStore'
@@ -23,14 +13,7 @@ import {
 } from '../services/transporterService'
 import { getUsers } from '@/services/userService'
 import type { UserWithRelations } from '@/shared/types/auth'
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardContent, 
-  Button, 
-  Input 
-} from '@/components/ui'
+import { Card, CardContent, Button } from '@/components/ui'
 
 const TransporterDriverMonitorPage: React.FC = () => {
   const navigate = useNavigate()

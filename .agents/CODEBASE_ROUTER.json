@@ -1,0 +1,396 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "name": "H.O.M.E. Codebase Routing Matrix",
+  "version": "1.1.0",
+  "system": "Hospital Operation Management Ecosystem (H.O.M.E.)",
+  "routing_rules": {
+    "zero_scan_mandate": "Use this matrix as a first hint for module requests. Verify coordinates and use bounded graph/source fallback when incomplete. Governance and cross-cutting tasks may bypass a module lookup.",
+    "precision_level": "Direct module root and entry pages resolution",
+    "token_budget_target": "Soft target: compact lookups; correctness and required coverage take priority"
+  },
+  "verification": {
+    "verified_at": "2026-10-13",
+    "source": "Graph candidates checked against current source imports, route entries and file existence",
+    "scope": "Declared root/page/service/data coordinates only; not an exhaustive feature, route or database inventory",
+    "database_hints": "db_tables requires confirmation against schema and policies before any data change"
+  },
+  "modules": {
+    "mykunci": {
+      "title": "MyKunci (Sistem Pengurusan Kunci & Keselamatan)",
+      "keywords": ["kunci", "key", "locker", "peti keselamatan", "serah kunci", "pulang kunci", "kunci log", "kunci policy", "kunci registry", "kunci audit"],
+      "root": "src/modules/mykunci",
+      "pages": [
+        "src/modules/mykunci/pages/KunciDashboardPage.tsx",
+        "src/modules/mykunci/pages/KunciRegistryPage.tsx",
+        "src/modules/mykunci/pages/KunciLogPage.tsx",
+        "src/modules/mykunci/pages/KunciAuditPage.tsx",
+        "src/modules/mykunci/pages/KunciPolicyPage.tsx"
+      ],
+      "services": [
+        "src/modules/mykunci/services/kunciService.ts"
+      ],
+      "route_path": "/hub/kunci",
+      "db_tables": ["kunci_daftar", "kunci_log", "kunci_policies"]
+    },
+    "mycylinder": {
+      "title": "MyCylinder (Sistem Pengurusan & Pemantauan Silinder Oksigen / Gas Perubatan)",
+      "keywords": ["cylinder", "silinder", "oksigen", "oxygen", "gas", "manifold", "ward oxygen", "bomba", "bekalan oksigen", "pulangan silinder"],
+      "root": "src/modules/mycylinder",
+      "pages": [
+        "src/modules/mycylinder/pages/oxygen/OxygenDashboardPage.tsx",
+        "src/modules/mycylinder/pages/oxygen/CylinderReportPage.tsx",
+        "src/modules/mycylinder/pages/oxygen/CylinderMaintenancePage.tsx",
+        "src/modules/mycylinder/pages/oxygen/CylinderKewPs4LedgerPage.tsx"
+      ],
+      "services": [
+        "src/modules/mycylinder/services/oxygenService.ts",
+        "src/modules/mycylinder/services/cylinderDispatchService.ts"
+      ],
+      "route_path": "/hub/cylinder",
+      "capability_notes": ["Standalone CylinderRegistryPage and CylinderTransactionPage do not exist. Current cylinder routes use OxygenDashboardPage; shared pharmacy service files re-export these module implementations."],
+      "db_tables": [
+        "pharmacy_oxygen_request_documents",
+        "pharmacy_oxygen_request_document_items",
+        "pharmacy_oxygen_return_documents",
+        "pharmacy_oxygen_return_document_items",
+        "pharmacy_cylinder_dispatch_requests",
+        "pharmacy_supplier_penalties"
+      ]
+    },
+    "mysuhu": {
+      "title": "MySuhu (Pemantauan Suhu Rangkaian Sejuk & Chiller Farmasi)",
+      "keywords": ["suhu", "temperature", "chiller", "fridge", "peti sejuk", "cold chain", "breach", "pemantauan suhu", "unit pemantauan"],
+      "root": "src/modules/mysuhu",
+      "pages": [
+        "src/modules/mysuhu/pages/SuhuDashboardPage.tsx",
+        "src/modules/mysuhu/pages/DepartmentSuhuPage.tsx",
+        "src/modules/mysuhu/pages/UnitDetailPage.tsx",
+        "src/modules/mysuhu/pages/BreachLogPage.tsx",
+        "src/modules/mysuhu/pages/AdminSetupPage.tsx"
+      ],
+      "services": [
+        "src/modules/mysuhu/services/suhuService.ts"
+      ],
+      "route_path": "/hub/suhu",
+      "db_tables": ["suhu_records", "suhu_units", "suhu_breaches", "unit_pemantauan"]
+    },
+    "mystaff": {
+      "title": "MyStaff (Direktori Staf, Hierarki Organisasi & Pengurusan Cuti)",
+      "keywords": ["staff", "staf", "pekerja", "orgchart", "hierarki", "organisasi", "direktori staf", "cuti staf", "jadual pergerakan", "hod", "deadline"],
+      "root": "src/modules/mystaff",
+      "pages": [
+        "src/modules/mystaff/pages/StaffDashboardPage.tsx",
+        "src/modules/mystaff/pages/StaffOrgChartPage.tsx",
+        "src/modules/mystaff/pages/StaffLeavePage.tsx",
+        "src/modules/mystaff/pages/StaffLeaveApplyPage.tsx",
+        "src/modules/mystaff/pages/StaffMovementPage.tsx",
+        "src/modules/mystaff/pages/StaffCalendarPage.tsx",
+        "src/modules/mystaff/pages/StaffHodPage.tsx",
+        "src/modules/mystaff/pages/StaffDeadlinePage.tsx",
+        "src/modules/mystaff/pages/StaffReminderPage.tsx"
+      ],
+      "services": [
+        "src/modules/mystaff/services/staffService.ts"
+      ],
+      "route_path": "/hub/staff",
+      "db_tables": ["users", "staff_profiles", "staff_leaves", "staff_movements", "departments"]
+    },
+    "myformulari": {
+      "title": "MyFormulari (Formulari Ubat Hospital & Garis Panduan Farmasi)",
+      "keywords": ["formulari", "formulary", "ubat", "drug", "ham", "lasa", "high alert", "antidote", "dilution", "antimicrobial", "drug quota", "paediatric"],
+      "root": "src/modules/myformulari",
+      "pages": [
+        "src/modules/myformulari/pages/FormulariDashboardPage.tsx",
+        "src/modules/myformulari/pages/HospitalLawasFormulariPage.tsx",
+        "src/modules/myformulari/pages/DrugDetailPage.tsx",
+        "src/modules/myformulari/pages/HamListPage.tsx",
+        "src/modules/myformulari/pages/LasaListPage.tsx",
+        "src/modules/myformulari/pages/DilutionProtocolPage.tsx",
+        "src/modules/myformulari/pages/AntimicrobialGuidelinePage.tsx",
+        "src/modules/myformulari/pages/DrugQuotaPage.tsx",
+        "src/modules/myformulari/pages/DrugAlternativesPage.tsx",
+        "src/modules/myformulari/pages/AntidoteProtocolPage.tsx",
+        "src/modules/myformulari/pages/PaediatricCataloguePage.tsx"
+      ],
+      "services": [
+        "src/modules/myformulari/services/formulariService.ts"
+      ],
+      "route_path": "/hub/formulari",
+      "db_tables": ["drugs", "drug_categories", "formulari_protocols", "drug_quotas"]
+    },
+    "mytransporter": {
+      "title": "MyTransporter (Sistem Tempahan & Pengurusan Pengangkutan Hospital)",
+      "keywords": ["transporter", "kenderaan", "logistik", "driver", "pemandu", "trip", "ambulans", "van hospital", "jadual pemandu", "tempahan kenderaan"],
+      "root": "src/modules/mytransporter",
+      "pages": [
+        "src/modules/mytransporter/pages/TransporterDashboardPage.tsx",
+        "src/modules/mytransporter/pages/TransporterRequestFormPage.tsx",
+        "src/modules/mytransporter/pages/TransporterMyRequestsPage.tsx",
+        "src/modules/mytransporter/pages/TransporterDriverPanelPage.tsx",
+        "src/modules/mytransporter/pages/TransporterDriverMonitorPage.tsx",
+        "src/modules/mytransporter/pages/TransporterAdminApprovalPage.tsx",
+        "src/modules/mytransporter/pages/TransporterVehicleRegistryPage.tsx",
+        "src/modules/mytransporter/pages/TransporterVehicleMovementPage.tsx",
+        "src/modules/mytransporter/pages/TransporterVehicleIssuesPage.tsx",
+        "src/modules/mytransporter/pages/TransporterReportsPage.tsx",
+        "src/modules/mytransporter/pages/TransporterRoleAssignmentPage.tsx",
+        "src/modules/mytransporter/pages/TransporterAvailabilityPage.tsx"
+      ],
+      "services": [
+        "src/modules/mytransporter/services/transporterService.ts"
+      ],
+      "route_path": "/hub/transporter",
+      "db_tables": ["transporter_requests", "transporter_vehicles", "transporter_drivers", "transporter_logs"]
+    },
+    "myperolehan": {
+      "title": "MyPerolehan (Sistem Pengurusan Perolehan, Pesanan & Pembekal)",
+      "keywords": ["perolehan", "procurement", "pesanan", "lpo", "tender", "sebut harga", "pembekal", "supplier", "pesanan tempatan", "invois"],
+      "root": "src/modules/myperolehan",
+      "pages": [
+        "src/modules/myperolehan/pages/MyPerolehanDashboard.tsx"
+      ],
+      "services": [
+        "src/modules/myperolehan/services/perolehanAdminService.ts"
+      ],
+      "route_path": "/hub/perolehan",
+      "db_tables": ["suppliers", "perolehan_orders", "perolehan_items", "lpo_records"]
+    },
+    "myprepacking": {
+      "title": "MyPrepacking (Unit Prapembungkusan Ubat & Lejar KEW.PS-4)",
+      "keywords": [
+        "prepacking", "prapembungkusan", "bungkus", "packaging", "label studio", "kewps4", "kew.ps-4",
+        "prepack batch", "prepack stock", "persediaan dalaman", "persediaan luaran", "galenikal", "ekstemporan",
+        "repack catalog", "senarai item", "item list", "prepack item"
+      ],
+      "root": "src/modules/myprepacking",
+      "pages": [
+        "src/modules/myprepacking/pages/PrepackDashboardPage.tsx",
+        "src/modules/myprepacking/pages/PrepackBatchListPage.tsx",
+        "src/modules/myprepacking/pages/PrepackItemListPage.tsx",
+        "src/modules/myprepacking/pages/PrepackKewPs4LedgerPage.tsx",
+        "src/modules/myprepacking/pages/PrepackLabelStudioPage.tsx",
+        "src/modules/myprepacking/pages/PrepackStockMovementPage.tsx",
+        "src/modules/myprepacking/pages/PrepackUsageHistoryPage.tsx",
+        "src/modules/myprepacking/pages/PrepackReportsPage.tsx"
+      ],
+      "services": [
+        "src/modules/myprepacking/services/prepackService.ts"
+      ],
+      "route_path": "/hub/prepacking",
+      "db_tables": ["prepack_items", "prepack_batches", "prepack_kewps4_ledger", "prepack_transfers"]
+    },
+    "mypriviledging": {
+      "title": "MyPriviledging (Sistem Kelayakan & Credentialing Klinikal Staf)",
+      "keywords": ["priviledging", "privileging", "credentialing", "prosedur klinikal", "submisi", "admin review", "staff progress", "sijil kelayakan"],
+      "root": "src/modules/mypriviledging",
+      "pages": [
+        "src/modules/mypriviledging/pages/PriviledgingDashboardPage.tsx",
+        "src/modules/mypriviledging/pages/CredentialingCriteriaPage.tsx",
+        "src/modules/mypriviledging/pages/ProcedureCatalogPage.tsx",
+        "src/modules/mypriviledging/pages/MySubmissionsPage.tsx",
+        "src/modules/mypriviledging/pages/AdminReviewQueuePage.tsx",
+        "src/modules/mypriviledging/pages/StaffProgressPage.tsx",
+        "src/modules/mypriviledging/pages/PrintPriviledgingPage.tsx"
+      ],
+      "services": [
+        "src/modules/mypriviledging/services/priviledgingService.ts"
+      ],
+      "route_path": "/hub/priviledging",
+      "db_tables": ["priviledging_applications", "procedure_catalog", "credentialing_criteria"]
+    },
+    "myporter": {
+      "title": "MyPorter (Sistem Tugasan & Agihan Porter / Pengusung Hospital)",
+      "keywords": ["porter", "pengusung", "dispatch", "tugasan porter", "pesakit wad", "roster porter", "receiver panel", "driver panel"],
+      "root": "src/modules/myporter",
+      "pages": [
+        "src/modules/myporter/pages/PorterDashboardPage.tsx",
+        "src/modules/myporter/pages/PorterRequestWizardPage.tsx",
+        "src/modules/myporter/pages/PorterMyRequestsPage.tsx",
+        "src/modules/myporter/pages/PorterManagerDispatchPage.tsx",
+        "src/modules/myporter/pages/PorterDriverPanelPage.tsx",
+        "src/modules/myporter/pages/PorterReceiverPanelPage.tsx",
+        "src/modules/myporter/pages/PorterRosterPage.tsx",
+        "src/modules/myporter/pages/PorterReportsPage.tsx",
+        "src/modules/myporter/pages/PorterRoleAssignmentPage.tsx"
+      ],
+      "services": [
+        "src/modules/myporter/services/porterService.ts"
+      ],
+      "route_path": "/hub/porter",
+      "db_tables": ["porter_tasks", "porter_assignments", "porter_rosters"]
+    },
+    "mytempahan": {
+      "title": "MyTempahan (Sistem Tempahan Bilik Mesyuarat & Fasiliti)",
+      "keywords": ["tempahan", "booking", "bilik mesyuarat", "dewan", "fasiliti", "kalendar tempahan", "kelulusan bilik", "room registry"],
+      "root": "src/modules/mytempahan",
+      "pages": [
+        "src/modules/mytempahan/pages/TempahanDashboardPage.tsx",
+        "src/modules/mytempahan/pages/TempahanRequestFormPage.tsx",
+        "src/modules/mytempahan/pages/TempahanMyBookingsPage.tsx",
+        "src/modules/mytempahan/pages/TempahanCalendarPage.tsx",
+        "src/modules/mytempahan/pages/TempahanApprovalQueuePage.tsx",
+        "src/modules/mytempahan/pages/TempahanRoomRegistryPage.tsx",
+        "src/modules/mytempahan/pages/TempahanReportsPage.tsx"
+      ],
+      "services": [
+        "src/modules/mytempahan/services/tempahanService.ts"
+      ],
+      "route_path": "/hub/tempahan",
+      "db_tables": ["tempahan_rooms", "tempahan_bookings"]
+    },
+    "mytimeoff": {
+      "title": "MyTimeOff (Sistem Gantian Cuti & Tuntutan Masa Pelepasan)",
+      "keywords": ["timeoff", "time-off", "cuti rehat", "gantian", "tuntutan masa", "redeem timeoff", "hod approval timeoff", "claim timeoff"],
+      "root": "src/modules/mytimeoff",
+      "pages": [
+        "src/modules/mytimeoff/pages/TimeOffDashboardPage.tsx",
+        "src/modules/mytimeoff/pages/TimeOffClaimPage.tsx",
+        "src/modules/mytimeoff/pages/TimeOffMyClaimsPage.tsx",
+        "src/modules/mytimeoff/pages/TimeOffRedeemPage.tsx",
+        "src/modules/mytimeoff/pages/TimeOffHodPage.tsx",
+        "src/modules/mytimeoff/pages/TimeOffHistoryPage.tsx"
+      ],
+      "services": [
+        "src/modules/mytimeoff/services/toilService.ts"
+      ],
+      "route_path": "/hub/time-off",
+      "db_tables": ["timeoff_claims", "timeoff_redemptions"]
+    },
+    "mycrossborder": {
+      "title": "MyCrossborder (Pengurusan Rujukan & Pemindahan Pesakit Rentas Sempadan)",
+      "keywords": ["crossborder", "rentas sempadan", "border", "pemindahan sempadan", "rujukan luar", "brunei", "sarawak", "log sempadan"],
+      "root": "src/modules/mycrossborder",
+      "pages": [
+        "src/modules/mycrossborder/pages/CrossborderDashboardPage.tsx",
+        "src/modules/mycrossborder/pages/CrossborderCreatePage.tsx",
+        "src/modules/mycrossborder/pages/CrossborderDetailPage.tsx",
+        "src/modules/mycrossborder/pages/CrossborderLogPage.tsx"
+      ],
+      "services": [
+        "src/modules/mycrossborder/services/crossborderService.ts"
+      ],
+      "route_path": "/hub/crossborder",
+      "db_tables": ["crossborder_referrals", "crossborder_logs"]
+    },
+    "mymsds": {
+      "title": "MyMSDS (Helaian Data Keselamatan Bahan Kimia & Bahaya)",
+      "keywords": ["msds", "chemical", "bahan kimia", "keselamatan bahan", "hazmat", "tumpahan", "helaian data"],
+      "root": "src/modules/mymsds",
+      "pages": [
+        "src/modules/mymsds/pages/MyMsdsDashboardPage.tsx"
+      ],
+      "services": [],
+      "route_path": "/hub/msds",
+      "data": ["src/modules/mymsds/data/msdsData.ts"],
+      "capability_notes": ["No module MSDS service or live Supabase integration is established by the current dashboard. It imports checked-in MSDS_DATABASE; legacy msdsService is unavailable. Database names below are unverified lookup hints."],
+      "db_tables": ["msds_records", "chemical_inventory"]
+    },
+    "myphis": {
+      "title": "MyPhIS (Integrasi & Rujukan Sistem Maklumat Farmasi)",
+      "keywords": ["phis", "myphis", "preskripsi", "integrasi phis", "farmasi phis", "stok phis"],
+      "root": "src/modules/myphis",
+      "pages": [
+        "src/modules/myphis/pages/MyPhisDashboardPage.tsx"
+      ],
+      "services": [
+        "src/modules/myphis/services/myphisService.ts"
+      ],
+      "route_path": "/hub/phis",
+      "db_tables": ["phis_sync_records", "phis_transactions"]
+    },
+    "inventory": {
+      "title": "MyInventory (Pengurusan Stok Stor Utama & Logistik Farmasi)",
+      "keywords": ["inventory", "stok", "stor", "baki stok", "kewps3", "kewps4", "kewps14", "penerimaan stok", "agihan stok", "multistore"],
+      "root": "src/modules/inventory",
+      "pages": [
+        "src/modules/inventory/pages/inventory/InventoryOverviewPage.tsx",
+        "src/modules/inventory/pages/inventory/DrugInventoryPage.tsx",
+        "src/modules/inventory/pages/inventory/NonDrugInventoryPage.tsx"
+      ],
+      "services": [
+        "src/modules/inventory/services/inventoryService.ts"
+      ],
+      "route_path": "/hub/inventory",
+      "capability_notes": ["Legacy InventoryDashboardPage and unified StockItemsPage are unavailable; the current overview and separate drug/non-drug inventory entries are listed."],
+      "db_tables": ["inventory_items", "inventory_transactions", "inventory_stores", "store_verifications"]
+    },
+    "mywarrant": {
+      "title": "MyWarrant (Pengurusan Waran Peruntukan & Belanjawan Hospital)",
+      "keywords": ["warrant", "waran", "peruntukan", "baki waran", "vot", "belanjawan", "kewangan waran"],
+      "root": "src/modules/mywarrant",
+      "pages": [
+        "src/modules/mywarrant/pages/mywarrant/MyWarrantDashboard.tsx",
+        "src/modules/financial/pages/financial/WarrantPage.tsx"
+      ],
+      "services": [
+        "src/modules/financial/services/warrantService.ts",
+        "src/modules/mywarrant/services/pharmacyDashboardService.ts"
+      ],
+      "route_path": "/hub/warrant",
+      "capability_notes": ["Legacy WarrantDashboardPage and WarrantAllocationPage are unavailable. Pharmacy overview lives in MyWarrantDashboard; warrant CRUD is routed through the financial module and its service. Verify the actual route before editing."],
+      "db_tables": ["warrant_allocations", "warrant_transactions"]
+    },
+    "admin": {
+      "title": "Sistem Pentadbir (Pengurusan Pengguna, Hospital, Klinik & Audit)",
+      "keywords": ["admin", "users", "pentadbir", "roles", "permissions", "access requests", "audit logs", "tetapan sistem", "hospital", "klinik"],
+      "root": "src/modules/admin",
+      "pages": [
+        "src/modules/hub/pages/modules/admin/MyAdminDashboard.tsx",
+        "src/modules/admin/pages/users/UserListPage.tsx",
+        "src/modules/admin/pages/accessRequests/AccessRequestListPage.tsx",
+        "src/modules/admin/pages/auditLogs/AuditLogPage.tsx"
+      ],
+      "services": [
+        "src/modules/admin/services/userService.ts",
+        "src/modules/admin/services/accessRequestService.ts",
+        "src/modules/admin/services/auditLogService.ts",
+        "src/modules/admin/services/systemAdminService.ts"
+      ],
+      "route_path": "/admin",
+      "capability_notes": ["The /admin dashboard is physically under the hub module. There is no monolithic adminService; choose the service for the requested capability."],
+      "db_tables": ["users", "roles", "permissions", "access_requests", "audit_logs", "hospitals", "departments"]
+    },
+    "hub": {
+      "title": "Module Hub & Galeri H.O.M.E.",
+      "keywords": ["hub", "module hub", "pelancar", "submenu", "gallery", "album", "menu utama"],
+      "root": "src/modules/hub",
+      "pages": [
+        "src/modules/hub/pages/ModuleHubPage.tsx",
+        "src/modules/hub/pages/gallery/MyGalleryPage.tsx"
+      ],
+      "services": [
+        "src/services/systemAnnouncementService.ts",
+        "src/services/authService.ts"
+      ],
+      "route_path": "/hub",
+      "capability_notes": ["No module-local hubService exists. ModuleHubPage uses shared announcement/auth services and some direct data access; listed shared services are not a complete hub data contract."],
+      "db_tables": ["hospital_modules", "system_announcements"]
+    },
+    "auth": {
+      "title": "Pengesahan & Log Masuk (Auth)",
+      "keywords": ["auth", "login", "log masuk", "logout", "kata laluan", "session", "mfa"],
+      "root": "src/modules/auth",
+      "pages": [
+        "src/modules/auth/pages/LoginPage.tsx"
+      ],
+      "services": [
+        "src/modules/auth/services/authService.ts"
+      ],
+      "route_path": "/login",
+      "db_tables": ["users", "roles"]
+    },
+    "profile": {
+      "title": "Profil Pengguna",
+      "keywords": ["profile", "profil", "akaun saya", "tukar katalaluan", "notifikasi"],
+      "root": "src/modules/profile",
+      "pages": [
+        "src/modules/profile/pages/profile/ProfilePage.tsx"
+      ],
+      "services": [
+        "src/modules/profile/services/profileService.ts"
+      ],
+      "route_path": "/profile",
+      "db_tables": ["users", "emergency_contacts"]
+    }
+  }
+}

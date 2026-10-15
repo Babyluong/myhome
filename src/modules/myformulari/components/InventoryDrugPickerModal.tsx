@@ -1,22 +1,6 @@
 // @ts-nocheck
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
-import {
-  Search,
-  X,
-  Package,
-  Check,
-  CheckCircle2,
-  AlertCircle,
-  Plus,
-  Filter,
-  Loader2,
-  ChevronLeft,
-  ChevronRight,
-  Pill,
-  Baby,
-  Building2,
-  Layers,
-} from 'lucide-react'
+import { Search, X, Package, Check, CheckCircle2, Plus, Filter, Loader2, ChevronLeft, ChevronRight, Baby } from 'lucide-react'
 import { getDrugPrescriberCategory } from '@/lib/drugCategorizer'
 import {
   searchMyInventoryDrugsForPicker,

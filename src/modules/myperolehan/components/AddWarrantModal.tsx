@@ -1,7 +1,7 @@
 // src/modules/myperolehan/components/AddWarrantModal.tsx
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { X, Plus, Wallet, Building, HardHat } from 'lucide-react'
+import { X, Wallet, Building, HardHat } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import {

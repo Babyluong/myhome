@@ -1,64 +1,44 @@
-// @ts-nocheck
-import React, { useEffect, useState, useCallback, useMemo } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import {
-  Building2,
-  Pill,
-  Search,
-  Plus,
-  Trash2,
-  Edit,
-  Save,
-  CheckCircle,
-  XCircle,
-  Layers,
-  ChevronLeft,
-  ChevronRight,
-  Warehouse,
-  ShieldCheck,
-  PackageCheck,
-  PlusCircle,
-  Package,
-  FileText,
-  Clock,
-  ArrowUpRight,
-  ArrowDownLeft,
-  Lock,
-  TrendingUp,
-  BarChart3,
-  FileDown,
-  FileSpreadsheet,
-  Loader2,
-  QrCode,
-  Printer,
-  Download,
-  Copy,
-  Check,
-} from 'lucide-react'
+import { Pill, Search, Plus, Trash2, Save, CheckCircle, XCircle, Layers, ChevronLeft, ChevronRight, Warehouse, ShieldCheck, PackageCheck, Package, Lock, TrendingUp, FileDown, FileSpreadsheet, Loader2, QrCode, Printer, Download, Copy, Check, Sliders, X } from 'lucide-react'
 import QRCode from 'qrcode'
 import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
-import { supabase, isSupabaseConfigured } from '@/services/supabase'
-import { Spinner, Modal, Button } from '@/components/ui'
-import { getDrugTherapeuticCategory, getDrugPrescriberCategory, getDrugCombinedCategory } from '@/lib/drugCategorizer'
+import { loadFacilityItemHistory } from '@/services/pharmacy/facilityStoreService'
+import type { FacilityItemHistory } from '@/services/pharmacy/facilityStoreService'
+import { Spinner, Button } from '@/components/ui'
+import { DialogFocusScope } from '@/shared/components/ui/Modal'
+import { getDrugTherapeuticCategory, getDrugPrescriberCategory } from '@/lib/drugCategorizer'
 import { getDrugs, getDrugCategories } from '@/services/pharmacy/inventoryService'
 import { generateFormulariPdf } from '@/services/pharmacy/formulariPdfService'
 import { exportFacilityDrugInventoryToExcel } from '@/services/pharmacy/facilityInventoryExcelService'
 import {
   loadFacilityDrugInventory,
-  addToFacilityDrugInventory,
   batchAddToFacilityDrugInventory,
   updateFacilityDrugInventoryItem,
   removeFromFacilityDrugInventory,
   clearFacilityDrugInventoryByScheme,
 } from '@/services/pharmacy/facilityDrugInventoryService'
 import type { FacilityDrugItem } from '@/services/pharmacy/facilityDrugInventoryService'
-import { loadStoreLocations, formatLocationString } from '@/services/pharmacy/storeLocationService'
+import { loadStoreLocations } from '@/services/pharmacy/storeLocationService'
 import { loadStoreSubLocations } from '@/services/pharmacy/storeSubLocationService'
 import type { SubLocationUnit } from '@/modules/inventory/pages/inventory/StoreLocationManagementPage'
 import type { DrugWithRelations, DrugCategory } from '@/types/pharmacy'
 import { useInventoryStore } from '@/modules/inventory/context/InventoryStoreContext'
 import { StoreLocationSelector } from '@/modules/inventory/components/StoreLocationSelector'
+import { FacilityDrugMobileCard } from '@/modules/inventory/components/FacilityDrugMobileCard'
+
+const legacyString = (value: object, key: string): string | undefined => {
+  const field: unknown = Reflect.get(value, key)
+  return typeof field === 'string' ? field : undefined
+}
+
+const legacyNumber = (value: object, key: string): number | undefined => {
+  const field: unknown = Reflect.get(value, key)
+  if (typeof field !== 'number' && (typeof field !== 'string' || !field.trim())) return undefined
+  const number = Number(field)
+  return Number.isFinite(number) ? number : undefined
+}
 
 export const FacilityDrugInventoryPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams()
@@ -66,7 +46,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
 
   const { user } = useAuthStore()
   const { activeStore, activeStoreId } = useInventoryStore()
-  const hospitalId = user?.hospital_id || 'hosp-lawas-01'
+  const hospitalId = user?.hospital_id || ''
 
   const { success: showSuccess, error: showError } = useToastStore()
 
@@ -82,8 +62,8 @@ export const FacilityDrugInventoryPage: React.FC = () => {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [modalSearch, setModalSearch] = useState('')
   const [modalVoteFilter, setModalVoteFilter] = useState<string>('all')
-  const [selectedCatalogDrug, setSelectedCatalogDrug] = useState<DrugWithRelations | null>(null)
-  const [selectedCatalogDrugIds, setSelectedCatalogDrugIds] = useState<string[]>([])
+  const [selectedCatalogDrugs, setSelectedCatalogItems] = useState<DrugWithRelations[]>([])
+  const selectedCatalogDrugIds = useMemo(() => selectedCatalogDrugs.map(item => item.id), [selectedCatalogDrugs])
   const [initialStockInput, setInitialStockInput] = useState<number>(0)
   const [minBufferInput, setMinBufferInput] = useState<number>(20)
 
@@ -109,9 +89,10 @@ export const FacilityDrugInventoryPage: React.FC = () => {
   const [isLoadingSubLocations, setIsLoadingSubLocations] = useState<boolean>(false)
 
   // Real Database Transactions & POs state
-  const [realTransactions, setRealTransactions] = useState<any[]>([])
-  const [realPOs, setRealPOs] = useState<any[]>([])
+  const [realTransactions, setRealTransactions] = useState<FacilityItemHistory['transactions']>([])
+  const [realPOs, setRealPOs] = useState<FacilityItemHistory['purchaseOrders']>([])
   const [isTxLoading, setIsTxLoading] = useState<boolean>(false)
+  const [historyError, setHistoryError] = useState<string | null>(null)
   const [editBatchInput, setEditBatchInput] = useState<string>('')
   const [editExpiryInput, setEditExpiryInput] = useState<string>('')
   const [isExporting, setIsExporting] = useState<boolean>(false)
@@ -126,9 +107,12 @@ export const FacilityDrugInventoryPage: React.FC = () => {
   // Pagination
   const [page, setPage] = useState(1)
   const [isLoadingInventory, setIsLoadingInventory] = useState(true)
+  const [inventoryError, setInventoryError] = useState<string | null>(null)
+  const [inventoryRetry, setInventoryRetry] = useState(0)
+  const [isAddingItems, setIsAddingItems] = useState(false)
   const pageSize = 15
 
-  const [availableStoreLocations, setAvailableStoreLocations] = useState<any[]>([])
+  const [availableStoreLocations, setAvailableStoreLocations] = useState<Awaited<ReturnType<typeof loadStoreLocations>>>([])
 
   // Load sub-locations when selectedStoreCode changes
   useEffect(() => {
@@ -141,11 +125,14 @@ export const FacilityDrugInventoryPage: React.FC = () => {
     loadStoreSubLocations(hospitalId, selectedStoreCode).then(subLocs => {
       if (isMounted) {
         setStoreSubLocations(subLocs)
-        setIsLoadingSubLocations(false)
       }
+    }).catch(() => {
+      if (isMounted) showError('Gagal memuatkan sublokasi stor.')
+    }).finally(() => {
+      if (isMounted) setIsLoadingSubLocations(false)
     })
     return () => { isMounted = false }
-  }, [hospitalId, selectedStoreCode])
+  }, [hospitalId, selectedStoreCode, showError])
 
   // Filter available Racks (strictly main physical units: rack, cabinet, pallet)
   const availableRacks = useMemo(() => {
@@ -189,63 +176,60 @@ export const FacilityDrugInventoryPage: React.FC = () => {
   useEffect(() => {
     let isMounted = true
     setIsLoadingInventory(true)
+    setInventoryError(null)
+    setFacilityItems([])
+    if (!hospitalId) {
+      setInventoryError('Konteks hospital tidak tersedia. Sila log masuk semula.')
+      setIsLoadingInventory(false)
+      return
+    }
     loadFacilityDrugInventory(hospitalId, activeStoreId || undefined).then(items => {
       if (isMounted) {
         setFacilityItems(items)
-        setIsLoadingInventory(false)
       }
+    }).catch(() => {
+      if (isMounted) setInventoryError('Gagal memuatkan inventori fasiliti. Sila cuba lagi.')
+    }).finally(() => {
+      if (isMounted) setIsLoadingInventory(false)
     })
     loadStoreLocations(hospitalId).then(locs => {
       if (isMounted) {
         setAvailableStoreLocations(locs.filter(l => l.is_active && (l.location_type === 'drug' || l.location_type === 'both')))
       }
-    })
+    }).catch(() => { if (isMounted) showError('Gagal memuatkan lokasi stor.') })
     return () => { isMounted = false }
-  }, [hospitalId, activeStoreId])
+  }, [hospitalId, activeStoreId, inventoryRetry, showError])
 
   // ─── Add Single Item ──────────────────────────────────────────────────────
-  const handleAddItem = async () => {
-    if (!selectedCatalogDrug) return
-    const res = await addToFacilityDrugInventory(
-      hospitalId, selectedCatalogDrug,
-      Number(initialStockInput) || 0,
-      Number(minBufferInput) || 20,
-      undefined,
-      activeStoreId || undefined,
-      activeStore?.department_id || user?.department_id
-    )
-    if (!res.success) { showError(res.error || 'Gagal menambah item.'); return }
-    // Reload from Supabase so all browsers get the latest
-    const fresh = await loadFacilityDrugInventory(hospitalId, activeStoreId || undefined)
-    setFacilityItems(fresh)
-    showSuccess(`'${selectedCatalogDrug.drug_name}' berjaya ditambah ke Inventori Fasiliti.`)
-    setSelectedCatalogDrug(null)
-    setSelectedCatalogDrugIds([])
-    setInitialStockInput(0)
-    setMinBufferInput(20)
-    setIsAddModalOpen(false)
-  }
+  
 
   // ─── Batch Add ────────────────────────────────────────────────────────────
   const handleBatchAddItems = async () => {
-    if (selectedCatalogDrugIds.length === 0) return
-    const drugsToAdd = catalogDrugs.filter(d => selectedCatalogDrugIds.includes(d.id))
+    if (isAddingItems || selectedCatalogDrugIds.length === 0) return
+    const drugsToAdd = selectedCatalogDrugs
     if (drugsToAdd.length === 0) return
-    const res = await batchAddToFacilityDrugInventory(
-      hospitalId, drugsToAdd,
-      Number(initialStockInput) || 0,
-      Number(minBufferInput) || 20,
-      undefined,
-      activeStoreId || undefined,
-      activeStore?.department_id || user?.department_id
-    )
-    if (res.error && res.added === 0) { showError(res.error); return }
-    const fresh = await loadFacilityDrugInventory(hospitalId, activeStoreId || undefined)
-    setFacilityItems(fresh)
-    showSuccess(`${res.added} item ubat berjaya ditambah ke Inventori Fasiliti.${ res.skipped > 0 ? ` (${res.skipped} sudah wujud, dilangkau.)` : '' }`)
-    setSelectedCatalogDrugIds([])
-    setSelectedCatalogDrug(null)
-    setIsAddModalOpen(false)
+    setIsAddingItems(true)
+    try {
+      const res = await batchAddToFacilityDrugInventory(
+        hospitalId, drugsToAdd,
+        Number(initialStockInput) || 0,
+        Number(minBufferInput) || 20,
+        undefined,
+        activeStoreId || undefined,
+        activeStore?.department_id || user?.department_id
+      )
+      if (res.error && res.added === 0) { showError(res.error); return }
+      const fresh = await loadFacilityDrugInventory(hospitalId, activeStoreId || undefined)
+      setFacilityItems(fresh)
+      showSuccess(`${res.added} item ubat berjaya ditambah ke Inventori Fasiliti.${ res.skipped > 0 ? ` (${res.skipped} sudah wujud, dilangkau.)` : '' }`)
+      if (res.error) { showError(res.error); return }
+      setSelectedCatalogItems([])
+        setIsAddModalOpen(false)
+    } catch {
+      showError('Gagal menambah atau memuat semula inventori. Pilihan anda dikekalkan; sila cuba lagi.')
+    } finally {
+      setIsAddingItems(false)
+    }
   }
 
   // ─── Delete Single Item ───────────────────────────────────────────────────
@@ -258,23 +242,21 @@ export const FacilityDrugInventoryPage: React.FC = () => {
   }
 
   // ─── Remove from edit drawer ─────────────────────────────────────────────
-  const handleRemoveItem = async (id: string, name: string) => {
-    if (!confirm(`Adakah anda pasti untuk memadam '${name}' daripada Inventori Fasiliti?`)) return
-    await removeFromFacilityDrugInventory(hospitalId, id, activeStoreId || undefined)
-    const fresh = await loadFacilityDrugInventory(hospitalId, activeStoreId || undefined)
-    setFacilityItems(fresh)
-    showSuccess(`'${name}' telah dipadam daripada Inventori Fasiliti.`)
-    setEditingItem(null)
-  }
+  
 
   // ─── Clear scheme ─────────────────────────────────────────────────────────
   const handleClearCurrentScheme = async () => {
     const schemeName = currentVoteParam === 'all' ? 'Semua Skim' : `Skim ${currentVoteParam.toUpperCase()}`
     if (!window.confirm(`Adakah anda pasti untuk mengosongkan item dalam ${schemeName}?`)) return
-    await clearFacilityDrugInventoryByScheme(hospitalId, currentVoteParam)
-    const fresh = await loadFacilityDrugInventory(hospitalId)
+    try {
+    const result = await clearFacilityDrugInventoryByScheme(hospitalId, currentVoteParam, activeStoreId || undefined)
+    if (!result.success) { showError(result.error || 'Gagal mengosongkan senarai inventori.'); return }
+    const fresh = await loadFacilityDrugInventory(hospitalId, activeStoreId || undefined)
     setFacilityItems(fresh)
     showSuccess(`Item dalam ${schemeName} berjaya dikosongkan.`)
+    } catch {
+      showError('Gagal mengosongkan atau memuat semula inventori. Sila cuba lagi.')
+    }
   }
 
   // Load Categories once
@@ -292,7 +274,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
     const loadCatalogData = async () => {
       setIsCatalogLoading(true)
       try {
-        const filterObj: any = {}
+        const filterObj: NonNullable<Parameters<typeof getDrugs>[1]> = {}
         if (modalVoteFilter !== 'all') {
           filterObj.procurement_vote = modalVoteFilter
         }
@@ -321,10 +303,12 @@ export const FacilityDrugInventoryPage: React.FC = () => {
   }, [hospitalId, isAddModalOpen, modalVoteFilter, modalSearch])
 
   // Toggle item selection
-  const handleToggleSelectDrug = (id: string, e?: React.MouseEvent) => {
+  const handleToggleSelectDrug = (item: DrugWithRelations, e?: React.SyntheticEvent) => {
     if (e) e.stopPropagation()
-    setSelectedCatalogDrugIds(prev =>
-      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    setSelectedCatalogItems(prev =>
+      prev.some(selected => selected.id === item.id)
+        ? prev.filter(selected => selected.id !== item.id)
+        : [...prev, item]
     )
   }
 
@@ -336,11 +320,11 @@ export const FacilityDrugInventoryPage: React.FC = () => {
     setEditMinLevelInput(drug.min_stock_level ?? 10)
     setEditMaxLevelInput(drug.max_stock_level ?? 100)
     setEditBufferInput(drug.min_buffer_level ?? 20)
-    setEditPriceInput(drug.price ?? drug.unit_price ?? 0)
+    setEditPriceInput(drug.price ?? legacyNumber(drug, 'unit_price') ?? 0)
     setEditTherapeuticCat(getDrugTherapeuticCategory(drug))
     setEditPrescriberCat(getDrugPrescriberCategory(drug))
 
-    const locStr = (drug as any).location || drug.storage_conditions || ''
+    const locStr = drug.location || drug.storage_conditions || ''
     setEditLocationInput(locStr)
     setEditBatchInput(drug.batch_number || drug.batch_no || '')
     setEditExpiryInput(drug.expiry_date || drug.exp_date || '')
@@ -384,100 +368,27 @@ export const FacilityDrugInventoryPage: React.FC = () => {
 
   // Fetch real database transactions and POs when editingItem is selected
   useEffect(() => {
-    if (!editingItem) {
-      setRealTransactions([])
-      setRealPOs([])
-      return
-    }
-
-    let isMounted = true
+    let active = true
+    setRealTransactions([])
+    setRealPOs([])
+    setHistoryError(null)
+    if (!editingItem) return
     setIsTxLoading(true)
-
-    async function loadRealData() {
+    const loadHistory = async () => {
       try {
-        let fetchedTx: any[] = []
-        let fetchedPOs: any[] = []
-
-        const isUuid = (val?: string) => typeof val === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(val)
-
-        if (isSupabaseConfigured()) {
-          if (isUuid(editingItem.id)) {
-            const { data: txData, error: txError } = await supabase
-              .from('pharmacy_stock_transactions')
-              .select('*')
-              .eq('item_id', editingItem.id)
-              .order('created_at', { ascending: false })
-              .limit(50)
-
-            if (!txError && txData) fetchedTx = txData
-          }
-
-          const poConditions: string[] = []
-          if (isUuid(editingItem.id)) {
-            poConditions.push(`item_id.eq.${editingItem.id}`)
-          }
-          if (editingItem.drug_code && editingItem.drug_code !== 'N/A') {
-            poConditions.push(`item_code.eq.${editingItem.drug_code}`)
-          }
-
-          if (poConditions.length > 0) {
-            const { data: poData, error: poError } = await supabase
-              .from('pharmacy_purchase_order_items')
-              .select('*, pharmacy_purchase_orders(*)')
-              .or(poConditions.join(','))
-              .order('created_at', { ascending: false })
-              .limit(50)
-
-            if (!poError && poData) {
-              fetchedPOs = poData.map((item: any) => ({
-                ...item,
-                purchase_order: item.pharmacy_purchase_orders
-              }))
-            }
-          }
-        }
-
-        // Check local storage for local offline transactions / POs if available
-        try {
-          const localTxStr = localStorage.getItem('pharmacy_stock_transactions')
-          if (localTxStr) {
-            const localTxArr = JSON.parse(localTxStr)
-            const matchedLocalTx = localTxArr.filter((t: any) =>
-              t.item_id === editingItem.id ||
-              t.item_code === editingItem.drug_code ||
-              (t.drug_name && editingItem.drug_name && t.drug_name.toLowerCase() === editingItem.drug_name.toLowerCase())
-            )
-            fetchedTx = [...fetchedTx, ...matchedLocalTx]
-          }
-
-          const localPoStr = localStorage.getItem('pharmacy_purchase_orders')
-          if (localPoStr) {
-            const localPoArr = JSON.parse(localPoStr)
-            const matchedLocalPOs = localPoArr.filter((po: any) =>
-              po.items?.some((i: any) => i.drug_id === editingItem.id || i.item_code === editingItem.drug_code)
-            )
-            fetchedPOs = [...fetchedPOs, ...matchedLocalPOs]
-          }
-        } catch (e) {
-          // ignore local parsing error
-        }
-
-        if (isMounted) {
-          setRealTransactions(fetchedTx)
-          setRealPOs(fetchedPOs)
-        }
-      } catch (err) {
-        console.error('Error loading item database transactions:', err)
+        const history = await loadFacilityItemHistory(hospitalId, activeStoreId || '', editingItem.id, 'drug')
+        if (!active) return
+        setRealTransactions(history.transactions)
+        setRealPOs(history.purchaseOrders)
+      } catch {
+        if (active) setHistoryError('Gagal memuatkan sejarah inventori. Cuba buka item ini semula.')
       } finally {
-        if (isMounted) setIsTxLoading(false)
+        if (active) setIsTxLoading(false)
       }
     }
-
-    loadRealData()
-    return () => {
-      isMounted = false
-    }
-  }, [editingItem])
+    void loadHistory()
+    return () => { active = false }
+  }, [editingItem, hospitalId, activeStoreId])
 
   // Generate QR Code data URL when editingItem changes
   useEffect(() => {
@@ -511,7 +422,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
     const name = editingItem.drug_name || editingItem.item_name
     const vote = (editingItem.procurement_vote || 'APPL').toUpperCase()
     const location = editLocationInput || editingItem.location || 'Belum Diset'
-    const uom = editingItem.dosage_form || editingItem.uom || editingItem.unit_of_measure || 'PACK'
+    const uom = editingItem.dosage_form || legacyString(editingItem, 'uom') || editingItem.unit_of_measure || 'PACK'
 
     const printWindow = window.open('', '_blank', 'width=650,height=650')
     if (!printWindow) return
@@ -771,9 +682,8 @@ export const FacilityDrugInventoryPage: React.FC = () => {
       return Math.round(totalIssued / 6)
     }
 
-    if (editingItem.amc != null && !isNaN(Number(editingItem.amc))) {
-      return Number(editingItem.amc)
-    }
+    const storedAmc = legacyNumber(editingItem, 'amc')
+    if (storedAmc !== undefined) return storedAmc
 
     return 0
   }, [editingItem, realTransactions])
@@ -824,7 +734,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
 
   const estimatedPurchasingCost = useMemo(() => {
     if (!editingItem) return 0
-    const unitPrice = Number(editPriceInput === '' ? (editingItem.price ?? editingItem.unit_price) : editPriceInput) || 0
+    const unitPrice = Number(editPriceInput === '' ? (editingItem.price ?? legacyNumber(editingItem, 'unit_price')) : editPriceInput) || 0
     return estimatedPurchasingQty * unitPrice
   }, [editingItem, editPriceInput, estimatedPurchasingQty])
   // ─── Save Edit (stock, buffer, batch, expiry, etc.) ─────────────────────
@@ -836,35 +746,28 @@ export const FacilityDrugInventoryPage: React.FC = () => {
 
     // editingItem.id is the drug catalog UUID (from ...row.drug spread),
     // which equals the drug_id FK on facility_drug_inventory.
+    try {
     const result = await updateFacilityDrugInventoryItem(hospitalId, editingItem.id, {
       min_buffer_level: bufferVal,
+      min_stock_level: minVal,
+      max_stock_level: maxVal,
       batch_number: editBatchInput.trim() || undefined,
       expiry_date: editExpiryInput.trim() || undefined,
       location: editLocationInput.trim() || undefined,
-    })
+    }, activeStoreId || undefined)
 
     if (!result.success) {
       showError(`Gagal menyimpan: ${result.error ?? 'Ralat tidak diketahui'}`)
       return
     }
 
-    // min_stock_level & max_stock_level live on the drugs table — update them separately.
-    import('@/services/supabase').then(({ supabase, isSupabaseConfigured }) => {
-      if (isSupabaseConfigured()) {
-        supabase
-          .from('drugs')
-          .update({ min_stock_level: minVal, max_stock_level: maxVal, updated_at: new Date().toISOString() })
-          .eq('id', editingItem.id)
-          .then(({ error }) => {
-            if (error) console.error('[FacilityInventory] Failed to update drugs min/max:', error)
-          })
-      }
-    })
-
-    const fresh = await loadFacilityDrugInventory(hospitalId)
+    const fresh = await loadFacilityDrugInventory(hospitalId, activeStoreId || undefined)
     setFacilityItems(fresh)
     showSuccess(`Konfigurasi stok untuk '${editingItem.drug_name}' berjaya dikemaskini.`)
     setEditingItem(null)
+    } catch {
+      showError('Gagal menyimpan atau memuat semula konfigurasi stok. Sila cuba lagi.')
+    }
   }
 
   // Generate distinct category options combining therapeutic categories & DB categories
@@ -892,7 +795,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
     const prescriberCodes = new Set(['A*', 'A', 'A/KK', 'B', 'C', 'C+'])
 
     categories.forEach(c => {
-      const name = c.category_name || (c as any).name
+      const name = c.category_name || legacyString(c, 'name')
       if (name && !prescriberCodes.has(name.trim())) set.add(name)
     })
 
@@ -917,7 +820,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
       if (search) {
         const q = search.toLowerCase()
         const code = item.drug_code || item.item_code || item.sku || ''
-        const contractNo = item.cc_contract_number || item.kkm_contract_number || item.contract_number || ''
+        const contractNo = item.cc_contract_number || legacyString(item, 'kkm_contract_number') || legacyString(item, 'contract_number') || ''
         const therapeuticCategory = getDrugTherapeuticCategory(item).toLowerCase()
         const prescriberCat = getDrugPrescriberCategory(item).toLowerCase()
         const matchCode = code.toLowerCase().includes(q)
@@ -964,7 +867,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
   const filteredCatalogDrugs = useMemo(() => {
     return catalogDrugs.filter(drug => {
       // Filter out already added items
-      if (facilityItems.some(f => f.id === drug.id || (f as any).drug_id === drug.id)) return false
+      if (facilityItems.some(f => f.id === drug.id || legacyString(f, 'drug_id') === drug.id)) return false
 
       if (modalVoteFilter !== 'all') {
         const dVote = (drug.procurement_vote || 'appl').toLowerCase()
@@ -973,10 +876,10 @@ export const FacilityDrugInventoryPage: React.FC = () => {
 
       if (modalSearch.trim()) {
         const q = modalSearch.toLowerCase().trim()
-        const code = (drug.drug_code || (drug as any).item_code || drug.sku || (drug as any).appl_kod || (drug as any).appl_code || '').toLowerCase()
+        const code = (drug.drug_code || legacyString(drug, 'item_code') || drug.sku || legacyString(drug, 'appl_kod') || legacyString(drug, 'appl_code') || '').toLowerCase()
         const name = (drug.drug_name || '').toLowerCase()
         const generic = (drug.generic_name || '').toLowerCase()
-        const contractNo = (drug.cc_contract_number || (drug as any).kkm_contract_number || (drug as any).contract_number || '').toLowerCase()
+        const contractNo = (drug.cc_contract_number || legacyString(drug, 'kkm_contract_number') || legacyString(drug, 'contract_number') || '').toLowerCase()
         return (
           code.includes(q) ||
           name.includes(q) ||
@@ -996,9 +899,12 @@ export const FacilityDrugInventoryPage: React.FC = () => {
 
   const handleToggleSelectAll = () => {
     if (isAllSelected) {
-      setSelectedCatalogDrugIds(prev => prev.filter(id => !allFilteredIds.includes(id)))
+      setSelectedCatalogItems(prev => prev.filter(item => !allFilteredIds.includes(item.id)))
     } else {
-      setSelectedCatalogDrugIds(prev => Array.from(new Set([...prev, ...allFilteredIds])))
+      setSelectedCatalogItems(prev => [
+        ...prev,
+        ...filteredCatalogDrugs.filter(item => !prev.some(selected => selected.id === item.id))
+      ])
     }
   }
 
@@ -1069,125 +975,127 @@ export const FacilityDrugInventoryPage: React.FC = () => {
   // Summary Metrics
   const activeCount = filteredItems.filter(d => d.is_active !== false).length
   const totalValuation = filteredItems.reduce((acc, d) => {
-    const itemPrice = d.price ?? d.unit_price ?? 0
+    const itemPrice = d.price ?? legacyNumber(d, 'unit_price') ?? 0
     return acc + itemPrice * (d.facility_stock || 0)
   }, 0)
 
   return (
-    <div className="p-6 space-y-6 w-full animate-fadeIn">
+    <div className="p-3 sm:p-4 md:p-6 space-y-4 md:space-y-6 w-full pb-24 md:pb-6 animate-fadeIn">
       {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-border-default shadow-xs relative">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-surface p-4 sm:p-5 rounded-2xl border border-border-default shadow-xs relative">
         <div className="relative z-10 space-y-1">
-          <div className="flex items-center gap-2 text-text-muted text-xs font-semibold uppercase tracking-wider">
-            <Warehouse className="w-4 h-4 text-accent-base" />
+          <div className="flex flex-wrap items-center gap-1.5 text-text-muted text-xs font-semibold uppercase tracking-wider">
+            <Warehouse className="w-4 h-4 text-accent-base shrink-0" />
             <span>Facility Inventory Module</span>
             <span className="text-text-muted">•</span>
-            <span className="text-accent-base font-medium">
+            <span className="text-accent-base font-medium break-all sm:break-normal">
               {activeStore ? `${activeStore.location_name} (${activeStore.location_code})` : 'Semua Stor'}
             </span>
           </div>
-          <h1 className="text-xl md:text-2xl font-bold tracking-tight text-text-primary flex items-center gap-3">
-            Facility Drug Inventory
+          <h1 className="text-xl md:text-2xl font-bold tracking-tight text-text-primary flex flex-wrap items-center gap-2 sm:gap-3">
+            <span>Facility Drug Inventory</span>
             <span className="text-xs px-2.5 py-0.5 bg-accent-base/10 text-accent-base border border-accent-base/20 rounded-full font-semibold uppercase">
               {currentVoteParam === 'all' ? 'Semua Skim' : `Skim ${currentVoteParam.toUpperCase()}`}
             </span>
           </h1>
           <p className="text-text-muted text-xs md:text-sm max-w-2xl">
-            Pilih dan tambah item ubat daripada Katolog Utama ke inventori fasiliti anda secara manual.
+            Pilih dan tambah item ubat daripada Katalog Utama ke inventori fasiliti anda secara manual.
           </p>
         </div>
 
-        <div className="relative z-10 flex flex-wrap items-center gap-3">
-          <StoreLocationSelector />
-          {/* Export Excel */}
-          <button
-            onClick={() => {
-              if (isExportingExcel || filteredItems.length === 0) return
-              setIsExportingExcel(true)
-              try {
-                const skimLabel = currentVoteParam === 'all' ? 'SEMUA SKIM' : `SKIM ${currentVoteParam.toUpperCase()}`
-                exportFacilityDrugInventoryToExcel(filteredItems, {
-                  skim: skimLabel,
-                  hospitalName: user?.hospital?.hospital_name || (user?.hospital as any)?.name || 'HOSPITAL LAWAS',
-                  departmentName: 'Jabatan Farmasi / Stor Utama',
-                  generatedBy: user?.full_name || (user as any)?.name || 'Pegawai Farmasi',
-                  generatedByTitle: user?.jawatan || (user?.role as any)?.name || 'Pegawai Farmasi (S41/S44/S48)',
-                })
-                showSuccess('Eksport Berjaya', `Fail Excel bagi ${filteredItems.length} item formulari ubat berjaya dijana.`)
-              } catch (err: any) {
-                console.error('Export Excel error:', err)
-                showError('Ralat Eksport', err?.message || 'Gagal mengeksport fail Excel.')
-              } finally {
-                setIsExportingExcel(false)
-              }
-            }}
-            disabled={isExportingExcel || filteredItems.length === 0}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-xs transition-colors
-              bg-surface hover:bg-subtle border border-border-default text-text-primary
-              disabled:opacity-50 disabled:cursor-allowed shadow-xs"
-            title="Eksport Formulari Ubat ke format Excel (.xlsx)"
-          >
-            {isExportingExcel ? (
-              <Loader2 className="w-4 h-4 animate-spin text-text-muted" />
-            ) : (
-              <FileSpreadsheet className="w-4 h-4 text-emerald-500" />
-            )}
-            <span>Eksport Excel</span>
-          </button>
+        <div className="relative z-10 flex flex-col items-start lg:items-end gap-2.5 w-full lg:w-auto shrink-0">
+          <StoreLocationSelector className="w-full sm:w-auto" />
+          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start lg:justify-end">
+            {/* Export Excel */}
+            <button
+              onClick={() => {
+                if (isExportingExcel || filteredItems.length === 0) return
+                setIsExportingExcel(true)
+                try {
+                  const skimLabel = currentVoteParam === 'all' ? 'SEMUA SKIM' : `SKIM ${currentVoteParam.toUpperCase()}`
+                  exportFacilityDrugInventoryToExcel(filteredItems, {
+                    skim: skimLabel,
+                    hospitalName: user?.hospital?.hospital_name || 'Hospital',
+                    departmentName: 'Jabatan Farmasi / Stor Utama',
+                    generatedBy: user?.full_name || 'Pegawai Farmasi',
+                    generatedByTitle: user?.jawatan || 'Pegawai Farmasi (S41/S44/S48)',
+                  })
+                  showSuccess('Eksport Berjaya', `Fail Excel bagi ${filteredItems.length} item formulari ubat berjaya dijana.`)
+                } catch (err) {
+                  console.error('Export Excel error:', err)
+                  showError('Ralat Eksport', (err instanceof Error ? err.message : undefined) || 'Gagal mengeksport fail Excel.')
+                } finally {
+                  setIsExportingExcel(false)
+                }
+              }}
+              disabled={isExportingExcel || filteredItems.length === 0}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg font-medium text-xs transition-colors
+                bg-surface hover:bg-subtle border border-border-default text-text-primary
+                disabled:opacity-50 disabled:cursor-allowed shadow-xs"
+              title="Eksport Formulari Ubat ke format Excel (.xlsx)"
+            >
+              {isExportingExcel ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-text-muted" />
+              ) : (
+                <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-500" />
+              )}
+              <span>Eksport Excel</span>
+            </button>
 
-          {/* Export Formulari PDF */}
-          <button
-            onClick={async () => {
-              if (isExporting) return
-              setIsExporting(true)
-              try {
-                const skimLabel = currentVoteParam === 'all' ? 'SEMUA SKIM' : currentVoteParam.toUpperCase()
-                await new Promise<void>(resolve => {
-                  setTimeout(() => {
-                    generateFormulariPdf(filteredItems, {
-                      skim: skimLabel,
-                      preparedBy: user?.full_name || (user as any)?.name || 'Pegawai Farmasi',
-                      preparedByTitle: user?.jawatan || (user?.role as any)?.name || 'Pegawai Farmasi (S41/S44/S48)',
-                      approvedBy: 'Pengarah Hospital',
-                      hospitalName: user?.hospital?.hospital_name || (user?.hospital as any)?.name || 'HOSPITAL LAWAS',
-                      department: 'Jabatan Farmasi',
-                    })
-                    resolve()
-                  }, 50)
-                })
-              } catch (err) {
-                console.error('Export PDF error:', err)
-              } finally {
-                setIsExporting(false)
-              }
-            }}
-            disabled={isExporting || filteredItems.length === 0}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium text-xs transition-colors
-              bg-surface hover:bg-subtle border border-border-default text-text-primary
-              disabled:opacity-50 disabled:cursor-allowed shadow-xs"
-            title="Eksport Formulari Ubat sebagai PDF Rasmi"
-          >
-            {isExporting ? (
-              <Loader2 className="w-4 h-4 animate-spin text-text-muted" />
-            ) : (
-              <FileDown className="w-4 h-4 text-text-muted" />
-            )}
-            {isExporting ? 'Menjana PDF...' : 'Eksport Formulari PDF'}
-          </button>
+            {/* Export Formulari PDF */}
+            <button
+              onClick={async () => {
+                if (isExporting) return
+                setIsExporting(true)
+                try {
+                  const skimLabel = currentVoteParam === 'all' ? 'SEMUA SKIM' : currentVoteParam.toUpperCase()
+                  await new Promise<void>(resolve => {
+                    setTimeout(() => {
+                      generateFormulariPdf(filteredItems, {
+                        skim: skimLabel,
+                        preparedBy: user?.full_name || 'Pegawai Farmasi',
+                        preparedByTitle: user?.jawatan || 'Pegawai Farmasi (S41/S44/S48)',
+                        approvedBy: 'Pengarah Hospital',
+                        hospitalName: user?.hospital?.hospital_name || 'Hospital',
+                        department: 'Jabatan Farmasi',
+                      })
+                      resolve()
+                    }, 50)
+                  })
+                } catch (err) {
+                  console.error('Export PDF error:', err)
+                } finally {
+                  setIsExporting(false)
+                }
+              }}
+              disabled={isExporting || filteredItems.length === 0}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg font-medium text-xs transition-colors
+                bg-surface hover:bg-subtle border border-border-default text-text-primary
+                disabled:opacity-50 disabled:cursor-allowed shadow-xs"
+              title="Eksport Formulari Ubat sebagai PDF Rasmi"
+            >
+              {isExporting ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-text-muted" />
+              ) : (
+                <FileDown className="w-3.5 h-3.5 text-text-muted" />
+              )}
+              <span>{isExporting ? 'Menjana PDF...' : 'Eksport Formulari PDF'}</span>
+            </button>
 
-          <Button
-            size="md"
-            onClick={() => setIsAddModalOpen(true)}
-            className="bg-accent-base hover:bg-accent-base/90 text-white font-medium px-4 py-2 rounded-lg shadow-xs flex items-center gap-1.5 transition-colors border border-accent-base/30 text-xs"
-          >
-            <Plus className="w-4 h-4" />
-            Tambah Item Dari Katolog
-          </Button>
+            <Button
+              size="md"
+              onClick={() => setIsAddModalOpen(true)}
+              className="bg-accent-base hover:bg-accent-base/90 text-white font-medium px-4 py-2 rounded-lg shadow-xs flex items-center justify-center gap-1.5 transition-colors border border-accent-base/30 text-xs w-full sm:w-auto"
+            >
+              <Plus className="w-4 h-4" />
+              Tambah Item Dari Katalog
+            </Button>
+          </div>
         </div>
       </div>
 
       {/* Skim Sub-menu Navigation Tabs */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar -mx-1 px-1">
         {[
           { id: 'all', label: 'Semua Skim' },
           { id: 'appl', label: 'APPL' },
@@ -1210,56 +1118,58 @@ export const FacilityDrugInventoryPage: React.FC = () => {
       </div>
 
       {/* Metric Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-surface p-4 rounded-xl border border-border-default shadow-xs transition-colors">
-          <div className="flex items-center justify-between text-text-muted text-xs font-medium uppercase tracking-wider mb-2">
-            <span>Jumlah Item Fasiliti</span>
-            <div className="w-8 h-8 rounded-lg bg-subtle text-text-muted flex items-center justify-center">
-              <Pill className="w-4 h-4" />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+        <div className="bg-surface p-3 sm:p-4 rounded-xl border border-border-default shadow-xs transition-colors">
+          <div className="flex items-center justify-between text-text-muted text-[11px] sm:text-xs font-medium uppercase tracking-wider mb-1.5 sm:mb-2">
+            <span className="truncate">Jumlah Item</span>
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-subtle text-text-muted flex items-center justify-center shrink-0">
+              <Pill className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           </div>
-          <div className="text-2xl font-semibold text-text-primary tabular-nums">{filteredItems.length}</div>
-          <p className="text-xs text-text-muted mt-1">Item dipilih di fasiliti ini</p>
+          <div className="text-xl sm:text-2xl font-semibold text-text-primary tabular-nums">{filteredItems.length}</div>
+          <p className="text-[11px] sm:text-xs text-text-muted mt-1 truncate">Item dipilih di fasiliti</p>
         </div>
 
-        <div className="bg-surface p-4 rounded-xl border border-border-default shadow-xs transition-colors">
-          <div className="flex items-center justify-between text-text-muted text-xs font-medium uppercase tracking-wider mb-2">
-            <span>Status Aktif</span>
-            <div className="w-8 h-8 rounded-lg bg-subtle text-text-muted flex items-center justify-center">
-              <CheckCircle className="w-4 h-4" />
+        <div className="bg-surface p-3 sm:p-4 rounded-xl border border-border-default shadow-xs transition-colors">
+          <div className="flex items-center justify-between text-text-muted text-[11px] sm:text-xs font-medium uppercase tracking-wider mb-1.5 sm:mb-2">
+            <span className="truncate">Status Aktif</span>
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-subtle text-text-muted flex items-center justify-center shrink-0">
+              <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           </div>
-          <div className="text-2xl font-semibold text-text-primary tabular-nums">{activeCount}</div>
-          <p className="text-xs text-text-muted mt-1">Sedia dipreksripsikan</p>
+          <div className="text-xl sm:text-2xl font-semibold text-text-primary tabular-nums">{activeCount}</div>
+          <p className="text-[11px] sm:text-xs text-text-muted mt-1 truncate">Sedia dipreksripsikan</p>
         </div>
 
-        <div className="bg-surface p-4 rounded-xl border border-border-default shadow-xs transition-colors">
-          <div className="flex items-center justify-between text-text-muted text-xs font-medium uppercase tracking-wider mb-2">
-            <span>Skim Dipilih</span>
-            <div className="w-8 h-8 rounded-lg bg-subtle text-text-muted flex items-center justify-center">
-              <ShieldCheck className="w-4 h-4" />
+        <div className="bg-surface p-3 sm:p-4 rounded-xl border border-border-default shadow-xs transition-colors">
+          <div className="flex items-center justify-between text-text-muted text-[11px] sm:text-xs font-medium uppercase tracking-wider mb-1.5 sm:mb-2">
+            <span className="truncate">Skim Dipilih</span>
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-subtle text-text-muted flex items-center justify-center shrink-0">
+              <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           </div>
-          <div className="text-2xl font-semibold text-text-primary uppercase">{currentVoteParam}</div>
-          <p className="text-xs text-text-muted mt-1">Mod paparan skim perolehan</p>
+          <div className="text-xl sm:text-2xl font-semibold text-text-primary uppercase truncate">{currentVoteParam}</div>
+          <p className="text-[11px] sm:text-xs text-text-muted mt-1 truncate">Mod paparan skim</p>
         </div>
 
-        <div className="bg-surface p-4 rounded-xl border border-border-default shadow-xs transition-colors">
-          <div className="flex items-center justify-between text-text-muted text-xs font-medium uppercase tracking-wider mb-2">
-            <span>Nilai Stok Pegangan</span>
-            <div className="w-8 h-8 rounded-lg bg-subtle text-text-muted flex items-center justify-center">
-              <PackageCheck className="w-4 h-4" />
+        <div className="bg-surface p-3 sm:p-4 rounded-xl border border-border-default shadow-xs transition-colors">
+          <div className="flex items-center justify-between text-text-muted text-[11px] sm:text-xs font-medium uppercase tracking-wider mb-1.5 sm:mb-2">
+            <span className="truncate">Nilai Stok</span>
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-subtle text-text-muted flex items-center justify-center shrink-0">
+              <PackageCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             </div>
           </div>
-          <div className="text-2xl font-semibold text-text-primary font-mono tabular-nums">RM {totalValuation.toLocaleString('ms-MY', { minimumFractionDigits: 2 })}</div>
-          <p className="text-xs text-text-muted mt-1">Nilai inventori semasa fasiliti</p>
+          <div className="text-lg sm:text-2xl font-semibold text-text-primary font-mono tabular-nums truncate">
+            RM {totalValuation.toLocaleString('ms-MY', { minimumFractionDigits: 2 })}
+          </div>
+          <p className="text-[11px] sm:text-xs text-text-muted mt-1 truncate">Nilai inventori semasa</p>
         </div>
       </div>
 
       {/* Controls & Search */}
-      <div className="bg-surface p-4 rounded-xl border border-border-default shadow-xs space-y-4">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="relative w-full md:w-96">
+      <div className="bg-surface p-3 sm:p-4 rounded-xl border border-border-default shadow-xs space-y-3 sm:space-y-4">
+        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 sm:gap-4">
+          <div className="relative w-full lg:w-80 xl:w-96">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
             <input
               type="text"
@@ -1270,11 +1180,11 @@ export const FacilityDrugInventoryPage: React.FC = () => {
             />
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-3 lg:flex lg:flex-wrap items-center gap-2 sm:gap-3 w-full lg:w-auto">
             <select
               value={categoryId}
               onChange={e => setCategoryId(e.target.value)}
-              className="px-3 py-2 text-xs rounded-lg border border-border-default bg-surface text-text-primary focus:outline-none focus:ring-1 focus:ring-accent-base font-medium cursor-pointer"
+              className="w-full lg:w-auto px-3 py-2 text-xs rounded-lg border border-border-default bg-surface text-text-primary focus:outline-none focus:ring-1 focus:ring-accent-base font-medium cursor-pointer"
             >
               <option value="" className="bg-surface text-text-primary">Semua Kategori Ubat</option>
               {categoryOptions.map(catName => (
@@ -1287,7 +1197,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
             <select
               value={prescriberFilter}
               onChange={e => setPrescriberFilter(e.target.value)}
-              className="px-3 py-2 text-xs rounded-lg border border-border-default bg-surface text-text-primary focus:outline-none focus:ring-1 focus:ring-accent-base font-medium cursor-pointer"
+              className="w-full lg:w-auto px-3 py-2 text-xs rounded-lg border border-border-default bg-surface text-text-primary focus:outline-none focus:ring-1 focus:ring-accent-base font-medium cursor-pointer"
             >
               <option value="all" className="bg-surface text-text-primary">Semua Preskriber (FUKKM)</option>
               <option value="A*" className="bg-surface text-text-primary">Kategori A* (Pakar Khusus)</option>
@@ -1299,8 +1209,11 @@ export const FacilityDrugInventoryPage: React.FC = () => {
 
             <select
               value={status}
-              onChange={e => setStatus(e.target.value as any)}
-              className="px-3 py-2 text-xs rounded-lg border border-border-default bg-surface text-text-primary focus:outline-none focus:ring-1 focus:ring-accent-base cursor-pointer"
+              onChange={e => {
+                const next = e.target.value
+                if (next === 'all' || next === 'active' || next === 'inactive') setStatus(next)
+              }}
+              className="w-full lg:w-auto px-3 py-2 text-xs rounded-lg border border-border-default bg-surface text-text-primary focus:outline-none focus:ring-1 focus:ring-accent-base cursor-pointer"
             >
               <option value="all" className="bg-surface text-text-primary">Semua Status</option>
               <option value="active" className="bg-surface text-text-primary">Aktif</option>
@@ -1310,7 +1223,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
             {facilityItems.length > 0 && (
               <button
                 onClick={handleClearCurrentScheme}
-                className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-rose-500 hover:text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 rounded-lg transition-colors"
+                className="col-span-full sm:col-span-1 lg:col-auto flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium text-rose-500 hover:text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border border-rose-500/20 rounded-lg transition-colors w-full lg:w-auto"
                 title="Clear item list for this scheme"
               >
                 <Trash2 className="w-3.5 h-3.5" />
@@ -1320,9 +1233,50 @@ export const FacilityDrugInventoryPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto rounded-xl border border-border-default">
-          <table className="w-full text-left text-sm text-text-primary">
+        {isLoadingInventory ? (
+          <p role="status" className="py-8 text-center text-sm text-text-secondary">Memuatkan inventori fasiliti...</p>
+        ) : inventoryError ? (
+          <div role="alert" className="p-4 rounded-xl border border-border-default bg-surface">
+            <p className="text-sm text-text-primary">{inventoryError}</p>
+            <Button variant="outline" className="mt-3" onClick={() => setInventoryRetry(value => value + 1)}>Cuba lagi</Button>
+          </div>
+        ) : null}
+
+        {/* Mobile Cards View (Zero Horizontal Scrolling) */}
+        <div className="block md:hidden space-y-2.5">
+          {isLoadingInventory || inventoryError ? null : paginatedItems.length === 0 ? (
+            <div className="py-12 px-4 text-center rounded-xl border border-border-default bg-surface space-y-3">
+              <div className="w-12 h-12 rounded-xl bg-subtle text-text-muted flex items-center justify-center mx-auto border border-border-default">
+                <Package className="w-6 h-6" />
+              </div>
+              <h3 className="font-semibold text-text-primary text-sm">Tiada Item dalam Inventori Fasiliti</h3>
+              <p className="text-xs text-text-muted max-w-xs mx-auto">
+                Inventori ubat fasiliti anda masih kosong {currentVoteParam !== 'all' ? `untuk skim ${currentVoteParam.toUpperCase()}` : ''}.
+              </p>
+              <Button
+                size="sm"
+                onClick={() => setIsAddModalOpen(true)}
+                className="bg-accent-base hover:bg-accent-base/90 text-white font-medium rounded-lg text-xs"
+              >
+                <Plus className="w-4 h-4 mr-1.5" />
+                Tambah Item dari Katolog
+              </Button>
+            </div>
+          ) : (
+            paginatedItems.map(drug => (
+              <FacilityDrugMobileCard
+                key={drug.id}
+                drug={drug}
+                onOpenEdit={handleOpenEditModal}
+                onDelete={handleDeleteItem}
+              />
+            ))
+          )}
+        </div>
+
+        {/* Desktop Table View */}
+        <div className={isLoadingInventory || inventoryError ? 'hidden' : 'hidden md:block overflow-x-auto rounded-xl border border-border-default'}>
+          <table className="w-full text-left text-sm text-text-primary min-w-[950px]">
             <thead className="bg-subtle/50 text-xs uppercase font-medium text-text-muted border-b border-border-default">
               <tr>
                 <th className="py-3 px-4">Nama & Kod Ubat</th>
@@ -1362,8 +1316,8 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                 </tr>
               ) : (
                 paginatedItems.map(drug => {
-                  const code = drug.drug_code || drug.item_code || drug.sku || '-'
-                  const priceVal = drug.price ?? drug.unit_price ?? 0
+                  const code = drug.drug_code || legacyString(drug, 'item_code') || drug.sku || '-'
+                  const priceVal = drug.price ?? legacyNumber(drug, 'unit_price') ?? 0
                   const therapeuticCat = getDrugTherapeuticCategory(drug)
                   const prescriberCat = getDrugPrescriberCategory(drug)
                   const batchNo = drug.batch_number || drug.batch_no || '-'
@@ -1396,7 +1350,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                       </td>
                       <td className="py-3 px-4">
                         <div className="font-medium text-text-primary uppercase">
-                          {drug.dosage_form || drug.uom || 'PACK'}
+                          {drug.dosage_form || legacyString(drug, 'uom') || 'PACK'}
                         </div>
                         {drug.packaging_description && (
                           <div className="text-[11px] text-text-muted font-normal mt-0.5">{drug.packaging_description}</div>
@@ -1456,8 +1410,8 @@ export const FacilityDrugInventoryPage: React.FC = () => {
 
         {/* Pagination */}
         {filteredItems.length > 0 && (
-          <div className="flex items-center justify-between pt-2">
-            <div className="text-xs text-text-muted">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+            <div className="text-xs text-text-muted text-center sm:text-left">
               Menunjukkan halaman <span className="font-semibold text-text-primary">{page}</span> daripada <span className="font-semibold text-text-primary">{totalPages}</span> ({filteredItems.length} item)
             </div>
             <div className="flex items-center gap-2">
@@ -1490,8 +1444,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
             className="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-[90] transition-opacity"
             onClick={() => {
               setIsAddModalOpen(false)
-              setSelectedCatalogDrug(null)
-              setSelectedCatalogDrugIds([])
+                        setSelectedCatalogItems([])
             }}
           />
 
@@ -1512,8 +1465,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
               <button
                 onClick={() => {
                   setIsAddModalOpen(false)
-                  setSelectedCatalogDrug(null)
-                  setSelectedCatalogDrugIds([])
+                                setSelectedCatalogItems([])
                 }}
                 className="w-9 h-9 rounded-xl bg-white/10 hover:bg-surface/20 text-white flex items-center justify-center transition-colors"
               >
@@ -1523,200 +1475,214 @@ export const FacilityDrugInventoryPage: React.FC = () => {
 
             {/* Drawer Body */}
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
-              {!selectedCatalogDrug ? (
-                <>
-                  {/* Search & Filter Controls */}
-                  <div className="flex flex-col sm:flex-row gap-3 bg-subtle/50 p-4 rounded-2xl border border-border-default shadow-sm">
-                    <div className="relative flex-1">
-                      <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                      <input
-                        type="text"
-                        placeholder="Cari kod barang, nama ubat atau bahan aktif..."
-                        value={modalSearch}
-                        onChange={e => setModalSearch(e.target.value)}
-                        className="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border border-border-default bg-surface focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
-                      />
-                    </div>
-
-                    <select
-                      value={modalVoteFilter}
-                      onChange={e => setModalVoteFilter(e.target.value)}
-                      className="px-4 py-2.5 text-sm font-semibold rounded-xl border border-border-default bg-surface text-text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+              {/* Search & Filter Controls */}
+              <div className="flex flex-col sm:flex-row gap-3 bg-subtle/50 p-4 rounded-2xl border border-border-default shadow-sm">
+                <div className="relative flex-1">
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <input
+                    type="text"
+                    placeholder="Cari kod barang, nama ubat atau bahan aktif..."
+                    value={modalSearch}
+                    onChange={e => setModalSearch(e.target.value)}
+                    className="w-full pl-9 pr-9 py-2.5 text-sm rounded-xl border border-border-default bg-surface focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+                  />
+                  {modalSearch && (
+                    <button
+                      type="button"
+                      onClick={() => setModalSearch('')}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-text-primary p-1 rounded-md transition-colors"
+                      title="Kosongkan carian"
                     >
-                      <option value="all">Semua Skim</option>
-                      <option value="appl">APPL</option>
-                      <option value="cc">CC</option>
-                      <option value="lp">LP</option>
-                      <option value="dp">DP</option>
-                    </select>
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  )}
+                </div>
+
+                <select
+                  value={modalVoteFilter}
+                  onChange={e => setModalVoteFilter(e.target.value)}
+                  className="px-4 py-2.5 text-sm font-semibold rounded-xl border border-border-default bg-surface text-text-secondary focus:outline-none focus:ring-2 focus:ring-blue-500/20 cursor-pointer"
+                >
+                  <option value="all">Semua Skim</option>
+                  <option value="appl">APPL (Konsesi)</option>
+                  <option value="cc">CC (Kontrak Pusat)</option>
+                  <option value="lp">LP (Tempatan)</option>
+                  <option value="dp">DP (Terus)</option>
+                </select>
+              </div>
+
+              {/* Multi-Select Header Toolbar */}
+              <div className="flex items-center justify-between px-1 py-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-text-secondary uppercase tracking-wider">
+                    Senarai Item Katolog
+                  </span>
+                  <span className="text-xs font-mono font-semibold px-2 py-0.5 rounded-full bg-subtle text-text-muted border border-border-default">
+                    {filteredCatalogDrugs.length} dijumpai
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {selectedCatalogDrugIds.length > 0 && (
+                    <span className="text-xs font-bold text-blue-700 dark:text-blue-300 bg-blue-500/10 dark:bg-blue-950/60 px-2.5 py-1 rounded-lg border border-blue-500/20">
+                      {selectedCatalogDrugIds.length} dipilih
+                    </span>
+                  )}
+                  {filteredCatalogDrugs.length > 0 && (
+                    <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-text-secondary hover:text-text-primary bg-surface hover:bg-subtle px-3 py-1.5 rounded-xl border border-border-default shadow-xs transition-colors select-none">
+                      <input
+                        type="checkbox"
+                        checked={isAllSelected}
+                        onChange={handleToggleSelectAll}
+                        className="w-4 h-4 rounded border-border-default text-blue-600 focus:ring-blue-500 cursor-pointer"
+                      />
+                      <span>{isAllSelected ? 'Nyahpilih Semua' : `Pilih Semua (${allFilteredIds.length})`}</span>
+                    </label>
+                  )}
+                </div>
+              </div>
+
+              {/* Item List */}
+              <div className="space-y-2">
+                {isCatalogLoading ? (
+                  <div className="py-16 text-center text-slate-400">
+                    <Spinner className="w-8 h-8 mx-auto text-blue-600 mb-3" />
+                    <p className="text-sm font-medium text-text-muted">Memuatkan Katolog Ubat Utama...</p>
                   </div>
-
-                  {/* Multi-Select Header Toolbar */}
-                  <div className="flex items-center justify-between px-1 py-1">
-                    <div className="text-xs font-bold text-text-secondary font-bold uppercase tracking-wider">
-                      Senarai Item Katolog ({filteredCatalogDrugs.length} dijumpai)
-                    </div>
-
-                    {filteredCatalogDrugs.length > 0 && (
-                      <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-blue-700 dark:text-blue-300 bg-blue-500/10 dark:bg-blue-950/60 px-3 py-1 rounded-lg border border-blue-500/20 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors">
-                        <input
-                          type="checkbox"
-                          checked={isAllSelected}
-                          onChange={handleToggleSelectAll}
-                          className="w-4 h-4 rounded border-border-default text-blue-600 focus:ring-blue-500 cursor-pointer"
-                        />
-                        Pilih Semua ({allFilteredIds.length})
-                      </label>
-                    )}
+                ) : filteredCatalogDrugs.length === 0 ? (
+                  <div className="py-16 text-center text-slate-400 border-2 border-dashed border-border-default rounded-2xl p-6">
+                    <p className="text-sm font-medium text-text-muted">Tiada item Katolog dijumpai.</p>
+                    <p className="text-xs text-slate-400 mt-1">Cuba tukar kata kunci carian atau penapis skim.</p>
                   </div>
+                ) : (
+                  <div className="divide-y divide-border-subtle border border-border-default rounded-2xl bg-surface overflow-hidden shadow-sm">
+                    {filteredCatalogDrugs.map(drug => {
+                      const code = drug.drug_code || legacyString(drug, 'item_code') || drug.sku || '-'
+                      const contractNo = drug.cc_contract_number || legacyString(drug, 'kkm_contract_number') || legacyString(drug, 'contract_number')
+                      const startDate = drug.cc_contract_start_date || legacyString(drug, 'contract_start_date') || legacyString(drug, 'start_date')
+                      const endDate = drug.cc_contract_end_date || legacyString(drug, 'contract_end_date') || legacyString(drug, 'end_date')
+                      const priceVal = drug.price ?? legacyNumber(drug, 'unit_price') ?? 0
+                      const isSelected = selectedCatalogDrugIds.includes(drug.id)
 
-                  {/* Item List */}
-                  <div className="space-y-2">
-                    {isCatalogLoading ? (
-                      <div className="py-16 text-center text-slate-400">
-                        <Spinner className="w-8 h-8 mx-auto text-blue-600 mb-3" />
-                        <p className="text-sm font-medium text-text-muted">Memuatkan Katolog Ubat Utama...</p>
-                      </div>
-                    ) : filteredCatalogDrugs.length === 0 ? (
-                      <div className="py-16 text-center text-slate-400 border-2 border-dashed border-border-default rounded-2xl p-6">
-                        <p className="text-sm font-medium text-text-muted">Tiada item Katolog dijumpai.</p>
-                        <p className="text-xs text-slate-400 mt-1">Cuba tukar kata kunci carian atau penapis skim.</p>
-                      </div>
-                    ) : (
-                      <div className="divide-y divide-border-subtle border border-border-default rounded-2xl bg-surface overflow-hidden shadow-sm">
-                        {filteredCatalogDrugs.map(drug => {
-                          const code = drug.drug_code || drug.item_code || drug.sku || '-'
-                          const contractNo = drug.cc_contract_number || drug.kkm_contract_number || drug.contract_number
-                          const startDate = drug.cc_contract_start_date || (drug as any).contract_start_date || (drug as any).start_date
-                          const endDate = drug.cc_contract_end_date || (drug as any).contract_end_date || (drug as any).end_date
-                          const priceVal = drug.price ?? drug.unit_price ?? 0
-                          const isSelected = selectedCatalogDrugIds.includes(drug.id)
+                      return (
+                        <div
+                          key={drug.id}
+                          onClick={() => handleToggleSelectDrug(drug)}
+                          role="checkbox"
+                          aria-checked={isSelected}
+                          tabIndex={0}
+                          onKeyDown={e => {
+                            if (e.key === ' ' || e.key === 'Enter') {
+                              e.preventDefault()
+                              handleToggleSelectDrug(drug)
+                            }
+                          }}
+                          className={`p-4 transition-colors duration-150 flex items-center justify-between cursor-pointer select-none group border-l-4 ${
+                            isSelected
+                              ? 'bg-blue-500/10 dark:bg-blue-950/40 border-l-blue-600 dark:border-l-blue-400'
+                              : 'hover:bg-subtle/80 dark:hover:bg-subtle/30 border-l-transparent'
+                          }`}
+                        >
+                          <div className="flex items-start gap-3.5 flex-1 pr-4">
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              onChange={e => handleToggleSelectDrug(drug, e)}
+                              onClick={e => e.stopPropagation()}
+                              className="w-4 h-4 mt-1 rounded border-border-default text-blue-600 focus:ring-blue-500 cursor-pointer"
+                            />
 
-                          return (
-                            <div
-                              key={drug.id}
-                              className={`p-4 transition-colors flex items-center justify-between group ${
-                                isSelected ? 'bg-blue-500/10 dark:bg-blue-950/40' : 'hover:bg-blue-500/10 dark:hover:bg-blue-950/20'
-                              }`}
-                            >
-                              <div className="flex items-start gap-3 flex-1 pr-4">
-                                <input
-                                  type="checkbox"
-                                  checked={isSelected}
-                                  onChange={e => handleToggleSelectDrug(drug.id, e)}
-                                  className="w-4 h-4 mt-1 rounded border-border-default text-blue-600 focus:ring-blue-500 cursor-pointer"
-                                />
-
-                                <div
-                                  onClick={() => setSelectedCatalogDrug(drug)}
-                                  className="space-y-1 flex-1 cursor-pointer"
-                                >
-                                  <div className="flex items-center gap-2 flex-wrap">
-                                    <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-blue-500/10 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-800">
-                                      {code}
-                                    </span>
-                                    <span className="text-xs font-semibold uppercase px-2 py-0.5 rounded bg-subtle text-text-secondary">
-                                      {(drug.procurement_vote || 'APPL').toUpperCase()}
-                                    </span>
-                                    {contractNo && (
-                                      <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-amber-500/10 dark:bg-amber-950/60 text-amber-400 dark:text-amber-300 border border-amber-500/20 dark:border-amber-800">
-                                        No. Kontrak: {contractNo}
-                                      </span>
-                                    )}
-                                    {renderContractPeriodBadge(startDate, endDate, drug.cc_contract_status, drug.procurement_vote, contractNo)}
-                                  </div>
-                                  <div className="font-bold text-text-primary text-base group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                                    {drug.drug_name}
-                                  </div>
-                                  {drug.generic_name && (
-                                    <div className="text-xs text-text-muted italic">{drug.generic_name}</div>
-                                  )}
-                                  <div className="text-xs text-slate-400">
-                                    Bentuk: <span className="font-medium text-text-muted uppercase">{drug.dosage_form || drug.uom || 'PACK'}</span> • Harga: <span className="font-mono font-semibold text-text-secondary">RM {priceVal.toFixed(2)}</span>
-                                  </div>
-                                </div>
+                            <div className="space-y-1.5 flex-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-blue-500/10 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border border-blue-100 dark:border-blue-800">
+                                  {code}
+                                </span>
+                                <span className="text-xs font-semibold uppercase px-2 py-0.5 rounded bg-subtle text-text-secondary">
+                                  {(drug.procurement_vote || 'APPL').toUpperCase()}
+                                </span>
+                                {contractNo && (
+                                  <span className="font-mono text-xs font-semibold px-2 py-0.5 rounded bg-amber-500/10 dark:bg-amber-950/60 text-amber-500 dark:text-amber-300 border border-amber-500/20 dark:border-amber-800">
+                                    No. Kontrak: {contractNo}
+                                  </span>
+                                )}
+                                {renderContractPeriodBadge(startDate, endDate, drug.cc_contract_status, drug.procurement_vote, contractNo)}
                               </div>
-
-                              <Button
-                                size="sm"
-                                onClick={() => setSelectedCatalogDrug(drug)}
-                                className="bg-blue-600 hover:bg-blue-500 text-white font-semibold rounded-xl shadow-sm flex-shrink-0"
-                              >
-                                <Plus className="w-4 h-4 mr-1" /> Pilih & Setup
-                              </Button>
+                              <div className="font-bold text-text-primary text-base group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                {drug.drug_name}
+                              </div>
+                              {drug.generic_name && (
+                                <div className="text-xs text-text-muted italic">{drug.generic_name}</div>
+                              )}
+                              <div className="text-xs text-text-muted">
+                                Bentuk: <span className="font-medium text-text-secondary uppercase">{drug.dosage_form || legacyString(drug, 'uom') || 'PACK'}</span>
+                              </div>
                             </div>
-                          )
-                        })}
-                      </div>
-                    )}
-                  </div>
-                </>
-              ) : (
-                /* Item Selected - Configure Stock */
-                <div className="space-y-6">
-                  <button
-                    onClick={() => setSelectedCatalogDrug(null)}
-                    className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1"
-                  >
-                    <ChevronLeft className="w-4 h-4" /> Kembali ke Carian Katolog
-                  </button>
+                          </div>
 
-                  <div className="bg-blue-500/10 p-5 rounded-2xl border border-blue-100 space-y-2">
-                    <span className="text-xs text-blue-600 uppercase font-bold tracking-wider">Item Katolog Dipilih</span>
-                    <h3 className="font-bold text-text-primary text-xl">{selectedCatalogDrug.drug_name}</h3>
-                    {selectedCatalogDrug.generic_name && (
-                      <p className="text-xs text-text-muted italic">{selectedCatalogDrug.generic_name}</p>
-                    )}
-                    <div className="flex items-center gap-3 flex-wrap pt-2">
-                      <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-surface text-blue-700 border border-blue-500/20">
-                        {selectedCatalogDrug.drug_code || selectedCatalogDrug.item_code || selectedCatalogDrug.sku || '-'}
-                      </span>
-                      <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-100 text-emerald-400 uppercase">
-                        {(selectedCatalogDrug.procurement_vote || 'APPL').toUpperCase()}
-                      </span>
-                      {(selectedCatalogDrug.cc_contract_number || selectedCatalogDrug.kkm_contract_number || selectedCatalogDrug.contract_number) && (
-                        <span className="font-mono text-xs font-bold px-2.5 py-1 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                          No. Kontrak: {selectedCatalogDrug.cc_contract_number || selectedCatalogDrug.kkm_contract_number || selectedCatalogDrug.contract_number}
-                        </span>
-                      )}
-                      {renderContractPeriodBadge(
-                        selectedCatalogDrug.cc_contract_start_date || (selectedCatalogDrug as any).contract_start_date,
-                        selectedCatalogDrug.cc_contract_end_date || (selectedCatalogDrug as any).contract_end_date,
-                        selectedCatalogDrug.cc_contract_status,
-                        selectedCatalogDrug.procurement_vote,
-                        selectedCatalogDrug.cc_contract_number || selectedCatalogDrug.kkm_contract_number || selectedCatalogDrug.contract_number
-                      )}
-                      <span className="text-xs text-text-muted font-mono">
-                        Harga: RM {((selectedCatalogDrug.price ?? selectedCatalogDrug.unit_price ?? 0)).toFixed(2)}
+                          <div className="flex flex-col items-end justify-center text-right flex-shrink-0 ml-2 space-y-1.5">
+                            <div className="font-mono text-base font-bold text-text-primary tabular-nums">
+                              RM {priceVal.toFixed(2)}
+                            </div>
+                            <div className="text-[10px] font-semibold text-text-muted uppercase tracking-wider bg-subtle px-2 py-0.5 rounded border border-border-default/50">
+                              {drug.dosage_form || legacyString(drug, 'uom') || 'UNIT'}
+                            </div>
+                            {isSelected ? (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-blue-700 dark:text-blue-300 bg-blue-500/15 dark:bg-blue-950/80 px-2 py-0.5 rounded-full border border-blue-500/30">
+                                <Check className="w-3 h-3 text-blue-600 dark:text-blue-400" /> Dipilih
+                              </span>
+                            ) : (
+                              <span className="text-[11px] font-medium text-text-muted opacity-0 group-hover:opacity-100 transition-opacity">
+                                Klik untuk pilih
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                )}
+              </div>
+
+              {/* Selected Items Facility Stock Configuration */}
+              {selectedCatalogDrugIds.length > 0 && (
+                <div className="bg-subtle/70 dark:bg-subtle/30 p-4 rounded-2xl border border-border-default space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-200">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Sliders className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                      <span className="text-xs font-bold text-text-primary uppercase tracking-wider">
+                        Tetapan Stok Fasiliti ({selectedCatalogDrugIds.length} item dipilih)
                       </span>
                     </div>
+                    <span className="text-[11px] text-text-muted">Akan digunakan untuk semua item dipilih</span>
                   </div>
 
-                  <div className="bg-surface p-6 rounded-2xl border border-border-default shadow-sm space-y-5">
-                    <h4 className="font-bold text-text-primary text-base border-b border-border-subtle pb-2">Konfigurasi Stok Fasiliti</h4>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                      <div>
-                        <label className="text-xs font-bold text-text-secondary block mb-1.5">Stok Awal Fasiliti</label>
-                        <input
-                          type="number"
-                          value={initialStockInput}
-                          onChange={e => setInitialStockInput(Number(e.target.value))}
-                          className="w-full px-4 py-2.5 rounded-xl border border-border-default bg-subtle/50 font-mono text-base focus:bg-surface focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
-                        />
-                        <span className="text-[11px] text-slate-400 mt-1 block">Kuantiti fizikal di stor fasiliti</span>
-                      </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="text-[11px] font-semibold text-text-secondary block mb-1">
+                        Stok Awal Fasiliti
+                      </label>
+                      <input
+                        type="number"
+                        min={0}
+                        value={initialStockInput}
+                        onChange={e => setInitialStockInput(Math.max(0, Number(e.target.value)))}
+                        className="w-full px-3 py-2 rounded-xl border border-border-default bg-surface font-mono text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+                      />
+                      <span className="text-[10px] text-text-muted mt-0.5 block">Kuantiti fizikal di stor</span>
+                    </div>
 
-                      <div>
-                        <label className="text-xs font-bold text-text-secondary block mb-1.5">Paras Penimbal (Min Buffer)</label>
-                        <input
-                          type="number"
-                          value={minBufferInput}
-                          onChange={e => setMinBufferInput(Number(e.target.value))}
-                          className="w-full px-4 py-2.5 rounded-xl border border-border-default bg-subtle/50 font-mono text-base focus:bg-surface focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
-                        />
-                        <span className="text-[11px] text-slate-400 mt-1 block">Amaran pesanan semula automatik</span>
-                      </div>
+                    <div>
+                      <label className="text-[11px] font-semibold text-text-secondary block mb-1">
+                        Paras Penimbal (Min Buffer)
+                      </label>
+                      <input
+                        type="number"
+                        min={0}
+                        value={minBufferInput}
+                        onChange={e => setMinBufferInput(Math.max(0, Number(e.target.value)))}
+                        className="w-full px-3 py-2 rounded-xl border border-border-default bg-surface font-mono text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-colors"
+                      />
+                      <span className="text-[10px] text-text-muted mt-0.5 block">Amaran pesanan semula automatik</span>
                     </div>
                   </div>
                 </div>
@@ -1724,37 +1690,50 @@ export const FacilityDrugInventoryPage: React.FC = () => {
             </div>
 
             {/* Drawer Footer */}
-            <div className="p-4 bg-subtle/50 border-t border-border-default flex items-center justify-between">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setIsAddModalOpen(false)
-                  setSelectedCatalogDrug(null)
-                  setSelectedCatalogDrugIds([])
-                }}
-              >
-                Batal
-              </Button>
+            <div className="p-4 bg-surface border-t border-border-default flex items-center justify-between gap-3 shadow-lg">
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setIsAddModalOpen(false)
+                                    setSelectedCatalogItems([])
+                  }}
+                  className="text-text-secondary hover:text-text-primary"
+                >
+                  Batal
+                </Button>
+                {selectedCatalogDrugIds.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => setSelectedCatalogItems([])}
+                    className="text-xs text-text-muted hover:text-text-primary underline px-2 py-1 transition-colors"
+                  >
+                    Kosongkan Pilihan
+                  </button>
+                )}
+              </div>
 
-              {selectedCatalogDrug ? (
-                <Button
-                  size="md"
-                  onClick={handleAddItem}
-                  className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-6 rounded-xl shadow-md"
-                >
-                  <Plus className="w-4 h-4 mr-1.5" />
-                  Tambah ke Inventori Fasiliti
-                </Button>
-              ) : selectedCatalogDrugIds.length > 0 ? (
-                <Button
-                  size="md"
-                  onClick={handleBatchAddItems}
-                  className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 rounded-xl shadow-md animate-pulse"
-                >
-                  <Plus className="w-4 h-4 mr-1.5" />
-                  Tambah {selectedCatalogDrugIds.length} Item ke Inventori
-                </Button>
-              ) : null}
+              <div>
+                {selectedCatalogDrugIds.length > 0 ? (
+                  <Button
+                    size="md"
+                    onClick={handleBatchAddItems}
+                    isLoading={isAddingItems}
+                    className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 rounded-xl shadow-md transition-[background-color,transform] duration-200 active:scale-[0.98] flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Tambah {selectedCatalogDrugIds.length} Item ke Inventori
+                  </Button>
+                ) : (
+                  <Button
+                    size="md"
+                    disabled
+                    className="bg-subtle text-text-muted font-medium px-5 py-2.5 rounded-xl cursor-not-allowed border border-border-default opacity-60"
+                  >
+                    Pilih Item untuk Ditambah
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         </>
@@ -1769,7 +1748,8 @@ export const FacilityDrugInventoryPage: React.FC = () => {
           />
 
           {/* Slide-Over Container */}
-          <div className="fixed inset-y-0 right-0 w-full sm:w-[680px] md:w-[860px] lg:w-[960px] xl:w-[1040px] bg-surface shadow-2xl z-[100] flex flex-col border-l border-border-default animate-in slide-in-from-right duration-300">
+          <DialogFocusScope label={`Kemas kini stok dan lokasi ${editingItem.drug_name}`} onClose={() => setEditingItem(null)}>
+          <div className="fixed inset-y-0 right-0 w-full sm:w-[680px] md:w-[860px] lg:w-[960px] xl:w-[1040px] bg-surface shadow-2xl z-[100] flex flex-col border-l border-border-default animate-in slide-in-from-right duration-200 motion-reduce:animate-none">
             {/* Drawer Header */}
             <div className="p-6 bg-gradient-to-r from-slate-900 via-blue-950 to-indigo-950 text-white flex items-center justify-between shadow-md">
               <div>
@@ -1785,8 +1765,10 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                 )}
               </div>
               <button
+                type="button"
+                aria-label="Tutup kemas kini inventori"
                 onClick={() => setEditingItem(null)}
-                className="w-9 h-9 rounded-xl bg-white/10 hover:bg-surface/20 text-white flex items-center justify-center transition-colors"
+                className="w-9 h-9 rounded-xl bg-white/10 hover:bg-surface/20 text-white flex items-center justify-center transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2"
               >
                 <XCircle className="w-5 h-5" />
               </button>
@@ -1873,13 +1855,13 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                       <div>
                         <span className="text-slate-400 block text-[11px]">Packaging</span>
                         <span className="font-bold text-text-primary uppercase">
-                          {editingItem.dosage_form || editingItem.uom || 'PACK'}
+                          {editingItem.dosage_form || legacyString(editingItem, 'uom') || 'PACK'}
                         </span>
                       </div>
                       <div>
                         <span className="text-slate-400 block text-[11px]">Harga Unit Kontrak</span>
                         <span className="font-mono font-bold text-text-primary">
-                          RM {((editingItem.price ?? editingItem.unit_price ?? 0)).toFixed(2)}
+                          RM {((editingItem.price ?? legacyNumber(editingItem, 'unit_price') ?? 0)).toFixed(2)}
                         </span>
                       </div>
                     </div>
@@ -2193,7 +2175,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                         <div className="text-xl font-bold font-mono text-cyan-300">
                           RM {estimatedPurchasingCost.toFixed(2)}
                         </div>
-                        <p className="text-[10px] text-slate-400">Harga Unit Kontrak: RM {((editingItem.price ?? editingItem.unit_price ?? 0)).toFixed(2)}</p>
+                        <p className="text-[10px] text-slate-400">Harga Unit Kontrak: RM {((editingItem.price ?? legacyNumber(editingItem, 'unit_price') ?? 0)).toFixed(2)}</p>
                       </div>
                     </div>
                   </div>
@@ -2203,7 +2185,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                     <div className="flex items-center justify-between border-b border-border-subtle pb-2">
                       <h4 className="font-bold text-text-primary text-xs uppercase tracking-wider flex items-center gap-2">
                         <span className="w-2 h-2 rounded-full bg-blue-500" />
-                        Rekod Pembelian & Perolehan (Purchasing)
+                        Rekod Pembelian Hospital
                       </h4>
                       <span className="text-[11px] font-semibold text-blue-600 bg-blue-500/10 px-2 py-0.5 rounded">
                         {realPOs.length} Pesanan Ditemui
@@ -2211,7 +2193,9 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                     </div>
 
                     <div className="space-y-2 text-xs">
-                      {isTxLoading ? (
+                      {historyError ? (
+                        <p role="alert" className="py-4 text-sm text-text-primary">{historyError}</p>
+                      ) : isTxLoading ? (
                         <div className="py-6 text-center text-slate-400 text-xs">Memuatkan rekod pembelian dari pangkalan data...</div>
                       ) : realPOs.length === 0 ? (
                         <div className="p-4 rounded-xl bg-subtle/50 border border-border-subtle text-center text-slate-400 text-xs font-medium">
@@ -2221,14 +2205,14 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                         realPOs.map(po => (
                           <div key={po.id} className="p-3 rounded-xl bg-subtle/50 border border-border-subtle flex items-center justify-between">
                             <div>
-                              <div className="font-mono font-bold text-blue-700">{po.purchase_order?.po_number || po.po_number || po.id}</div>
+                              <div className="font-mono font-bold text-blue-700">{po.purchase_order.po_number || po.id}</div>
                               <div className="text-text-muted text-[11px]">
                                 Tarikh Pesan: {po.created_at ? new Date(po.created_at).toLocaleDateString('ms-MY') : '-'}
                               </div>
                             </div>
                             <div className="text-right font-mono">
-                              <div className="font-bold text-text-primary">{po.quantity} unit</div>
-                              <div className="text-[10px] text-emerald-600 font-bold">LULUS</div>
+                              <div className="font-bold text-text-primary">{po.quantity_ordered} unit dipesan</div>
+                              <div className="text-[10px] text-text-secondary font-bold">{po.purchase_order.status.replace(/_/g, ' ').toUpperCase()}</div>
                             </div>
                           </div>
                         ))
@@ -2253,19 +2237,21 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                     </div>
 
                     <div className="space-y-2 text-xs">
-                      {isTxLoading ? (
+                      {historyError ? (
+                        <p role="alert" className="py-4 text-sm text-text-primary">{historyError}</p>
+                      ) : isTxLoading ? (
                         <div className="py-6 text-center text-slate-400 text-xs">Memuatkan rekod penerimaan dari pangkalan data...</div>
-                      ) : realTransactions.filter(t => t.transaction_type === 'receive' || t.quantity > 0).length === 0 ? (
+                      ) : realTransactions.filter(t => t.transaction_type === 'receipt').length === 0 ? (
                         <div className="p-4 rounded-xl bg-subtle/50 border border-border-subtle text-center text-slate-400 text-xs font-medium">
                           Tiada rekod penerimaan stok (GRN) ditemui dalam pangkalan data untuk ubat ini.
                         </div>
                       ) : (
                         realTransactions
-                          .filter(t => t.transaction_type === 'receive' || t.quantity > 0)
+                          .filter(t => t.transaction_type === 'receipt')
                           .map(t => (
                             <div key={t.id} className="p-3 rounded-xl bg-subtle/50 border border-border-subtle flex items-center justify-between">
                               <div>
-                                <div className="font-mono font-bold text-emerald-700">{t.reference_number || t.transaction_number || `GRN-${t.id.slice(-4)}`}</div>
+                                <div className="font-mono font-bold text-emerald-700">{t.transaction_number || t.id}</div>
                                 <div className="text-text-muted text-[11px]">
                                   Tarikh Terima: {t.transaction_date ? new Date(t.transaction_date).toLocaleDateString('ms-MY') : '-'}
                                 </div>
@@ -2341,7 +2327,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
                               {editingItem.drug_name}
                             </div>
                             <div className="text-[10px] text-text-muted">
-                              Packaging: <span className="font-semibold text-text-secondary uppercase">{editingItem.dosage_form || editingItem.uom || 'PACK'}</span>
+                              Packaging: <span className="font-semibold text-text-secondary uppercase">{editingItem.dosage_form || legacyString(editingItem, 'uom') || 'PACK'}</span>
                             </div>
                             <div className="text-[10px] text-text-muted truncate">
                               Lokasi: <span className="font-semibold text-text-secondary">{editLocationInput || editingItem.location || 'Belum Diset'}</span>
@@ -2425,6 +2411,7 @@ export const FacilityDrugInventoryPage: React.FC = () => {
               </Button>
             </div>
           </div>
+          </DialogFocusScope>
         </>
       )}
     </div>

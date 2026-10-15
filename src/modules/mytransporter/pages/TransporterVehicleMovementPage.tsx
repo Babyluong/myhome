@@ -1,19 +1,8 @@
 // src/modules/mytransporter/pages/TransporterVehicleMovementPage.tsx
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  ArrowLeft, 
-  Car, 
-  Printer, 
-  Search, 
-  Calendar, 
-  TrendingUp, 
-  MapPin, 
-  Clock, 
-  User, 
-  Activity 
-} from 'lucide-react'
-import { Ambulance } from '../components/AmbulanceIcon'
+import { ArrowLeft, Printer, Activity } from 'lucide-react'
+import '../components/AmbulanceIcon'
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { useAuthStore } from '@/stores/authStore'
@@ -24,14 +13,7 @@ import {
   getDriverMovementReport 
 } from '../services/transporterService'
 import { getUsers } from '@/services/userService'
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardContent, 
-  Button, 
-  Input 
-} from '@/components/ui'
+import { Card, CardContent, Button } from '@/components/ui'
 
 const TransporterVehicleMovementPage: React.FC = () => {
   const navigate = useNavigate()

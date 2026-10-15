@@ -1,34 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import {
-  X,
-  RefreshCw,
-  Download,
-  Upload,
-  FileJson,
-  CheckCircle2,
-  AlertCircle,
-  Clock,
-  Database,
-  Globe,
-  Plus,
-  RotateCcw,
-  Sparkles,
-  ShieldCheck,
-  FileText,
-  Copy,
-  ChevronRight
-} from 'lucide-react'
+import { X, RefreshCw, Download, Upload, FileJson, CheckCircle2, AlertCircle, Clock, Database, Globe, Plus, RotateCcw, Sparkles, FileText, Copy, ChevronRight } from 'lucide-react'
 import { NAGInfectionGuideline, NAGSyncMetadata, NAGPopulation, NAGBodySystem } from '../types/formulariTypes'
-import {
-  getNAGSyncMetadata,
-  getAllNAGGuidelines,
-  syncFromOfficialNAGOnline,
-  importNAGGuidelinesFromJSON,
-  exportNAGGuidelinesToJSON,
-  resetToOfficialNAGDefaults,
-  addOrUpdateNAGGuideline,
-  OFFICIAL_NAG_PORTAL_URL
-} from '../services/nagService'
+import { getNAGSyncMetadata, syncFromOfficialNAGOnline, importNAGGuidelinesFromJSON, exportNAGGuidelinesToJSON, resetToOfficialNAGDefaults, addOrUpdateNAGGuideline, OFFICIAL_NAG_PORTAL_URL } from '../services/nagService'
 import { NAG_ADULT_CATEGORIES_METADATA, NAG_PAED_CATEGORIES_METADATA } from '../data/nagCategoriesData'
 
 interface NAGSyncManagerModalProps {

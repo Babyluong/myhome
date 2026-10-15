@@ -7,98 +7,23 @@
 import { supabase, isSupabaseConfigured } from '@/services/supabase'
 import type { StoreLocation, StoreLocationFormData, StoreLocationWithOccupancy } from '@/types/pharmacy'
 import { loadFacilityDrugInventory } from './facilityDrugInventoryService'
+import { loadFacilityNonDrugInventory } from './facilityNonDrugInventoryService'
+import { listFacilityStores } from './facilityStoreService'
+import { offlineScope } from '@/services/offlineSession'
 
 function cacheKey(hospitalId: string) {
-  return `store_locations_${hospitalId}`
+  return `store_locations_${offlineScope() || "unavailable"}_${hospitalId}`
 }
 
-const DEFAULT_LOCATIONS: Omit<StoreLocation, 'created_at' | 'updated_at'>[] = [
-  {
-    id: 'store-loc-mf-001',
-    hospital_id: 'hosp-lawas-01',
-    location_code: 'LOG-MF-001',
-    store_name: 'Main Freezer',
-    department: 'LOG',
-    cabinet_rack: '-',
-    shelf_level: '-',
-    location_type: 'drug',
-    storage_condition: 'cold_2_8c',
-    is_active: true,
-  },
-  {
-    id: 'store-loc-sl-001',
-    hospital_id: 'hosp-lawas-01',
-    location_code: 'LOG-SL-001',
-    store_name: 'Stor Logistik',
-    department: 'LOG',
-    cabinet_rack: '-',
-    shelf_level: '-',
-    location_type: 'non_drug',
-    storage_condition: 'ambient',
-    is_active: true,
-  },
-  {
-    id: 'store-loc-sl-002',
-    hospital_id: 'hosp-lawas-01',
-    location_code: 'LOG-SL-002',
-    store_name: 'Stor Logistik',
-    department: 'LOG',
-    cabinet_rack: '-',
-    shelf_level: '-',
-    location_type: 'drug',
-    storage_condition: 'ambient',
-    is_active: true,
-  },
-  {
-    id: 'store-loc-tl-001',
-    hospital_id: 'hosp-lawas-01',
-    location_code: 'LOG-TL-001',
-    store_name: 'Top Loading',
-    department: 'LOG',
-    cabinet_rack: '-',
-    shelf_level: '-',
-    location_type: 'drug',
-    storage_condition: 'cold_2_8c',
-    is_active: true,
-  },
-]
-
 function readCache(hospitalId: string): StoreLocation[] {
-  try {
-    const raw = localStorage.getItem(cacheKey(hospitalId))
-    if (!raw) {
-      const initial = DEFAULT_LOCATIONS.map(l => ({
-        ...l,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })) as StoreLocation[]
-      localStorage.setItem(cacheKey(hospitalId), JSON.stringify(initial))
-      return initial
-    }
-    const parsed = JSON.parse(raw)
-    if (!Array.isArray(parsed) || parsed.length === 0) {
-      const initial = DEFAULT_LOCATIONS.map(l => ({
-        ...l,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      })) as StoreLocation[]
-      localStorage.setItem(cacheKey(hospitalId), JSON.stringify(initial))
-      return initial
-    }
-    return parsed
-  } catch {
-    return DEFAULT_LOCATIONS.map(l => ({
-      ...l,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    })) as StoreLocation[]
-  }
+  if (!offlineScope()) return []
+  try { const raw = localStorage.getItem(cacheKey(hospitalId)); return raw ? JSON.parse(raw) : [] } catch { return [] }
 }
 
 function writeCache(hospitalId: string, items: StoreLocation[]) {
   try {
     localStorage.setItem(cacheKey(hospitalId), JSON.stringify(items))
-  } catch {}
+  } catch { /* Cached copies are optional; confirmed writes remain authoritative. */ }
 }
 
 export function formatLocationString(storeName: string, cabinetRack?: string, shelfLevel?: string): string {
@@ -189,7 +114,7 @@ export function generateUniqueLocationCode(
  */
 export async function loadStoreLocations(hospitalId: string): Promise<StoreLocation[]> {
   if (!isSupabaseConfigured()) {
-    return readCache(hospitalId)
+    throw new Error('Store locations unavailable')
   }
 
   try {
@@ -199,31 +124,32 @@ export async function loadStoreLocations(hospitalId: string): Promise<StoreLocat
       .eq('hospital_id', hospitalId)
       .order('store_name', { ascending: true })
 
-    if (error || !data || data.length === 0) {
-      return readCache(hospitalId)
-    }
+    if (error || !data) throw new Error('Store locations unavailable')
 
-    const items: StoreLocation[] = data.map((row: any) => ({
-      id: row.id,
-      hospital_id: row.hospital_id,
-      store_name: row.store_name,
-      department: row.department,
-      cabinet_rack: row.cabinet_rack,
-      shelf_level: row.shelf_level,
-      location_code: row.location_code || generateLocationCode(row.store_name, row.department || 'LOG', row.cabinet_rack, row.shelf_level),
-      location_type: row.location_type || 'both',
-      storage_condition: row.storage_condition || 'ambient',
-      description: row.description,
-      is_active: row.is_active ?? true,
-      created_at: row.created_at,
-      updated_at: row.updated_at,
-    }))
+    const items: StoreLocation[] = data.map((row: StoreLocation) => {
+      const codePrefix = row.location_code ? row.location_code.split('-')[0].toUpperCase() : 'LOG'
+      const dept = row.department || (codePrefix === 'IPD' ? 'IPD' : codePrefix === 'LOG' ? 'LOG' : codePrefix)
+      return {
+        id: row.id,
+        hospital_id: row.hospital_id,
+        store_name: row.store_name,
+        department: dept,
+        cabinet_rack: row.cabinet_rack,
+        shelf_level: row.shelf_level,
+        location_code: row.location_code || generateLocationCode(row.store_name, dept, row.cabinet_rack, row.shelf_level),
+        location_type: row.location_type || 'both',
+        storage_condition: row.storage_condition || 'ambient',
+        description: row.description,
+        is_active: row.is_active ?? true,
+        created_at: row.created_at,
+        updated_at: row.updated_at,
+      }
+    })
 
     writeCache(hospitalId, items)
     return items
   } catch (err) {
-    console.error('[StoreLocation] Failed to fetch from Supabase, returning cache:', err)
-    return readCache(hospitalId)
+    throw new Error('Store locations unavailable')
   }
 }
 
@@ -234,6 +160,8 @@ export async function createStoreLocation(
   hospitalId: string,
   formData: StoreLocationFormData
 ): Promise<StoreLocation> {
+  if (!isSupabaseConfigured()) throw new Error('Store location write unavailable')
+
   const existingLocs = readCache(hospitalId)
   const defaultCode = generateLocationCode(formData.store_name, formData.department || 'LOG', formData.cabinet_rack, formData.shelf_level)
   const userCode = formData.location_code?.trim()
@@ -283,7 +211,7 @@ export async function createStoreLocation(
 
     if (error) {
       console.error('[StoreLocation] Supabase insert error:', error)
-      if (error.code === '23505' || (error as any).status === 409) {
+      if (error.code === '23505') {
         throw new Error(`Kod lokasi '${newLoc.location_code}' telah wujud. Sila gunakan kod lokasi yang lain.`)
       }
       throw new Error(error.message || 'Gagal menyimpan ke pangkalan data.')
@@ -308,6 +236,8 @@ export async function updateStoreLocation(
   locationId: string,
   formData: Partial<StoreLocationFormData>
 ): Promise<StoreLocation | null> {
+  if (!isSupabaseConfigured()) throw new Error('Store location write unavailable')
+
   const now = new Date().toISOString()
   const cache = readCache(hospitalId)
   const index = cache.findIndex(l => l.id === locationId)
@@ -382,21 +312,10 @@ export async function updateStoreLocation(
  * Delete a store location
  */
 export async function deleteStoreLocation(hospitalId: string, locationId: string): Promise<boolean> {
-  if (isSupabaseConfigured()) {
-    try {
-      await supabase
-        .from('store_locations')
-        .delete()
-        .eq('id', locationId)
-        .eq('hospital_id', hospitalId)
-    } catch (err) {
-      console.warn('[StoreLocation] Supabase delete failed:', err)
-    }
-  }
-
-  const cache = readCache(hospitalId)
-  const filtered = cache.filter(l => l.id !== locationId)
-  writeCache(hospitalId, filtered)
+  if (!isSupabaseConfigured()) throw new Error('Store location write unavailable')
+  const { data, error } = await supabase.from('store_locations').delete().eq('id', locationId).eq('hospital_id', hospitalId).select('id')
+  if (error || !data?.length) throw new Error('Store location was not deleted')
+  writeCache(hospitalId, readCache(hospitalId).filter(location => location.id !== locationId))
   return true
 }
 
@@ -405,14 +324,13 @@ export async function deleteStoreLocation(hospitalId: string, locationId: string
  */
 export async function getStoreLocationsWithOccupancy(hospitalId: string): Promise<StoreLocationWithOccupancy[]> {
   const locations = await loadStoreLocations(hospitalId)
-  const drugItems = await loadFacilityDrugInventory(hospitalId)
-
-  // Non-drug items from localStorage cache
-  let nonDrugItems: any[] = []
-  try {
-    const raw = localStorage.getItem(`facility_nondrug_items_${hospitalId}`)
-    if (raw) nonDrugItems = JSON.parse(raw)
-  } catch {}
+  
+  const stores = await listFacilityStores(hospitalId)
+  const inventories = await Promise.all(stores.map(async store => ({
+    code: store.location_code.split('-')[1],
+    drugs: await loadFacilityDrugInventory(hospitalId, store.id),
+    nonDrugs: await loadFacilityNonDrugInventory(hospitalId, store.id),
+  })))
 
   return locations.map(loc => {
     const formatted = formatLocationString(loc.store_name, loc.cabinet_rack, loc.shelf_level)
@@ -434,9 +352,13 @@ export async function getStoreLocationsWithOccupancy(hospitalId: string): Promis
       return cleanLoc.includes(cleanStoreName) || cleanLoc.includes(cleanCode)
     }
 
+    const relevant = inventories.filter(inventory => inventory.code === (loc.department || loc.location_code.split('-')[0]))
+    const drugItemsPool = relevant.flatMap(inventory => inventory.drugs)
+    const nonDrugItems = relevant.flatMap(inventory => inventory.nonDrugs)
+
     const drugCount = (loc.location_type === 'non_drug')
       ? 0
-      : drugItems.filter(item => isLocationMatch(item.location || '')).length
+      : drugItemsPool.filter(item => isLocationMatch(item.location || '')).length
 
     const nonDrugCount = (loc.location_type === 'drug')
       ? 0

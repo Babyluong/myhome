@@ -1,35 +1,9 @@
 // @ts-nocheck
 import React, { useState, useEffect, useMemo } from 'react';
-import {
-  Search,
-  RotateCcw,
-  Truck,
-  Building2,
-  Calendar,
-  AlertTriangle,
-  CheckCircle2,
-  Clock,
-  Download,
-  Printer,
-  Copy,
-  Check,
-  ChevronRight,
-  Filter,
-  ArrowUpDown,
-  RefreshCw,
-  Eye,
-  Layers,
-  ArrowRight,
-  PackageCheck,
-  ExternalLink,
-  ShieldCheck,
-  MapPin,
-  Flame,
-  Info
-} from 'lucide-react';
+import { Search, RotateCcw, Truck, Building2, AlertTriangle, CheckCircle2, Clock, Download, Copy, Check, RefreshCw, PackageCheck, ShieldCheck, MapPin } from 'lucide-react'
 import { useLanguage } from '@/shared/contexts/LanguageContext';
 import { getSupplierCylinderReconciliationData } from '@/modules/mycylinder/services/oxygenService';
-import type { SupplierTrackedCylinder, SupplierCylinderTrackingSummary } from '@/types/pharmacy';
+import type { SupplierCylinderTrackingSummary } from '@/types/pharmacy'
 
 interface SupplierCylinderTrackingSectionProps {
   hospitalId: string;

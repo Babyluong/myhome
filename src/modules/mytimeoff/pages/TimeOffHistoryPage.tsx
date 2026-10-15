@@ -2,23 +2,7 @@
 
 import React, { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  CalendarDays,
-  ArrowLeft,
-  Calendar,
-  Clock,
-  CheckCircle2,
-  AlertCircle,
-  XCircle,
-  FileText,
-  TrendingDown,
-  TrendingUp,
-  Layers,
-  ArrowRight,
-  ShieldCheck,
-  Search,
-  Download
-} from 'lucide-react'
+import { CalendarDays, ArrowLeft, Clock, CheckCircle2, AlertCircle, TrendingDown, TrendingUp, Layers } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
@@ -29,7 +13,7 @@ import {
   getToilClaims
 } from '@/modules/mytimeoff/services/toilService'
 import type { ToilRedemption, ToilBalance, ToilClaim } from '@/shared/types/mytimeoff'
-import { Button } from '@/components/ui'
+import '@/components/ui'
 
 export const TimeOffHistoryPage: React.FC = () => {
   const navigate = useNavigate()

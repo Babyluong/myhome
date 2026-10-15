@@ -1,18 +1,7 @@
 // @ts-nocheck
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  AlertTriangle, 
-  Wrench, 
-  Sparkles, 
-  Info, 
-  ChevronDown, 
-  Calendar, 
-  Clock, 
-  ShieldCheck,
-  ExternalLink,
-  Layers
-} from 'lucide-react'
+import { AlertTriangle, Wrench, Sparkles, Info, ChevronDown, Calendar, Clock, ExternalLink, Layers } from 'lucide-react'
 import type { SystemAnnouncement } from '@/services/systemAnnouncementService'
 
 interface SystemBroadcastBannerProps {
@@ -168,11 +157,11 @@ export const SystemBroadcastBanner: React.FC<SystemBroadcastBannerProps> = ({
       <AnimatePresence initial={false}>
         {isExpanded && (
           <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
+            initial={{ scaleY: 0.96, opacity: 0 }}
+            animate={{ scaleY: 1, opacity: 1 }}
+            exit={{ scaleY: 0.96, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="overflow-hidden pt-3 mt-3 border-t border-border-default space-y-3"
+            className="origin-top overflow-hidden pt-3 mt-3 border-t border-border-default space-y-3"
           >
             {activeNotices.map((notice) => {
               const style = getBannerBadge(notice)

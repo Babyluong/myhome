@@ -1,0 +1,129 @@
+{
+  "taskId": "LOGIN-PREMIUM-20261012",
+  "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+  "baselinePaths": [
+    ".gitignore",
+    "dist/index.html",
+    "docs/DECISIONS.md",
+    "docs/SESSION_HANDOFF.md",
+    "public/version.json",
+    "src/config/generatedReleases.json",
+    "src/config/systemReleases.ts",
+    "src/modules/inventory/components/StoreLocationSelector.tsx",
+    "src/modules/inventory/pages/inventory/DrugInventoryPage.tsx",
+    "src/modules/inventory/pages/inventory/FacilityDrugInventoryPage.tsx",
+    "src/modules/inventory/pages/inventory/FacilityNonDrugInventoryPage.tsx",
+    "src/modules/inventory/pages/inventory/InventoryOverviewPage.tsx",
+    "src/modules/inventory/pages/inventory/KewPs4LedgerPage.tsx",
+    "src/modules/inventory/pages/inventory/NearExpiryPage.tsx",
+    "src/modules/inventory/pages/inventory/NonDrugInventoryPage.tsx",
+    "src/modules/inventory/pages/inventory/SlowMovingPage.tsx",
+    "src/modules/inventory/pages/inventory/StoreLocationManagementPage.tsx",
+    "src/modules/myprepacking/components/PrepackDrugPickerModal.tsx",
+    "src/modules/myprepacking/services/prepackService.ts",
+    "src/routes/routes.tsx",
+    "src/services/pharmacy/storeLocationService.ts",
+    "src/services/pharmacy/storeSubLocationService.ts",
+    "src/shared/components/mobile/TabBar.tsx",
+    "src/shared/config/mobileTabs.ts",
+    "src/shared/utils/cacheBuster.ts",
+    ".agents/AGENTS.md",
+    ".agents/CODEBASE_ROUTER.json",
+    ".agents/skills/agent-monitor/SKILL.md",
+    ".agents/skills/amri/SKILL.md",
+    ".agents/skills/antislop-copywriting/SKILL.md",
+    ".agents/skills/antislop-human/SKILL.md",
+    ".agents/skills/babyaaralyn/SKILL.md",
+    ".agents/skills/babybun/SKILL.md",
+    ".agents/skills/babyhien/SKILL.md",
+    ".agents/skills/babyluong/SKILL.md",
+    ".agents/skills/brainstorming/SKILL.md",
+    ".agents/skills/caveman/SKILL.md",
+    ".agents/skills/codebase-memory/SKILL.md",
+    ".agents/skills/compact-code/SKILL.md",
+    ".agents/skills/emil-kowalski/SKILL.md",
+    ".agents/skills/error-guard/SKILL.md",
+    ".agents/skills/frontend-architecture/SKILL.md",
+    ".agents/skills/grill-me/SKILL.md",
+    ".agents/skills/impeccable/SKILL.md",
+    ".agents/skills/plan-first/SKILL.md",
+    ".agents/skills/security-gate/SKILL.md",
+    ".agents/skills/session-compactor/SKILL.md",
+    ".agents/skills/supabase-postgres-best-practices/SKILL.md",
+    ".agents/skills/system-design-pro/SKILL.md",
+    ".agents/skills/task-slicer/SKILL.md",
+    ".agents/skills/tasteskill/SKILL.md",
+    ".agents/skills/test-gate/SKILL.md",
+    ".agents/skills/zero-scan-router/SKILL.md",
+    ".codex/agents/babyaaralyn.toml",
+    ".codex/agents/babybun.toml",
+    ".codex/agents/babyhien.toml",
+    ".codex/agents/babyluong.toml",
+    ".codex/config.toml",
+    ".codex/task-manifest.template.json",
+    "AGENTS.md",
+    "docs/AGENT_OWNERSHIP.json",
+    "docs/AGENT_RULES_SOURCES.md",
+    "docs/tasks/T-015.md",
+    "docs/tasks/T-016.md",
+    "docs/test-reports/2026-10-12-inpatient-pharmacy-store-locations-report.md",
+    "scripts/check-agent-boundaries.cjs",
+    "scripts/refactor-store-location-page.cjs",
+    "scripts/test-ipd-locations.cjs",
+    "scripts/update-store-location-service.cjs",
+    "src/modules/inventory/components/FacilityDrugMobileCard.tsx",
+    "src/modules/inventory/components/FacilityNonDrugMobileCard.tsx",
+    "supabase/migrations/088_seed_inpatient_store_locations.sql"
+  ],
+  "slices": [
+    {
+      "agent": "amri",
+      "allowedPaths": [
+        "docs/audits/login-premium-20261012.manifest.json",
+        "docs/audits/login-premium-20261012.md"
+      ]
+    },
+    {
+      "agent": "babybun",
+      "allowedPaths": []
+    },
+    {
+      "agent": "babyluong",
+      "allowedPaths": []
+    },
+    {
+      "agent": "babyaaralyn",
+      "allowedPaths": []
+    }
+  ],
+  "acceptanceCriteria": [
+    "Audit the design constraints against the explicit premium 3D request",
+    "Provide a visibly animated dimensional login concept with intentional light and dark treatments",
+    "Readable credential area and working local presentation controls",
+    "Verify rendering, motion, reduced motion, responsive layout, and ownership",
+    "Do not change authentication, clinical data, or existing feature code"
+  ],
+  "artifactOwnership": {
+    "babyluong": [
+      "C:/Users/60113/.codex/visualizations/2026/10/12/01a13067-1c14-7002-ae5e-9fd83a955d83/home-premium-login.html"
+    ],
+    "babyaaralyn": [
+      "C:/Users/60113/.codex/visualizations/2026/10/12/01a13067-1c14-7002-ae5e-9fd83a955d83/premium-qa*"
+    ]
+  },
+  "dependencies": {
+    "babybun": [],
+    "babyluong": [
+      "user premium 3D brief",
+      "active design-system login WebGL allowance"
+    ],
+    "babyaaralyn": [
+      "Babyluong prototype handoff"
+    ]
+  },
+  "status": "AUDIT_COMPLETE_USER_DECISION_PENDING",
+  "objective": "Finish read-only audit of login design rules and current implementation; await user decision before proceeding with any redesign.",
+  "deliverables": [
+    "docs/audits/login-premium-20261012.md"
+  ]
+}

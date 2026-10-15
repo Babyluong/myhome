@@ -1,27 +1,9 @@
 // @ts-nocheck
 import React, { useEffect, useState, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  Plus,
-  Search,
-  Filter,
-  ChevronLeft,
-  ChevronRight,
-  ClipboardList,
-  CheckCircle2,
-  Clock,
-  Package,
-  Pill,
-  Building2,
-  AlertCircle,
-  Eye,
-  FileText,
-  XCircle,
-  User,
-  Printer,
-} from 'lucide-react'
+import { Plus, Search, ChevronLeft, ChevronRight, ClipboardList, CheckCircle2, Clock, Package, Pill, Building2, AlertCircle, Eye, FileText, XCircle, User, Printer } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
-import { Table, Spinner, Input, Badge, Select, Button } from '@/components/ui'
+import { Spinner, Input, Select, Button } from '@/components/ui'
 import {
   getIndentRequests,
   getDepartments,

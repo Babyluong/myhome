@@ -1,0 +1,2417 @@
+{
+  "version": 2,
+  "taskId": "HOME-FIXES-20261013",
+  "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+  "baselinePaths": [
+    ".env.example",
+    ".gitignore",
+    "AUTHENTICATION_FLOW.md",
+    "README.md",
+    "dist/index.html",
+    "docs/DECISIONS.md",
+    "docs/DESIGN_SYSTEM.md",
+    "docs/SESSION_HANDOFF.md",
+    "eslint.config.mjs",
+    "next.config.ts",
+    "package.json",
+    "postcss.config.mjs",
+    "public/version.json",
+    "scripts/check-rules.cjs",
+    "scripts/export_supabase_backup.cjs",
+    "scripts/generate_system_releases.cjs",
+    "scripts/sync-english-releases.cjs",
+    "src/config/generatedReleases.json",
+    "src/config/systemReleases.ts",
+    "src/index.css",
+    "src/modules/auth/services/authUserService.ts",
+    "src/modules/hospital-admin/services/hospitalAdminService.ts",
+    "src/modules/inventory/components/StoreLocationSelector.tsx",
+    "src/modules/inventory/pages/inventory/DrugInventoryPage.tsx",
+    "src/modules/inventory/pages/inventory/FacilityDrugInventoryPage.tsx",
+    "src/modules/inventory/pages/inventory/FacilityNonDrugInventoryPage.tsx",
+    "src/modules/inventory/pages/inventory/InventoryOverviewPage.tsx",
+    "src/modules/inventory/pages/inventory/KewPs4LedgerPage.tsx",
+    "src/modules/inventory/pages/inventory/NearExpiryPage.tsx",
+    "src/modules/inventory/pages/inventory/NonDrugInventoryPage.tsx",
+    "src/modules/inventory/pages/inventory/SlowMovingPage.tsx",
+    "src/modules/inventory/pages/inventory/StoreLocationManagementPage.tsx",
+    "src/modules/myprepacking/components/PrepackDrugPickerModal.tsx",
+    "src/modules/myprepacking/services/prepackService.ts",
+    "src/routes/routes.tsx",
+    "src/services/emailService.ts",
+    "src/services/pharmacy/storeLocationService.ts",
+    "src/services/pharmacy/storeSubLocationService.ts",
+    "src/shared/components/mobile/TabBar.tsx",
+    "src/shared/config/mobileTabs.ts",
+    "src/shared/utils/cacheBuster.ts",
+    "tailwind.config.js",
+    ".agents/AGENTS.md",
+    ".agents/CODEBASE_ROUTER.json",
+    ".agents/skills/agent-monitor/SKILL.md",
+    ".agents/skills/amri/SKILL.md",
+    ".agents/skills/antislop-copywriting/SKILL.md",
+    ".agents/skills/antislop-human/SKILL.md",
+    ".agents/skills/babyaaralyn/SKILL.md",
+    ".agents/skills/babybun/SKILL.md",
+    ".agents/skills/babyhien/SKILL.md",
+    ".agents/skills/babyluong/SKILL.md",
+    ".agents/skills/brainstorming/SKILL.md",
+    ".agents/skills/caveman/SKILL.md",
+    ".agents/skills/codebase-memory/SKILL.md",
+    ".agents/skills/compact-code/SKILL.md",
+    ".agents/skills/emil-kowalski/SKILL.md",
+    ".agents/skills/error-guard/SKILL.md",
+    ".agents/skills/frontend-architecture/SKILL.md",
+    ".agents/skills/grill-me/SKILL.md",
+    ".agents/skills/impeccable/SKILL.md",
+    ".agents/skills/plan-first/SKILL.md",
+    ".agents/skills/security-gate/SKILL.md",
+    ".agents/skills/session-compactor/SKILL.md",
+    ".agents/skills/supabase-postgres-best-practices/SKILL.md",
+    ".agents/skills/system-design-pro/SKILL.md",
+    ".agents/skills/task-slicer/SKILL.md",
+    ".agents/skills/tasteskill/SKILL.md",
+    ".agents/skills/test-gate/SKILL.md",
+    ".agents/skills/token-efficiency/SKILL.md",
+    ".agents/skills/zero-scan-router/SKILL.md",
+    ".codex/agents/babyaaralyn.toml",
+    ".codex/agents/babybun.toml",
+    ".codex/agents/babyhien.toml",
+    ".codex/agents/babyluong.toml",
+    ".codex/config.toml",
+    ".codex/task-manifest.template.json",
+    "AGENTS.md",
+    "docs/AGENT_OWNERSHIP.json",
+    "docs/AGENT_RULES_SOURCES.md",
+    "docs/audits/home-fixes-20261013.baseline.json",
+    "docs/audits/home-health-20261013.backend.md",
+    "docs/audits/home-health-20261013.baseline.json",
+    "docs/audits/home-health-20261013.frontend.md",
+    "docs/audits/home-health-20261013.manifest.json",
+    "docs/audits/home-health-20261013.md",
+    "docs/audits/login-premium-20261012.manifest.json",
+    "docs/audits/login-premium-20261012.md",
+    "docs/audits/system-rules-20261013.manifest.json",
+    "docs/audits/system-rules-20261013.md",
+    "docs/audits/system-rules-20261013.tools.json",
+    "docs/audits/system-rules-update-20261013.baseline.json",
+    "docs/audits/system-rules-update-20261013.manifest.json",
+    "docs/audits/token-efficiency-20261013.baseline.json",
+    "docs/audits/token-efficiency-20261013.manifest.json",
+    "docs/audits/token-efficiency-20261013.md",
+    "docs/tasks/LOGIN-DESIGN-BRIEF-20261013.md",
+    "docs/tasks/SYSTEM-RULES-UPDATE-20261013.md",
+    "docs/tasks/T-015.md",
+    "docs/tasks/T-016.md",
+    "docs/test-reports/2026-10-12-inpatient-pharmacy-store-locations-report.md",
+    "docs/test-reports/2026-10-13-agent-system-update.md",
+    "docs/test-reports/2026-10-13-home-health.md",
+    "docs/test-reports/2026-10-13-token-efficiency-report.md",
+    "scripts/capture-agent-baseline.cjs",
+    "scripts/check-agent-boundaries.cjs",
+    "scripts/check-agent-system.cjs",
+    "scripts/refactor-store-location-page.cjs",
+    "scripts/test-ipd-locations.cjs",
+    "scripts/update-store-location-service.cjs",
+    "src/modules/inventory/components/FacilityDrugMobileCard.tsx",
+    "src/modules/inventory/components/FacilityNonDrugMobileCard.tsx",
+    "supabase/functions/admin-user-ops/index.ts",
+    "supabase/migrations/088_seed_inpatient_store_locations.sql",
+    "tests/agent-governance.test.cjs",
+    "tests/agent-rules.test.cjs",
+    "tests/agent-system.test.cjs",
+    "tests/design-tokens.test.cjs",
+    "docs/audits/home-fixes-phase6t-20261014.baseline.json",
+    "docs/audits/home-fixes-phase6t.manifest.json",
+    "docs/audits/home-fixes-phase6u-20261014.baseline.json",
+    "docs/audits/home-fixes-phase6u.manifest.json",
+    "docs/audits/home-fixes-phase6v-20261015.baseline.json",
+    "docs/audits/home-fixes-phase6v.manifest.json"
+  ],
+  "baselineSnapshotPath": "docs/audits/home-fixes-20261013.baseline.json",
+  "baselineSnapshotSha256": "ccec66f87a9c229c5cad9e28cb1d3767fbc405a63dfedd864a6ecfb6aaa5cd3d",
+  "approval": {
+    "approvedBy": "user",
+    "date": "2026-10-13",
+    "evidence": "User: fix all this issue, following HOME health audit",
+    "scope": "Correct all reported security, offline data, inventory, frontend and verification defects; preserve existing work; prepare and verify deployment changes before external deployment",
+    "amriApproved": true
+  },
+  "ownerOverrides": {
+    "docs/audits/home-fixes-20261013.backend.md": "babyhien",
+    "docs/audits/home-fixes-20261013.frontend.md": "babyluong",
+    "src/shared/utils/cacheBuster.ts": "babyluong",
+    "public/version.json": "babyhien",
+    "public/formulari/formulari-data.json": "babyhien",
+    "public/sw-capabilities-v2.js": "babyhien",
+    "Abstrak_MyHOME_Sistem_Keseluruhan.docx": "amri",
+    "MyHOME_SYSTEM_COMPREHENSIVE_TECHNICAL_AND_IMPACT_REPORT.docx": "amri",
+    "MyHOME_SYSTEM_PROCUREMENT_REPORT_AND_BUDGET_PROPOSAL.docx": "amri",
+    "dist/index.html": "amri",
+    "~$HOME_SYSTEM_COMPREHENSIVE_TECHNICAL_AND_IMPACT_REPORT.docx": "amri",
+    "MyHOME_SYSTEM_MODULE_EVALUATION_REPORT_HOSPITAL_LAWAS.docx": "amri",
+    "docs/audits/home-fixes-phase6i-20261014.baseline.json": "amri",
+    "MyHOME_SYSTEM_MODULE_EVALUATION_REPORT_HOSPITAL_LAWAS_BM.docx": "amri",
+    "docs/audits/home-fixes-phase6j-20261014.baseline.json": "amri",
+    "MyHOME_SYSTEM_MODULE_EVALUATION_REPORT_HOSPITAL_LAWAS_EN.docx": "amri",
+    "docs/audits/home-fixes-phase6k-20261014.baseline.json": "amri",
+    "docs/reports/diagrams/_test-fig1.png": "babyaaralyn",
+    "docs/reports/diagrams/fig-01-context.png": "amri",
+    "docs/reports/diagrams/fig-01-context.svg": "amri",
+    "docs/reports/diagrams/fig-02-architecture.png": "amri",
+    "docs/reports/diagrams/fig-02-architecture.svg": "amri",
+    "docs/reports/diagrams/fig-03-landscape.png": "amri",
+    "docs/reports/diagrams/fig-03-landscape.svg": "amri",
+    "docs/reports/diagrams/fig-04-access-flow.png": "amri",
+    "docs/reports/diagrams/fig-04-access-flow.svg": "amri",
+    "docs/reports/diagrams/fig-05-supply-chain.png": "amri",
+    "docs/reports/diagrams/fig-05-supply-chain.svg": "amri",
+    "docs/reports/diagrams/fig-06-before-after.png": "amri",
+    "docs/reports/diagrams/fig-06-before-after.svg": "amri",
+    "docs/reports/diagrams/fig-07-offline.png": "amri",
+    "docs/reports/diagrams/fig-07-offline.svg": "amri",
+    "docs/reports/diagrams/fig-08-maturity.png": "amri",
+    "docs/reports/diagrams/fig-08-maturity.svg": "amri",
+    "docs/reports/diagrams/fig-09-integration.png": "amri",
+    "docs/reports/diagrams/fig-09-integration.svg": "amri",
+    "docs/reports/diagrams/fig-10-benefits.png": "amri",
+    "docs/reports/diagrams/fig-10-benefits.svg": "amri",
+    "docs/reports/diagrams-build.log": "amri",
+    "docs/reports/facts-summary.txt": "amri",
+    "docs/reports/home-report-facts.json": "amri",
+    "scripts/generate_home_report_diagrams.cjs": "babyhien",
+    "scripts/home_report_content.cjs": "babyhien",
+    "scripts/home_report_facts.cjs": "babyhien",
+    "scripts/home_report_svg.cjs": "babyhien",
+    "scripts/generate_report_bm.cjs": "babyhien",
+    "scripts/update_markdown_report.cjs": "babyhien",
+    "supabase/.temp/cli-latest": "amri"
+  },
+  "acceptanceCriteria": [
+    "All reported functional defects corrected with meaningful isolated regressions",
+    "Administrative writes enforce active actor role and target hospital with audit events",
+    "Offline data cannot cross actor or tenant and mutations never synthesize false success",
+    "Normal dev/build has no remote publication side effects",
+    "Inventory selection, search, mobile edit and scoped occupancy/detail/export work",
+    "Lint, rules, compilation, build and agent gates checked without hiding failures"
+  ],
+  "slices": [
+    {
+      "agent": "amri",
+      "acceptanceCriteria": [
+        "Exact owners and scope recorded; evidence reviewed"
+      ],
+      "reportTo": "amri",
+      "goal": "Supervise correction and repair missing ownership routing",
+      "allowedPaths": [
+        "docs/audits/home-fixes-20261013.baseline.json",
+        "docs/audits/home-fixes-20261013.manifest.json",
+        "docs/audits/home-fixes-20261013.md",
+        "docs/AGENT_OWNERSHIP.json",
+        "docs/audits/home-fixes-20261013.lint-inventory.json",
+        "docs/audits/home-fixes-phase6t-20261014.baseline.json",
+        "docs/audits/home-fixes-phase6t.manifest.json",
+        "docs/audits/home-fixes-phase6u-20261014.baseline.json",
+        "docs/audits/home-fixes-phase6u.manifest.json",
+        "docs/audits/home-fixes-phase6v-20261015.baseline.json",
+        "docs/audits/home-fixes-phase6v.manifest.json",
+        "docs/audits/home-fixes-phase6w.manifest.json",
+        "docs/audits/home-fixes-phase6w-20261015.baseline.json",
+        "docs/audits/home-fixes-phase6x.manifest.json",
+        "docs/audits/home-fixes-phase6x-20261015.baseline.json"
+      ],
+      "dependencies": []
+    },
+    {
+      "agent": "babybun",
+      "acceptanceCriteria": [
+        "All audit findings mapped to exact paths and checks"
+      ],
+      "reportTo": "amri",
+      "goal": "Plan complete audit corrections and lint ownership",
+      "allowedPaths": [
+        "docs/tasks/HOME-FIXES-20261013.md"
+      ],
+      "dependencies": []
+    },
+    {
+      "reportTo": "amri",
+      "acceptanceCriteria": [
+        "Secure trusted actor and tenant operations",
+        "Fail-closed offline queries and truthful durable writes",
+        "Dynamic hospital stores with explicit query errors",
+        "Dev/build no remote side effects",
+        "Resolve assigned R1/R2 static blockers in backend paths: accessRequestManagementService.ts, userService.ts, authService.ts, drugCatalogService.ts, nonDrugCatalogService.ts, facilityDrugInventoryService.ts, facilityNonDrugInventoryService.ts. Remove production mock-data fallbacks and misleading localhost references while preserving typed errors, tenant/auth boundaries, real schema/query semantics, and isolated-test seams.",
+        "After both owner handoffs, scripts/check-rules.cjs reports zero BLOCK findings; existing nonblocking warnings are counted and recorded."
+      ],
+      "goal": "Fix backend B1-B8, offline integrity and release publication",
+      "allowedPaths": [
+        "supabase/functions/admin-user-ops/index.ts",
+        "supabase/functions/admin-user-ops/handler.ts",
+        "supabase/migrations/089_secure_store_locations.sql",
+        "src/modules/auth/services/authUserService.ts",
+        "src/modules/auth/services/authService.ts",
+        "src/modules/hospital-admin/services/hospitalAdminService.ts",
+        "src/services/offlineFetch.ts",
+        "src/services/offlineAdapter.ts",
+        "src/services/offlineQueue.ts",
+        "src/services/offlineSyncService.ts",
+        "src/services/offlinePreloader.ts",
+        "src/services/offlineSession.ts",
+        "src/services/supabase.ts",
+        "src/services/pharmacy/storeLocationService.ts",
+        "src/services/pharmacy/storeSubLocationService.ts",
+        "src/services/pharmacy/facilityDrugInventoryService.ts",
+        "src/services/pharmacy/facilityNonDrugInventoryService.ts",
+        "src/services/pharmacy/facilityStoreService.ts",
+        "src/modules/myprepacking/services/prepackService.ts",
+        "scripts/generate_system_releases.cjs",
+        "scripts/sync-english-releases.cjs",
+        "scripts/check-agent-boundaries.cjs",
+        "package.json",
+        "package-lock.json",
+        "vite.config.ts",
+        "eslint.config.mjs",
+        "docs/audits/home-fixes-20261013.backend.md",
+        "src/modules/admin/services/userService.ts",
+        "src/modules/admin/services/accessRequestManagementService.ts",
+        "src/modules/admin/services/systemAdminFixService.ts",
+        "src/config/systemReleases.ts",
+        "src/hooks/usePWAInstall.ts",
+        "src/lib/drugCategorizer.ts",
+        "src/middleware.ts",
+        "src/modules/admin/services/accessRequestService.ts",
+        "src/modules/admin/services/alertService.ts",
+        "src/modules/admin/services/auditLogService.ts",
+        "src/modules/admin/services/backupService.ts",
+        "src/modules/admin/services/departmentService.ts",
+        "src/modules/admin/services/hospitalService.ts",
+        "src/modules/admin/services/index.ts",
+        "src/modules/admin/services/moduleService.ts",
+        "src/modules/admin/services/monitoringService.ts",
+        "src/modules/admin/services/roleService.ts",
+        "src/modules/admin/services/systemAdminService.ts",
+        "src/modules/admin/services/systemLogService.ts",
+        "src/modules/admin/services/systemSettingsService.ts",
+        "src/modules/admin/services/userAccountFixService.ts",
+        "src/modules/auth/index.ts",
+        "src/modules/auth/services/index.ts",
+        "src/modules/catalog/services/catalogService.ts",
+        "src/modules/catalog/services/drugCatalogService.ts",
+        "src/modules/catalog/services/nonDrugCatalogService.ts",
+        "src/modules/distribution/services/distributionService.ts",
+        "src/modules/distribution/services/indentService.ts",
+        "src/modules/financial/services/applAllocationService.ts",
+        "src/modules/financial/services/applExportService.ts",
+        "src/modules/financial/services/budgetEngine.ts",
+        "src/modules/financial/services/budgetService.ts",
+        "src/modules/financial/services/ccAllocationService.ts",
+        "src/modules/financial/services/ccExportService.ts",
+        "src/modules/financial/services/hospitalBudgetService.ts",
+        "src/modules/financial/services/lpAllocationService.ts",
+        "src/modules/financial/services/warrantExportService.ts",
+        "src/modules/financial/services/warrantService.ts",
+        "src/modules/hospital-admin/services/hospitalBackupService.ts",
+        "src/modules/hospital-admin/services/hospitalHealthService.ts",
+        "src/modules/hospital-admin/services/hospitalLogService.ts",
+        "src/modules/hospital-admin/services/memoService.ts",
+        "src/modules/hospital-admin/services/patientDatabaseMonitorService.ts",
+        "src/modules/hospital-admin/services/sensitiveDataRequestService.ts",
+        "src/modules/inventory/context/InventoryStoreContext.tsx",
+        "src/modules/inventory/services/inventoryService.ts",
+        "src/modules/maintenance/services/maintenanceService.ts",
+        "src/modules/maintenance/services/unitCatalogItemService.ts",
+        "src/modules/maintenance/services/unitCatalogService.ts",
+        "src/modules/mycrossborder/services/crossborderPdfService.ts",
+        "src/modules/mycrossborder/services/crossborderService.ts",
+        "src/modules/mycylinder/hooks/useCylinderOffline.ts",
+        "src/modules/mycylinder/services/cylinderDispatchPdfService.ts",
+        "src/modules/mycylinder/services/cylinderDispatchService.ts",
+        "src/modules/mycylinder/services/cylinderKewPs4Service.ts",
+        "src/modules/mycylinder/services/cylinderMaintenanceService.ts",
+        "src/modules/mycylinder/services/cylinderOfflineDB.ts",
+        "src/modules/mycylinder/services/cylinderOfflineService.ts",
+        "src/modules/mycylinder/services/cylinderReportService.ts",
+        "src/modules/mycylinder/services/cylinderSyncEngine.ts",
+        "src/modules/mycylinder/services/oxygenPdfService.ts",
+        "src/modules/mycylinder/services/oxygenService.ts",
+        "src/modules/myformulari/data/antimicrobialData.ts",
+        "src/modules/myformulari/data/formulariDatabase.ts",
+        "src/modules/myformulari/services/drugQuotaService.ts",
+        "src/modules/myformulari/services/formulariService.ts",
+        "src/modules/myformulari/services/fukkmMatcher.ts",
+        "src/modules/myformulari/services/nagService.ts",
+        "src/modules/myformulari/services/paediatricCataloguePdfService.ts",
+        "src/modules/myformulari/services/paediatricCatalogueService.ts",
+        "src/modules/myformulari/services/paediatricDoseService.ts",
+        "src/modules/myformulari/services/patientQuotaService.ts",
+        "src/modules/myformulari/services/stockDisruptionService.ts",
+        "src/modules/mykunci/services/kunciService.ts",
+        "src/modules/myperolehan/services/perolehanAdminService.ts",
+        "src/modules/myphis/services/myphisService.ts",
+        "src/modules/myporter/services/porterRosterPdfService.ts",
+        "src/modules/myporter/services/porterService.ts",
+        "src/modules/myprepacking/data/kkmGalenicalMonographs.ts",
+        "src/modules/myprepacking/services/prepackKewPs4Service.ts",
+        "src/modules/myprepacking/types/prepack.ts",
+        "src/modules/mypriviledging/data/defaultPriviledgingData.ts",
+        "src/modules/mypriviledging/services/priviledgingService.ts",
+        "src/modules/mystaff/services/staffOrgChartService.ts",
+        "src/modules/mystaff/services/staffService.ts",
+        "src/modules/mysuhu/services/suhuReportService.ts",
+        "src/modules/mysuhu/services/suhuService.ts",
+        "src/modules/mytempahan/services/tempahanExportService.ts",
+        "src/modules/mytempahan/services/tempahanPdfService.ts",
+        "src/modules/mytempahan/services/tempahanService.ts",
+        "src/modules/mytempahan/services/tempahanValidation.ts",
+        "src/modules/mytimeoff/services/toilService.ts",
+        "src/modules/mytransporter/services/transporterCrossborderPdf.ts",
+        "src/modules/mytransporter/services/transporterService.ts",
+        "src/modules/mywarrant/services/pharmacyDashboardService.ts",
+        "src/modules/procurement/services/applPenaltyPdfService.ts",
+        "src/modules/procurement/services/ccPenaltyPdfService.ts",
+        "src/modules/procurement/services/creditNoteService.ts",
+        "src/modules/procurement/services/excelUploadService.ts",
+        "src/modules/procurement/services/grPdfService.ts",
+        "src/modules/procurement/services/lpoService.ts",
+        "src/modules/procurement/services/orderTrackingReportPdfService.ts",
+        "src/modules/procurement/services/orderTrackingService.ts",
+        "src/modules/procurement/services/paymentExcelParser.ts",
+        "src/modules/procurement/services/penaltyService.ts",
+        "src/modules/procurement/services/poPdfService.ts",
+        "src/modules/procurement/services/procurementService.ts",
+        "src/modules/procurement/services/receivingService.ts",
+        "src/modules/profile/services/profileService.ts",
+        "src/modules/reports/services/financialReportPdfService.ts",
+        "src/modules/reports/services/financialReportService.ts",
+        "src/modules/reports/services/pdfMergeService.ts",
+        "src/modules/reports/services/procurementReportPdfService.ts",
+        "src/modules/reports/services/procurementReportService.ts",
+        "src/routes/ProtectedRoute.tsx",
+        "src/services/aiService.ts",
+        "src/services/baseService.ts",
+        "src/services/emailService.ts",
+        "src/services/facilityService.ts",
+        "src/services/pharmacy/facilityInventoryExcelService.ts",
+        "src/services/pharmacy/formulariPdfService.ts",
+        "src/services/pharmacy/googleSheetsService.ts",
+        "src/services/pharmacy/index.ts",
+        "src/services/pharmacy/mockData.ts",
+        "src/services/pharmacy/pharmacySettingsService.ts",
+        "src/services/pharmacy/storeLocationPdfService.ts",
+        "src/services/pharmacy/uploadService.ts",
+        "src/services/rbacService.ts",
+        "src/services/systemAnnouncementService.ts",
+        "src/services/webSearchService.ts",
+        "src/shared/config/mobileTabs.ts",
+        "src/shared/config/navigationConfig.ts",
+        "src/shared/contexts/LanguageContext.tsx",
+        "src/shared/hooks/usePermission.ts",
+        "src/shared/lib/passwordUtils.ts",
+        "src/shared/lib/pdfParser.ts",
+        "src/shared/lib/utils.ts",
+        "src/shared/lib/validation.ts",
+        "src/shared/lib/validators.ts",
+        "src/shared/stores/toastStore.ts",
+        "src/shared/types/hospital-admin.ts",
+        "src/shared/types/mystaff.ts",
+        "src/shared/types/mytimeoff.ts",
+        "src/shared/utils/cylinderRbac.ts",
+        "src/shared/utils/inventoryRbac.ts",
+        "src/shared/utils/itemCodeUtils.ts",
+        "src/stores/rbacStore.ts",
+        "src/types/pharmacy/index.ts",
+        "src/modules/myformulari/data/officialFukkmData.json",
+        "scripts/generate-formulari-assets.cjs",
+        "public/formulari/formulari-data.json",
+        "src/modules/myformulari/services/formulariAssetService.ts",
+        "src/config/generatedReleases.json",
+        "public/version.json",
+        "public/sw-capabilities-v2.js"
+      ],
+      "dependencies": [
+        "QA regression contracts",
+        "Frontend consumes resolved stores"
+      ],
+      "agent": "babyhien"
+    },
+    {
+      "reportTo": "amri",
+      "acceptanceCriteria": [
+        "Selection count equals submitted items across searches",
+        "Keyboard-editable mobile cards; stale searches ignored",
+        "Scoped inventory detail and export",
+        "Hooks and control transitions valid",
+        "Reconstruct the three baseline-dirty pages from the nearest Git version and report user edits that could not be preserved; do not claim byte-for-byte restoration",
+        "Reapply the task-approved procurement UI/type/lint corrections across the six assigned pages without changing service/database contracts or clinical/operational data",
+        "Run direct ESLint for the six procurement pages and focused TypeScript checks; report exact results and remaining diagnostics",
+        "Do not run whitespace-flattening or whole-file formatting scripts; preserve multiline source and verify each file remains multiline",
+        "Resolve the current focused TypeScript errors in already-assigned ExcelUploadModal.tsx and PenaltyDetailPage.tsx without suppressions or changing backend contracts",
+        "Resolve assigned R1/R2/R5 static blockers in frontend paths listed in the 2026-10-14 rules audit: remove mock-data-backed production UI and provide truthful empty/error states using existing service contracts; replace user-facing localhost wording with secure-context guidance; replace forbidden transition-all/layout animation with purposeful transform/opacity motion within 150–250ms and reduced-motion support. Preserve hook, route, keyboard, focus, and operational data behavior.",
+        "After both owner handoffs, scripts/check-rules.cjs reports zero BLOCK findings; existing nonblocking warnings are counted and recorded."
+      ],
+      "goal": "Fix the approved procurement UI/type/lint issues and reconstruct affected pages after the cleanup incident",
+      "allowedPaths": [
+        "docs/audits/home-fixes-20261013.frontend.md",
+        "src/App.tsx",
+        "src/components/AppShell.tsx",
+        "src/components/AuthWrapper.tsx",
+        "src/components/BorrowingReviewModal.tsx",
+        "src/components/BufferLevelTable.tsx",
+        "src/components/charts/index.ts",
+        "src/components/ClientOnly.tsx",
+        "src/components/ErrorBoundary.tsx",
+        "src/components/forms/AccessRequestForm.tsx",
+        "src/components/forms/ChangePasswordForm.tsx",
+        "src/components/forms/DepartmentForm.tsx",
+        "src/components/forms/HospitalAdminForm.tsx",
+        "src/components/forms/HospitalForm.tsx",
+        "src/components/forms/index.ts",
+        "src/components/forms/InquiryForm.tsx",
+        "src/components/forms/LoginForm.tsx",
+        "src/components/forms/ResetPasswordForm.tsx",
+        "src/components/forms/UserForm.tsx",
+        "src/components/index.ts",
+        "src/components/InventorySearchFilter.tsx",
+        "src/components/InventoryTable.tsx",
+        "src/components/ItemAnalyticsModal.tsx",
+        "src/components/kunci/ScanKunciMovementModal.tsx",
+        "src/components/layout/index.ts",
+        "src/components/LoanReviewModal.tsx",
+        "src/components/ManualIssuanceModal.tsx",
+        "src/components/MedicalOxygenSearchFilter.tsx",
+        "src/components/MedicalOxygenTable.tsx",
+        "src/components/Nav.tsx",
+        "src/components/oxygen/AuditReconciliationSummaryModal.tsx",
+        "src/components/oxygen/CreateReceiveDocumentModal.tsx",
+        "src/components/oxygen/CreateRequestDocumentModal.tsx",
+        "src/components/oxygen/CreateReturnDocumentModal.tsx",
+        "src/components/oxygen/CylinderDispatchPrintView.tsx",
+        "src/components/oxygen/CylinderDispatchTable.tsx",
+        "src/components/oxygen/CylinderKpiCards.tsx",
+        "src/components/oxygen/CylinderOfflineBanner.tsx",
+        "src/components/oxygen/CylinderStockReconciliationModal.tsx",
+        "src/components/oxygen/DeleteCylinderModal.tsx",
+        "src/components/oxygen/DeleteDispatchConfirmModal.tsx",
+        "src/components/oxygen/DispatchRequestDetailModal.tsx",
+        "src/components/oxygen/EditCylinderModal.tsx",
+        "src/components/oxygen/EmptyCylinderListModal.tsx",
+        "src/components/oxygen/ManualIssueModal.tsx",
+        "src/components/oxygen/ReceiveDocumentPrintView.tsx",
+        "src/components/oxygen/ReceiveInterFacilityModal.tsx",
+        "src/components/oxygen/RegisterAvailableCylindersModal.tsx",
+        "src/components/oxygen/RequestDocumentPrintView.tsx",
+        "src/components/oxygen/ReturnDocumentPrintView.tsx",
+        "src/components/oxygen/ReturnInterFacilityModal.tsx",
+        "src/components/oxygen/ScanEmptyCylinderModal.tsx",
+        "src/components/oxygen/ScanReconciliationModal.tsx",
+        "src/components/oxygen/StoreBalanceGrid.tsx",
+        "src/components/oxygen/StoreUsageBalanceTable.tsx",
+        "src/components/oxygen/SupplierCylinderTrackingSection.tsx",
+        "src/components/oxygen/SupplierReturnsSection.tsx",
+        "src/components/oxygen/UnitDistributionTable.tsx",
+        "src/components/oxygen/UnitRequestModal.tsx",
+        "src/components/pharmacy/ExcelImport.tsx",
+        "src/components/PhysicalIssuanceModal.tsx",
+        "src/components/ReviewModal.tsx",
+        "src/components/SearchAndFilter.tsx",
+        "src/components/shared/ContactModal.tsx",
+        "src/components/shared/index.ts",
+        "src/components/shared/JataNegara.tsx",
+        "src/components/shared/PdfPreviewModal.tsx",
+        "src/components/shared/PDFViewer.tsx",
+        "src/components/SidebarNav.tsx",
+        "src/components/TransactionDetailsModal.tsx",
+        "src/components/ui/button.tsx",
+        "src/components/ui/data-table.tsx",
+        "src/components/ui/empty-state.tsx",
+        "src/components/ui/Icons.tsx",
+        "src/components/ui/input.tsx",
+        "src/components/ui/Modal.tsx",
+        "src/components/ui/PDFUpload.tsx",
+        "src/components/ui/skeleton.tsx",
+        "src/components/UnitItemModal.tsx",
+        "src/main.tsx",
+        "src/modules/admin/pages/accessRequests/AccessRequestDetailPage.tsx",
+        "src/modules/admin/pages/accessRequests/AccessRequestListPage.tsx",
+        "src/modules/admin/pages/accessRequests/index.ts",
+        "src/modules/admin/pages/alerts/AlertCenterPage.tsx",
+        "src/modules/admin/pages/alerts/index.ts",
+        "src/modules/admin/pages/auditLogs/AuditLogPage.tsx",
+        "src/modules/admin/pages/auditLogs/index.ts",
+        "src/modules/admin/pages/backups/BackupManagementPage.tsx",
+        "src/modules/admin/pages/backups/index.ts",
+        "src/modules/admin/pages/clinics/ClinicDetailPage.tsx",
+        "src/modules/admin/pages/clinics/ClinicListPage.tsx",
+        "src/modules/admin/pages/departments/DepartmentDetailPage.tsx",
+        "src/modules/admin/pages/departments/DepartmentListPage.tsx",
+        "src/modules/admin/pages/departments/index.ts",
+        "src/modules/admin/pages/hospitals/HospitalDetailPage.tsx",
+        "src/modules/admin/pages/hospitals/HospitalListPage.tsx",
+        "src/modules/admin/pages/hospitals/index.ts",
+        "src/modules/admin/pages/modules/index.ts",
+        "src/modules/admin/pages/modules/ModuleAccessControlPage.tsx",
+        "src/modules/admin/pages/monitoring/index.ts",
+        "src/modules/admin/pages/monitoring/SystemMonitoringPage.tsx",
+        "src/modules/admin/pages/roles/index.ts",
+        "src/modules/admin/pages/roles/RoleListPage.tsx",
+        "src/modules/admin/pages/roles/RolePermissionPage.tsx",
+        "src/modules/admin/pages/settings/index.ts",
+        "src/modules/admin/pages/settings/SystemSettingsPage.tsx",
+        "src/modules/admin/pages/systemLogs/index.ts",
+        "src/modules/admin/pages/systemLogs/SystemLogsPage.tsx",
+        "src/modules/admin/pages/users/index.ts",
+        "src/modules/admin/pages/users/UserDetailPage.tsx",
+        "src/modules/admin/pages/users/UserListPage.tsx",
+        "src/modules/auth/pages/LoginPage.tsx",
+        "src/modules/catalog/pages/catalog/ContractCatalogPage.tsx",
+        "src/modules/catalog/pages/catalog/DrugCatalogPage.tsx",
+        "src/modules/catalog/pages/catalog/FacilityCatalogPage.tsx",
+        "src/modules/catalog/pages/catalog/NonDrugCatalogPage.tsx",
+        "src/modules/catalog/pages/catalog/SupplierCatalogPage.tsx",
+        "src/modules/distribution/components/IndentIssuePrintView.tsx",
+        "src/modules/distribution/pages/distribution/IndentEntitlementPage.tsx",
+        "src/modules/distribution/pages/distribution/IndentRequestDetailPage.tsx",
+        "src/modules/distribution/pages/distribution/IndentRequestFormPage.tsx",
+        "src/modules/distribution/pages/distribution/IndentRequestListPage.tsx",
+        "src/modules/distribution/pages/distribution/index.ts",
+        "src/modules/distribution/pages/distribution/IssueCounterPage.tsx",
+        "src/modules/distribution/pages/distribution/TransferRequestListPage.tsx",
+        "src/modules/financial/pages/financial/APPLAllocationPage.tsx",
+        "src/modules/financial/pages/financial/BudgetOverviewPage.tsx",
+        "src/modules/financial/pages/financial/CCAllocationPage.tsx",
+        "src/modules/financial/pages/financial/HospitalBudgetForecastPage.tsx",
+        "src/modules/financial/pages/financial/index.ts",
+        "src/modules/financial/pages/financial/LPAllocationPage.tsx",
+        "src/modules/financial/pages/financial/WarrantPage.tsx",
+        "src/modules/hospital-admin/pages/memos/MemoListPage.tsx",
+        "src/modules/hospital-admin/pages/sensitiveData/SensitiveDataRequestDetailPage.tsx",
+        "src/modules/hospital-admin/pages/sensitiveData/SensitiveDataRequestListPage.tsx",
+        "src/modules/hub/components/AdminBroadcastModal.tsx",
+        "src/modules/hub/components/SystemBroadcastBanner.tsx",
+        "src/modules/hub/components/SystemUpdateLogModal.tsx",
+        "src/modules/hub/pages/gallery/AlbumDetailPage.tsx",
+        "src/modules/hub/pages/gallery/MyGalleryPage.tsx",
+        "src/modules/hub/pages/index.ts",
+        "src/modules/hub/pages/ModuleHubPage.tsx",
+        "src/modules/hub/pages/modules/admin/AdminApprovalsTab.tsx",
+        "src/modules/hub/pages/modules/admin/AdminDepartmentsTab.tsx",
+        "src/modules/hub/pages/modules/admin/AdminRbacTab.tsx",
+        "src/modules/hub/pages/modules/admin/AdminSystemLogsTab.tsx",
+        "src/modules/hub/pages/modules/admin/AdminUsersTab.tsx",
+        "src/modules/hub/pages/modules/AdminSubMenu.tsx",
+        "src/modules/hub/pages/modules/BorangSubMenu.tsx",
+        "src/modules/hub/pages/modules/CutiSubMenu.tsx",
+        "src/modules/hub/pages/modules/CylinderSubMenu.tsx",
+        "src/modules/hub/pages/modules/FileSubMenu.tsx",
+        "src/modules/hub/pages/modules/FormulariSubMenu.tsx",
+        "src/modules/hub/pages/modules/InventorySubMenu.tsx",
+        "src/modules/hub/pages/modules/KunciSubMenu.tsx",
+        "src/modules/hub/pages/modules/PorterSubMenu.tsx",
+        "src/modules/hub/pages/modules/StaffSubMenu.tsx",
+        "src/modules/hub/pages/modules/SuhuSubMenu.tsx",
+        "src/modules/hub/pages/modules/SuratSubMenu.tsx",
+        "src/modules/hub/pages/modules/TempahanSubMenu.tsx",
+        "src/modules/hub/pages/modules/TimeOffSubMenu.tsx",
+        "src/modules/hub/pages/modules/TransporterSubMenu.tsx",
+        "src/modules/hub/pages/modules/WarrantSubMenu.tsx",
+        "src/modules/inventory/components/FacilityDrugMobileCard.tsx",
+        "src/modules/inventory/components/FacilityNonDrugMobileCard.tsx",
+        "src/modules/inventory/components/StoreLocationSelector.tsx",
+        "src/modules/inventory/pages/inventory/APPLInventoryPage.tsx",
+        "src/modules/inventory/pages/inventory/DrugInventoryPage.tsx",
+        "src/modules/inventory/pages/inventory/FacilityDrugInventoryPage.tsx",
+        "src/modules/inventory/pages/inventory/FacilityNonDrugInventoryPage.tsx",
+        "src/modules/inventory/pages/inventory/index.ts",
+        "src/modules/inventory/pages/inventory/InventoryOverviewPage.tsx",
+        "src/modules/inventory/pages/inventory/InventoryReportPage.tsx",
+        "src/modules/inventory/pages/inventory/KewPs4LedgerPage.tsx",
+        "src/modules/inventory/pages/inventory/NearExpiryPage.tsx",
+        "src/modules/inventory/pages/inventory/NonDrugInventoryPage.tsx",
+        "src/modules/inventory/pages/inventory/SlowMovingPage.tsx",
+        "src/modules/inventory/pages/inventory/StockMovementScannerPage.tsx",
+        "src/modules/inventory/pages/inventory/StoreLocationManagementPage.tsx",
+        "src/modules/maintenance/pages/maintenance/index.ts",
+        "src/modules/maintenance/pages/maintenance/StockLocationPage.tsx",
+        "src/modules/maintenance/pages/maintenance/StockVerificationPage.tsx",
+        "src/modules/maintenance/pages/maintenance/UnitCatalogPage.tsx",
+        "src/modules/mycrossborder/pages/CrossborderCreatePage.tsx",
+        "src/modules/mycrossborder/pages/CrossborderDashboardPage.tsx",
+        "src/modules/mycrossborder/pages/CrossborderDetailPage.tsx",
+        "src/modules/mycrossborder/pages/CrossborderLogPage.tsx",
+        "src/modules/mycylinder/components/CylinderQrTag.tsx",
+        "src/modules/mycylinder/pages/oxygen/CylinderKewPs4LedgerPage.tsx",
+        "src/modules/mycylinder/pages/oxygen/CylinderMaintenancePage.tsx",
+        "src/modules/mycylinder/pages/oxygen/CylinderReportPage.tsx",
+        "src/modules/mycylinder/pages/oxygen/index.ts",
+        "src/modules/mycylinder/pages/oxygen/OxygenAnalytics.tsx",
+        "src/modules/mycylinder/pages/oxygen/OxygenDashboardPage.tsx",
+        "src/modules/myformulari/components/AddEditPaediatricProtocolModal.tsx",
+        "src/modules/myformulari/components/AddPatientQuotaModal.tsx",
+        "src/modules/myformulari/components/AddQuotaDrugModal.tsx",
+        "src/modules/myformulari/components/AddStockDisruptionModal.tsx",
+        "src/modules/myformulari/components/AntidoteDetailModal.tsx",
+        "src/modules/myformulari/components/AntimicrobialTable.tsx",
+        "src/modules/myformulari/components/ArtemetherScheduleCalculator.tsx",
+        "src/modules/myformulari/components/DilutionCard.tsx",
+        "src/modules/myformulari/components/DrugBadge.tsx",
+        "src/modules/myformulari/components/DrugCard.tsx",
+        "src/modules/myformulari/components/DrugInteractionModal.tsx",
+        "src/modules/myformulari/components/EditQuotaDrugModal.tsx",
+        "src/modules/myformulari/components/InventoryDrugPickerModal.tsx",
+        "src/modules/myformulari/components/NAGCategoryDirectory.tsx",
+        "src/modules/myformulari/components/NAGClinicalMonograph.tsx",
+        "src/modules/myformulari/components/NAGMasterSidebar.tsx",
+        "src/modules/myformulari/components/NAGSyncManagerModal.tsx",
+        "src/modules/myformulari/components/PaediatricDoseCalculatorModal.tsx",
+        "src/modules/myformulari/components/PatientQuotaDrawer.tsx",
+        "src/modules/myformulari/components/PRNHotlineCard.tsx",
+        "src/modules/myformulari/components/QuotaDispenseHistoryModal.tsx",
+        "src/modules/myformulari/components/RecordQuotaDispenseModal.tsx",
+        "src/modules/myformulari/components/ShelfLifeWidget.tsx",
+        "src/modules/myformulari/pages/AntidoteProtocolPage.tsx",
+        "src/modules/myformulari/pages/AntimicrobialGuidelinePage.tsx",
+        "src/modules/myformulari/pages/DilutionProtocolPage.tsx",
+        "src/modules/myformulari/pages/DrugAlternativesPage.tsx",
+        "src/modules/myformulari/pages/DrugDetailPage.tsx",
+        "src/modules/myformulari/pages/DrugQuotaPage.tsx",
+        "src/modules/myformulari/pages/FormulariDashboardPage.tsx",
+        "src/modules/myformulari/pages/HamListPage.tsx",
+        "src/modules/myformulari/pages/HospitalLawasFormulariPage.tsx",
+        "src/modules/myformulari/pages/LasaListPage.tsx",
+        "src/modules/myformulari/pages/PaediatricCataloguePage.tsx",
+        "src/modules/mykunci/pages/KunciAuditPage.tsx",
+        "src/modules/mykunci/pages/KunciDashboardPage.tsx",
+        "src/modules/mykunci/pages/KunciLogPage.tsx",
+        "src/modules/mykunci/pages/KunciPolicyPage.tsx",
+        "src/modules/mykunci/pages/KunciRegistryPage.tsx",
+        "src/modules/mymsds/components/GhsPictogram.tsx",
+        "src/modules/mymsds/components/MsdsChemicalCard.tsx",
+        "src/modules/mymsds/components/MsdsDetailModal.tsx",
+        "src/modules/mymsds/pages/MyMsdsDashboardPage.tsx",
+        "src/modules/myperolehan/components/AddOrEditPerihalItemModal.tsx",
+        "src/modules/myperolehan/components/AddWarrantModal.tsx",
+        "src/modules/myperolehan/components/BudgetSummaryCards.tsx",
+        "src/modules/myperolehan/components/CreateAdminPOModal.tsx",
+        "src/modules/myperolehan/components/RecordPaymentModal.tsx",
+        "src/modules/myperolehan/pages/MyPerolehanDashboard.tsx",
+        "src/modules/myperolehan/pages/tabs/PengurusanBudgetTab.tsx",
+        "src/modules/myperolehan/pages/tabs/PerihalSuppliersTab.tsx",
+        "src/modules/myperolehan/pages/tabs/PerolehanOverviewTab.tsx",
+        "src/modules/myperolehan/pages/tabs/PurchaseOrdersTab.tsx",
+        "src/modules/myperolehan/pages/tabs/ReceivingPaymentsTab.tsx",
+        "src/modules/myphis/pages/MyPhisDashboardPage.tsx",
+        "src/modules/myporter/components/HandoverVerificationModal.tsx",
+        "src/modules/myporter/components/PorterAudioAlert.ts",
+        "src/modules/myporter/components/PorterRadarAlertModal.tsx",
+        "src/modules/myporter/pages/PorterDashboardPage.tsx",
+        "src/modules/myporter/pages/PorterDriverPanelPage.tsx",
+        "src/modules/myporter/pages/PorterManagerDispatchPage.tsx",
+        "src/modules/myporter/pages/PorterMyRequestsPage.tsx",
+        "src/modules/myporter/pages/PorterReceiverPanelPage.tsx",
+        "src/modules/myporter/pages/PorterReportsPage.tsx",
+        "src/modules/myporter/pages/PorterRequestWizardPage.tsx",
+        "src/modules/myporter/pages/PorterRoleAssignmentPage.tsx",
+        "src/modules/myporter/pages/PorterRosterPage.tsx",
+        "src/modules/myprepacking/components/formulationEditor/FormulationAuditHistoryTab.tsx",
+        "src/modules/myprepacking/components/formulationEditor/FormulationGeneralTab.tsx",
+        "src/modules/myprepacking/components/formulationEditor/FormulationIngredientsTab.tsx",
+        "src/modules/myprepacking/components/formulationEditor/FormulationProcedureTab.tsx",
+        "src/modules/myprepacking/components/GalenicalPreparationMonographModal.tsx",
+        "src/modules/myprepacking/components/PrepackBatchCreateModal.tsx",
+        "src/modules/myprepacking/components/PrepackBringForwardModal.tsx",
+        "src/modules/myprepacking/components/PrepackCheckFoundModal.tsx",
+        "src/modules/myprepacking/components/PrepackDrugPickerModal.tsx",
+        "src/modules/myprepacking/components/PrepackItemModal.tsx",
+        "src/modules/myprepacking/components/PrepackLabelPrintModal.tsx",
+        "src/modules/myprepacking/components/PrepackStoreVerificationModal.tsx",
+        "src/modules/myprepacking/components/PrepackUsageModal.tsx",
+        "src/modules/myprepacking/components/RecentBatchesPanel.tsx",
+        "src/modules/myprepacking/components/StoreToCounterTransferModal.tsx",
+        "src/modules/myprepacking/pages/PrepackBatchListPage.tsx",
+        "src/modules/myprepacking/pages/PrepackDashboardPage.tsx",
+        "src/modules/myprepacking/pages/PrepackItemListPage.tsx",
+        "src/modules/myprepacking/pages/PrepackKewPs4LedgerPage.tsx",
+        "src/modules/myprepacking/pages/PrepackLabelStudioPage.tsx",
+        "src/modules/myprepacking/pages/PrepackReportsPage.tsx",
+        "src/modules/myprepacking/pages/PrepackStockMovementPage.tsx",
+        "src/modules/myprepacking/pages/PrepackUsageHistoryPage.tsx",
+        "src/modules/mypriviledging/components/CredentialingCriteriaView.tsx",
+        "src/modules/mypriviledging/components/PriviledgingCertificatePrint.tsx",
+        "src/modules/mypriviledging/components/PriviledgingHeader.tsx",
+        "src/modules/mypriviledging/components/ProcedureCatalogExplorer.tsx",
+        "src/modules/mypriviledging/components/StaffCompetencyMatrix.tsx",
+        "src/modules/mypriviledging/components/SubmissionsTable.tsx",
+        "src/modules/mypriviledging/components/SubmitProcedureModal.tsx",
+        "src/modules/mypriviledging/pages/AdminReviewQueuePage.tsx",
+        "src/modules/mypriviledging/pages/CredentialingCriteriaPage.tsx",
+        "src/modules/mypriviledging/pages/MySubmissionsPage.tsx",
+        "src/modules/mypriviledging/pages/PriviledgingDashboardPage.tsx",
+        "src/modules/mypriviledging/pages/ProcedureCatalogPage.tsx",
+        "src/modules/mystaff/components/AuditLogDrawer.tsx",
+        "src/modules/mystaff/components/AuditReasonModal.tsx",
+        "src/modules/mystaff/pages/StaffCalendarPage.tsx",
+        "src/modules/mystaff/pages/StaffDashboardPage.tsx",
+        "src/modules/mystaff/pages/StaffDeadlinePage.tsx",
+        "src/modules/mystaff/pages/StaffHodPage.tsx",
+        "src/modules/mystaff/pages/StaffLeaveApplyPage.tsx",
+        "src/modules/mystaff/pages/StaffLeavePage.tsx",
+        "src/modules/mystaff/pages/StaffMovementPage.tsx",
+        "src/modules/mystaff/pages/StaffOrgChartPage.tsx",
+        "src/modules/mystaff/pages/StaffReminderPage.tsx",
+        "src/modules/mysuhu/pages/AdminSetupPage.tsx",
+        "src/modules/mysuhu/pages/BreachLogPage.tsx",
+        "src/modules/mysuhu/pages/DepartmentSuhuPage.tsx",
+        "src/modules/mysuhu/pages/SuhuDashboardPage.tsx",
+        "src/modules/mysuhu/pages/UnitDetailPage.tsx",
+        "src/modules/mytempahan/components/BookingDetailDrawer.tsx",
+        "src/modules/mytempahan/pages/TempahanApprovalQueuePage.tsx",
+        "src/modules/mytempahan/pages/TempahanCalendarPage.tsx",
+        "src/modules/mytempahan/pages/TempahanDashboardPage.tsx",
+        "src/modules/mytempahan/pages/TempahanMyBookingsPage.tsx",
+        "src/modules/mytempahan/pages/TempahanReportsPage.tsx",
+        "src/modules/mytempahan/pages/TempahanRequestFormPage.tsx",
+        "src/modules/mytempahan/pages/TempahanRoomRegistryPage.tsx",
+        "src/modules/mytimeoff/pages/TimeOffClaimPage.tsx",
+        "src/modules/mytimeoff/pages/TimeOffDashboardPage.tsx",
+        "src/modules/mytimeoff/pages/TimeOffHistoryPage.tsx",
+        "src/modules/mytimeoff/pages/TimeOffHodPage.tsx",
+        "src/modules/mytimeoff/pages/TimeOffMyClaimsPage.tsx",
+        "src/modules/mytimeoff/pages/TimeOffRedeemPage.tsx",
+        "src/modules/mytransporter/pages/TransporterAdminApprovalPage.tsx",
+        "src/modules/mytransporter/pages/TransporterAvailabilityPage.tsx",
+        "src/modules/mytransporter/pages/TransporterDashboardPage.tsx",
+        "src/modules/mytransporter/pages/TransporterDriverMonitorPage.tsx",
+        "src/modules/mytransporter/pages/TransporterDriverPanelPage.tsx",
+        "src/modules/mytransporter/pages/TransporterMyRequestsPage.tsx",
+        "src/modules/mytransporter/pages/TransporterReportsPage.tsx",
+        "src/modules/mytransporter/pages/TransporterRequestFormPage.tsx",
+        "src/modules/mytransporter/pages/TransporterRoleAssignmentPage.tsx",
+        "src/modules/mytransporter/pages/TransporterVehicleIssuesPage.tsx",
+        "src/modules/mytransporter/pages/TransporterVehicleMovementPage.tsx",
+        "src/modules/mytransporter/pages/TransporterVehicleRegistryPage.tsx",
+        "src/modules/mywarrant/pages/dashboard/index.ts",
+        "src/modules/mywarrant/pages/dashboard/PharmacyLogisticsDashboard.tsx",
+        "src/modules/mywarrant/pages/mywarrant/MyWarrantDashboard.tsx",
+        "src/modules/procurement/pages/procurement/APPLPenaltyDetailPage.tsx",
+        "src/modules/procurement/pages/procurement/CCPenaltyDetailPage.tsx",
+        "src/modules/procurement/pages/procurement/CreditNoteAuditPage.tsx",
+        "src/modules/procurement/pages/procurement/ExcelUploadModal.tsx",
+        "src/modules/procurement/pages/procurement/GoodsReceivingForm.tsx",
+        "src/modules/procurement/pages/procurement/index.ts",
+        "src/modules/procurement/pages/procurement/LPOListPage.tsx",
+        "src/modules/procurement/pages/procurement/OrderTrackingPage.tsx",
+        "src/modules/procurement/pages/procurement/PaymentPage.tsx",
+        "src/modules/procurement/pages/procurement/PenaltyDetailPage.tsx",
+        "src/modules/procurement/pages/procurement/PenaltyPage.tsx",
+        "src/modules/procurement/pages/procurement/PurchaseOrderCreatePage.tsx",
+        "src/modules/procurement/pages/procurement/PurchaseOrderDetailPage.tsx",
+        "src/modules/procurement/pages/procurement/PurchaseOrderDetailView.tsx",
+        "src/modules/procurement/pages/procurement/PurchaseOrderListPage.tsx",
+        "src/modules/procurement/pages/procurement/ReceivingPage.tsx",
+        "src/modules/procurement/pages/procurement/SupplierPerformancePage.tsx",
+        "src/modules/profile/components/EditProfileModal.tsx",
+        "src/modules/profile/components/ProfileChangeLogCard.tsx",
+        "src/modules/profile/components/ProfilePhotoModal.tsx",
+        "src/modules/profile/pages/profile/ProfilePage.tsx",
+        "src/modules/reports/pages/reports/FinancialReportPage.tsx",
+        "src/modules/reports/pages/reports/index.ts",
+        "src/modules/reports/pages/reports/ProcurementReportPage.tsx",
+        "src/modules/reports/pages/reports/ReportsPage.tsx",
+        "src/pages/dashboard/DashboardPage.tsx",
+        "src/pages/dashboard/HospitalAdminDashboard.tsx",
+        "src/pages/dashboard/SystemAdminDashboard.tsx",
+        "src/pages/error/UnauthorizedPage.tsx",
+        "src/pages/pharmacy/index.ts",
+        "src/routes/routes.tsx",
+        "src/shared/components/forms/AccessRequestForm.tsx",
+        "src/shared/components/forms/ChangePasswordForm.tsx",
+        "src/shared/components/forms/DepartmentForm.tsx",
+        "src/shared/components/forms/HospitalAdminForm.tsx",
+        "src/shared/components/forms/LoginForm.tsx",
+        "src/shared/components/forms/UserForm.tsx",
+        "src/shared/components/layout/Header.tsx",
+        "src/shared/components/layout/MainLayout.tsx",
+        "src/shared/components/layout/Sidebar.tsx",
+        "src/shared/components/mobile/MobileModuleNavList.tsx",
+        "src/shared/components/mobile/MoreSheet.tsx",
+        "src/shared/components/mobile/TabBar.tsx",
+        "src/shared/components/ui/button.tsx",
+        "src/shared/components/ui/ConfirmationDialog.tsx",
+        "src/shared/components/ui/DataTable.tsx",
+        "src/shared/components/ui/dialog.tsx",
+        "src/shared/components/ui/Modal.tsx",
+        "src/shared/components/ui/OfflineSyncDrawer.tsx",
+        "src/shared/components/ui/PDFUpload.tsx",
+        "src/shared/components/ui/select.tsx",
+        "src/shared/components/ui/skeleton.tsx",
+        "src/shared/components/ui/SlideOver.tsx",
+        "src/shared/components/ui/table.tsx",
+        "src/shared/components/ui/tabs.tsx",
+        "src/shared/utils/cacheBuster.ts"
+      ],
+      "dependencies": [
+        "Backend dynamic store and inventory contracts",
+        "User authorized nearest-Git reconstruction on 2026-10-14; baseline snapshot and HEAD are references, scratch copies are not exact substitutes"
+      ],
+      "agent": "babyluong"
+    },
+    {
+      "reportTo": "amri",
+      "acceptanceCriteria": [
+        "Security/filter/write regressions test real implementation",
+        "Affected frontend browser checks with fixtures",
+        "Required compile build lint rule and scope checks report actual outcomes"
+      ],
+      "goal": "Regression tests and verification with isolated fixtures",
+      "allowedPaths": [
+        "tests/home-health-regressions.test.cjs",
+        "tests/home-health-ui.spec.cjs",
+        "tests/fixtures/home-health.ts",
+        "docs/test-reports/2026-10-13-home-fixes.md",
+        "docs/test-reports/2026-10-13-home-fixes-tests.log",
+        "docs/test-reports/2026-10-13-home-fixes-lint.log",
+        "docs/test-reports/2026-10-13-home-fixes-typecheck.log",
+        "docs/test-reports/2026-10-13-home-fixes-build.log",
+        "docs/test-reports/2026-10-13-home-fixes-rules.log",
+        "docs/test-reports/2026-10-13-home-fixes-agents.log",
+        "docs/test-reports/2026-10-13-home-fixes-browser.png",
+        "docs/test-reports/2026-10-13-home-fixes-mobile.png",
+        "tests/home-auth-security.test.cjs",
+        "tests/home-offline-fetch.test.cjs",
+        "tests/home-inventory-contracts.test.cjs",
+        "tests/home-release-safety.test.cjs",
+        "tests/home-ui-regressions.spec.ts",
+        "tests/home-store-locations-rls.sql",
+        "tests/home-formulari-assets.test.cjs",
+        "docs/test-reports/2026-10-13-home-fixes-browser.json",
+        "docs/test-reports/2026-10-13-home-fixes-browser-light.png",
+        "docs/test-reports/2026-10-13-home-fixes-mobile-light.png",
+        "tests/home-store-locations-rls.test.cjs",
+        "docs/test-reports/2026-10-15-lint-first-slices.md"
+      ],
+      "dependencies": [
+        "Backend/frontend fixes"
+      ],
+      "agent": "babyaaralyn",
+      "baselineSnapshotSha256": "ccec66f87a9c229c5cad9e28cb1d3767fbc405a63dfedd864a6ecfb6aaa5cd3d"
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6-20261014.baseline.json",
+      "baselineSnapshotSha256": "88afba7cfd01c634d9114c267c1d46fb255b04f5d3f0667ff70bd44e9afe612a",
+      "reportTo": "amri",
+      "goal": "Add isolated service regressions for budget, penalty, receipt-history, and procurement lookup contracts",
+      "allowedPaths": [
+        "tests/home-procurement-contracts.test.cjs"
+      ],
+      "dependencies": [
+        "Financial/procurement service handoffs"
+      ],
+      "acceptanceCriteria": [
+        "Test all-department budget behavior, absence of the hard-coded approver, and approval-log error propagation with isolated fixtures",
+        "Test penalty and receipt-history success shapes and error propagation with injected clients",
+        "Test LPO supplier object/array mapping and cached PO relation object/array mapping, including omission of incomplete cache rows without placeholders",
+        "Do not use production data, synthetic fallback records, or unreported skipped assertions"
+      ],
+      "agent": "babyaaralyn"
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6l-20261014.baseline.json",
+      "baselineSnapshotSha256": "b9b4bf42d5023c0b12819abb48d83d089fc0060e069c954de1e38bba331d1128",
+      "reportTo": "amri",
+      "agent": "babyluong",
+      "goal": "Resolve fresh oxygen dashboard and scan-modal TypeScript errors after the oxygen service/type correction",
+      "dependencies": [
+        "Phase 6l baseline captured before edits",
+        "Oxygen service and shared type slice handoff confirms zero assigned-file diagnostics"
+      ],
+      "allowedPaths": [
+        "src/modules/mycylinder/pages/oxygen/OxygenDashboardPage.tsx",
+        "src/components/oxygen/ScanEmptyCylinderModal.tsx"
+      ],
+      "acceptanceCriteria": [
+        "Resolve current TypeScript diagnostics in both assigned UI paths without suppressions or product behavior loss",
+        "Direct ESLint passes on assigned paths",
+        "Focused diagnostics and task boundary check are reported"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6l-20261014.baseline.json",
+      "baselineSnapshotSha256": "b9b4bf42d5023c0b12819abb48d83d089fc0060e069c954de1e38bba331d1128",
+      "reportTo": "amri",
+      "agent": "amri",
+      "goal": "Capture and pin the Phase 6l correction baseline",
+      "dependencies": [
+        "Task source tree stable before the assigned oxygen UI correction"
+      ],
+      "allowedPaths": [
+        "docs/audits/home-fixes-phase6l-20261014.baseline.json",
+        "docs/audits/home-fixes-phase6w.manifest.json",
+        "docs/audits/home-fixes-phase6w-20261015.baseline.json"
+      ],
+      "acceptanceCriteria": [
+        "Capture baseline before correction edits",
+        "Keep the snapshot unchanged and digest pinned"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6m-20261014.baseline.json",
+      "baselineSnapshotSha256": "3520b3f0ee9f1e9e2e5d66ec0fb3f8a2882679c94b4d1e79e2ec1d428f689420",
+      "reportTo": "amri",
+      "agent": "babyluong",
+      "goal": "Resolve broad surfaced TypeScript errors in the oxygen dashboard exposed by corrected oxygen data contracts",
+      "dependencies": [
+        "Phase 6l UI correction handoff: 103 diagnostics remain in OxygenDashboardPage",
+        "Follow-on baseline captured before edits"
+      ],
+      "allowedPaths": [
+        "src/modules/mycylinder/pages/oxygen/OxygenDashboardPage.tsx"
+      ],
+      "acceptanceCriteria": [
+        "Investigate diagnostics against actual oxygen service/types and fix genuine UI typing issues without broad any casts or suppressions",
+        "Preserve oxygen operational behavior and data access",
+        "Report remaining diagnostics if scope cannot safely resolve them, plus direct ESLint and boundary evidence"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6m-20261014.baseline.json",
+      "baselineSnapshotSha256": "3520b3f0ee9f1e9e2e5d66ec0fb3f8a2882679c94b4d1e79e2ec1d428f689420",
+      "reportTo": "amri",
+      "agent": "amri",
+      "goal": "Capture and pin Phase 6m correction baseline before oxygen dashboard follow-on",
+      "dependencies": [
+        "Current source snapshot before follow-on edit"
+      ],
+      "allowedPaths": [
+        "docs/audits/home-fixes-phase6m-20261014.baseline.json",
+        "docs/audits/home-fixes-phase6w.manifest.json",
+        "docs/audits/home-fixes-phase6w-20261015.baseline.json"
+      ],
+      "acceptanceCriteria": [
+        "Capture baseline before edits",
+        "Keep snapshot unchanged and digest pinned"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6n-20261014.baseline.json",
+      "baselineSnapshotSha256": "fd8dcec6a034fb2a4cd9550630451be49f8563468ba487c78ee40dd3595e96a8",
+      "reportTo": "amri",
+      "agent": "babyluong",
+      "goal": "Resolve supported oxygen dashboard type mismatches against existing query projections and local UI contracts",
+      "dependencies": [
+        "Phase 6m contract audit identifies supported reception items/derived fields and supplier/pricing fields",
+        "Do not invent loan_vote_code or loan_vote_activity columns",
+        "Keep exact ownership to OxygenDashboardPage.tsx"
+      ],
+      "allowedPaths": [
+        "src/modules/mycylinder/pages/oxygen/OxygenDashboardPage.tsx"
+      ],
+      "acceptanceCriteria": [
+        "Fix supported page-local typing/control-flow diagnostics without unsafe casts, broad suppression, fabricated data, or changing backend schema/contracts",
+        "Preserve query semantics and tenant filtering; do not broaden supplier query scope",
+        "Report unresolved diagnostics by exact unsupported contract and direct ESLint/boundary/page-filtered tsc evidence"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6n-20261014.baseline.json",
+      "baselineSnapshotSha256": "fd8dcec6a034fb2a4cd9550630451be49f8563468ba487c78ee40dd3595e96a8",
+      "reportTo": "amri",
+      "agent": "amri",
+      "goal": "Capture and pin Phase 6n oxygen dashboard contract correction baseline",
+      "dependencies": [
+        "Phase 6m source checkpoint stable before page edits"
+      ],
+      "allowedPaths": [
+        "docs/audits/home-fixes-phase6n-20261014.baseline.json",
+        "docs/audits/home-fixes-phase6w.manifest.json",
+        "docs/audits/home-fixes-phase6w-20261015.baseline.json"
+      ],
+      "acceptanceCriteria": [
+        "Capture snapshot before edits",
+        "Keep snapshot unchanged and digest pinned"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6o-20261014.baseline.json",
+      "baselineSnapshotSha256": "48e43622c5c73b03f21cd248cad3267a2f08c65693c27838950aa2c3bd867ed7",
+      "reportTo": "amri",
+      "agent": "babyluong",
+      "goal": "Fix ScanEmptyCylinderModal lint errors with typed scanner event and camera handling",
+      "dependencies": [
+        "Phase 6o pinned baseline before edits"
+      ],
+      "allowedPaths": [
+        "src/components/oxygen/ScanEmptyCylinderModal.tsx"
+      ],
+      "acceptanceCriteria": [
+        "Remove explicit-any lint errors without suppressions or changing scanner behavior",
+        "Fix or explain hook dependency warnings and preserve cleanup behavior",
+        "Direct ESLint passes and component remains typed"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6o-20261014.baseline.json",
+      "baselineSnapshotSha256": "48e43622c5c73b03f21cd248cad3267a2f08c65693c27838950aa2c3bd867ed7",
+      "reportTo": "amri",
+      "agent": "babyluong",
+      "goal": "Trace and resolve the native Formulary Retry interaction stall",
+      "dependencies": [
+        "Current QA evidence confirms click reaches handler/service, browser does not settle; inspect actual retry state transition"
+      ],
+      "allowedPaths": [
+        "src/modules/myformulari/pages/HospitalLawasFormulariPage.tsx"
+      ],
+      "acceptanceCriteria": [
+        "Resolve product-side stall if present without hiding errors or inventing recovery",
+        "Keep retry accessible and avoid duplicate requests",
+        "Direct ESLint/focused TypeScript pass; QA reruns native browser acceptance against current hash"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6o-20261014.baseline.json",
+      "baselineSnapshotSha256": "48e43622c5c73b03f21cd248cad3267a2f08c65693c27838950aa2c3bd867ed7",
+      "reportTo": "amri",
+      "agent": "babyhien",
+      "goal": "Reduce the current lint/type backlog in the highest-count inventory service while preserving data and access contracts",
+      "dependencies": [
+        "Phase 6o refreshed full lint found 109 errors in inventoryService.ts",
+        "Do not change tenant filters, audit semantics, schema, or introduce fallback records"
+      ],
+      "allowedPaths": [
+        "src/modules/inventory/services/inventoryService.ts"
+      ],
+      "acceptanceCriteria": [
+        "Fix assigned-file lint errors with meaningful types and unchanged query semantics/security",
+        "No broad suppression, fabricated fallback data, or weakened checks",
+        "Direct ESLint, focused TypeScript, and boundary checks reported"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6o-20261014.baseline.json",
+      "baselineSnapshotSha256": "48e43622c5c73b03f21cd248cad3267a2f08c65693c27838950aa2c3bd867ed7",
+      "reportTo": "amri",
+      "agent": "amri",
+      "goal": "Capture and pin Phase 6o baseline before three independent correction slices",
+      "dependencies": [
+        "Full build passes after Phase 6n oxygen dashboard fixes"
+      ],
+      "allowedPaths": [
+        "docs/audits/home-fixes-phase6o-20261014.baseline.json",
+        "docs/audits/home-fixes-phase6w.manifest.json",
+        "docs/audits/home-fixes-phase6w-20261015.baseline.json"
+      ],
+      "acceptanceCriteria": [
+        "Capture baseline before edits",
+        "Keep digest pinned and snapshot unchanged"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6o-20261014.baseline.json",
+      "baselineSnapshotSha256": "48e43622c5c73b03f21cd248cad3267a2f08c65693c27838950aa2c3bd867ed7",
+      "reportTo": "amri",
+      "agent": "babyhien",
+      "goal": "Prevent clearStockTransactions from deleting or resetting inventory outside the requested hospital",
+      "dependencies": [
+        "Verified pharmacy_stock_transactions and pharmacy_stock_batches include hospital_id in plans and existing backup dumps",
+        "User authorization covers fixing all audited safety issues",
+        "Use exact existing inventoryService ownership"
+      ],
+      "allowedPaths": [
+        "src/modules/inventory/services/inventoryService.ts"
+      ],
+      "acceptanceCriteria": [
+        "Apply hospitalId filters to transaction, batch, drug and non-drug inventory writes in both all-items and item-specific branches",
+        "Fail closed when Supabase is unconfigured; do not claim a destructive operation succeeded via global mock mutation",
+        "Check each write error and report partial completion truthfully",
+        "Preserve audit/RLS enforcement; do not weaken or bypass it"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6o-20261014.baseline.json",
+      "baselineSnapshotSha256": "48e43622c5c73b03f21cd248cad3267a2f08c65693c27838950aa2c3bd867ed7",
+      "reportTo": "amri",
+      "agent": "babyaaralyn",
+      "goal": "Verify hospital scoping and failure behavior of clearStockTransactions with isolated fixtures",
+      "dependencies": [
+        "Backend security fix handed off for exact `hospital_id` scopes",
+        "No production data use"
+      ],
+      "allowedPaths": [
+        "tests/home-inventory-clear-scope.test.cjs"
+      ],
+      "acceptanceCriteria": [
+        "Test all-items and item-specific paths for hospitalId filters across transaction/batch/facility writes",
+        "Test unconfigured Supabase or query failures do not fabricate success or mutate production-like records",
+        "Use isolated fixtures; do not weaken assertions"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6t-20261014.baseline.json",
+      "baselineSnapshotSha256": "fa57d7aa94fe690e5d72e626bed60f75a54b22b42c7af2d3951b151384f1d521",
+      "reportTo": "amri",
+      "agent": "babyhien",
+      "goal": "Resolve remaining inventoryService compiler and mock-data findings",
+      "dependencies": [
+        "Phase6s shared inventory type contract corrections",
+        "No mock data as a production fallback"
+      ],
+      "allowedPaths": [
+        "src/modules/inventory/services/inventoryService.ts"
+      ],
+      "acceptanceCriteria": [
+        "Remove confirmed compiler diagnostics without weakening types",
+        "Eliminate prohibited mock-data import and fabricated record fallbacks",
+        "Focused lint and full TypeScript/build evidence reported"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6u-20261014.baseline.json",
+      "baselineSnapshotSha256": "61f960c6809a547f37aaff5744b03cea8133a02c5509afefa313eb78cc5cbb70",
+      "reportTo": "amri",
+      "agent": "babyhien",
+      "goal": "Complete correction cycle 1 for inventoryService fail-closed behavior",
+      "dependencies": [
+        "Phase6t incomplete handoff with nine rooted diagnostics and mock fallbacks remaining"
+      ],
+      "allowedPaths": [
+        "src/modules/inventory/services/inventoryService.ts"
+      ],
+      "acceptanceCriteria": [
+        "No imports or references to pharmacy mock data remain in inventoryService",
+        "No invalid or missing hospital ID is replaced by a default tenant ID",
+        "All offline reads use verified actor-scoped cached data or return explicit errors",
+        "All offline mutations return failure and do not synthesize success or inventory records",
+        "Focused lint and TypeScript checks are reported without suppression",
+        "No new untyped casts or fabricated database fields are introduced"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6v-20261015.baseline.json",
+      "baselineSnapshotSha256": "6ab2dd5e2b0915540e02fe503012300e147fb12b636cc448a4f219c792afcfd2",
+      "reportTo": "amri",
+      "agent": "babyaaralyn",
+      "goal": "Stabilize full Formulary regression within QA-owned test and report paths",
+      "dependencies": [
+        "Focused alternatives scenarios pass; full file intermittent click timeout before events"
+      ],
+      "allowedPaths": [
+        "tests/home-formulari-assets.test.cjs",
+        "docs/test-reports/2026-10-14-formulary-alternatives-diagnostic.md"
+      ],
+      "acceptanceCriteria": [
+        "Keep the full Formulary behavior assertions unchanged",
+        "Adjust only the Playwright actionability timeout if evidence supports a fixture/runtime timing issue",
+        "Run the full Formulary test file and report actual outcome and browser evidence",
+        "Do not modify product source or fabricate formulary data"
+      ]
+    }
+  ],
+  "followOnSlices": [
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotSha256": "88afba7cfd01c634d9114c267c1d46fb255b04f5d3f0667ff70bd44e9afe612a",
+      "agent": "babyhien",
+      "goal": "Move the full FUKKM catalogue behind a deterministic versioned static asset and typed async service while preserving every source record",
+      "reportTo": "amri",
+      "dependencies": [
+        "Full lint baseline completed"
+      ],
+      "allowedPaths": [
+        "src/modules/myformulari/services/formulariService.ts",
+        "src/modules/myformulari/data/formulariDatabase.ts",
+        "src/modules/myformulari/data/officialFukkmData.json",
+        "src/modules/myformulari/services/formulariAssetService.ts",
+        "public/formulari/formulari-data.json",
+        "scripts/generate-formulari-assets.cjs",
+        "vite.config.ts",
+        "public/sw-capabilities-v2.js"
+      ],
+      "acceptanceCriteria": [
+        "Generator is deterministic and preserves source record count, order, stable IDs, every field, and source hash",
+        "No static import of the full catalogue remains in the initial bundle",
+        "Typed async APIs preserve search, detail, interaction, and summary semantics; failures are explicit and retryable",
+        "The versioned asset is available after first successful fetch offline; cold offline failure is visible and never an empty catalogue",
+        "Measured initial JS, lazy JS, raw/gzip asset and initial transfer sizes are reported"
+      ],
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6-20261014.baseline.json"
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotSha256": "ccec66f87a9c229c5cad9e28cb1d3767fbc405a63dfedd864a6ecfb6aaa5cd3d",
+      "agent": "babyluong",
+      "goal": "Migrate every FUKKM-backed page, modal, and hub summary to the agreed async contract with visible loading and retry states",
+      "reportTo": "amri",
+      "dependencies": [
+        "BabyHien Slice A service contract handoff"
+      ],
+      "allowedPaths": [
+        "src/modules/myformulari/pages/DrugAlternativesPage.tsx",
+        "src/modules/myformulari/pages/DrugDetailPage.tsx",
+        "src/modules/myformulari/pages/FormulariDashboardPage.tsx",
+        "src/modules/myformulari/pages/HamListPage.tsx",
+        "src/modules/myformulari/pages/HospitalLawasFormulariPage.tsx",
+        "src/modules/myformulari/pages/LasaListPage.tsx",
+        "src/modules/myformulari/pages/PaediatricCataloguePage.tsx",
+        "src/modules/myformulari/components/AddQuotaDrugModal.tsx",
+        "src/modules/myformulari/components/DrugInteractionModal.tsx",
+        "src/modules/hub/pages/modules/FormulariSubMenu.tsx"
+      ],
+      "acceptanceCriteria": [
+        "All ten consumers use the agreed async API without a hidden eager catalogue import",
+        "Existing search, filter, detail, interaction, summary, and quota behavior is preserved",
+        "Each consumer has clear loading and recoverable failure states"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotSha256": "ccec66f87a9c229c5cad9e28cb1d3767fbc405a63dfedd864a6ecfb6aaa5cd3d",
+      "agent": "babyhien",
+      "goal": "Restore checked types in the two catalog services without changing their query and error contracts",
+      "reportTo": "amri",
+      "dependencies": [
+        "Formulary Slice A implementation has reached a stable source handoff"
+      ],
+      "allowedPaths": [
+        "src/modules/catalog/services/drugCatalogService.ts",
+        "src/modules/catalog/services/nonDrugCatalogService.ts"
+      ],
+      "acceptanceCriteria": [
+        "Remove file-level ts-nocheck by restoring real schema and API response types",
+        "Resolve lint errors without changing filters, ordering, pagination, or error propagation",
+        "Focused service checks and direct ESLint report their exact results"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotSha256": "88afba7cfd01c634d9114c267c1d46fb255b04f5d3f0667ff70bd44e9afe612a",
+      "agent": "babyluong",
+      "goal": "Resolve existing lint diagnostics in the highest-count procurement UI pages while preserving operational behavior",
+      "reportTo": "amri",
+      "dependencies": [
+        "Full lint baseline completed"
+      ],
+      "allowedPaths": [
+        "src/modules/procurement/pages/procurement/PurchaseOrderCreatePage.tsx",
+        "src/modules/procurement/pages/procurement/PurchaseOrderDetailView.tsx",
+        "src/modules/procurement/pages/procurement/GoodsReceivingForm.tsx",
+        "src/modules/procurement/pages/procurement/LPOListPage.tsx"
+      ],
+      "acceptanceCriteria": [
+        "Resolve assigned ESLint errors without weakening rules or adding suppressions",
+        "Preserve purchase order, receiving, filters, calculations, and error/loading behavior",
+        "Direct ESLint and applicable focused typecheck report exact outcomes"
+      ],
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6-20261014.baseline.json"
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotSha256": "88afba7cfd01c634d9114c267c1d46fb255b04f5d3f0667ff70bd44e9afe612a",
+      "agent": "babyluong",
+      "goal": "Resolve existing lint diagnostics in the remaining highest-count procurement UI pages without changing operational behavior",
+      "reportTo": "amri",
+      "dependencies": [
+        "Full lint baseline and procurement UI diagnostic inventory completed"
+      ],
+      "allowedPaths": [
+        "src/modules/procurement/pages/procurement/APPLPenaltyDetailPage.tsx",
+        "src/modules/procurement/pages/procurement/CCPenaltyDetailPage.tsx",
+        "src/modules/procurement/pages/procurement/CreditNoteAuditPage.tsx",
+        "src/modules/procurement/pages/procurement/ExcelUploadModal.tsx",
+        "src/modules/procurement/pages/procurement/OrderTrackingPage.tsx",
+        "src/modules/procurement/pages/procurement/PaymentPage.tsx",
+        "src/modules/procurement/pages/procurement/PenaltyDetailPage.tsx",
+        "src/modules/procurement/pages/procurement/PenaltyPage.tsx",
+        "src/modules/procurement/pages/procurement/PurchaseOrderDetailPage.tsx",
+        "src/modules/procurement/pages/procurement/PurchaseOrderListPage.tsx",
+        "src/modules/procurement/pages/procurement/ReceivingPage.tsx",
+        "src/modules/procurement/pages/procurement/SupplierPerformancePage.tsx",
+        "src/modules/procurement/pages/procurement/index.ts"
+      ],
+      "acceptanceCriteria": [
+        "Resolve assigned ESLint errors without weakening rules or adding suppressions",
+        "Preserve procurement calculations, filters, data writes, and error/loading behavior",
+        "Direct ESLint reports exact per-file outcomes and rendered evidence is provided for behavior changes"
+      ],
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6-20261014.baseline.json"
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotSha256": "ccec66f87a9c229c5cad9e28cb1d3767fbc405a63dfedd864a6ecfb6aaa5cd3d",
+      "agent": "babyluong",
+      "goal": "Make the Drug Alternatives directory show truthful catalogue loading and recoverable failure states while the async catalogue is unavailable",
+      "reportTo": "amri",
+      "dependencies": [
+        "QA reproduced the missing loading/error state on the directory tab"
+      ],
+      "allowedPaths": [
+        "src/modules/myformulari/pages/DrugAlternativesPage.tsx"
+      ],
+      "acceptanceCriteria": [
+        "While the catalogue Promise is pending, the directory tab exposes a visible loading message/status",
+        "On catalogue failure, the directory tab exposes a clear retry action and error state",
+        "On success, prior directory contents and selection/search behavior are preserved",
+        "Direct ESLint and QA rendered-state checks pass"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotSha256": "ccec66f87a9c229c5cad9e28cb1d3767fbc405a63dfedd864a6ecfb6aaa5cd3d",
+      "agent": "babyhien",
+      "goal": "Correct the budget query type contract, remove invented production approver data, and preserve approver lookup failures",
+      "reportTo": "amri",
+      "dependencies": [
+        "Frontend QA exposed a caller using the already-supported all-departments behavior"
+      ],
+      "allowedPaths": [
+        "src/modules/financial/services/budgetEngine.ts"
+      ],
+      "acceptanceCriteria": [
+        "The getBudgetForPO wrapper accepts the established BudgetQuery department contract; existing department-specific and all-departments filtering remain unchanged",
+        "Remove the hard-coded PO-2026-0382 test approver value so only database joins, actual signature snapshots, and actual approval records supply names",
+        "Check and surface approval-log query errors through the existing ApiResponse error path; do not silently continue with missing approver data",
+        "Use real row/API types and resolve direct ESLint errors in the assigned file without suppressions",
+        "Focused checks report exact results; no synthetic records or production data are used"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotSha256": "ccec66f87a9c229c5cad9e28cb1d3767fbc405a63dfedd864a6ecfb6aaa5cd3d",
+      "agent": "babyhien",
+      "goal": "Give the procurement penalty detail service a real response type matching its joined database result",
+      "reportTo": "amri",
+      "dependencies": [
+        "Frontend lint owner identified the untyped getPenaltyById API boundary"
+      ],
+      "allowedPaths": [
+        "src/modules/procurement/services/penaltyService.ts"
+      ],
+      "acceptanceCriteria": [
+        "getPenaltyById returns a typed result matching the actual query and relation shape consumed by APPLPenaltyDetailPage",
+        "No placeholder clinical/operational values or fake fallback records are introduced",
+        "Query filters, joins, ordering, and existing ApiResponse error behavior are preserved",
+        "Remove the file-level ts-nocheck and resolve direct ESLint errors with real types and no suppressions",
+        "Direct ESLint and focused checks report exact outcomes"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotSha256": "ccec66f87a9c229c5cad9e28cb1d3767fbc405a63dfedd864a6ecfb6aaa5cd3d",
+      "agent": "babyhien",
+      "goal": "Give goods-receipt history a typed union/common result matching its actual receipt query and procurement consumers",
+      "reportTo": "amri",
+      "dependencies": [
+        "Frontend lint owner identified incompatible goods-receipt history shape assumptions"
+      ],
+      "allowedPaths": [
+        "src/modules/procurement/services/receivingService.ts"
+      ],
+      "acceptanceCriteria": [
+        "getGoodsReceiptHistory accurately types every query result shape and nested received item consumed by CC penalty UI",
+        "Preserve selected receipt rows, joins, filters, ordering, and ApiResponse error behavior",
+        "No placeholder/synthetic data is introduced",
+        "Remove the file-level ts-nocheck and resolve direct ESLint errors with real types and no suppressions",
+        "Direct ESLint and focused checks report exact results"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotSha256": "ccec66f87a9c229c5cad9e28cb1d3767fbc405a63dfedd864a6ecfb6aaa5cd3d",
+      "agent": "babyluong",
+      "goal": "Ensure the Formulary dashboard exposes recoverable failure instead of remaining in loading state after async catalogue failure",
+      "reportTo": "amri",
+      "dependencies": [
+        "Stable-source QA reproduced missing error/retry UI after catalogue fetch failure"
+      ],
+      "allowedPaths": [
+        "src/modules/myformulari/pages/FormulariDashboardPage.tsx"
+      ],
+      "acceptanceCriteria": [
+        "A failed catalogue load exits the loading state and shows an alert with a retry action",
+        "A pending request remains visibly loading and a successful load preserves the prior dashboard",
+        "Retry re-runs the async load without fabricating empty catalogue data",
+        "Direct ESLint and QA rendered-state verification pass"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotSha256": "ccec66f87a9c229c5cad9e28cb1d3767fbc405a63dfedd864a6ecfb6aaa5cd3d",
+      "agent": "babyaaralyn",
+      "goal": "Add isolated regressions for the budget/penalty/receiving service contracts corrected during lint restoration",
+      "reportTo": "amri",
+      "dependencies": [
+        "BabyHien service handoffs for budgetEngine, penaltyService, and receivingService"
+      ],
+      "allowedPaths": [
+        "tests/home-procurement-contracts.test.cjs",
+        "docs/test-reports/2026-10-13-home-fixes-tests.log",
+        "docs/test-reports/2026-10-13-home-fixes.md"
+      ],
+      "acceptanceCriteria": [
+        "Exercise budget all-department semantics, no hard-coded test approver, and approval-log error propagation against isolated fixtures",
+        "Exercise penalty and receipt-history typed success shapes and failure propagation without production data",
+        "Exercise LPO supplier object/array mapping and offline cached PO relation object/array mapping, including omission of incomplete cache rows without placeholders",
+        "Tests preserve real query fields/error contracts and report exact counts with zero unreported skips"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotSha256": "ccec66f87a9c229c5cad9e28cb1d3767fbc405a63dfedd864a6ecfb6aaa5cd3d",
+      "agent": "babyhien",
+      "goal": "Correct the pending-PO-for-LPO service result type to match its selected database fields and the page's actual consumers",
+      "reportTo": "amri",
+      "dependencies": [
+        "Procurement build diagnostics and the LPOListPage caller contract"
+      ],
+      "allowedPaths": [
+        "src/modules/procurement/services/lpoService.ts"
+      ],
+      "acceptanceCriteria": [
+        "getPendingPOsForLPO result types include only the query's actual PO fields, supplier relation, and selected item fields used by LPOListPage",
+        "Preserve existing hospital filters, joins, ordering, pagination, cache behavior, and ApiResponse error behavior while accurately handling PostgREST relation arrays and nullable IDs",
+        "Remove unnecessary any in the assigned service file without adding suppressions or synthetic records",
+        "Direct ESLint passes and the focused TypeScript check reports no diagnostics"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6b-20261014.baseline.json",
+      "baselineSnapshotSha256": "fe7feda5c421d1e90ffbe64c606ff4292d3b64bc981c77ac2a63ba33bbf37b61",
+      "reportTo": "amri",
+      "agent": "babyhien",
+      "goal": "Resolve audited lint diagnostics in oxygenService without changing oxygen inventory contracts or authorization behavior",
+      "dependencies": [
+        "Stable current full lint inventory; preserve existing services and clinical/operational data"
+      ],
+      "allowedPaths": [
+        "src/modules/mycylinder/services/oxygenService.ts"
+      ],
+      "acceptanceCriteria": [
+        "Resolve lint diagnostics without suppressions or weakening rules",
+        "Preserve query, authorization, tenant, audit, and error behavior; do not invent operational records",
+        "Focused tests, ESLint, TypeScript, and diff checks pass with exact outcomes"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6b-20261014.baseline.json",
+      "baselineSnapshotSha256": "fe7feda5c421d1e90ffbe64c606ff4292d3b64bc981c77ac2a63ba33bbf37b61",
+      "reportTo": "amri",
+      "agent": "babyluong",
+      "goal": "Resolve audited lint diagnostics in CylinderReportPage while preserving report behavior and truthful loading/error states",
+      "dependencies": [
+        "Stable current full lint inventory and current working-tree baseline"
+      ],
+      "allowedPaths": [
+        "src/modules/mycylinder/pages/oxygen/CylinderReportPage.tsx"
+      ],
+      "acceptanceCriteria": [
+        "Resolve lint diagnostics without suppressions or weakening rules",
+        "Preserve report filters, calculations, loading/error states, and accessible interaction",
+        "Focused lint, TypeScript, and relevant regression checks pass with exact outcomes"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6c-20261014.baseline.json",
+      "baselineSnapshotSha256": "2cec9a3e82bdd96c508431744e6c750077c8d46abc74e610701f8dbf91b24ecb",
+      "reportTo": "amri",
+      "agent": "babyluong",
+      "goal": "Resolve audited lint diagnostics in OxygenDashboardPage while preserving oxygen dashboard behavior",
+      "dependencies": [
+        "Stable current full lint inventory; preserve operational data"
+      ],
+      "allowedPaths": [
+        "src/modules/mycylinder/pages/oxygen/OxygenDashboardPage.tsx"
+      ],
+      "acceptanceCriteria": [
+        "Resolve lint diagnostics without suppressions or weakening rules",
+        "Preserve dashboard filters, metrics, query behavior, authorization visibility, and accessible interaction",
+        "Focused lint, TypeScript, relevant regression checks, and scoped diff check pass with exact outcomes"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6c-20261014.baseline.json",
+      "baselineSnapshotSha256": "2cec9a3e82bdd96c508431744e6c750077c8d46abc74e610701f8dbf91b24ecb",
+      "reportTo": "amri",
+      "agent": "amri",
+      "goal": "Preserve and account for the pre-existing unassigned user document without modifying its content",
+      "dependencies": [
+        "Document SHA-256 must match phase6c snapshot"
+      ],
+      "allowedPaths": [
+        "Abstrak_MyHOME_Sistem_Keseluruhan.docx"
+      ],
+      "acceptanceCriteria": [
+        "Do not edit, move, rename, or delete the document",
+        "Verify its SHA-256 matches phase6c baseline",
+        "Record provenance as unknown and preserve user content"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6d-20261014.baseline.json",
+      "baselineSnapshotSha256": "1401704c47b0eb243a075fa2175ded7c2638d855b7dc92f272e654ab3d82e917",
+      "reportTo": "amri",
+      "agent": "babyaaralyn",
+      "goal": "Diagnose and correct the PurchaseOrderCreatePage browser fixture so its select interaction matches the real shared Select component",
+      "dependencies": [
+        "Product page source is stable and only QA-owned test harness may change"
+      ],
+      "allowedPaths": [
+        "tests/home-ui-regressions.spec.ts"
+      ],
+      "acceptanceCriteria": [
+        "Use the actual shared Select behavior or a faithful stable fixture and capture node identity/mutation evidence",
+        "Run PurchaseOrderCreatePage browser scenario through form validation and subtotal assertions",
+        "Do not modify product source or weaken assertions",
+        "Record exact revision, viewport, theme, motion, external requests, result, and artifact"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6e-20261014.baseline.json",
+      "baselineSnapshotSha256": "9158fcbe51eef73ac3c4591f3339c4d62a143056051cbf5fdd7c8508e4e751db",
+      "reportTo": "amri",
+      "agent": "amri",
+      "goal": "Preserve existing unassigned documents and generated audit/build artifacts while attributing their task-start state",
+      "dependencies": [
+        "Do not edit or delete user documents or the existing build artifact"
+      ],
+      "allowedPaths": [
+        "docs/audits/home-fixes-phase6-20261014.baseline.json",
+        "docs/audits/home-fixes-phase6b-20261014.baseline.json",
+        "docs/audits/home-fixes-phase6c-20261014.baseline.json",
+        "docs/audits/home-fixes-phase6d-20261014.baseline.json",
+        "docs/audits/home-fixes-phase6e-20261014.baseline.json",
+        "MyHOME_SYSTEM_COMPREHENSIVE_TECHNICAL_AND_IMPACT_REPORT.docx",
+        "MyHOME_SYSTEM_PROCUREMENT_REPORT_AND_BUDGET_PROPOSAL.docx",
+        "dist/index.html",
+        "~$HOME_SYSTEM_COMPREHENSIVE_TECHNICAL_AND_IMPACT_REPORT.docx",
+        "docs/audits/home-fixes-phase6f-20261014.baseline.json",
+        "docs/audits/home-fixes-phase6g-20261014.baseline.json"
+      ],
+      "acceptanceCriteria": [
+        "Do not modify, move, rename, or delete the listed document or generated artifacts",
+        "Verify user documents are unchanged from the pinned phase6e snapshot where present",
+        "Record unknown provenance without claiming the artifacts are task source changes"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6e-20261014.baseline.json",
+      "baselineSnapshotSha256": "9158fcbe51eef73ac3c4591f3339c4d62a143056051cbf5fdd7c8508e4e751db",
+      "reportTo": "amri",
+      "agent": "babyhien",
+      "goal": "Account for the procurement DOCX report generator at the pinned task baseline without editing it",
+      "dependencies": [
+        "Preserve the current source bytes"
+      ],
+      "allowedPaths": [
+        "scripts/generate_procurement_report_docx.cjs"
+      ],
+      "acceptanceCriteria": [
+        "Do not modify the script during the boundary-check repair",
+        "Preserve generator behavior and current content hash",
+        "Report status to Amri"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6e-20261014.baseline.json",
+      "baselineSnapshotSha256": "9158fcbe51eef73ac3c4591f3339c4d62a143056051cbf5fdd7c8508e4e751db",
+      "reportTo": "amri",
+      "agent": "babyhien",
+      "goal": "Honor exact follow-on slice assignments in the existing boundary checker without weakening ownership validation",
+      "dependencies": [
+        "Amri approves the design of using exact allowlisted paths from primary and follow-on slices for attribution"
+      ],
+      "allowedPaths": [
+        "scripts/check-agent-boundaries.cjs"
+      ],
+      "acceptanceCriteria": [
+        "Validate each follow-on with the same contract and owner/override/test checks as primary slices",
+        "Reject duplicate and case-colliding paths across primary and follow-on slices",
+        "Treat absent followOnSlices as empty for existing v2 manifests; do not make nested baseline metadata grant authority",
+        "Focused governance tests and scripts/check-agent-boundaries.cjs --task pass"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6e-20261014.baseline.json",
+      "baselineSnapshotSha256": "9158fcbe51eef73ac3c4591f3339c4d62a143056051cbf5fdd7c8508e4e751db",
+      "reportTo": "amri",
+      "agent": "babyaaralyn",
+      "goal": "Add regression coverage for follow-on slice assignment and rejection behavior",
+      "dependencies": [
+        "Amri approves the design of using exact allowlisted paths from primary and follow-on slices for attribution"
+      ],
+      "allowedPaths": [
+        "tests/agent-governance.test.cjs"
+      ],
+      "acceptanceCriteria": [
+        "Assigned follow-on changed paths pass",
+        "Duplicate/overlap and invalid owner follow-ons fail",
+        "Unassigned path remains rejected and test ownership override remains protected",
+        "Focused governance test suite passes with exact counts and zero skips"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6f-20261014.baseline.json",
+      "baselineSnapshotSha256": "78553c0b6a21a97e6fa4b76e6e741187dc7658e505e49a4a71c9f44a872a42f3",
+      "reportTo": "amri",
+      "agent": "babyaaralyn",
+      "goal": "Make agent-system test fixtures run in the writable workspace cache while preserving isolation and assertions",
+      "dependencies": [
+        "Use unique temp prefixes and prefix-checked cleanup under node_modules/.cache"
+      ],
+      "allowedPaths": [
+        "tests/agent-system.test.cjs",
+        "tests/agent-rules.test.cjs"
+      ],
+      "acceptanceCriteria": [
+        "Do not rely on OS temp locations denied to the test process",
+        "Keep each fixture uniquely named and cleanup restricted to its own resolved prefix",
+        "Run node --test across the full agent-system suite with zero failures and skips",
+        "Preserve all assertions and collect exact test count"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6g-20261014.baseline.json",
+      "baselineSnapshotSha256": "e72543c5b548161032523e75a07853423f9ad2aa0c691791c3091a786d0e3eac",
+      "reportTo": "amri",
+      "agent": "babyhien",
+      "goal": "Correct shared oxygen relation and status types to match observed service query output and caller expectations",
+      "dependencies": [
+        "Use observed select projections and exported callers; do not change production schema or records"
+      ],
+      "allowedPaths": [
+        "src/types/pharmacy/index.ts"
+      ],
+      "acceptanceCriteria": [
+        "Model actual oxygen relation fields and observed valid statuses without invented database columns or records",
+        "Preserve runtime output and callers; adjust only the assigned type file unless Amri approves another exact path",
+        "Focused TypeScript checks expose no new consumer errors and full TypeScript/build pass after the service slice completes",
+        "Report required caller changes or missing schema evidence before broadening scope"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6h-20261014.baseline.json",
+      "baselineSnapshotSha256": "1dfff9b82ed79be54ce476bf06a096720933b79bab0f224011e6ad2cc16342d6",
+      "reportTo": "amri",
+      "agent": "amri",
+      "goal": "Preserve and account for the discovered Hospital Lawas module evaluation report without editing its contents",
+      "dependencies": [
+        "Preserve source bytes and report the exact snapshot hash"
+      ],
+      "allowedPaths": [
+        "MyHOME_SYSTEM_MODULE_EVALUATION_REPORT_HOSPITAL_LAWAS.docx",
+        "docs/audits/home-fixes-phase6h-20261014.baseline.json"
+      ],
+      "acceptanceCriteria": [
+        "Do not modify the report document",
+        "Keep its current bytes accounted for in the pinned task snapshot",
+        "Keep the snapshot artifact pinned and assigned for auditability",
+        "Report the verified content hash and preserve user content"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6i-20261014.baseline.json",
+      "baselineSnapshotSha256": "72d8faadc804183d33d075e8666622d759382627876ec9b866a6039ce692cc25",
+      "reportTo": "amri",
+      "agent": "babyhien",
+      "goal": "Correction cycle 1: resolve the remaining oxygenService.ts type diagnostics within the already approved service/type slice",
+      "dependencies": [
+        "Preserve actual Supabase query projections, typed error behavior, and public service output contracts"
+      ],
+      "allowedPaths": [
+        "src/modules/mycylinder/services/oxygenService.ts",
+        "src/types/pharmacy/index.ts"
+      ],
+      "acceptanceCriteria": [
+        "Resolve all oxygenService.ts diagnostics without ts-nocheck, any, or weakened strictness",
+        "Make full TypeScript checking and the production build pass, or report exact unrelated failing paths to Amri",
+        "Keep direct ESLint and scoped diff check clean",
+        "Run static rules and task boundary checks; report any remaining warning/block accurately",
+        "Do not change schema or invent production data"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6i-20261014.baseline.json",
+      "baselineSnapshotSha256": "72d8faadc804183d33d075e8666622d759382627876ec9b866a6039ce692cc25",
+      "reportTo": "amri",
+      "agent": "amri",
+      "goal": "Pin the current content snapshot for oxygen service correction cycle 1",
+      "dependencies": [
+        "Snapshot captured before the correction cycle"
+      ],
+      "allowedPaths": [
+        "docs/audits/home-fixes-phase6i-20261014.baseline.json"
+      ],
+      "acceptanceCriteria": [
+        "Keep the captured baseline unchanged",
+        "Keep its digest pinned in this task manifest"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6i-20261014.baseline.json",
+      "baselineSnapshotSha256": "72d8faadc804183d33d075e8666622d759382627876ec9b866a6039ce692cc25",
+      "reportTo": "amri",
+      "agent": "babyluong",
+      "goal": "Resolve the reproduced Hospital Lawas Formulary Retry browser interaction stall",
+      "dependencies": [
+        "QA evidence confirms the native click reaches the handler and fixture service but browser recovery state never settles"
+      ],
+      "allowedPaths": [
+        "src/modules/myformulari/pages/HospitalLawasFormulariPage.tsx"
+      ],
+      "acceptanceCriteria": [
+        "Inspect the retry interaction and remove the reproducible user-visible stall without hiding errors or fabricating success",
+        "Preserve loading, error, retryable, and reload states with keyboard-accessible controls",
+        "Direct ESLint and focused typecheck pass for the assigned page",
+        "Request any additional exact path from Amri before editing it; QA will rerun the native browser regression without weakening assertions"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6j-20261014.baseline.json",
+      "baselineSnapshotSha256": "867ba956ee3736d75c644a115a091551028568ccbca7273dcc9df812f553cfda",
+      "reportTo": "amri",
+      "agent": "amri",
+      "goal": "Preserve and account for the discovered Malay Hospital Lawas module evaluation report without editing it",
+      "dependencies": [
+        "Preserve the document bytes and report the verified content hash"
+      ],
+      "allowedPaths": [
+        "MyHOME_SYSTEM_MODULE_EVALUATION_REPORT_HOSPITAL_LAWAS_BM.docx",
+        "docs/audits/home-fixes-phase6j-20261014.baseline.json"
+      ],
+      "acceptanceCriteria": [
+        "Do not modify the report document",
+        "Keep its current bytes in the pinned snapshot",
+        "Keep the snapshot assigned for auditability",
+        "Report the content hash and preserve user content"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6k-20261014.baseline.json",
+      "baselineSnapshotSha256": "00070d346ae52df30efc2766b7704d4c46de457813d8a7f698ff3e7eb1a721d9",
+      "reportTo": "amri",
+      "agent": "amri",
+      "goal": "Preserve and account for the discovered English Hospital Lawas module evaluation report without editing it",
+      "dependencies": [
+        "Preserve the document bytes and report the verified content hash"
+      ],
+      "allowedPaths": [
+        "MyHOME_SYSTEM_MODULE_EVALUATION_REPORT_HOSPITAL_LAWAS_EN.docx",
+        "docs/audits/home-fixes-phase6k-20261014.baseline.json"
+      ],
+      "acceptanceCriteria": [
+        "Do not modify the report document",
+        "Keep its current bytes in the pinned snapshot",
+        "Keep the snapshot assigned for auditability",
+        "Report the content hash and preserve user content"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6k-20261014.baseline.json",
+      "baselineSnapshotSha256": "00070d346ae52df30efc2766b7704d4c46de457813d8a7f698ff3e7eb1a721d9",
+      "reportTo": "amri",
+      "agent": "amri",
+      "goal": "Preserve the pre-existing home report baseline artifact discovered during task attribution",
+      "dependencies": [
+        "Keep the artifact byte-identical and avoid altering other task baselines"
+      ],
+      "allowedPaths": [
+        "docs/audits/home-report-20261014.baseline.json"
+      ],
+      "acceptanceCriteria": [
+        "Do not edit the baseline artifact",
+        "Preserve and report its SHA-256 hash"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6k-20261014.baseline.json",
+      "baselineSnapshotSha256": "00070d346ae52df30efc2766b7704d4c46de457813d8a7f698ff3e7eb1a721d9",
+      "reportTo": "amri",
+      "agent": "babyaaralyn",
+      "goal": "Preserve the discovered test fixture image without modifying it",
+      "dependencies": [
+        "Keep source image unchanged"
+      ],
+      "allowedPaths": [
+        "docs/reports/diagrams/_test-fig1.png"
+      ],
+      "acceptanceCriteria": [
+        "Do not modify the fixture image",
+        "Preserve it as existing user/project content"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6k-20261014.baseline.json",
+      "baselineSnapshotSha256": "00070d346ae52df30efc2766b7704d4c46de457813d8a7f698ff3e7eb1a721d9",
+      "reportTo": "amri",
+      "agent": "amri",
+      "goal": "Preserve the discovered generated report diagrams without modifying their contents",
+      "dependencies": [
+        "Keep the figure assets byte-identical to the pinned Phase 6k snapshot"
+      ],
+      "allowedPaths": [
+        "docs/reports/diagrams/fig-01-context.png",
+        "docs/reports/diagrams/fig-01-context.svg",
+        "docs/reports/diagrams/fig-02-architecture.png",
+        "docs/reports/diagrams/fig-02-architecture.svg",
+        "docs/reports/diagrams/fig-03-landscape.png",
+        "docs/reports/diagrams/fig-03-landscape.svg",
+        "docs/reports/diagrams/fig-04-access-flow.png",
+        "docs/reports/diagrams/fig-04-access-flow.svg",
+        "docs/reports/diagrams/fig-05-supply-chain.png",
+        "docs/reports/diagrams/fig-05-supply-chain.svg",
+        "docs/reports/diagrams/fig-06-before-after.png",
+        "docs/reports/diagrams/fig-06-before-after.svg",
+        "docs/reports/diagrams/fig-07-offline.png",
+        "docs/reports/diagrams/fig-07-offline.svg",
+        "docs/reports/diagrams/fig-08-maturity.png",
+        "docs/reports/diagrams/fig-08-maturity.svg",
+        "docs/reports/diagrams/fig-09-integration.png",
+        "docs/reports/diagrams/fig-09-integration.svg",
+        "docs/reports/diagrams/fig-10-benefits.png",
+        "docs/reports/diagrams/fig-10-benefits.svg"
+      ],
+      "acceptanceCriteria": [
+        "Do not modify the diagram files",
+        "Preserve them as existing project/report assets"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6k-20261014.baseline.json",
+      "baselineSnapshotSha256": "00070d346ae52df30efc2766b7704d4c46de457813d8a7f698ff3e7eb1a721d9",
+      "reportTo": "amri",
+      "agent": "amri",
+      "goal": "Preserve generated report source and build-log artifacts without modifying them",
+      "dependencies": [
+        "Keep the exact report artifacts in the Phase 6k task snapshot"
+      ],
+      "allowedPaths": [
+        "docs/reports/diagrams-build.log",
+        "docs/reports/facts-summary.txt",
+        "docs/reports/home-report-facts.json"
+      ],
+      "acceptanceCriteria": [
+        "Do not edit these artifacts",
+        "Preserve them as existing report-generation inputs/evidence"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6k-20261014.baseline.json",
+      "baselineSnapshotSha256": "00070d346ae52df30efc2766b7704d4c46de457813d8a7f698ff3e7eb1a721d9",
+      "reportTo": "amri",
+      "agent": "babyhien",
+      "goal": "Preserve the existing report-generation scripts without editing them",
+      "dependencies": [
+        "Keep scripts and generated evidence unchanged during this task"
+      ],
+      "allowedPaths": [
+        "scripts/generate_home_report_diagrams.cjs",
+        "scripts/generate_report_bm.cjs",
+        "scripts/home_report_content.cjs",
+        "scripts/home_report_facts.cjs",
+        "scripts/home_report_svg.cjs",
+        "scripts/update_markdown_report.cjs"
+      ],
+      "acceptanceCriteria": [
+        "Do not modify these scripts in the oxygen or browser correction slices",
+        "Preserve them as existing user/project content"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6o-20261014.baseline.json",
+      "baselineSnapshotSha256": "48e43622c5c73b03f21cd248cad3267a2f08c65693c27838950aa2c3bd867ed7",
+      "reportTo": "amri",
+      "agent": "babyhien",
+      "goal": "Add database-enforced hospital authorization and persistent audit for stock transaction and batch clearing",
+      "dependencies": [
+        "Inventory service all-items and item-specific hospital-scoped clear has QA fixture evidence",
+        "Use confirmed schema columns and existing can_access_store_locations and audit trigger patterns",
+        "Do not apply migrations to a remote or production database"
+      ],
+      "allowedPaths": [
+        "supabase/migrations/090_secure_stock_history_clear.sql"
+      ],
+      "acceptanceCriteria": [
+        "Expose a single atomic authenticated operation for the approved hospital/item scope",
+        "Enforce actor status, hospital scope and inventory delete/edit permission in the database",
+        "Preserve persistent audit for deleted transactions/batches and reset inventory rows",
+        "Use rollback on any failed sub-operation",
+        "Restrict function/table grants and prevent direct bypass where feasible without breaking established service CRUD"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6p-20261014.baseline.json",
+      "baselineSnapshotSha256": "885c1a1e7810c2a36f9ac2605c3e46e52e845a5dfdd670473e1cc3e08ef4deb3",
+      "reportTo": "amri",
+      "agent": "babyaaralyn",
+      "goal": "Verify scanner open/close/tab lifecycle, QR code handler, and manual filtering/list UI",
+      "dependencies": [
+        "Phase6o scanner modal implementation is stable",
+        "Use controlled isolated Playwright browser fixture and mocked camera APIs only"
+      ],
+      "allowedPaths": [
+        "tests/home-oxygen-scanner.spec.cjs",
+        "docs/test-reports/2026-10-14-oxygen-scanner-qa.md"
+      ],
+      "acceptanceCriteria": [
+        "Camera stream is stopped and tracks released on close and tab switch",
+        "QR detection calls the current handler and updates scan state",
+        "Manual search/filter/list remains interactive and renders matching fixture",
+        "No external requests or production data; capture revision, viewport, theme and motion settings"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6p-20261014.baseline.json",
+      "baselineSnapshotSha256": "885c1a1e7810c2a36f9ac2605c3e46e52e845a5dfdd670473e1cc3e08ef4deb3",
+      "reportTo": "amri",
+      "agent": "amri",
+      "goal": "Pin baseline snapshot for Phase6p scanner QA",
+      "dependencies": [
+        "Snapshot captured before QA test edits"
+      ],
+      "allowedPaths": [
+        "docs/audits/home-fixes-phase6p-20261014.baseline.json"
+      ],
+      "acceptanceCriteria": [
+        "Do not alter the captured snapshot",
+        "Keep pinned SHA-256 unchanged"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6p-20261014.baseline.json",
+      "baselineSnapshotSha256": "885c1a1e7810c2a36f9ac2605c3e46e52e845a5dfdd670473e1cc3e08ef4deb3",
+      "reportTo": "amri",
+      "agent": "babyluong",
+      "goal": "Resolve the confirmed Retry-independent alternatives menu interaction timeout",
+      "dependencies": [
+        "Lawas Retry isolated acceptance passes",
+        "Current browser test failure is alternatives/pending menu click"
+      ],
+      "allowedPaths": [
+        "src/modules/myformulari/pages/DrugAlternativesPage.tsx"
+      ],
+      "acceptanceCriteria": [
+        "Confirm or fix a product-side blocking menu interaction without weakening QA",
+        "Focused lint and TypeScript pass",
+        "QA full formulary asset/browser suite passes or documents unrelated environment issue"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6p-20261014.baseline.json",
+      "baselineSnapshotSha256": "885c1a1e7810c2a36f9ac2605c3e46e52e845a5dfdd670473e1cc3e08ef4deb3",
+      "reportTo": "amri",
+      "agent": "babyaaralyn",
+      "goal": "Verify the updated scanner and formulary retry/menu behavior in controlled browser",
+      "dependencies": [
+        "Scanner QA harness ownership in Phase6p",
+        "Retry-specific native acceptance already passes"
+      ],
+      "allowedPaths": [
+        "tests/home-oxygen-scanner.spec.cjs",
+        "tests/home-formulari-assets.test.cjs",
+        "docs/test-reports/2026-10-14-oxygen-scanner-qa.md"
+      ],
+      "acceptanceCriteria": [
+        "Keep scanner QA isolated and do not edit product code",
+        "Record full Formulary browser suite result after menu slice",
+        "Report test summary and unverified criteria honestly"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6p-20261014.baseline.json",
+      "baselineSnapshotSha256": "885c1a1e7810c2a36f9ac2605c3e46e52e845a5dfdd670473e1cc3e08ef4deb3",
+      "reportTo": "amri",
+      "agent": "babyluong",
+      "goal": "Resolve legacy TypeScript errors exposed in OxygenDashboardPage from removed suppression",
+      "dependencies": [
+        "Current exact error is ComboInventory | null passed to optional TargetCombo"
+      ],
+      "allowedPaths": [
+        "src/modules/mycylinder/pages/oxygen/OxygenDashboardPage.tsx"
+      ],
+      "acceptanceCriteria": [
+        "Align nullable selected combo prop with the actual optional targetCombo UI contract without unsafe casts",
+        "Focused type diagnostics for this page are zero",
+        "Direct ESLint passes"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6p-20261014.baseline.json",
+      "baselineSnapshotSha256": "885c1a1e7810c2a36f9ac2605c3e46e52e845a5dfdd670473e1cc3e08ef4deb3",
+      "reportTo": "amri",
+      "agent": "babyluong",
+      "goal": "Declare and initialize receiptDate and issueDate state used by inventory stock movement scanner",
+      "dependencies": [
+        "Controlled scanner QA reproduces ReferenceError on QR/manual item selection"
+      ],
+      "allowedPaths": [
+        "src/modules/inventory/pages/inventory/StockMovementScannerPage.tsx"
+      ],
+      "acceptanceCriteria": [
+        "Receipt and issue date state is initialized and used by form and mutation paths",
+        "QR/manual selection renders transaction form without ReferenceError",
+        "Focused TypeScript diagnostics and ESLint pass"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6q-20261014.baseline.json",
+      "baselineSnapshotSha256": "A0D7A9995DFFDBAF118687663964E8632FC5AAAB720E2251908DAE88FD5E772A",
+      "reportTo": "amri",
+      "agent": "amri",
+      "goal": "Pin Phase6q baseline for atomic stock-history clear RPC integration",
+      "dependencies": [
+        "Migration 090 final hash recorded before service edits"
+      ],
+      "allowedPaths": [
+        "docs/audits/home-fixes-phase6q-20261014.baseline.json"
+      ],
+      "acceptanceCriteria": [
+        "Preserve captured snapshot bytes",
+        "Keep snapshot SHA-256 pinned"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6q-20261014.baseline.json",
+      "baselineSnapshotSha256": "A0D7A9995DFFDBAF118687663964E8632FC5AAAB720E2251908DAE88FD5E772A",
+      "reportTo": "amri",
+      "agent": "babyhien",
+      "goal": "Integrate inventory reset service with the atomic stock-history RPC",
+      "dependencies": [
+        "Migration 090 defines clear_stock_history_and_reset_inventory(uuid,uuid) and exact count keys",
+        "Current service-only tests cover filters but need RPC contract updates"
+      ],
+      "allowedPaths": [
+        "src/modules/inventory/services/inventoryService.ts"
+      ],
+      "acceptanceCriteria": [
+        "Call RPC with p_hospital_id and nullable p_item_id instead of separate destructive queries",
+        "Map returned count keys into existing ApiResponse contract",
+        "Propagate RPC errors without false success or local fallback",
+        "Focused ESLint and TypeScript diagnostics reported"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6q-20261014.baseline.json",
+      "baselineSnapshotSha256": "A0D7A9995DFFDBAF118687663964E8632FC5AAAB720E2251908DAE88FD5E772A",
+      "reportTo": "amri",
+      "agent": "babyaaralyn",
+      "goal": "Test database migration 090 authorization, tenant boundaries, audit and atomic rollback with isolated PostgreSQL",
+      "dependencies": [
+        "Migration 090 stable",
+        "Use isolated PGlite fixtures based on tests/home-store-locations-rls.sql and migrations 012, 068, 089, 090",
+        "No remote or production database"
+      ],
+      "allowedPaths": [
+        "tests/home-stock-history-clear.sql",
+        "tests/home-stock-history-clear.test.cjs",
+        "docs/test-reports/2026-10-14-stock-history-clear-qa.md"
+      ],
+      "acceptanceCriteria": [
+        "Authorized hospital admin/permission actor can clear only own hospital/item",
+        "Ordinary, inactive, cross-tenant, anonymous and direct-delete actors denied",
+        "Audit rows persist for transaction, batch and facility changes",
+        "Injected audit/sub-operation failure rolls back all changes",
+        "No production data or external requests; report skips as unverified"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6q-20261014.baseline.json",
+      "baselineSnapshotSha256": "A0D7A9995DFFDBAF118687663964E8632FC5AAAB720E2251908DAE88FD5E772A",
+      "reportTo": "amri",
+      "agent": "amri",
+      "goal": "Preserve existing Supabase CLI metadata file discovered during Phase6q boundary validation",
+      "dependencies": [
+        "Keep exact file bytes",
+        "Do not treat as generated scratch or delete"
+      ],
+      "allowedPaths": [
+        "supabase/.temp/cli-latest"
+      ],
+      "acceptanceCriteria": [
+        "Do not modify or delete the existing metadata file",
+        "Preserve it as project state"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6r-20261014.baseline.json",
+      "baselineSnapshotSha256": "477513d1282b22efdb59832e9701ea105d65d2d1eef9a510409c2265298f4353",
+      "reportTo": "amri",
+      "agent": "amri",
+      "goal": "Pin Phase6r baseline before inventory service type and lint cleanup",
+      "dependencies": [
+        "Phase6q atomic RPC integration source handoff completed"
+      ],
+      "allowedPaths": [
+        "docs/audits/home-fixes-phase6r-20261014.baseline.json"
+      ],
+      "acceptanceCriteria": [
+        "Keep captured snapshot bytes unchanged",
+        "Keep SHA-256 digest pinned"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6r-20261014.baseline.json",
+      "baselineSnapshotSha256": "477513d1282b22efdb59832e9701ea105d65d2d1eef9a510409c2265298f4353",
+      "reportTo": "amri",
+      "agent": "babyhien",
+      "goal": "Reduce inventoryService lint/type debt without changing data or authorization behavior",
+      "dependencies": [
+        "RPC integration is complete and migration 090 is stable",
+        "No shared type files are assigned"
+      ],
+      "allowedPaths": [
+        "src/modules/inventory/services/inventoryService.ts"
+      ],
+      "acceptanceCriteria": [
+        "Resolve service-local lint errors with meaningful types and no broad suppression",
+        "Remove @ts-nocheck only if all exposed diagnostics can be corrected using evidence-backed local types",
+        "Do not alter queries, tenant filters, cache semantics, or fallback behavior",
+        "Report direct ESLint and focused/full TSC; stop and report any errors requiring shared type ownership"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6r-20261014.baseline.json",
+      "baselineSnapshotSha256": "477513d1282b22efdb59832e9701ea105d65d2d1eef9a510409c2265298f4353",
+      "reportTo": "amri",
+      "agent": "babyluong",
+      "goal": "Resolve remaining scanner-page lint errors without changing the now-passing scan behavior",
+      "dependencies": [
+        "Phase6p scanner browser test passes 4/4 against source with local date fields",
+        "Phase6r baseline contains the current page state"
+      ],
+      "allowedPaths": [
+        "src/modules/inventory/pages/inventory/StockMovementScannerPage.tsx"
+      ],
+      "acceptanceCriteria": [
+        "Fix the five assigned-page lint errors and two warnings with meaningful types and correct hook dependencies",
+        "No new suppressions or behavior changes",
+        "Direct ESLint exits 0",
+        "Coordinate QA rerun after code handoff"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6s-20261014.baseline.json",
+      "baselineSnapshotSha256": "88b3f249da4623b5a48dc47c81e1df226f2d32eff243f184deba1ca5ead8f119",
+      "reportTo": "amri",
+      "agent": "amri",
+      "goal": "Pin Phase6s type-contract baseline for inventory service diagnostics",
+      "dependencies": [
+        "Phase6r measured 75 diagnostics after suppressions probe",
+        "Only source evidence-backed contracts are in scope"
+      ],
+      "allowedPaths": [
+        "docs/audits/home-fixes-phase6s-20261014.baseline.json"
+      ],
+      "acceptanceCriteria": [
+        "Preserve snapshot bytes",
+        "Keep pinned SHA-256"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6s-20261014.baseline.json",
+      "baselineSnapshotSha256": "88b3f249da4623b5a48dc47c81e1df226f2d32eff243f184deba1ca5ead8f119",
+      "reportTo": "amri",
+      "agent": "babyhien",
+      "goal": "Correct shared inventory type contracts evidenced by service compiler diagnostics",
+      "dependencies": [
+        "75 compiler diagnostics were captured with suppression temporarily removed from inventoryService",
+        "Use existing migrations, backup schema, and actual service callers; do not invent fields"
+      ],
+      "allowedPaths": [
+        "src/types/pharmacy/index.ts",
+        "src/services/pharmacy/facilityDrugInventoryService.ts",
+        "src/services/pharmacy/facilityNonDrugInventoryService.ts"
+      ],
+      "acceptanceCriteria": [
+        "Add or correct shared fields/nullability only where schema and current query projections establish them",
+        "Align facility item contracts to actual loader projection fields consumed by inventoryService",
+        "Do not use any or broad suppression to silence compiler errors",
+        "Report focused/full TSC and any diagnostics remaining in inventoryService"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6s-20261014.baseline.json",
+      "baselineSnapshotSha256": "88b3f249da4623b5a48dc47c81e1df226f2d32eff243f184deba1ca5ead8f119",
+      "reportTo": "amri",
+      "agent": "babyluong",
+      "goal": "Diagnose and resolve the reproducible alternatives-directory browser menu timeout",
+      "dependencies": [
+        "Current Formulary full browser file reports alternatives/pending click timeout; focused Lawas Retry passes",
+        "Do not weaken QA assertions or fabricate catalog content"
+      ],
+      "allowedPaths": [
+        "src/modules/myformulari/pages/DrugAlternativesPage.tsx"
+      ],
+      "acceptanceCriteria": [
+        "Trace whether the menu click timeout is a product UI defect or fixture/runtime issue",
+        "If product issue, fix only the page without changing clinical/disruption data semantics",
+        "Focused ESLint and TypeScript diagnostics pass",
+        "Report exact evidence for QA follow-up"
+      ]
+    },
+    {
+      "taskId": "HOME-FIXES-20261013",
+      "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+      "baselineSnapshotPath": "docs/audits/home-fixes-phase6s-20261014.baseline.json",
+      "baselineSnapshotSha256": "88b3f249da4623b5a48dc47c81e1df226f2d32eff243f184deba1ca5ead8f119",
+      "reportTo": "amri",
+      "agent": "babyaaralyn",
+      "goal": "Isolate Formulary alternatives tab timeout with source and bundle stability evidence",
+      "dependencies": [
+        "Prior saved scenarios for alternatives loading, success and retry passed",
+        "A later full file run timed out before click activation, without a page error"
+      ],
+      "allowedPaths": [
+        "tests/home-formulari-assets.test.cjs",
+        "docs/test-reports/2026-10-14-formulary-alternatives-diagnostic.md"
+      ],
+      "acceptanceCriteria": [
+        "Rerun only alternatives pending/retry scenarios against stable source and bundle hashes",
+        "Capture DOM visibility, enabled state, bounding rectangle and click event progression",
+        "Capture page errors/disconnects and external request count",
+        "Do not weaken assertions or modify product source",
+        "Report whether outcome is PASS, FAIL, or environment/runtime BLOCKED"
+      ]
+    }
+  ],
+  "status": "IMPLEMENTING_PRIORITY_CORRECTIONS",
+  "recoveryDecision": {
+    "date": "2026-10-14",
+    "authorizedBy": "user",
+    "decision": "Recover the six affected procurement pages from task checkpoint 9933c72 (2026-10-13 23:42 +08), saved before the cleanup incident and containing the task page changes. User authorized reconstruction from the nearest Git version. Original task-start edits are not byte-for-byte verified; disclose provenance limits.",
+    "paths": [
+      "src/modules/procurement/pages/procurement/APPLPenaltyDetailPage.tsx",
+      "src/modules/procurement/pages/procurement/GoodsReceivingForm.tsx",
+      "src/modules/procurement/pages/procurement/LPOListPage.tsx",
+      "src/modules/procurement/pages/procurement/OrderTrackingPage.tsx",
+      "src/modules/procurement/pages/procurement/PurchaseOrderCreatePage.tsx",
+      "src/modules/procurement/pages/procurement/PurchaseOrderDetailView.tsx"
+    ],
+    "sourceCommit": "9933c72f8cd17261a17d4790fd93cf38a7d331c9"
+  },
+  "rulesAuditCheckpoint": {
+    "date": "2026-10-14",
+    "initialResult": "39 BLOCKs, 1062 WARNINGs",
+    "ownerResolution": "Existing babyhien and babyluong slices; no path ownership override",
+    "logPath": "scratch/home-fixes-rules-20261014.log"
+  }
+}

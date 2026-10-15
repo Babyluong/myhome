@@ -2,9 +2,9 @@
 import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { History, RefreshCw, ArrowRight, ShieldCheck, UserCheck, Camera, Lock, Key, Clock, FileText } from 'lucide-react'
-import { Badge, Spinner } from '@/components/ui'
+import { Spinner } from '@/components/ui'
 import { getUserProfileAuditLogs, type ProfileAuditLogItem } from '../services/profileService'
-import { formatDate } from '@/lib/utils'
+import '@/lib/utils'
 
 interface ProfileChangeLogCardProps {
   userId: string

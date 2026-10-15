@@ -1,12 +1,8 @@
 // @ts-nocheck
 import React, { useState, useEffect, useRef } from 'react';
-import { 
-  X, Plus, Trash2, ArrowDownToLine, Building2, Truck, FileText, 
-  User as UserIcon, Calendar, CheckCircle2, AlertCircle, Sparkles, 
-  Clipboard, Hash, ShieldCheck, Check, Search, MapPin
-} from 'lucide-react';
+import { X, Plus, Trash2, ArrowDownToLine, Building2, Truck, FileText, User as UserIcon, CheckCircle2, AlertCircle, Clipboard, Hash, Check, Search } from 'lucide-react'
 import type { User } from '@/types';
-import { COMMON_EXTERNAL_FACILITIES } from '@/modules/mycylinder/constants/externalFacilities';
+import '@/modules/mycylinder/constants/externalFacilities'
 import { supabase } from '@/services/supabase';
 
 interface ItemBatch {

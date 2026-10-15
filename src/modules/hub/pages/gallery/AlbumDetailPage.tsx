@@ -1,27 +1,14 @@
 // @ts-nocheck
 import React, { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { 
-  ArrowLeft, 
-  Plus, 
-  Trash2, 
-  Image as ImageIcon,
-  Upload,
-  X,
-  Maximize2,
-  Download,
-  Loader2,
-  ChevronLeft,
-  ChevronRight,
-  MoreVertical
-} from 'lucide-react'
+import { ArrowLeft, Trash2, Image as ImageIcon, Upload, X, Maximize2, Download, Loader2, ChevronLeft, ChevronRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ROUTES } from '@/lib/constants'
 import { supabase } from '@/services/supabase'
 import { useAuthStore } from '@/stores/authStore'
-import { Button, Modal, Spinner, ConfirmationDialog } from '@/shared/components/ui'
+import { Button, Spinner, ConfirmationDialog } from '@/shared/components/ui'
 import { useToast } from '@/stores/toastStore'
-import { cn, generateId } from '@/shared/lib/utils'
+import { generateId } from '@/shared/lib/utils'
 
 interface Photo {
   id: string

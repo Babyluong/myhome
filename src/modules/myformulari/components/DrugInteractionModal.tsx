@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
-import { X, ShieldAlert, AlertTriangle, CheckCircle2, Search, Plus, Trash2, ArrowRight } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { X, ShieldAlert, CheckCircle2, Search } from 'lucide-react'
 import { DrugEntry } from '../types/formulariTypes'
-import { checkDrugInteractions } from '../services/formulariService'
+import { checkDrugInteractions, FormulariAssetError } from '../services/formulariService'
 
 interface DrugInteractionModalProps {
   isOpen: boolean
@@ -18,6 +18,36 @@ export const DrugInteractionModal: React.FC<DrugInteractionModalProps> = ({
 }) => {
   const [selectedIds, setSelectedIds] = useState<string[]>(initialDrug ? [initialDrug.id] : [])
   const [searchTerm, setSearchTerm] = useState('')
+  const [interactions, setInteractions] = useState<Awaited<ReturnType<typeof checkDrugInteractions>>>([])
+  const [isChecking, setIsChecking] = useState(false)
+  const [interactionError, setInteractionError] = useState<string | null>(null)
+  const [canRetryInteractions, setCanRetryInteractions] = useState(true)
+  const [retryVersion, setRetryVersion] = useState(0)
+
+  useEffect(() => {
+    if (!isOpen || selectedIds.length < 2) {
+      setInteractions([])
+      setInteractionError(null)
+      setIsChecking(false)
+      return
+    }
+
+    let isCurrent = true
+    setIsChecking(true)
+    setInteractionError(null)
+    void checkDrugInteractions(selectedIds).then(results => {
+      if (isCurrent) setInteractions(results)
+    }).catch(error => {
+      if (isCurrent) {
+        setInteractionError(error instanceof FormulariAssetError ? error.message : 'Interaction data is unavailable. Please try again.')
+        setCanRetryInteractions(!(error instanceof FormulariAssetError) || error.retryable)
+      }
+    }).finally(() => {
+      if (isCurrent) setIsChecking(false)
+    })
+
+    return () => { isCurrent = false }
+  }, [isOpen, selectedIds, retryVersion])
 
   if (!isOpen) return null
 
@@ -39,8 +69,6 @@ export const DrugInteractionModal: React.FC<DrugInteractionModalProps> = ({
   )
 
   const selectedDrugs = allDrugs.filter(d => selectedIds.includes(d.id))
-  const interactions = checkDrugInteractions(selectedIds)
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
       <div className="bg-surface rounded-3xl border border-border-default shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
@@ -145,6 +173,15 @@ export const DrugInteractionModal: React.FC<DrugInteractionModalProps> = ({
             {selectedDrugs.length < 2 ? (
               <div className="p-8 text-center bg-subtle/50 rounded-2xl border border-dashed border-border-default text-text-muted text-xs">
                 Sila tambah sekurang-kurangnya 2 ubat untuk menjalankan semakan keselamatan silang.
+              </div>
+            ) : isChecking ? (
+              <p className="p-6 text-center text-sm text-text-secondary" role="status" aria-live="polite">Checking interaction data…</p>
+            ) : interactionError ? (
+              <div className="p-6 text-center rounded-2xl border border-border-default bg-subtle/50" role="alert">
+                <p className="text-sm text-text-primary">{interactionError}</p>
+                <button type="button" onClick={() => canRetryInteractions ? setRetryVersion(version => version + 1) : window.location.reload()} className="mt-3 rounded-lg bg-accent-base px-4 py-2 text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-base focus-visible:outline-offset-2">
+                  {canRetryInteractions ? 'Try again' : 'Reload app'}
+                </button>
               </div>
             ) : interactions.length === 0 ? (
               <div className="p-6 bg-emerald-500/10 rounded-2xl border border-emerald-500/20 flex items-center gap-3 text-emerald-400 dark:text-emerald-300 font-bold text-xs">

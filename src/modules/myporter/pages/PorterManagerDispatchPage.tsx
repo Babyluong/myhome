@@ -1,25 +1,9 @@
 // src/modules/myporter/pages/PorterManagerDispatchPage.tsx
 import React, { useEffect, useState } from 'react'
-import { 
-  Shield, 
-  Users, 
-  MapPin, 
-  Clock, 
-  AlertTriangle, 
-  CheckCircle2, 
-  TrendingUp, 
-  UserPlus, 
-  ChevronRight, 
-  RefreshCw,
-  Search,
-  Filter,
-  Flame,
-  Radio,
-  ArrowRight
-} from 'lucide-react'
-import { useAuthStore } from '@/stores/authStore'
+import { Shield, Users, AlertTriangle, UserPlus, RefreshCw, Flame, Radio } from 'lucide-react'
+import '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
-import { Button, Input, Modal, Card, CardHeader, CardTitle, CardContent, Badge } from '@/components/ui'
+import { Button, Modal } from '@/components/ui'
 import { 
   getPorterStats, 
   getPorterJobs, 
@@ -37,10 +21,10 @@ import { soundAlert } from '../components/PorterAudioAlert'
 export const PorterManagerDispatchPage: React.FC = () => {
   const toast = useToast()
 
-  const [stats, setStats] = useState<PorterAggregateStats | null>(null)
+  const [, setStats] = useState<PorterAggregateStats | null>(null)
   const [jobs, setJobs] = useState<PorterJobRequest[]>([])
   const [porters, setPorters] = useState<PorterProfile[]>([])
-  const [loading, setLoading] = useState(true)
+  const [, setLoading] = useState(true)
 
   // Manual Dispatch Modal
   const [selectedJob, setSelectedJob] = useState<PorterJobRequest | null>(null)

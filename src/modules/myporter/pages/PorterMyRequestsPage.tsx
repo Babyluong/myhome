@@ -1,25 +1,12 @@
 // src/modules/myporter/pages/PorterMyRequestsPage.tsx
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  ClipboardList, 
-  Plus, 
-  Search, 
-  Filter, 
-  MapPin, 
-  Clock, 
-  XCircle, 
-  Phone, 
-  Shield, 
-  CheckCircle2, 
-  ArrowRight,
-  AlertCircle
-} from 'lucide-react'
+import { ClipboardList, Plus, Search, Clock, CheckCircle2 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
-import { Button, Input, Modal, Badge } from '@/components/ui'
+import { Button, Modal } from '@/components/ui'
 import { getPorterJobs, cancelPorterJob } from '../services/porterService'
-import type { PorterJobRequest, PorterJobStatus } from '@/shared/types/myporter'
+import type { PorterJobRequest } from '@/shared/types/myporter'
 import { JobStatusBadge, UrgencyBadge } from '../components/PorterStatusBadge'
 import { PorterJobTrackerStepper } from '../components/PorterJobTrackerStepper'
 
@@ -29,7 +16,7 @@ export const PorterMyRequestsPage: React.FC = () => {
   const toast = useToast()
 
   const [jobs, setJobs] = useState<PorterJobRequest[]>([])
-  const [loading, setLoading] = useState(true)
+  const [, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'active' | 'completed' | 'all'>('active')
   const [searchQuery, setSearchQuery] = useState('')
 

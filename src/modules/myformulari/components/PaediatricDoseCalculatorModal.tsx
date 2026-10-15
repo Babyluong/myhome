@@ -1,30 +1,5 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react'
-import {
-  Calculator,
-  X,
-  Baby,
-  Sparkles,
-  AlertCircle,
-  CheckCircle2,
-  Scale,
-  Info,
-  Layers,
-  Clock,
-  Pill,
-  Plus,
-  Edit3,
-  Trash2,
-  Building2,
-  Download,
-  Upload,
-  RotateCcw,
-  Search,
-  Zap,
-  BookmarkPlus,
-  ShieldAlert,
-  ArrowRight,
-  Filter
-} from 'lucide-react'
+import { Calculator, X, Baby, AlertCircle, CheckCircle2, Scale, Info, Layers, Clock, Pill, Plus, Edit3, Trash2, Download, Upload, RotateCcw, Search, Zap, BookmarkPlus, ShieldAlert } from 'lucide-react'
 import {
   PaediatricDrugPreset,
   PaediatricIndication,

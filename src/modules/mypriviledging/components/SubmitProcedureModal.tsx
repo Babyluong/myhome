@@ -3,23 +3,10 @@
 // Full English default with seamless language toggle support
 
 import React, { useState, useEffect, useMemo } from 'react';
-import {
-  X,
-  FileCheck2,
-  Calendar,
-  Building,
-  Upload,
-  AlertCircle,
-  Paperclip,
-  Trash2
-} from 'lucide-react';
+import { X, FileCheck2, Upload, AlertCircle, Paperclip, Trash2 } from 'lucide-react'
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/shared/contexts/LanguageContext';
-import {
-  ALL_PROCEDURE_CATEGORIES,
-  getCategoriesForRole,
-  findCategoryById
-} from '../data/procedureCatalogData';
+import { getCategoriesForRole } from '../data/procedureCatalogData'
 import type {
   ProcedureSubmission,
   ProcedureCategory,

@@ -1,17 +1,7 @@
 // src/modules/mycrossborder/pages/CrossborderDetailPage.tsx
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  Trash2, 
-  Send, 
-  CheckCircle, 
-  XCircle, 
-  FileText, 
-  Stamp, 
-  Check, 
-  AlertCircle
-} from 'lucide-react';
+import { ArrowLeft, Trash2, Send, XCircle, FileText, Stamp, Check } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore';
 import { useToast } from '@/stores/toastStore';
 import { useLanguage } from '@/shared/contexts/LanguageContext';
@@ -28,7 +18,7 @@ import {
   generatePermissionLetterPDF
 } from '../services/crossborderPdfService';
 import type { CrossborderTransfer } from '@/shared/types/mycrossborder';
-import { Card, CardContent, Button, Badge } from '@/components/ui';
+import { Card, Button, Badge } from '@/components/ui'
 import { formatDate } from '@/lib/utils';
 
 export const CrossborderDetailPage: React.FC = () => {

@@ -1,16 +1,7 @@
 // src/modules/myperolehan/components/BudgetSummaryCards.tsx
 import React from 'react'
 import { motion } from 'framer-motion'
-import {
-  Wallet,
-  Clock,
-  CheckCircle2,
-  PieChart,
-  ArrowRight,
-  Building,
-  HardHat,
-  ChevronRight
-} from 'lucide-react'
+import { Wallet, Clock, CheckCircle2, PieChart, Building, HardHat, ChevronRight } from 'lucide-react'
 import type { OverallPerolehanKPIs } from '@/shared/types/myperolehan'
 
 interface BudgetSummaryCardsProps {

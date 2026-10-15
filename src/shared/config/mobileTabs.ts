@@ -1,3 +1,4 @@
+import { isPharmacyLogisticsUser } from '@/shared/utils/inventoryRbac'
 export interface MobileTabItem {
   id: string
   label: string
@@ -138,7 +139,8 @@ export const MODULE_MOBILE_TABS: Record<string, MobileTabItem[]> = {
  */
 export function getMobileTabsForModule(
   moduleCode: string | null | undefined,
-  userRole?: string
+  userRole?: string,
+  user?: any
 ): MobileTabItem[] {
   if (!moduleCode) return []
 
@@ -153,7 +155,22 @@ export function getMobileTabsForModule(
 
   const tabs = MODULE_MOBILE_TABS[normalizedCode]
   if (!tabs) return []
-  if (!userRole) return tabs
 
-  return tabs.filter((t) => !t.roles || t.roles.includes(userRole))
+  let resolvedTabs = tabs
+  if (normalizedCode === 'inventory') {
+    const isLogistics = isPharmacyLogisticsUser(user)
+    resolvedTabs = tabs.map((t) => {
+      if (t.id === 'inv-drugs') {
+        return {
+          ...t,
+          to: isLogistics ? '/pharmacy/inventory/drugs' : '/pharmacy/inventory/facility-drugs',
+        }
+      }
+      return t
+    })
+  }
+
+  if (!userRole) return resolvedTabs
+
+  return resolvedTabs.filter((t) => !t.roles || t.roles.includes(userRole))
 }

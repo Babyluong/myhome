@@ -1,34 +1,13 @@
 // @ts-nocheck
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import {
-  Search,
-  Plus,
-  X,
-  Edit,
-  Download,
-  FileUp,
-  Building2,
-  Phone,
-  Mail,
-  MapPin,
-  Calendar,
-  DollarSign,
-  ShoppingCart,
-  TrendingUp,
-  Package,
-  FileText,
-  ExternalLink,
-  AlertCircle,
-  ChevronRight,
-  Sparkles,
-} from 'lucide-react'
+import { Search, Plus, X, Edit, Building2, Phone, Mail, MapPin, Calendar, DollarSign, ShoppingCart, TrendingUp, Package, FileText, ExternalLink, AlertCircle, ChevronRight, Sparkles } from 'lucide-react'
 import { Button, Input, Select, Badge, Pagination, Modal, LoadingOverlay, Spinner } from '@/components/ui'
 import { PDFUpload } from '@/components/ui/PDFUpload'
 import { useToastStore } from '@/stores/toastStore'
 import { useAuthStore } from '@/stores/authStore'
 import type { Supplier, SupplierType } from '@/types/pharmacy'
-import { DEFAULT_PAGE_SIZE } from '@/lib/constants'
+import '@/lib/constants'
 import { supabase, isSupabaseConfigured } from '@/services/supabase'
 import {
   getSuppliers,
@@ -38,7 +17,7 @@ import {
   type SupplierFilter,
   type SupplierStatistics,
 } from '@/services/pharmacy/procurementService'
-import { cn, formatCurrency } from '@/lib/utils'
+import { formatCurrency } from '@/lib/utils'
 
 // =====================================================
 // KPI CARD
@@ -51,28 +30,7 @@ interface KPICardProps {
   icon?: React.ReactNode
 }
 
-const KPICard: React.FC<KPICardProps> = ({ title, value, color, icon }) => {
-  const colorClasses = {
-    primary: 'bg-gradient-to-br from-teal-50 to-teal-100 border-accent-base/20 text-teal-700',
-    success: 'bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-500/20 text-emerald-700',
-    warning: 'bg-gradient-to-br from-amber-50 to-amber-100 border-amber-500/20 text-amber-700',
-    error: 'bg-gradient-to-br from-rose-50 to-rose-100 border-rose-500/20 text-rose-700',
-  }
 
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className={`rounded-2xl border-2 p-6 ${colorClasses[color]} shadow-sm hover:shadow-md transition-shadow`}
-    >
-      <div className="flex items-center justify-between mb-2">
-        <p className="text-sm font-semibold opacity-90">{title}</p>
-        {icon && <div className="opacity-70">{icon}</div>}
-      </div>
-      <p className="text-4xl font-bold">{value.toLocaleString()}</p>
-    </motion.div>
-  )
-}
 
 // =====================================================
 // SUPPLIER CARD

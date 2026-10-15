@@ -1,46 +1,12 @@
 // @ts-nocheck
 import React, { useEffect, useState, useMemo } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import {
-  FileText,
-  Plus,
-  Calendar,
-  DollarSign,
-  TrendingUp,
-  Building2,
-  Package,
-  AlertTriangle,
-  X,
-  Search,
-  Filter,
-  ChevronDown,
-  ChevronRight,
-  ChevronLeft,
-  ChevronsLeft,
-  ChevronsRight,
-  BarChart3,
-  PieChart,
-  Wallet,
-  FileSpreadsheet,
-  Check,
-  Edit,
-  Trash2,
-  User,
-  Clock,
-  RefreshCw,
-  BarChart2,
-  Sparkles,
-  LayoutGrid,
-  CheckCircle2,
-  AlertCircle,
-  Table as TableIcon,
-  Layers,
-} from 'lucide-react'
+import { motion } from 'framer-motion'
+import { FileText, Plus, DollarSign, TrendingUp, AlertTriangle, X, Search, ChevronDown, ChevronRight, ChevronLeft, ChevronsLeft, ChevronsRight, PieChart, Wallet, Edit, Trash2, User, Clock, RefreshCw, BarChart2, Sparkles, LayoutGrid, AlertCircle, Table as TableIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useAuthStore } from '@/stores/authStore'
-import { Spinner, Button, Input, Select, Badge, Modal, DataTable } from '@/components/ui'
+import { Spinner, Button, Input, Badge, Modal } from '@/components/ui'
 import { useToastStore } from '@/stores/toastStore'
 import {
   getWarrants,
@@ -116,7 +82,7 @@ export const WarrantPage: React.FC = () => {
   const [warrants, setWarrants] = useState<Warrant[]>([])
   const [summary, setSummary] = useState<WarrantSummary | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [, setError] = useState<string | null>(null)
   const [isFormOpen, setIsFormOpen] = useState(false)
   const [isDetailsOpen, setIsDetailsOpen] = useState(false)
   const [selectedWarrant, setSelectedWarrant] = useState<(Warrant & { created_by_user?: { full_name: string; email: string } }) | null>(null)

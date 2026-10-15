@@ -2,25 +2,8 @@
 // Catalog & Suppliers management component matching Screenshot 2 design & specifications
 
 import React, { useState, useMemo } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Search,
-  Download,
-  Plus,
-  Layers,
-  ChevronDown,
-  ChevronUp,
-  Edit2,
-  Trash2,
-  Tag,
-  Building,
-  Phone,
-  Mail,
-  MapPin,
-  FileCheck2,
-  MoreVertical,
-  CheckCircle2
-} from 'lucide-react'
+import { motion } from 'framer-motion'
+import { Search, Download, Plus, Layers, ChevronDown, ChevronUp, Edit2, Trash2, Tag, Building, Phone, Mail, MapPin, FileCheck2 } from 'lucide-react'
 import { Button } from '@/components/ui'
 import { useToast } from '@/stores/toastStore'
 import { deletePerihalItem } from '../../services/perolehanAdminService'

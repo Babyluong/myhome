@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React, { useState } from 'react'
 import { ClipboardCheck, Plus, Calendar, AlertTriangle, CheckCircle, Clock } from 'lucide-react'
-import { Table, Badge, Button, Select, Input } from '@/components/ui'
+import { Table, Badge, Button, Select } from '@/components/ui'
 import type { VerificationType, VerificationStatus } from '@/types/pharmacy'
 
 // Mock data for demonstration

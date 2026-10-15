@@ -1,15 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import {
-  History,
-  User,
-  Clock,
-  ChevronDown,
-  ChevronUp,
-  Loader2,
-  AlertCircle,
-  FileText,
-  ShieldCheck
-} from 'lucide-react'
+import { History, User, Clock, ChevronDown, ChevronUp, Loader2, AlertCircle, ShieldCheck } from 'lucide-react'
 import type { PrepackFormulationAuditLog } from '../../types/prepack'
 import { getPrepackItemAuditLogs } from '../../services/prepackService'
 

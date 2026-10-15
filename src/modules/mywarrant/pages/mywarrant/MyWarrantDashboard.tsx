@@ -1,27 +1,13 @@
 // @ts-nocheck
 import React, { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { 
-  BarChart3, 
-  Wallet, 
-  FileText, 
-  ShoppingCart, 
-  PieChart, 
-  Activity, 
-  Clock, 
-  ArrowRight, 
-  ClipboardList, 
-  LayoutDashboard, 
-  Loader2,
-  Sparkles,
-  ChevronRight
-} from 'lucide-react'
+import { BarChart3, Wallet, FileText, ShoppingCart, PieChart, Activity, Clock, ArrowRight, ClipboardList, LayoutDashboard } from 'lucide-react'
 import { Skeleton } from '@/shared/components/ui/skeleton'
 import { ModulePageHeader } from '@/components/ui'
 import { ROUTES } from '@/lib/constants'
 import { cn } from '@/lib/utils'
 import { supabase } from '@/services/supabase'
-import { motion } from 'framer-motion'
+import 'framer-motion'
 
 interface DashboardStats {
   totalBudget: number

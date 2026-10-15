@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import { supabase } from '@/services/supabase'
 import { useAuthStore } from '@/stores/authStore'
@@ -36,6 +35,10 @@ import { parsePaymentExcel } from '@/modules/procurement/services/paymentExcelPa
 import type { PaymentExcelRow, ParseError } from '@/modules/procurement/services/paymentExcelParser'
 
 export const PaymentPage: React.FC = () => {
+  type SettlementReceipt = { gr_number?: string | null; delivery_note_number?: string | null; invoice_number?: string | null; receipt_date?: string | null; receiving_date?: string | null; lpo_id?: string | null }
+  type SettlementPenalty = { penalty_amount?: number | null; status?: string | null; days_delayed?: number | null }
+  type SettlementPOItem = { id?: string; item_name?: string | null; item_code?: string | null; quantity_ordered?: number | null; unit_price?: number | null; packaging_description?: string | null }
+  type SettlementPurchaseOrder = { actual_delivery_date?: string | null; items?: SettlementPOItem[] }
   const { user } = useAuthStore()
   const hospitalId = user?.hospital_id
   const toast = useToastStore()
@@ -60,9 +63,9 @@ export const PaymentPage: React.FC = () => {
   const [selectedLpo, setSelectedLpo] = useState<LPOListItem | null>(null)
   const [isWorkspaceOpen, setIsWorkspaceOpen] = useState(false)
   const [isLoadingWorkspaceDetails, setIsLoadingWorkspaceDetails] = useState(false)
-  const [workspaceGrn, setWorkspaceGrn] = useState<any>(null)
-  const [workspacePenalty, setWorkspacePenalty] = useState<any>(null)
-  const [selectedPoItems, setSelectedPoItems] = useState<any[]>([])
+  const [workspaceGrn, setWorkspaceGrn] = useState<SettlementReceipt | null>(null)
+  const [workspacePenalty, setWorkspacePenalty] = useState<SettlementPenalty | null>(null)
+  const [selectedPoItems, setSelectedPoItems] = useState<SettlementPOItem[]>([])
 
   // Settlement Form Fields
   const [effectiveDate, setEffectiveDate] = useState('')
@@ -145,12 +148,12 @@ export const PaymentPage: React.FC = () => {
 
       setUploadPreviewRows(result.rows)
       setUploadErrors(result.errors)
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error parsing payment Excel:', err)
       setUploadErrors([{
         row: 0,
         column: 'File',
-        message: err.message || 'Failed to parse Excel file. Ensure it is a valid Excel format.',
+        message: err instanceof Error ? err.message : 'Failed to parse Excel file. Ensure it is a valid Excel format.',
         severity: 'error'
       }])
     } finally {
@@ -190,7 +193,7 @@ export const PaymentPage: React.FC = () => {
           po:pharmacy_purchase_orders!inner(
             po_number, 
             po_type, 
-            order_date, 
+            order_date, actual_delivery_date,
             total_amount, 
             vote_code, 
             category, 
@@ -207,8 +210,8 @@ export const PaymentPage: React.FC = () => {
 
       if (err) throw err
 
-      const mapped: LPOListItem[] = (data || []).map((lpo: any) => {
-        const po = lpo.po || {}
+      const mapped: LPOListItem[] = (data || []).map((lpo) => {
+        const po = Array.isArray(lpo.po) ? lpo.po[0] || {} : lpo.po || {}
         const supplierData = Array.isArray(po.supplier) ? po.supplier[0] : po.supplier
         return {
           po_id: lpo.po_id,
@@ -229,17 +232,17 @@ export const PaymentPage: React.FC = () => {
           verify_tracking: lpo.verify_tracking,
           payment_status: lpo.payment_status || 'pending',
           sent_for_payment_date: lpo.sent_for_payment_date,
-          item_names: (po.items || []).map((i: any) => i.item_name),
+          item_names: (po.items || []).map((i) => i.item_name),
           
           // Raw nested objects for modals/slide-overs
-          raw_po: po,
+          raw_po: po as SettlementPurchaseOrder,
           bank_name: supplierData?.bank_name || 'MALAYAN BANKING BERHAD (MAYBANK)',
           bank_account: supplierData?.bank_account || '164228940192'
         }
       })
 
       setLpos(mapped)
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching payments:', err)
     } finally {
       setIsLoading(false)
@@ -334,6 +337,7 @@ export const PaymentPage: React.FC = () => {
 
   // Open Payment Workspace split-screen panel
   const openPaymentWorkspace = async (lpo: LPOListItem) => {
+    const rawPurchaseOrder = lpo.raw_po as SettlementPurchaseOrder | null
     setSelectedLpo(lpo)
     setIsWorkspaceOpen(true)
     setIsLoadingWorkspaceDetails(true)
@@ -350,8 +354,8 @@ export const PaymentPage: React.FC = () => {
     // Prepopulate GRN/Invoice values
     let grnNumberVal = ''
     let invoiceNumberVal = ''
-    let grnData: any = null
-    let penaltyData: any = null
+    let grnData: SettlementReceipt | null = null
+    let penaltyData: SettlementPenalty | null = null
 
     try {
       // 1. Fetch goods receipt and receiving history for this LPO/PO
@@ -440,8 +444,8 @@ export const PaymentPage: React.FC = () => {
       let systemReceivedDate = todayStr
       if (grnData && grnData.receipt_date) {
         systemReceivedDate = grnData.receipt_date.split('T')[0]
-      } else if (lpo.actual_delivery_date) {
-        systemReceivedDate = lpo.actual_delivery_date.split('T')[0]
+      } else if (rawPurchaseOrder?.actual_delivery_date) {
+        systemReceivedDate = rawPurchaseOrder.actual_delivery_date.split('T')[0]
       }
       setReceivedDate(systemReceivedDate)
 
@@ -473,8 +477,8 @@ export const PaymentPage: React.FC = () => {
     }
 
     // Set items for display
-    if (lpo.raw_po && lpo.raw_po.items) {
-      setSelectedPoItems(lpo.raw_po.items)
+    if (rawPurchaseOrder?.items) {
+      setSelectedPoItems(rawPurchaseOrder.items)
     } else {
       setSelectedPoItems([])
     }
@@ -514,12 +518,14 @@ export const PaymentPage: React.FC = () => {
         .select('*')
         .in('lpo_id', lpoIds)
 
-      const grMap = new Map<string, any>()
+      const grMap = new Map<string, SettlementReceipt>()
       grs?.forEach(g => {
-        grMap.set(g.lpo_id, g)
+        if (g.lpo_id) grMap.set(g.lpo_id, g)
       })
 
       for (const lpo of eligibleLpos) {
+        if (!lpo.lpo_id) continue
+        const rawPurchaseOrder = lpo.raw_po as SettlementPurchaseOrder | null
         const normalizedKey = (lpo.lpo_number || '').toUpperCase().trim().replace(/\s+/g, '')
         const excelRow = paymentExcelData.get(normalizedKey)
         if (!excelRow) continue
@@ -529,8 +535,8 @@ export const PaymentPage: React.FC = () => {
         let systemReceivedDate = todayStr
         if (grData && grData.receipt_date) {
           systemReceivedDate = grData.receipt_date.split('T')[0]
-        } else if (lpo.actual_delivery_date) {
-          systemReceivedDate = lpo.actual_delivery_date.split('T')[0]
+        } else if (rawPurchaseOrder?.actual_delivery_date) {
+          systemReceivedDate = rawPurchaseOrder.actual_delivery_date.split('T')[0]
         }
 
         const effectiveDateVal = excelRow.paymentDate || todayStr
@@ -579,9 +585,9 @@ export const PaymentPage: React.FC = () => {
 
       alert(`Proses bayaran pukal selesai!\n- Berjaya diluluskan: ${successCount} LPO\n- Gagal: ${failedCount}`)
       void loadLpos()
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err)
-      alert("Ralat berlaku ketika memproses bayaran pukal: " + (err.message || String(err)))
+      alert("Ralat berlaku ketika memproses bayaran pukal: " + (err instanceof Error ? err.message : String(err)))
     } finally {
       setIsBulkAuthorizing(false)
     }
@@ -590,6 +596,7 @@ export const PaymentPage: React.FC = () => {
   // Submit Settlement from Workspace
   const handleAuthorizeDisbursement = async () => {
     if (!selectedLpo || !selectedLpo.lpo_id) return
+    const selectedLpoId = selectedLpo.lpo_id
     
     if (!egrnReference.trim()) {
       toast.error('Required Field', 'Please enter the eGRN Reference number.')
@@ -607,7 +614,7 @@ export const PaymentPage: React.FC = () => {
     setIsProcessing(true)
     try {
       // 1. Update LPO Status in DB to paid
-      const result = await updateLPOPaymentStatus(selectedLpo.lpo_id, 'paid')
+      const result = await updateLPOPaymentStatus(selectedLpoId, 'paid')
       if (result.error) throw new Error(result.error)
 
       // 2. Prepare settlement JSON payload
@@ -640,9 +647,9 @@ export const PaymentPage: React.FC = () => {
       setIsWorkspaceOpen(false)
       setSelectedLpo(null)
       void loadLpos()
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error settling payment:', err)
-      toast.error('Error', err?.message || 'Failed to complete payment settlement.')
+      toast.error('Error', err instanceof Error ? err.message : 'Failed to complete payment settlement.')
     } finally {
       setIsProcessing(false)
     }
@@ -966,13 +973,13 @@ export const PaymentPage: React.FC = () => {
                       }
                       if (cat.includes('vaccine')) {
                         return (
-                          <Badge variant="purple" className="font-extrabold text-[9px] tracking-wider px-2.5 py-0.5 border border-indigo-500/20 bg-indigo-500/10 text-purple-700 rounded-md shadow-3xs uppercase">
+                          <Badge variant="primary" className="font-extrabold text-[9px] tracking-wider px-2.5 py-0.5 border border-indigo-500/20 bg-indigo-500/10 text-purple-700 rounded-md shadow-3xs uppercase">
                             VACCINE
                           </Badge>
                         );
                       }
                       return (
-                        <Badge variant="secondary" className="font-extrabold text-[9px] tracking-wider px-2.5 py-0.5 border border-border-default bg-subtle/50 text-text-secondary rounded-md shadow-3xs uppercase">
+                        <Badge variant="gray" className="font-extrabold text-[9px] tracking-wider px-2.5 py-0.5 border border-border-default bg-subtle/50 text-text-secondary rounded-md shadow-3xs uppercase">
                           {category?.replace('_', ' ') || 'STANDARD'}
                         </Badge>
                       );
@@ -1057,7 +1064,7 @@ export const PaymentPage: React.FC = () => {
                         </td>
                         <td className="px-6 py-5">
                           <div className="space-y-1.5 flex flex-col items-start">
-                            {getCategoryBadge(lpo.category)}
+                            {getCategoryBadge(lpo.category || '')}
                             {lpo.vote_code && (
                               <div className="text-[10px] font-black text-slate-400 uppercase tracking-widest font-mono">
                                 VOTE • {lpo.vote_code}
@@ -1090,7 +1097,7 @@ export const PaymentPage: React.FC = () => {
                           </div>
                         </td>
                         <td className="px-6 py-5 text-center">
-                          {getStatusBadge(lpo.payment_status)}
+                          {getStatusBadge(lpo.payment_status || 'pending')}
                         </td>
                         <td className="px-6 py-5 text-right" onClick={(e) => e.stopPropagation()}>
                           <div className="flex items-center justify-end gap-2.5">
@@ -1289,8 +1296,10 @@ export const PaymentPage: React.FC = () => {
                   </div>
 
                   <div className="space-y-4">
-                    {selectedPoItems.map((item: any, index: number) => {
-                      const totalItemPrice = item.quantity_ordered * item.unit_price
+                    {selectedPoItems.map((item, index) => {
+                      const quantityOrdered = item.quantity_ordered ?? 0
+                      const unitPrice = item.unit_price ?? 0
+                      const totalItemPrice = quantityOrdered * unitPrice
                       return (
                         <div 
                           key={item.id || index}
@@ -1330,7 +1339,7 @@ export const PaymentPage: React.FC = () => {
                           <div className="bg-subtle/50 rounded-lg p-2 border border-border-subtle text-[10px] text-text-muted font-bold flex items-center justify-between">
                             <span>Unit Rate Breakdown</span>
                             <span className="font-mono tabular-nums text-text-secondary">
-                              {item.quantity_ordered} x {formatCurrency(item.unit_price).replace('MYR', 'RM')} = <strong className="text-text-primary">{formatCurrency(totalItemPrice).replace('MYR', 'RM')}</strong>
+                              {quantityOrdered} x {formatCurrency(unitPrice).replace('MYR', 'RM')} = <strong className="text-text-primary">{formatCurrency(totalItemPrice).replace('MYR', 'RM')}</strong>
                             </span>
                           </div>
 
@@ -1362,7 +1371,7 @@ export const PaymentPage: React.FC = () => {
 
                               {/* Right Sub-column: Status/Penalty */}
                               <div className="flex flex-col items-end justify-center">
-                                {workspacePenalty?.days_delayed > 0 || (!workspacePenalty && new Date(workspaceGrn?.receipt_date || new Date(new Date(selectedLpo.document_date || selectedLpo.order_date).getTime() + 15 * 86400000)).getTime() > new Date(selectedLpo.document_date || selectedLpo.order_date).getTime() + 10 * 86400000) ? (
+                                {(workspacePenalty?.days_delayed ?? 0) > 0 || (!workspacePenalty && new Date(workspaceGrn?.receipt_date || new Date(new Date(selectedLpo.document_date || selectedLpo.order_date).getTime() + 15 * 86400000)).getTime() > new Date(selectedLpo.document_date || selectedLpo.order_date).getTime() + 10 * 86400000) ? (
                                   <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-2.5 flex flex-col items-center justify-center text-center shadow-elevation-1 w-full">
                                     <AlertCircle className="w-3.5 h-3.5 text-amber-600 mb-0.5" />
                                     <span className="text-[9px] font-black text-amber-400 uppercase tracking-wider block">

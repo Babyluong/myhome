@@ -1,40 +1,8 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  ExternalLink, 
-  Database, 
-  Clock, 
-  Search, 
-  Plus, 
-  RefreshCw, 
-  X, 
-  Info, 
-  Calendar, 
-  ChevronLeft,
-  ChevronRight,
-  Check, 
-  AlertTriangle, 
-  ArrowRight,
-  ShieldCheck,
-  CheckCircle2,
-  FileText,
-  AlertCircle
-} from 'lucide-react'
+import { ExternalLink, Database, Clock, Search, Plus, RefreshCw, Check, AlertTriangle, ArrowRight, ShieldCheck, FileText, AlertCircle } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
-import { 
-  Button, 
-  Badge, 
-  Spinner, 
-  Modal, 
-  Input, 
-  Select,
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-  Skeleton,
-  ModulePageHeader
-} from '@/components/ui'
+import { Button, Badge, Modal, Input, Tabs, TabsList, TabsTrigger, TabsContent, Skeleton, ModulePageHeader } from '@/components/ui'
 import { isSupabaseConfigured } from '@/services/supabase'
 import { 
   getDiskChangeLogs, 

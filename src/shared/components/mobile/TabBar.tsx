@@ -1,27 +1,6 @@
 import React, { useMemo } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
-import {
-  LayoutGrid,
-  Activity,
-  FileText,
-  Boxes,
-  Thermometer,
-  Key,
-  Users,
-  Truck,
-  Pill,
-  DollarSign,
-  Calendar,
-  Sliders,
-  Clock,
-  PersonStanding,
-  ShieldCheck,
-  ShoppingCart,
-  Building2,
-  Package,
-  MoreHorizontal,
-  WifiOff,
-} from 'lucide-react'
+import { LayoutGrid, Activity, FileText, Boxes, Thermometer, Key, Users, Truck, Pill, DollarSign, Calendar, Sliders, Clock, PersonStanding, ShieldCheck, ShoppingCart, Building2, Package, MoreHorizontal } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { getCurrentModuleInfo } from '@/shared/utils/moduleNavigation'
@@ -67,8 +46,8 @@ export const TabBar: React.FC<TabBarProps> = ({ onOpenMore, isMoreOpen = false }
   }, [location.pathname])
 
   const contextTabs = useMemo(() => {
-    return getMobileTabsForModule(currentModule?.code, user?.role?.role_code)
-  }, [currentModule?.code, user?.role?.role_code])
+    return getMobileTabsForModule(currentModule?.code, user?.role?.role_code, user)
+  }, [currentModule?.code, user?.role?.role_code, user])
 
   const isHubActive = location.pathname === '/hub' || location.pathname === '/'
 
@@ -113,7 +92,11 @@ export const TabBar: React.FC<TabBarProps> = ({ onOpenMore, isMoreOpen = false }
           const IconComp = ICON_MAP[tab.icon] || FileText
           const isTabActive = tab.exact 
             ? location.pathname === tab.to 
-            : location.pathname.startsWith(tab.to)
+            : location.pathname.startsWith(tab.to) ||
+              (tab.id === 'inv-drugs' && (
+                location.pathname.startsWith('/pharmacy/inventory/drugs') ||
+                location.pathname.startsWith('/pharmacy/inventory/facility-drugs')
+              ))
 
           return (
             <NavLink

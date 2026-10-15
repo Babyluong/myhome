@@ -1,7 +1,6 @@
-import { DrugEntry } from '../types/formulariTypes'
-import officialFukkmData from './officialFukkmData.json'
-import { KKM_LASA_MASTER_REGISTRY, getLasaPairsForDrug } from './lasaDatabase'
-import { getKkmDilutionProtocol, KKM_DILUTION_MASTER_DATABASE } from './kkmDilutionMasterDatabase'
+import type { DrugEntry } from '../types/formulariTypes'
+import { getLasaPairsForDrug } from './lasaDatabase'
+import { getKkmDilutionProtocol } from './kkmDilutionMasterDatabase'
 
 const DETAILED_SPECIALIST_MONOGRAPHS: DrugEntry[] = [
   // 1. Concentrated Electrolyte - KCl (HAM CRITICAL)
@@ -2406,90 +2405,118 @@ const DETAILED_SPECIALIST_MONOGRAPHS: DrugEntry[] = [
   }
 ]
 
-const ALL_BASE_FORMULARI_DRUGS: DrugEntry[] = [
-  ...DETAILED_SPECIALIST_MONOGRAPHS,
-  ...(officialFukkmData as DrugEntry[]).filter(
-    kkm => !DETAILED_SPECIALIST_MONOGRAPHS.some(
-      d => d.genericName.toLowerCase().trim() === kkm.genericName.toLowerCase().trim() ||
-           (d.mohDrugCode && kkm.mohDrugCode && d.mohDrugCode === kkm.mohDrugCode)
+const detailedSpecialistNames = new Set(
+  DETAILED_SPECIALIST_MONOGRAPHS.map(drug => drug.genericName.toLowerCase().trim())
+)
+const detailedSpecialistCodes = new Set(
+  DETAILED_SPECIALIST_MONOGRAPHS
+    .map(drug => drug.mohDrugCode)
+    .filter((code): code is string => Boolean(code))
+)
+
+export function buildFormulariDatabase(officialFukkmData: readonly DrugEntry[]): DrugEntry[] {
+  const lasaPairsCache = new Map<string, ReturnType<typeof getLasaPairsForDrug>>()
+  const dilutionProtocolCache = new Map<string, ReturnType<typeof getKkmDilutionProtocol>>()
+
+  const getCachedLasaPairs = (genericName: string) => {
+    const key = genericName.toLowerCase().trim()
+    if (!lasaPairsCache.has(key)) {
+      lasaPairsCache.set(key, getLasaPairsForDrug(genericName))
+    }
+    return (lasaPairsCache.get(key) || []).map(pair => ({ ...pair }))
+  }
+
+  const getCachedDilutionProtocol = (drugName: string) => {
+    const key = drugName.toLowerCase().trim()
+    if (!dilutionProtocolCache.has(key)) {
+      dilutionProtocolCache.set(key, getKkmDilutionProtocol(drugName))
+    }
+    return dilutionProtocolCache.get(key)
+  }
+
+  const ALL_BASE_FORMULARI_DRUGS: DrugEntry[] = [
+    ...DETAILED_SPECIALIST_MONOGRAPHS,
+    ...officialFukkmData.filter(kkm =>
+      !detailedSpecialistNames.has(kkm.genericName.toLowerCase().trim()) &&
+      !(kkm.mohDrugCode && detailedSpecialistCodes.has(kkm.mohDrugCode))
+    ),
+  ]
+
+  return ALL_BASE_FORMULARI_DRUGS.map(drug => {
+    let updatedDrug: DrugEntry = { ...drug }
+
+    // Check if drug is parenteral before attaching dilution protocols
+    const isDefinitelyNonParenteral = Boolean(
+      drug.dosageForms &&
+      drug.dosageForms.some(f => /tablet|capsule|syrup|oral|cream|ointment|gel|lotion|shampoo|suppository|pessary|enema|nasal spray|inhaler|mouthwash|gargle|eye drops|ear drops/i.test(f)) &&
+      !drug.dosageForms.some(f => /inject|infus|ampoul|vial|powder for recon|parenteral/i.test(f))
     )
-  )
-]
 
-export const FORMULARI_DATABASE: DrugEntry[] = ALL_BASE_FORMULARI_DRUGS.map(drug => {
-  let updatedDrug: DrugEntry = { ...drug }
+    const isParenteral = !isDefinitelyNonParenteral && (
+      (drug.dosageForms && drug.dosageForms.some(f => /inject|infus|ampoul|vial|powder for recon|parenteral|iv|im/i.test(f))) ||
+      /\b(injection|infusion|solution for injection|ampoule|vial)\b/i.test(drug.genericName)
+    )
 
-  // Check if drug is parenteral before attaching dilution protocols
-  const isDefinitelyNonParenteral = Boolean(
-    drug.dosageForms &&
-    drug.dosageForms.some(f => /tablet|capsule|syrup|oral|cream|ointment|gel|lotion|shampoo|suppository|pessary|enema|nasal spray|inhaler|mouthwash|gargle|eye drops|ear drops/i.test(f)) &&
-    !drug.dosageForms.some(f => /inject|infus|ampoul|vial|powder for recon|parenteral/i.test(f))
-  )
+    if (isParenteral) {
+      const kkmProtocol = getCachedDilutionProtocol(drug.genericName) ||
+        (drug.brandNames && drug.brandNames.length > 0 ? getCachedDilutionProtocol(drug.brandNames[0]) : undefined)
 
-  const isParenteral = !isDefinitelyNonParenteral && (
-    (drug.dosageForms && drug.dosageForms.some(f => /inject|infus|ampoul|vial|powder for recon|parenteral|iv|im/i.test(f))) ||
-    /\b(injection|infusion|solution for injection|ampoule|vial)\b/i.test(drug.genericName)
-  )
-
-  if (isParenteral) {
-    const kkmProtocol = getKkmDilutionProtocol(drug.genericName) ||
-      (drug.brandNames && drug.brandNames.length > 0 ? getKkmDilutionProtocol(drug.brandNames[0]) : undefined)
-
-    if (kkmProtocol) {
-      updatedDrug = {
-        ...updatedDrug,
-        dilution: {
-          isApplicable: true,
-          compatibleDiluents: kkmProtocol.compatibleDiluents || [kkmProtocol.diluentText],
-          incompatibleDiluents: kkmProtocol.incompatibleDiluents || [],
-          standardDilution: {
-            doseRange: kkmProtocol.rawTitle,
-            volume: kkmProtocol.suggestedMinimumDilutions,
-            finalConcentration: kkmProtocol.suggestedMinimumDilutions,
-            route: 'IV Infusion',
-            infusionDuration: kkmProtocol.administrationText
+      if (kkmProtocol) {
+        updatedDrug = {
+          ...updatedDrug,
+          dilution: {
+            isApplicable: true,
+            compatibleDiluents: kkmProtocol.compatibleDiluents || [kkmProtocol.diluentText],
+            incompatibleDiluents: kkmProtocol.incompatibleDiluents || [],
+            standardDilution: {
+              doseRange: kkmProtocol.rawTitle,
+              volume: kkmProtocol.suggestedMinimumDilutions,
+              finalConcentration: kkmProtocol.suggestedMinimumDilutions,
+              route: 'IV Infusion',
+              infusionDuration: kkmProtocol.administrationText
+            },
+            ySiteCompatibility: {
+              compatible: kkmProtocol.compatibleDiluents || [],
+              incompatible: kkmProtocol.incompatibleDiluents || [],
+              requiresSeparateLine: false
+            },
+            sourceGuideline: kkmProtocol.sourceGuideline,
+            clinicalRemarks: kkmProtocol.comments,
+            references: kkmProtocol.references,
+            monitoringParameters: [
+              'Tanda-tanda vital (Tekanan darah, Nadi, SpO2, Pernafasan)',
+              'Pemantauan tapak infusi (Phlebitis, Ekstravasasi, Kemerahan)',
+              'Kesan terapeutik dan tindak balas klinikal pesakit'
+            ]
           },
-          ySiteCompatibility: {
-            compatible: kkmProtocol.compatibleDiluents || [],
-            incompatible: kkmProtocol.incompatibleDiluents || [],
-            requiresSeparateLine: false
-          },
-          sourceGuideline: kkmProtocol.sourceGuideline,
-          clinicalRemarks: kkmProtocol.comments,
-          references: kkmProtocol.references,
-          monitoringParameters: [
-            'Tanda-tanda vital (Tekanan darah, Nadi, SpO2, Pernafasan)',
-            'Pemantauan tapak infusi (Phlebitis, Ekstravasasi, Kemerahan)',
-            'Kesan terapeutik dan tindak balas klinikal pesakit'
-          ]
-        },
-        reconstitution: {
-          isApplicable: kkmProtocol.isReconstitutionRequired,
-          preferredSolvent: kkmProtocol.isReconstitutionRequired ? 'Water for Injection (WFI)' : undefined,
-          solventVolume: kkmProtocol.isReconstitutionRequired ? kkmProtocol.reconstitutionText : undefined,
-          stepByStepInstructions: kkmProtocol.isReconstitutionRequired ? [kkmProtocol.reconstitutionText] : undefined
+          reconstitution: {
+            isApplicable: kkmProtocol.isReconstitutionRequired,
+            preferredSolvent: kkmProtocol.isReconstitutionRequired ? 'Water for Injection (WFI)' : undefined,
+            solventVolume: kkmProtocol.isReconstitutionRequired ? kkmProtocol.reconstitutionText : undefined,
+            stepByStepInstructions: kkmProtocol.isReconstitutionRequired ? [kkmProtocol.reconstitutionText] : undefined
+          }
         }
       }
     }
-  }
 
-  const dynamicPairs = getLasaPairsForDrug(updatedDrug.genericName)
-  if (dynamicPairs.length > 0) {
-    const existingPairs = updatedDrug.lasaPairs || []
-    const mergedPairs = [...existingPairs]
-    dynamicPairs.forEach(dp => {
-      if (!mergedPairs.some(ep => ep.tallManOther.toLowerCase() === dp.tallManOther.toLowerCase() || ep.confusedWith.toLowerCase() === dp.confusedWith.toLowerCase())) {
-        mergedPairs.push(dp)
+    const dynamicPairs = getCachedLasaPairs(updatedDrug.genericName)
+    if (dynamicPairs.length > 0) {
+      const existingPairs = updatedDrug.lasaPairs || []
+      const mergedPairs = [...existingPairs]
+      dynamicPairs.forEach(dp => {
+        if (!mergedPairs.some(ep => ep.tallManOther.toLowerCase() === dp.tallManOther.toLowerCase() || ep.confusedWith.toLowerCase() === dp.confusedWith.toLowerCase())) {
+          mergedPairs.push(dp)
+        }
+      })
+
+      return {
+        ...updatedDrug,
+        isLASA: true,
+        tallManName: updatedDrug.tallManName || dynamicPairs[0].tallManThis,
+        lasaPairs: mergedPairs
       }
-    })
-
-    return {
-      ...updatedDrug,
-      isLASA: true,
-      tallManName: updatedDrug.tallManName || dynamicPairs[0].tallManThis,
-      lasaPairs: mergedPairs
     }
-  }
-  return updatedDrug
-})
+    return updatedDrug
+  })
+}
 

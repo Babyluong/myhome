@@ -1,24 +1,8 @@
 // src/modules/mytransporter/pages/TransporterAdminApprovalPage.tsx
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  ArrowLeft, 
-  Car, 
-  Check, 
-  X, 
-  Calendar, 
-  FileText, 
-  AlertTriangle, 
-  MapPin, 
-  Clock, 
-  User, 
-  Shield, 
-  ThumbsUp, 
-  ThumbsDown, 
-  Info, 
-  CheckCircle2 
-} from 'lucide-react'
-import { Ambulance } from '../components/AmbulanceIcon'
+import { ArrowLeft, Check, X, FileText, AlertTriangle, MapPin, User, Shield, Info, CheckCircle2 } from 'lucide-react'
+import '../components/AmbulanceIcon'
 import { CrossborderDetailsPanel } from '../components/CrossborderDetailsPanel'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'

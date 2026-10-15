@@ -1,0 +1,24 @@
+[mcp_servers.21st]
+url = "https://21st.dev/api/mcp"
+
+[mcp_servers.21st.env_http_headers]
+"x-api-key" = "HOME_21ST_MCP_API_KEY"
+
+[agents]
+enabled = true
+
+[agents.babybun]
+description = "Plan and slice H.O.M.E. work. Never implement feature code."
+config_file = "agents/babybun.toml"
+
+[agents.babyluong]
+description = "Implement H.O.M.E. frontend work only."
+config_file = "agents/babyluong.toml"
+
+[agents.babyhien]
+description = "Implement H.O.M.E. backend, database, and security work only."
+config_file = "agents/babyhien.toml"
+
+[agents.babyaaralyn]
+description = "Monitor H.O.M.E. task handoffs and verify tests; never edit feature code."
+config_file = "agents/babyaaralyn.toml"

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import React, { useState, useMemo } from 'react';
-import { Search, Filter, Printer, FileText, ChevronLeft, ChevronRight, Eye, CheckCircle, Trash2 } from 'lucide-react';
+import { Search, Printer, ChevronLeft, ChevronRight, Eye, CheckCircle, Trash2 } from 'lucide-react'
 import type { CylinderDispatchRequestWithRelations } from '@/types/pharmacy';
 
 interface CylinderDispatchTableProps {
@@ -183,10 +183,7 @@ export const CylinderDispatchTable: React.FC<CylinderDispatchTableProps> = ({
     }
   };
 
-  const formatItemsSummary = (items: any[] | undefined) => {
-    if (!items || items.length === 0) return 'No items';
-    return items.map((itm) => `${itm.quantity_requested}x ${itm.size_code}`).join(', ');
-  };
+  
 
   return (
     <div className="bg-surface rounded-2xl border border-border-default shadow-xs overflow-hidden mt-6">

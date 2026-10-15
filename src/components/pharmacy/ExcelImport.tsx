@@ -1174,9 +1174,7 @@ export const ExcelImport: React.FC<ExcelImportProps> = ({
     onClose()
   }
 
-  const getFieldLabel = (key: string) => {
-    return targetFields.find(f => f.key === key)?.label || key
-  }
+  
 
   const getUnmappedColumns = () => {
     return excelColumns.filter(col => !mappings.some(m => m.excelColumn === col))

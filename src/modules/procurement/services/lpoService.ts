@@ -7,6 +7,7 @@ import type {
   LPOListItem, 
   LPOStats, 
   LPOUploadData, 
+  POType,
   PharmacyLPO,
   ProcurementFilter
 } from '@/types/pharmacy'
@@ -14,6 +15,113 @@ import { uploadLpoDocument } from '@/services/pharmacy/uploadService'
 import { createOrderTrackingForLPO } from './orderTrackingService'
 
 const ALLOWED_MEDICAL_VOTE_CODES = ['080702', '990102', '080600 (APPL)', '080600 (CC)', '080600']
+
+interface PendingPurchaseOrderRow {
+  id: string
+  po_number: string
+  total_amount: number
+  manual_supplier_name: string | null
+  order_date: string
+  supplier: { company_name: string | null } | Array<{ company_name: string | null }> | null
+  items: Array<{
+    id: string
+    item_name: string
+    item_code?: string
+    quantity_ordered: number
+    unit_price: number
+  }>
+}
+
+interface PendingPurchaseOrderQueryRow extends Omit<PendingPurchaseOrderRow, 'items'> {
+  items: Array<Omit<PendingPurchaseOrderRow['items'][number], 'item_code'> & { item_code: string | null }>
+}
+
+export interface PendingPOForLPO extends Omit<PendingPurchaseOrderRow, 'supplier'> {
+  supplier_name?: string
+}
+
+interface JoinedLPOPurchaseOrder {
+  po_number?: string | null
+  po_type?: POType | null
+  order_date?: string | null
+  total_amount?: number | null
+  vote_code?: string | null
+  category?: string | null
+  department?: string | null
+  manual_supplier_name?: string | null
+  status?: string | null
+  supplier?: { company_name?: string | null } | Array<{ company_name?: string | null }> | null
+  items?: Array<{ item_name?: string | null; item_code?: string | null; quantity_ordered?: number; unit_price?: number }> | null
+}
+
+type JoinedLPOPurchaseOrderRelation = JoinedLPOPurchaseOrder | JoinedLPOPurchaseOrder[] | null
+
+type CachedLPORecord = Omit<Partial<PharmacyLPO>, 'po_id'> & {
+  id?: string
+  po_id?: string | null
+  po?: JoinedLPOPurchaseOrderRelation
+}
+
+function errorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback
+}
+
+function supplierCompanyName(supplier: JoinedLPOPurchaseOrder['supplier']): string | undefined {
+  return (Array.isArray(supplier) ? supplier[0]?.company_name : supplier?.company_name) || undefined
+}
+
+function firstRelation<T>(relation: T | T[] | null | undefined): T | undefined {
+  return Array.isArray(relation) ? relation[0] : relation || undefined
+}
+
+type JoinedPurchaseOrderName = { po_number?: string | null } | Array<{ po_number?: string | null }> | null
+
+function joinedPurchaseOrderNumber(relation: JoinedPurchaseOrderName): string | undefined {
+  const purchaseOrder = Array.isArray(relation) ? relation[0] : relation
+  return purchaseOrder?.po_number || undefined
+}
+
+interface SupplierAssessmentRecord {
+  id: string
+  lpo_id: string
+  ratings: { quality: number; support: number; delivery: number }
+  total_score: number
+  percentage: number
+  performance_level: string
+  comments: string | null
+  created_at: string
+  goods_receipt_id: string | null
+  goods_receipt?: { id: string; gr_number: string; delivery_note_number: string | null } | null
+  lpo: {
+    lpo_number: string
+    hospital_id?: string
+    po?: {
+      po_number: string
+      total_amount: number | null
+      manual_supplier_name: string | null
+      supplier: { company_name: string | null } | Array<{ company_name: string | null }> | null
+      items: Array<{ item_name: string | null; quantity: number; unit_price: number }>
+    } | null
+  }
+}
+
+interface SupplierAssessmentPO {
+  po_number: string
+  total_amount: number | null
+  manual_supplier_name: string | null
+  supplier: { company_name: string | null } | Array<{ company_name: string | null }> | null
+  items: Array<{ item_name: string | null; quantity: number; unit_price: number }>
+}
+
+interface SupplierAssessmentLPO {
+  lpo_number: string
+  hospital_id?: string
+  po?: SupplierAssessmentPO | SupplierAssessmentPO[] | null
+}
+
+interface SupplierAssessmentQueryRow extends Omit<SupplierAssessmentRecord, 'lpo'> {
+  lpo: SupplierAssessmentLPO | SupplierAssessmentLPO[] | null
+}
 
 /**
  * Get LPO statistics (counts for approved POs, pending LPOs, sent/verified LPOs)
@@ -53,8 +161,11 @@ export async function getLPOStats(
         .filter(po => ALLOWED_MEDICAL_VOTE_CODES.includes(po.vote_code))
         .filter(po => !po.po_number?.toUpperCase().startsWith('SQ-') && !po.po_number?.toUpperCase().startsWith('INV-'))
       const lpos = (lpoData || [])
-        .filter((lpo: any) => ALLOWED_MEDICAL_VOTE_CODES.includes(lpo.po?.vote_code))
-        .filter((lpo: any) => !lpo.po?.po_number?.toUpperCase().startsWith('SQ-') && !lpo.po?.po_number?.toUpperCase().startsWith('INV-'))
+        .filter(lpo => ALLOWED_MEDICAL_VOTE_CODES.includes(firstRelation<JoinedLPOPurchaseOrder>(lpo.po)?.vote_code || ''))
+        .filter(lpo => {
+          const po = firstRelation<JoinedLPOPurchaseOrder>(lpo.po)
+          return !po?.po_number?.toUpperCase().startsWith('SQ-') && !po?.po_number?.toUpperCase().startsWith('INV-')
+        })
       
       const lpoPoIds = new Set(lpos.map(lpo => lpo.po_id))
 
@@ -79,30 +190,9 @@ export async function getLPOStats(
       return { data: stats, error: null }
     }
 
-    return { 
-      data: {
-        totalApproved: 361,
-        pendingCount: 202,
-        sentCount: 95,
-        verifiedCount: 67,
-        totalValue: 154000
-      }, 
-      error: null 
-    }
+    return { data: null, error: 'Supabase not configured' }
   } catch (error) {
     console.error('Error fetching LPO stats:', error)
-    if (typeof navigator !== 'undefined' && !navigator.onLine) {
-      return {
-        data: {
-          totalApproved: 0,
-          pendingCount: 0,
-          sentCount: 0,
-          verifiedCount: 0,
-          totalValue: 0
-        },
-        error: null
-      }
-    }
     return {
       data: null,
       error: error instanceof Error ? error.message : 'Failed to fetch LPO stats',
@@ -161,7 +251,7 @@ export async function getLPOList(
         if (poError) throw poError
 
         // 3. Filter out POs that already have LPOs and enforce allowed vote codes
-        let pendingPOs = (poData || []).filter(po => !lpoPoIds.includes(po.id) && ALLOWED_MEDICAL_VOTE_CODES.includes(po.vote_code))
+        const pendingPOs = (poData || []).filter(po => !lpoPoIds.includes(po.id) && ALLOWED_MEDICAL_VOTE_CODES.includes(po.vote_code))
 
         // Map to standard format
         let results: LPOListItem[] = pendingPOs.map(po => {
@@ -169,14 +259,14 @@ export async function getLPOList(
           return {
             po_id: po.id,
             po_number: po.po_number,
-            po_type: po.po_type as any,
+            po_type: po.po_type as POType,
             order_date: po.order_date,
             total_amount: po.total_amount || 0,
-            vote_code: po.vote_code,
-            category: po.category,
-            department: po.department,
-            supplier_name: po.manual_supplier_name || supplierData?.company_name,
-            item_names: (po.items || []).map((i: any) => i.item_name)
+            vote_code: po.vote_code || undefined,
+            category: po.category || undefined,
+            department: po.department || undefined,
+            supplier_name: po.manual_supplier_name || supplierData?.company_name || undefined,
+            item_names: (po.items || []).map(i => i.item_name || '')
           }
         })
 
@@ -204,7 +294,7 @@ export async function getLPOList(
       } else {
         // APPROVED TAB: POs joined with LPO records
         
-        let query = supabase
+        const query = supabase
           .from('pharmacy_lpo')
           .select(`
             id, lpo_number, status, document_date, document_url, verify_tracking, payment_status, sent_for_payment_date,
@@ -233,22 +323,25 @@ export async function getLPOList(
           void offlineAdapter.setCache('pharmacy_lpo', lpoData)
         }
 
-        let results: LPOListItem[] = (lpoData || [])
-          .filter((lpo: any) => ALLOWED_MEDICAL_VOTE_CODES.includes(lpo.po?.vote_code))
-          .map((lpo: any) => {
-            const po = lpo.po || {}
-          const supplierData = Array.isArray(po.supplier) ? po.supplier[0] : po.supplier;
-          return {
+        let results: LPOListItem[] = (lpoData || []).flatMap(lpo => {
+          const po = firstRelation<JoinedLPOPurchaseOrder>(lpo.po)
+          if (
+            !po?.po_number ||
+            !po.po_type ||
+            !po.order_date ||
+            !ALLOWED_MEDICAL_VOTE_CODES.includes(po.vote_code || '')
+          ) return []
+          const supplierData = Array.isArray(po.supplier) ? po.supplier[0] : po.supplier
+          return [{
             po_id: lpo.po_id,
             po_number: po.po_number,
             po_type: po.po_type,
             order_date: po.order_date,
             total_amount: po.total_amount || 0,
-            vote_code: po.vote_code,
-            category: po.category,
-            department: po.department,
-            supplier_name: po.manual_supplier_name || supplierData?.company_name,
-            
+            vote_code: po.vote_code || undefined,
+            category: po.category || undefined,
+            department: po.department || undefined,
+            supplier_name: po.manual_supplier_name || supplierData?.company_name || undefined,
             lpo_id: lpo.id,
             lpo_number: lpo.lpo_number,
             lpo_status: lpo.status,
@@ -257,8 +350,8 @@ export async function getLPOList(
             verify_tracking: lpo.verify_tracking,
             payment_status: lpo.payment_status,
             sent_for_payment_date: lpo.sent_for_payment_date,
-            item_names: (po.items || []).map((i: any) => i.item_name)
-          }
+            item_names: (po.items || []).map(item => item.item_name || ''),
+          }]
         })
 
         // Apply PO-level filters
@@ -291,21 +384,22 @@ export async function getLPOList(
 
     // Offline cache fallback
     try {
-      const cached = await offlineAdapter.getCache<any>('pharmacy_lpo', 'procurement', 'pharmacy_lpo')
+      const cached = await offlineAdapter.getCache<CachedLPORecord>('pharmacy_lpo', 'procurement', 'pharmacy_lpo')
       if (cached && cached.length > 0) {
-        let results: LPOListItem[] = cached.map((lpo: any) => {
-          const po = lpo.po || {}
+        const results: LPOListItem[] = cached.flatMap(lpo => {
+          const po = firstRelation<JoinedLPOPurchaseOrder>(lpo.po) || {}
+          if (!lpo.po_id || !po.po_number || !po.po_type || !po.order_date) return []
           const supplierData = Array.isArray(po.supplier) ? po.supplier[0] : po.supplier
-          return {
+          return [{
             po_id: lpo.po_id,
             po_number: po.po_number,
             po_type: po.po_type,
             order_date: po.order_date,
             total_amount: po.total_amount || 0,
-            vote_code: po.vote_code,
-            category: po.category,
-            department: po.department,
-            supplier_name: po.manual_supplier_name || supplierData?.company_name,
+            vote_code: po.vote_code || undefined,
+            category: po.category || undefined,
+            department: po.department || undefined,
+            supplier_name: po.manual_supplier_name || supplierData?.company_name || undefined,
             lpo_id: lpo.id,
             lpo_number: lpo.lpo_number,
             lpo_status: lpo.status,
@@ -314,26 +408,55 @@ export async function getLPOList(
             verify_tracking: lpo.verify_tracking,
             payment_status: lpo.payment_status,
             sent_for_payment_date: lpo.sent_for_payment_date,
-            item_names: (po.items || []).map((i: any) => i.item_name)
-          }
+            item_names: (po.items || []).map(i => i.item_name || '')
+          }]
         })
         const total = results.length
         const paginatedData = results.slice((page - 1) * pageSize, page * pageSize)
         return { data: { data: paginatedData, total, page, pageSize, totalPages: Math.ceil(total / pageSize) }, error: null }
       }
-    } catch (_) {}
+    } catch {
+      // Cache miss or cache read failure leaves the normal empty offline state.
+    }
 
     return { data: { data: [], total: 0, page, pageSize, totalPages: 0 }, error: null }
   } catch (error) {
     console.error('Error fetching LPO list:', error)
     try {
-      const cached = await offlineAdapter.getCache<any>('pharmacy_lpo', 'procurement', 'pharmacy_lpo')
+      const cached = await offlineAdapter.getCache<CachedLPORecord>('pharmacy_lpo', 'procurement', 'pharmacy_lpo')
       if (cached && cached.length > 0) {
-        const total = cached.length
-        const paginatedData = cached.slice((page - 1) * pageSize, page * pageSize)
+        const results = cached.flatMap(lpo => {
+          const po = firstRelation<JoinedLPOPurchaseOrder>(lpo.po) || {}
+          if (!lpo.po_id || !po.po_number || !po.po_type || !po.order_date) return []
+          const supplierData = Array.isArray(po.supplier) ? po.supplier[0] : po.supplier
+          return [{
+            po_id: lpo.po_id,
+            po_number: po.po_number,
+            po_type: po.po_type,
+            order_date: po.order_date,
+            total_amount: po.total_amount || 0,
+            vote_code: po.vote_code || undefined,
+            category: po.category || undefined,
+            department: po.department || undefined,
+            supplier_name: po.manual_supplier_name || supplierData?.company_name || undefined,
+            lpo_id: lpo.id,
+            lpo_number: lpo.lpo_number,
+            lpo_status: lpo.status,
+            document_date: lpo.document_date,
+            document_url: lpo.document_url,
+            verify_tracking: lpo.verify_tracking,
+            payment_status: lpo.payment_status,
+            sent_for_payment_date: lpo.sent_for_payment_date,
+            item_names: (po.items || []).map(item => item.item_name || ''),
+          }]
+        })
+        const total = results.length
+        const paginatedData = results.slice((page - 1) * pageSize, page * pageSize)
         return { data: { data: paginatedData, total, page, pageSize, totalPages: Math.ceil(total / pageSize) }, error: null }
       }
-    } catch (_) {}
+    } catch {
+      // Cache fallback is best-effort after the primary query has failed.
+    }
 
     if (typeof navigator !== 'undefined' && !navigator.onLine) {
       return { data: { data: [], total: 0, page, pageSize, totalPages: 0 }, error: null }
@@ -382,7 +505,7 @@ export async function uploadLPO(
           const copiedPages = await newPdfDoc.copyPages(pdfDoc, [0, 1])
           copiedPages.forEach(p => newPdfDoc.addPage(p))
           const pdfBytes = await newPdfDoc.save()
-          const blob = new Blob([pdfBytes] as any, { type: 'application/pdf' })
+          const blob = new Blob([new Uint8Array(pdfBytes)], { type: 'application/pdf' })
           fileToUpload = new File([blob], data.document_file.name, { type: 'application/pdf' })
         }
       } catch (err) {
@@ -456,16 +579,17 @@ export async function uploadLPO(
     }
 
     return { data: null, error: 'Supabase not configured' }
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error uploading LPO:', error)
     let message = 'Failed to upload LPO'
-    if (error?.code === '23505') {
-      const detail = error.detail || ''
+    const uploadError = typeof error === 'object' && error !== null ? error as { code?: string; detail?: string; message?: string } : null
+    if (uploadError?.code === '23505') {
+      const detail = uploadError.detail || ''
       const match = detail.match(/\((.*)\)/)
       const val = match ? match[1] : 'unknown'
       message = `Conflict: LPO number "${val}" already exists in the database.`
-    } else if (error?.message) {
-      message = error.message
+    } else if (uploadError?.message) {
+      message = uploadError.message
     } else if (typeof error === 'string') {
       message = error
     }
@@ -489,11 +613,13 @@ export async function updateLPOStatus(
     if (isSupabaseConfigured()) {
       // If status is verified, check if document exists
       if (status === 'verified') {
-        const { data: checkLpo } = await supabase
+        const { data: checkLpo, error: checkError } = await supabase
           .from('pharmacy_lpo')
           .select('document_url')
           .eq('id', lpoId)
           .single();
+
+        if (checkError) throw checkError
         
         if (!checkLpo?.document_url) {
           throw new Error('Cannot verify LPO without an uploaded document');
@@ -534,7 +660,7 @@ export async function updateLPOStatus(
  */
 export async function bulkVerifyLPOs(
   lpoIds: string[]
-): Promise<ApiResponse<any>> {
+): Promise<ApiResponse<null>> {
   try {
     if (isSupabaseConfigured()) {
       const { data, error } = await supabase
@@ -569,7 +695,7 @@ export async function bulkVerifyLPOs(
 /**
  * Get list of POs that are approved but don't have an LPO linked yet
  */
-export async function getPendingPOsForLPO(hospitalId: string): Promise<ApiResponse<{ id: string, po_number: string, total_amount: number, manual_supplier_name: string | null, order_date: string }[]>> {
+export async function getPendingPOsForLPO(hospitalId: string): Promise<ApiResponse<PendingPOForLPO[]>> {
   try {
     if (isSupabaseConfigured()) {
       // 1. Get all approved POs with items
@@ -582,7 +708,7 @@ export async function getPendingPOsForLPO(hospitalId: string): Promise<ApiRespon
           manual_supplier_name, 
           order_date,
           supplier:suppliers(company_name),
-          items:pharmacy_purchase_order_items(id, item_name, quantity_ordered, unit_price)
+          items:pharmacy_purchase_order_items(id, item_name, item_code, quantity_ordered, unit_price)
         `)
         .eq('hospital_id', hospitalId)
         .eq('status', 'approved')
@@ -603,15 +729,20 @@ export async function getPendingPOsForLPO(hospitalId: string): Promise<ApiRespon
       
       // 3. Filter POs that are not linked and map supplier name
       // Exclude Quotations (SQ) and Invoices (INV) as they shouldn't be matched with LPOs
-      const pendingPOs = (pos || [])
+      const pendingPOs = ((pos || []) as PendingPurchaseOrderQueryRow[])
         .filter(po => !linkedPoIds.has(po.id))
         .filter(po => !po.po_number.toUpperCase().startsWith('SQ-') && !po.po_number.toUpperCase().startsWith('INV-'))
         .map(po => ({
-          ...po,
-          supplier_name: po.manual_supplier_name || (po as any).supplier?.company_name || 'Generic Supplier'
+          id: po.id,
+          po_number: po.po_number,
+          total_amount: po.total_amount,
+          manual_supplier_name: po.manual_supplier_name,
+          order_date: po.order_date,
+          items: po.items.map(item => ({ ...item, item_code: item.item_code ?? undefined })),
+          supplier_name: po.manual_supplier_name || (Array.isArray(po.supplier) ? po.supplier[0]?.company_name : po.supplier?.company_name) || undefined
         }))
 
-      return { data: pendingPOs as any, error: null }
+      return { data: pendingPOs, error: null }
 
     }
     return { data: null, error: 'Supabase not configured' }
@@ -645,7 +776,7 @@ export async function checkDuplicateLPO(hospitalId: string, lpoNumber: string, e
         return { 
           data: { 
             isDuplicate: true, 
-            existingPoNumber: (data.pharmacy_purchase_orders as any)?.po_number 
+            existingPoNumber: joinedPurchaseOrderNumber(data.pharmacy_purchase_orders as JoinedPurchaseOrderName)
           }, 
           error: null 
         }
@@ -695,7 +826,7 @@ export async function getExistingLPONumbers(
         }
         
         // Add linked PO number (if any)
-        const poNum = (r.pharmacy_purchase_orders as any)?.po_number
+        const poNum = joinedPurchaseOrderNumber(r.pharmacy_purchase_orders as JoinedPurchaseOrderName)
         if (poNum) {
           lpoNumbers.add(poNum.toUpperCase().replace(/[\s\-_]/g, ''))
         }
@@ -792,13 +923,14 @@ export async function checkDuplicateLPOsBatch(hospitalId: string, lpoNumbers: st
         
         for (const record of allRecords) {
           const dbLpo = record.lpo_number.toUpperCase().replace(/\s/g, '').replace(/[-_]/g, '')
-          const dbPo = (record.pharmacy_purchase_orders as any)?.po_number?.toUpperCase().replace(/\s/g, '').replace(/[-_]/g, '')
+          const poNumber = joinedPurchaseOrderNumber(record.pharmacy_purchase_orders as JoinedPurchaseOrderName)
+          const dbPo = poNumber?.toUpperCase().replace(/\s/g, '').replace(/[-_]/g, '')
           
           // Match against LPO number
           if (dbLpo === upperSearch || dbLpo.includes(upperSearch) || upperSearch.includes(dbLpo)) {
             result[searchNum] = {
               isDuplicate: true,
-              existingPoNumber: (record.pharmacy_purchase_orders as any)?.po_number,
+              existingPoNumber: poNumber,
               type: 'lpo'
             }
             break
@@ -907,9 +1039,9 @@ export async function repairLPONumber(lpoId: string, newLpoNumber: string) {
       throw error
     }
     return { data, error: null }
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error repairing LPO number:', error)
-    return { data: null, error: error.message || 'Failed to repair LPO number' }
+    return { data: null, error: errorMessage(error, 'Failed to repair LPO number') }
   }
 }
 
@@ -964,7 +1096,7 @@ export async function createSupplierAssessment(
     comments?: string;
     assessed_by?: string;
   }
-): Promise<ApiResponse<any>> {
+): Promise<ApiResponse<SupplierAssessmentRecord>> {
   try {
     if (isSupabaseConfigured()) {
       const { data, error } = await supabase
@@ -995,7 +1127,7 @@ export async function createSupplierAssessment(
  */
 export async function getSupplierAssessments(
   hospitalId: string
-): Promise<ApiResponse<any[]>> {
+): Promise<ApiResponse<SupplierAssessmentRecord[]>> {
   try {
     if (isSupabaseConfigured()) {
       const { data, error } = await supabase
@@ -1016,9 +1148,17 @@ export async function getSupplierAssessments(
 
       if (error) throw error
 
-      let finalData = data || []
+      let finalData: SupplierAssessmentRecord[] = (data || []).flatMap((row: SupplierAssessmentQueryRow) => {
+        const lpo = firstRelation(row.lpo)
+        if (!lpo) return []
+        const po = firstRelation(lpo.po)
+        const normalizedPO = po
+          ? { ...po, supplier: firstRelation(po.supplier) || null }
+          : null
+        return [{ ...row, lpo: { ...lpo, po: normalizedPO } }]
+      })
       const goodsReceiptIds = finalData
-        .map((r: any) => r.goods_receipt_id)
+        .map(r => r.goods_receipt_id)
         .filter(Boolean)
 
       if (goodsReceiptIds.length > 0) {
@@ -1027,9 +1167,10 @@ export async function getSupplierAssessments(
           .select('id, gr_number, delivery_note_number')
           .in('id', goodsReceiptIds)
 
-        if (!grError && grData) {
-          const grMap = new Map(grData.map((gr: any) => [gr.id, gr]))
-          finalData = finalData.map((item: any) => ({
+        if (grError) throw grError
+        if (grData) {
+          const grMap = new Map(grData.map(gr => [gr.id, gr]))
+          finalData = finalData.map(item => ({
             ...item,
             goods_receipt: item.goods_receipt_id ? grMap.get(item.goods_receipt_id) : null
           }))
@@ -1039,33 +1180,7 @@ export async function getSupplierAssessments(
       return { data: finalData, error: null }
     }
 
-    // Fallback static mock data for demo / offline development
-    return {
-      data: [
-        {
-          id: 'mock-1',
-          lpo_id: 'lpo-1',
-          ratings: { quality: 5, support: 5, delivery: 5 },
-          total_score: 15,
-          percentage: 100,
-          performance_level: 'SANGAT MEMUASKAN',
-          created_at: new Date().toISOString(),
-          lpo: {
-            lpo_number: 'CO260000000278194',
-            po: {
-              po_number: 'PO-2026-0329',
-              total_amount: 4380.60,
-              manual_supplier_name: 'Generic Supplier',
-              supplier: { company_name: 'Generic Supplier' },
-              items: [
-                { item_name: 'Paracetamol 500mg Tab', quantity: 100, unit_price: 12.50 }
-              ]
-            }
-          }
-        }
-      ],
-      error: null
-    }
+    return { data: null, error: 'Supabase not configured' }
   } catch (error) {
     console.error('Error fetching supplier assessments:', error)
     return {
@@ -1123,19 +1238,19 @@ export async function getAllLPOsForAudit(
 
     if (error) throw error
 
-    const records: LPOAuditRecord[] = (data || []).map((row: any) => {
-      const po = row.po || {}
-      const supplierData = Array.isArray(po.supplier) ? po.supplier[0] : po.supplier
-      return {
+    const records: LPOAuditRecord[] = (data || []).flatMap(row => {
+      const po = firstRelation(row.po)
+      if (!row.po_id || !po) return []
+      return [{
         lpo_id: row.id,
         lpo_number: row.lpo_number || '',
         document_url: row.document_url || null,
         po_id: row.po_id,
         po_number: po.po_number || '',
         po_amount: po.total_amount || 0,
-        supplier_name: po.manual_supplier_name || supplierData?.company_name || '',
-        items: (po.items || []).map((i: any) => ({ item_name: i.item_name || '' })),
-      }
+        supplier_name: po.manual_supplier_name || supplierCompanyName(po.supplier) || '',
+        items: (po.items || []).map(i => ({ item_name: i.item_name || '' })),
+      }]
     })
 
     return { data: records, error: null }

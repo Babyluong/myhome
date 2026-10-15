@@ -1,20 +1,5 @@
-// @ts-nocheck
-import React, { useState, useEffect } from 'react'
-import {
-  IconX,
-  IconPackage,
-  IconAlertCircle,
-  IconFileText,
-  IconPlus,
-  IconCheckCircle,
-  IconTrash,
-  IconHistory,
-  IconClock,
-  IconUpload,
-  IconEdit,
-  IconCreditCard,
-  IconShieldCheck
-} from '@/components/ui/Icons'
+import React, { useState, useEffect, useCallback } from 'react'
+import { IconX, IconPackage, IconAlertCircle, IconFileText, IconPlus, IconCheckCircle, IconTrash, IconHistory, IconClock, IconEdit, IconCreditCard, IconShieldCheck } from '@/components/ui/Icons'
 import { 
   getReceivingDetail, 
   createGoodsReceipt, 
@@ -26,10 +11,28 @@ import type { GoodsReceiptItemCreate } from '@/services/pharmacy/receivingServic
 import { updateLPOPaymentStatus, createSupplierAssessment } from '@/services/pharmacy/lpoService'
 import { Star } from 'lucide-react'
 import { uploadFile, supabase } from '@/services/supabase'
-import type { GoodsReceipt } from '@/types/pharmacy'
 import { useAuthStore } from '@/stores/authStore'
-import { Spinner, Input, Badge, Modal, Textarea } from '@/components/ui'
-import { cn, formatCurrency } from '@/lib/utils'
+import { Spinner, Input, Modal, Textarea } from '@/components/ui'
+import { cn } from '@/lib/utils'
+
+type ReceivingOrder = NonNullable<Awaited<ReturnType<typeof getReceivingDetail>>['data']>
+type ReceiptHistoryRecord = NonNullable<Awaited<ReturnType<typeof getGoodsReceiptHistory>>['data']>[number]
+
+interface SupplierAssessment {
+  id: string
+  goods_receipt_id: string
+  ratings?: { quality?: number; support?: number; delivery?: number }
+  total_score?: number
+  percentage?: number
+  performance_level?: string
+  comments?: string
+}
+
+type ModificationItem = NonNullable<ReceiptHistoryRecord['items']>[number]
+
+function getErrorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback
+}
 
 interface GoodsReceivingFormProps {
   poId: string
@@ -77,14 +80,14 @@ export default function GoodsReceivingForm({
   const [documentUrls, setDocumentUrls] = useState<string[]>([])
 
   // Modification State
-  const [selectedGrForMod, setSelectedGrForMod] = useState<any | null>(null);
+  const [selectedGrForMod, setSelectedGrForMod] = useState<ReceiptHistoryRecord | null>(null);
   const [isModifying, setIsModifying] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false)
   const [isAssessmentOpen, setIsAssessmentOpen] = useState(false)
-  const [selectedGrForAssessment, setSelectedGrForAssessment] = useState<any | null>(null)
-  const [assessments, setAssessments] = useState<any[]>([])
+  const [selectedGrForAssessment, setSelectedGrForAssessment] = useState<ReceiptHistoryRecord | null>(null)
+  const [assessments, setAssessments] = useState<SupplierAssessment[]>([])
 
-  const [po, setPo] = useState<any>(null)
+  const [po, setPo] = useState<ReceivingOrder | null>(null)
   
   // Form State
   const [deliveryNote, setDeliveryNote] = useState('')
@@ -95,37 +98,20 @@ export default function GoodsReceivingForm({
   
   const [items, setItems] = useState<GoodsReceiptItemCreate[]>([])
   
-  const [history, setHistory] = useState<(GoodsReceipt & { items: any[], received_by_user?: { full_name: string } })[]>([])
-  const [showHistory, setShowHistory] = useState(false)
+  const [history, setHistory] = useState<ReceiptHistoryRecord[]>([])
+  const [, setShowHistory] = useState(false)
 
-  useEffect(() => {
-    if (isOpen && poId) {
-      void loadPo()
-    } else {
-      // Reset state
-      setPo(null)
-      setItems([])
-      setDeliveryNote('')
-      setInvoiceNumber('')
-      setNotes('')
-      setError(null)
-      setScheduledDate('')
-      setAssessments([])
-      setSelectedGrForAssessment(null)
-    }
-  }, [isOpen, poId])
-
-  const initializeItems = (poData: any, prefill?: any) => {
+  const initializeItems = useCallback((poData: ReceivingOrder, prefill?: GoodsReceivingFormProps['prefillData']) => {
     console.warn('initializeItems prefillData received:', prefill)
     const isDrug = poData?.category === 'drug'
     const defaultExpiry = isDrug ? '' : 'N/A'
-    const initialItems: GoodsReceiptItemCreate[] = poData.items.map((item: any) => {
+    const initialItems: GoodsReceiptItemCreate[] = poData.items.map(item => {
       const qtyOrdered = item.quantity_ordered || 0
       const qtyPrevReceived = item.quantity_received || 0
       const qtyRemaining = Math.max(0, qtyOrdered - qtyPrevReceived)
 
       const prefilledItem = prefill?.items?.find(
-        (pi: any) => pi.poItemId === item.id
+        pi => pi.poItemId === item.id
       )
 
       if (prefilledItem) {
@@ -142,7 +128,7 @@ export default function GoodsReceivingForm({
           rejection_reason: '',
           notes: 'Auto-populated from Excel',
           batches: prefilledItem.batches && prefilledItem.batches.length > 0
-            ? prefilledItem.batches.map((b: any) => ({
+            ? prefilledItem.batches.map(b => ({
                 batch_number: b.batch_number || '',
                 manufacturing_date: b.mfg_date || '',
                 expiry_date: b.expiry_date || defaultExpiry,
@@ -186,9 +172,9 @@ export default function GoodsReceivingForm({
       }
     })
     setItems(initialItems)
-  }
+  }, [])
 
-  const loadPo = async () => {
+  const loadPo = useCallback(async () => {
     setIsLoading(true)
     setError(null)
     
@@ -198,7 +184,7 @@ export default function GoodsReceivingForm({
     ])
 
     if (historyRes.data) {
-      setHistory(historyRes.data as any)
+      setHistory(historyRes.data)
       if (res.data?.status === 'completed') {
         setShowHistory(true)
       }
@@ -244,7 +230,7 @@ export default function GoodsReceivingForm({
             break
           }
           if (Array.isArray(lpo.tracking) && lpo.tracking.length > 0) {
-            const track = lpo.tracking.find((t: any) => t.expected_delivery_date)
+            const track = lpo.tracking.find(t => t.expected_delivery_date)
             if (track) {
               initialExpectedDate = track.expected_delivery_date
               break
@@ -258,7 +244,24 @@ export default function GoodsReceivingForm({
       setScheduledDate(initialExpectedDate ? initialExpectedDate.split('T')[0] : '')
     }
     setIsLoading(false)
-  }
+  }, [poId, prefillData, initializeItems])
+
+  useEffect(() => {
+    if (isOpen && poId) {
+      void loadPo()
+    } else {
+      // Reset state
+      setPo(null)
+      setItems([])
+      setDeliveryNote('')
+      setInvoiceNumber('')
+      setNotes('')
+      setError(null)
+      setScheduledDate('')
+      setAssessments([])
+      setSelectedGrForAssessment(null)
+    }
+  }, [isOpen, poId, loadPo])
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
@@ -278,8 +281,8 @@ export default function GoodsReceivingForm({
         if (url) newUrls.push(url)
       }
       setDocumentUrls(newUrls)
-    } catch (err: any) {
-      setError(err.message || 'Failed to upload document')
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, 'Failed to upload document'))
     } finally {
       setIsUploading(false)
       // Reset input
@@ -299,7 +302,7 @@ export default function GoodsReceivingForm({
       for (const lpo of lpos) {
         if (lpo.expected_delivery_date) return lpo.expected_delivery_date
         if (Array.isArray(lpo.tracking) && lpo.tracking.length > 0) {
-          const track = lpo.tracking.find((t: any) => t.expected_delivery_date)
+          const track = lpo.tracking.find(t => t.expected_delivery_date)
           if (track) return track.expected_delivery_date
         }
       }
@@ -335,11 +338,10 @@ export default function GoodsReceivingForm({
     }
   }
 
-  const handleItemChange = (index: number, field: keyof GoodsReceiptItemCreate, value: any) => {
+  const handleItemChange = <K extends keyof GoodsReceiptItemCreate>(index: number, field: K, value: GoodsReceiptItemCreate[K]) => {
     const newItems = [...items]
     const item = newItems[index]
     
-    // @ts-ignore
     item[field] = value
 
     if (field === 'arrived') {
@@ -365,11 +367,11 @@ export default function GoodsReceivingForm({
     }
 
     if (field === 'quantity_received') {
-      const numValue = parseInt(value, 10) || 0
+      const numValue = Number.parseInt(String(value), 10) || 0
       item.quantity_accepted = Math.max(0, numValue - item.quantity_rejected)
       item.arrived = numValue > 0
     } else if (field === 'quantity_rejected') {
-      const numValue = parseInt(value, 10) || 0
+      const numValue = Number.parseInt(String(value), 10) || 0
       item.quantity_accepted = Math.max(0, item.quantity_received - numValue)
     }
 
@@ -393,12 +395,12 @@ export default function GoodsReceivingForm({
     setItems(newItems)
   }
 
-  const handleBatchChange = (itemIndex: number, batchIndex: number, field: keyof GoodsReceiptItemCreate['batches'][0], value: any) => {
+  const handleBatchChange = <K extends keyof GoodsReceiptItemCreate['batches'][0]>(itemIndex: number, batchIndex: number, field: K, value: GoodsReceiptItemCreate['batches'][0][K]) => {
     const newItems = [...items]
     const batch = newItems[itemIndex].batches[batchIndex]
     
     if (field === 'quantity') {
-      const numValue = parseInt(value, 10) || 0
+      const numValue = Number.parseInt(String(value), 10) || 0
       const otherBatchesSum = newItems[itemIndex].batches
         .filter((_, i) => i !== batchIndex)
         .reduce((sum, b) => sum + (b.quantity || 0), 0)
@@ -406,7 +408,6 @@ export default function GoodsReceivingForm({
       const maxAllowed = Math.max(0, newItems[itemIndex].quantity_accepted - otherBatchesSum)
       batch.quantity = Math.min(numValue, maxAllowed)
     } else {
-      // @ts-ignore
       batch[field] = value
     }
     
@@ -466,6 +467,7 @@ export default function GoodsReceivingForm({
       }
     }
 
+    if (!po) return
     setIsSubmitting(true)
     setError(null)
 
@@ -531,11 +533,11 @@ export default function GoodsReceivingForm({
         initializeItems(poRes.data)
       }
       if (historyRes.data) {
-        setHistory(historyRes.data as any)
+        setHistory(historyRes.data)
       }
       onSuccess()
-    } catch (err: any) {
-      setError(err.message || 'Failed to delete record')
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, 'Failed to delete record'))
     } finally {
       setIsLoading(false)
     }
@@ -553,8 +555,8 @@ export default function GoodsReceivingForm({
         const paymentRes = await updateLPOPaymentStatus(lpoId, 'sent_for_payment')
         if (paymentRes.error) throw new Error(paymentRes.error)
         void loadPo()
-      } catch (err: any) {
-        setError(err.message || 'Failed to proceed to payment')
+      } catch (err: unknown) {
+        setError(getErrorMessage(err, 'Failed to proceed to payment'))
       } finally {
         setIsUpdating(false)
       }
@@ -1047,11 +1049,11 @@ export default function GoodsReceivingForm({
                                         </div>
                                         <div className="md:col-span-3">
                                           <label className="block text-[9px] font-black text-slate-400 uppercase mb-0.5">Expiry Date *</label>
-                                          <Input type="date" value={batch.expiry_date} onChange={(e) => handleBatchChange(idx, bIdx, 'expiry_date', e.target.value)} className="h-8 text-xs font-bold rounded border-border-default" />
+          <Input type="date" value={batch.expiry_date ?? ''} onChange={(e) => handleBatchChange(idx, bIdx, 'expiry_date', e.target.value)} className="h-8 text-xs font-bold rounded border-border-default" />
                                         </div>
                                         <div className="md:col-span-2">
                                           <label className="block text-[9px] font-black text-slate-400 uppercase mb-0.5">Registry Qty</label>
-                                          <Input type="number" value={batch.quantity || ''} onChange={(e) => handleBatchChange(idx, bIdx, 'quantity', e.target.value)} className="h-8 text-xs font-black text-center rounded border-border-default" />
+                                        <Input type="number" value={batch.quantity || ''} onChange={(e) => handleBatchChange(idx, bIdx, 'quantity', Number(e.target.value))} className="h-8 text-xs font-black text-center rounded border-border-default" />
                                         </div>
                                         <div className="md:col-span-1 flex justify-center pb-0.5">
                                           <button onClick={() => handleRemoveBatch(idx, bIdx)} disabled={item.batches.length === 1} className="w-8 h-8 rounded border border-border-default flex items-center justify-center text-slate-300 hover:text-rose-600 hover:bg-rose-500/10 hover:border-rose-500/20 transition-colors">
@@ -1130,7 +1132,7 @@ export default function GoodsReceivingForm({
                     </thead>
                     <tbody className="divide-y divide-border-subtle">
                       {history.map((gr) => {
-                        const totalValue = gr.items?.reduce((sum: number, item: any) => sum + ((item.quantity_accepted || 0) * (item.po_item?.unit_price || 0)), 0) || 0;
+                        const totalValue = gr.items?.reduce((sum, item) => sum + ((item.quantity_accepted || 0) * (item.po_item?.unit_price || 0)), 0) || 0;
                         const assessment = assessments.find(a => a.goods_receipt_id === gr.id) || 
                           (history.length === 1 ? assessments[0] : null);
                         return (
@@ -1166,7 +1168,7 @@ export default function GoodsReceivingForm({
                               </td>
                               <td className="px-3.5 py-4 align-top">
                                 <div className="flex flex-col divide-y divide-border-subtle min-w-[180px]">
-                                  {gr.items?.map((item: any) => (
+                                  {gr.items?.map(item => (
                                     <div key={item.id} className="py-3 first:pt-0 last:pb-0">
                                       <div className="flex items-center justify-between gap-4">
                                         <p className="text-[12px] font-semibold text-text-primary leading-tight">
@@ -1217,14 +1219,14 @@ export default function GoodsReceivingForm({
                                   <div className="flex flex-col items-center">
                                     <span className={cn(
                                       "px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-wider border",
-                                      assessment.percentage >= 80 ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-700" :
-                                      assessment.percentage >= 60 ? "bg-amber-500/10 border-amber-500/20 text-amber-700" :
+                                      (assessment.percentage ?? 0) >= 80 ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-700" :
+                                      (assessment.percentage ?? 0) >= 60 ? "bg-amber-500/10 border-amber-500/20 text-amber-700" :
                                       "bg-rose-500/10 border-rose-500/20 text-rose-700"
                                     )}>
                                       {assessment.performance_level}
                                     </span>
                                     <span className="text-[10px] font-bold text-slate-400 mt-1">
-                                      Skor: {assessment.total_score}/15 ({assessment.percentage}%)
+                                      Skor: {assessment.total_score ?? 0}/15 ({assessment.percentage ?? 0}%)
                                     </span>
                                     <button
                                       onClick={() => {
@@ -1299,7 +1301,6 @@ export default function GoodsReceivingForm({
           isOpen={isAssessmentOpen}
           po={po}
           goodsReceipt={selectedGrForAssessment}
-          history={history}
           onClose={() => {
             setIsAssessmentOpen(false);
             setSelectedGrForAssessment(null);
@@ -1365,7 +1366,7 @@ export default function GoodsReceivingForm({
 /**
  * Modification Modal for Goods Receipt Corrections
  */
-function ModificationModal({ isOpen, gr, onClose, onSuccess }: { isOpen: boolean, gr: any, onClose: () => void, onSuccess: () => void }) {
+function ModificationModal({ isOpen, gr, onClose, onSuccess }: { isOpen: boolean, gr: ReceiptHistoryRecord | null, onClose: () => void, onSuccess: () => void }) {
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -1376,18 +1377,17 @@ function ModificationModal({ isOpen, gr, onClose, onSuccess }: { isOpen: boolean
   const [invoiceNumber, setInvoiceNumber] = useState('');
   const [notes, setNotes] = useState('');
   const [documentUrls, setDocumentUrls] = useState<string[]>([]);
-  const [modifyingItems, setModifyingItems] = useState<any[]>([]);
+  const [modifyingItems, setModifyingItems] = useState<ModificationItem[]>([]);
   const [modificationReason, setModificationReason] = useState('');
 
   useEffect(() => {
     if (gr) {
       setReceiptDate(gr.receipt_date || new Date().toISOString().split('T')[0]);
       setDeliveryNote(gr.delivery_note_number || '');
-      invoiceNumber === undefined && setInvoiceNumber(gr.invoice_number || '');
       setInvoiceNumber(gr.invoice_number || '');
       setNotes(gr.notes || '');
       setDocumentUrls(gr.document_urls || (gr.document_url ? [gr.document_url] : []));
-      setModifyingItems(gr.items ? JSON.parse(JSON.stringify(gr.items)) : []);
+      setModifyingItems(gr.items ? gr.items.map(item => ({ ...item })) : []);
       setModificationReason('');
     }
   }, [gr]);
@@ -1408,9 +1408,9 @@ function ModificationModal({ isOpen, gr, onClose, onSuccess }: { isOpen: boolean
         if (url) newUrls.push(url)
       }
       setDocumentUrls(newUrls);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Upload error:', err);
-      alert(err.message || 'Failed to upload documents');
+      alert(getErrorMessage(err, 'Failed to upload documents'));
     } finally {
       setIsUploading(false);
     }
@@ -1421,6 +1421,7 @@ function ModificationModal({ isOpen, gr, onClose, onSuccess }: { isOpen: boolean
   };
 
   const handleSave = async () => {
+    if (!gr) return
     if (!modificationReason) {
       setError('Modification reason is mandatory for audit compliance');
       return;
@@ -1442,13 +1443,21 @@ function ModificationModal({ isOpen, gr, onClose, onSuccess }: { isOpen: boolean
         receipt_date: receiptDate,
         document_urls: documentUrls,
         modification_reason: modificationReason,
-        items: modifyingItems
+        items: modifyingItems.map(item => ({
+          id: item.id,
+          quantity_received: item.quantity_received ?? undefined,
+          quantity_accepted: item.quantity_accepted ?? 0,
+          quantity_rejected: item.quantity_rejected ?? 0,
+          batch_number: item.batch_number ?? undefined,
+          expiry_date: item.expiry_date ?? undefined,
+          manufacturing_date: item.manufacturing_date ?? undefined,
+        }))
       });
 
       if (updateError) throw updateError;
       onSuccess();
-    } catch (err: any) {
-      setError(err.message || 'Failed to update registry');
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, 'Failed to update registry'));
     } finally {
       setIsUpdating(false);
     }
@@ -1550,7 +1559,7 @@ function ModificationModal({ isOpen, gr, onClose, onSuccess }: { isOpen: boolean
                     <td className="px-4 py-4 w-28">
                       <Input 
                         type="number" 
-                        value={item.quantity_accepted} 
+                        value={item.quantity_accepted ?? ''}
                         onChange={(e) => {
                           const newItems = [...modifyingItems];
                           newItems[idx].quantity_accepted = parseFloat(e.target.value);
@@ -1561,7 +1570,7 @@ function ModificationModal({ isOpen, gr, onClose, onSuccess }: { isOpen: boolean
                     </td>
                     <td className="px-4 py-4 w-40">
                       <Input 
-                        value={item.batch_number} 
+                        value={item.batch_number ?? ''}
                         onChange={(e) => {
                           const newItems = [...modifyingItems];
                           newItems[idx].batch_number = e.target.value;
@@ -1573,7 +1582,7 @@ function ModificationModal({ isOpen, gr, onClose, onSuccess }: { isOpen: boolean
                     <td className="px-6 py-4 w-48">
                       <Input 
                         type="date"
-                        value={item.expiry_date} 
+                        value={item.expiry_date ?? ''}
                         onChange={(e) => {
                           const newItems = [...modifyingItems];
                           newItems[idx].expiry_date = e.target.value;
@@ -1630,14 +1639,12 @@ function SupplierAssessmentModal({
   isOpen,
   po,
   goodsReceipt,
-  history = [],
   onClose,
   onSuccess
 }: {
   isOpen: boolean
-  po: any
-  goodsReceipt?: any
-  history?: any[]
+  po: ReceivingOrder | null
+  goodsReceipt?: ReceiptHistoryRecord | null
   onClose: () => void
   onSuccess: () => void
 }) {
@@ -1771,24 +1778,26 @@ function SupplierAssessmentModal({
       }
 
       if (assessmentRes.error) {
-        throw new Error(typeof assessmentRes.error === 'object' ? (assessmentRes.error as any).message : String(assessmentRes.error))
+        throw new Error(typeof assessmentRes.error === 'object' && 'message' in assessmentRes.error
+          ? String(assessmentRes.error.message)
+          : String(assessmentRes.error))
       }
 
       // The LPO status will be explicitly updated to 'sent_for_payment' when the user clicks the now-enabled 'Proceed to payment' button.
 
       onSuccess()
-    } catch (err: any) {
-      setError(err.message || 'Gagal menyimpan penilaian.')
+    } catch (err: unknown) {
+      setError(getErrorMessage(err, 'Gagal menyimpan penilaian.'))
     } finally {
       setIsSubmitting(false)
     }
   }
 
-  const supplierName = po?.manual_supplier_name || po?.supplier?.[0]?.company_name || po?.supplier?.company_name || 'Generic Supplier'
+  const supplierName = po?.manual_supplier_name || po?.supplier?.company_name || 'Generic Supplier'
   const poNumber = po?.po_number || 'N/A'
   const lpoNumber = po?.lpo?.[0]?.lpo_number || 'N/A'
   
-  const grValue = goodsReceipt?.items?.reduce((sum: number, item: any) => sum + ((item.quantity_accepted || 0) * (item.po_item?.unit_price || 0)), 0) || 0
+  const grValue = goodsReceipt?.items?.reduce((sum, item) => sum + ((item.quantity_accepted || 0) * (item.po_item?.unit_price || 0)), 0) || 0
   const orderValue = grValue > 0 ? grValue : (po?.total_amount || 0)
 
   return (

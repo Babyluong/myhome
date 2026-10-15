@@ -2,42 +2,17 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import {
-  ArrowLeft,
-  Edit,
-  Building2,
-  MapPin,
-  Phone,
-  Mail,
-  Clock,
-  Shield,
-  User,
-  UserPlus,
-  Key,
-  XCircle,
-  Settings,
-  Users,
-  Activity,
-  BarChart3,
-  Package,
-  ScrollText,
-  TrendingUp,
-  AlertCircle,
-  CheckCircle,
-  Database,
-  Zap,
-  HardDrive,
-} from 'lucide-react'
+import { ArrowLeft, Edit, Building2, MapPin, Phone, Mail, Clock, Shield, User, UserPlus, Key, XCircle, Settings, Users, Activity, Package, ScrollText, AlertCircle, Database, Zap, HardDrive } from 'lucide-react'
 import { Button, Badge, LoadingOverlay, Modal, ConfirmationDialog, Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui'
 import { getHospitalById, updateHospital } from '@/services/hospitalService'
 import { getHospitalsWithAdmin } from '@/services/systemAdminService'
 import { resetHospitalAdminPassword, disableHospitalAdmin } from '@/services/hospitalAdminService'
 import { getHospitalModules } from '@/services/moduleService'
 import { getFacilityStatistics, getFacilityLogs } from '@/services/facilityService'
-import { getHospitalLogs } from '@/services/hospitalLogService'
+import '@/services/hospitalLogService'
 import { useToast } from '@/stores/toastStore'
 import { useAuthStore } from '@/stores/authStore'
-import { ROUTES, HOSPITAL_STATUS } from '@/lib/constants'
+import { ROUTES } from '@/lib/constants'
 import { formatDate, formatDateTime } from '@/lib/utils'
 import { HospitalForm } from '@/components/forms/HospitalForm'
 import { HospitalAdminForm } from '@/components/forms/HospitalAdminForm'
@@ -53,7 +28,7 @@ export const HospitalDetailPage: React.FC = () => {
   const { user } = useAuthStore()
   const isSystemAdmin = user?.role?.role_code === 'system_admin'
   const [hospital, setHospital] = useState<HospitalWithAdmin | null>(null)
-  const [modules, setModules] = useState<HospitalModuleWithRelations[]>([])
+  const [, setModules] = useState<HospitalModuleWithRelations[]>([])
   const [statistics, setStatistics] = useState<FacilityStatistics | null>(null)
   const [recentLogs, setRecentLogs] = useState<any[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -127,19 +102,7 @@ export const HospitalDetailPage: React.FC = () => {
     }
   }
 
-  const handleStatusChange = async (newStatus: string) => {
-    if (!hospital) return
-
-    try {
-      const updatedHospital = await updateHospital(hospital.id, {
-        status: newStatus as Hospital['status'],
-      })
-      setHospital(updatedHospital as HospitalWithAdmin)
-      toast.success('Success', `Hospital status updated to ${newStatus}`)
-    } catch (error) {
-      toast.error('Error', 'Failed to update hospital status')
-    }
-  }
+  
 
   const handleResetPassword = async () => {
     if (!hospital?.admin) return

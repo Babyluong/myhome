@@ -3,23 +3,8 @@
 
 import React, { useState, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import {
-  BarChart3,
-  Download,
-  Calendar,
-  Clock,
-  Building2,
-  TrendingUp,
-  FileSpreadsheet,
-  CheckCircle2,
-  Users,
-  PieChart,
-  ArrowUpRight,
-  Printer,
-  Sparkles,
-  ArrowLeft
-} from 'lucide-react'
+import 'framer-motion'
+import { BarChart3, Clock, FileSpreadsheet, PieChart, ArrowLeft } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import { ROUTES } from '@/lib/constants'
@@ -44,7 +29,7 @@ export const TempahanReportsPage: React.FC = () => {
   const [bookings, setBookings] = useState<Booking[]>([])
   const [rooms, setRooms] = useState<Room[]>([])
   const [stats, setStats] = useState<BookingStats | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [, setLoading] = useState(true)
   const [exporting, setExporting] = useState(false)
 
   const loadData = async () => {

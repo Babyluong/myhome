@@ -1,48 +1,10 @@
 // src/modules/myporter/pages/PorterRosterPage.tsx
 import React, { useEffect, useState, useMemo } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Calendar as CalendarIcon, 
-  Users, 
-  Clock, 
-  Plus, 
-  Check, 
-  X, 
-  Sun, 
-  Sunset, 
-  Moon, 
-  Coffee, 
-  FileDown, 
-  ArrowLeftRight, 
-  ChevronLeft, 
-  ChevronRight, 
-  AlertTriangle, 
-  CheckCircle2, 
-  Sparkles, 
-  GripVertical,
-  Info,
-  CalendarDays,
-  ShieldCheck,
-  Filter,
-  Search,
-  Layers,
-  Printer
-} from 'lucide-react'
+import 'framer-motion'
+import { Calendar as CalendarIcon, Clock, Plus, Check, X, Sun, Sunset, Moon, Coffee, FileDown, ArrowLeftRight, ChevronLeft, ChevronRight, AlertTriangle, CheckCircle2, GripVertical, Info, CalendarDays, Filter, Search, Printer } from 'lucide-react'
 import { useToast } from '@/stores/toastStore'
-import { Button, Input, Modal, Card, CardHeader, CardTitle, CardContent } from '@/components/ui'
-import { 
-  getPorterRoster, 
-  saveRosterShift, 
-  moveOrUpdateRosterShift, 
-  deleteRosterShift, 
-  getPorterProfiles, 
-  getShiftExchanges, 
-  createShiftExchangeRequest, 
-  approveShiftExchange, 
-  rejectShiftExchange,
-  calculateWeeklyWorkHours,
-  getShiftHours
-} from '../services/porterService'
+import { Button, Modal } from '@/components/ui'
+import { getPorterRoster, saveRosterShift, moveOrUpdateRosterShift, getPorterProfiles, getShiftExchanges, createShiftExchangeRequest, approveShiftExchange, rejectShiftExchange, calculateWeeklyWorkHours, getShiftHours } from '../services/porterService'
 import { exportRosterToPdf, type WeekRange } from '../services/porterRosterPdfService'
 import type { 
   PorterRosterShift, 
@@ -58,7 +20,7 @@ export const PorterRosterPage: React.FC = () => {
   const [roster, setRoster] = useState<PorterRosterShift[]>([])
   const [porters, setPorters] = useState<PorterProfile[]>([])
   const [exchanges, setExchanges] = useState<ShiftExchangeRequest[]>([])
-  const [loading, setLoading] = useState(true)
+  const [, setLoading] = useState(true)
 
   // Current calendar view date
   const [selectedDate, setSelectedDate] = useState<Date>(new Date())

@@ -1,16 +1,6 @@
 // @ts-nocheck
 import React, { useState } from 'react'
-import {
-  Wifi,
-  WifiOff,
-  RefreshCw,
-  Database,
-  CheckCircle2,
-  AlertTriangle,
-  ArrowUpCircle,
-  HardDriveDownload,
-  Info,
-} from 'lucide-react'
+import { Wifi, WifiOff, RefreshCw, CheckCircle2, HardDriveDownload } from 'lucide-react'
 import { useCylinderOffline } from '@/modules/mycylinder/hooks/useCylinderOffline'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
 

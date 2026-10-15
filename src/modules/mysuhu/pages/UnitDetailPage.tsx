@@ -1,25 +1,7 @@
 // src/modules/mysuhu/pages/UnitDetailPage.tsx
 import React, { useEffect, useState, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { 
-  ArrowLeft, 
-  Thermometer, 
-  Plus, 
-  Calendar, 
-  Download, 
-  Clock, 
-  AlertTriangle,
-  CheckCircle,
-  FileText,
-  AlertCircle,
-  Edit2,
-  Activity,
-  Camera,
-  Eye,
-  X,
-  Trash2,
-  Image as ImageIcon
-} from 'lucide-react'
+import { ArrowLeft, Thermometer, Plus, Calendar, Download, AlertTriangle, FileText, Edit2, Activity, Camera, Eye, X, Trash2, Image as ImageIcon } from 'lucide-react'
 import { 
   LineChart, 
   Line, 

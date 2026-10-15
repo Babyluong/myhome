@@ -165,16 +165,16 @@ Each user has **TWO records**:
 Both use the **SAME UUID** to link them together.
 
 ### 2. **Auto-Confirmation**
-When `VITE_SUPABASE_SERVICE_ROLE_KEY` is set:
-- `createAuthUser()` uses **Admin API**
-- Sets `email_confirm: true`
-- User can login **immediately** without email confirmation
+When `SUPABASE_SERVICE_ROLE_KEY` is configured in Edge Functions:
+- `createAuthUser()` uses the secure `admin-user-ops` **Edge Function**
+- Sets `email_confirm: true` server-side
+- User can login **immediately** without manual confirmation
 
 ### 3. **Temporary Password**
 - Generated automatically (12 characters, secure)
-- Currently logged to console
-- User should change on first login
-- TODO: Send via email in production
+- Delivered securely via password reset / invitation email link
+- Credentials are never logged in plain text in browser console
+- User updates credentials upon first login
 
 ### 4. **Login Process**
 ```
@@ -193,11 +193,10 @@ Login succeeds!
 
 ## ⚠️ Important Notes:
 
-### If Service Role Key is NOT Set:
-- Falls back to `signUp()` method
-- Requires email confirmation
-- User cannot login until they confirm email
-- **Solution**: Set `VITE_SUPABASE_SERVICE_ROLE_KEY` in `.env`
+### Edge Function Configuration:
+- Server-side admin operations require `SUPABASE_SERVICE_ROLE_KEY` set in Supabase Edge Functions environment
+- Without Edge Functions, system falls back to standard `signUp()` method
+- **Security Rule**: Never prefix `SUPABASE_SERVICE_ROLE_KEY` with `VITE_` in client applications
 
 ### For Existing Users (Created Before This Implementation):
 - They may not have `auth.users` records

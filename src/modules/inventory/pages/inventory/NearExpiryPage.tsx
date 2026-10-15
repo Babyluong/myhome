@@ -1,41 +1,9 @@
 // @ts-nocheck
 import React, { useEffect, useState, useMemo } from 'react'
-import {
-  Clock,
-  AlertTriangle,
-  Calendar,
-  AlertCircle,
-  ShieldCheck,
-  Search,
-  Filter,
-  Download,
-  RefreshCw,
-  Copy,
-  Check,
-  Package,
-  MapPin,
-  Sparkles,
-  SlidersHorizontal,
-  X,
-  Trash2,
-  Send,
-  Eye,
-  Info,
-  CheckCircle2,
-  ArrowRightLeft,
-  FileSpreadsheet,
-  Flame,
-  ChevronDown,
-  ChevronRight,
-  Layers,
-  Boxes,
-  LayoutList,
-  ChevronsUpDown,
-  FolderTree
-} from 'lucide-react'
+import { Clock, AlertCircle, ShieldCheck, Search, Download, RefreshCw, Copy, Check, Package, MapPin, SlidersHorizontal, X, Trash2, Eye, Info, CheckCircle2, ArrowRightLeft, Flame, ChevronDown, Layers, Boxes, LayoutList, ChevronsUpDown } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
-import { Table, Spinner, Badge, Select } from '@/components/ui'
-import { getNearExpiryItems, getStockLocations, createStockTransaction } from '@/services/pharmacy/inventoryService'
+import { Spinner } from '@/components/ui'
+import { getNearExpiryItems, getStockLocations } from '@/services/pharmacy/inventoryService'
 import { useInventoryStore } from '../../context/InventoryStoreContext'
 import { StoreLocationSelector } from '../../components/StoreLocationSelector'
 import type { ExpiryItem } from '@/types/pharmacy'
@@ -87,7 +55,7 @@ export const NearExpiryPage: React.FC = () => {
   const [targetLocation, setTargetLocation] = useState<string>('Decanting')
   const [disposalReason, setDisposalReason] = useState<string>('Expired')
   const [disposalRefNo, setDisposalRefNo] = useState<string>('')
-  const [isSubmittingAction, setIsSubmittingAction] = useState(false)
+  useState(false);
 
   // Toast Notification
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'info' | 'error' } | null>(null)
@@ -432,22 +400,24 @@ export const NearExpiryPage: React.FC = () => {
           </div>
 
           {/* Quick Header Actions */}
-          <div className="flex flex-wrap items-center gap-3">
-            <StoreLocationSelector />
-            <button
-              onClick={() => void loadData()}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-sm font-medium border border-slate-700 transition-colors shadow-sm active:scale-95"
-            >
-              <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-              Muat Semula
-            </button>
-            <button
-              onClick={handleExportCSV}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium shadow-md shadow-indigo-900/30 transition-colors active:scale-95 border border-indigo-400/30"
-            >
-              <Download className="w-4 h-4" />
-              Eksport Laporan CSV
-            </button>
+          <div className="flex flex-col items-start md:items-end gap-2.5 w-full md:w-auto shrink-0">
+            <StoreLocationSelector className="w-full sm:w-auto" />
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start md:justify-end">
+              <button
+                onClick={() => void loadData()}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 transition-colors shadow-sm active:scale-95"
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
+                Muat Semula
+              </button>
+              <button
+                onClick={handleExportCSV}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-medium shadow-md shadow-indigo-900/30 transition-colors active:scale-95 border border-indigo-400/30"
+              >
+                <Download className="w-3.5 h-3.5" />
+                Eksport Laporan CSV
+              </button>
+            </div>
           </div>
         </div>
       </div>

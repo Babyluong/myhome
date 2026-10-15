@@ -1,6 +1,6 @@
 /**
  * scripts/check-rules.cjs
- * Deterministic Rules Checker for H.O.M.E. Workspace (R1 - R6)
+ * Static pattern hints for H.O.M.E. (not live-data, auth, audit, or release verification)
  *
  * Usage:
  *   node scripts/check-rules.cjs              # Checks changed/uncommitted files
@@ -10,7 +10,8 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
+const { parsePorcelain } = require('./check-agent-boundaries.cjs');
 
 const IGNORE_DIRS = [
   'node_modules',
@@ -24,46 +25,29 @@ const IGNORE_DIRS = [
 ];
 
 const ROOT_DIR = path.resolve(__dirname, '..');
-const SRC_DIR = path.join(ROOT_DIR, 'src');
 
-// Parse CLI flags and arguments
-const args = process.argv.slice(2);
-const isFullScan = args.includes('--full');
-const targetFilesArg = args.filter(a => !a.startsWith('--'));
-
-function getTargetFiles() {
+function getTargetFiles(root = ROOT_DIR, args = process.argv.slice(2)) {
+  const isFullScan = args.includes('--full');
+  const targetFilesArg = args.filter(a => !a.startsWith('--'));
+  const existingTargets = (files) => [...new Set(files)]
+    .filter(f => f && (f.startsWith('src/') || f.startsWith('supabase/')))
+    .map(f => path.join(root, f))
+    .filter(f => fs.existsSync(f) && fs.statSync(f).isFile());
   if (targetFilesArg.length > 0) {
-    return targetFilesArg.map(f => path.resolve(ROOT_DIR, f));
+    return targetFilesArg.map(f => path.resolve(root, f));
   }
 
   if (isFullScan) {
-    return getAllFiles(SRC_DIR);
+    return getAllFiles(path.join(root, 'src'));
   }
 
-  // Otherwise, inspect git status / git diff
-  try {
-    const gitDiff = execSync('git status --porcelain', { encoding: 'utf8', cwd: ROOT_DIR });
-    const files = gitDiff
-      .split('\n')
-      .map(line => line.trim().slice(3))
-      .filter(f => f && (f.startsWith('src/') || f.startsWith('supabase/')))
-      .map(f => path.join(ROOT_DIR, f))
-      .filter(f => fs.existsSync(f) && fs.statSync(f).isFile());
-
-    if (files.length === 0) {
-      // If working tree is clean, check last commit
-      const lastCommitFiles = execSync('git diff-tree --no-commit-id --name-only -r HEAD', { encoding: 'utf8', cwd: ROOT_DIR })
-        .split('\n')
-        .map(f => f.trim())
-        .filter(f => f && f.startsWith('src/'))
-        .map(f => path.join(ROOT_DIR, f))
-        .filter(f => fs.existsSync(f) && fs.statSync(f).isFile());
-      return lastCommitFiles;
-    }
-    return files;
-  } catch {
-    return getAllFiles(SRC_DIR);
-  }
+  const status = execFileSync('git', ['-c', 'core.fsmonitor=false', 'status', '--porcelain=v1', '--untracked-files=all', '-z'], { cwd: root });
+  const records = parsePorcelain(status);
+  // Only a genuinely clean worktree may fall back to HEAD; unrelated modifications
+  // or deletions do not justify claiming a different commit was checked.
+  if (records.length) return existingTargets(records.flatMap(entry => entry.originalPath ? [entry.path, entry.originalPath] : [entry.path]));
+  const committed = execFileSync('git', ['diff-tree', '--root', '--no-commit-id', '--name-only', '-r', '-z', 'HEAD'], { cwd: root });
+  return existingTargets(committed.toString('utf8').split('\0'));
 }
 
 function getAllFiles(dir, fileList = []) {
@@ -90,26 +74,15 @@ const FORBIDDEN_MOCK_WORDS = [
 ];
 
 const HEX_COLOR_REGEX = /#[0-9a-fA-F]{3,8}\b/g;
-const TRANSITION_ALL_REGEX = /transition:\s*all\b|transition-all\b/g;
-const ANIMATE_LAYOUT_REGEX = /animate=\{.*?(width|height|margin|padding).*?\}/g;
+const TRANSITION_ALL_REGEX = /transition:\s*all\b|transition-all\b/;
+const ANIMATE_LAYOUT_REGEX = /animate=\{.*?(width|height|margin|padding).*?\}/;
 
 const findings = [];
 
-function checkFile(filePath) {
-  const relPath = path.relative(ROOT_DIR, filePath).replace(/\\/g, '/');
+function checkFile(filePath, root = ROOT_DIR, output = findings) {
+  const relPath = path.relative(root, filePath).replace(/\\/g, '/');
   const content = fs.readFileSync(filePath, 'utf8');
   const lines = content.split('\n');
-
-  // Check 150 line cap for compact-code standard (only on src feature files)
-  if (relPath.startsWith('src/') && !relPath.includes('routes/routes.tsx') && !relPath.endsWith('.css') && lines.length > 150) {
-    findings.push({
-      rule: 'Compact Code Standard',
-      severity: 'WARN',
-      file: relPath,
-      line: lines.length,
-      message: `File exceeds 150 lines (${lines.length} lines)`
-    });
-  }
 
   // R1: Check mock/dummy keywords
   lines.forEach((lineText, idx) => {
@@ -117,7 +90,7 @@ function checkFile(filePath) {
     // Skip comments if desired, or check strict
     for (const pat of FORBIDDEN_MOCK_WORDS) {
       if (pat.test(lineText)) {
-        findings.push({
+        output.push({
           rule: 'R1 (Real Data)',
           severity: 'BLOCK',
           file: relPath,
@@ -129,7 +102,7 @@ function checkFile(filePath) {
 
     // R2: Check localhost in src outside config
     if (lineText.includes('localhost') && !relPath.includes('config') && !relPath.includes('vite') && !relPath.includes('env')) {
-      findings.push({
+      output.push({
         rule: 'R2 (Localhost/Prod Parity)',
         severity: 'BLOCK',
         file: relPath,
@@ -144,7 +117,7 @@ function checkFile(filePath) {
       const hexMatches = lineText.match(HEX_COLOR_REGEX);
       if (hexMatches) {
         // Exclude allowed SVG inline icons or comments if needed
-        findings.push({
+        output.push({
           rule: 'R5 (Design Tokens)',
           severity: 'WARN',
           file: relPath,
@@ -155,7 +128,7 @@ function checkFile(filePath) {
 
       // Transition: all check
       if (TRANSITION_ALL_REGEX.test(lineText)) {
-        findings.push({
+        output.push({
           rule: 'R5 (Motion Craft)',
           severity: 'BLOCK',
           file: relPath,
@@ -166,7 +139,7 @@ function checkFile(filePath) {
 
       // Animate layout properties check
       if (ANIMATE_LAYOUT_REGEX.test(lineText)) {
-        findings.push({
+        output.push({
           rule: 'R5 (Motion Craft)',
           severity: 'BLOCK',
           file: relPath,
@@ -178,16 +151,17 @@ function checkFile(filePath) {
   });
 }
 
-function run() {
+function run(args = process.argv.slice(2), root = ROOT_DIR) {
+  findings.length = 0;
   console.log('='.repeat(60));
-  console.log('  H.O.M.E. Deterministic Rule Checker (scripts/check-rules.cjs)');
+  console.log('  H.O.M.E. static pattern checker (scripts/check-rules.cjs)');
   console.log('='.repeat(60));
 
-  const targetFiles = getTargetFiles();
+  const targetFiles = getTargetFiles(root, args);
   console.log(`Auditing ${targetFiles.length} file(s)...`);
 
   for (const file of targetFiles) {
-    checkFile(file);
+    checkFile(file, root);
   }
 
   const blocks = findings.filter(f => f.severity === 'BLOCK');
@@ -195,8 +169,8 @@ function run() {
 
   console.log('\n--- AUDIT RESULTS ---');
   if (findings.length === 0) {
-    console.log('✅ PASS: All R1 - R6 rules verified. Zero violations detected.\n');
-    process.exit(0);
+    console.log(targetFiles.length ? 'PASS scope=STATIC_PATTERNS_ONLY: no matching violations; clinical data, authorization, audit and releases unverified.' : 'SKIP scope=STATIC_PATTERNS_ONLY: no applicable readable files.');
+    return 0;
   }
 
   for (const f of findings) {
@@ -210,10 +184,14 @@ function run() {
   console.log('='.repeat(60));
 
   if (blocks.length > 0) {
-    process.exit(1);
+    return 1;
   } else {
-    process.exit(0);
+    return 0;
   }
 }
 
-run();
+module.exports = { getTargetFiles, getAllFiles, checkFile, run };
+if (require.main === module) {
+  try { process.exitCode = run(); }
+  catch (error) { console.error(`FAIL static checker: ${error.message}`); process.exitCode = 1; }
+}

@@ -1,11 +1,11 @@
 ﻿// @ts-nocheck
 import React, { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
-import { Search, RefreshCw, Download, Filter, Calendar, User, FileText, Eye } from 'lucide-react'
-import { Button, Table, Pagination, Input, Select, Badge, LoadingOverlay, Modal } from '@/components/ui'
+import { Search, RefreshCw, Download, Filter, Eye } from 'lucide-react'
+import { Button, Table, Pagination, Input, Select, Badge, Modal } from '@/components/ui'
 import { getAuditLogs, exportAuditLogsToCSV, getAuditLogModules, getAuditLogActions } from '@/services/auditLogService'
 import { useToastStore } from '@/stores/toastStore'
-import { ROUTES, DEFAULT_PAGE_SIZE, PAGE_SIZE_OPTIONS } from '@/lib/constants'
+import { DEFAULT_PAGE_SIZE, PAGE_SIZE_OPTIONS } from '@/lib/constants'
 import { formatDateTime } from '@/lib/utils'
 import type { AuditLogWithRelations, SortConfig } from '@/types'
 
@@ -253,10 +253,10 @@ export const AuditLogPage: React.FC = () => {
         {/* Filters Panel */}
         {showFilters && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="bg-subtle/50 border border-border-default rounded-xl p-4 mb-4"
+            initial={{ opacity: 0, scaleY: 0.96 }}
+            animate={{ opacity: 1, scaleY: 1 }}
+            exit={{ opacity: 0, scaleY: 0.96 }}
+            className="origin-top bg-subtle/50 border border-border-default rounded-xl p-4 mb-4"
           >
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <Select

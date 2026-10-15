@@ -1,23 +1,7 @@
 // src/modules/mytransporter/pages/TransporterDashboardPage.tsx
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  Car, 
-  FileText, 
-  Plus, 
-  ArrowRight, 
-  ClipboardList, 
-  TrendingUp, 
-  AlertOctagon, 
-  Settings, 
-  Activity, 
-  CheckCircle2, 
-  Clock, 
-  Users, 
-  Calendar,
-  XCircle,
-  Truck
-} from 'lucide-react'
+import { Car, FileText, Plus, ArrowRight, ClipboardList, TrendingUp, AlertOctagon, Settings, Activity, Clock, Users, Calendar, Truck } from 'lucide-react'
 import { Ambulance } from '../components/AmbulanceIcon'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'

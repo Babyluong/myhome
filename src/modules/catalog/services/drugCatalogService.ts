@@ -1,13 +1,12 @@
-// @ts-nocheck
 /**
  * Drug Catalog Service (Unified Wrapper around MyInventory inventoryService)
  * All drug catalog operations query and manipulate the MyInventory single source of truth.
  */
 
 import { supabase, isSupabaseConfigured } from '@/services/supabase'
-import { mockDrugs } from '@/services/pharmacy/mockData'
-import type { ApiResponse, PaginatedResponse } from '@/types'
+import type { ApiResponse } from '@/types'
 import type { Drug, DrugWithRelations } from '@/types/pharmacy'
+import type { InventoryFilter } from '@/types/pharmacy'
 import {
   getDrugs as getDrugCatalog,
   getDrugById,
@@ -28,15 +27,23 @@ export {
   getDrugCategories,
 }
 
-export type { DrugCatalogFilter, DrugCatalogKPIs } from '@/types/pharmacy'
+export type DrugCatalogFilter = InventoryFilter & { supplier_id?: string }
 
-export async function getDrugCatalogKPIs(hospitalId: string) {
+export interface DrugCatalogKPIs {
+  total: number
+  active: number
+  inactive: number
+}
+
+export async function getDrugCatalogKPIs(
+  hospitalId: string
+): Promise<ApiResponse<DrugCatalogKPIs>> {
   const result = await getDrugCatalog(hospitalId, undefined, 1, 1000)
   if (result.error || !result.data) {
     return { data: { total: 0, active: 0, inactive: 0 }, error: result.error }
   }
   const items = result.data.data || []
-  const active = items.filter((d: any) => d.status === 'active').length
+  const active = items.filter((drug: DrugWithRelations) => drug.status === 'active').length
   return {
     data: {
       total: items.length,
@@ -58,7 +65,7 @@ export async function searchDrugs(
   if (!query || query.length < 2) {
     return { data: [], error: null }
   }
-  const result = await getDrugCatalog(hospitalId, { search: query } as any, 1, limit)
+  const result = await getDrugCatalog(hospitalId, { search: query }, 1, limit)
   return {
     data: result.data?.data || [],
     error: result.error,
@@ -70,13 +77,13 @@ export async function searchDrugs(
  */
 export async function exportDrugCatalog(
   hospitalId: string,
-  filter?: any
+  filter?: DrugCatalogFilter
 ): Promise<ApiResponse<string>> {
   try {
     const result = await getDrugCatalog(hospitalId, filter, 1, 10000)
     
-    if (!result.data) {
-      return { data: null, error: 'Failed to fetch drugs for export' }
+    if (result.error || !result.data) {
+      return { data: null, error: result.error || 'Failed to fetch drugs for export' }
     }
 
     const headers = [
@@ -91,13 +98,13 @@ export async function exportDrugCatalog(
       'Price',
     ]
 
-    const rows = (result.data.data || []).map((drug: any) => [
+    const rows = (result.data.data || []).map((drug: DrugWithRelations) => [
       drug.drug_code || '',
       drug.drug_name || '',
       drug.sku || '',
       drug.pku || '',
       drug.category?.category_name || '',
-      drug.supplier?.supplier_name || '',
+      drug.supplier?.company_name || '',
       drug.procurement_vote?.toUpperCase() || '',
       drug.status || 'active',
       typeof drug.price === 'number' ? drug.price.toFixed(2) : '0.00',
@@ -128,6 +135,9 @@ export async function batchImportDrugs(
 ): Promise<ApiResponse<{ success: number; errors: string[] }>> {
   try {
     const supabaseConfigured = isSupabaseConfigured()
+    if (!supabaseConfigured) {
+      return { data: null, error: 'Drug catalog is unavailable because Supabase is not configured.' }
+    }
     const errors: string[] = []
     let successCount = 0
 
@@ -166,11 +176,14 @@ export async function batchImportDrugs(
             .in('drug_code', chunk)
 
           if (error) {
-            errors.push(`Failed to check existing items for some codes: ${error.message}`)
-            break
+            return {
+              data: { success: 0, errors: [`Failed to check existing drugs: ${error.message}`] },
+              error: null,
+            }
           }
 
-          ;(data || []).forEach((row: any) => {
+          const existingRows = data || []
+          existingRows.forEach((row: { id: string; drug_code: string } | null) => {
             if (!row || !row.drug_code || !row.id) return
             const code = String(row.drug_code).trim().toUpperCase()
             existingByCode!.set(code, { id: row.id })
@@ -178,6 +191,10 @@ export async function batchImportDrugs(
         }
       } catch (preloadError) {
         console.error('[batchImportDrugs] Exception while preloading existing drugs:', preloadError)
+        return {
+          data: { success: 0, errors: ['Failed to check existing drugs before import.'] },
+          error: null,
+        }
       }
     }
     
@@ -241,11 +258,6 @@ export async function batchImportDrugs(
         if (existingByCode) {
           existing = existingByCode.get(drugCode) || null
         }
-      } else {
-        const found = mockDrugs.find(
-          d => d.drug_code === drugCode && d.hospital_id === hospitalId
-        )
-        existing = found ? { id: found.id } : null
       }
 
       if (existing) {
@@ -253,7 +265,7 @@ export async function batchImportDrugs(
           const updateResult = await updateDrug(existing.id, {
             ...drugData,
             hospital_id: hospitalId,
-          } as any)
+          })
           if (updateResult.error) {
             errors.push(`Row ${i + 2}: ${updateResult.error}`)
           } else {
@@ -266,7 +278,7 @@ export async function batchImportDrugs(
         try {
           const createResult = await createDrug(hospitalId, {
             ...drugData,
-          } as any)
+          })
           if (createResult.error) {
             errors.push(`Row ${i + 2}: ${createResult.error}`)
           } else {

@@ -1,31 +1,14 @@
 // src/modules/mytransporter/pages/TransporterRoleAssignmentPage.tsx
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  ArrowLeft, 
-  Users, 
-  Shield, 
-  Check, 
-  Search, 
-  UserCheck, 
-  UserX, 
-  Plus 
-} from 'lucide-react'
+import { ArrowLeft, Shield, Search } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { getUsers } from '@/services/userService'
 import { getTransporterRoles, assignTransporterRole } from '../services/transporterService'
 import type { UserWithRelations } from '@/shared/types/auth'
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardContent, 
-  Button, 
-  Badge, 
-  Input 
-} from '@/components/ui'
+import { Card, CardContent, Badge, Input } from '@/components/ui'
 
 const TransporterRoleAssignmentPage: React.FC = () => {
   const navigate = useNavigate()

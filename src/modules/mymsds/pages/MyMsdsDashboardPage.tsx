@@ -1,32 +1,11 @@
 import React, { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  FlaskConical,
-  Search,
-  Filter,
-  AlertTriangle,
-  ShieldAlert,
-  Download,
-  CheckCircle2,
-  Grid,
-  List,
-  Eye,
-  Sparkles,
-  AlertOctagon,
-  X,
-  PhoneCall,
-  Activity,
-  Layers,
-  Building2,
-  FileCheck2,
-  ShieldCheck,
-  RotateCcw
-} from 'lucide-react'
+import { FlaskConical, Search, AlertTriangle, ShieldAlert, Download, Grid, List, AlertOctagon, X, PhoneCall, Activity, Layers, RotateCcw } from 'lucide-react'
 import { MSDS_DATABASE, MSDSEntry, ChemicalCategory, HazardClass } from '../data/msdsData'
 import { MsdsChemicalCard } from '../components/MsdsChemicalCard'
 import { MsdsTableRow } from '../components/MsdsTableRow'
 import { MsdsDetailModal } from '../components/MsdsDetailModal'
-import { GhsPictogram } from '../components/GhsPictogram'
+import '../components/GhsPictogram'
 import { ModulePageHeader } from '@/shared/components/ui'
 
 export default function MyMsdsDashboardPage() {

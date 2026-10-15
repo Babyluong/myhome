@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useState, useRef } from 'react'
 import { Modal, Spinner, Badge } from '@/components/ui'
 import { 
@@ -8,17 +7,7 @@ import {
   MatchedPOGroup 
 } from '../../services/excelUploadService'
 import { useAuthStore } from '@/stores/authStore'
-import { 
-  IconUpload, 
-  IconCheckCircle, 
-  IconAlertCircle, 
-  IconFileText, 
-  IconArrowRight, 
-  IconPlus, 
-  IconX,
-  IconSearch,
-  IconPackage
-} from '@/components/ui/Icons'
+import { IconUpload, IconAlertCircle, IconFileText, IconArrowRight, IconSearch, IconPackage } from '@/components/ui/Icons'
 import GoodsReceivingForm from './GoodsReceivingForm'
 import { createGoodsReceipt } from '../../services/receivingService'
 import { recalculateOverdueStatus } from '../../services/orderTrackingService'
@@ -40,7 +29,7 @@ export default function ExcelUploadModal({
   const userId = user?.id
 
   const [dragActive, setDragActive] = useState(false)
-  const [file, setFile] = useState<File | null>(null)
+  const [, setFile] = useState<File | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [parseResult, setParseResult] = useState<ParsedExcelResult | null>(null)
@@ -138,9 +127,9 @@ export default function ExcelUploadModal({
       } else {
         setError('Hospital ID not found. Please re-login.')
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err)
-      setError(err.message || 'Failed to process Excel file.')
+      setError(err instanceof Error ? err.message : 'Failed to process Excel file.')
     } finally {
       setIsLoading(false)
       setProgressPercent(0)
@@ -206,6 +195,11 @@ export default function ExcelUploadModal({
   }
 
   const handleAuthorizeAllQueue = async () => {
+    if (!hospitalId || !userId) {
+      setError('Your hospital or user session is unavailable. Refresh the page and try again.')
+      return
+    }
+
     const readyGroups = matchedGroups.filter(g => 
       g.poId && 
       !approvedGroups.includes(g.lpoNumber) && 
@@ -239,20 +233,20 @@ export default function ExcelUploadModal({
         })
 
         try {
-          const payloadItems = group.items.map((item: any) => {
+          const payloadItems = group.items.map((item) => {
             const qty = item.quantity_received || 0
             const batches = item.batches && item.batches.length > 0
-              ? item.batches.map((b: any) => ({
+              ? item.batches.map((b) => ({
                   batch_number: b.batch_number || 'NOT APPLICABLE',
-                  manufacturing_date: b.mfg_date || b.manufacturing_date || null,
-                  expiry_date: (b.expiry_date === 'N/A' || !b.expiry_date) ? null : b.expiry_date,
+                  manufacturing_date: b.mfg_date || undefined,
+                  expiry_date: (b.expiry_date === 'N/A' || !b.expiry_date) ? '' : b.expiry_date,
                   quantity: b.quantity
                 }))
               : [
                   {
                     batch_number: item.batch_number || 'NOT APPLICABLE',
-                    manufacturing_date: item.mfg_date || item.manufacturing_date || null,
-                    expiry_date: (item.expiry_date === 'N/A' || !item.expiry_date) ? null : item.expiry_date,
+                    manufacturing_date: item.mfg_date || undefined,
+                    expiry_date: (item.expiry_date === 'N/A' || !item.expiry_date) ? '' : item.expiry_date,
                     quantity: qty
                   }
                 ]
@@ -266,14 +260,14 @@ export default function ExcelUploadModal({
               quantity_received: qty,
               quantity_accepted: qty,
               quantity_rejected: 0,
-              disposition: 'accepted',
+              disposition: 'accepted' as const,
               rejection_reason: '',
               notes: 'Auto-authorized in bulk from Excel',
               batches
             }
           })
 
-          const receivedItems = payloadItems.filter((item: any) => item.quantity_accepted > 0)
+          const receivedItems = payloadItems.filter((item) => item.quantity_accepted > 0)
 
           if (receivedItems.length > 0) {
             const payload = {
@@ -301,7 +295,7 @@ export default function ExcelUploadModal({
 
           setApprovedGroups(prev => [...prev, group.lpoNumber])
           successCount++
-        } catch (singleErr: any) {
+        } catch (singleErr: unknown) {
           console.error(`[Bulk Authorize Error] Failed to process LPO ${group.lpoNumber}:`, singleErr)
           setSkippedGroups(prev => [...prev, group.lpoNumber])
           failCount++
@@ -325,9 +319,9 @@ export default function ExcelUploadModal({
       } else {
         alert(`Successfully authorized all ${successCount} pending POs!`)
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err)
-      setError(err.message || "An error occurred during bulk authorization.")
+      setError(err instanceof Error ? err.message : "An error occurred during bulk authorization.")
     } finally {
       setIsBulkAuthorizing(false)
       setBulkProgress(null)
@@ -684,7 +678,6 @@ export default function ExcelUploadModal({
                     receiptDate: matchedGroups[activeGroupIndex].receiptDate,
                     deliveryNote: matchedGroups[activeGroupIndex].deliveryNote,
                     invoiceNumber: matchedGroups[activeGroupIndex].invoiceNumber,
-                    debugIndices: matchedGroups[activeGroupIndex].debugIndices,
                     items: matchedGroups[activeGroupIndex].items
                   }}
                 />

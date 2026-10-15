@@ -2,20 +2,8 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import {
-  Shield,
-  ArrowLeft,
-  CheckCircle,
-  XCircle,
-  Clock,
-  User,
-  Calendar,
-  FileText,
-  AlertTriangle,
-  AlertCircle,
-  Ban,
-} from 'lucide-react'
-import { Button, Badge, Input, Textarea, Modal } from '@/components/ui'
+import { Shield, ArrowLeft, CheckCircle, XCircle, Clock, User, FileText, AlertTriangle, AlertCircle, Ban } from 'lucide-react'
+import { Button, Badge, Textarea, Modal } from '@/components/ui'
 import {
   getSensitiveDataRequestById,
   approveSensitiveDataRequest,

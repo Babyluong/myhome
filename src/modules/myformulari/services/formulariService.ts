@@ -1,46 +1,52 @@
-import { DrugEntry, PrescriberCategory, HAMCategory, DrugInteraction } from '../types/formulariTypes'
-import { FORMULARI_DATABASE } from '../data/formulariDatabase'
+import type { DrugEntry, PrescriberCategory, HAMCategory, DrugInteraction } from '../types/formulariTypes'
+import { buildFormulariDatabase } from '../data/formulariDatabase'
 import { KKM_LASA_MASTER_REGISTRY, KkmLasaEntry, getLasaCategories } from '../data/lasaDatabase'
+import { FORMULARI_ASSET_VERSION, FormulariAssetError, loadOfficialFormulariRecords } from './formulariAssetService'
 
-const STORAGE_KEY_FORMULARI_V2 = 'myformulari_database_v20.0_structured_regimens_2026'
+let formulariCatalogPromise: Promise<DrugEntry[]> | null = null
+
+export interface FormulariSummaryStats {
+  totalDrugs: number
+  hamCount: number
+  lasaCount: number
+  lowStockCount: number
+  antimicrobialCount: number
+  ivDilutionCount: number
+}
+
+async function loadFormulariCatalog(): Promise<DrugEntry[]> {
+  if (!formulariCatalogPromise) {
+    formulariCatalogPromise = loadOfficialFormulariRecords()
+      .then(records => buildFormulariDatabase(records))
+      .catch((error: unknown) => {
+        formulariCatalogPromise = null
+        if (error instanceof FormulariAssetError) throw error
+        throw new FormulariAssetError('The formulary data could not be prepared. Reload the app to retry.', 'invalid_asset', false)
+      })
+  }
+
+  return formulariCatalogPromise
+}
 
 /**
  * Get all drugs with localStorage fallback & cache invalidation support
  */
-export function getAllFormulariDrugs(): DrugEntry[] {
-  try {
-    const cached = localStorage.getItem(STORAGE_KEY_FORMULARI_V2)
-    if (cached) {
-      const parsed = JSON.parse(cached)
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed
-      }
-    }
-  } catch (err) {
-    console.error('Failed to read formulari database cache', err)
-  }
-  
-  // Set default seed
-  try {
-    localStorage.setItem(STORAGE_KEY_FORMULARI_V2, JSON.stringify(FORMULARI_DATABASE))
-  } catch (e) {
-    // Ignore quota errors
-  }
-  return FORMULARI_DATABASE
+export function getAllFormulariDrugs(): Promise<DrugEntry[]> {
+  return loadFormulariCatalog()
 }
 
 /**
  * Get single drug by ID
  */
-export function getDrugById(id: string): DrugEntry | undefined {
-  const all = getAllFormulariDrugs()
+export async function getDrugById(id: string): Promise<DrugEntry | undefined> {
+  const all = await loadFormulariCatalog()
   return all.find(d => d.id === id || d.mohDrugCode === id)
 }
 
 /**
  * Filter drugs with rich clinical search
  */
-export function searchDrugs(
+export async function searchDrugs(
   query: string,
   filters: {
     prescriberCategory?: PrescriberCategory | 'ALL'
@@ -52,8 +58,8 @@ export function searchDrugs(
     therapeuticClass?: string | 'ALL'
     skimPerolehan?: string | 'ALL'
   } = {}
-): DrugEntry[] {
-  const all = getAllFormulariDrugs()
+): Promise<DrugEntry[]> {
+  const all = await loadFormulariCatalog()
   const q = query.trim().toLowerCase()
 
   return all.filter(drug => {
@@ -129,12 +135,12 @@ function extractSubstanceTokens(name: string): string[] {
 /**
  * Check drug-drug interactions between a list of drugs
  */
-export function checkDrugInteractions(drugIds: string[]): {
+export async function checkDrugInteractions(drugIds: string[]): Promise<{
   drugA: DrugEntry
   drugB: DrugEntry
   interaction: DrugInteraction
-}[] {
-  const all = getAllFormulariDrugs()
+}[]> {
+  const all = await loadFormulariCatalog()
   const selected = all.filter(d => drugIds.includes(d.id))
   const results: { drugA: DrugEntry; drugB: DrugEntry; interaction: DrugInteraction }[] = []
 
@@ -190,8 +196,8 @@ export function checkDrugInteractions(drugIds: string[]): {
 /**
  * Summary stats for hub & dashboard
  */
-export function getFormulariSummaryStats() {
-  const all = getAllFormulariDrugs()
+export async function getFormulariSummaryStats(): Promise<FormulariSummaryStats> {
+  const all = await loadFormulariCatalog()
   const totalDrugs = all.length
   const hamCount = all.filter(d => d.isHAM).length
   const lasaCount = all.filter(d => d.isLASA).length
@@ -216,5 +222,6 @@ export function getLasaMasterRegistry(): KkmLasaEntry[] {
   return KKM_LASA_MASTER_REGISTRY
 }
 
-export { KKM_LASA_MASTER_REGISTRY, getLasaCategories, type KkmLasaEntry } from '../data/lasaDatabase'
+export { KKM_LASA_MASTER_REGISTRY, getLasaCategories, type KkmLasaEntry }
+export { FormulariAssetError, FORMULARI_ASSET_VERSION }
 

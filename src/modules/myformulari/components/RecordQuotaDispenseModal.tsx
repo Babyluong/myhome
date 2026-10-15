@@ -1,17 +1,5 @@
 import React, { useState } from 'react'
-import {
-  X,
-  MinusCircle,
-  AlertTriangle,
-  CheckCircle2,
-  Calendar,
-  User,
-  Stethoscope,
-  Building2,
-  FileText,
-  Clock,
-  Sparkles
-} from 'lucide-react'
+import { X, MinusCircle, AlertTriangle, CheckCircle2 } from 'lucide-react'
 import { DrugQuotaItem, QuotaDispenseLog } from '../types/drugQuotaTypes'
 import { recordDrugQuotaDispense } from '../services/drugQuotaService'
 
@@ -32,7 +20,7 @@ export const RecordQuotaDispenseModal: React.FC<RecordQuotaDispenseModalProps> =
   const [patientRn, setPatientRn] = useState('')
   const [patientName, setPatientName] = useState('')
   const [prescriberName, setPrescriberName] = useState('')
-  const [prescriberRole, setPrescriberRole] = useState('Pakar Perunding Kardiologi / Perubatan')
+  const [prescriberRole, ] = useState('Pakar Perunding Kardiologi / Perubatan')
   const [wardOrClinic, setWardOrClinic] = useState('')
   const [reasonOrIndication, setReasonOrIndication] = useState('')
   const [dispensedBy, setDispensedBy] = useState('Pegawai Farmasi Bertugas (F44/F48)')

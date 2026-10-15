@@ -10,15 +10,18 @@ import type {
   VehicleInspection,
   VehicleIssueReport,
   TransportRequestLog,
-  JenisKenderaan,
-  StatusKenderaan,
   StatusPermohonan,
-  JenisPemeriksaan,
-  KeputusanPemeriksaan,
-  KeutamaanIsu,
   StatusIsu
 } from '@/shared/types/mytransporter'
 import type { User } from '@/shared/types/auth'
+
+const errorMessage = (error: unknown, fallback: string): string =>
+  error && typeof error === 'object' && 'message' in error && typeof error.message === 'string'
+    ? error.message || fallback
+    : fallback
+
+const relationOne = <T>(value: T | T[] | null): T | null =>
+  Array.isArray(value) ? value[0] ?? null : value
 
 // ============================================
 // LOCAL STORAGE MOCK DATA SYSTEM
@@ -380,9 +383,9 @@ export const getVehicles = async (): Promise<ApiResponse<TransportVehicle[]>> =>
     
     if (error) throw error
     return { data: data as TransportVehicle[], error: null }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('getVehicles error:', error)
-    return { data: null, error: error.message || 'Failed to fetch vehicles' }
+    return { data: null, error: errorMessage(error, 'Failed to fetch vehicles') }
   }
 }
 
@@ -403,9 +406,9 @@ export const getVehicleById = async (id: string): Promise<ApiResponse<TransportV
 
     if (error) throw error
     return { data: data as TransportVehicle, error: null }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('getVehicleById error:', error)
-    return { data: null, error: error.message || 'Failed to fetch vehicle' }
+    return { data: null, error: errorMessage(error, 'Failed to fetch vehicle') }
   }
 }
 
@@ -441,9 +444,9 @@ export const registerVehicle = async (
 
     if (error) throw error
     return { data: data as TransportVehicle, error: null }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('registerVehicle error:', error)
-    return { data: null, error: error.message || 'Failed to register vehicle' }
+    return { data: null, error: errorMessage(error, 'Failed to register vehicle') }
   }
 }
 
@@ -476,9 +479,9 @@ export const updateVehicle = async (
 
     if (error) throw error
     return { data: data as TransportVehicle, error: null }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('updateVehicle error:', error)
-    return { data: null, error: error.message || 'Failed to update vehicle' }
+    return { data: null, error: errorMessage(error, 'Failed to update vehicle') }
   }
 }
 
@@ -575,9 +578,9 @@ export const createRequest = async (
     }
 
     return { data, error: null }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('createRequest error:', error)
-    return { data: null, error: error.message || 'Failed to create request' }
+    return { data: null, error: errorMessage(error, 'Failed to create request') }
   }
 }
 
@@ -613,9 +616,9 @@ export const updateRequest = async (
 
     if (error) throw error
     return { data: data as TransportRequest, error: null }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('updateRequest error:', error)
-    return { data: null, error: error.message || 'Failed to update request' }
+    return { data: null, error: errorMessage(error, 'Failed to update request') }
   }
 }
 
@@ -648,9 +651,9 @@ export const getRequests = async (): Promise<ApiResponse<TransportRequest[]>> =>
 
     if (error) throw error
     return { data: data as TransportRequest[], error: null }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('getRequests error:', error)
-    return { data: null, error: error.message || 'Failed to fetch requests' }
+    return { data: null, error: errorMessage(error, 'Failed to fetch requests') }
   }
 }
 
@@ -683,9 +686,9 @@ export const getRequestById = async (id: string): Promise<ApiResponse<TransportR
 
     if (error) throw error
     return { data: data as TransportRequest, error: null }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('getRequestById error:', error)
-    return { data: null, error: error.message || 'Failed to fetch request detail' }
+    return { data: null, error: errorMessage(error, 'Failed to fetch request detail') }
   }
 }
 
@@ -831,9 +834,9 @@ export const driverAcceptRequest = async (
     )
 
     return { data: updatedReq as TransportRequest, error: null }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('driverAcceptRequest error:', error)
-    return { data: null, error: error.message || 'Failed to process driver acceptance' }
+    return { data: null, error: errorMessage(error, 'Failed to process driver acceptance') }
   }
 }
 
@@ -877,9 +880,9 @@ export const driverRejectRequestDirect = async (
 
     await logRequestTransition(requestId, 'Pemandu Tolak Tugasan', 'submitted', 'submitted', `Ditolak pemandu: ${reason}. Tugasan dikembalikan ke senarai.`, driverId, hospitalId)
     return { data: data as TransportRequest, error: null }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('driverRejectRequestDirect error:', error)
-    return { data: null, error: error.message || 'Failed to reject request' }
+    return { data: null, error: errorMessage(error, 'Failed to reject request') }
   }
 }
 
@@ -922,9 +925,9 @@ export const adminApproveRequest = async (
 
     await logRequestTransition(requestId, 'Kelulusan Pentadbir', 'driver_accepted', 'approved', 'Permohonan diluluskan oleh Pentadbir.', adminId, hospitalId)
     return { data: data as TransportRequest, error: null }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('adminApproveRequest error:', error)
-    return { data: null, error: error.message || 'Failed to approve request' }
+    return { data: null, error: errorMessage(error, 'Failed to approve request') }
   }
 }
 
@@ -968,9 +971,9 @@ export const adminRejectRequest = async (
 
     await logRequestTransition(requestId, 'Ditolak Pentadbir', 'driver_accepted', 'rejected', `Ditolak oleh Pentadbir: ${reason}`, adminId, hospitalId)
     return { data: data as TransportRequest, error: null }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('adminRejectRequest error:', error)
-    return { data: null, error: error.message || 'Failed to reject request' }
+    return { data: null, error: errorMessage(error, 'Failed to reject request') }
   }
 }
 
@@ -1014,9 +1017,9 @@ export const cancelRequest = async (
 
     await logRequestTransition(requestId, 'Dibatalkan', 'submitted', 'cancelled', `Dibatalkan: ${reason}`, userId, hospitalId)
     return { data: data as TransportRequest, error: null }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('cancelRequest error:', error)
-    return { data: null, error: error.message || 'Failed to cancel request' }
+    return { data: null, error: errorMessage(error, 'Failed to cancel request') }
   }
 }
 
@@ -1057,9 +1060,9 @@ export const startTrip = async (
 
     await logRequestTransition(requestId, 'Mula Perjalanan', 'approved', 'in_transit', 'Pemandu memulakan perjalanan trip.', driverId, hospitalId)
     return { data: data as TransportRequest, error: null }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('startTrip error:', error)
-    return { data: null, error: error.message || 'Failed to start trip' }
+    return { data: null, error: errorMessage(error, 'Failed to start trip') }
   }
 }
 
@@ -1171,9 +1174,9 @@ export const completeTrip = async (
     )
 
     return { data: updatedReq as TransportRequest, error: null }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('completeTrip error:', error)
-    return { data: null, error: error.message || 'Failed to complete trip' }
+    return { data: null, error: errorMessage(error, 'Failed to complete trip') }
   }
 }
 
@@ -1205,9 +1208,9 @@ export const getVehicleIssues = async (): Promise<ApiResponse<VehicleIssueReport
 
     if (error) throw error
     return { data: data as VehicleIssueReport[], error: null }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('getVehicleIssues error:', error)
-    return { data: null, error: error.message || 'Failed to fetch issue reports' }
+    return { data: null, error: errorMessage(error, 'Failed to fetch issue reports') }
   }
 }
 
@@ -1236,9 +1239,9 @@ export const reportVehicleIssue = async (
 
     if (error) throw error
     return { data: data as VehicleIssueReport, error: null }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('reportVehicleIssue error:', error)
-    return { data: null, error: error.message || 'Failed to submit issue report' }
+    return { data: null, error: errorMessage(error, 'Failed to submit issue report') }
   }
 }
 
@@ -1281,9 +1284,9 @@ export const resolveVehicleIssue = async (
 
     if (error) throw error
     return { data: data as VehicleIssueReport, error: null }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('resolveVehicleIssue error:', error)
-    return { data: null, error: error.message || 'Failed to resolve issue' }
+    return { data: null, error: errorMessage(error, 'Failed to resolve issue') }
   }
 }
 
@@ -1318,9 +1321,9 @@ export const acknowledgeVehicleIssue = async (
 
     if (error) throw error
     return { data: data as VehicleIssueReport, error: null }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('acknowledgeVehicleIssue error:', error)
-    return { data: null, error: error.message || 'Failed to acknowledge issue' }
+    return { data: null, error: errorMessage(error, 'Failed to acknowledge issue') }
   }
 }
 
@@ -1351,9 +1354,9 @@ export const getInspections = async (): Promise<ApiResponse<VehicleInspection[]>
 
     if (error) throw error
     return { data: data as VehicleInspection[], error: null }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('getInspections error:', error)
-    return { data: null, error: error.message || 'Failed to fetch inspections' }
+    return { data: null, error: errorMessage(error, 'Failed to fetch inspections') }
   }
 }
 
@@ -1419,9 +1422,9 @@ export const getRequestLogs = async (requestId: string): Promise<ApiResponse<Tra
 
     if (error) throw error
     return { data: data as TransportRequestLog[], error: null }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('getRequestLogs error:', error)
-    return { data: null, error: error.message || 'Failed to fetch audit logs' }
+    return { data: null, error: errorMessage(error, 'Failed to fetch audit logs') }
   }
 }
 
@@ -1442,7 +1445,7 @@ export const getTransporterRoles = async (): Promise<ApiResponse<Record<string, 
   }
 
   try {
-    let roles = getMockData<Record<string, string>>('transporter_roles', null as any)
+    let roles = getMockData<Record<string, string> | null>('transporter_roles', null)
     if (!roles || Object.keys(roles).length === 0) {
       roles = { ...defaultRoles }
       setMockData('transporter_roles', roles)
@@ -1454,9 +1457,9 @@ export const getTransporterRoles = async (): Promise<ApiResponse<Record<string, 
       .select('id, role_id, roles:roles(role_code)')
 
     if (users) {
-      users.forEach((u: any) => {
+      users.forEach(u => {
         if (!roles[u.id]) {
-          const sysRole = (u as any).roles?.role_code
+          const sysRole = relationOne(u.roles)?.role_code
           if (sysRole === 'hospital_driver') {
             roles[u.id] = 'transport_driver'
           } else if (sysRole === 'system_admin' || sysRole === 'hospital_admin' || sysRole === 'hospital_administrator') {
@@ -1467,7 +1470,7 @@ export const getTransporterRoles = async (): Promise<ApiResponse<Record<string, 
     }
 
     return { data: roles, error: null }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('getTransporterRoles error:', err)
     const roles = getMockData<Record<string, string>>('transporter_roles', defaultRoles)
     return { data: roles, error: null }
@@ -1584,9 +1587,9 @@ export const getVehicleMovementReport = async (
     const trips: VehicleMovementReportRow[] = []
     let totalKm = 0
 
-    reqs.forEach((req: any) => {
-      const preInsp = req.inspections?.find((i: any) => i.jenis_pemeriksaan === 'pre_trip')
-      const postInsp = req.inspections?.find((i: any) => i.jenis_pemeriksaan === 'post_trip')
+    reqs.forEach(req => {
+      const preInsp = req.inspections?.find(i => i.jenis_pemeriksaan === 'pre_trip')
+      const postInsp = req.inspections?.find(i => i.jenis_pemeriksaan === 'post_trip')
 
       const odoStart = preInsp ? preInsp.bacaan_odometer : 0
       const odoEnd = postInsp ? postInsp.bacaan_odometer : odoStart
@@ -1595,7 +1598,7 @@ export const getVehicleMovementReport = async (
 
       trips.push({
         date: req.trip_completed_at ? req.trip_completed_at.split('T')[0] : '',
-        driverName: req.pemandu?.full_name || 'Driver Not Set',
+        driverName: relationOne(req.pemandu)?.full_name || 'Driver Not Set',
         destination: req.destinasi,
         purpose: req.tujuan_permohonan,
         odometerStart: odoStart,
@@ -1614,9 +1617,9 @@ export const getVehicleMovementReport = async (
       },
       error: null
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('getVehicleMovementReport error:', error)
-    return { data: null, error: error.message || 'Failed to compile vehicle movement report' }
+    return { data: null, error: errorMessage(error, 'Failed to compile vehicle movement report') }
   }
 }
 
@@ -1625,12 +1628,12 @@ export const getDriverMovementReport = async (
   month: number, // 1-12
   year: number
 ): Promise<ApiResponse<{
-  driver: any
+  driver: Pick<User, 'id' | 'full_name'>
   trips: VehicleMovementReportRow[]
   totalTrips: number
   totalKm: number
 }>> => {
-  let driver: any = { id: driverId, full_name: 'Driver' }
+  let driver: Pick<User, 'id' | 'full_name'> = { id: driverId, full_name: 'Driver' }
   
   if (isSupabaseConfigured()) {
     try {
@@ -1726,11 +1729,11 @@ export const getDriverMovementReport = async (
     const trips: VehicleMovementReportRow[] = []
     let totalKm = 0
 
-    reqs.forEach((req: any) => {
+    reqs.forEach(req => {
       // Sort inspections descending by created_at so the latest is first
-      const sortedInsps = req.inspections ? [...req.inspections].sort((a: any, b: any) => new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime()) : []
-      const preInsp = sortedInsps.find((i: any) => i.jenis_pemeriksaan === 'pre_trip')
-      const postInsp = sortedInsps.find((i: any) => i.jenis_pemeriksaan === 'post_trip')
+      const sortedInsps = req.inspections ? [...req.inspections].sort((a, b) => new Date(b.created_at || '').getTime() - new Date(a.created_at || '').getTime()) : []
+      const preInsp = sortedInsps.find(i => i.jenis_pemeriksaan === 'pre_trip')
+      const postInsp = sortedInsps.find(i => i.jenis_pemeriksaan === 'post_trip')
 
       const odoStart = preInsp ? preInsp.bacaan_odometer : 0
       const odoEnd = postInsp ? postInsp.bacaan_odometer : odoStart
@@ -1740,10 +1743,11 @@ export const getDriverMovementReport = async (
       const start = req.trip_started_at ? new Date(req.trip_started_at).getTime() : 0
       const end = req.trip_completed_at ? new Date(req.trip_completed_at).getTime() : 0
       const durationHours = start && end ? parseFloat(((end - start) / 3600000).toFixed(2)) : 0
+      const vehicle = relationOne(req.kenderaan)
 
       trips.push({
         date: req.trip_completed_at ? req.trip_completed_at.split('T')[0] : '',
-        driverName: req.kenderaan ? `${req.kenderaan.no_kenderaan} - ${req.kenderaan.model}` : 'Unknown Vehicle',
+        driverName: vehicle ? `${vehicle.no_kenderaan} - ${vehicle.model}` : 'Unknown Vehicle',
         destination: req.destinasi,
         purpose: req.tujuan_permohonan,
         odometerStart: odoStart,
@@ -1763,9 +1767,9 @@ export const getDriverMovementReport = async (
       },
       error: null
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('getDriverMovementReport error:', error)
-    return { data: null, error: error.message || 'Failed to compile driver movement report' }
+    return { data: null, error: errorMessage(error, 'Failed to compile driver movement report') }
   }
 }
 
@@ -1855,7 +1859,7 @@ export const getDriverActivityReport = async (
     if (reqsError) throw reqsError
 
     let totalHours = 0
-    const trips = reqs.map((r: any) => {
+    const trips = reqs.map(r => {
       const start = r.trip_started_at ? new Date(r.trip_started_at).getTime() : 0
       const end = r.trip_completed_at ? new Date(r.trip_completed_at).getTime() : 0
       const duration = start && end ? (end - start) / 3600000 : 0
@@ -1863,8 +1867,8 @@ export const getDriverActivityReport = async (
 
       return {
         date: r.trip_completed_at ? r.trip_completed_at.split('T')[0] : '',
-        vehicleNo: r.kenderaan?.no_kenderaan || 'Unknown',
-        vehicleModel: r.kenderaan?.model || 'Unknown',
+        vehicleNo: relationOne(r.kenderaan)?.no_kenderaan || 'Unknown',
+        vehicleModel: relationOne(r.kenderaan)?.model || 'Unknown',
         destination: r.destinasi,
         durationHours: parseFloat(duration.toFixed(2)),
         referenceNo: r.no_rujukan
@@ -1880,9 +1884,9 @@ export const getDriverActivityReport = async (
       },
       error: null
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('getDriverActivityReport error:', error)
-    return { data: null, error: error.message || 'Failed to compile driver activity report' }
+    return { data: null, error: errorMessage(error, 'Failed to compile driver activity report') }
   }
 }
 
@@ -1934,9 +1938,9 @@ export const getTransporterAggregateStats = async (): Promise<ApiResponse<{
       supabase.from('transport_requests').select('jenis_permohonan')
     ])
 
-    const ambCount = byTypeData?.filter((r: any) => r.jenis_permohonan === 'ambulance').length || 0
-    const sgCount = byTypeData?.filter((r: any) => r.jenis_permohonan === 'sg').length || 0
-    const vanCount = byTypeData?.filter((r: any) => r.jenis_permohonan === 'van_jenazah').length || 0
+    const ambCount = byTypeData?.filter(r => r.jenis_permohonan === 'ambulance').length || 0
+    const sgCount = byTypeData?.filter(r => r.jenis_permohonan === 'sg').length || 0
+    const vanCount = byTypeData?.filter(r => r.jenis_permohonan === 'van_jenazah').length || 0
 
     return {
       data: {
@@ -1953,9 +1957,9 @@ export const getTransporterAggregateStats = async (): Promise<ApiResponse<{
       },
       error: null
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('getTransporterAggregateStats error:', error)
-    return { data: null, error: error.message || 'Failed to fetch aggregate stats' }
+    return { data: null, error: errorMessage(error, 'Failed to fetch aggregate stats') }
   }
 }
 
@@ -1996,9 +2000,9 @@ export const getUnlinkedTransportRequests = async (): Promise<ApiResponse<Transp
 
     if (error) throw error
     return { data: data as TransportRequest[], error: null }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('getUnlinkedTransportRequests error:', error)
-    return { data: null, error: error.message || 'Failed to fetch unlinked transporter requests' }
+    return { data: null, error: errorMessage(error, 'Failed to fetch unlinked transporter requests') }
   }
 }
 
@@ -2024,9 +2028,9 @@ export const getCrossborderRequests = async (): Promise<ApiResponse<TransportReq
 
     if (error) throw error
     return { data: data as TransportRequest[], error: null }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('getCrossborderRequests error:', error)
-    return { data: null, error: error.message || 'Failed to fetch crossborder requests' }
+    return { data: null, error: errorMessage(error, 'Failed to fetch crossborder requests') }
   }
 }
 

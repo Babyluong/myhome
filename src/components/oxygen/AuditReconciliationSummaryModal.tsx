@@ -1,22 +1,6 @@
 // @ts-nocheck
 import React, { useState } from 'react';
-import { 
-  X, 
-  ShieldCheck, 
-  AlertTriangle, 
-  CheckCircle2, 
-  Building2, 
-  Layers, 
-  FileText, 
-  ArrowRight, 
-  Check, 
-  Clock, 
-  UserCheck, 
-  Sparkles,
-  ClipboardCheck,
-  RefreshCw,
-  Info
-} from 'lucide-react';
+import { X, ShieldCheck, AlertTriangle, CheckCircle2, Building2, FileText, ArrowRight, Clock, UserCheck, ClipboardCheck, RefreshCw } from 'lucide-react'
 
 export interface AuditChangeItem {
   cylinderId: string;

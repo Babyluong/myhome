@@ -1,3 +1,10 @@
+// Base utilities retain complete tokens; slash modifiers attenuate their alpha.
+const semanticColor = (token, translucent = false) => ({ opacityValue, opacityVariable } = {}) => {
+  if (opacityValue === undefined || opacityVariable) return `var(--${token})`;
+  const alpha = translucent ? `calc(var(--${token}-alpha) * ${opacityValue})` : opacityValue;
+  return `rgb(var(--${token}-rgb) / ${alpha})`;
+};
+
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: 'class',
@@ -17,32 +24,32 @@ export default {
     extend: {
       colors: {
         // High-Tier Semantic Design Tokens
-        canvas: 'var(--bg-canvas)',
-        surface: 'var(--bg-surface)',
-        elevated: 'var(--bg-elevated)',
-        'accent-teal': 'var(--accent-teal)',
-        'border-interactive': 'var(--border-interactive)',
-        subtle: 'var(--bg-subtle)',
-        'muted-surface': 'var(--bg-muted)',
-        inset: 'var(--bg-inset)',
-        'border-default': 'var(--border-default)',
-        'border-subtle': 'var(--border-subtle)',
-        'border-strong': 'var(--border-strong)',
-        'text-primary': 'var(--text-primary)',
-        'text-secondary': 'var(--text-secondary)',
-        'text-muted': 'var(--text-muted)',
-        'accent-base': 'var(--accent-base)',
-        'accent-hover': 'var(--accent-hover)',
-        'accent-active': 'var(--accent-active)',
-        'accent-subtle': 'var(--accent-subtle)',
-        'accent-foreground': 'var(--accent-foreground)',
-        'accent-decor': 'var(--accent-decor)',
-        'surface-subtle': 'var(--bg-subtle)',
-        'surface-hover': 'var(--bg-hover)',
-        'text-tertiary': 'var(--text-muted)',
-        'ink': 'var(--ink-button)',
-        'ink-hover': 'var(--ink-button-hover)',
-        'ink-text': 'var(--ink-button-text)',
+        canvas: semanticColor('bg-canvas'),
+        surface: semanticColor('bg-surface'),
+        elevated: semanticColor('bg-elevated'),
+        'accent-teal': semanticColor('accent-teal'),
+        'border-interactive': semanticColor('border-interactive', true),
+        subtle: semanticColor('bg-subtle'),
+        'muted-surface': semanticColor('bg-muted'),
+        inset: semanticColor('bg-inset'),
+        'border-default': semanticColor('border-default', true),
+        'border-subtle': semanticColor('border-subtle', true),
+        'border-strong': semanticColor('border-strong', true),
+        'text-primary': semanticColor('text-primary'),
+        'text-secondary': semanticColor('text-secondary'),
+        'text-muted': semanticColor('text-muted'),
+        'accent-base': semanticColor('accent-base'),
+        'accent-hover': semanticColor('accent-hover'),
+        'accent-active': semanticColor('accent-active'),
+        'accent-subtle': semanticColor('accent-subtle', true),
+        'accent-foreground': semanticColor('accent-foreground'),
+        'accent-decor': semanticColor('accent-decor'),
+        'surface-subtle': semanticColor('bg-subtle'),
+        'surface-hover': semanticColor('bg-hover'),
+        'text-tertiary': semanticColor('text-muted'),
+        'ink': semanticColor('ink-button'),
+        'ink-hover': semanticColor('ink-button-hover'),
+        'ink-text': semanticColor('ink-button-text'),
         
         primary: {
           50: '#EFF6FF',
@@ -129,6 +136,9 @@ export default {
           800: '#1E40AF',
           900: '#1E3A8A',
         },
+      },
+      opacity: {
+        8: '0.08',
       },
       fontFamily: {
         sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'SF Pro Display', 'Inter', 'system-ui', 'sans-serif'],

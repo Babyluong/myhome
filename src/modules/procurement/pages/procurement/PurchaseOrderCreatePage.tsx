@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useEffect, useState, useRef, useMemo } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -13,33 +12,7 @@ import {
   ConfirmationDialog,
   Checkbox
 } from '@/components/ui'
-import { 
-  IconShoppingCart, 
-  IconPlus, 
-  IconCheck, 
-  IconFileSearch, 
-  IconFilePen,
-  IconX,
-  IconPrinter,
-  IconSave,
-  IconAlertCircle,
-  IconCalculator,
-  IconSearch,
-  IconMoney,
-  IconBuilding,
-  IconTag,
-  IconFolder,
-  IconUser,
-  IconLayers,
-  IconChevronLeft,
-  IconChevronRight,
-  IconActivity,
-  IconPackage,
-  IconHash,
-  IconCurrencyDollar,
-  IconInfoCircle,
-  IconHistory
-} from '@/components/ui/Icons'
+import { IconPlus, IconX, IconSave, IconAlertCircle, IconCalculator, IconSearch, IconBuilding, IconUser, IconChevronLeft, IconChevronRight, IconActivity, IconPackage, IconInfoCircle, IconHistory } from '@/components/ui/Icons'
 import { supabase } from '@/services/supabase'
 import { ROUTES } from '@/lib/constants'
 import { 
@@ -50,15 +23,7 @@ import {
   createSupplier
 } from '@/services/pharmacy/procurementService'
 import { getBudgetForPO } from '@/services/pharmacy/budgetEngine'
-import { 
-  getWarrants,
-  getWarrantSummary,
-  WARRANT_VOTE_CODES,
-  WARRANT_VOTE_ACTIVITIES,
-  WARRANT_CATEGORIES,
-  WARRANT_DEPARTMENTS,
-  getSharedDepartments,
-} from '@/services/pharmacy/warrantService'
+import { getWarrants, WARRANT_CATEGORIES, WARRANT_DEPARTMENTS } from '@/services/pharmacy/warrantService'
 import { getDrugCatalog } from '@/services/pharmacy/drugCatalogService'
 import { getNonDrugCatalog } from '@/services/pharmacy/nonDrugCatalogService'
 import { cn, formatCurrency, isContractExpired, isApplVote, isCcVote } from '@/lib/utils'
@@ -85,14 +50,6 @@ function deriveCatalogSource(voteCode?: string): CatalogSource {
 }
 
 // Constants
-const VOTE_CODES = [
-  { value: '080702', label: '080702 - CC/DP' },
-  { value: '990102', label: '990102 - APPL' },
-  { value: '080600 (APPL)', label: '080600 (APPL) - Duit Khas' },
-  { value: '080600 (CC)', label: '080600 (CC) - Duit Khas' },
-  { value: 'other', label: 'Others (Manual Entry)' },
-]
-
 const VOTE_ACTIVITIES = [
   { value: '27401', label: '27401 - Drugs' },
   { value: '27499', label: '27499 - Non-Drugs' },
@@ -134,6 +91,92 @@ interface POItem {
   contract_number?: string
   lead_time_days?: number | string
   contract_end_date?: string
+  cc_contract_number?: string
+  cc_contract_start_date?: string
+  cc_contract_end_date?: string
+  cc_contract_status?: string
+  cc_supplier_name?: string
+  procurement_vote?: string
+  category?: string | { category_name?: string }
+  supplier?: { name?: string; company_name?: string; contract_number?: string }
+  drug_code?: string
+  drug_name?: string
+  id?: string
+  price?: number
+  lead_time?: string | number
+  contract_status?: string
+  contract_start_date?: string
+  contract_expiry?: string
+}
+
+interface CatalogItem {
+  id: string
+  item_type: 'drug' | 'non_drug'
+  item_id?: string
+  item_name?: string
+  item_code?: string
+  drug_name?: string
+  drug_code?: string
+  quantity?: number
+  unit_price?: number
+  packaging_description?: string
+  supplier_name?: string
+  contract_number?: string
+  kkm_contract_number?: string
+  lead_time_days?: number | string
+  lead_time?: number | string
+  delivery_timeframe?: string
+  contract_end_date?: string
+  cc_contract_end_date?: string
+  contract_start_date?: string
+  cc_contract_start_date?: string
+  contract_expiry?: string
+  expiry_date?: string
+  contract_status?: string
+  cc_contract_status?: string
+  cc_contract_number?: string
+  cc_supplier_name?: string
+  procurement_vote?: string
+  category?: string | { category_name?: string }
+  price?: number
+  supplier_id?: string
+  supplier?: Pick<Supplier, 'company_name' | 'contract_number'> & { name?: string }
+}
+
+interface ProcurementContractLookup {
+  id: string
+  contract_name?: string | null
+  contract_number?: string | null
+  contract_type?: string | null
+  supplier_id?: string | null
+  supplier_name?: string | null
+  item_code?: string | null
+  unit_price?: number | null
+  start_date?: string | null
+  end_date?: string | null
+  sst_rate?: string | null
+  metadata?: { packaging_description?: string | null } | null
+}
+
+type PurchaseOrderSubmitData = Omit<PurchaseOrderFormData, 'items'> & {
+  items: Array<PurchaseOrderFormData['items'][number] & {
+    contract_number?: string
+    lead_time_days?: string | number
+    contract_end_date?: string
+  }>
+  modification_reason?: string
+}
+
+type PurchaseOrderFormState = Omit<PurchaseOrderFormData, 'items'> & {
+  items: POItem[]
+  order_date?: string
+  modification_reason?: string
+}
+
+interface PurchaseOrderRouteState {
+  mode?: 'edit'
+  poId?: string
+  type?: PurchaseOrderFormData['po_type']
 }
 
 export const PurchaseOrderCreatePage: React.FC = () => {
@@ -145,17 +188,18 @@ export const PurchaseOrderCreatePage: React.FC = () => {
   const userId = user?.id
 
   // Check if we're in edit mode
-  const editMode = (location.state as any)?.mode === 'edit'
-  const poId = (location.state as any)?.poId as string | undefined
+  const routeState = location.state as PurchaseOrderRouteState | null
+  const editMode = routeState?.mode === 'edit'
+  const poId = routeState?.poId
 
   // Form state
-  const [formData, setFormData] = useState<any>({
+  const [formData, setFormData] = useState<PurchaseOrderFormState>({
     supplier_id: '',
     vote_code: '',
     vote_activity: '',
     category: '',
     department: '',
-    po_type: (location.state as any)?.type || 'regular',
+    po_type: routeState?.type || 'regular',
     kkm_contract_number: '',
     inv_sq_number: '',
     program_name: '',
@@ -220,13 +264,13 @@ export const PurchaseOrderCreatePage: React.FC = () => {
   // Item selection
   const [itemSearch, setItemSearch] = useState('')
   const [showSuggestions, setShowSuggestions] = useState(false)
-  const [allItems, setAllItems] = useState<((Drug | NonDrug) & { item_type: 'drug' | 'non_drug' })[]>([])
+  const [allItems, setAllItems] = useState<CatalogItem[]>([])
 
   // Balance calculation
   const [balanceAfterPurchase, setBalanceAfterPurchase] = useState<number | null>(null)
   const [availableBudget, setAvailableBudget] = useState<number>(0)
   const [totalAllocation, setTotalAllocation] = useState<number>(0)
-  const [previousExpenses, setPreviousExpenses] = useState<number>(0)
+  const [, setPreviousExpenses] = useState<number>(0)
   const [showCancelDialog, setShowCancelDialog] = useState(false)
   const [cancelReason, setCancelReason] = useState('')
   const [manualItem, setManualItem] = useState({
@@ -247,7 +291,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
     const loadSignatures = async () => {
       const result = await getPharmacyPOSignatures(hospitalId, formData.department)
       if (result.data) {
-        let finalSignatures = { ...result.data }
+        const finalSignatures = { ...result.data }
         
         // Always follow currently logged in user for applicant
         finalSignatures.applicantName = !editMode ? (user?.full_name || result.data.applicantName) : result.data.applicantName
@@ -273,7 +317,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
     }
 
     void loadSignatures()
-  }, [hospitalId, formData.department])
+  }, [hospitalId, formData.department, editMode, user?.full_name, user?.jawatan])
 
   // Load initial data and existing PO if in edit mode
   useEffect(() => {
@@ -312,7 +356,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
             setExistingPO(po)
 
             // Load item details and populate form
-            const itemsWithDetails = (po.items || []).map((item) => {
+            const itemsWithDetails: POItem[] = (po.items || []).map((item) => {
               // Immediately use stored metadata as primary source
               return {
                 item_type: item.item_type as 'drug' | 'non_drug',
@@ -326,7 +370,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
             })
 
             // Populate form with existing metadata first to prevent blank fields
-            setFormData((prev: any) => ({
+            setFormData((prev) => ({
               ...prev,
               supplier_id: po.supplier_id,
               vote_code: po.vote_code || '',
@@ -441,14 +485,14 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                   return item
                 })
               )
-              setFormData((prev: any) => ({ ...prev, items: enrichedItems }))
+              setFormData((prev) => ({ ...prev, items: enrichedItems }))
 
               // Self-healing: persist resolved names back to the DB
               for (const enriched of enrichedItems) {
                 const original = itemsWithDetails.find(o => o.item_id === enriched.item_id)
                 if (original && enriched.item_name !== original.item_name && enriched.item_name !== 'Unknown Item') {
                   // Find the database record ID for this PO item
-                  const dbItem = (po.items || []).find((i: any) => i.item_id === enriched.item_id)
+                  const dbItem = (po.items || []).find((i) => i.item_id === enriched.item_id)
                   if (dbItem?.id) {
                     void supabase
                       .from('pharmacy_purchase_order_items')
@@ -489,7 +533,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
       try {
         const parsed = JSON.parse(savedDraft)
         if (parsed && typeof parsed === 'object') {
-          setFormData((prev: any) => ({
+          setFormData((prev) => ({
             ...prev,
             ...parsed
           }))
@@ -500,7 +544,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
       }
     }
     setIsDraftLoaded(true)
-  }, [hospitalId, userId, editMode, isLoading])
+  }, [hospitalId, userId, editMode, isLoading, showSuccess])
 
   // Auto-save draft to localStorage on form changes
   useEffect(() => {
@@ -568,7 +612,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
     const loadItems = async () => {
       try {
         const src = deriveCatalogSource(formData.vote_code)
-        const combinedItems: Array<(Drug | NonDrug) & { item_type: 'drug' | 'non_drug' }> = []
+        const combinedItems: CatalogItem[] = []
 
         if (formData.po_type === 'sq') {
           // Invite Quotation (SQ): Make exception to search all active items across drugs, non-drugs, and contracts
@@ -603,8 +647,8 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                 (existing) => 
                   (existing.item_code && contract.item_code && existing.item_code.toLowerCase() === contract.item_code.toLowerCase()) ||
                   (existing.drug_code && contract.item_code && existing.drug_code.toLowerCase() === contract.item_code.toLowerCase()) ||
-                  (('drug_name' in existing && existing.drug_name.toLowerCase() === contract.contract_name.toLowerCase()) ||
-                   ('item_name' in existing && existing.item_name.toLowerCase() === contract.contract_name.toLowerCase()))
+                  (('drug_name' in existing && (existing.drug_name || '').toLowerCase() === contract.contract_name.toLowerCase()) ||
+                   ('item_name' in existing && (existing.item_name || '').toLowerCase() === contract.contract_name.toLowerCase()))
               )
               if (!alreadyExists) {
                 const isNonDrug = contract.contract_type === 'non_drug' || 
@@ -622,7 +666,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                   packaging_description: contract.metadata?.packaging_description || contract.sst_rate || '',
                   category: 'Contract Catalog',
                   supplier_id: contract.supplier_id,
-                } as any)
+                })
               }
             })
           }
@@ -675,8 +719,8 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                 (existing) => 
                   (existing.item_code && contract.item_code && existing.item_code.toLowerCase() === contract.item_code.toLowerCase()) ||
                   (existing.drug_code && contract.item_code && existing.drug_code.toLowerCase() === contract.item_code.toLowerCase()) ||
-                  (('drug_name' in existing && existing.drug_name.toLowerCase() === contract.contract_name.toLowerCase()) ||
-                   ('item_name' in existing && existing.item_name.toLowerCase() === contract.contract_name.toLowerCase()))
+                  (('drug_name' in existing && (existing.drug_name || '').toLowerCase() === contract.contract_name.toLowerCase()) ||
+                   ('item_name' in existing && (existing.item_name || '').toLowerCase() === contract.contract_name.toLowerCase()))
               )
               if (!alreadyExists) {
                 const isNonDrug = contract.contract_type === 'non_drug' || 
@@ -694,7 +738,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                   packaging_description: contract.metadata?.packaging_description || contract.sst_rate || '',
                   category: 'Contract Catalog',
                   supplier_id: contract.supplier_id,
-                } as any)
+                })
               }
             })
           }
@@ -732,8 +776,8 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                 (existing) => 
                   (existing.item_code && contract.item_code && existing.item_code.toLowerCase() === contract.item_code.toLowerCase()) ||
                   (existing.drug_code && contract.item_code && existing.drug_code.toLowerCase() === contract.item_code.toLowerCase()) ||
-                  (('drug_name' in existing && existing.drug_name.toLowerCase() === contract.contract_name.toLowerCase()) ||
-                   ('item_name' in existing && existing.item_name.toLowerCase() === contract.contract_name.toLowerCase()))
+                  (('drug_name' in existing && (existing.drug_name || '').toLowerCase() === contract.contract_name.toLowerCase()) ||
+                   ('item_name' in existing && (existing.item_name || '').toLowerCase() === contract.contract_name.toLowerCase()))
               )
               if (!alreadyExists) {
                 const isNonDrug = contract.contract_type === 'non_drug' || 
@@ -745,9 +789,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                          (('drug_name' in m && m.drug_name === contract.contract_name) ||
                           ('item_name' in m && m.item_name === contract.contract_name))
                 );
-                const resolvedMasterCode = matchingMasterItem 
-                  ? ('drug_code' in matchingMasterItem ? (matchingMasterItem as any).drug_code : (matchingMasterItem as any).item_code) 
-                  : '';
+                const resolvedMasterCode = matchingMasterItem?.drug_code || matchingMasterItem?.item_code || '';
 
                 combinedItems.push({
                   id: contract.id,
@@ -760,7 +802,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                   packaging_description: contract.metadata?.packaging_description || contract.sst_rate || '',
                   category: 'Contract Catalog',
                   supplier_id: contract.supplier_id,
-                } as any)
+                })
               }
             })
           }
@@ -778,7 +820,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
     }, 300)
 
     return () => clearTimeout(timeout)
-  }, [itemSearch, hospitalId, formData.vote_code])
+  }, [itemSearch, hospitalId, formData.vote_code, formData.po_type])
 
   // Close suggestions when clicking outside
   useEffect(() => {
@@ -810,10 +852,10 @@ export const PurchaseOrderCreatePage: React.FC = () => {
     const loadBudget = async () => {
       const budget = await getBudgetForPO(
         hospitalId,
-        formData.vote_code as any,
-        formData.vote_activity as any,
-        (formData.department || 'all') as any,
-        formData.category as any,
+        formData.vote_code,
+        formData.vote_activity,
+        (formData.department || 'all') as Warrant['department'],
+        formData.category,
         editMode && poId ? poId : undefined
       )
 
@@ -830,8 +872,9 @@ export const PurchaseOrderCreatePage: React.FC = () => {
   }, [hospitalId, formData.vote_code, formData.vote_activity, formData.department, formData.category, formData.items, editMode, poId])
 
   // Auto-fill KKM Contract No. and unit prices from contracts database
+  const contractFillItems = formData.items
   useEffect(() => {
-    if (!hospitalId || !formData.supplier_id || formData.supplier_id === 'other' || !formData.items || formData.items.length === 0) {
+    if (!hospitalId || !formData.supplier_id || formData.supplier_id === 'other' || !contractFillItems || contractFillItems.length === 0) {
       return
     }
 
@@ -854,7 +897,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
             const cleanStr = (name: string) => name ? name.toLowerCase().replace(/[^a-z0-9]/g, '').replace(/sdn\s*bhd/gi, '').replace(/sdn/gi, '').replace(/bhd/gi, '').trim() : '';
             const targetCleanName = cleanStr(selectedSupplier.company_name);
 
-            const nameContracts = (allActive || []).filter((c: any) => {
+            const nameContracts = (allActive || []).filter((c: ProcurementContractLookup) => {
               if (!c.supplier_name) return false;
               const cleanContractSupplier = cleanStr(c.supplier_name);
               return cleanContractSupplier === targetCleanName || 
@@ -869,11 +912,11 @@ export const PurchaseOrderCreatePage: React.FC = () => {
         }
 
         if (supplierContracts && supplierContracts.length > 0) {
-          const clean = (s: string) => s ? s.toLowerCase().replace(/[^a-z0-9]/g, '') : '';
+          const clean = (s?: string) => s ? s.toLowerCase().replace(/[^a-z0-9]/g, '') : '';
           let matchedContractNo = formData.kkm_contract_number || '';
           let itemsUpdated = false;
 
-          const updatedItems = formData.items!.map((item) => {
+          const updatedItems = contractFillItems.map((item) => {
             const cleanItemName = clean(item.item_name || '');
             const cleanItemCode = clean(item.item_code || '');
             const itemPrice = Number(item.unit_price || 0);
@@ -881,13 +924,13 @@ export const PurchaseOrderCreatePage: React.FC = () => {
             // Find matching contract using same hierarchy as backend
             let matched = null;
             if (cleanItemCode) {
-              matched = supplierContracts.find((c: any) => clean(c.item_code) === cleanItemCode);
+              matched = supplierContracts.find((c: ProcurementContractLookup) => clean(c.item_code || '') === cleanItemCode);
             }
             if (!matched && cleanItemName) {
-              matched = supplierContracts.find((c: any) => clean(c.contract_name) === cleanItemName);
+              matched = supplierContracts.find((c: ProcurementContractLookup) => clean(c.contract_name || '') === cleanItemName);
             }
             if (!matched && cleanItemName) {
-              matched = supplierContracts.find((c: any) => {
+              matched = supplierContracts.find((c: ProcurementContractLookup) => {
                 const cleanContractName = clean(c.contract_name || '');
                 return cleanContractName.includes(cleanItemName) || cleanItemName.includes(cleanContractName);
               });
@@ -930,18 +973,18 @@ export const PurchaseOrderCreatePage: React.FC = () => {
     }
 
     void autoFillContracts()
-  }, [formData.supplier_id, formData.vote_code, formData.items?.map(it => `${it.item_id}_${it.unit_price}`).join(','), hospitalId])
+  }, [formData.supplier_id, formData.vote_code, contractFillItems, formData.kkm_contract_number, formData.order_date, suppliers, hospitalId])
 
   // Keep header KKM Contract No in sync with item contract number
   useEffect(() => {
     if (!formData.kkm_contract_number && formData.items && formData.items.length > 0) {
       const activeItemWithContract = formData.items.find(it => {
-        const cNo = it.contract_number || (it as any).cc_contract_number;
+        const cNo = it.contract_number || it.cc_contract_number;
         const refDate = formData.order_date || new Date().toISOString();
         return cNo && !isContractExpired(it, refDate);
       });
       if (activeItemWithContract) {
-        const firstContractNo = activeItemWithContract.contract_number || (activeItemWithContract as any).cc_contract_number || '';
+        const firstContractNo = activeItemWithContract.contract_number || activeItemWithContract.cc_contract_number || '';
         setFormData(prev => ({
           ...prev,
           kkm_contract_number: firstContractNo
@@ -953,7 +996,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
 
   // No mock items: user will search and add real catalog items only
 
-  const handleInputChange = (field: keyof PurchaseOrderFormData, value: any) => {
+  const handleInputChange = (field: keyof PurchaseOrderFormState, value: string) => {
     setFormData((prev) => {
       if (field === 'vote_code' && prev.vote_code && prev.vote_code !== value && prev.items && prev.items.length > 0) {
         // Only warn & clear items when the catalog *mode* actually changes.
@@ -1050,7 +1093,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
     });
   }
 
-  const addItem = (item: Drug | NonDrug & { item_type: 'drug' | 'non_drug' }) => {
+  const addItem = (item: CatalogItem) => {
     if (!formData.items) {
       setFormData((prev) => ({ ...prev, items: [] }))
     }
@@ -1084,16 +1127,17 @@ export const PurchaseOrderCreatePage: React.FC = () => {
             items: (prev.items || []).map(it => it.item_id === currentItemId ? { ...it, item_code: genuineCode } : it)
           }));
         }
-      } catch (_err) {}
+      } catch (error) {
+        console.error("Failed to resolve purchase order item code", error);
+      }
     })();
-    const isCc = isCcVote(formData.vote_code) || (item as any).procurement_vote === 'cc';
     
-    const supplierName = (item as any).cc_supplier_name || (item as any).supplier?.company_name || (item as any).supplier_name || (item as any).supplier?.name || '';
-    const rawContractNo = (item as any).cc_contract_number || (item as any).kkm_contract_number || (item as any).contract_number || (item as any).supplier?.contract_number || '';
-    const contractStart = (item as any).cc_contract_start_date || (item as any).contract_start_date || '';
-    const contractEnd = (item as any).cc_contract_end_date || (item as any).contract_expiry || (item as any).contract_end_date || (item as any).expiry_date || '';
-    const contractStatus = (item as any).cc_contract_status || (item as any).contract_status || '';
-    const leadTime = (item as any).lead_time_days || (item as any).delivery_timeframe || (item as any).lead_time || '';
+    const supplierName = item.cc_supplier_name || item.supplier?.company_name || item.supplier_name || item.supplier?.name || '';
+    const rawContractNo = item.cc_contract_number || item.kkm_contract_number || item.contract_number || item.supplier?.contract_number || '';
+    const contractStart = item.cc_contract_start_date || item.contract_start_date || '';
+    const contractEnd = item.cc_contract_end_date || item.contract_expiry || item.contract_end_date || item.expiry_date || '';
+    const contractStatus = item.cc_contract_status || item.contract_status || '';
+    const leadTime = item.lead_time_days || item.delivery_timeframe || item.lead_time || '';
 
     const refDate = formData.order_date || new Date().toISOString();
     const itemIsExpired = isContractExpired({
@@ -1122,7 +1166,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
       contract_end_date: contractEnd,
     }
 
-    setFormData((prev: any) => {
+    setFormData((prev) => {
       const updated = {
         ...prev,
         items: [...(prev.items || []), newItem],
@@ -1178,7 +1222,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
           const cleanStr = (name: string) => name ? name.toLowerCase().replace(/[^a-z0-9]/g, '').replace(/sdn\s*bhd/gi, '').replace(/sdn/gi, '').replace(/bhd/gi, '').trim() : '';
           const targetCleanName = cleanStr(selectedSupplierName);
 
-          const fallbackContracts = (allActive || []).filter((c: any) => {
+          const fallbackContracts = (allActive || []).filter((c: ProcurementContractLookup) => {
             if (!c.supplier_name) return false;
             const cleanContractSupplier = cleanStr(c.supplier_name);
             return cleanContractSupplier === targetCleanName || 
@@ -1192,19 +1236,19 @@ export const PurchaseOrderCreatePage: React.FC = () => {
         }
 
         if (matchedContracts && matchedContracts.length > 0) {
-          const clean = (s: string) => s ? s.toLowerCase().replace(/[^a-z0-9]/g, '') : '';
+          const clean = (s?: string) => s ? s.toLowerCase().replace(/[^a-z0-9]/g, '') : '';
           const cleanItemName = clean(name);
           const cleanItemCode = clean(code);
 
           let matched = null;
           if (cleanItemCode) {
-            matched = matchedContracts.find((c: any) => clean(c.item_code) === cleanItemCode);
+            matched = matchedContracts.find((c: ProcurementContractLookup) => clean(c.item_code || '') === cleanItemCode);
           }
           if (!matched && cleanItemName) {
-            matched = matchedContracts.find((c: any) => clean(c.contract_name) === cleanItemName);
+            matched = matchedContracts.find((c: ProcurementContractLookup) => clean(c.contract_name || '') === cleanItemName);
           }
           if (!matched && cleanItemName) {
-            matched = matchedContracts.find((c: any) => {
+            matched = matchedContracts.find((c: ProcurementContractLookup) => {
               const cleanContractName = clean(c.contract_name || '');
               return cleanContractName.includes(cleanItemName) || cleanItemName.includes(cleanContractName);
             });
@@ -1332,7 +1376,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                   .ilike('drug_name', `%${firstWord}%`);
 
                 if (drugCandidates && drugCandidates.length > 0) {
-                  const matched = drugCandidates.find((c: any) => clean(c.drug_name) === cleanContractName);
+                  const matched = drugCandidates.find((c: { drug_name?: string | null }) => clean(c.drug_name || '') === cleanContractName);
                   if (matched) {
                     catalogItem = { ...matched, item_type: 'drug' };
                   }
@@ -1346,7 +1390,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                     .ilike('item_name', `%${firstWord}%`);
 
                   if (nonDrugCandidates && nonDrugCandidates.length > 0) {
-                    const matched = nonDrugCandidates.find((c: any) => clean(c.item_name) === cleanContractName);
+                    const matched = nonDrugCandidates.find((c: { item_name?: string | null }) => clean(c.item_name || '') === cleanContractName);
                     if (matched) {
                       catalogItem = { ...matched, item_type: 'non_drug' };
                     }
@@ -1388,7 +1432,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
     }, 500);
 
     return () => clearTimeout(delayDebounce);
-  }, [formData.kkm_contract_number, hospitalId]);
+  }, [formData.kkm_contract_number, formData.items, hospitalId]);
 
   const addManualItem = () => {
     if (!manualItem.item_name) {
@@ -1404,7 +1448,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
       return
     }
 
-    const newItem: any = {
+    const newItem: POItem = {
       item_type: manualItem.item_type,
       item_id: `manual-${Date.now()}`,
       quantity: manualItem.quantity,
@@ -1431,16 +1475,16 @@ export const PurchaseOrderCreatePage: React.FC = () => {
   }
 
   const removeItem = (index: number) => {
-    setFormData((prev: any) => ({
+    setFormData((prev) => ({
       ...prev,
-      items: prev.items?.filter((_: any, i: number) => i !== index) || [],
+      items: prev.items?.filter((_, i) => i !== index) || [],
     }))
   }
 
-  const updateItem = (index: number, field: keyof POItem, value: any) => {
-    setFormData((prev: any) => ({
+  const updateItem = <K extends keyof POItem,>(index: number, field: K, value: POItem[K]) => {
+    setFormData((prev) => ({
       ...prev,
-      items: prev.items?.map((item: any, i: number) => (i === index ? { ...item, [field]: value } : item)) || [],
+      items: prev.items?.map((item, i) => (i === index ? { ...item, [field]: value } : item)) || [],
     }))
   }
 
@@ -1560,9 +1604,9 @@ export const PurchaseOrderCreatePage: React.FC = () => {
         }
       }
 
-      const submitData: PurchaseOrderFormData = {
+      const submitData: PurchaseOrderSubmitData = {
         supplier_id: (formData.po_type === 'sq' && formData.supplier_ids && formData.supplier_ids.length > 0)
-          ? undefined as any
+          ? undefined
           : finalSupplierId,
         sq_suppliers: (formData.po_type === 'sq' && formData.supplier_ids && formData.supplier_ids.length > 0)
           ? formData.supplier_ids.map((id: string) => suppliers.find(s => s.id === id)?.company_name || 'Unknown Supplier')
@@ -1585,7 +1629,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
         manual_category: formData.manual_category,
         manual_department: formData.manual_department,
         kkm_contract_number: formData.kkm_contract_number,
-        items: formData.items.map((item: any) => ({
+        items: formData.items.map((item) => ({
           item_type: item.item_type,
           item_id: item.item_id,
           item_name: item.item_name,
@@ -1598,7 +1642,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
           contract_end_date: item.contract_end_date || item.cc_contract_end_date,
         })),
         modification_reason: formData.modification_reason,
-      } as any
+      }
 
       if (!editMode) {
         const result = await createPurchaseOrder(hospitalId, userId, submitData)
@@ -1610,7 +1654,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
           const DRAFT_KEY = `po_draft_${hospitalId}_${userId}`
           localStorage.removeItem(DRAFT_KEY)
           // Also clear from state/prevent auto-save
-          setFormData((prev: any) => ({ ...prev, items: [] }))
+          setFormData((prev) => ({ ...prev, items: [] }))
 
           showSuccess('Success', formData.po_type === 'sq' 
             ? 'Successfully created quotation invitation for all selected suppliers.'
@@ -1639,7 +1683,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
           const DRAFT_KEY = `po_draft_${hospitalId}_${userId}`
           localStorage.removeItem(DRAFT_KEY)
           // Also clear from state/prevent auto-save
-          setFormData((prev: any) => ({ ...prev, items: [] }))
+          setFormData((prev) => ({ ...prev, items: [] }))
 
           showSuccess('Success', 'Purchase order created successfully')
           navigate(ROUTES.PHARMACY_PO)
@@ -1676,7 +1720,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
       return { subtotal: 0, total: 0 }
     }
 
-    const subtotal = formData.items.reduce((sum: number, item: any) => sum + (item.quantity * item.unit_price), 0)
+    const subtotal = formData.items.reduce((sum, item) => sum + (item.quantity * item.unit_price), 0)
     const total = subtotal
 
     return { subtotal, total }
@@ -1841,7 +1885,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                         const type = e.target.value;
                         handleInputChange('po_type', type);
                         if (type === 'sq' && formData.supplier_id && formData.supplier_id !== 'other') {
-                          handleInputChange('supplier_ids', [formData.supplier_id]);
+                          setFormData(prev => ({ ...prev, supplier_ids: [formData.supplier_id!] }));
                         }
                       }}
                       className="w-full bg-indigo-500/10 border border-indigo-100 rounded-xl px-4 py-2.5 text-sm font-bold text-indigo-400 dark:text-indigo-300 font-bold focus:border-indigo-500 focus:ring-0 outline-none transition-colors hover:bg-indigo-500/10"
@@ -1856,10 +1900,10 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                   <AnimatePresence>
                     {formData.po_type === 'manual' && (
                       <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="overflow-hidden"
+                        initial={{ opacity: 0, scaleY: 0.96 }}
+                        animate={{ opacity: 1, scaleY: 1 }}
+                        exit={{ opacity: 0, scaleY: 0.96 }}
+                        className="origin-top overflow-hidden"
                       >
                         <label className="block text-[10px] font-black text-text-secondary font-bold uppercase tracking-wider mb-2">Program Name</label>
                         <Input
@@ -1898,7 +1942,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                                   } else {
                                     newIds = currentIds.filter((id: string) => id !== supplier.id);
                                   }
-                                  handleInputChange('supplier_ids', newIds);
+                                  setFormData(prev => ({ ...prev, supplier_ids: newIds }));
                                   
                                   // Update single supplier_id for compatibility if needed
                                   if (newIds.length > 0) {
@@ -1937,14 +1981,14 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                           handleInputChange('supplier_id', value);
                           if (value !== 'other') {
                             // Clear manual fields if a database supplier is chosen
-                            setFormData((prev: any) => ({
+                            setFormData((prev) => ({
                               ...prev,
                               manual_supplier_name: '',
                               manual_supplier_address: '',
                               supplier_ids: value ? [value] : []
                             }));
                           } else {
-                            setFormData((prev: any) => ({
+                            setFormData((prev) => ({
                               ...prev,
                               supplier_ids: []
                             }));
@@ -1964,9 +2008,9 @@ export const PurchaseOrderCreatePage: React.FC = () => {
 
                     {formData.supplier_id === 'other' && (
                       <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        className="mt-3 space-y-3 overflow-hidden"
+                        initial={{ opacity: 0, scaleY: 0.96 }}
+                        animate={{ opacity: 1, scaleY: 1 }}
+                        className="origin-top mt-3 space-y-3 overflow-hidden"
                       >
                         <AutoExpandingTextarea
                           placeholder="Manual Supplier Name..."
@@ -2050,10 +2094,10 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                   <AnimatePresence>
                     {isCcVote(formData.vote_code) && formData.po_type !== 'sq' && (
                       <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="overflow-hidden"
+                        initial={{ opacity: 0, scaleY: 0.96 }}
+                        animate={{ opacity: 1, scaleY: 1 }}
+                        exit={{ opacity: 0, scaleY: 0.96 }}
+                        className="origin-top overflow-hidden"
                       >
                         <label className="block text-[10px] font-black text-text-secondary font-bold uppercase tracking-wider mb-2">KKM Contract No.</label>
                         <Input
@@ -2158,8 +2202,8 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                   </div>
                   <textarea
                     placeholder="Briefly explain why this PO is being modified..."
-                    value={(formData as any).modification_reason || ''}
-                    onChange={(e) => handleInputChange('modification_reason' as any, e.target.value)}
+                    value={formData.modification_reason || ''}
+                    onChange={(e) => handleInputChange('modification_reason', e.target.value)}
                     className="w-full bg-subtle/50 border border-border-default rounded-xl px-4 py-3 text-sm text-text-primary focus:border-amber-500 focus:ring-4 focus:ring-amber-500/10 outline-none transition-colors min-h-[100px]"
                     required
                   />
@@ -2202,8 +2246,9 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                           </div>
                           <div className="w-16 h-1.5 bg-slate-800 rounded-full overflow-hidden">
                             <motion.div 
-                              initial={{ width: 0 }}
-                              animate={{ width: `${Math.min(100, (totals.total / availableBudget) * 100)}%` }}
+                              initial={{ scaleX: 0 }}
+                              animate={{ scaleX: Math.min(100, (totals.total / availableBudget) * 100) / 100 }}
+                              style={{ transformOrigin: 'left' }}
                               className={`h-full ${balanceAfterPurchase >= 0 ? 'bg-indigo-500' : 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]'}`}
                             />
                           </div>
@@ -2211,8 +2256,8 @@ export const PurchaseOrderCreatePage: React.FC = () => {
 
                         {formData.vote_code !== 'other' && balanceAfterPurchase !== null && balanceAfterPurchase < 0 && (
                           <motion.div 
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
+                            initial={{ opacity: 0, scaleY: 0.96 }}
+                            animate={{ opacity: 1, scaleY: 1 }}
                             className="mt-4 p-3 rounded-xl bg-rose-500/10 border border-rose-500/20 flex items-start gap-3"
                           >
                             <IconAlertCircle className="w-5 h-5 text-rose-400 shrink-0 mt-0.5" />
@@ -2227,8 +2272,8 @@ export const PurchaseOrderCreatePage: React.FC = () => {
 
                         {formData.vote_code === 'other' && (
                           <motion.div 
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
+                            initial={{ opacity: 0, scaleY: 0.96 }}
+                            animate={{ opacity: 1, scaleY: 1 }}
                             className="mt-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-start gap-3"
                           >
                             <IconInfoCircle className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
@@ -2350,7 +2395,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                                     <span className="text-sm font-bold text-text-primary group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                                       {'drug_name' in item ? item.drug_name : item.item_name}
                                     </span>
-                                    {((item as any).procurement_vote === 'cc' || (item as any).category === 'Contract Catalog' || (item as any).kkm_contract_number || (item as any).contract_number) ? (
+                                    {(item.procurement_vote === 'cc' || item.category === 'Contract Catalog' || item.kkm_contract_number || item.contract_number) ? (
                                       <span className="px-2 py-0.5 text-[9px] font-black rounded-md bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 uppercase tracking-wider">
                                         CC Contract
                                       </span>
@@ -2371,9 +2416,9 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                                     </span>
                                     <span className="text-slate-300">•</span>
                                     <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">
-                                      {typeof (item as any).category === 'object' && (item as any).category !== null 
-                                        ? ((item as any).category as any).category_name 
-                                        : ((item as any).category || 'General')}
+                                      {typeof item.category === 'object' && item.category !== null
+                                        ? item.category.category_name
+                                        : (item.category || 'General')}
                                     </span>
                                   </div>
                                 </div>
@@ -2454,7 +2499,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                       <button
                         type="button"
                         onClick={addManualItem}
-                        disabled={!manualItem.item_name || !manualItem.quantity || (formData.po_type !== 'sq' && !manualItem.unit_price)}
+                        disabled={!manualItem.item_name || !manualItem.quantity || !manualItem.unit_price}
                         className="h-8 px-5 bg-indigo-600 text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-indigo-700 active:scale-[0.95] disabled:opacity-50 disabled:active:scale-100 transition-colors flex items-center justify-center gap-2 shadow-sm"
                         title="Add Item"
                       >
@@ -2528,7 +2573,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
               {/* Items List */}
               <div className="space-y-2">
                 {formData.items && formData.items.length > 0 ? (
-                  formData.items.map((item: any, index: number) => (
+                  formData.items.map((item, index) => (
                     <div key={`${item.item_id}-${index}`} className="group relative bg-surface border border-border-default rounded-2xl overflow-hidden hover:border-indigo-500/20 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-colors">
                       <div className="flex flex-col lg:flex-row">
                         {/* Status Accent */}
@@ -2559,36 +2604,36 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                                 </div>
 
                                 {/* CC Item Contract Details Card - Only show if real contract details exist and not in SQ mode */}
-                                {formData.po_type !== 'sq' && (item.contract_number || (item as any).cc_contract_number || item.supplier_name || (item as any).cc_supplier_name) && (
+                                {formData.po_type !== 'sq' && (item.contract_number || item.cc_contract_number || item.supplier_name || item.cc_supplier_name) && (
                                   <div className="mt-3 p-3 bg-subtle/50 border border-border-default rounded-xl grid grid-cols-2 sm:grid-cols-5 gap-3 text-[10px] w-full">
                                     <div>
                                       <span className="block text-[8px] font-black text-text-secondary font-bold uppercase tracking-wider mb-0.5">Nama Pembekal</span>
-                                      <span className="font-bold text-text-primary truncate block" title={item.supplier_name || (item as any).cc_supplier_name || suppliers.find(s => s.id === formData.supplier_id)?.company_name || '-'}>
-                                        {item.supplier_name || (item as any).cc_supplier_name || suppliers.find(s => s.id === formData.supplier_id)?.company_name || '-'}
+                                      <span className="font-bold text-text-primary truncate block" title={item.supplier_name || item.cc_supplier_name || suppliers.find(s => s.id === formData.supplier_id)?.company_name || '-'}>
+                                        {item.supplier_name || item.cc_supplier_name || suppliers.find(s => s.id === formData.supplier_id)?.company_name || '-'}
                                       </span>
                                     </div>
                                     <div>
                                       <span className="block text-[8px] font-black text-text-secondary font-bold uppercase tracking-wider mb-0.5">No. Kontrak</span>
-                                      <span className="inline-block font-mono font-bold text-indigo-700 bg-indigo-500/10 border border-indigo-100/80 px-2 py-0.5 rounded text-[10px] truncate max-w-full" title={item.contract_number || (item as any).cc_contract_number || formData.kkm_contract_number || '-'}>
-                                        {item.contract_number || (item as any).cc_contract_number || formData.kkm_contract_number || '-'}
+                                      <span className="inline-block font-mono font-bold text-indigo-700 bg-indigo-500/10 border border-indigo-100/80 px-2 py-0.5 rounded text-[10px] truncate max-w-full" title={item.contract_number || item.cc_contract_number || formData.kkm_contract_number || '-'}>
+                                        {item.contract_number || item.cc_contract_number || formData.kkm_contract_number || '-'}
                                       </span>
                                     </div>
                                     <div>
                                       <span className="block text-[8px] font-black text-text-secondary font-bold uppercase tracking-wider mb-0.5">Tarikh Mula</span>
                                       <span className="font-bold text-text-primary block">
-                                        {(item as any).cc_contract_start_date || (item as any).contract_start_date || '-'}
+                                        {item.cc_contract_start_date || item.contract_start_date || '-'}
                                       </span>
                                     </div>
                                     <div>
                                       <span className="block text-[8px] font-black text-text-secondary font-bold uppercase tracking-wider mb-0.5">Tarikh Tamat</span>
                                       <span className="font-bold text-text-primary block">
-                                        {item.contract_end_date || (item as any).cc_contract_end_date || '-'}
+                                        {item.contract_end_date || item.cc_contract_end_date || '-'}
                                       </span>
                                     </div>
                                     <div>
                                       <span className="block text-[8px] font-black text-text-secondary font-bold uppercase tracking-wider mb-0.5">Status Kontrak</span>
                                       <span className="inline-block font-bold text-sky-700 bg-sky-50 border border-sky-100 px-2 py-0.5 rounded-full text-[9px] uppercase tracking-wider">
-                                        {(item as any).cc_contract_status || '-'}
+                                        {item.cc_contract_status || '-'}
                                       </span>
                                     </div>
                                   </div>
@@ -2776,7 +2821,7 @@ export const PurchaseOrderCreatePage: React.FC = () => {
                               type="button"
                               onClick={() => {
                                 const newIds = formData.supplier_ids?.filter((sid: string) => sid !== id) || [];
-                                handleInputChange('supplier_ids', newIds);
+                                setFormData(prev => ({ ...prev, supplier_ids: newIds }));
                                 if (newIds.length > 0) handleInputChange('supplier_id', newIds[0]);
                                 else handleInputChange('supplier_id', '');
                               }}

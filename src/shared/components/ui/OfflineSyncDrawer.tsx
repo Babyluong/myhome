@@ -1,16 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  X,
-  Wifi,
-  WifiOff,
-  RefreshCw,
-  Database,
-  CheckCircle2,
-  Clock,
-  Layers,
-  ArrowRight,
-} from 'lucide-react'
+import { X, Wifi, WifiOff, RefreshCw, Database, CheckCircle2, Clock, Layers } from 'lucide-react'
 import { useOfflineStatus } from '@/hooks/useOfflineStatus'
 import { offlineQueue, QueuedMutation } from '@/services/offlineQueue'
 

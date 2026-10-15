@@ -1,11 +1,7 @@
 // @ts-nocheck
 import React, { useState, useEffect, useRef } from 'react';
 import jsQR from 'jsqr';
-import { 
-  X, Plus, Trash2, ShieldAlert, Store, User as UserIcon, 
-  Camera, Keyboard, Database, Check, QrCode, AlertCircle, 
-  RefreshCw, CheckCircle2, Volume2, VolumeX, Search 
-} from 'lucide-react';
+import { X, ShieldAlert, Store, User as UserIcon, Camera, Database, Check, QrCode, AlertCircle, RefreshCw, CheckCircle2, Volume2, VolumeX, Search } from 'lucide-react'
 import { supabase, isSupabaseConfigured } from '@/services/supabase';
 import type { User } from '@/types';
 

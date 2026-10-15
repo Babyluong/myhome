@@ -1,21 +1,7 @@
 // @ts-nocheck
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  X, 
-  Megaphone, 
-  Wrench, 
-  Sparkles, 
-  AlertTriangle, 
-  CheckCircle2, 
-  Clock, 
-  Calendar, 
-  Layers, 
-  ShieldAlert,
-  Trash2,
-  Archive,
-  Power
-} from 'lucide-react'
+import { X, Megaphone, CheckCircle2, Clock, ShieldAlert, Trash2 } from 'lucide-react'
 import { 
   createAnnouncement, 
   updateAnnouncement, 

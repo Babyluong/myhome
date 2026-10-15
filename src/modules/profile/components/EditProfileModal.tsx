@@ -1,8 +1,8 @@
 // @ts-nocheck
 import React, { useState } from 'react'
-import { motion } from 'framer-motion'
-import { User as UserIcon, Phone, Calendar, MapPin, Mail, Hash, AlertCircle, Check, Loader2 } from 'lucide-react'
-import { Modal, Input, Select, Textarea } from '@/components/ui'
+import 'framer-motion'
+import { User as UserIcon, Phone, Calendar, MapPin, AlertCircle, Check, Loader2 } from 'lucide-react'
+import { Modal, Input, Textarea } from '@/components/ui'
 import { useToast } from '@/stores/toastStore'
 import { updateUserProfile } from '../services/profileService'
 import type { UserWithRelations, Gender } from '@/types'

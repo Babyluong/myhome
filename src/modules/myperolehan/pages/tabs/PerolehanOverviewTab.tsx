@@ -1,15 +1,7 @@
 // src/modules/myperolehan/pages/tabs/PerolehanOverviewTab.tsx
 import React from 'react'
 import { motion } from 'framer-motion'
-import {
-  Building,
-  HardHat,
-  Plus,
-  ChevronRight,
-  Activity,
-  ArrowRight,
-  Sparkles
-} from 'lucide-react'
+import { Building, HardHat, Plus, ChevronRight, Activity } from 'lucide-react'
 import { BudgetSummaryCards } from '../../components/BudgetSummaryCards'
 import { BudgetProgressBar } from '../../components/BudgetProgressBar'
 import type {
@@ -17,7 +9,7 @@ import type {
   BudgetHierarchySummary,
   AdminPurchaseOrder
 } from '@/shared/types/myperolehan'
-import { Button, Badge } from '@/components/ui'
+import { Button } from '@/components/ui'
 
 interface PerolehanOverviewTabProps {
   kpis: OverallPerolehanKPIs

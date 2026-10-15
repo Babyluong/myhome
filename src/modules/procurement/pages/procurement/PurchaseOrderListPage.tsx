@@ -1,43 +1,17 @@
-// @ts-nocheck
 import React, { useEffect, useState, useCallback } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
-import { Spinner, SlideOver } from '@/components/ui'
+import { SlideOver } from '@/components/ui'
 import { PurchaseOrderDetailView } from './PurchaseOrderDetailView'
-import { getPurchaseOrders, getActiveSuppliers, getPurchaseOrderStats, getProcurementMetadata } from '@/services/pharmacy/procurementService'
-import type { PurchaseOrderWithRelations, Supplier, ProcurementFilter, POStatus } from '@/types/pharmacy'
+import { getPurchaseOrders, getPurchaseOrderStats, getProcurementMetadata } from '@/services/pharmacy/procurementService'
+import type { PurchaseOrderWithRelations, ProcurementFilter, POStatus } from '@/types/pharmacy'
 import { ROUTES } from '@/lib/constants'
-import { 
-  IconShoppingCart, 
-  IconPlus, 
-  IconSearch, 
-  IconFilter, 
-  IconReceipt, 
-  IconMoney, 
-  IconClock, 
-  IconCheck, 
-  IconArrowLeft,
-  IconArrowRight,
-  IconX
-} from '@/components/ui/Icons'
+import { IconShoppingCart, IconPlus, IconSearch, IconFilter, IconReceipt, IconMoney, IconClock, IconCheck, IconArrowLeft, IconArrowRight } from '@/components/ui/Icons'
 import { cn, formatCurrency } from '@/lib/utils'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { SkeletonTable } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
-import { 
-  ChevronRight, 
-  ChevronLeft, 
-  ChevronsLeft, 
-  ChevronsRight, 
-  Eye, 
-  ArrowUpRight,
-  Sparkles,
-  CheckCircle2,
-  AlertCircle,
-  XCircle,
-  FileText,
-  X
-} from 'lucide-react'
+import { ChevronRight, Sparkles, FileText } from 'lucide-react'
 
 export const PurchaseOrderListPage: React.FC = () => {
   const navigate = useNavigate()
@@ -47,7 +21,7 @@ export const PurchaseOrderListPage: React.FC = () => {
   const [orders, setOrders] = useState<PurchaseOrderWithRelations[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const [, setError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<'PO' | 'MANUAL' | 'SQ'>('PO')
   const [stats, setStats] = useState({
     totalCount: 0,
@@ -88,7 +62,7 @@ export const PurchaseOrderListPage: React.FC = () => {
     const filter: ProcurementFilter = {
       search: search || undefined,
       status: statusFilter === 'all' ? undefined : statusFilter,
-      po_type: activeTab === 'SQ' ? 'sq' : (activeTab === 'MANUAL' ? 'manual' : (activeTab === 'PO' ? 'regular' : activeTab as any)),
+      po_type: activeTab === 'SQ' ? 'sq' : (activeTab === 'MANUAL' ? 'manual' : 'regular'),
       vote_code: voteCodeFilter || undefined,
       category: categoryFilter || undefined,
       department: departmentFilter || undefined,

@@ -1,16 +1,6 @@
 // src/modules/myprepacking/pages/PrepackLabelStudioPage.tsx
 import React, { useState, useEffect } from 'react'
-import {
-  Printer,
-  Download,
-  QrCode,
-  Sliders,
-  Boxes,
-  PackageCheck,
-  CheckCircle2,
-  RefreshCw,
-  Sparkles
-} from 'lucide-react'
+import { Printer, Download, Sliders, Sparkles } from 'lucide-react'
 import { getPrepackBatches } from '../services/prepackService'
 import type { PrepackBatch, LabelFormat } from '../types/prepack'
 import QRCode from 'qrcode'

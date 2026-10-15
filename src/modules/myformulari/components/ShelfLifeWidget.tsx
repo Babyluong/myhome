@@ -1,5 +1,5 @@
 import React from 'react'
-import { Clock, Thermometer, Sun, ShieldCheck, AlertTriangle, Pill, Eye, Droplets, Wind, Sparkles, MapPin, CheckCircle2, AlertOctagon, Info } from 'lucide-react'
+import { Clock, Thermometer, Sun, ShieldCheck, AlertTriangle, Pill, Eye, Droplets, MapPin, CheckCircle2, AlertOctagon } from 'lucide-react'
 import { ShelfLifeProtocol } from '../types/formulariTypes'
 
 interface ShelfLifeWidgetProps {

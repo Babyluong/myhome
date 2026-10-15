@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { motion } from 'framer-motion'
+import 'framer-motion'
 import { Save, X, User, Mail, Hash, Phone, Briefcase, Lock, Eye, EyeOff, RefreshCw } from 'lucide-react'
-import { Button, Input, Modal } from '@/components/ui'
+import { Button, Input } from '@/components/ui'
 import { hospitalAdminSchema, type HospitalAdminFormData } from '@/lib/validators'
 import { createHospitalAdmin } from '@/services/hospitalAdminService'
 import { useToastStore } from '@/stores/toastStore'
-import { cn } from '@/lib/utils'
+import '@/lib/utils'
 
 interface HospitalAdminFormProps {
   hospitalId: string

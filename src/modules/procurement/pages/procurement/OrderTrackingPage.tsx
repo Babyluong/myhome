@@ -1,48 +1,14 @@
-// @ts-nocheck
-import React, { useState, useEffect } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
-import {
-  Package,
-  Search,
-  RefreshCw,
-  Clock,
-  AlertTriangle,
-  FileCheck,
-  AlertCircle,
-  FileText,
-  Activity,
-  Truck,
-  Mail,
-  ChevronLeft,
-  ChevronRight,
-  X,
-  Bell,
-  CheckCircle2,
-  Download,
-  Building2,
-  Send,
-  CreditCard,
-  Trash2,
-  Printer,
-  Plus,
-  XCircle,
-  Eye,
-  Gavel,
-  ShieldAlert,
-  Sparkles
-} from 'lucide-react'
+import { Package, Search, RefreshCw, Clock, AlertTriangle, AlertCircle, FileText, Activity, Truck, Mail, ChevronLeft, ChevronRight, X, Bell, CheckCircle2, Download, Building2, Send, CreditCard, Trash2, Printer, Plus, XCircle, Gavel, ShieldAlert, Sparkles } from 'lucide-react'
 import { useUser } from '@/stores/authStore'
 import { Modal, SlideOver } from '@/components/ui'
 import { cn, formatCurrency, formatDate, formatDateTime } from '@/lib/utils'
 import { supabase } from '@/services/supabase'
 
-import type {
-  OrderTrackingStats,
-  OrderTrackingListItem,
-  OrderTrackingDetail,
-  DeliveryProgress,
-  LPOReminder
-} from '@/types/pharmacy'
+import type { OrderTrackingStats, OrderTrackingListItem, OrderTrackingDetail, DeliveryProgress } from '@/types/pharmacy'
+import type { GoodsReceiptItem, GoodsReceiptWithRelations, PurchaseOrderItem, Supplier, SupplierPenalty } from '@/types/pharmacy'
+import type { User } from '@/shared/types/auth'
 import {
   getOrderTrackingStats,
   getOrderTrackingList,
@@ -59,13 +25,22 @@ import { deleteGoodsReceipt, getGoodsReceiptDetail } from '@/services/pharmacy/r
 import { rejectPurchaseOrder } from '@/services/pharmacy/procurementService'
 import GoodsReceivingForm from './GoodsReceivingForm'
 
+type OrderTrackingListRow = OrderTrackingListItem & { has_penalties?: boolean }
+type ReceiptDetail = Omit<GoodsReceiptWithRelations, 'purchase_order' | 'items'> & {
+  penalties?: Array<SupplierPenalty & { receiving_id?: string }>
+  received_by_user?: Pick<User, 'full_name'>
+  purchase_order?: NonNullable<GoodsReceiptWithRelations['purchase_order']> & { supplier?: Supplier }
+  items?: Array<GoodsReceiptItem & { po_item?: Pick<PurchaseOrderItem, 'item_name' | 'item_code' | 'packaging_description'> }>
+}
+type OrderTrackingDetailView = Omit<OrderTrackingDetail, 'goods_receipts'> & { goods_receipts?: ReceiptDetail[] }
+
 export default function OrderTrackingPage() {
   const user = useUser()
   const hospitalId = user?.hospital_id || '85bb6adc-b868-428b-83f4-e5af2f5cf904' // Default for dev
 
   // Data states
   const [stats, setStats] = useState<OrderTrackingStats | null>(null)
-  const [items, setItems] = useState<OrderTrackingListItem[]>([])
+  const [items, setItems] = useState<OrderTrackingListRow[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
@@ -84,33 +59,35 @@ export default function OrderTrackingPage() {
 
   // Slide-over & Modal states
   const [selectedLpoId, setSelectedLpoId] = useState<string | null>(null)
-  const [detailData, setDetailData] = useState<OrderTrackingDetail | null>(null)
+  const [detailData, setDetailData] = useState<OrderTrackingDetailView | null>(null)
   const [isDetailOpen, setIsDetailOpen] = useState(false)
   const [isReminderOpen, setIsReminderOpen] = useState(false)
   const [reminderType, setReminderType] = useState<'eta' | 'late'>('eta')
   const [sendingReminder, setSendingReminder] = useState(false)
   const [isReceivingOpen, setIsReceivingOpen] = useState(false)
   const [selectedGRId, setSelectedGRId] = useState<string | null>(null)
-  const [grDetail, setGrDetail] = useState<any | null>(null)
+  const [grDetail, setGrDetail] = useState<ReceiptDetail | null>(null)
   const [loadingGR, setLoadingGR] = useState(false)
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false)
   const [cancellationReason, setCancellationReason] = useState('')
   const [cancelling, setCancelling] = useState(false)
+  const searchRef = useRef(searchTerm)
+  searchRef.current = searchTerm
 
   const fetchGRDetail = async (grId: string) => {
     setLoadingGR(true)
     const { data, error } = await getGoodsReceiptDetail(grId)
-    if (data) setGrDetail(data)
+    if (error) {
+      console.error('Failed to load goods receipt detail:', error)
+      setGrDetail(null)
+    } else {
+      setGrDetail(data)
+    }
     setLoadingGR(false)
   }
 
-  // Load data
-  useEffect(() => {
-    fetchData()
-  }, [hospitalId, page, statusFilter, categoryFilter])
-
   // Fetch data
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true)
     
     try {
@@ -120,7 +97,7 @@ export default function OrderTrackingPage() {
 
       // Get list
       const filter: OrderTrackingFilter = {
-        search: searchTerm,
+        search: searchRef.current,
         status: statusFilter,
         category: categoryFilter !== 'all' ? categoryFilter : undefined
       }
@@ -136,7 +113,12 @@ export default function OrderTrackingPage() {
       setLoading(false)
       setRefreshing(false)
     }
-  }
+  }, [hospitalId, page, statusFilter, categoryFilter, pageSize])
+
+  // Load data
+  useEffect(() => {
+    void fetchData()
+  }, [fetchData])
 
   // Handle Search 
   useEffect(() => {
@@ -145,7 +127,7 @@ export default function OrderTrackingPage() {
       fetchData()
     }, 500)
     return () => clearTimeout(timer)
-  }, [searchTerm])
+  }, [searchTerm, fetchData])
 
   const handleSync = async () => {
     if (!hospitalId) return
@@ -776,7 +758,7 @@ export default function OrderTrackingPage() {
                             {item.reminder_count} Reminders
                           </span>
                         )}
-                        {(item as any).has_penalties && (
+                        {item.has_penalties && (
                           <span className="inline-flex items-center gap-1 text-[10px] font-bold text-red-700 bg-red-50 px-1.5 py-0.5 rounded border border-red-200">
                             <AlertTriangle className="w-3 h-3" />
                             PENALTY ISSUED
@@ -946,7 +928,7 @@ export default function OrderTrackingPage() {
                   </div>
                   <div className="bg-subtle/50 border border-border-subtle rounded-2xl px-4 py-3">
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Order Date</p>
-                    <p className="text-sm font-bold text-text-primary tracking-tight">{formatDate(detailData.order_date)}</p>
+                    <p className="text-sm font-bold text-text-primary tracking-tight">{formatDate(detailData.order_date || '')}</p>
                   </div>
                 </div>
 
@@ -1223,10 +1205,10 @@ export default function OrderTrackingPage() {
                                   <p className="text-sm font-bold text-text-primary group-hover/item:text-emerald-600 transition-colors">
                                     {formatDate(gr.receipt_date)}
                                   </p>
-                                  {detailData.penalties?.some(p => 
+                                  {detailData?.penalties?.some(p =>
                                     p.gr_id === gr.id || 
-                                    (p as any).receiving_id === gr.id || 
-                                    (p.lpo_id === detailData.lpo_id)
+                                    ('receiving_id' in p && p.receiving_id === gr.id) ||
+                                    (p.lpo_id === detailData?.lpo_id)
                                   ) && (
                                     <span className="px-1.5 py-0.5 rounded bg-rose-500/10 text-rose-600 text-[8px] font-black uppercase tracking-widest border border-rose-100">
                                       Penalty Alert
@@ -1248,8 +1230,8 @@ export default function OrderTrackingPage() {
                             <div className="flex items-center gap-2">
                               <span className={cn(
                                 "px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border",
-                                gr.status === 'completed' ? "bg-emerald-500/10 text-emerald-600 border-emerald-100" :
-                                gr.status === 'draft' ? "bg-amber-500/10 text-amber-600 border-amber-100" :
+                                gr.status === 'accepted' ? "bg-emerald-500/10 text-emerald-600 border-emerald-100" :
+                                gr.status === 'pending' ? "bg-amber-500/10 text-amber-600 border-amber-100" :
                                 "bg-subtle/50 text-text-muted border-border-default"
                               )}>
                                 {gr.status}
@@ -1257,7 +1239,7 @@ export default function OrderTrackingPage() {
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  generateGoodsReceiptPdf(gr as any);
+                                  generateGoodsReceiptPdf(gr);
                                 }}
                                 className="p-1.5 rounded-lg text-gray-400 hover:text-indigo-600 hover:bg-indigo-500/10 transition-colors border border-transparent hover:border-indigo-100"
                                 title="Print Goods Receipt Note"
@@ -1382,6 +1364,7 @@ export default function OrderTrackingPage() {
                                   <button 
                                     onClick={() => {
                                       const url = reminder.pdf_url;
+                                      if (!url) return;
                                       if (url.startsWith('data:')) {
                                         try {
                                           const parts = url.split(',');
@@ -1471,7 +1454,7 @@ export default function OrderTrackingPage() {
                         <div className="flex items-center gap-4">
                           <h2 className="text-3xl font-black text-text-primary tracking-tight">Receipt Summary</h2>
                           {(() => {
-                            const sourcePenalties = (grDetail.penalties && grDetail.penalties.length > 0) ? grDetail.penalties : detailData.penalties;
+                            const sourcePenalties = (grDetail.penalties && grDetail.penalties.length > 0) ? grDetail.penalties : detailData?.penalties;
                             const grPenalties = sourcePenalties?.filter(p => 
                               p.gr_id === grDetail.id || p.receiving_id === grDetail.id || p.lpo_id === grDetail.lpo_id
                             );
@@ -1557,7 +1540,7 @@ export default function OrderTrackingPage() {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50">
-                          {grDetail.items?.map((item: any, i: number) => (
+                          {grDetail.items?.map((item, i: number) => (
                             <tr key={item.id || i} className="group hover:bg-subtle/50 transition-colors">
                               <td className="px-8 py-4">
                                 <p className="text-sm font-black text-text-primary mb-1">{item.po_item?.item_name || 'Unknown Item'}</p>
@@ -1592,7 +1575,7 @@ export default function OrderTrackingPage() {
                                 </span>
                                   {(() => {
                                     // Use penalties from grDetail if available, otherwise fallback to detailData
-                                    const sourcePenalties = (grDetail.penalties && grDetail.penalties.length > 0) ? grDetail.penalties : detailData.penalties;
+                                    const sourcePenalties = (grDetail.penalties && grDetail.penalties.length > 0) ? grDetail.penalties : detailData?.penalties;
                                     const itemPenalty = sourcePenalties?.find(p => 
                                       (p.gr_id === grDetail.id || p.receiving_id === grDetail.id || p.lpo_id === grDetail.lpo_id) && (
                                         (p.item_code && p.item_code === item.po_item?.item_code) ||

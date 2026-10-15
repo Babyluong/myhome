@@ -4,22 +4,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  UserCheck,
-  ArrowLeft,
-  CheckCircle2,
-  XCircle,
-  Clock,
-  FileText,
-  Calendar,
-  ExternalLink,
-  ShieldCheck,
-  AlertCircle,
-  Users,
-  Search,
-  Check,
-  X
-} from 'lucide-react'
+import { ArrowLeft, CheckCircle2, Clock, FileText, Calendar, ExternalLink, AlertCircle, Users, Check, X } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import { useLanguage } from '@/shared/contexts/LanguageContext'

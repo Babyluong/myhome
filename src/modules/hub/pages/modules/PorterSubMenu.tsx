@@ -1,22 +1,7 @@
 // @ts-nocheck
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  ArrowLeft, 
-  PersonStanding,
-  LayoutDashboard,
-  Plus,
-  FileText,
-  Clock,
-  CheckCircle2,
-  Calendar,
-  BarChart3,
-  UserCheck,
-  Activity,
-  AlertTriangle,
-  Users,
-  Radio
-} from 'lucide-react'
+import { ArrowLeft, PersonStanding, LayoutDashboard, Plus, FileText, CheckCircle2, Calendar, BarChart3, UserCheck, Activity, AlertTriangle, Users, Radio } from 'lucide-react'
 import { ROUTES } from '@/lib/constants'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { Badge, Skeleton } from '@/components/ui'

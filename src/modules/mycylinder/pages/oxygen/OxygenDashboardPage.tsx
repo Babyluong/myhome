@@ -1,67 +1,12 @@
-// @ts-nocheck
-import React, { useEffect, useState, useMemo } from 'react'
-import { useLocation, Link, useNavigate } from 'react-router-dom'
-import { 
-  Activity, 
-  AirVent, 
-  Wind, 
-  AlertTriangle, 
-  AlertCircle,
-  Database, 
-  ShoppingCart, 
-  ClipboardList, 
-  FileText,
-  Search,
-  Plus,
-  QrCode,
-  RefreshCw,
-  CheckCircle,
-  Printer,
-  DollarSign,
-  TrendingUp,
-  Percent,
-  Layers,
-  ArrowUpRight,
-  ArrowDownToLine,
-  ArrowUpFromLine,
-  Share2,
-  Download,
-  Calendar,
-  CalendarDays,
-  List,
-  Sparkles,
-  X,
-  ChevronDown,
-  Lock,
-  ShieldAlert,
-  Eye,
-  EyeOff,
-  Building2,
-  MapPin,
-  CheckCheck,
-  ScrollText,
-  Save,
-  CheckCircle2,
-  Clock,
-  Camera,
-  CheckSquare,
-  Square,
-  MinusSquare,
-  Trash2,
-  LayoutGrid,
-  Truck,
-  FileCheck,
-  PackageCheck,
-  RotateCcw,
-  Receipt,
-  Pencil
-} from 'lucide-react'
+import React, { useCallback, useEffect, useState, useMemo } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { Wind, AlertTriangle, AlertCircle, Database, ShoppingCart, ClipboardList, FileText, Search, Plus, QrCode, RefreshCw, CheckCircle, Printer, DollarSign, TrendingUp, Percent, Layers, ArrowUpRight, ArrowDownToLine, ArrowUpFromLine, Share2, Download, Calendar, List, Sparkles, X, ChevronDown, Lock, ShieldAlert, Eye, EyeOff, Building2, CheckCheck, ScrollText, CheckCircle2, Clock, Camera, CheckSquare, Trash2, LayoutGrid, Truck, RotateCcw, Receipt, Pencil } from 'lucide-react'
 import { ROUTES } from '@/shared/constants/routes'
 import { useAuthStore } from '@/stores/authStore'
 import { isCylinderAuthorizedOfficer } from '@/shared/utils/cylinderRbac'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
-import { Spinner, StatCard, Table, Badge, DataTable } from '@/components/ui'
-import { CylinderKpiCards } from '@/components/oxygen/CylinderKpiCards'
+import { Spinner, Table, Badge } from '@/components/ui'
+import '@/components/oxygen/CylinderKpiCards'
 import { StoreBalanceGrid } from '@/components/oxygen/StoreBalanceGrid'
 import { UnitDistributionTable } from '@/components/oxygen/UnitDistributionTable'
 import { StoreUsageBalanceTable } from '@/components/oxygen/StoreUsageBalanceTable'
@@ -108,42 +53,11 @@ import {
   deleteCylinderDispatchRequest,
   getCylinderDispatchRequestById,
 } from '@/services/pharmacy/cylinderDispatchService'
-import { 
-  getOxygenCylinders, 
-  getOxygenSummary, 
-  getOxygenConsumptionHistory,
-  updateOxygenCylinderStatus,
-  getOxygenFinancialSummary,
-  getOxygenLatestPricing,
-  updateCylinderPrices,
-  getOxygenPricingHistory,
-  getOxygenReceptionsList,
-  createOxygenReceptionRecord,
-  getOxygenSystemSettings,
-  getCylinderInventoryByType,
-  getCylindersByDepartment,
-  getStoreUsageBalance,
-  getReturnDocuments,
-  getRequestDocuments,
-  getReceiveDocuments,
-  assignCylinderQrTag,
-  deactivateCylinderQrTag,
-  reactivateCylinder,
-  getOxygenCylinderTypes,
-  generateNewCylindersWithQr,
-  addSupplierTaggedLoanCylinders,
-  clearCylinderInventory,
-  getRegisteredOxygenVoteCodes,
-  updateOxygenReceptionVoteCode,
-  updateOxygenReceptionsVoteCode,
-  updateOxygenReceptionArrival,
-  deleteOxygenCylinder,
-  deleteOxygenCylindersBatch,
-  updateCylinderValveType,
-} from '@/services/pharmacy/oxygenService'
+import { getOxygenCylinders, getOxygenSummary, getOxygenConsumptionHistory, getOxygenFinancialSummary, getOxygenLatestPricing, updateCylinderPrices, getOxygenPricingHistory, getOxygenReceptionsList, createOxygenReceptionRecord, getOxygenSystemSettings, getCylinderInventoryByType, getCylindersByDepartment, getStoreUsageBalance, getReturnDocuments, getRequestDocuments, getReceiveDocuments, deactivateCylinderQrTag, reactivateCylinder, getOxygenCylinderTypes, generateNewCylindersWithQr, addSupplierTaggedLoanCylinders, clearCylinderInventory, getRegisteredOxygenVoteCodes, updateOxygenReceptionsVoteCode, updateOxygenReceptionArrival, deleteOxygenCylinder, deleteOxygenCylindersBatch, updateCylinderValveType } from '@/services/pharmacy/oxygenService'
 import { 
   generateOxygenPoPdf, 
-  generateOxygenReceptionReportPdf 
+  generateOxygenReceptionReportPdf,
+  type OxygenPdfItem,
 } from '@/services/pharmacy/oxygenPdfService'
 import { extractSerialsFromDocument } from '@/shared/lib/pdfParser'
 import { 
@@ -159,14 +73,69 @@ import type {
   OxygenPricingConfig,
   OxygenSystemSettings,
   OxygenReceptionRecord,
+  OxygenCylinderStatus,
   OxygenReceptionItem,
   OxygenReturnDocumentWithRelations,
   OxygenRequestDocumentWithRelations,
   OxygenReceiveDocumentWithRelations,
   OxygenCylinderTypeInfo,
+  CylinderDispatchRequestWithRelations,
+  CylinderDispatchKPI,
 } from '@/types/pharmacy'
-import type { ApiResponse, Paginated, Column } from '@/types'
+import type { Column } from '@/types'
+import type { ComboInventory } from '@/components/oxygen/StoreBalanceGrid'
 import { supabase, isSupabaseConfigured } from '@/services/supabase'
+
+type CylinderAggregate = NonNullable<Awaited<ReturnType<typeof getCylinderInventoryByType>>['data']>[number]
+type DepartmentCylinderSummary = NonNullable<Awaited<ReturnType<typeof getCylindersByDepartment>>['data']>[number]
+type CylinderUsageLedgerEntry = NonNullable<Awaited<ReturnType<typeof getStoreUsageBalance>>['data']>[number]
+type ReceptionSizeRelation = { code: string | null; unit: string | null } | { code: string | null; unit: string | null }[] | null
+type ReceptionItemProjection = {
+  unit_price: number | null
+  quantity: number | null
+  size_info: ReceptionSizeRelation
+}
+type ReceptionWithDetails = OxygenReceptionRecord & {
+  items?: ReceptionItemProjection[] | null
+  is_vie_tank?: boolean
+}
+type MonthlyReceptionRecord = OxygenReceptionRecord & {
+  monthKey?: string
+  records?: ReceptionWithDetails[]
+  items?: ReceptionItemProjection[] | null
+}
+type ReceptionItemRow = {
+  size_code?: string | null
+  unit_price?: number | null
+  quantity?: number | null
+  size_info?: { code?: string | null; is_loan?: boolean | null } | null
+}
+type ReceptionRecordWithMonthlyData = OxygenReceptionRecord & {
+  monthKey?: string
+  records?: ReceptionWithDetails[]
+}
+type PricingHistoryRecord = NonNullable<Awaited<ReturnType<typeof getOxygenPricingHistory>>['data']>[number] & {
+  supplier_name?: OxygenPricingConfig['supplier_name']
+}
+type TaggedOxygenCylinder = OxygenCylinderWithRelations & { is_active?: boolean | null }
+type BudgetReceiptStatus = 'completed' | 'pending_invoice' | 'outstanding_po'
+const isBudgetReceiptStatus = (value: string): value is BudgetReceiptStatus =>
+  value === 'completed' || value === 'pending_invoice' || value === 'outstanding_po'
+type ReconciliationLog = {
+  id: string
+  created_at: string
+  action?: string
+  user?: { full_name?: string | null; jawatan?: string | null } | null
+  new_values?: Record<string, string | number | boolean | null | undefined>
+  old_values?: Record<string, string | number | boolean | null | undefined>
+}
+type ReconciliationCylinder = OxygenCylinderWithRelations & {
+  scanned_location?: string | { location_name?: string; name?: string; department_name?: string } | null
+  scanned_by_name?: string | null
+  is_verified?: boolean
+  is_loan?: boolean
+}
+type LocationValue = string | { location_name?: string | null; name?: string | null; department_name?: string | null } | null | undefined
 
 export const OxygenDashboardPage: React.FC = () => {
   const { user } = useAuthStore()
@@ -178,17 +147,17 @@ export const OxygenDashboardPage: React.FC = () => {
   const currentPath = location.pathname
 
   // Existing distribution and inventory states
-  const [summary, setSummary] = useState<OxygenSummary | null>(null)
-  const [cylinders, setCylinders] = useState<OxygenCylinderWithRelations[]>([])
-  const [taggedCylindersList, setTaggedCylindersList] = useState<OxygenCylinderWithRelations[]>([])
-  const [consumptionHistory, setConsumptionHistory] = useState<OxygenConsumptionWithRelations[]>([])
+  const [, setSummary] = useState<OxygenSummary | null>(null)
+  const [cylinders, setCylinders] = useState<ReconciliationCylinder[]>([])
+  const [taggedCylindersList, setTaggedCylindersList] = useState<TaggedOxygenCylinder[]>([])
+  const [, setConsumptionHistory] = useState<OxygenConsumptionWithRelations[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   // Cylinder Inventory Dashboard states (implementation plan)
-  const [cylinderAggregates, setCylinderAggregates] = useState<any[]>([])
-  const [deptDistribution, setDeptDistribution] = useState<any[]>([])
-  const [ledgerData, setLedgerData] = useState<any[]>([])
+  const [cylinderAggregates, setCylinderAggregates] = useState<CylinderAggregate[]>([])
+  const [deptDistribution, setDeptDistribution] = useState<DepartmentCylinderSummary[]>([])
+  const [ledgerData, setLedgerData] = useState<CylinderUsageLedgerEntry[]>([])
   const [returnDocs, setReturnDocs] = useState<OxygenReturnDocumentWithRelations[]>([])
   const [requestDocs, setRequestDocs] = useState<OxygenRequestDocumentWithRelations[]>([])
   const [receiveDocs, setReceiveDocs] = useState<OxygenReceiveDocumentWithRelations[]>([])
@@ -200,10 +169,10 @@ export const OxygenDashboardPage: React.FC = () => {
     return d.toISOString().split('T')[0]
   })
   const [ledgerEndDate, setLedgerEndDate] = useState(() => new Date().toISOString().split('T')[0])
-  const [isLedgerLoading, setIsLedgerLoading] = useState(false)
+  const [isLedgerLoading, ] = useState(false)
   const [isReturnModalOpen, setIsReturnModalOpen] = useState(false)
   const [isScanOpen, setIsScanOpen] = useState(false)
-  const [selectedDepleteCombo, setSelectedDepleteCombo] = useState<any | null>(null)
+  const [selectedDepleteCombo, setSelectedDepleteCombo] = useState<ComboInventory | null>(null)
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false)
   const [isReceiveDocModalOpen, setIsReceiveDocModalOpen] = useState(false)
   const [sessionScannedCylinders, setSessionScannedCylinders] = useState<OxygenCylinderWithRelations[]>([])
@@ -214,8 +183,8 @@ export const OxygenDashboardPage: React.FC = () => {
   const [emptyListCylinders, setEmptyListCylinders] = useState<OxygenCylinderWithRelations[]>([])
 
   // Filters for Cylinder Registry
-  const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState('')
+  const [searchTerm, ] = useState('')
+  const [statusFilter, ] = useState('')
 
   // QR Label Generator State
   const [selectedTypeId, setSelectedTypeId] = useState('')
@@ -256,9 +225,9 @@ export const OxygenDashboardPage: React.FC = () => {
       const serials = await extractSerialsFromDocument(deliveryDocFiles)
       setOcrExtractedTags(serials.map(s => ({ serial: s, selected: true })))
       setShowOcrReview(true)
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err)
-      setOcrError(err.message || 'Failed to extract serial numbers. Please try again or enter manually.')
+      setOcrError(err instanceof Error ? err.message : 'Failed to extract serial numbers. Please try again or enter manually.')
     } finally {
       setIsOcrProcessing(false)
     }
@@ -302,7 +271,7 @@ export const OxygenDashboardPage: React.FC = () => {
   const [verifiedCylinderIds, setVerifiedCylinderIds] = useState<Set<string>>(new Set())
   const [reconciliationTab, setReconciliationTab] = useState<'system' | 'scanned'>('system')
   const [auditSuccessMsg, setAuditSuccessMsg] = useState<string | null>(null)
-  const [reconciliationLogs, setReconciliationLogs] = useState<any[]>([])
+  const [reconciliationLogs, setReconciliationLogs] = useState<ReconciliationLog[]>([])
   const [isSavingReconciliation, setIsSavingReconciliation] = useState(false)
   const [selectedReconciliationGroup, setSelectedReconciliationGroup] = useState<string | null>(null)
   const [reconciliationPage, setReconciliationPage] = useState(1)
@@ -314,7 +283,7 @@ export const OxygenDashboardPage: React.FC = () => {
   const [bulkStatus, setBulkStatus] = useState<string>('available')
   const [highlightedCylinderId, setHighlightedCylinderId] = useState<string | null>(null)
 
-  const isStoreLocation = (loc?: any) => {
+  const isStoreLocation = (loc?: LocationValue) => {
     if (!loc) return true;
     let locStr = '';
     if (typeof loc === 'string') {
@@ -329,7 +298,7 @@ export const OxygenDashboardPage: React.FC = () => {
     return lower.includes('store') || lower.includes('farmasi') || lower.includes('depot') || lower === 'pharmacy' || lower === 'main store' || lower === 'pharmacy store' || lower === 'central store';
   };
 
-  const normalizeStatusForReconciliation = (status?: any) => {
+  const normalizeStatusForReconciliation = (status?: string | null) => {
     const s = (typeof status === 'string' ? status : String(status || '')).toLowerCase();
     if (s === 'available' || s === 'full') return 'available';
     if (s === 'used' || s === 'in_use' || s === 'issued') return 'used';
@@ -338,10 +307,11 @@ export const OxygenDashboardPage: React.FC = () => {
     return s;
   };
 
-  const getExpectedStateForCylinder = (cyl: any, locationOverride?: string) => {
-    const rawLoc = locationOverride || physicalLocations[cyl?.id] || cyl?.scanned_location || cyl?.current_location || cyl?.assigned_ward?.department_name || cyl?.department?.department_name;
-    const loc = typeof rawLoc === 'object' ? (rawLoc?.location_name || rawLoc?.name || rawLoc?.department_name || '') : rawLoc;
-    const rawStatus = (typeof cyl?.status === 'string' ? cyl?.status : String(cyl?.status || '')).toLowerCase();
+  const getExpectedStateForCylinder = (cyl: ReconciliationCylinder, locationOverride?: string) => {
+    const assignedDepartment = typeof cyl?.assigned_ward === 'string' ? cyl.assigned_ward : cyl?.assigned_ward?.department_name;
+    const rawLoc = locationOverride || physicalLocations[cyl?.id] || cyl?.scanned_location || cyl?.current_location || assignedDepartment;
+    const loc = rawLoc && typeof rawLoc === 'object' ? (rawLoc.location_name || rawLoc.name || rawLoc.department_name || '') : rawLoc;
+    const rawStatus = (typeof cyl.status === 'string' ? cyl.status : String(cyl.status || '')).toLowerCase();
 
     // Explicit empty or return states
     if (rawStatus === 'empty') return 'empty';
@@ -356,7 +326,7 @@ export const OxygenDashboardPage: React.FC = () => {
     return normalizeStatusForReconciliation(cyl?.status || 'available');
   };
 
-  const mapReconciliationToDbStatus = (status: string, location?: string) => {
+  const mapReconciliationToDbStatus = (status: string): OxygenCylinderStatus | null => {
     const norm = normalizeStatusForReconciliation(status);
     if (norm === 'available') {
       return 'available';
@@ -364,7 +334,7 @@ export const OxygenDashboardPage: React.FC = () => {
     if (norm === 'used') return 'issued';
     if (norm === 'empty') return 'empty';
     if (norm === 'return') return 'returned_to_supplier';
-    return status;
+    return null;
   };
 
   const getStatusLabel = (status: string) => {
@@ -376,7 +346,7 @@ export const OxygenDashboardPage: React.FC = () => {
     return status;
   };
 
-  const getCylinderLocation = (cyl: any, statusKey?: string) => {
+  const getCylinderLocation = (cyl: ReconciliationCylinder, statusKey?: string) => {
     // 1. If explicit location was assigned or recorded
     const loc = cyl?.scanned_location || cyl?.current_location;
     if (loc) {
@@ -386,8 +356,8 @@ export const OxygenDashboardPage: React.FC = () => {
         if (name) return name;
       }
     }
-    if (cyl?.assigned_ward?.department_name) return cyl.assigned_ward.department_name;
-    if (cyl?.department?.department_name) return cyl.department.department_name;
+    if (typeof cyl?.assigned_ward === 'string' && cyl.assigned_ward) return cyl.assigned_ward;
+    if (typeof cyl?.assigned_ward === 'object' && cyl.assigned_ward?.department_name) return cyl.assigned_ward.department_name;
 
     if (statusKey) {
       const norm = normalizeStatusForReconciliation(statusKey);
@@ -401,8 +371,8 @@ export const OxygenDashboardPage: React.FC = () => {
   const fmt = (val: number) => `RM ${val.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`
   const [financials, setFinancials] = useState<OxygenFinancialSummary | null>(null)
   const [pricingConfigs, setPricingConfigs] = useState<OxygenPricingConfig[]>([])
-  const [pricingHistory, setPricingHistory] = useState<any[]>([])
-  const [receptionsList, setReceptionsList] = useState<OxygenReceptionRecord[]>([])
+  const [pricingHistory, setPricingHistory] = useState<PricingHistoryRecord[]>([])
+  const [receptionsList, setReceptionsList] = useState<ReceptionWithDetails[]>([])
   const [systemSettings, setSystemSettings] = useState<OxygenSystemSettings | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [ledgerViewMode, setLedgerViewMode] = useState<'detailed' | 'monthly'>('detailed')
@@ -420,7 +390,7 @@ export const OxygenDashboardPage: React.FC = () => {
   const [receiveSupplyMode, setReceiveSupplyMode] = useState<'cyl' | 'vie'>('cyl')
 
   // Helper to group and consolidate reception entries by month (with vote code segregation)
-  const getMonthlyConsolidatedReceptions = (receptions: OxygenReceptionRecord[], filterVote?: string) => {
+  const getMonthlyConsolidatedReceptions = (receptions: ReceptionWithDetails[], filterVote?: string) => {
     const targetVote = filterVote || dashboardVoteFilter
     const filtered = targetVote && targetVote !== 'all'
       ? receptions.filter(r => (r.vote_code || '080702').startsWith(targetVote))
@@ -437,14 +407,15 @@ export const OxygenDashboardPage: React.FC = () => {
       total_amount: number
       vote_code: string
       vote_activity: string
-      status: 'completed' | 'pending_invoice' | 'outstanding_po'
+      status: OxygenReceptionRecord['status']
       supplier_name?: string | null
+      is_vie_tank: boolean
       ids: string[]
       monthKey: string
       monthLabel: string
       entryCount: number
-      records: OxygenReceptionRecord[]
-      created_at?: string
+      records: ReceptionWithDetails[]
+      created_at: string
     }> = {}
 
     filtered.forEach(rec => {
@@ -463,8 +434,9 @@ export const OxygenDashboardPage: React.FC = () => {
       // Use the is_vie_tank flag (derived at fetch time from reception items) as a discriminator
       // so they are never merged together regardless of vote code or date.
       const isVieRec = rec.is_vie_tank === true || (
-        Array.isArray((rec as any).items) && (rec as any).items.some((itm: any) => {
-          const code = (itm.size_info?.code || itm.size_code || itm.code || '').toLowerCase()
+        Array.isArray(rec.items) && rec.items.some((itm) => {
+          const sizeInfo = Array.isArray(itm.size_info) ? itm.size_info[0] : itm.size_info
+          const code = (sizeInfo?.code || '').toLowerCase()
           return code.includes('vie') || code.includes('liquid')
         })
       )
@@ -564,7 +536,7 @@ export const OxygenDashboardPage: React.FC = () => {
   const [loanCustomRates, setLoanCustomRates] = useState<Record<string, number>>({})
   const [loanRemarks, setLoanRemarks] = useState('')
   const [isSubmittingLoanPayment, setIsSubmittingLoanPayment] = useState(false)
-  const [activeLoanCustody, setActiveLoanCustody] = useState<{ sizeCode: string; sizeObj: any; activeCount: number; rate: number }[]>([])
+  const [activeLoanCustody, setActiveLoanCustody] = useState<{ sizeCode: string; sizeObj: { id: string }; activeCount: number; rate: number }[]>([])
   const [isLoadingCustody, setIsLoadingCustody] = useState(false)
 
   // Officer Signatures state
@@ -595,13 +567,10 @@ export const OxygenDashboardPage: React.FC = () => {
   const [previewLoanAmount, setPreviewLoanAmount] = useState<number>(0)
   const [dashboardVoteFilter, setDashboardVoteFilter] = useState<string>('all')
   const [availableVoteCodes, setAvailableVoteCodes] = useState<string[]>(['080702', '080600'])
-  const [isSavingVoteCode, setIsSavingVoteCode] = useState<boolean>(false)
-  const [voteSaveSuccess, setVoteSaveSuccess] = useState<boolean>(false)
-  const [isUpdatingTableVote, setIsUpdatingTableVote] = useState<string | null>(null)
 
   // Vote Code Security Override & Audit Log Modal states
   const [isVoteOverrideModalOpen, setIsVoteOverrideModalOpen] = useState(false)
-  const [overrideTargetRecord, setOverrideTargetRecord] = useState<OxygenReceptionRecord | any | null>(null)
+  const [overrideTargetRecord, setOverrideTargetRecord] = useState<MonthlyReceptionRecord | null>(null)
   const [overrideSelectedVoteCode, setOverrideSelectedVoteCode] = useState<string>('080702')
   const [overrideSelectedVoteActivity, setOverrideSelectedVoteActivity] = useState<string>('27402')
   const [overridePasswordInput, setOverridePasswordInput] = useState<string>('')
@@ -627,7 +596,7 @@ export const OxygenDashboardPage: React.FC = () => {
     return filtered.length > 0 ? filtered : hospitalUsers
   }, [hospitalUsers])
 
-  const [lindeSupplier, setLindeSupplier] = useState<any>(null)
+  const [lindeSupplier, setLindeSupplier] = useState<{ company_name?: string | null; address?: string | null; phone?: string | null } | null>(null)
 
   // Cylinder Request & Dispatch States
   const [dispatchRequests, setDispatchRequests] = useState<CylinderDispatchRequestWithRelations[]>([])
@@ -651,7 +620,7 @@ export const OxygenDashboardPage: React.FC = () => {
   // Check if current user belongs to an "other unit" (wards, clinics, ICU, etc.) rather than Pharmacy / Administration
   const isOtherUnit = useMemo(() => {
     if (!user) return false;
-    const roleCode = (user.role?.role_code || (user as any).role || '').toLowerCase();
+    const roleCode = (user.role?.role_code || '').toLowerCase();
     const roleName = (user.role?.role_name || '').toLowerCase();
     const deptName = (user.department?.department_name || '').toLowerCase();
     const jawatan = (user.jawatan || '').toLowerCase();
@@ -716,18 +685,44 @@ export const OxygenDashboardPage: React.FC = () => {
 
   const lindeDisplayName = lindeSupplier?.company_name || 'Linde Malaysia Sdn Bhd'
 
-  const isLindeSupplier = (name?: string | null) => {
+  const isLindeSupplier = useCallback((name?: string | null) => {
     if (!name) return true
     return String(name).toLowerCase().includes('linde')
-  }
+  }, [])
 
-  const isSupplierMatch = (configSupplier: string | null | undefined, selectedSupplier: string) => {
+  const isSupplierMatch = useCallback((configSupplier: string | null | undefined, selectedSupplier: string) => {
     if (selectedSupplier === 'All Suppliers') return true
     if (isLindeSupplier(selectedSupplier)) {
       return isLindeSupplier(configSupplier)
     }
     return String(configSupplier || '').trim().toLowerCase() === String(selectedSupplier || '').trim().toLowerCase()
-  }
+  }, [isLindeSupplier])
+
+  const getSupplierPricingConfig = useCallback((sizeCode: string, supplierName: string) => {
+    const supplierConfigs = pricingConfigs.filter(c => isSupplierMatch(c.supplier_name, supplierName))
+    const match = supplierConfigs.find(c => c.cylinder_size_code === sizeCode)
+    if (match) return match
+    if (!supplierName || isLindeSupplier(supplierName)) {
+      return pricingConfigs.find(c => isLindeSupplier(c.supplier_name) && c.cylinder_size_code === sizeCode)
+    }
+    return undefined
+  }, [pricingConfigs, isSupplierMatch, isLindeSupplier])
+
+  const getActivePrice = useCallback((sizeCode: string, supplierName = selectedReceiveSupplier): number => {
+    const config = getSupplierPricingConfig(sizeCode, supplierName)
+    if (config) return config.refill_price
+    if (sizeCode === '101-N') return 250.00
+    if (sizeCode === '101-F' || sizeCode === 'P101-F') return 118.00
+    if (sizeCode.includes('Liquid Medical Oxygen') || sizeCode.includes('VIE Tank')) return 3.60
+    return 0
+  }, [getSupplierPricingConfig, selectedReceiveSupplier])
+
+  const getActiveLoanRate = useCallback((sizeCode: string, supplierName = selectedReceiveSupplier): number => {
+    const config = getSupplierPricingConfig(sizeCode, supplierName)
+    if (config?.loan_rate != null) return config.loan_rate
+    if (supplierName && !isLindeSupplier(supplierName)) return 15.00
+    return systemSettings?.loan_cylinder_rate || 18.36
+  }, [getSupplierPricingConfig, selectedReceiveSupplier, isLindeSupplier, systemSettings?.loan_cylinder_rate])
 
   const realSupplierOptions = Array.from(
     new Set([
@@ -773,22 +768,22 @@ export const OxygenDashboardPage: React.FC = () => {
     })
 
     setEditedPrices(priceMap)
-  }, [selectedModalSupplier, isAddingNewSupplier, customSupplierInput, pricingConfigs])
+  }, [selectedModalSupplier, isAddingNewSupplier, customSupplierInput, pricingConfigs, isLindeSupplier, isSupplierMatch])
 
   /**
    * Consolidates received cylinder items for a single reception record or a monthly consolidated record.
    * Handles per-reception breakdown so that un-itemized legacy records or mixed-record months are
    * accurately aggregated without dropping any deliveries.
    */
-  const fetchAndConsolidateReceptionItems = async (
-    targetRecord: OxygenReceptionRecord | any,
+  const fetchAndConsolidateReceptionItems = useCallback(async (
+      targetRecord: ReceptionRecordWithMonthlyData,
     targetSupplierName: string
   ): Promise<OxygenPdfItem[]> => {
     // Check if target record or consolidated group represents a VIE Tank consolidation
     const isVieConsolidation = Boolean(
       targetRecord.is_vie_tank ||
       (typeof targetRecord.monthKey === 'string' && targetRecord.monthKey.endsWith('_vie')) ||
-      (Array.isArray(targetRecord.records) && targetRecord.records.some((r: any) => r.is_vie_tank))
+      (Array.isArray(targetRecord.records) && targetRecord.records.some((r) => r.is_vie_tank))
     )
 
     // 1. Gather all reception IDs for this record or month (matching supply type strictly)
@@ -806,7 +801,7 @@ export const OxygenDashboardPage: React.FC = () => {
 
     // Flatten all sub-records and their nested ids
     if (Array.isArray(targetRecord.records)) {
-      targetRecord.records.forEach((rec: any) => {
+      targetRecord.records.forEach((rec) => {
         if (rec.id && typeof rec.id === 'string' && !rec.id.startsWith('monthly-')) idSet.add(rec.id)
         if (Array.isArray(rec.ids)) {
           rec.ids.forEach((subId: string) => { if (subId && typeof subId === 'string' && !subId.startsWith('monthly-')) idSet.add(subId) })
@@ -840,7 +835,7 @@ export const OxygenDashboardPage: React.FC = () => {
 
       const { data: monthRecs } = await query
       if (monthRecs && monthRecs.length > 0) {
-        monthRecs.forEach((r: any) => { if (r.id) idSet.add(r.id) })
+        monthRecs.forEach((r) => { if (r.id) idSet.add(r.id) })
       }
     }
 
@@ -870,7 +865,7 @@ export const OxygenDashboardPage: React.FC = () => {
     //      If unit_price >> loanRate (i.e. matches the refill price), it is a refill.
     //    This is necessary because the schema stores 101-N cylinder type as is_loan=true
     //    but it also receives actual refill gas (at RM 250) plus a separate loan fee (at RM 15).
-    const resolveIsLoan = (itm: any): boolean => {
+    const resolveIsLoan = (itm: ReceptionItemRow): boolean => {
       const sizeCode = (itm.size_info?.code || itm.size_code || '').toLowerCase()
       if (sizeCode.includes('liquid') || sizeCode.includes('vie')) {
         return false
@@ -898,7 +893,7 @@ export const OxygenDashboardPage: React.FC = () => {
     // and standard cylinder items can ONLY be included in cylinder consolidation.
     const groupMap: Record<string, { size_code: string; is_loan: boolean; qty: number; price: number }> = {}
 
-    ;(rawItems || []).forEach((itm: any) => {
+    ;(rawItems || []).forEach((itm) => {
       const sizeCode = itm.size_info?.code || itm.size_code || 'Standard'
       const codeLower = sizeCode.toLowerCase()
       const isVieItem = codeLower.includes('vie') || codeLower.includes('liquid')
@@ -1001,14 +996,14 @@ export const OxygenDashboardPage: React.FC = () => {
     }
 
     return formattedItems
-  }
+  }, [hospitalId, pricingConfigs, isSupplierMatch, getActivePrice, getActiveLoanRate, isLindeSupplier])
 
   /**
    * Helper to compute precise balanceBefore and balanceAfter for PO generation,
    * properly accounting for whether the record is already committed to the target vote code in the DB.
    */
-  const computePoBalances = (
-    rec: OxygenReceptionRecord | any,
+  const computePoBalances = useCallback((
+    rec: ReceptionRecordWithMonthlyData,
     targetVoteCode: string,
     totalAmount: number
   ): { balanceBefore: number; balanceAfter: number } => {
@@ -1020,7 +1015,8 @@ export const OxygenDashboardPage: React.FC = () => {
     // Check if this reception record is already counted in this vote code in DB
     let isAlreadyCounted = false
     if (Array.isArray(rec.ids) && rec.ids.length > 0) {
-      const matched = receptionsList.filter(r => rec.ids.includes(r.id) && (r.vote_code || '080702').startsWith(normTarget))
+        const ids = rec.ids
+        const matched = receptionsList.filter(r => ids.includes(r.id) && (r.vote_code || '080702').startsWith(normTarget))
       isAlreadyCounted = matched.length > 0
     } else if (rec.id && !rec.id.startsWith('monthly-')) {
       const dbRec = receptionsList.find(r => r.id === rec.id)
@@ -1037,7 +1033,7 @@ export const OxygenDashboardPage: React.FC = () => {
     const balanceAfter = isAlreadyCounted ? currentBalance : currentBalance - totalAmount
 
     return { balanceBefore, balanceAfter }
-  }
+  }, [financials, receptionsList])
 
   useEffect(() => {
     if (!isPoPreviewModalOpen || !previewRecord) return
@@ -1056,11 +1052,9 @@ export const OxygenDashboardPage: React.FC = () => {
           .forEach(c => { if (c.loan_rate != null) supplierLoanRates[c.cylinder_size_code] = c.loan_rate })
 
         const formattedItems = await fetchAndConsolidateReceptionItems(previewRecord, targetSupName)
-
-        const totalAmount = formattedItems.reduce((sum, item) => sum + item.total_price, 0)
         const refillTotalAmount = formattedItems.filter(i => !i.is_loan).reduce((sum, item) => sum + item.total_price, 0)
         const loanTotalAmount = formattedItems.filter(i => i.is_loan).reduce((sum, item) => sum + item.total_price, 0)
-        setPreviewTotalAmount(totalAmount)
+        setPreviewTotalAmount(refillTotalAmount + loanTotalAmount)
         setPreviewRefillAmount(refillTotalAmount)
         setPreviewLoanAmount(loanTotalAmount)
         
@@ -1083,11 +1077,11 @@ export const OxygenDashboardPage: React.FC = () => {
           balanceBefore,
           balanceAfter,
           supplierName: matchedSup?.company_name || targetSupName,
-          supplierAddress: matchedSup?.address || (isLindeSupplier(targetSupName) ? lindeSupplier?.address : '') || '',
-          supplierPhone: matchedSup?.phone || (isLindeSupplier(targetSupName) ? lindeSupplier?.phone : '') || '',
+          supplierAddress: (isLindeSupplier(targetSupName) ? lindeSupplier?.address : '') || '',
+          supplierPhone: (isLindeSupplier(targetSupName) ? lindeSupplier?.phone : '') || '',
           loanRates: supplierLoanRates,
-          loanVoteCode: previewRecord.loan_vote_code || (previewRecord.vote_code && !previewRecord.vote_code.startsWith('080') ? previewRecord.vote_code : (previewVoteCode.startsWith('24') || previewVoteCode.startsWith('0202') ? previewVoteCode : '24000')),
-          loanVoteActivity: previewRecord.loan_vote_activity || (previewRecord.vote_activity && previewRecord.vote_activity !== '27402' ? previewRecord.vote_activity : (previewVoteActivity === '020200' ? previewVoteActivity : '020200'))
+          loanVoteCode: previewRecord.vote_code && !previewRecord.vote_code.startsWith('080') ? previewRecord.vote_code : (previewVoteCode.startsWith('24') || previewVoteCode.startsWith('0202') ? previewVoteCode : '24000'),
+          loanVoteActivity: previewRecord.vote_activity !== '27402' ? previewRecord.vote_activity : (previewVoteActivity === '020200' ? previewVoteActivity : '020200')
         })
 
         if (active) {
@@ -1104,7 +1098,7 @@ export const OxygenDashboardPage: React.FC = () => {
     return () => {
       active = false
     }
-  }, [isPoPreviewModalOpen, previewRecord, previewVoteCode, previewVoteActivity, previewSignatures.applicantName, previewSignatures.applicantPosition, previewSignatures.headName, previewSignatures.headPosition, financials])
+  }, [isPoPreviewModalOpen, previewRecord, previewVoteCode, previewVoteActivity, previewSignatures.applicantName, previewSignatures.applicantPosition, previewSignatures.headName, previewSignatures.headPosition, financials, computePoBalances, dbSuppliers, fetchAndConsolidateReceptionItems, isLindeSupplier, isSupplierMatch, lindeSupplier?.address, lindeSupplier?.phone, pricingConfigs, selectedReceiveSupplier])
 
   // Pricing Form state
   const [editedPrices, setEditedPrices] = useState<Record<string, string>>({})
@@ -1129,7 +1123,7 @@ export const OxygenDashboardPage: React.FC = () => {
   const [showClearPassword, setShowClearPassword] = useState(false)
 
   // Fetch real data
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!hospitalId) return
     setIsLoading(true)
     setError(null)
@@ -1152,19 +1146,9 @@ export const OxygenDashboardPage: React.FC = () => {
         receptionsRes,
         settingsRes,
         typesRes
-      ]: [
-        ApiResponse<OxygenSummary>,
-        ApiResponse<Paginated<OxygenCylinderWithRelations>>,
-        ApiResponse<OxygenConsumptionWithRelations[]>,
-        ApiResponse<OxygenFinancialSummary>,
-        ApiResponse<OxygenPricingConfig[]>,
-        ApiResponse<any[]>,
-        ApiResponse<OxygenReceptionRecord[]>,
-        ApiResponse<OxygenSystemSettings>,
-        ApiResponse<OxygenCylinderTypeInfo[]>
       ] = await Promise.all([
         getOxygenSummary(hospitalId),
-        getOxygenCylinders(hospitalId, {}, 1, limit) as any,
+        getOxygenCylinders(hospitalId, {}, 1, limit),
         getOxygenConsumptionHistory(hospitalId),
         getOxygenFinancialSummary(hospitalId),
         getOxygenLatestPricing(hospitalId),
@@ -1247,7 +1231,11 @@ export const OxygenDashboardPage: React.FC = () => {
         .select('id, full_name, jawatan, department_id, department:departments!department_id(id, department_name), role:roles(role_name)')
         .eq('hospital_id', hospitalId)
       if (rawUsers) {
-        setHospitalUsers(rawUsers as any)
+        setHospitalUsers(rawUsers.map((rawUser) => ({
+          ...rawUser,
+          department: Array.isArray(rawUser.department) ? rawUser.department[0] ?? null : rawUser.department,
+          role: Array.isArray(rawUser.role) ? rawUser.role[0] : rawUser.role,
+        })))
       }
 
       // Load Cylinder Request & Dispatch Data
@@ -1305,7 +1293,7 @@ export const OxygenDashboardPage: React.FC = () => {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [hospitalId, currentPath])
 
   useEffect(() => {
     if (hospitalId) {
@@ -1331,7 +1319,7 @@ export const OxygenDashboardPage: React.FC = () => {
       }
       void loadInventoryDashboardData()
     }
-  }, [hospitalId, currentPath, ledgerStartDate, ledgerEndDate])
+  }, [hospitalId, currentPath, ledgerStartDate, ledgerEndDate, loadData])
 
   const handleRefreshInventoryData = async () => {
     if (!hospitalId) return
@@ -1400,7 +1388,7 @@ export const OxygenDashboardPage: React.FC = () => {
       } else {
         setClearPasswordError(res.error || 'Gagal mengosongkan inventori.')
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error(err)
       setClearPasswordError('Ralat sistem semasa mengosongkan stok.')
     } finally {
@@ -1413,7 +1401,7 @@ export const OxygenDashboardPage: React.FC = () => {
       case 'full':
         return <Badge variant="success">Full</Badge>
       case 'empty':
-        return <Badge variant="secondary">Empty</Badge>
+        return <Badge variant="gray">Empty</Badge>
       case 'in_use':
         return <Badge variant="info">In Use</Badge>
       case 'maintenance':
@@ -1423,7 +1411,7 @@ export const OxygenDashboardPage: React.FC = () => {
       case 'deactivated':
         return <Badge variant="error">{language === 'ms' ? 'Dinyahaktifkan' : 'Deactivated'}</Badge>
       default:
-        return <Badge variant="secondary">{status}</Badge>
+        return <Badge variant="gray">{status}</Badge>
     }
   }
 
@@ -1457,7 +1445,7 @@ export const OxygenDashboardPage: React.FC = () => {
       key: 'assigned_ward',
       label: 'Assigned Department',
       className: 'text-sm text-text-muted',
-      render: (_, row) => row.assigned_ward?.department_name || '-',
+      render: (_, row) => typeof row.assigned_ward === 'string' ? row.assigned_ward : row.assigned_ward?.department_name || '-',
     },
     {
       key: 'status',
@@ -1468,39 +1456,6 @@ export const OxygenDashboardPage: React.FC = () => {
   ]
 
   // Columns for Consumption/Refill History Table
-  const consumptionColumns: Column<OxygenConsumptionWithRelations>[] = [
-    {
-      key: 'consumption_date',
-      label: 'Date',
-      className: 'text-sm text-text-primary',
-      render: (value) => value ? new Date(String(value)).toLocaleDateString() : '-',
-    },
-    {
-      key: 'cylinder',
-      label: 'Cylinder Serial',
-      className: 'font-mono text-xs text-text-secondary font-bold',
-      render: (_, row) => row.cylinder?.serial_number || 'BULK DISPATCH',
-    },
-    {
-      key: 'department',
-      label: 'Requesting Unit',
-      className: 'text-sm text-text-muted',
-      render: (_, row) => row.department?.department_name || 'Emergency Trauma Unit',
-    },
-    {
-      key: 'quantity_used',
-      label: 'Quantity Refilled',
-      className: 'text-sm text-text-primary font-semibold',
-      render: (val, row) => `${val} ${row.unit || 'liters'}`,
-    },
-    {
-      key: 'notes',
-      label: 'Remarks / Notes',
-      className: 'text-sm text-text-muted italic',
-      render: (val) => val || 'Scheduled ward refill',
-    }
-  ]
-
   const getReconciliationChangesList = (): AuditChangeItem[] => {
     const allTrackedIds = Array.from(new Set([...Object.keys(physicalCounts), ...Object.keys(physicalLocations)]));
     return allTrackedIds
@@ -1511,8 +1466,8 @@ export const OxygenDashboardPage: React.FC = () => {
         const normalizedNew = physicalCounts[cylId] ? normalizeStatusForReconciliation(physicalCounts[cylId]) : normalizedOld;
         const rawOldLocation = getCylinderLocation(cyl, normalizedOld);
         const rawNewLocation = physicalLocations[cylId] || getCylinderLocation(cyl, normalizedNew);
-        const oldLocation = typeof rawOldLocation === 'object' ? (rawOldLocation?.location_name || rawOldLocation?.name || 'Pharmacy Store') : (rawOldLocation || 'Pharmacy Store');
-        const newLocation = typeof rawNewLocation === 'object' ? (rawNewLocation?.location_name || rawNewLocation?.name || 'Pharmacy Store') : (rawNewLocation || 'Pharmacy Store');
+        const oldLocation = rawOldLocation || 'Pharmacy Store';
+        const newLocation = rawNewLocation || 'Pharmacy Store';
 
         const statusChanged = normalizedOld !== normalizedNew;
         const locationChanged = Boolean(physicalLocations[cylId]);
@@ -1543,10 +1498,18 @@ export const OxygenDashboardPage: React.FC = () => {
   };
 
   const handleAuditSubmit = async (remarks?: string) => {
-    if (!hospitalId || !user?.id) return;
+    if (!hospitalId || !user?.id) {
+      alert('Hospital and user context are required to save reconciliation.');
+      return;
+    }
+    if (!isSupabaseConfigured()) {
+      alert('Reconciliation cannot be saved because the database is not configured. No changes were saved.');
+      return;
+    }
+
     setIsSavingReconciliation(true);
     setAuditSuccessMsg(null);
-    
+
     try {
       const allTrackedIds = Array.from(new Set([...Object.keys(physicalCounts), ...Object.keys(physicalLocations)]));
       const updates = allTrackedIds.filter(cylId => {
@@ -1560,12 +1523,15 @@ export const OxygenDashboardPage: React.FC = () => {
 
       if (updates.length === 0) {
         alert('No status or location changes to save.');
-        setIsSavingReconciliation(false);
         setIsAuditReviewOpen(false);
         return;
       }
 
       let successCount = 0;
+      const persistedIds: string[] = [];
+      const updateFailures: string[] = [];
+      const auditFailures: string[] = [];
+      const unsupportedStatuses: string[] = [];
 
       for (const cylId of updates) {
         const cyl = cylinders.find(c => c.id === cylId);
@@ -1574,78 +1540,77 @@ export const OxygenDashboardPage: React.FC = () => {
         const normalizedOld = getExpectedStateForCylinder(cyl);
         const normalizedNew = physicalCounts[cylId] || normalizedOld;
         const rawNewLocation = physicalLocations[cylId] || getCylinderLocation(cyl, normalizedNew);
-        let newLocation = typeof rawNewLocation === 'object' ? (rawNewLocation?.location_name || rawNewLocation?.name || 'Pharmacy Store') : (rawNewLocation || 'Pharmacy Store');
+        let newLocation = rawNewLocation || 'Pharmacy Store';
         if (normalizedNew === 'available') {
           newLocation = 'Pharmacy Store';
         }
-        const dbStatus = mapReconciliationToDbStatus(normalizedNew, newLocation);
-
-        if (isSupabaseConfigured()) {
-          // Update the primary table (pharmacy_oxygen_cylinder_inventory) which holds the data
-          const { error: updateErr } = await supabase
-            .from('pharmacy_oxygen_cylinder_inventory')
-            .update({
-              status: dbStatus,
-              current_location: newLocation,
-              updated_at: new Date().toISOString()
-            })
-            .eq('id', cylId);
-
-          if (updateErr) {
-            console.error(`Failed to update cylinder ${cyl.serial_number}:`, updateErr);
-            continue;
-          }
-
-          // Insert audit log
-          await supabase.from('audit_logs').insert({
-            user_id: user.id,
-            action: 'RECONCILED_CYLINDER_STATUS',
-            module: 'OXYGEN_INVENTORY',
-            entity_type: 'cylinder',
-            entity_id: cylId,
-            old_values: { status: normalizedOld },
-            new_values: { status: normalizedNew, serial_number: cyl.serial_number, location: newLocation, remarks: remarks || null },
-            ip_address: null,
-            user_agent: null,
-            created_at: new Date().toISOString()
-          });
-
-          successCount++;
-        } else {
-          // Mock update
-          const mockCylIndex = mockOxygenCylinders.findIndex(c => c.id === cylId);
-          if (mockCylIndex !== -1) {
-            mockOxygenCylinders[mockCylIndex].status = dbStatus;
-            mockOxygenCylinders[mockCylIndex].current_location = { location_name: newLocation };
-            mockOxygenCylinders[mockCylIndex].updated_at = new Date().toISOString();
-          }
-
-          // Update local state copy
-          cyl.status = dbStatus;
-          cyl.current_location = { location_name: newLocation };
-
-          // Add to local reconciliation logs list
-          const newLog = {
-            id: `log-${Date.now()}-${Math.random()}`,
-            created_at: new Date().toISOString(),
-            user: { full_name: user.full_name || 'Pharmacy Officer', jawatan: user.jawatan || 'Officer' },
-            new_values: { serial_number: cyl.serial_number, status: normalizedNew, location: newLocation, remarks: remarks || null },
-            old_values: { status: normalizedOld }
-          };
-          setReconciliationLogs(prev => [newLog, ...prev]);
-          successCount++;
+        const dbStatus = mapReconciliationToDbStatus(normalizedNew);
+        if (!dbStatus) {
+          unsupportedStatuses.push(cyl.serial_number);
+          continue;
         }
+
+        const { error: updateErr } = await supabase
+          .from('pharmacy_oxygen_cylinder_inventory')
+          .update({
+            status: dbStatus,
+            current_location: newLocation,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', cylId)
+          .eq('hospital_id', hospitalId);
+
+        if (updateErr) {
+          console.error('Failed to update cylinder ' + cyl.serial_number + ':', updateErr);
+          updateFailures.push(cyl.serial_number);
+          continue;
+        }
+
+        persistedIds.push(cylId);
+        const { error: auditErr } = await supabase.from('audit_logs').insert({
+          user_id: user.id,
+          action: 'RECONCILED_CYLINDER_STATUS',
+          module: 'OXYGEN_INVENTORY',
+          entity_type: 'cylinder',
+          entity_id: cylId,
+          old_values: { status: normalizedOld },
+          new_values: { status: normalizedNew, serial_number: cyl.serial_number, location: newLocation, remarks: remarks || null },
+          ip_address: null,
+          user_agent: null,
+          created_at: new Date().toISOString()
+        });
+
+        if (auditErr) {
+          console.error('Cylinder ' + cyl.serial_number + ' was updated but its audit event failed:', auditErr);
+          auditFailures.push(cyl.serial_number);
+          continue;
+        }
+        successCount++;
       }
 
-      setPhysicalCounts({});
-      setPhysicalLocations({});
+      if (persistedIds.length > 0) {
+        const persistedSet = new Set(persistedIds);
+        setPhysicalCounts(prev => Object.fromEntries(Object.entries(prev).filter(([id]) => !persistedSet.has(id))));
+        setPhysicalLocations(prev => Object.fromEntries(Object.entries(prev).filter(([id]) => !persistedSet.has(id))));
+        await loadData();
+      }
+
+      const failures: string[] = [];
+      if (updateFailures.length) failures.push('Update failed: ' + updateFailures.join(', '));
+      if (auditFailures.length) failures.push('Status saved but audit log failed: ' + auditFailures.join(', '));
+      if (unsupportedStatuses.length) failures.push('Unsupported status, not saved: ' + unsupportedStatuses.join(', '));
+
+      if (failures.length > 0) {
+        alert(successCount + ' reconciliation change(s) were fully saved. ' + failures.join('. ') + '.');
+        return;
+      }
+
       setIsAuditReviewOpen(false);
-      setAuditSuccessMsg(`Stock reconciliation verified. ${successCount} status changes logged successfully.`);
+      setAuditSuccessMsg('Stock reconciliation verified. ' + successCount + ' status changes and audit events saved successfully.');
       setTimeout(() => setAuditSuccessMsg(null), 5000);
-      await loadData();
     } catch (err) {
       console.error('Reconciliation save error:', err);
-      alert('Failed to save reconciliation audit.');
+      alert(err instanceof Error ? 'Failed to save reconciliation audit: ' + err.message : 'Failed to save reconciliation audit.');
     } finally {
       setIsSavingReconciliation(false);
     }
@@ -1728,39 +1693,9 @@ export const OxygenDashboardPage: React.FC = () => {
     setIsPoPreviewModalOpen(true)
   }
 
-  const handleSaveVoteCodeForPreview = async (overrideCode?: string, overrideActivity?: string) => {
-    if (!previewRecord) return
-    const codeToSave = overrideCode || previewVoteCode
-    const actToSave = overrideActivity || previewVoteActivity || financials?.by_vote_code?.[codeToSave]?.vote_activity || '27402'
-    setIsSavingVoteCode(true)
-    try {
-      const targetIds = (Array.isArray(previewRecord.ids) && previewRecord.ids.length > 0)
-        ? previewRecord.ids
-        : [previewRecord.id].filter(id => id && !id.startsWith('monthly-'))
 
-      if (targetIds.length > 0) {
-        const res = await updateOxygenReceptionsVoteCode(targetIds, codeToSave, actToSave)
-        if (res.data) {
-          setPreviewRecord(prev => prev ? { ...prev, vote_code: codeToSave, vote_activity: actToSave } : null)
-          setReceptionsList(prev => prev.map(r => {
-            if (targetIds.includes(r.id) || (r.ids && r.ids.some(id => targetIds.includes(id)))) {
-              return { ...r, vote_code: codeToSave, vote_activity: actToSave }
-            }
-            return r
-          }))
-          setVoteSaveSuccess(true)
-          setTimeout(() => setVoteSaveSuccess(false), 3000)
-          void loadData()
-        }
-      }
-    } catch (err) {
-      console.error('Error saving vote code for preview:', err)
-    } finally {
-      setIsSavingVoteCode(false)
-    }
-  }
 
-  const handleOpenVoteOverrideModal = (record: OxygenReceptionRecord | any) => {
+  const handleOpenVoteOverrideModal = (record: ReceptionRecordWithMonthlyData) => {
     if (!record) return
     setOverrideTargetRecord(record)
     const currentVote = record.vote_code || '080702'
@@ -1860,9 +1795,9 @@ export const OxygenDashboardPage: React.FC = () => {
         setIsVoteOverrideModalOpen(false)
         await loadData()
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error overriding vote code:', err)
-      setOverrideError(err.message || 'Ralat semasa mengemas kini kod vot.')
+      setOverrideError(err instanceof Error ? err.message : 'Ralat semasa mengemas kini kod vot.')
     } finally {
       setOverrideIsSubmitting(false)
     }
@@ -1882,8 +1817,6 @@ export const OxygenDashboardPage: React.FC = () => {
         .forEach(c => { if (c.loan_rate != null) poLoanRates[c.cylinder_size_code] = c.loan_rate })
 
       const formattedItems = await fetchAndConsolidateReceptionItems(previewRecord, poSupplierName)
-
-      const totalAmount = formattedItems.reduce((sum, item) => sum + item.total_price, 0)
       const refillTotalAmount = formattedItems.filter(i => !i.is_loan).reduce((sum, item) => sum + item.total_price, 0)
       const { balanceBefore, balanceAfter } = computePoBalances(previewRecord, previewVoteCode, refillTotalAmount)
 
@@ -1913,11 +1846,11 @@ export const OxygenDashboardPage: React.FC = () => {
         balanceBefore,
         balanceAfter,
         supplierName: poMatchedSup?.company_name || poSupplierName,
-        supplierAddress: poMatchedSup?.address || (isLindeSupplier(poSupplierName) ? lindeSupplier?.address : '') || '',
-        supplierPhone: poMatchedSup?.phone || (isLindeSupplier(poSupplierName) ? lindeSupplier?.phone : '') || '',
+        supplierAddress: (isLindeSupplier(poSupplierName) ? lindeSupplier?.address : '') || '',
+        supplierPhone: (isLindeSupplier(poSupplierName) ? lindeSupplier?.phone : '') || '',
         loanRates: poLoanRates,
-        loanVoteCode: previewRecord.loan_vote_code || (previewRecord.vote_code && !previewRecord.vote_code.startsWith('080') ? previewRecord.vote_code : (previewVoteCode.startsWith('24') || previewVoteCode.startsWith('0202') ? previewVoteCode : '24000')),
-        loanVoteActivity: previewRecord.loan_vote_activity || (previewRecord.vote_activity && previewRecord.vote_activity !== '27402' ? previewRecord.vote_activity : (previewVoteActivity === '020200' ? previewVoteActivity : '020200'))
+        loanVoteCode: previewRecord.vote_code && !previewRecord.vote_code.startsWith('080') ? previewRecord.vote_code : (previewVoteCode.startsWith('24') || previewVoteCode.startsWith('0202') ? previewVoteCode : '24000'),
+        loanVoteActivity: previewRecord.vote_activity !== '27402' ? previewRecord.vote_activity : (previewVoteActivity === '020200' ? previewVoteActivity : '020200')
       })
 
       const url = URL.createObjectURL(blob)
@@ -1927,34 +1860,6 @@ export const OxygenDashboardPage: React.FC = () => {
       console.error('Error generating PO PDF:', err)
       alert('Failed to generate PO PDF.')
     }
-  }
-
-  const getSupplierPricingConfig = (sizeCode: string, supplierName: string) => {
-    const supplierConfigs = pricingConfigs.filter(c => isSupplierMatch(c.supplier_name, supplierName))
-    const match = supplierConfigs.find(c => c.cylinder_size_code === sizeCode)
-    if (match) return match
-    // Only fall back to Linde if supplierName is unselected or is Linde
-    if (!supplierName || isLindeSupplier(supplierName)) {
-      return pricingConfigs.find(c => isLindeSupplier(c.supplier_name) && c.cylinder_size_code === sizeCode)
-    }
-    return undefined
-  }
-
-  const getActivePrice = (sizeCode: string, supplierName = selectedReceiveSupplier): number => {
-    const config = getSupplierPricingConfig(sizeCode, supplierName)
-    if (config) return config.refill_price
-    // Default fallback base refill prices when no config found for specific size
-    if (sizeCode === '101-N') return 250.00
-    if (sizeCode === '101-F' || sizeCode === 'P101-F') return 118.00
-    if (sizeCode.includes('Liquid Medical Oxygen') || sizeCode.includes('VIE Tank')) return 3.60
-    return 0
-  }
-
-  const getActiveLoanRate = (sizeCode: string, supplierName = selectedReceiveSupplier): number => {
-    const config = getSupplierPricingConfig(sizeCode, supplierName)
-    if (config?.loan_rate != null) return config.loan_rate
-    if (supplierName && !isLindeSupplier(supplierName)) return 15.00
-    return systemSettings?.loan_cylinder_rate || 18.36
   }
 
   // Dynamic cost calculations for key-in form
@@ -2329,47 +2234,7 @@ export const OxygenDashboardPage: React.FC = () => {
   }
 
   // PDF Generation Triggers
-  const handleDownloadPO = async (record: OxygenReceptionRecord) => {
-    try {
-      const poSupplierName = record.supplier_name || selectedReceiveSupplier || 'LINDE EOX SDN BHD (CAW. MIRI)'
-      const matchedSup = dbSuppliers.find(s => isSupplierMatch(s.company_name, poSupplierName))
 
-      const formattedItems = await fetchAndConsolidateReceptionItems(record, poSupplierName)
-
-      const totalAmount = formattedItems.reduce((sum, item) => sum + item.total_price, 0)
-      const refillTotalAmount = formattedItems.filter(i => !i.is_loan).reduce((sum, item) => sum + item.total_price, 0)
-      const targetVote = record.vote_code || '080702'
-      const { balanceBefore, balanceAfter } = computePoBalances(record, targetVote, refillTotalAmount)
-
-      const poLoanRates: Record<string, number> = {}
-      pricingConfigs
-        .filter(c => isSupplierMatch(c.supplier_name, poSupplierName))
-        .forEach(c => { if (c.loan_rate != null) poLoanRates[c.cylinder_size_code] = c.loan_rate })
-
-      const blob = await generateOxygenPoPdf({
-        reception: record,
-        items: formattedItems,
-        applicantName: signatures.applicantName,
-        applicantPosition: signatures.applicantPosition,
-        headName: signatures.headName,
-        headPosition: signatures.headPosition,
-        balanceBefore,
-        balanceAfter,
-        supplierName: matchedSup?.company_name || poSupplierName,
-        supplierAddress: matchedSup?.address || (isLindeSupplier(poSupplierName) ? lindeSupplier?.address : '') || '',
-        supplierPhone: matchedSup?.phone || (isLindeSupplier(poSupplierName) ? lindeSupplier?.phone : '') || '',
-        loanRates: poLoanRates,
-        loanVoteCode: record.loan_vote_code || (record.vote_code && !record.vote_code.startsWith('080') ? record.vote_code : '24000'),
-        loanVoteActivity: record.loan_vote_activity || (record.vote_activity && record.vote_activity !== '27402' ? record.vote_activity : '020200')
-      })
-
-      const url = URL.createObjectURL(blob)
-      window.open(url, '_blank')
-    } catch (err) {
-      console.error('Error generating PO PDF:', err)
-      alert('Failed to generate PO PDF.')
-    }
-  }
 
   const handleDownloadReport = async (record: OxygenReceptionRecord) => {
     try {
@@ -2578,9 +2443,9 @@ export const OxygenDashboardPage: React.FC = () => {
       setTimeout(() => setAuditSuccessMsg(null), 5000)
 
       setDeleteCylinderTarget(null)
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error deleting cylinder(s):', err)
-      alert(err?.message || 'Gagal memadam silinder / Failed to delete cylinder(s)')
+      alert(err instanceof Error ? err.message : 'Gagal memadam silinder / Failed to delete cylinder(s)')
     } finally {
       setIsDeletingCylinder(false)
     }
@@ -2638,17 +2503,6 @@ export const OxygenDashboardPage: React.FC = () => {
   const renderActiveView = () => {
     // 1. CYLINDER INVENTORY VIEW (Implementation Plan Dashboard)
     if (currentPath === '/pharmacy/oxygen/cylinders') {
-      // Compute KPI totals from aggregates
-      const kpiTotals = cylinderAggregates.reduce(
-        (acc, curr) => ({
-          total: acc.total + (curr.total || 0),
-          available: acc.available + (curr.available || 0),
-          inUse: acc.inUse + (curr.in_use || 0),
-          returned: acc.returned + (curr.returned || 0),
-        }),
-        { total: 0, available: 0, inUse: 0, returned: 0 }
-      )
-
       return (
         <div className="space-y-8">
           {/* Executive Segmented Navigation Bar & Operational Controls */}
@@ -2687,7 +2541,11 @@ export const OxygenDashboardPage: React.FC = () => {
                 return (
                   <button
                     key={tab.id}
-                    onClick={() => setCylinderActiveTab(tab.id as any)}
+                    onClick={() => {
+                      if (tab.id === 'overview' || tab.id === 'unit_monitor' || tab.id === 'store_balance' || tab.id === 'supplier_returns') {
+                        setCylinderActiveTab(tab.id)
+                      }
+                    }}
                     className={`w-full sm:w-auto px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl text-xs font-semibold transition-colors duration-150 flex items-center justify-center gap-2 cursor-pointer ${
                       isActive
                         ? 'bg-accent-base text-white shadow-xs font-bold'
@@ -2796,7 +2654,7 @@ export const OxygenDashboardPage: React.FC = () => {
           <ScanEmptyCylinderModal
             hospitalId={hospitalId || ''}
             isOpen={isScanOpen}
-            targetCombo={selectedDepleteCombo}
+            targetCombo={selectedDepleteCombo ?? undefined}
             onClose={() => {
               setIsScanOpen(false)
               setSelectedDepleteCombo(null)
@@ -2970,7 +2828,7 @@ export const OxygenDashboardPage: React.FC = () => {
               }
             }}
             departments={departmentsList}
-            currentUser={user as any}
+            currentUser={user}
             users={hospitalUsers}
             hospitalId={hospitalId || ''}
           />
@@ -2994,7 +2852,7 @@ export const OxygenDashboardPage: React.FC = () => {
               }
             }}
             departments={departmentsList}
-            currentUser={user as any}
+            currentUser={user}
           />
 
           <ReceiveInterFacilityModal
@@ -3013,7 +2871,7 @@ export const OxygenDashboardPage: React.FC = () => {
               }
             }}
             departments={departmentsList}
-            currentUser={user as any}
+            currentUser={user}
             users={hospitalUsers}
             hospitalId={hospitalId || ''}
           />
@@ -3034,7 +2892,7 @@ export const OxygenDashboardPage: React.FC = () => {
               }
             }}
             departments={departmentsList}
-            currentUser={user as any}
+            currentUser={user}
             users={hospitalUsers}
             hospitalId={hospitalId || ''}
           />
@@ -3043,7 +2901,7 @@ export const OxygenDashboardPage: React.FC = () => {
             isOpen={!!detailRequest}
             onClose={() => setDetailRequest(null)}
             request={detailRequest}
-            currentUser={user as any}
+            currentUser={user}
             onApprove={async (id, adjustedItems) => {
               if (!isCylinderOfficer) {
                 throw new Error('Hanya Pegawai Farmasi dan Penolong Pegawai Farmasi yang dibenarkan meluluskan permohonan silinder.')
@@ -3166,7 +3024,7 @@ export const OxygenDashboardPage: React.FC = () => {
         
         let matchesSize = true
         if (qrSizeFilter) {
-          matchesSize = c.size_info?.code === qrSizeFilter || c.type_code === qrSizeFilter
+          matchesSize = c.size_info?.code === qrSizeFilter || c.type_info?.type_code === qrSizeFilter
         }
 
         let matchesType = true
@@ -3983,7 +3841,7 @@ export const OxygenDashboardPage: React.FC = () => {
     // 4. STOCK RECONCILIATION AUDIT VIEW
     if (currentPath === '/pharmacy/oxygen/reconciliation') {
       // Group cylinders by Type and Size
-      const groupedCylinders = cylinders.reduce((acc: Record<string, OxygenCylinderWithRelations[]>, cyl) => {
+      const groupedCylinders = cylinders.reduce((acc: Record<string, ReconciliationCylinder[]>, cyl) => {
         const groupKey = cyl.type_info?.type_name || 'Standard Cylinder';
         if (!acc[groupKey]) {
           acc[groupKey] = [];
@@ -4003,7 +3861,7 @@ export const OxygenDashboardPage: React.FC = () => {
         : (activeGroup ? (groupedCylinders[activeGroup] || []) : []);
 
       // Categorize cylinders: Available in System (Verified) vs Scanned in Audit (Pending Verification)
-      const isCylinderScanned = (cyl: any) => Boolean(
+      const isCylinderScanned = (cyl: ReconciliationCylinder) => Boolean(
         physicalCounts[cyl.id] || 
         physicalLocations[cyl.id] || 
         physicalScannedBy[cyl.id] || 
@@ -4012,7 +3870,7 @@ export const OxygenDashboardPage: React.FC = () => {
         cyl.scanned_location
       );
 
-      const isCylinderVerified = (cyl: any) => Boolean(
+      const isCylinderVerified = (cyl: ReconciliationCylinder) => Boolean(
         cyl.is_verified || 
         verifiedCylinderIds.has(cyl.id)
       );
@@ -4063,7 +3921,12 @@ export const OxygenDashboardPage: React.FC = () => {
           if (normalizedNew === 'available') {
             newLocation = 'Pharmacy Store';
           }
-          const dbStatus = mapReconciliationToDbStatus(normalizedNew, newLocation);
+          const dbStatus = mapReconciliationToDbStatus(normalizedNew);
+          if (!dbStatus) {
+            setAuditSuccessMsg(language === 'ms' ? 'Status silinder tidak disokong untuk pengesahan.' : 'Cylinder status is unsupported for verification.');
+            setTimeout(() => setAuditSuccessMsg(null), 4000);
+            return;
+          }
           const auditorName = physicalScannedBy[cylId]?.user || cyl.scanned_by_name || user?.full_name || 'AMRI AMIT';
 
           if (isSupabaseConfigured()) {
@@ -4129,13 +3992,13 @@ export const OxygenDashboardPage: React.FC = () => {
               : `✅ Cylinder ${cyl.serial_number} verified and recorded in System Inventory!`
           );
           setTimeout(() => setAuditSuccessMsg(null), 4000);
-        } catch (err: any) {
+        } catch (err) {
           console.error('Error verifying cylinder:', err);
         }
       };
 
       // Batch verify all scanned cylinders in active group
-      const handleVerifyAllScanned = async (groupCylinders: any[]) => {
+      const handleVerifyAllScanned = async (groupCylinders: ReconciliationCylinder[]) => {
         if (!groupCylinders || groupCylinders.length === 0) return;
         try {
           for (const c of groupCylinders) {
@@ -4148,13 +4011,18 @@ export const OxygenDashboardPage: React.FC = () => {
       };
 
       // Toggle valve type (BN <-> PI) directly from the stock reconciliation audit table
-      const handleToggleCylinderValveType = async (e: React.MouseEvent, cyl: any) => {
+      const handleToggleCylinderValveType = async (e: React.MouseEvent, cyl: ReconciliationCylinder) => {
         e.stopPropagation();
         const currentCode = (cyl.type_info?.code || (cyl.type_info?.type_name?.includes('PI') ? 'PI' : 'BN')).toUpperCase();
         const nextCode: 'BN' | 'PI' = currentCode === 'BN' ? 'PI' : 'BN';
         
         try {
-          const res = await updateCylinderValveType(hospitalId, cyl.id, nextCode, user?.id);
+          if (!hospitalId || !user?.id) {
+            setAuditSuccessMsg(language === 'ms' ? 'Hospital atau pengguna tidak tersedia.' : 'Hospital or user context is unavailable.');
+            setTimeout(() => setAuditSuccessMsg(null), 4000);
+            return;
+          }
+          const res = await updateCylinderValveType(hospitalId, cyl.id, nextCode, user.id);
           if (res.error) {
             setAuditSuccessMsg(`❌ ${res.error}`);
             setTimeout(() => setAuditSuccessMsg(null), 4000);
@@ -4188,7 +4056,7 @@ export const OxygenDashboardPage: React.FC = () => {
               : `✅ Valve for cylinder ${cyl.serial_number} successfully updated to ${nextCode === 'BN' ? 'Bullnose (BN)' : 'Pin Index (PI)'}!`
           );
           setTimeout(() => setAuditSuccessMsg(null), 4000);
-        } catch (err: any) {
+        } catch (err) {
           console.error('Error toggling valve type:', err);
         }
       };
@@ -4705,7 +4573,6 @@ export const OxygenDashboardPage: React.FC = () => {
                         const rawLoc = physicalLocations[cyl.id] || cyl.scanned_location || getCylinderLocation(cyl, currentPhysical);
                         const locationLabel = typeof rawLoc === 'object' ? (rawLoc?.location_name || rawLoc?.name || 'Pharmacy Store') : (rawLoc || 'Pharmacy Store');
                         const isScanned = isCylinderScanned(cyl);
-                        const isVerified = isCylinderVerified(cyl);
                         const scannerInfo = physicalScannedBy[cyl.id];
                         const scannedUser = scannerInfo?.user || cyl.scanned_by_name || (isScanned ? (user?.full_name || 'Staff Auditor') : null);
                         const isSelected = selectedReconciliationIds.has(cyl.id);
@@ -4919,7 +4786,6 @@ export const OxygenDashboardPage: React.FC = () => {
                             const rawLoc = physicalLocations[cyl.id] || cyl.scanned_location || getCylinderLocation(cyl, currentPhysical);
                             const locationLabel = typeof rawLoc === 'object' ? (rawLoc?.location_name || rawLoc?.name || 'Pharmacy Store') : (rawLoc || 'Pharmacy Store');
                             const isScanned = isCylinderScanned(cyl);
-                            const isVerified = isCylinderVerified(cyl);
                             const scannerInfo = physicalScannedBy[cyl.id];
                             const scannedUser = scannerInfo?.user || cyl.scanned_by_name || (isScanned ? (user?.full_name || 'Staff Auditor') : null);
                             const scannedTime = scannerInfo?.timestamp || (cyl.qr_tagged_at ? new Date(cyl.qr_tagged_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : null);
@@ -5390,6 +5256,10 @@ export const OxygenDashboardPage: React.FC = () => {
             ? financials
             : financials?.by_vote_code?.[dashboardVoteFilter]
 
+          const activeVoteActivity = dashboardVoteFilter === 'all'
+            ? undefined
+            : financials?.by_vote_code?.[dashboardVoteFilter]?.vote_activity
+
           const displayAllocation = activeFin?.total_allocation ?? (dashboardVoteFilter === 'all' ? (financials?.total_allocation ?? 274000.0) : 0)
           const displayExpenses = activeFin?.total_expenses ?? 0
           const displayLiabilities = activeFin?.liabilities ?? 0
@@ -5397,7 +5267,7 @@ export const OxygenDashboardPage: React.FC = () => {
           const displayLoanCharges = activeFin?.loan_charges ?? 0
           const displayVoteBadge = dashboardVoteFilter === 'all'
             ? `${availableVoteCodes.length} KOD VOT BERDAFTAR`
-            : `VOTE: ${dashboardVoteFilter} / ${activeFin?.vote_activity || '27402'}`
+            : `VOTE: ${dashboardVoteFilter} / ${activeVoteActivity || '27402'}`
           const isOverBudget = displayBalance < 0
           const totalCommitted = displayExpenses + displayLiabilities
           const utilizationPct = displayAllocation > 0
@@ -6094,7 +5964,7 @@ export const OxygenDashboardPage: React.FC = () => {
                             <td className="px-3.5 py-3 text-right whitespace-nowrap">
                               <div className="flex items-center justify-end gap-1.5">
                                 <button 
-                                  onClick={() => handleOpenPoPreview(mRec as any)}
+                                  onClick={() => handleOpenPoPreview(mRec)}
                                   className="px-2 py-1 bg-surface hover:bg-teal-600 hover:text-white text-teal-800 rounded-xl font-black text-[9px] uppercase tracking-wider transition-colors duration-150 flex items-center gap-1 active:scale-95 border border-teal-300 shadow-sm"
                                   title={language === 'ms' ? 'Jana PO Gabungan Bulanan' : 'Generate Consolidated Monthly PO PDF'}
                                 >
@@ -6110,7 +5980,7 @@ export const OxygenDashboardPage: React.FC = () => {
                                   </span>
                                 ) : (
                                   <button 
-                                    onClick={() => handleDownloadReport(mRec as any)}
+                                    onClick={() => handleDownloadReport(mRec)}
                                     className="px-2 py-1 bg-accent-base/10 hover:bg-teal-700 hover:text-white text-teal-800 rounded-xl font-black text-[9px] uppercase tracking-wider transition-colors duration-150 flex items-center gap-1 active:scale-95 border border-accent-base/20 shadow-sm"
                                     title={language === 'ms' ? 'Jana Laporan Pemeriksaan Bulanan (KEW.PS-3)' : 'Generate Consolidated Monthly Inspection Report'}
                                   >
@@ -6226,7 +6096,7 @@ export const OxygenDashboardPage: React.FC = () => {
 
                         <div className="flex items-center justify-end gap-2 pt-1 border-t border-border-subtle">
                           <button 
-                            onClick={() => handleOpenPoPreview(mRec as any)}
+                            onClick={() => handleOpenPoPreview(mRec)}
                             className="px-3 py-2 bg-surface hover:bg-teal-600 hover:text-white text-teal-800 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-colors flex items-center gap-1 active:scale-95 border border-teal-300 shadow-xs"
                           >
                             <FileText className="w-3.5 h-3.5" />
@@ -6241,7 +6111,7 @@ export const OxygenDashboardPage: React.FC = () => {
                             </span>
                           ) : (
                             <button 
-                              onClick={() => handleDownloadReport(mRec as any)}
+                              onClick={() => handleDownloadReport(mRec)}
                               className="px-3 py-2 bg-accent-base/10 hover:bg-teal-700 hover:text-white text-teal-800 rounded-xl font-bold text-[10px] uppercase tracking-wider transition-colors flex items-center gap-1 active:scale-95 border border-accent-base/20"
                             >
                               <Download className="w-3.5 h-3.5" />
@@ -6586,7 +6456,7 @@ export const OxygenDashboardPage: React.FC = () => {
             <span className="px-3 py-1 bg-subtle text-text-secondary border border-border-default rounded-full text-[9px] font-black tracking-wider uppercase">Live Database</span>
           </div>
           <Table
-            data={cylinders.slice(0, 10)}
+            data={filteredCylinders.slice(0, 10)}
             columns={cylinderColumns}
             emptyMessage={language === 'ms' ? 'Tiada silinder ditemui dalam inventori.' : 'No cylinders found in the inventory.'}
           />
@@ -7048,7 +6918,7 @@ export const OxygenDashboardPage: React.FC = () => {
                       interface GroupedLog {
                         created_at: string
                         effective_from: string
-                        creator: { full_name: string; email: string; jawatan?: string } | null
+                        creator: { full_name?: string | null; email?: string | null; jawatan?: string | null } | null
                         changes: { cylinder_size_code: string; refill_price: number }[]
                       }
 
@@ -7578,7 +7448,9 @@ export const OxygenDashboardPage: React.FC = () => {
                         <label className="text-[9px] font-bold text-slate-505 uppercase tracking-wider block">Budget Status</label>
                         <select 
                           value={receptionStatus}
-                          onChange={(e) => setReceptionStatus(e.target.value as any)}
+                          onChange={(e) => {
+                            if (isBudgetReceiptStatus(e.currentTarget.value)) setReceptionStatus(e.currentTarget.value)
+                          }}
                           className="bg-surface border border-slate-250 text-text-primary focus:ring-2 focus:ring-teal-600/10 focus:border-teal-500 transition-colors cursor-pointer shadow-xxs text-xs font-semibold rounded-lg w-full p-2.5"
                         >
                           <option value="completed">Completed</option>
@@ -8000,7 +7872,9 @@ export const OxygenDashboardPage: React.FC = () => {
                       </label>
                       <select 
                         value={loanStatus}
-                        onChange={(e) => setLoanStatus(e.target.value as any)}
+                        onChange={(e) => {
+                          if (isBudgetReceiptStatus(e.currentTarget.value)) setLoanStatus(e.currentTarget.value)
+                        }}
                         className="w-full px-3 py-2 text-xs font-bold text-text-primary border border-border-default focus:border-purple-500 rounded-xl bg-surface outline-none cursor-pointer"
                       >
                         <option value="completed">{language === 'ms' ? 'Diluluskan / Selesai (Completed)' : 'Completed / Approved'}</option>
@@ -8969,7 +8843,7 @@ export const OxygenDashboardPage: React.FC = () => {
                       disabled={!currentMonthRec}
                       onClick={() => {
                         if (currentMonthRec) {
-                          handleDownloadReport(currentMonthRec as any)
+                          handleDownloadReport(currentMonthRec)
                         }
                       }}
                       className="flex-1 sm:flex-none px-4 py-3 bg-surface hover:bg-accent-base/10 border border-teal-300 text-teal-800 font-extrabold rounded-xl text-xs shadow-xs transition-colors flex items-center justify-center gap-1.5 active:scale-95 disabled:opacity-50"
@@ -8984,7 +8858,7 @@ export const OxygenDashboardPage: React.FC = () => {
                       onClick={() => {
                         if (currentMonthRec) {
                           setIsMonthlyModalOpen(false)
-                          handleOpenPoPreview(currentMonthRec as any)
+                          handleOpenPoPreview(currentMonthRec)
                         }
                       }}
                       className="flex-1 sm:flex-none px-5 py-3 bg-teal-600 hover:bg-teal-700 text-white font-extrabold rounded-xl text-xs shadow-md shadow-teal-600/20 transition-colors flex items-center justify-center gap-1.5 active:scale-95 disabled:opacity-50"
@@ -9262,7 +9136,7 @@ export const OxygenDashboardPage: React.FC = () => {
       {/* ========================================================
           MODAL: EDIT CYLINDER DETAILS (SERIAL, SIZE, VALVE)
          ======================================================== */}
-      {editingCylinderTarget && (
+      {editingCylinderTarget && hospitalId && (
         <EditCylinderModal
           isOpen={!!editingCylinderTarget}
           cylinder={editingCylinderTarget}

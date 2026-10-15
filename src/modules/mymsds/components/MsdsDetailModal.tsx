@@ -1,27 +1,6 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  FlaskConical,
-  X,
-  Printer,
-  Download,
-  ShieldAlert,
-  Building2,
-  Calendar,
-  AlertTriangle,
-  Shield,
-  FileText,
-  Thermometer,
-  CheckCircle2,
-  Info,
-  Flame,
-  Droplets,
-  Activity,
-  Award,
-  Layers,
-  HeartPulse,
-  PackageCheck
-} from 'lucide-react'
+import { X, Printer, Download, ShieldAlert, Building2, AlertTriangle, Shield, Thermometer, CheckCircle2, Flame, Droplets, Award, HeartPulse, PackageCheck } from 'lucide-react'
 import { MSDSEntry } from '../data/msdsData'
 import { GhsPictogram } from './GhsPictogram'
 

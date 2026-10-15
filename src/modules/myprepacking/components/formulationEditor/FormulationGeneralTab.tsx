@@ -1,15 +1,5 @@
 import React from 'react'
-import {
-  Sparkles,
-  Search,
-  CheckCircle2,
-  RefreshCw,
-  X,
-  Pill,
-  Package,
-  Beaker,
-  AlertCircle
-} from 'lucide-react'
+import { Sparkles, Search, CheckCircle2, RefreshCw, X, Pill, Beaker, AlertCircle } from 'lucide-react'
 import type { DosageForm, PackageType, PackType } from '../../types/prepack'
 import type { FacilityCatalogDrugOption } from '../../services/prepackService'
 

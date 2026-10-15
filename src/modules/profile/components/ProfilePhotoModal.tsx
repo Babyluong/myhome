@@ -1,7 +1,7 @@
 // @ts-nocheck
 import React, { useState, useRef } from 'react'
-import { motion } from 'framer-motion'
-import { Camera, Upload, Trash2, Check, AlertCircle, Loader2, RefreshCw } from 'lucide-react'
+import 'framer-motion'
+import { Upload, Trash2, Check, Loader2 } from 'lucide-react'
 import { Modal, Avatar } from '@/components/ui'
 import { useToast } from '@/stores/toastStore'
 import { updateProfilePhoto, removeProfilePhoto } from '../services/profileService'

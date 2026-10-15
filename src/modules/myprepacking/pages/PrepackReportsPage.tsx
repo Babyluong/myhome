@@ -1,19 +1,6 @@
 // src/modules/myprepacking/pages/PrepackReportsPage.tsx
 import React, { useState, useEffect, useMemo } from 'react'
-import {
-  FileSpreadsheet,
-  FileDown,
-  BarChart3,
-  Calendar,
-  Building,
-  Boxes,
-  PackageCheck,
-  TrendingDown,
-  ShieldCheck,
-  AlertTriangle,
-  RefreshCw,
-  Sparkles
-} from 'lucide-react'
+import { FileSpreadsheet, FileDown, BarChart3, Building, Boxes, PackageCheck, ShieldCheck, AlertTriangle, RefreshCw } from 'lucide-react'
 import {
   getPrepackItems,
   getPrepackBatches,

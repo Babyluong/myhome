@@ -1,7 +1,7 @@
 /**
  * Facility Non-Drug Inventory Service
  * Persists selected facility non-drug inventory items to Supabase so they are
- * shared across all browsers, devices, and environments (localhost + production).
+ * shared across browsers, devices, and deployment environments.
  *
  * localStorage is used as a fast local read-cache to avoid loading delays,
  * but Supabase is the single source of truth for all writes.
@@ -9,27 +9,16 @@
  * Mirrors the pattern used in facilityDrugInventoryService.ts.
  */
 
+import { resolveFacilityStoreById, validateFacilityStockSettings, validateInventoryExpiry } from './facilityStoreService'
 import { supabase, isSupabaseConfigured } from '@/services/supabase'
-import type { NonDrug } from '@/types/pharmacy'
+import type { FacilityNonDrugInventoryRecord, NonDrug, NonDrugWithRelations } from '@/types/pharmacy'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
-export interface FacilityNonDrugInventoryRow {
-  id: string
-  hospital_id: string
-  nondrug_id: string
-  facility_stock: number
-  min_buffer_level: number
-  location?: string | null
-  notes?: string | null
-  added_at: string
-  updated_at: string
-  store_location_id?: string | null
-  department_id?: string | null
-}
+export type FacilityNonDrugInventoryRow = FacilityNonDrugInventoryRecord
 
 /** Full item: non_drugs catalog fields + facility-specific fields */
-export interface FacilityNonDrugItem extends NonDrug {
+export interface FacilityNonDrugItem extends NonDrugWithRelations {
   facility_inventory_id?: string
   facility_stock?: number
   min_buffer_level?: number
@@ -43,43 +32,23 @@ export interface FacilityNonDrugItem extends NonDrug {
   batch_no?: string
   expiry_date?: string
   exp_date?: string
-  category?: any
   category_name?: string
-  supplier?: any
   supplier_name?: string
+  unit_price?: number
+  uom?: string
+  kkm_contract_number?: string
+  contract_number?: string
   is_active?: boolean
   store_location_id?: string | null
   department_id?: string | null
 }
 
-const DEFAULT_HOSPITAL_UUID = '85bb6adc-b868-428b-83f4-e5af2f5cf904'
-
 function sanitizeHospitalId(id?: string): string {
-  if (!id) return DEFAULT_HOSPITAL_UUID
-  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)
-  return isUuid ? id : DEFAULT_HOSPITAL_UUID
+  if (!id || !/^[0-9a-f-]{36}$/i.test(id)) throw new Error('Valid hospital ID required')
+  return id
 }
 
 // ─── Local Cache Helpers ──────────────────────────────────────────────────────
-
-function cacheKey(hospitalId: string, storeLocationId?: string) {
-  return storeLocationId ? `facility_nondrug_items_${hospitalId}_${storeLocationId}` : `facility_nondrug_items_${hospitalId}`
-}
-
-function readCache(hospitalId: string, storeLocationId?: string): FacilityNonDrugItem[] {
-  try {
-    const raw = localStorage.getItem(cacheKey(hospitalId, storeLocationId))
-    return raw ? JSON.parse(raw) : []
-  } catch {
-    return []
-  }
-}
-
-function writeCache(hospitalId: string, items: FacilityNonDrugItem[], storeLocationId?: string) {
-  try {
-    localStorage.setItem(cacheKey(hospitalId, storeLocationId), JSON.stringify(items))
-  } catch {}
-}
 
 // ─── Load ─────────────────────────────────────────────────────────────────────
 
@@ -94,10 +63,11 @@ export async function loadFacilityNonDrugInventory(
   storeLocationId?: string
 ): Promise<FacilityNonDrugItem[]> {
   if (!isSupabaseConfigured()) {
-    return readCache(hospitalId, storeLocationId)
+    throw new Error('Facility non-drug inventory unavailable')
   }
 
   try {
+    if (storeLocationId) await resolveFacilityStoreById(hospitalId, storeLocationId)
     let query = supabase
       .from('facility_nondrug_inventory')
       .select(`
@@ -106,6 +76,10 @@ export async function loadFacilityNonDrugInventory(
         nondrug_id,
         facility_stock,
         min_buffer_level,
+        batch_number,
+        expiry_date,
+        min_stock_level,
+        max_stock_level,
         location,
         notes,
         added_at,
@@ -143,25 +117,29 @@ export async function loadFacilityNonDrugInventory(
 
     if (error) throw error
 
-    const items: FacilityNonDrugItem[] = (data || []).map((row: any) => ({
-      // Spread all non_drugs catalog fields
-      ...row.nondrug,
-      // Overlay facility-specific fields
-      facility_inventory_id: row.id,
-      facility_stock: row.facility_stock ?? 0,
-      min_buffer_level: row.min_buffer_level ?? 10,
-      location: row.location ?? '',
-      notes: row.notes ?? '',
-      added_at: row.added_at,
-      store_location_id: row.store_location_id,
-      department_id: row.department_id,
-    }))
+    const items: FacilityNonDrugItem[] = (data || []).flatMap(row => {
+      const nondrug = Array.isArray(row.nondrug) ? row.nondrug[0] : row.nondrug
+      if (!nondrug) return []
+      return [{
+        ...nondrug,
+        facility_inventory_id: row.id,
+        facility_stock: row.facility_stock ?? 0,
+        batch_number: row.batch_number ?? '',
+        expiry_date: row.expiry_date ?? '',
+        min_stock_level: row.min_stock_level ?? nondrug.min_stock_level,
+        max_stock_level: row.max_stock_level ?? nondrug.max_stock_level,
+        min_buffer_level: row.min_buffer_level ?? 10,
+        location: row.location ?? '',
+        notes: row.notes ?? '',
+        added_at: row.added_at,
+        store_location_id: row.store_location_id,
+        department_id: row.department_id,
+      }]
+    })
 
-    writeCache(hospitalId, items, storeLocationId)
     return items
   } catch (err) {
-    console.error('[FacilityNonDrugInventory] Failed to load from Supabase, using cache:', err)
-    return readCache(hospitalId, storeLocationId)
+    throw new Error('Facility non-drug inventory unavailable')
   }
 }
 
@@ -173,40 +151,29 @@ export async function loadFacilityNonDrugInventory(
  */
 export async function addToFacilityNonDrugInventory(
   hospitalId: string,
-  item: NonDrug,
+  item: NonDrug & { batch_number?: string; expiry_date?: string | null; notes?: string },
   facilityStock = 0,
   minBufferLevel = 10,
   location = '',
   storeLocationId?: string,
   departmentId?: string
 ): Promise<{ success: boolean; error?: string }> {
-  const saveToLocalCache = () => {
-    const cached = readCache(hospitalId, storeLocationId)
-    if (cached.some(i => i.id === item.id)) {
-      return { success: false, error: 'Item sudah wujud dalam Inventori Fasiliti.' }
-    }
-    const newItem: FacilityNonDrugItem = {
-      ...item,
-      facility_stock: facilityStock,
-      min_buffer_level: minBufferLevel,
-      location,
-      store_location_id: storeLocationId,
-      department_id: departmentId,
-      added_at: new Date().toISOString(),
-    }
-    writeCache(hospitalId, [newItem, ...cached], storeLocationId)
-    return { success: true }
-  }
+
 
   if (!isSupabaseConfigured()) {
-    return saveToLocalCache()
+    return { success: false, error: 'Inventory write failed' }
   }
 
   try {
+    if (!storeLocationId) throw new Error('Selected store required')
+    await resolveFacilityStoreById(hospitalId, storeLocationId)
     const cleanHospitalId = sanitizeHospitalId(hospitalId)
-    const payload: any = {
+    const payload: Omit<FacilityNonDrugInventoryRow, 'id' | 'added_at' | 'updated_at'> = {
       hospital_id: cleanHospitalId,
       nondrug_id: item.id,
+      batch_number: item.batch_number,
+      expiry_date: validateInventoryExpiry(item.expiry_date),
+      notes: item.notes,
       facility_stock: facilityStock,
       min_buffer_level: minBufferLevel,
       location,
@@ -224,15 +191,14 @@ export async function addToFacilityNonDrugInventory(
       }
       if (error.code === '42501') {
         console.warn('[FacilityNonDrugInventory] RLS policy blocked insert, using local cache fallback')
-        return saveToLocalCache()
+        return { success: false, error: 'Inventory write failed' }
       }
       throw error
     }
 
     return { success: true }
-  } catch (err: any) {
-    console.error('[FacilityNonDrugInventory] Add failed, falling back to local cache:', err)
-    return saveToLocalCache()
+  } catch {
+    return { success: false, error: 'Inventory write failed' }
   }
 }
 
@@ -252,28 +218,15 @@ export async function batchAddToFacilityNonDrugInventory(
   storeLocationId?: string,
   departmentId?: string
 ): Promise<{ added: number; skipped: number; error?: string }> {
-  const batchSaveToLocalCache = () => {
-    const cached = readCache(hospitalId, storeLocationId)
-    const existingIds = new Set(cached.map(i => i.id))
-    const toAdd = items.filter(d => !existingIds.has(d.id))
-    const newItems: FacilityNonDrugItem[] = toAdd.map(d => ({
-      ...d,
-      facility_stock: facilityStock,
-      min_buffer_level: minBufferLevel,
-      location,
-      store_location_id: storeLocationId,
-      department_id: departmentId,
-      added_at: new Date().toISOString(),
-    }))
-    writeCache(hospitalId, [...newItems, ...cached], storeLocationId)
-    return { added: newItems.length, skipped: items.length - newItems.length }
-  }
+
 
   if (!isSupabaseConfigured()) {
-    return batchSaveToLocalCache()
+    return { added: 0, skipped: items.length, error: 'Inventory write failed' }
   }
 
   try {
+    if (!storeLocationId) throw new Error('Selected store required')
+    await resolveFacilityStoreById(hospitalId, storeLocationId)
     const cleanHospitalId = sanitizeHospitalId(hospitalId)
     const rows = items.map(d => ({
       hospital_id: cleanHospitalId,
@@ -293,7 +246,7 @@ export async function batchAddToFacilityNonDrugInventory(
     if (error) {
       if (error.code === '42501') {
         console.warn('[FacilityNonDrugInventory] RLS policy blocked batch insert, using local cache fallback')
-        return batchSaveToLocalCache()
+        return { added: 0, skipped: items.length, error: 'Inventory write failed' }
       }
       throw error
     }
@@ -302,9 +255,8 @@ export async function batchAddToFacilityNonDrugInventory(
       added: (data || []).length,
       skipped: items.length - (data || []).length,
     }
-  } catch (err: any) {
-    console.error('[FacilityNonDrugInventory] Batch add failed, falling back to local cache:', err)
-    return batchSaveToLocalCache()
+  } catch {
+    return { added: 0, skipped: items.length, error: 'Inventory write failed' }
   }
 }
 
@@ -321,65 +273,45 @@ export async function updateFacilityNonDrugInventoryItem(
     min_buffer_level?: number
     location?: string
     notes?: string
+    batch_number?: string
+    expiry_date?: string | null
     min_stock_level?: number
     max_stock_level?: number
-  }
+  },
+  storeLocationId?: string
 ): Promise<{ success: boolean; error?: string }> {
-  const updateLocalCache = () => {
-    const cached = readCache(hospitalId)
-    const updated = cached.map(item => {
-      if (item.id === nonDrugId) {
-        return {
-          ...item,
-          ...updates,
-        }
-      }
-      return item
-    })
-    writeCache(hospitalId, updated)
-    return { success: true }
-  }
 
-  if (!isSupabaseConfigured()) {
-    return updateLocalCache()
-  }
+
+  if (!isSupabaseConfigured() || !storeLocationId) return { success: false, error: 'Selected store required for editing' }
 
   try {
+    validateFacilityStockSettings({ min_stock_level: updates.min_stock_level, max_stock_level: updates.max_stock_level, min_buffer_level: updates.min_buffer_level,  })
+    if (!storeLocationId) throw new Error('Selected store required')
+    await resolveFacilityStoreById(hospitalId, storeLocationId)
     // 1. Update facility inventory specific table
-    const { error: invErr } = await supabase
+    const { data: updatedRows, error: invErr } = await supabase
       .from('facility_nondrug_inventory')
       .update({
         min_buffer_level: updates.min_buffer_level,
         location: updates.location,
         notes: updates.notes,
+        batch_number: updates.batch_number,
+        expiry_date: validateInventoryExpiry(updates.expiry_date),
+        min_stock_level: updates.min_stock_level,
+        max_stock_level: updates.max_stock_level,
         updated_at: new Date().toISOString(),
       })
       .eq('hospital_id', hospitalId)
       .eq('nondrug_id', nonDrugId)
+      .eq('store_location_id', storeLocationId)
+      .select('id')
 
-    if (invErr) {
-      if (invErr.code === '42501') {
-        return updateLocalCache()
-      }
-      throw invErr
-    }
-
-    // 2. Update catalog level min/max stock if specified
-    if (updates.min_stock_level !== undefined || updates.max_stock_level !== undefined) {
-      const catalogUpdates: any = {}
-      if (updates.min_stock_level !== undefined) catalogUpdates.min_stock_level = updates.min_stock_level
-      if (updates.max_stock_level !== undefined) catalogUpdates.max_stock_level = updates.max_stock_level
-
-      await supabase
-        .from('non_drugs')
-        .update(catalogUpdates)
-        .eq('id', nonDrugId)
-    }
+    if (invErr) throw invErr
+    if (updatedRows?.length !== 1) throw new Error('Inventory row update not confirmed')
 
     return { success: true }
-  } catch (err: any) {
-    console.error('[FacilityNonDrugInventory] Update failed, using local cache fallback:', err)
-    return updateLocalCache()
+  } catch {
+    return { success: false, error: 'Inventory write failed' }
   }
 }
 
@@ -394,17 +326,15 @@ export async function removeFromFacilityNonDrugInventory(
   nonDrugId: string,
   storeLocationId?: string
 ): Promise<{ success: boolean; error?: string }> {
-  const removeLocalCache = () => {
-    const cached = readCache(hospitalId, storeLocationId)
-    writeCache(hospitalId, cached.filter(i => i.id !== nonDrugId), storeLocationId)
-    return { success: true }
-  }
+
 
   if (!isSupabaseConfigured()) {
-    return removeLocalCache()
+    return { success: false, error: 'Inventory write failed' }
   }
 
   try {
+    if (!storeLocationId) throw new Error('Selected store required')
+    await resolveFacilityStoreById(hospitalId, storeLocationId)
     let query = supabase
       .from('facility_nondrug_inventory')
       .delete()
@@ -419,14 +349,42 @@ export async function removeFromFacilityNonDrugInventory(
 
     if (error) {
       if (error.code === '42501') {
-        return removeLocalCache()
+        return { success: false, error: 'Inventory write failed' }
       }
       throw error
     }
     return { success: true }
-  } catch (err: any) {
-    console.error('[FacilityNonDrugInventory] Delete failed, using local cache fallback:', err)
-    return removeLocalCache()
+  } catch {
+    return { success: false, error: 'Inventory write failed' }
   }
 }
 
+
+export async function bulkAssignLocationToFacilityNonDrugItems(hospitalId: string, itemIds: string[], locationString: string, storeLocationId?: string): Promise<{ success: boolean; count: number; error?: string }> {
+  if (!isSupabaseConfigured() || !storeLocationId) return { success: false, count: 0, error: 'Selected store required for assignment' }
+  try {
+    if (!storeLocationId) throw new Error('Selected store required')
+    await resolveFacilityStoreById(hospitalId, storeLocationId)
+    const { data, error } = await supabase.from('facility_nondrug_inventory').update({ location: locationString, updated_at: new Date().toISOString() }).eq('hospital_id', hospitalId).eq('store_location_id', storeLocationId).in('nondrug_id', itemIds).select('id')
+    if (error) throw error
+    const count = data?.length || 0
+    return count === new Set(itemIds).size ? { success: true, count } : { success: false, count, error: 'Some selected items were not updated; refresh inventory' }
+  } catch { return { success: false, count: 0, error: 'Location assignment failed' } }
+}
+export async function clearFacilityNonDrugInventoryByScheme(hospitalId: string, scheme: string, storeLocationId?: string): Promise<{ success: boolean; error?: string }> {
+  if (!isSupabaseConfigured() || !storeLocationId) return { success: false, error: 'Selected store required for removal' }
+  try {
+    if (!storeLocationId) throw new Error('Selected store required')
+    await resolveFacilityStoreById(hospitalId, storeLocationId)
+    let query = supabase.from('facility_nondrug_inventory').delete().eq('hospital_id', hospitalId).eq('store_location_id', storeLocationId)
+    if (scheme !== 'all') {
+      const { data, error } = await supabase.from('non_drugs').select('id').eq('hospital_id', hospitalId).eq('procurement_vote', scheme.toLowerCase())
+      if (error) throw error
+      if (!data?.length) return { success: true }
+      query = query.in('nondrug_id', data.map(item => item.id))
+    }
+    const { error } = await query
+    if (error) throw error
+    return { success: true }
+  } catch { return { success: false, error: 'Inventory removal failed' } }
+}

@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Pharmacy Inventory Service
  * Handles drug and non-drug inventory management
@@ -28,32 +27,58 @@ import type {
   InventoryReportFilter,
   StockLevelSummary,
   StoreVerificationRecord,
-  DrugFormData,
+  StockTransactionWithRelations,
+  MovementSummary,
+  DeptBreakdownRow,
 } from '@/types/pharmacy'
-import {
-  mockDrugs,
-  mockDrugCategories,
-  mockNonDrugs,
-  mockNonDrugCategories,
-  mockSuppliers,
-  mockStockBatches,
-  mockStockLocations,
-  mockExpiryItems,
-  mockSlowMovingItems,
-} from '@/services/pharmacy/mockData'
 import { loadFacilityDrugInventory } from '@/services/pharmacy/facilityDrugInventoryService'
 import { loadFacilityNonDrugInventory } from '@/services/pharmacy/facilityNonDrugInventoryService'
+
+type InventoryStockLevelSummary = StockLevelSummary & {
+  price?: number
+  created_at?: string
+}
+
+type StockTransactionRow = StockTransaction & {
+  quantity_received?: number
+  type?: string
+  facility_inventory_id?: string
+  item_code?: string
+  received_from?: string
+  notes?: string
+}
+type CatalogSheetRow = string[]
+type CatalogUpsert = Record<string, string | number | boolean | null | undefined> & {
+  drug_code?: string | null
+  drug_name?: string | null
+  cc_contract_number?: string | null
+  cc_supplier_name?: string | null
+}
+type CatalogSupplierUpsert = Record<string, string | number | null | undefined>
+type CatalogSyncLog = Record<string, unknown>
+type PopulatedInventoryRow<T extends { item_type: 'drug' | 'non_drug'; item_id: string }> = T & {
+  drug?: Drug
+  non_drug?: NonDrug
+  facility_location: string | null
+  location?: { location_name: string } | { location_name: string }[] | null
+}
+type FastMovingInventoryItem = Pick<SlowMovingItem, 'item_id' | 'item_type' | 'item_code' | 'item_name' | 'current_stock'> & {
+  total_movement: number
+  usage_per_month: number
+  price: number
+}
+type DrugMoveSource = Drug & { cc_brand_name?: string }
+type NonDrugMoveSource = NonDrug & { cc_brand_name?: string }
 
 // =====================================================
 // DRUG MANAGEMENT
 // =====================================================
 
-const DEFAULT_HOSPITAL_UUID = '85bb6adc-b868-428b-83f4-e5af2f5cf904'
-
 function sanitizeHospitalId(id?: string | null): string {
-  if (!id) return DEFAULT_HOSPITAL_UUID
-  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)
-  return isUuid ? id : DEFAULT_HOSPITAL_UUID
+  if (!id || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
+    throw new Error('Valid hospital ID required')
+  }
+  return id
 }
 
 /**
@@ -74,6 +99,7 @@ export async function getDrugs(
         .select(
           `
           id,
+          created_at,
           hospital_id,
           drug_code,
           drug_name,
@@ -156,7 +182,11 @@ export async function getDrugs(
 
       if (error) throw error
 
-      const rows = (data || []) as DrugWithRelations[]
+      const rows: DrugWithRelations[] = (data || []).map(row => ({
+        ...row,
+        category: Array.isArray(row.category) ? row.category[0] : row.category,
+        supplier: Array.isArray(row.supplier) ? row.supplier[0] : row.supplier,
+      }))
 
       // Persist to local IndexedDB cache for offline availability
       if (rows.length > 0 && page === 1 && !filter?.search) {
@@ -182,13 +212,11 @@ export async function getDrugs(
       if (cached && cached.length > 0) {
         drugs = [...cached]
       }
-    } catch (_) {}
-
-    if (drugs.length === 0) {
-      drugs = [...mockDrugs]
+    } catch (cacheError) {
+      console.warn('Unable to read the offline drug cache:', cacheError)
     }
 
-    // Apply filters
+// Apply filters
     if (filter?.search) {
       const search = filter.search.toLowerCase()
       drugs = drugs.filter(d =>
@@ -214,8 +242,9 @@ export async function getDrugs(
       drugs = drugs.filter(d => d.is_controlled === filter.is_controlled)
     }
 
-    if (filter?.procurement_vote && filter.procurement_vote !== 'all') {
-      drugs = drugs.filter(d => d.procurement_vote?.toLowerCase() === filter.procurement_vote.toLowerCase())
+    const procurementVote = filter?.procurement_vote?.toLowerCase()
+    if (procurementVote && procurementVote !== 'all') {
+      drugs = drugs.filter(d => d.procurement_vote?.toLowerCase() === procurementVote)
     }
 
     const total = drugs.length
@@ -252,20 +281,10 @@ export async function getDrugs(
           error: null,
         }
       }
-    } catch (_) {}
-
-    if (typeof navigator !== 'undefined' && !navigator.onLine) {
-      return {
-        data: {
-          data: [],
-          total: 0,
-          page,
-          pageSize,
-          totalPages: 0,
-        },
-        error: null,
-      }
+    } catch (cacheError) {
+      console.warn('Unable to read the offline drug cache after the request failed:', cacheError)
     }
+
     return {
       data: null,
       error: error instanceof Error ? error.message : 'Failed to fetch drugs',
@@ -278,19 +297,13 @@ export async function getDrugs(
  */
 export async function getDrugById(drugId: string): Promise<ApiResponse<DrugWithRelations>> {
   try {
-    const drug = mockDrugs.find(d => d.id === drugId)
-    
-    if (!drug) {
-      return { data: null, error: 'Drug not found' }
-    }
-
-    return { data: drug, error: null }
+    if (!isSupabaseConfigured()) throw new Error('Inventory service unavailable')
+    const { data, error } = await supabase.from('drugs').select('*').eq('id', drugId).single()
+    if (error) throw error
+    return { data: data as DrugWithRelations, error: null }
   } catch (error) {
     console.error('Error fetching drug:', error)
-    return {
-      data: null,
-      error: error instanceof Error ? error.message : 'Failed to fetch drug',
-    }
+    return { data: null, error: error instanceof Error ? error.message : 'Failed to fetch drug' }
   }
 }
 
@@ -311,9 +324,8 @@ export async function getDrugCategories(): Promise<ApiResponse<DrugCategory[]>> 
       return { data: (data || []) as DrugCategory[], error: null }
     }
 
-    // Fallback to mock data when Supabase is not configured
-    return { data: mockDrugCategories, error: null }
-  } catch (error) {
+    throw new Error('Inventory service unavailable')
+} catch (error) {
     console.error('Error fetching drug categories:', error)
     return {
       data: null,
@@ -332,7 +344,6 @@ export async function createOrGetDrugCategory(categoryName: string, hospitalId?:
     }
 
     const nameTrimmed = categoryName.trim()
-    const nameLower = nameTrimmed.toLowerCase()
     const categoryCode = nameTrimmed
       .replace(/[^a-zA-Z0-9]/g, '_')
       .toUpperCase()
@@ -395,14 +406,11 @@ export async function createOrGetDrugCategory(categoryName: string, hospitalId?:
       }
 
       // Create new category in Supabase
-      const insertData: any = {
+      const insertData = {
         category_code: categoryCode,
         category_name: nameTrimmed,
         description: `Category for ${nameTrimmed}`,
-      }
-
-      if (hospitalId) {
-        insertData.hospital_id = hospitalId
+        ...(hospitalId ? { hospital_id: hospitalId } : {}),
       }
 
       const { data: newCategory, error } = await supabase
@@ -417,29 +425,8 @@ export async function createOrGetDrugCategory(categoryName: string, hospitalId?:
       return { data: newCategory as DrugCategory, error: null }
     }
 
-    // Fallback to mock data
-    let existingCategory = mockDrugCategories.find(
-      c => c.category_name.toLowerCase() === nameLower || c.category_code.toLowerCase() === nameLower
-    )
-
-    if (existingCategory) {
-      return { data: existingCategory, error: null }
-    }
-
-    const newCategory: DrugCategory = {
-      id: `dcat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      category_code: categoryCode,
-      category_name: nameTrimmed,
-      description: `Category for ${nameTrimmed}`,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    }
-
-    mockDrugCategories.push(newCategory)
-    console.log(`[CATEGORY] Created new drug category (mock): ${nameTrimmed} (ID: ${newCategory.id})`)
-
-    return { data: newCategory, error: null }
-  } catch (error) {
+    throw new Error('Inventory service unavailable')
+} catch (error) {
     console.error('Error creating/getting drug category:', error)
     return {
       data: null,
@@ -536,7 +523,11 @@ export async function getNonDrugs(
 
       if (error) throw error
 
-      const rows = (data || []) as NonDrugWithRelations[]
+      const rows: NonDrugWithRelations[] = (data || []).map(row => ({
+        ...row,
+        category: Array.isArray(row.category) ? row.category[0] : row.category,
+        supplier: Array.isArray(row.supplier) ? row.supplier[0] : row.supplier,
+      }))
 
       return {
         data: {
@@ -550,54 +541,8 @@ export async function getNonDrugs(
       }
     }
 
-    // Fallback to mock data
-    let items = [...mockNonDrugs]
-
-    if (filter?.procurement_vote && filter.procurement_vote !== 'all') {
-      items = items.filter(d => d.procurement_vote?.toLowerCase() === filter.procurement_vote.toLowerCase())
-    }
-
-    if (filter?.search) {
-      const search = filter.search.toLowerCase()
-      items = items.filter(d =>
-        (d.item_code && d.item_code.toLowerCase().includes(search)) ||
-        (d.item_name && d.item_name.toLowerCase().includes(search)) ||
-        ((d as any).appl_kod && (d as any).appl_kod.toLowerCase().includes(search)) ||
-        ((d as any).appl_code && (d as any).appl_code.toLowerCase().includes(search)) ||
-        (d.sku && d.sku.toLowerCase().includes(search)) ||
-        (d.pku && d.pku.toLowerCase().includes(search)) ||
-        ((d as any).generic_name && (d as any).generic_name.toLowerCase().includes(search))
-      )
-    }
-
-    if (filter?.category_id) {
-      items = items.filter(d => d.category_id === filter.category_id)
-    }
-
-    if (filter?.status && filter.status !== 'all') {
-      items = items.filter(d => d.status === filter.status)
-    }
-
-    if (filter?.stock_status && filter.stock_status !== 'all') {
-      items = items.filter(d => d.stock_status === filter.stock_status)
-    }
-
-    const total = items.length
-    const totalPages = Math.ceil(total / pageSize)
-    const start = (page - 1) * pageSize
-    const data = items.slice(start, start + pageSize)
-
-    return {
-      data: {
-        data,
-        total,
-        page,
-        pageSize,
-        totalPages,
-      },
-      error: null,
-    }
-  } catch (error) {
+    throw new Error('Inventory service unavailable')
+} catch (error) {
     console.error('Error fetching non-drugs:', error)
     return {
       data: null,
@@ -611,28 +556,13 @@ export async function getNonDrugs(
  */
 export async function getNonDrugById(nonDrugId: string): Promise<ApiResponse<NonDrugWithRelations>> {
   try {
-    if (isSupabaseConfigured()) {
-      const { data, error } = await supabase
-        .from('non_drugs')
-        .select('*')
-        .eq('id', nonDrugId)
-        .single()
-
-      if (error) throw error
-      return { data: data as NonDrugWithRelations, error: null }
-    }
-
-    const nonDrug = mockNonDrugs.find(d => d.id === nonDrugId)
-    if (!nonDrug) {
-      return { data: null, error: 'Non-drug item not found' }
-    }
-    return { data: nonDrug as NonDrugWithRelations, error: null }
+    if (!isSupabaseConfigured()) throw new Error('Inventory service unavailable')
+    const { data, error } = await supabase.from('non_drugs').select('*').eq('id', nonDrugId).single()
+    if (error) throw error
+    return { data: data as NonDrugWithRelations, error: null }
   } catch (error) {
     console.error('Error fetching non-drug:', error)
-    return {
-      data: null,
-      error: error instanceof Error ? error.message : 'Failed to fetch non-drug',
-    }
+    return { data: null, error: error instanceof Error ? error.message : 'Failed to fetch non-drug' }
   }
 }
 
@@ -653,12 +583,8 @@ export async function getNonDrugCategories(): Promise<ApiResponse<NonDrugCategor
       return { data: (data || []) as NonDrugCategory[], error: null }
     }
 
-    // Fallback to mock data
-    const mockCategoryIds = ['ncat-001', 'ncat-002', 'ncat-003']
-    const actualCategories = mockNonDrugCategories.filter(c => !mockCategoryIds.includes(c.id))
-    
-    return { data: actualCategories, error: null }
-  } catch (error) {
+    throw new Error('Inventory service unavailable')
+} catch (error) {
     console.error('Error fetching non-drug categories:', error)
     return {
       data: null,
@@ -677,7 +603,6 @@ export async function createOrGetNonDrugCategory(categoryName: string, hospitalI
     }
 
     const nameTrimmed = categoryName.trim()
-    const nameLower = nameTrimmed.toLowerCase()
     const categoryCode = nameTrimmed
       .replace(/[^a-zA-Z0-9]/g, '_')
       .toUpperCase()
@@ -702,14 +627,11 @@ export async function createOrGetNonDrugCategory(categoryName: string, hospitalI
       }
 
       // Create new category
-      const insertData: any = {
+      const insertData = {
         category_code: categoryCode,
         category_name: nameTrimmed,
         description: `Category for ${nameTrimmed}`,
-      }
-
-      if (hospitalId) {
-        insertData.hospital_id = hospitalId
+        ...(hospitalId ? { hospital_id: hospitalId } : {}),
       }
 
       const { data: newCategory, error } = await supabase
@@ -724,29 +646,8 @@ export async function createOrGetNonDrugCategory(categoryName: string, hospitalI
       return { data: newCategory as NonDrugCategory, error: null }
     }
 
-    // Fallback to mock data
-    let existingCategory = mockNonDrugCategories.find(
-      c => c.category_name.toLowerCase() === nameLower || c.category_code.toLowerCase() === nameLower
-    )
-
-    if (existingCategory) {
-      return { data: existingCategory, error: null }
-    }
-
-    const newCategory: NonDrugCategory = {
-      id: `ncat-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      category_code: categoryCode,
-      category_name: nameTrimmed,
-      description: `Category for ${nameTrimmed}`,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    }
-
-    mockNonDrugCategories.push(newCategory)
-    console.log(`[CATEGORY] Created new category (mock): ${nameTrimmed} (ID: ${newCategory.id})`)
-
-    return { data: newCategory, error: null }
-  } catch (error) {
+    throw new Error('Inventory service unavailable')
+} catch (error) {
     console.error('Error creating/getting category:', error)
     return {
       data: null,
@@ -771,11 +672,11 @@ export async function getStockLocations(
 ): Promise<ApiResponse<StockLocation[]>> {
   try {
     if (isSupabaseConfigured()) {
-      const validHospId = (hospitalId && isValidUUID(hospitalId)) ? hospitalId : '85bb6adc-b868-428b-83f4-e5af2f5cf904'
+      const validHospId = sanitizeHospitalId(hospitalId)
       const { data, error } = await supabase
         .from('pharmacy_stock_locations')
         .select('*')
-        .or(`hospital_id.eq.${validHospId},hospital_id.is.null`)
+        .eq('hospital_id', validHospId)
         .order('location_name', { ascending: true })
 
       if (error) throw error
@@ -800,23 +701,25 @@ export async function getStockLocations(
 /**
  * Helper to populate drug and non_drug relations for batches
  */
-async function populateBatchItems(batches: any[]): Promise<any[]> {
+async function populateBatchItems<T extends { item_type: 'drug' | 'non_drug'; item_id: string }>(
+  batches: T[]
+): Promise<PopulatedInventoryRow<T>[]> {
   if (!batches || batches.length === 0) return []
   
   const drugIds = batches.filter(b => b.item_type === 'drug').map(b => b.item_id)
   const nonDrugIds = batches.filter(b => b.item_type === 'non_drug').map(b => b.item_id)
   
-  const drugsMap = new Map()
-  const nonDrugsMap = new Map()
-  const facDrugLocMap = new Map()
-  const facNonDrugLocMap = new Map()
+  const drugsMap = new Map<string, Drug>()
+  const nonDrugsMap = new Map<string, NonDrug>()
+  const facDrugLocMap = new Map<string, string>()
+  const facNonDrugLocMap = new Map<string, string>()
   
   if (drugIds.length > 0) {
     const { data: drugs } = await supabase
       .from('drugs')
       .select('*')
       .in('id', drugIds)
-    drugs?.forEach(d => drugsMap.set(d.id, d))
+    drugs?.forEach(d => drugsMap.set(d.id, d as Drug))
 
     const { data: facDrugs } = await supabase
       .from('facility_drug_inventory')
@@ -832,7 +735,7 @@ async function populateBatchItems(batches: any[]): Promise<any[]> {
       .from('non_drugs')
       .select('*')
       .in('id', nonDrugIds)
-    nonDrugs?.forEach(n => nonDrugsMap.set(n.id, n))
+    nonDrugs?.forEach(n => nonDrugsMap.set(n.id, n as NonDrug))
 
     const { data: facNonDrugs } = await supabase
       .from('facility_nondrug_inventory')
@@ -851,11 +754,11 @@ async function populateBatchItems(batches: any[]): Promise<any[]> {
 
     return {
       ...b,
-      drug,
-      non_drug: nonDrug,
+      drug: drug || undefined,
+      non_drug: nonDrug || undefined,
       facility_location: facLoc || null
     }
-  })
+  }) as PopulatedInventoryRow<T>[]
 }
 
 /**
@@ -886,57 +789,12 @@ export async function getStockBatches(
       const { data, error } = await query
 
       if (error) throw error
-      let populated = await populateBatchItems(data || [])
-
-      // If no active batch found in pharmacy_stock_batches, check if the item has positive stock in catalog/facility inventory
-      if (!populated || populated.length === 0) {
-        let currentStock = 0
-        let hospitalId = ''
-        if (itemType === 'drug') {
-          const { data: drug } = await supabase.from('drugs').select('hospital_id').eq('id', itemId).maybeSingle()
-          if (drug) {
-            hospitalId = drug.hospital_id || ''
-          }
-          const { data: facDrug } = await supabase.from('facility_drug_inventory').select('facility_stock, hospital_id').eq('drug_id', itemId).limit(1)
-          if (facDrug && facDrug.length > 0) {
-            currentStock = facDrug[0].facility_stock || 0
-            if (!hospitalId) hospitalId = facDrug[0].hospital_id || ''
-          }
-        } else {
-          const { data: nonDrug } = await supabase.from('non_drugs').select('hospital_id').eq('id', itemId).maybeSingle()
-          if (nonDrug) {
-            hospitalId = nonDrug.hospital_id || ''
-          }
-          const { data: facNonDrug } = await supabase.from('facility_non_drug_inventory').select('facility_stock, hospital_id').eq('nondrug_id', itemId).limit(1)
-          if (facNonDrug && facNonDrug.length > 0) {
-            currentStock = facNonDrug[0].facility_stock || 0
-            if (!hospitalId) hospitalId = facNonDrug[0].hospital_id || ''
-          }
-        }
-
-        if (currentStock > 0 && hospitalId) {
-          const virtualBatch: StockBatchWithRelations = {
-            id: `batch-virtual-opening-${itemId}`,
-            hospital_id: hospitalId,
-            item_id: itemId,
-            item_type: itemType,
-            batch_number: 'STOK-SEDIA-ADA',
-            quantity_received: currentStock,
-            quantity_on_hand: currentStock,
-            quantity_reserved: 0,
-            expiry_date: null as any,
-            status: 'available',
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
-          }
-          return { data: [virtualBatch], error: null }
-        }
-      }
+      const populated = await populateBatchItems<StockBatch>(data || [])
 
       return { data: populated as StockBatchWithRelations[], error: null }
     }
 
-    return { data: [], error: null }
+    throw new Error('Inventory service unavailable')
   } catch (error) {
     console.error('Error fetching batches:', error)
     return {
@@ -955,138 +813,35 @@ export async function resolveOrCreateStockBatch(
   itemId: string,
   itemType: 'drug' | 'non_drug',
   batchNumber: string,
-  expiryDate?: string,
-  initialQty: number = 0,
+  _expiryDate?: string,
+  _initialQty = 0,
   locationId?: string
 ): Promise<string> {
-  const cleanBatchNum = (batchNumber || '').trim() || 'BN-DEFAULT'
-  const cleanExpiry = expiryDate || '2028-12-31'
-  const reqQty = Math.max(1, initialQty)
-  const validHospId = (hospitalId && isValidUUID(hospitalId)) ? hospitalId : null
-  const validLocId = (locationId && isValidUUID(locationId)) ? locationId : null
+  void _initialQty
+  if (!isSupabaseConfigured()) throw new Error('Inventory service unavailable')
+  if (!isValidUUID(hospitalId) || !isValidUUID(itemId)) throw new Error('Valid hospital and item IDs required')
+  if (locationId && !isValidUUID(locationId)) throw new Error('Valid store location ID required')
 
-  if (isSupabaseConfigured()) {
-    try {
-      // 1. If itemId is a valid UUID, try to find matching batch for this item in pharmacy_stock_batches
-      if (itemId && isValidUUID(itemId)) {
-        let query = supabase
-          .from('pharmacy_stock_batches')
-          .select('*')
-          .eq('item_id', itemId)
-          .eq('item_type', itemType)
-          .ilike('batch_number', cleanBatchNum)
-          .limit(1)
+  let query = supabase
+    .from('pharmacy_stock_batches')
+    .select('id')
+    .eq('hospital_id', hospitalId)
+    .eq('item_id', itemId)
+    .eq('item_type', itemType)
+    .in('status', ['available', 'quarantine', 'active'])
+    .gt('quantity_on_hand', 0)
+    .order('expiry_date', { ascending: true })
+    .limit(1)
 
-        if (validHospId) {
-          query = query.eq('hospital_id', validHospId)
-        }
+  if (locationId) query = query.eq('location_id', locationId)
+  const requestedBatch = batchNumber.trim()
+  if (requestedBatch && requestedBatch !== 'BN-DEFAULT') query = query.ilike('batch_number', requestedBatch)
 
-        const { data: batches, error: bErr } = await query
-
-        if (!bErr && batches && batches.length > 0) {
-          const existing = batches[0]
-          // If current batch quantity is less than required, top it up to avoid failure during issueStock
-          if ((existing.quantity_on_hand || 0) < reqQty) {
-            const topUpQty = Math.max(existing.quantity_on_hand || 0, reqQty + 50)
-            await supabase
-              .from('pharmacy_stock_batches')
-              .update({
-                quantity_on_hand: topUpQty,
-                status: 'available',
-                updated_at: new Date().toISOString()
-              })
-              .eq('id', existing.id)
-          }
-          return existing.id
-        }
-
-        // 2. If not found by exact batch number, check if there's any active batch for this item
-        const { data: anyBatches } = await supabase
-          .from('pharmacy_stock_batches')
-          .select('*')
-          .eq('item_id', itemId)
-          .eq('item_type', itemType)
-          .order('expiry_date', { ascending: true })
-          .limit(1)
-
-        if (anyBatches && anyBatches.length > 0 && (!batchNumber || batchNumber === 'BN-DEFAULT')) {
-          const existing = anyBatches[0]
-          if ((existing.quantity_on_hand || 0) < reqQty) {
-            await supabase
-              .from('pharmacy_stock_batches')
-              .update({
-                quantity_on_hand: Math.max(existing.quantity_on_hand || 0, reqQty + 50),
-                status: 'available',
-                updated_at: new Date().toISOString()
-              })
-              .eq('id', existing.id)
-          }
-          return existing.id
-        }
-
-        // 3. If still not found, insert a new batch row with mandatory received_date
-        const { data: newBatch, error: insertErr } = await supabase
-          .from('pharmacy_stock_batches')
-          .insert({
-            hospital_id: validHospId,
-            item_id: itemId,
-            item_type: itemType,
-            batch_number: cleanBatchNum,
-            expiry_date: cleanExpiry,
-            received_date: new Date().toISOString().split('T')[0],
-            quantity_received: reqQty + 100,
-            quantity_on_hand: reqQty + 100,
-            quantity_reserved: 0,
-            location_id: validLocId,
-            status: 'available'
-          })
-          .select('id')
-          .single()
-
-        if (!insertErr && newBatch?.id) {
-          return newBatch.id
-        }
-      }
-    } catch (err) {
-      console.warn('Error in resolveOrCreateStockBatch (Supabase):', err)
-    }
-  }
-
-  // Fallback valid UUID format (avoids PostgreSQL 22P02 invalid UUID syntax)
-  return '00000000-0000-0000-0000-' + Date.now().toString(16).padStart(12, '0').slice(-12)
-
-  // Fallback Mock Batch
-  const matchedMock = mockStockBatches.find(
-    (b) =>
-      (b.item_id === itemId || b.batch_number?.toLowerCase() === cleanBatchNum.toLowerCase()) &&
-      b.item_type === itemType
-  )
-
-  if (matchedMock) {
-    if ((matchedMock.quantity_on_hand || 0) < reqQty) {
-      matchedMock.quantity_on_hand = reqQty + 100
-      matchedMock.status = 'available'
-    }
-    return matchedMock.id
-  }
-
-  const newMockId = `batch-${Date.now()}-${Math.floor(100 + Math.random() * 900)}`
-  const newBatchObj: StockBatch = {
-    id: newMockId,
-    hospital_id: hospitalId || 'hosp-001',
-    item_id: itemId,
-    item_type: itemType,
-    batch_number: cleanBatchNum,
-    expiry_date: cleanExpiry,
-    quantity_received: reqQty + 100,
-    quantity_on_hand: reqQty + 100,
-    quantity_reserved: 0,
-    status: 'available',
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  }
-  mockStockBatches.push(newBatchObj)
-  return newMockId
+  const { data, error } = await query
+  if (error) throw error
+  const batch = data?.[0]
+  if (!batch) throw new Error('No available stock batch found for this item')
+  return batch.id
 }
 
 /**
@@ -1122,20 +877,10 @@ export async function getAllBatches(
 
       const { data, error } = await query
       if (error) throw error
-      const populated = await populateBatchItems(data || [])
+      const populated = await populateBatchItems<StockBatch>(data || [])
       return { data: populated as StockBatchWithRelations[], error: null }
     }
-    let batches = [...mockStockBatches]
-    if (filter?.item_type && filter.item_type !== 'all') {
-      batches = batches.filter(b => b.item_type === filter.item_type)
-    }
-    if (filter?.status) {
-      batches = batches.filter(b => b.status === filter.status)
-    }
-    if (filter?.location_id) {
-      batches = batches.filter(b => b.location_id === filter.location_id)
-    }
-    return { data: batches, error: null }
+    throw new Error('Inventory service unavailable')
   } catch (error) {
     console.error('Error fetching batches:', error)
     return {
@@ -1159,14 +904,14 @@ export async function getNearExpiryItems(
 ): Promise<ApiResponse<ExpiryItem[]>> {
   try {
     if (isSupabaseConfigured()) {
-      const validHospId = (hospitalId && isValidUUID(hospitalId)) ? hospitalId : '85bb6adc-b868-428b-83f4-e5af2f5cf904'
+      const validHospId = sanitizeHospitalId(hospitalId)
       let query = supabase
         .from('pharmacy_stock_batches')
         .select(`
           *,
           location:pharmacy_stock_locations(location_name)
         `)
-        .or(`hospital_id.eq.${validHospId},hospital_id.is.null`)
+        .eq('hospital_id', validHospId)
         .gt('quantity_on_hand', 0)
         .not('expiry_date', 'is', null)
 
@@ -1178,9 +923,12 @@ export async function getNearExpiryItems(
 
       if (error) throw error
 
-      const populated = await populateBatchItems(batches || [])
+      const populated = await populateBatchItems<StockBatch>(batches || [])
       const now = new Date()
-      const expiryItems: ExpiryItem[] = populated
+      const batchesWithExpiry = populated.filter((batch): batch is typeof batch & { expiry_date: string } =>
+        typeof batch.expiry_date === 'string' && batch.expiry_date.length > 0
+      )
+      const expiryItems: ExpiryItem[] = batchesWithExpiry
         .map(b => {
           const expDate = new Date(b.expiry_date)
           const timeDiff = expDate.getTime() - now.getTime()
@@ -1199,6 +947,7 @@ export async function getNearExpiryItems(
           const unitCost = Number(b.unit_cost || b.drug?.price || b.non_drug?.price || 0)
 
           let locationName = 'Stor Logistik (Ubat)'
+          const batchLocation = Array.isArray(b.location) ? b.location[0] : b.location
           if (b.facility_location && b.facility_location.trim()) {
             locationName = b.facility_location
               .replace(/^\[[^\]]+\]\s*/, '')
@@ -1206,13 +955,13 @@ export async function getNearExpiryItems(
               .replace(/\((Drug|drug)\)/gi, '(Ubat)')
               .replace(/\((Non-Drug|non-drug|nondrug)\)/gi, '(Bukan Ubat)')
               .trim()
-          } else if (b.location?.location_name && b.location.location_name !== 'Decanting') {
-            if (b.location.location_name === 'MS' || b.location.location_name === 'Main Store') {
+          } else if (batchLocation?.location_name && batchLocation.location_name !== 'Decanting') {
+            if (batchLocation.location_name === 'MS' || batchLocation.location_name === 'Main Store') {
               locationName = 'Stor Utama Farmasi'
-            } else if (b.location.location_name === 'Pharmacy Logistic' || b.location.location_name === 'Hosp Lawas') {
+            } else if (batchLocation.location_name === 'Pharmacy Logistic' || batchLocation.location_name === 'Hosp Lawas') {
               locationName = 'Stor Logistik (Ubat)'
             } else {
-              locationName = b.location.location_name
+              locationName = batchLocation.location_name
             }
           }
 
@@ -1294,7 +1043,7 @@ export async function getSlowMovingItems(
       const summaryRes = await getStockLevelSummary(hospitalId, undefined, storeLocationId)
       if (summaryRes.error) throw new Error(summaryRes.error)
       
-      const itemsList = summaryRes.data || []
+      const itemsList: InventoryStockLevelSummary[] = summaryRes.data || []
       
       let txnQuery = supabase
         .from('pharmacy_stock_transactions')
@@ -1307,6 +1056,7 @@ export async function getSlowMovingItems(
       }
       
       const { data: txns, error: txnError } = await txnQuery
+      if (txnError) throw txnError
 
       const lastMovementMap = new Map<string, string>()
       txns?.forEach(t => {
@@ -1341,10 +1091,7 @@ export async function getSlowMovingItems(
       return { data: slowItems, error: null }
     }
 
-    const items = mockSlowMovingItems.filter(
-      s => s.days_since_movement >= daysSinceMovement
-    )
-    return { data: items, error: null }
+    throw new Error('Inventory service unavailable')
   } catch (error) {
     console.error('Error fetching slow moving items:', error)
     return {
@@ -1393,10 +1140,33 @@ export function getPeriodDateRange(period: ReportPeriod, year: number, subPeriod
 /**
  * Accurately determines an item's procurement vote / Skim (appl, cc, lp, dp)
  */
-export function getCleanProcurementVote(item: any): 'appl' | 'cc' | 'dp' | 'lp' {
+type ProcurementVoteSource = {
+  procurement_vote?: unknown
+  procurement_scheme?: unknown
+  vote?: unknown
+  skim?: unknown
+  scheme?: unknown
+  cc_contract_number?: unknown
+  kkm_contract_number?: unknown
+  contract_number?: unknown
+  drug_code?: unknown
+  item_code?: unknown
+  code?: unknown
+  sheet_source?: unknown
+  is_appl?: boolean
+}
+
+export function getCleanProcurementVote(item: ProcurementVoteSource): 'appl' | 'cc' | 'dp' | 'lp' {
   if (!item) return 'appl'
 
-  const voteRaw = item.procurement_vote || item.procurement_scheme || item.vote || item.skim || item.scheme
+  const getText = (...keys: string[]): string | undefined => {
+    for (const key of keys) {
+      const value = item[key as keyof ProcurementVoteSource]
+      if (typeof value === 'string' && value.length > 0) return value
+    }
+    return undefined
+  }
+  const voteRaw = getText('procurement_vote', 'procurement_scheme', 'vote', 'skim', 'scheme')
   if (voteRaw && typeof voteRaw === 'string') {
     const v = voteRaw.trim().toLowerCase()
     if (v === 'appl') return 'appl'
@@ -1406,11 +1176,11 @@ export function getCleanProcurementVote(item: any): 'appl' | 'cc' | 'dp' | 'lp' 
   }
 
   // Contract number presence implies Cost Centre (CC)
-  if (item.cc_contract_number || item.kkm_contract_number || item.contract_number) {
+  if (getText('cc_contract_number', 'kkm_contract_number', 'contract_number')) {
     return 'cc'
   }
 
-  const code = String(item.drug_code || item.item_code || item.code || '').trim()
+  const code = (getText('drug_code', 'item_code', 'code') || '').trim()
 
   // KPK codes are Local Purchase (LP)
   if (code.toUpperCase().startsWith('KPK')) {
@@ -1471,13 +1241,13 @@ export async function getInventoryReport(
     // Build lookup sets of exact catalog drug/non-drug IDs from the real facility inventory lists
     const facilityDrugCatalogIds = new Set<string>()
     ;(facilityDrugs || []).forEach(fd => {
-      const drugId = fd.drug_id || fd.id
+      const drugId = fd.id
       if (drugId) facilityDrugCatalogIds.add(drugId)
     })
 
     const facilityNonDrugCatalogIds = new Set<string>()
     ;(facilityNonDrugs || []).forEach(fn => {
-      const nonDrugId = fn.nondrug_id || fn.id
+      const nonDrugId = fn.id
       if (nonDrugId) facilityNonDrugCatalogIds.add(nonDrugId)
     })
 
@@ -1514,7 +1284,7 @@ export async function getInventoryReport(
     }
 
     // Collect real transactions from Supabase AND localStorage
-    let realTxns: any[] = []
+    const realTxns: StockTransactionRow[] = []
 
     if (isSupabaseConfigured()) {
       const { data: dbTxns, error: txnErr } = await supabase
@@ -1672,6 +1442,7 @@ export function matchStockItem<T extends { item_id?: string; id?: string; facili
   // Pass 1: Direct ID match (highest priority)
   if (targetId) {
     const idMatch = items.find(i => {
+      if (targetType && i.item_type !== targetType) return false
       const itemId = (i.item_id || i.id || i.facility_inventory_id || '').trim()
       return itemId === targetId || i.facility_inventory_id === targetId
     })
@@ -1681,7 +1452,7 @@ export function matchStockItem<T extends { item_id?: string; id?: string; facili
   // Pass 2: Exact normalized code match (e.g. 'C10AA05–000–T10–01–XXX' vs 'C10AA05-000-T10-01-XXX')
   if (normTargetCode) {
     const exactCodeMatch = items.find(i => {
-      const itemCodeStr = i.item_code || (i as any).drug_code || ''
+      const itemCodeStr = i.item_code || i.drug_code || ''
       const normItemCode = normalizeItemCode(itemCodeStr)
       return normItemCode === normTargetCode
     })
@@ -1691,7 +1462,7 @@ export function matchStockItem<T extends { item_id?: string; id?: string; facili
   // Pass 3: Exact stripped alphanumeric code match (ignores all dashes, slashes, spaces)
   if (strippedTargetCode && strippedTargetCode.length >= 3) {
     const exactStrippedMatch = items.find(i => {
-      const itemCodeStr = i.item_code || (i as any).drug_code || ''
+      const itemCodeStr = i.item_code || i.drug_code || ''
       const strippedItemCode = stripItemCode(itemCodeStr)
       return strippedItemCode === strippedTargetCode
     })
@@ -1721,7 +1492,7 @@ export async function getStockLevelSummary(
   hospitalId: string,
   filter?: InventoryFilter,
   storeLocationId?: string
-): Promise<ApiResponse<StockLevelSummary[]>> {
+): Promise<ApiResponse<InventoryStockLevelSummary[]>> {
   try {
     const effectiveStoreLocationId = storeLocationId || filter?.store_location_id || filter?.location_id
 
@@ -1734,7 +1505,6 @@ export async function getStockLevelSummary(
     const registeredDrugIds = new Set<string>()
     const registeredDrugCodes = new Set<string>()
     ;(facilityDrugs || []).forEach(d => {
-      if (d.drug_id) registeredDrugIds.add(d.drug_id)
       if (d.id) registeredDrugIds.add(d.id)
       if (d.facility_inventory_id) registeredDrugIds.add(d.facility_inventory_id)
       const code = d.drug_code || d.item_code
@@ -1744,10 +1514,9 @@ export async function getStockLevelSummary(
     const registeredNonDrugIds = new Set<string>()
     const registeredNonDrugCodes = new Set<string>()
     ;(facilityNonDrugs || []).forEach(n => {
-      if (n.nondrug_id) registeredNonDrugIds.add(n.nondrug_id)
       if (n.id) registeredNonDrugIds.add(n.id)
       if (n.facility_inventory_id) registeredNonDrugIds.add(n.facility_inventory_id)
-      const code = n.item_code || n.drug_code
+      const code = n.item_code
       if (code) registeredNonDrugCodes.add(normalizeItemCode(code))
     })
 
@@ -1832,18 +1601,17 @@ export async function getStockLevelSummary(
         })
       })
 
-      let summaries: StockLevelSummary[] = []
+      let summaries: InventoryStockLevelSummary[] = []
 
       if (filter?.item_type === 'all' || filter?.item_type === 'drug' || !filter?.item_type) {
         drugs?.forEach(d => {
           const qty = qtyMap.get(d.id) || { onHand: 0, reserved: 0 }
           const facilityMatch = facilityDrugs.find(fd => 
-            (fd.drug_id && fd.drug_id === d.id) || 
-            (fd.id && fd.id === d.id) ||
+            fd.id === d.id ||
             (fd.facility_inventory_id && fd.facility_inventory_id === d.id) ||
             (fd.drug_code && normalizeItemCode(fd.drug_code) === normalizeItemCode(d.drug_code))
           )
-          const currentStock = qty.onHand > 0 ? qty.onHand : (facilityMatch?.facility_stock ?? d.current_stock ?? 0)
+          const currentStock = qty.onHand > 0 ? qty.onHand : (facilityMatch?.facility_stock ?? 0)
           const minStock = facilityMatch?.min_buffer_level ?? d.min_stock_level ?? 0
           
           let status: StockLevelSummary['status'] = 'in_stock'
@@ -1857,10 +1625,10 @@ export async function getStockLevelSummary(
             item_code: d.drug_code,
             item_name: d.drug_name,
             unit_of_measure: d.unit_of_measure || 'unit',
-            packaging_description: d.packaging_description || (facilityMatch as any)?.packaging_description || (d.unit_of_measure?.toLowerCase().includes('tablet') ? 'Pack of 10 x 10 Tablets' : `${d.unit_of_measure || 'Pack'}`),
+            packaging_description: d.packaging_description || (d.unit_of_measure?.toLowerCase().includes('tablet') ? 'Pack of 10 x 10 Tablets' : `${d.unit_of_measure || 'Pack'}`),
             min_stock: minStock,
-            max_stock: d.max_stock_level || null,
-            reorder_level: d.reorder_level || null,
+            max_stock: d.max_stock_level ?? undefined,
+            reorder_level: d.reorder_level ?? undefined,
             current_stock: currentStock,
             available_stock: currentStock - qty.reserved,
             reserved_stock: qty.reserved,
@@ -1871,7 +1639,7 @@ export async function getStockLevelSummary(
             procurement_vote: getCleanProcurementVote(d),
             procurement_scheme: getCleanProcurementVote(d),
             is_appl: getCleanProcurementVote(d) === 'appl',
-            location: facilityMatch?.location || (d as any).location || null,
+            location: facilityMatch?.location || null,
             facility_inventory_id: facilityMatch?.facility_inventory_id || facilityMatch?.id || undefined
           })
         })
@@ -1881,12 +1649,11 @@ export async function getStockLevelSummary(
         nonDrugs?.forEach(n => {
           const qty = qtyMap.get(n.id) || { onHand: 0, reserved: 0 }
           const facilityMatch = facilityNonDrugs.find(fn => 
-            (fn.nondrug_id && fn.nondrug_id === n.id) || 
-            (fn.id && fn.id === n.id) ||
+            fn.id === n.id ||
             (fn.facility_inventory_id && fn.facility_inventory_id === n.id) ||
             (fn.item_code && normalizeItemCode(fn.item_code) === normalizeItemCode(n.item_code))
           )
-          const currentStock = qty.onHand > 0 ? qty.onHand : (facilityMatch?.facility_stock ?? n.current_stock ?? 0)
+          const currentStock = qty.onHand > 0 ? qty.onHand : (facilityMatch?.facility_stock ?? 0)
           const minStock = facilityMatch?.min_buffer_level ?? n.min_stock_level ?? 0
           
           let status: StockLevelSummary['status'] = 'in_stock'
@@ -1900,10 +1667,10 @@ export async function getStockLevelSummary(
             item_code: n.item_code,
             item_name: n.item_name,
             unit_of_measure: n.unit_of_measure || 'unit',
-            packaging_description: n.packaging_description || (facilityMatch as any)?.packaging_description || `${n.unit_of_measure || 'Pack'}`,
+            packaging_description: n.packaging_description || `${n.unit_of_measure || 'Pack'}`,
             min_stock: minStock,
-            max_stock: n.max_stock_level || null,
-            reorder_level: n.reorder_level || null,
+            max_stock: n.max_stock_level ?? undefined,
+            reorder_level: n.reorder_level ?? undefined,
             current_stock: currentStock,
             available_stock: currentStock - qty.reserved,
             reserved_stock: qty.reserved,
@@ -1913,7 +1680,7 @@ export async function getStockLevelSummary(
             procurement_vote: getCleanProcurementVote(n),
             procurement_scheme: getCleanProcurementVote(n),
             is_appl: getCleanProcurementVote(n) === 'appl',
-            location: facilityMatch?.location || (n as any).location || null,
+            location: facilityMatch?.location || null,
             facility_inventory_id: facilityMatch?.facility_inventory_id || facilityMatch?.id || undefined
           })
         })
@@ -1921,9 +1688,9 @@ export async function getStockLevelSummary(
 
       // Merge any registered facilityDrugs not returned by rawDrugs query
       if (filter?.item_type === 'all' || filter?.item_type === 'drug' || !filter?.item_type) {
-        ;(facilityDrugs || []).forEach(fd => {
+        (facilityDrugs || []).forEach(fd => {
           const fdCode = normalizeItemCode(fd.drug_code || fd.item_code)
-          const fdId = fd.drug_id || fd.id || fd.facility_inventory_id
+          const fdId = fd.id
           const alreadyIn = summaries.some(s => 
             (s.item_id && s.item_id === fdId) ||
             (s.facility_inventory_id && s.facility_inventory_id === fd.facility_inventory_id) ||
@@ -1943,16 +1710,16 @@ export async function getStockLevelSummary(
               item_code: fd.drug_code || fd.item_code || '',
               item_name: fd.drug_name || fd.item_name || '',
               unit_of_measure: fd.unit_of_measure || 'unit',
-              packaging_description: (fd as any).packaging_description || 'Box of 10 x 10\'s',
+              packaging_description: fd.packaging_description || 'Box of 10 x 10\'s',
               min_stock: minStock,
-              max_stock: fd.max_stock_level || null,
-              reorder_level: fd.reorder_level || null,
+              max_stock: fd.max_stock_level ?? undefined,
+              reorder_level: fd.reorder_level ?? undefined,
               current_stock: currentStock,
               available_stock: currentStock,
               reserved_stock: 0,
               status,
               price: fd.price || 0,
-              created_at: fd.added_at || (fd as any).created_at,
+              created_at: fd.added_at || fd.created_at,
               procurement_vote: getCleanProcurementVote(fd),
               procurement_scheme: getCleanProcurementVote(fd),
               is_appl: getCleanProcurementVote(fd) === 'appl',
@@ -1965,9 +1732,9 @@ export async function getStockLevelSummary(
 
       // Merge any registered facilityNonDrugs not returned by rawNonDrugs query
       if (filter?.item_type === 'all' || filter?.item_type === 'non_drug' || !filter?.item_type) {
-        ;(facilityNonDrugs || []).forEach(fn => {
-          const fnCode = normalizeItemCode(fn.item_code || fn.drug_code)
-          const fnId = fn.nondrug_id || fn.id || fn.facility_inventory_id
+        (facilityNonDrugs || []).forEach(fn => {
+          const fnCode = normalizeItemCode(fn.item_code)
+          const fnId = fn.id
           const alreadyIn = summaries.some(s => 
             (s.item_id && s.item_id === fnId) ||
             (s.facility_inventory_id && s.facility_inventory_id === fn.facility_inventory_id) ||
@@ -1987,16 +1754,16 @@ export async function getStockLevelSummary(
               item_code: fn.item_code || '',
               item_name: fn.item_name || '',
               unit_of_measure: fn.unit_of_measure || 'unit',
-              packaging_description: (fn as any).packaging_description || `${fn.unit_of_measure || 'Pack'}`,
+              packaging_description: fn.packaging_description || `${fn.unit_of_measure || 'Pack'}`,
               min_stock: minStock,
-              max_stock: fn.max_stock_level || null,
-              reorder_level: fn.reorder_level || null,
+              max_stock: fn.max_stock_level ?? undefined,
+              reorder_level: fn.reorder_level ?? undefined,
               current_stock: currentStock,
               available_stock: currentStock,
               reserved_stock: 0,
               status,
               price: fn.price || 0,
-              created_at: fn.added_at || (fn as any).created_at,
+              created_at: fn.added_at || fn.created_at,
               procurement_vote: getCleanProcurementVote(fn),
               procurement_scheme: getCleanProcurementVote(fn),
               is_appl: getCleanProcurementVote(fn) === 'appl',
@@ -2014,154 +1781,7 @@ export async function getStockLevelSummary(
       return { data: summaries, error: null }
     }
 
-    // Mock/local cache fallback mode:
-    let summaries: StockLevelSummary[] = []
-    if (registeredDrugIds.size > 0 || registeredNonDrugIds.size > 0) {
-      facilityDrugs.forEach(d => {
-        const currentStock = d.facility_stock ?? d.current_stock ?? 0
-        const minStock = d.min_buffer_level ?? d.min_stock_level ?? 0
-        let status: StockLevelSummary['status'] = 'in_stock'
-        if (currentStock <= 0) status = 'out_of_stock'
-        else if (currentStock <= minStock * 0.5) status = 'critical'
-        else if (currentStock <= minStock) status = 'low_stock'
-
-        summaries.push({
-          item_id: d.id || d.drug_id,
-          item_type: 'drug',
-          item_code: d.drug_code || d.item_code || '',
-          item_name: d.drug_name || d.item_name || '',
-          unit_of_measure: d.unit_of_measure || 'unit',
-          min_stock: minStock,
-          max_stock: d.max_stock_level || null,
-          reorder_level: d.reorder_level || null,
-          current_stock: currentStock,
-          available_stock: currentStock,
-          reserved_stock: 0,
-          status,
-          price: d.price || 0,
-          location: d.location || null,
-          facility_inventory_id: d.facility_inventory_id || d.id
-        })
-      })
-
-      facilityNonDrugs.forEach(n => {
-        const currentStock = n.facility_stock ?? n.current_stock ?? 0
-        const minStock = n.min_buffer_level ?? n.min_stock_level ?? 0
-        let status: StockLevelSummary['status'] = 'in_stock'
-        if (currentStock <= 0) status = 'out_of_stock'
-        else if (currentStock <= minStock * 0.5) status = 'critical'
-        else if (currentStock <= minStock) status = 'low_stock'
-
-        summaries.push({
-          item_id: n.id || n.nondrug_id,
-          item_type: 'non_drug',
-          item_code: n.item_code || '',
-          item_name: n.item_name || '',
-          unit_of_measure: n.unit_of_measure || 'unit',
-          min_stock: minStock,
-          max_stock: n.max_stock_level || null,
-          reorder_level: n.reorder_level || null,
-          current_stock: currentStock,
-          available_stock: currentStock,
-          reserved_stock: 0,
-          status,
-          price: n.price || 0,
-          location: n.location || null,
-          facility_inventory_id: n.facility_inventory_id || n.id
-        })
-      })
-
-      if (filter?.include_unregistered) {
-        mockDrugs.forEach(d => {
-          const isRegistered = facilityDrugs.some(fd => (fd.id || fd.drug_id) === d.id)
-          if (!isRegistered) {
-            summaries.push({
-              item_id: d.id,
-              item_type: 'drug',
-              item_code: d.drug_code,
-              item_name: d.drug_name,
-              unit_of_measure: d.unit_of_measure || 'unit',
-              min_stock: d.min_stock_level || 0,
-              max_stock: d.max_stock_level || null,
-              reorder_level: d.reorder_level || null,
-              current_stock: 0,
-              available_stock: 0,
-              reserved_stock: 0,
-              status: 'out_of_stock',
-              price: d.price || 0,
-              location: null
-            })
-          }
-        })
-
-        mockNonDrugs.forEach(n => {
-          const isRegistered = facilityNonDrugs.some(fn => (fn.id || fn.nondrug_id) === n.id)
-          if (!isRegistered) {
-            summaries.push({
-              item_id: n.id,
-              item_type: 'non_drug',
-              item_code: n.item_code,
-              item_name: n.item_name,
-              unit_of_measure: n.unit_of_measure || 'unit',
-              min_stock: n.min_stock_level || 0,
-              max_stock: n.max_stock_level || null,
-              reorder_level: n.reorder_level || null,
-              current_stock: 0,
-              available_stock: 0,
-              reserved_stock: 0,
-              status: 'out_of_stock',
-              price: n.price || 0,
-              location: null
-            })
-          }
-        })
-      }
-    } else {
-      summaries = [
-        ...mockDrugs.map(d => ({
-          item_id: d.id,
-          item_type: 'drug' as const,
-          item_code: d.drug_code,
-          item_name: d.drug_name,
-          unit_of_measure: d.unit_of_measure,
-          min_stock: d.min_stock_level,
-          max_stock: d.max_stock_level,
-          reorder_level: d.reorder_level,
-          current_stock: d.current_stock || 0,
-          available_stock: d.current_stock || 0,
-          reserved_stock: 0,
-          status: d.stock_status || 'in_stock',
-          price: d.price || 0,
-          location: d.location || null
-        })),
-        ...mockNonDrugs.map(n => ({
-          item_id: n.id,
-          item_type: 'non_drug' as const,
-          item_code: n.item_code,
-          item_name: n.item_name,
-          unit_of_measure: n.unit_of_measure,
-          min_stock: n.min_stock_level,
-          max_stock: n.max_stock_level,
-          reorder_level: n.reorder_level,
-          current_stock: n.current_stock || 0,
-          available_stock: n.current_stock || 0,
-          reserved_stock: 0,
-          status: n.stock_status || 'in_stock',
-          price: n.price || 0,
-          location: n.location || null
-        })),
-      ]
-    }
-
-    if (filter?.search) {
-      const q = filter.search.toLowerCase()
-      summaries = summaries.filter(s => 
-        s.item_code.toLowerCase().includes(q) || 
-        s.item_name.toLowerCase().includes(q)
-      )
-    }
-
-    return { data: summaries, error: null }
+    throw new Error('Stock level inventory unavailable')
   } catch (error) {
     console.error('Error fetching stock level summary:', error)
     return {
@@ -2193,7 +1813,7 @@ export async function getStockTransactions(
 ): Promise<ApiResponse<StockTransactionWithRelations[]>> {
   try {
     if (isSupabaseConfigured()) {
-      const validHospId = (hospitalId && isValidUUID(hospitalId)) ? hospitalId : '85bb6adc-b868-428b-83f4-e5af2f5cf904'
+      const validHospId = sanitizeHospitalId(hospitalId)
       let query = supabase
         .from('pharmacy_stock_transactions')
         .select(`
@@ -2203,7 +1823,7 @@ export async function getStockTransactions(
           performed_by_user:users!pharmacy_stock_transactions_performed_by_fkey(*),
           batch:pharmacy_stock_batches(*)
         `)
-        .or(`hospital_id.eq.${validHospId},hospital_id.is.null`)
+        .eq('hospital_id', validHospId)
         .order('transaction_date', { ascending: false })
 
       if (filter?.item_id) {
@@ -2229,12 +1849,13 @@ export async function getStockTransactions(
       }
 
       const { data, error } = await query
+      if (error) throw error
       if (data && data.length > 0) {
-        let populated = await populateBatchItems(data)
+        let populated = await populateBatchItems<StockTransactionWithRelations>(data)
 
         if (filter?.search_query && filter.search_query.trim()) {
           const q = filter.search_query.toLowerCase().trim()
-          populated = populated.filter((t: any) =>
+          populated = populated.filter(t =>
             t.transaction_number?.toLowerCase().includes(q) ||
             t.reason?.toLowerCase().includes(q) ||
             t.batch?.batch_number?.toLowerCase().includes(q) ||
@@ -2251,7 +1872,7 @@ export async function getStockTransactions(
       try {
         const localTxStr = localStorage.getItem('pharmacy_stock_transactions')
         if (localTxStr) {
-          let list = JSON.parse(localTxStr) as any[]
+          let list = JSON.parse(localTxStr) as StockTransactionRow[]
           if (filter?.item_id) {
             list = list.filter((t) => t.item_id === filter.item_id)
           }
@@ -2267,7 +1888,9 @@ export async function getStockTransactions(
           }
           return { data: list as StockTransactionWithRelations[], error: null }
         }
-      } catch (e) {}
+      } catch (cacheError) {
+        console.warn('Unable to read the cached stock transactions:', cacheError)
+      }
     }
 
     return { data: [], error: null }
@@ -2298,12 +1921,12 @@ export async function getItemMovementSummary(
     let lastIssueDate: string | null = null
 
     if (isSupabaseConfigured()) {
-      const validHospId = (hospitalId && isValidUUID(hospitalId)) ? hospitalId : '85bb6adc-b868-428b-83f4-e5af2f5cf904'
+      const validHospId = sanitizeHospitalId(hospitalId)
       // 1. Fetch current stock balance from batches
       const { data: batches } = await supabase
         .from('pharmacy_stock_batches')
         .select('quantity_on_hand')
-        .or(`hospital_id.eq.${validHospId},hospital_id.is.null`)
+        .eq('hospital_id', validHospId)
         .eq('item_id', itemId)
 
       if (batches) {
@@ -2314,7 +1937,7 @@ export async function getItemMovementSummary(
       let txQuery = supabase
         .from('pharmacy_stock_transactions')
         .select('transaction_type, quantity, to_location_id, transaction_date, created_at')
-        .or(`hospital_id.eq.${validHospId},hospital_id.is.null`)
+        .eq('hospital_id', validHospId)
         .eq('item_id', itemId)
         .order('transaction_date', { ascending: false })
 
@@ -2417,7 +2040,8 @@ export async function getDepartmentIssuanceBreakdown(
           const qty = Number(row.quantity) || 0
           grandTotal += qty
           const locId = row.to_location_id || 'unknown'
-          const locName = (row.to_location as any)?.location_name || 'Jabatan Lain / Tidak Nyata'
+          const toLocation = Array.isArray(row.to_location) ? row.to_location[0] : row.to_location
+          const locName = toLocation?.location_name || 'Jabatan Lain / Tidak Nyata'
 
           const existing = locationMap.get(locId) || { name: locName, total: 0 }
           existing.total += qty
@@ -2455,6 +2079,8 @@ export async function createStockTransaction(
   transaction: Omit<StockTransaction, 'id' | 'created_at'> & { transaction_number?: string; transaction_date?: string }
 ): Promise<ApiResponse<StockTransaction>> {
   try {
+    if (!isValidUUID(hospitalId)) throw new Error('Valid hospital ID required')
+    if (!isValidUUID(transaction.item_id)) throw new Error('Valid inventory item ID required')
     const txnDate = transaction.transaction_date || new Date().toISOString()
     const txnNumber = transaction.transaction_number || `TXN-${Date.now()}-${Math.floor(1000 + Math.random() * 9000)}`
 
@@ -2480,18 +2106,10 @@ export async function createStockTransaction(
         ? transaction.batch_id
         : null
 
-      const hospUuid = (hospitalId && isValidUUID(hospitalId))
-        ? hospitalId
-        : null
-
-      const itemUuid = (transaction.item_id && isValidUUID(transaction.item_id))
-        ? transaction.item_id
-        : '00000000-0000-0000-0000-000000000000'
-
       const insertPayload = {
         ...transaction,
-        hospital_id: hospUuid,
-        item_id: itemUuid,
+        hospital_id: hospitalId,
+        item_id: transaction.item_id,
         batch_id: batchUuid,
         performed_by: performedByUuid,
         approved_by: approvedByUuid,
@@ -2526,12 +2144,14 @@ export async function createStockTransaction(
                 const txList = localTxStr ? JSON.parse(localTxStr) : []
                 txList.unshift(retryData)
                 localStorage.setItem('pharmacy_stock_transactions', JSON.stringify(txList))
-              } catch (e) {}
+              } catch (cacheError) {
+                console.warn('Unable to cache the recovered stock transaction:', cacheError)
+              }
             }
             return { data: retryData as StockTransaction, error: null }
           }
         }
-        console.warn('Supabase stock transaction insert error (falling back to local):', error)
+        throw error
       } else if (data) {
         if (typeof window !== 'undefined') {
           try {
@@ -2539,30 +2159,15 @@ export async function createStockTransaction(
             const txList = localTxStr ? JSON.parse(localTxStr) : []
             txList.unshift(data)
             localStorage.setItem('pharmacy_stock_transactions', JSON.stringify(txList))
-          } catch (e) {}
+          } catch (cacheError) {
+            console.warn('Unable to cache the stock transaction:', cacheError)
+          }
         }
         return { data: data as StockTransaction, error: null }
       }
     }
 
-    const newTransaction: StockTransaction = {
-      id: `txn-${Date.now()}`,
-      ...transaction,
-      transaction_number: txnNumber,
-      transaction_date: txnDate,
-      created_at: new Date().toISOString(),
-    }
-
-    if (typeof window !== 'undefined') {
-      try {
-        const localTxStr = localStorage.getItem('pharmacy_stock_transactions')
-        const txList = localTxStr ? JSON.parse(localTxStr) : []
-        txList.unshift(newTransaction)
-        localStorage.setItem('pharmacy_stock_transactions', JSON.stringify(txList))
-      } catch (e) {}
-    }
-
-    return { data: newTransaction, error: null }
+    throw new Error('Inventory service unavailable')
   } catch (error) {
     console.error('Error creating transaction:', error)
     return {
@@ -2574,16 +2179,16 @@ export async function createStockTransaction(
 
 export async function updateStockTransaction(
   transactionId: string,
-  updates: Partial<StockTransaction> & { received_from?: string; supplier_id?: string; batch_id?: string }
+  updates: Partial<StockTransaction> & { received_from?: string; supplier_id?: string; batch_id?: string; notes?: string }
 ): Promise<ApiResponse<StockTransaction>> {
   try {
     if (isSupabaseConfigured() && isValidUUID(transactionId)) {
-      const payload: Record<string, any> = {}
+      const payload: Partial<StockTransaction> & { supplier_id?: string } = {}
       if (updates.quantity !== undefined) payload.quantity = updates.quantity
       if (updates.transaction_date !== undefined) payload.transaction_date = updates.transaction_date
       if (updates.transaction_number !== undefined) payload.transaction_number = updates.transaction_number
       
-      let finalReason = updates.reason || (updates as any).notes
+      let finalReason = updates.reason || updates.notes
       if (updates.received_from) {
         if (!finalReason) {
           finalReason = `Penerimaan stok daripada: ${updates.received_from}`
@@ -2612,7 +2217,7 @@ export async function updateStockTransaction(
         if (!error && data) {
           const returnData = {
             ...data,
-            received_from: updates.received_from || (data as any)?.received_from
+            received_from: updates.received_from || undefined
           }
           return { data: returnData as StockTransaction, error: null }
         }
@@ -2636,10 +2241,12 @@ export async function updateStockTransaction(
             return { data: txList[targetIndex], error: null }
           }
         }
-      } catch (e) {}
+      } catch (cacheError) {
+        console.warn('Unable to read cached stock transactions for update:', cacheError)
+      }
     }
 
-    return { data: updates as any, error: null }
+    return { data: { ...updates, id: transactionId } as StockTransaction, error: null }
   } catch (error) {
     console.error('Error updating transaction:', error)
     return {
@@ -2743,13 +2350,14 @@ export async function createStockReceipt(
         : 'Penerimaan stok pembekal / QR Scan'
 
       const txnRes = await createStockTransaction(hospitalId, {
+        hospital_id: hospitalId,
         transaction_type: 'receipt',
         transaction_number: txnNumber,
         item_type: payload.item_type,
         item_id: payload.item_id,
         batch_id: batch.id,
         quantity: payload.quantity_received,
-        to_location_id: payload.location_id,
+        to_location_id: payload.location_id ?? undefined,
         performed_by: payload.performed_by,
         reason: reasonText,
         transaction_date: txnDate
@@ -2760,14 +2368,7 @@ export async function createStockReceipt(
       return { data: { batch, transaction: txnRes.data! }, error: null }
     }
 
-    // Mock fallback success
-    return {
-      data: {
-        batch: { id: `batch-${Date.now()}`, ...payload, received_date: recDate, quantity_on_hand: payload.quantity_received } as any,
-        transaction: { id: `txn-${Date.now()}`, transaction_number: txnNumber, transaction_type: 'receipt', quantity: payload.quantity_received, transaction_date: txnDate } as any
-      },
-      error: null
-    }
+    throw new Error('Inventory service unavailable')
   } catch (error) {
     console.error('Error performing receipt:', error)
     return {
@@ -2874,13 +2475,14 @@ export async function bringForwardStock(
 
       // 2. Create stock transaction
       const txnRes = await createStockTransaction(hospitalId, {
+        hospital_id: hospitalId,
         transaction_type: 'bring_forward',
         transaction_number: txnNumber,
         item_type: payload.item_type,
         item_id: payload.item_id,
         batch_id: batch.id,
         quantity: payload.bring_forward_qty,
-        to_location_id: payload.location_id,
+        to_location_id: payload.location_id ?? undefined,
         performed_by: payload.performed_by,
         reason: fullReason,
         transaction_date: txnDate
@@ -2891,13 +2493,7 @@ export async function bringForwardStock(
       return { data: { batch, transaction: txnRes.data! }, error: null }
     }
 
-    return {
-      data: {
-        batch: { id: `batch-bf-${Date.now()}`, ...payload, quantity_on_hand: payload.bring_forward_qty } as any,
-        transaction: { id: `txn-bf-${Date.now()}`, transaction_number: txnNumber, transaction_type: 'bring_forward', quantity: payload.bring_forward_qty, transaction_date: txnDate, reason: fullReason } as any
-      },
-      error: null
-    }
+    throw new Error('Inventory service unavailable')
   } catch (error) {
     console.error('Error performing bring forward:', error)
     return {
@@ -2994,6 +2590,7 @@ export async function issueStock(
 
       // 3. Create transaction
       const txnRes = await createStockTransaction(hospitalId, {
+        hospital_id: hospitalId,
         transaction_type: 'issue',
         transaction_number: txnNumber,
         item_type: batch.item_type,
@@ -3001,7 +2598,7 @@ export async function issueStock(
         batch_id: batch.id,
         quantity: payload.quantity,
         from_location_id: batch.location_id,
-        to_location_id: payload.to_location_id || null,
+        to_location_id: payload.to_location_id || undefined,
         performed_by: payload.performed_by,
         reason: payload.reason || 'Pengeluaran stok / QR Scan',
         transaction_date: txnDate
@@ -3012,41 +2609,7 @@ export async function issueStock(
       return { data: txnRes.data!, error: null }
     }
 
-    const mockBatch = mockStockBatches.find(b => b.id === payload.batch_id)
-    if (mockBatch) {
-      mockBatch.quantity_on_hand = Math.max(0, (mockBatch.quantity_on_hand || 0) - payload.quantity)
-      if (mockBatch.quantity_on_hand <= 0) mockBatch.status = 'depleted'
-    }
-
-    const newTx: StockTransaction = {
-      id: `txn-${Date.now()}`,
-      hospital_id: hospitalId,
-      transaction_number: txnNumber,
-      transaction_type: 'issue',
-      item_type: mockBatch?.item_type || 'drug',
-      item_id: mockBatch?.item_id || 'item-default',
-      batch_id: payload.batch_id,
-      quantity: payload.quantity,
-      to_location_id: payload.to_location_id || null,
-      performed_by: payload.performed_by,
-      reason: payload.reason || 'Pengeluaran stok',
-      transaction_date: txnDate,
-      created_at: new Date().toISOString()
-    }
-
-    if (typeof window !== 'undefined') {
-      try {
-        const localTxStr = localStorage.getItem('pharmacy_stock_transactions')
-        const txList = localTxStr ? JSON.parse(localTxStr) : []
-        txList.unshift(newTx)
-        localStorage.setItem('pharmacy_stock_transactions', JSON.stringify(txList))
-      } catch (e) {}
-    }
-
-    return {
-      data: newTx,
-      error: null
-    }
+    throw new Error('Inventory service unavailable')
   } catch (error) {
     console.error('Error performing issuing:', error)
     return {
@@ -3080,7 +2643,6 @@ export async function performStockCheckAndFound(
     const txnNumber = `CHK-FND-${Date.now().toString().slice(-6)}-${Math.floor(100 + Math.random() * 900)}`
     
     const diff = payload.physical_quantity - payload.system_quantity
-    const diffSignStr = diff > 0 ? `+${diff}` : `${diff}`
     const statusText = diff === 0 ? 'Sama (Matched)' : diff > 0 ? `Penemuan (+${diff})` : `Pelarasan (${diff})`
 
     const reasonText = payload.reason?.trim()
@@ -3185,9 +2747,10 @@ export async function performStockCheckAndFound(
         transaction_number: txnNumber,
         item_type: payload.item_type,
         item_id: payload.item_id,
-        batch_id: payload.batch_id || null,
+        hospital_id: hospitalId,
+        batch_id: payload.batch_id || undefined,
         quantity: Math.abs(diff),
-        to_location_id: payload.location_id || null,
+        to_location_id: payload.location_id || undefined,
         performed_by: payload.checked_by,
         reason: reasonText,
         transaction_date: txnDate
@@ -3197,39 +2760,7 @@ export async function performStockCheckAndFound(
       return { data: txnRes.data!, error: null }
     }
 
-    const mockBatch = mockStockBatches.find(b => b.item_id === payload.item_id && b.item_type === payload.item_type)
-    if (mockBatch) {
-      mockBatch.quantity_on_hand = payload.physical_quantity
-      mockBatch.status = payload.physical_quantity > 0 ? 'available' : 'depleted'
-    } else if (payload.physical_quantity > 0) {
-      const year = new Date().getFullYear()
-      mockStockBatches.push({
-        id: `batch-chk-fnd-${payload.item_id}`,
-        hospital_id: hospitalId,
-        item_id: payload.item_id,
-        item_type: payload.item_type,
-        batch_number: `CHK-FND-${year}`,
-        quantity_received: payload.physical_quantity,
-        quantity_on_hand: payload.physical_quantity,
-        quantity_reserved: 0,
-        expiry_date: undefined,
-        status: 'available',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      })
-    }
-
-    return {
-      data: {
-        id: `txn-${Date.now()}`,
-        transaction_number: txnNumber,
-        transaction_type: 'check_found',
-        quantity: Math.abs(diff),
-        reason: reasonText,
-        transaction_date: txnDate
-      } as any,
-      error: null
-    }
+    throw new Error('Inventory service unavailable')
   } catch (error) {
     console.error('Error performing Check & Found:', error)
     return {
@@ -3272,12 +2803,14 @@ export async function performStoreVerification(
   }
 ): Promise<ApiResponse<StoreVerificationRecord>> {
   try {
+    if (!isSupabaseConfigured()) throw new Error('Inventory service unavailable')
+    sanitizeHospitalId(hospitalId)
     const diff_phys_kew = payload.physical_stock - payload.kew_ps4_stock
     const diff_phys_phis = payload.physical_stock - payload.phis_stock
     const diff_kew_phis = payload.kew_ps4_stock - payload.phis_stock
     const is_tally = diff_phys_kew === 0 && diff_phys_phis === 0
 
-    let status: StoreVerificationRecord['status'] = is_tally
+    const status: StoreVerificationRecord['status'] = is_tally
       ? 'tally'
       : payload.adjust_kew_ps4
       ? 'discrepancy_adjusted'
@@ -3331,9 +2864,10 @@ export async function performStoreVerification(
           transaction_number: txnNumber,
           item_type: payload.item_type,
           item_id: payload.item_id,
-          batch_id: payload.batch_id || null,
+          hospital_id: hospitalId,
+          batch_id: payload.batch_id || undefined,
           quantity: Math.abs(diff_phys_kew),
-          to_location_id: payload.location_id || null,
+          to_location_id: payload.location_id || undefined,
           performed_by: `${payload.verifier_name} (${payload.verifier_department})`,
           reason: reasonText,
           transaction_date: txnDate
@@ -3343,13 +2877,7 @@ export async function performStoreVerification(
           transaction_id = txnRes.data.id
         }
       } else {
-        // Mock fallback
-        const mockBatch = mockStockBatches.find(b => b.item_id === payload.item_id && b.item_type === payload.item_type)
-        if (mockBatch && payload.adjust_kew_ps4) {
-          mockBatch.quantity_on_hand = payload.physical_stock
-          mockBatch.status = payload.physical_stock > 0 ? 'available' : 'depleted'
-        }
-        transaction_id = `txn-ver-${Date.now()}`
+        throw new Error('Inventory service unavailable')
       }
     }
 
@@ -3470,7 +2998,7 @@ export async function getFastMovingItems(
   hospitalId: string,
   daysThreshold: number = 90,
   storeLocationId?: string
-): Promise<ApiResponse<any[]>> {
+): Promise<ApiResponse<FastMovingInventoryItem[]>> {
   try {
     if (isSupabaseConfigured()) {
       // Get all issue transactions in the last daysThreshold days
@@ -3522,12 +3050,7 @@ export async function getFastMovingItems(
       return { data: fastItems, error: null }
     }
     
-    // Fallback mock data when Supabase is not configured
-    const mockFastItems = [
-      { item_id: 'drug-001', item_type: 'drug', item_code: 'PCM500', item_name: 'Paracetamol 500mg', current_stock: 1200, total_movement: 600, usage_per_month: 200, price: 0.10 },
-      { item_id: 'drug-003', item_type: 'drug', item_code: 'METF500', item_name: 'Metformin 500mg', current_stock: 800, total_movement: 450, usage_per_month: 150, price: 0.15 },
-    ]
-    return { data: mockFastItems, error: null }
+    throw new Error('Inventory service unavailable')
   } catch (error) {
     console.error('Error fetching fast moving items:', error)
     return {
@@ -3540,84 +3063,6 @@ export async function getFastMovingItems(
 // =====================================================
 // APPL SYNC & CATALOG MANAGEMENT
 // =====================================================
-
-// Mock tables for APPL local simulation
-export let mockApplApprovedSuppliers = [
-  {
-    id: 'supp-appl-001',
-    hospital_id: 'hosp-001',
-    drug_id: 'drug-001',
-    drug_code: 'D01.3003.11',
-    supplier_name: 'Duopharma Manufacturing (Bangi) Sdn Bhd',
-    manufacturer_name: 'Duopharma Manufacturing (Bangi) Sdn Bhd',
-    country_of_origin: 'Malaysia',
-    brand_name: 'Uphamol 120 Infant Syrup',
-    mal_mda_number: 'MAL19912686XZ',
-    procurement_scheme: 'SPPB',
-    appl_effective_date: '2024-04-01',
-    notes: 'Produk boleh dibeli melalui Konsesi seperti biasa.',
-    status: 'active'
-  },
-  {
-    id: 'supp-appl-002',
-    hospital_id: 'hosp-001',
-    drug_id: 'drug-001',
-    drug_code: 'D01.3003.11',
-    supplier_name: 'Idaman Pharma Manufacturing Sdn Bhd',
-    manufacturer_name: 'Idaman Pharma Manufacturing Sdn Bhd',
-    country_of_origin: 'Malaysia',
-    brand_name: 'Fepril Syrup 120mg/5ml',
-    mal_mda_number: 'MAL19912158XZ',
-    procurement_scheme: 'SPPB',
-    appl_effective_date: '2024-04-01',
-    notes: 'Produk boleh dibeli melalui Konsesi seperti biasa.',
-    status: 'active'
-  },
-  {
-    id: 'supp-appl-003',
-    hospital_id: 'hosp-001',
-    drug_id: 'drug-002',
-    drug_code: 'D01.0016.05',
-    supplier_name: 'Natural Wellness Industries Sdn Bhd',
-    manufacturer_name: 'Natural Wellness Industries Sdn Bhd',
-    country_of_origin: 'Malaysia',
-    brand_name: 'Nw Acriflavine Lotion 0.1%',
-    mal_mda_number: 'MAL10120051XZ',
-    procurement_scheme: 'SPPB',
-    appl_effective_date: '2024-05-01',
-    notes: 'Produk boleh dibeli melalui Konsesi seperti biasa.',
-    status: 'active'
-  },
-  {
-    id: 'supp-appl-004',
-    hospital_id: 'hosp-001',
-    drug_id: 'drug-002',
-    drug_code: 'D01.0016.05',
-    supplier_name: 'Teraputics Sdn Bhd',
-    manufacturer_name: 'Teraputics Sdn Bhd',
-    country_of_origin: 'Malaysia',
-    brand_name: 'Flavisept Lotion 0.1%W/V',
-    mal_mda_number: 'MAL19940184XCZ',
-    procurement_scheme: 'SPPB',
-    appl_effective_date: '2024-05-01',
-    notes: 'Produk boleh dibeli melalui Konsesi seperti biasa.',
-    status: 'active'
-  }
-];
-
-export let mockApplSyncLogs = [
-  {
-    id: 'log-001',
-    hospital_id: 'hosp-001',
-    synced_at: new Date(Date.now() - 3600000 * 4).toISOString(), // 4 hours ago
-    status: 'success',
-    sheet_tab: 'Lampiran B',
-    rows_fetched: 612,
-    drugs_upserted: 45,
-    suppliers_upserted: 98,
-    triggered_by: 'manual'
-  }
-];
 
 /**
  * Get APPL catalog items with optional filtering
@@ -3689,59 +3134,7 @@ export async function getApplItems(
     }
 
     // Mock Fallback
-    let items = mockDrugs.filter(d => d.procurement_vote === 'appl' && d.drug_code.startsWith('D'))
-
-    if (filter?.search) {
-      const search = filter.search.toLowerCase().trim()
-      items = items.filter(
-        d =>
-          d.drug_code.toLowerCase().includes(search) ||
-          d.drug_name.toLowerCase().includes(search) ||
-          d.generic_name?.toLowerCase().includes(search)
-      )
-    }
-
-    if (filter?.category_id) {
-      items = items.filter(d => d.category_id === filter.category_id)
-    }
-
-    if (filter?.status && filter.status !== 'all') {
-      items = items.filter(d => d.status === filter.status)
-    }
-
-    // Sort by name
-    items.sort((a, b) => a.drug_name.localeCompare(b.drug_name))
-
-    const total = items.length
-    const start = (page - 1) * pageSize
-    const paginated = items.slice(start, start + pageSize)
-
-    // Map relationships to mock
-    const enriched = paginated.map(item => {
-      const cat = mockDrugCategories.find(c => c.id === item.category_id)
-      const sup = mockSuppliers.find(s => s.id === item.supplier_id)
-      return {
-        ...item,
-        category: cat || null,
-        supplier: sup || null,
-        appl_kod: item.appl_kod || item.drug_code.replace('D', ''),
-        appl_code: item.drug_code,
-        price: item.price || 5.72,
-        moq: item.moq || '1 Pack',
-        packaging_description: item.packaging_description || 'Bottle of 100 ml',
-      }
-    })
-
-    return {
-      data: {
-        data: enriched as DrugWithRelations[],
-        total,
-        page,
-        pageSize,
-        totalPages: Math.ceil(total / pageSize),
-      },
-      error: null,
-    }
+    throw new Error('Inventory service unavailable')
   } catch (error) {
     console.error('Error fetching APPL items:', error)
     return {
@@ -3757,7 +3150,7 @@ export async function getApplItems(
 export async function getApplSuppliers(
   hospitalId: string,
   drugCode: string
-): Promise<ApiResponse<any[]>> {
+): Promise<ApiResponse<CatalogSyncLog[]>> {
   try {
     if (isSupabaseConfigured()) {
       const { data, error } = await supabase
@@ -3771,11 +3164,7 @@ export async function getApplSuppliers(
       return { data: data || [], error: null }
     }
 
-    // Mock Fallback
-    const suppliers = mockApplApprovedSuppliers.filter(
-      s => s.hospital_id === hospitalId && s.drug_code === drugCode
-    )
-    return { data: suppliers, error: null }
+    throw new Error('Inventory service unavailable')
   } catch (error) {
     console.error('Error fetching APPL suppliers:', error)
     return {
@@ -3790,7 +3179,7 @@ export async function getApplSuppliers(
  */
 export async function getApplSyncStatus(
   hospitalId: string
-): Promise<ApiResponse<any>> {
+): Promise<ApiResponse<CatalogSyncLog | null>> {
   try {
     if (isSupabaseConfigured()) {
       const { data, error } = await supabase
@@ -3805,9 +3194,7 @@ export async function getApplSyncStatus(
       return { data: data || null, error: null }
     }
 
-    // Mock Fallback
-    const latest = mockApplSyncLogs.length > 0 ? mockApplSyncLogs[mockApplSyncLogs.length - 1] : null
-    return { data: latest, error: null }
+    throw new Error('Inventory service unavailable')
   } catch (error) {
     console.error('Error fetching APPL sync status:', error)
     return {
@@ -4020,7 +3407,7 @@ export async function triggerApplSync(
       }
 
       // Group Drugs
-      const groupedDrugs = new Map<string, any[]>()
+      const groupedDrugs = new Map<string, CatalogSheetRow[]>()
       for (const row of drugRows) {
         const rawKod = cleanCode(row[1])
         const newKod = cleanCode(row[2])
@@ -4030,8 +3417,8 @@ export async function triggerApplSync(
         groupedDrugs.get(drugCode)!.push(row)
       }
 
-      const drugUpserts: any[] = []
-      const suppliersByDrugCode = new Map<string, any[]>()
+      const drugUpserts: CatalogUpsert[] = []
+      const suppliersByDrugCode = new Map<string, CatalogSupplierUpsert[]>()
 
       for (const [drugCode, items] of groupedDrugs.entries()) {
         const primaryItem = items[0]
@@ -4076,7 +3463,7 @@ export async function triggerApplSync(
           sheet_source: 'Lampiran B',
         })
 
-        const suppliersList: any[] = []
+        const suppliersList: CatalogSupplierUpsert[] = []
         const seenSupplierNames = new Set<string>()
         for (const item of items) {
           const supplierName = item[12]
@@ -4101,7 +3488,7 @@ export async function triggerApplSync(
       }
 
       // Group Non-Drugs
-      const groupedNonDrugs = new Map<string, any[]>()
+      const groupedNonDrugs = new Map<string, CatalogSheetRow[]>()
       for (const row of nonDrugRows) {
         const rawKod = cleanCode(row[1])
         const newKod = cleanCode(row[2])
@@ -4111,7 +3498,7 @@ export async function triggerApplSync(
         groupedNonDrugs.get(itemCode)!.push(row)
       }
 
-      const nonDrugUpserts: any[] = []
+      const nonDrugUpserts: CatalogUpsert[] = []
       for (const [itemCode, items] of groupedNonDrugs.entries()) {
         const primaryItem = items[0]
         const name = primaryItem[4]
@@ -4184,7 +3571,7 @@ export async function triggerApplSync(
         if (data) nonDrugsUpsertedCount += data.length
       }
 
-      const supplierUpserts: any[] = []
+      const supplierUpserts: CatalogSupplierUpsert[] = []
       for (const [drugCode, suppliers] of suppliersByDrugCode.entries()) {
         const drugId = drugIdMap.get(drugCode)
         if (!drugId) continue
@@ -4224,37 +3611,7 @@ export async function triggerApplSync(
       }
     }
 
-    // Local Mock Simulation
-    await new Promise(resolve => setTimeout(resolve, 2000)) // Simulation delay
-
-    // Update prices of some mock items slightly to simulate a real change
-    mockDrugs.forEach(d => {
-      if (d.procurement_vote === 'appl' && d.price) {
-        d.price = parseFloat((d.price * (1 + (Math.random() * 0.1 - 0.05))).toFixed(2))
-      }
-    })
-
-    const newLog = {
-      id: `log-${Date.now()}`,
-      hospital_id: hospitalId,
-      synced_at: new Date().toISOString(),
-      status: 'success' as const,
-      sheet_tab: 'Lampiran B',
-      rows_fetched: 612,
-      drugs_upserted: Math.floor(Math.random() * 5) + 1,
-      suppliers_upserted: Math.floor(Math.random() * 15) + 5,
-      triggered_by: 'manual' as const
-    }
-    mockApplSyncLogs.push(newLog)
-
-    return {
-      data: {
-        rows_processed: 612,
-        drugs_upserted: newLog.drugs_upserted,
-        suppliers_upserted: newLog.suppliers_upserted,
-      },
-      error: null,
-    }
+    throw new Error('Inventory service unavailable')
   } catch (error) {
     console.error('Error triggering APPL sync:', error)
     return {
@@ -4629,7 +3986,7 @@ export async function triggerLpSync(
  */
 export async function getLpSyncLogs(
   hospitalId: string
-): Promise<ApiResponse<any[]>> {
+): Promise<ApiResponse<CatalogSyncLog[]>> {
   try {
     if (isSupabaseConfigured()) {
       const { data, error } = await supabase
@@ -4940,7 +4297,7 @@ export async function triggerCcSync(
         .eq('hospital_id', hospitalId)
         .eq('procurement_vote', 'cc');
 
-      const drugUpserts = dataRows.map((row, idx) => {
+      const drugUpserts = dataRows.map(row => {
         let mdc = mdcIdx !== -1 ? (row[mdcIdx]?.trim() || '') : '';
         const itemName = row[itemNameIdx]?.trim() || '';
         const packaging = row[packagingIdx]?.trim() || '';
@@ -5016,10 +4373,11 @@ export async function triggerCcSync(
       });
 
       // Deduplicate items by drug_code to prevent PostgreSQL ON CONFLICT error
-      const uniqueMap = new Map<string, any>();
+      const uniqueMap = new Map<string, CatalogUpsert>();
       drugUpserts.forEach((item, i) => {
         let code = item.drug_code;
-        if (uniqueMap.has(code) && uniqueMap.get(code).drug_name !== item.drug_name) {
+        const existing = uniqueMap.get(code || '')
+        if (existing && existing.drug_name !== item.drug_name) {
           code = `${code}-${i}`;
           item.drug_code = code;
         }
@@ -5189,7 +4547,7 @@ export async function importCcSyncCsv(
         }
 
         // Match DD/MM/YYYY or YYYY-MM-DD
-        const slashParts = cleanVal.split(/[\/\.-]/);
+        const slashParts = cleanVal.split(/[/.-]/);
         if (slashParts.length === 3) {
           const p1 = parseInt(slashParts[0], 10);
           const p2 = parseInt(slashParts[1], 10);
@@ -5411,7 +4769,7 @@ export async function importCcSyncCsv(
         .eq('hospital_id', hospitalId)
         .eq('procurement_vote', 'cc');
 
-      const drugUpserts = dataRows.map((row, idx) => {
+      const drugUpserts = dataRows.map(row => {
         let mdc = mdcIdx !== -1 ? (row[mdcIdx]?.trim() || '') : '';
         const itemName = row[itemNameIdx]?.trim() || '';
         const packaging = row[packagingIdx]?.trim() || '';
@@ -5480,13 +4838,14 @@ export async function importCcSyncCsv(
       });
 
       // Deduplicate items by drug_code to prevent PostgreSQL ON CONFLICT error
-      const uniqueMap = new Map<string, any>();
+      const uniqueMap = new Map<string, CatalogUpsert>();
       drugUpserts.forEach((item, i) => {
         let code = item.drug_code;
-        if (uniqueMap.has(code) && (
-          uniqueMap.get(code).cc_contract_number !== item.cc_contract_number ||
-          uniqueMap.get(code).cc_supplier_name !== item.cc_supplier_name ||
-          uniqueMap.get(code).drug_name !== item.drug_name
+        const existing = uniqueMap.get(code || '')
+        if (existing && (
+          existing.cc_contract_number !== item.cc_contract_number ||
+          existing.cc_supplier_name !== item.cc_supplier_name ||
+          existing.drug_name !== item.drug_name
         )) {
           code = `${code}-${i}`;
           item.drug_code = code;
@@ -5548,19 +4907,17 @@ export async function importCcSyncCsv(
  */
 export async function moveDrugToNonDrug(drugId: string, hospitalId: string): Promise<ApiResponse<{ id: string }>> {
   try {
-    let drugItem: any = null
+    if (!isSupabaseConfigured()) throw new Error('Inventory service unavailable')
+    const validHospitalId = sanitizeHospitalId(hospitalId)
+    let drugItem: DrugMoveSource | null = null
     if (isSupabaseConfigured()) {
       const { data, error } = await supabase
         .from('drugs')
         .select('*')
         .eq('id', drugId)
+        .eq('hospital_id', validHospitalId)
         .single()
-      if (!error && data) drugItem = data
-    }
-
-    if (!drugItem) {
-      const found = mockDrugs.find((d: any) => d.id === drugId)
-      if (found) drugItem = found
+      if (!error && data) drugItem = data as DrugMoveSource
     }
 
     if (!drugItem) {
@@ -5600,18 +4957,15 @@ export async function moveDrugToNonDrug(drugId: string, hospitalId: string): Pro
 
       if (insertErr) throw insertErr
       newId = created.id
-      await supabase.from('drugs').delete().eq('id', drugId)
+      await supabase.from('drugs').delete().eq('id', drugId).eq('hospital_id', validHospitalId)
     } else {
-      const newObj = { ...nonDrugPayload, id: drugId, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }
-      mockNonDrugs.push(newObj)
-      const idx = mockDrugs.findIndex((d: any) => d.id === drugId)
-      if (idx !== -1) mockDrugs.splice(idx, 1)
+      throw new Error('Inventory service unavailable')
     }
 
     return { data: { id: newId }, error: null }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Error moving drug to non-drug:', err)
-    return { data: null, error: err?.message || 'Gagal memindahkan item ke Non-Drug' }
+    return { data: null, error: err instanceof Error ? err.message : 'Gagal memindahkan item ke Non-Drug' }
   }
 }
 
@@ -5620,19 +4974,17 @@ export async function moveDrugToNonDrug(drugId: string, hospitalId: string): Pro
  */
 export async function moveNonDrugToDrug(nonDrugId: string, hospitalId: string): Promise<ApiResponse<{ id: string }>> {
   try {
-    let itemData: any = null
+    if (!isSupabaseConfigured()) throw new Error('Inventory service unavailable')
+    const validHospitalId = sanitizeHospitalId(hospitalId)
+    let itemData: NonDrugMoveSource | null = null
     if (isSupabaseConfigured()) {
       const { data, error } = await supabase
         .from('non_drugs')
         .select('*')
         .eq('id', nonDrugId)
+        .eq('hospital_id', validHospitalId)
         .single()
-      if (!error && data) itemData = data
-    }
-
-    if (!itemData) {
-      const found = mockNonDrugs.find((nd: any) => nd.id === nonDrugId)
-      if (found) itemData = found
+      if (!error && data) itemData = data as NonDrugMoveSource
     }
 
     if (!itemData) {
@@ -5674,18 +5026,15 @@ export async function moveNonDrugToDrug(nonDrugId: string, hospitalId: string): 
 
       if (insertErr) throw insertErr
       newId = created.id
-      await supabase.from('non_drugs').delete().eq('id', nonDrugId)
+      await supabase.from('non_drugs').delete().eq('id', nonDrugId).eq('hospital_id', validHospitalId)
     } else {
-      const newObj = { ...drugPayload, id: nonDrugId, created_at: new Date().toISOString(), updated_at: new Date().toISOString() }
-      mockDrugs.push(newObj)
-      const idx = mockNonDrugs.findIndex((nd: any) => nd.id === nonDrugId)
-      if (idx !== -1) mockNonDrugs.splice(idx, 1)
+      throw new Error('Inventory service unavailable')
     }
 
     return { data: { id: newId }, error: null }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Error moving non-drug to drug:', err)
-    return { data: null, error: err?.message || 'Gagal memindahkan item ke Ubat' }
+    return { data: null, error: err instanceof Error ? err.message : 'Gagal memindahkan item ke Ubat' }
   }
 }
 
@@ -5699,7 +5048,7 @@ function isValidUUID(uuid: string): boolean {
   return uuidRegex.test(uuid)
 }
 
-function sanitizeUuid(uuid: any): string | null {
+function sanitizeUuid(uuid: unknown): string | null {
   if (!uuid || typeof uuid !== 'string') return null
   const trimmed = uuid.trim()
   if (!trimmed) return null
@@ -5709,7 +5058,7 @@ function sanitizeUuid(uuid: any): string | null {
   return trimmed
 }
 
-function sanitizeDate(dateVal: any): string | null {
+function sanitizeDate(dateVal: unknown): string | null {
   if (!dateVal || typeof dateVal !== 'string') return null
   const trimmed = dateVal.trim()
   if (!trimmed || trimmed === '-' || trimmed === '—' || trimmed.toLowerCase() === 'n/a' || trimmed.toLowerCase() === 'not applicable') {
@@ -5718,19 +5067,19 @@ function sanitizeDate(dateVal: any): string | null {
   return parseAndNormalizeDate(trimmed) || null
 }
 
-function normalizeStatus(status: any): 'active' | 'inactive' {
+function normalizeStatus(status: unknown): 'active' | 'inactive' {
   if (status === 'active' || status === 'inactive') return status
   return 'active'
 }
 
-function normalizeProcurementVote(vote: any): 'appl' | 'cc' | 'dp' | 'lp' {
+function normalizeProcurementVote(vote: unknown): 'appl' | 'cc' | 'dp' | 'lp' {
   if (!vote || typeof vote !== 'string') return 'cc'
   const lower = vote.toLowerCase()
   if (lower === 'appl' || lower === 'cc' || lower === 'dp' || lower === 'lp') return lower
   return 'cc'
 }
 
-function normalizeDosageForm(form: any): string {
+function normalizeDosageForm(form: unknown): string {
   const allowed = [
     'tablet', 'capsule', 'injection', 'syrup', 'suspension',
     'cream', 'ointment', 'drops', 'inhaler', 'patch', 'suppository',
@@ -5747,7 +5096,7 @@ export async function createDrug(
   drugData: Partial<Drug>
 ): Promise<ApiResponse<DrugWithRelations>> {
   try {
-    const insertData: any = {
+    const insertData: CatalogUpsert = {
       hospital_id: hospitalId,
       drug_code: drugData.drug_code || `DRUG-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
       drug_name: drugData.drug_name || '',
@@ -5770,13 +5119,13 @@ export async function createDrug(
       supplier_id: sanitizeUuid(drugData.supplier_id),
       procurement_vote: normalizeProcurementVote(drugData.procurement_vote),
       price: drugData.price || null,
-      packaging_description: (drugData as any).packaging_description || null,
-      item_sub_class: (drugData as any).item_sub_class || null,
-      cc_contract_start_date: sanitizeDate((drugData as any).cc_contract_start_date),
-      cc_contract_end_date: sanitizeDate((drugData as any).cc_contract_end_date),
-      appl_effective_date: sanitizeDate((drugData as any).appl_effective_date),
-      lp_start_date: sanitizeDate((drugData as any).lp_start_date),
-      lp_end_date: sanitizeDate((drugData as any).lp_end_date),
+      packaging_description: drugData.packaging_description || null,
+      item_sub_class: drugData.item_sub_class || null,
+      cc_contract_start_date: sanitizeDate(drugData.cc_contract_start_date),
+      cc_contract_end_date: sanitizeDate(drugData.cc_contract_end_date),
+      appl_effective_date: sanitizeDate(drugData.appl_effective_date),
+      lp_start_date: sanitizeDate(drugData.lp_start_date),
+      lp_end_date: sanitizeDate(drugData.lp_end_date),
     }
 
     const normalizedInputName = (drugData.drug_name || '').trim().toLowerCase()
@@ -5808,27 +5157,7 @@ export async function createDrug(
       return { data: data as DrugWithRelations, error: null }
     }
 
-    if (normalizedInputName) {
-      const matched = mockDrugs.find(
-        d => (d.hospital_id === hospitalId || !d.hospital_id) && (d.drug_name || '').trim().toLowerCase() === normalizedInputName
-      )
-      if (matched) {
-        return {
-          data: null,
-          error: `Item "${matched.drug_name}" (Code: ${matched.drug_code || matched.sku || 'N/A'}) already exists in the system. Creation of duplicate items is disabled to preserve stock ledger integrity. Please edit the existing item to update its SKIM / Item Code instead.`,
-        }
-      }
-    }
-
-    const newId = `drug-${Date.now()}`
-    const newDrug: DrugWithRelations = {
-      id: newId,
-      ...insertData,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    }
-    mockDrugs.push(newDrug)
-    return { data: newDrug, error: null }
+    throw new Error('Inventory service unavailable')
   } catch (error) {
     console.error('Error creating drug in inventoryService:', error)
     return { data: null, error: error instanceof Error ? error.message : 'Failed to create drug' }
@@ -5841,7 +5170,7 @@ export async function updateDrug(
 ): Promise<ApiResponse<DrugWithRelations>> {
   try {
     const normVote = drugData.procurement_vote ? normalizeProcurementVote(drugData.procurement_vote) : undefined
-    const updateData: any = {
+    const updateData: CatalogUpsert = {
       ...drugData,
       dosage_form: drugData.dosage_form ? normalizeDosageForm(drugData.dosage_form) : undefined,
       status: drugData.status ? normalizeStatus(drugData.status) : undefined,
@@ -5873,24 +5202,7 @@ export async function updateDrug(
       return { data: data as DrugWithRelations, error: null }
     }
 
-    const idx = mockDrugs.findIndex(d => d.id === drugId)
-    if (idx !== -1) {
-      const updatedSupplier = updateData.supplier_id 
-        ? (mockSuppliers.find(s => s.id === updateData.supplier_id) || mockDrugs[idx].supplier)
-        : (updateData.supplier_id === null ? undefined : mockDrugs[idx].supplier)
-      const updatedCategory = updateData.category_id
-        ? (mockDrugCategories.find(c => c.id === updateData.category_id) || mockDrugs[idx].category)
-        : (updateData.category_id === null ? undefined : mockDrugs[idx].category)
-      mockDrugs[idx] = { 
-        ...mockDrugs[idx], 
-        ...updateData, 
-        supplier: updatedSupplier,
-        category: updatedCategory,
-        updated_at: new Date().toISOString() 
-      }
-      return { data: mockDrugs[idx], error: null }
-    }
-    return { data: null, error: 'Drug not found' }
+    throw new Error('Inventory service unavailable')
   } catch (error) {
     console.error('Error updating drug in inventoryService:', error)
     return { data: null, error: error instanceof Error ? error.message : 'Failed to update drug' }
@@ -5903,8 +5215,7 @@ export async function deleteDrug(drugId: string): Promise<ApiResponse<void>> {
       const { error } = await supabase.from('drugs').delete().eq('id', drugId)
       if (error) throw error
     } else {
-      const idx = mockDrugs.findIndex(d => d.id === drugId)
-      if (idx !== -1) mockDrugs.splice(idx, 1)
+      throw new Error('Inventory service unavailable')
     }
     return { data: undefined, error: null }
   } catch (error) {
@@ -5930,14 +5241,7 @@ export async function batchUpdateDrugStatus(
       return { data: { successCount: drugIds.length }, error: null }
     }
 
-    let count = 0
-    mockDrugs.forEach(d => {
-      if (drugIds.includes(d.id)) {
-        d.status = status
-        count++
-      }
-    })
-    return { data: { successCount: count }, error: null }
+    throw new Error('Inventory service unavailable')
   } catch (error) {
     console.error('Error in batchUpdateDrugStatus:', error)
     return { data: null, error: error instanceof Error ? error.message : 'Failed to batch update drug status' }
@@ -5949,7 +5253,7 @@ export async function createNonDrug(
   nonDrugData: Partial<NonDrug>
 ): Promise<ApiResponse<NonDrugWithRelations>> {
   try {
-    const insertData: any = {
+    const insertData: CatalogUpsert = {
       hospital_id: hospitalId,
       item_code: nonDrugData.item_code || `ND-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
       item_name: nonDrugData.item_name || '',
@@ -5964,12 +5268,12 @@ export async function createNonDrug(
       supplier_id: sanitizeUuid(nonDrugData.supplier_id),
       procurement_vote: normalizeProcurementVote(nonDrugData.procurement_vote),
       price: nonDrugData.price || null,
-      packaging_description: (nonDrugData as any).packaging_description || null,
-      cc_contract_start_date: sanitizeDate((nonDrugData as any).cc_contract_start_date),
-      cc_contract_end_date: sanitizeDate((nonDrugData as any).cc_contract_end_date),
-      appl_effective_date: sanitizeDate((nonDrugData as any).appl_effective_date),
-      lp_start_date: sanitizeDate((nonDrugData as any).lp_start_date),
-      lp_end_date: sanitizeDate((nonDrugData as any).lp_end_date),
+      packaging_description: nonDrugData.packaging_description || null,
+      cc_contract_start_date: sanitizeDate(nonDrugData.cc_contract_start_date),
+      cc_contract_end_date: sanitizeDate(nonDrugData.cc_contract_end_date),
+      appl_effective_date: sanitizeDate(nonDrugData.appl_effective_date),
+      lp_start_date: sanitizeDate(nonDrugData.lp_start_date),
+      lp_end_date: sanitizeDate(nonDrugData.lp_end_date),
     }
 
     const normalizedInputName = (nonDrugData.item_name || '').trim().toLowerCase()
@@ -6001,27 +5305,7 @@ export async function createNonDrug(
       return { data: data as NonDrugWithRelations, error: null }
     }
 
-    if (normalizedInputName) {
-      const matched = mockNonDrugs.find(
-        nd => (nd.hospital_id === hospitalId || !nd.hospital_id) && (nd.item_name || '').trim().toLowerCase() === normalizedInputName
-      )
-      if (matched) {
-        return {
-          data: null,
-          error: `Item "${matched.item_name}" (Code: ${matched.item_code || matched.sku || 'N/A'}) already exists in the system. Creation of duplicate items is disabled to preserve stock ledger integrity. Please edit the existing item to update its SKIM / Item Code instead.`,
-        }
-      }
-    }
-
-    const newId = `nd-${Date.now()}`
-    const newNonDrug: NonDrugWithRelations = {
-      id: newId,
-      ...insertData,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    }
-    mockNonDrugs.push(newNonDrug)
-    return { data: newNonDrug, error: null }
+    throw new Error('Inventory service unavailable')
   } catch (error) {
     console.error('Error creating non-drug in inventoryService:', error)
     return { data: null, error: error instanceof Error ? error.message : 'Failed to create non-drug' }
@@ -6034,7 +5318,7 @@ export async function updateNonDrug(
 ): Promise<ApiResponse<NonDrugWithRelations>> {
   try {
     const normVote = nonDrugData.procurement_vote ? normalizeProcurementVote(nonDrugData.procurement_vote) : undefined
-    const updateData: any = {
+    const updateData: CatalogUpsert = {
       ...nonDrugData,
       status: nonDrugData.status ? normalizeStatus(nonDrugData.status) : undefined,
       procurement_vote: normVote,
@@ -6065,24 +5349,7 @@ export async function updateNonDrug(
       return { data: data as NonDrugWithRelations, error: null }
     }
 
-    const idx = mockNonDrugs.findIndex(nd => nd.id === nonDrugId)
-    if (idx !== -1) {
-      const updatedSupplier = updateData.supplier_id 
-        ? (mockSuppliers.find(s => s.id === updateData.supplier_id) || mockNonDrugs[idx].supplier)
-        : (updateData.supplier_id === null ? undefined : mockNonDrugs[idx].supplier)
-      const updatedCategory = updateData.category_id
-        ? (mockNonDrugCategories.find(c => c.id === updateData.category_id) || mockNonDrugs[idx].category)
-        : (updateData.category_id === null ? undefined : mockNonDrugs[idx].category)
-      mockNonDrugs[idx] = { 
-        ...mockNonDrugs[idx], 
-        ...updateData, 
-        supplier: updatedSupplier,
-        category: updatedCategory,
-        updated_at: new Date().toISOString() 
-      }
-      return { data: mockNonDrugs[idx], error: null }
-    }
-    return { data: null, error: 'Non-drug not found' }
+    throw new Error('Inventory service unavailable')
   } catch (error) {
     console.error('Error updating non-drug in inventoryService:', error)
     return { data: null, error: error instanceof Error ? error.message : 'Failed to update non-drug' }
@@ -6095,8 +5362,7 @@ export async function deleteNonDrug(nonDrugId: string): Promise<ApiResponse<void
       const { error } = await supabase.from('non_drugs').delete().eq('id', nonDrugId)
       if (error) throw error
     } else {
-      const idx = mockNonDrugs.findIndex(nd => nd.id === nonDrugId)
-      if (idx !== -1) mockNonDrugs.splice(idx, 1)
+      throw new Error('Inventory service unavailable')
     }
     return { data: undefined, error: null }
   } catch (error) {
@@ -6122,14 +5388,7 @@ export async function batchUpdateNonDrugStatus(
       return { data: { successCount: nonDrugIds.length }, error: null }
     }
 
-    let count = 0
-    mockNonDrugs.forEach(nd => {
-      if (nonDrugIds.includes(nd.id)) {
-        nd.status = status
-        count++
-      }
-    })
-    return { data: { successCount: count }, error: null }
+    throw new Error('Inventory service unavailable')
   } catch (error) {
     console.error('Error in batchUpdateNonDrugStatus:', error)
     return { data: null, error: error instanceof Error ? error.message : 'Failed to batch update non-drug status' }
@@ -6144,104 +5403,62 @@ export async function batchUpdateNonDrugStatus(
 export async function clearStockTransactions(
   hospitalId: string,
   itemId?: string
-): Promise<ApiResponse<{ deletedTransactionsCount: number }>> {
+): Promise<ApiResponse<{
+  deletedTransactionsCount: number
+  deletedBatchesCount: number
+  resetDrugInventoryRows: number
+  resetNonDrugInventoryRows: number
+}>> {
+  const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+  if (!isSupabaseConfigured()) {
+    return { data: null, error: 'Supabase must be configured to reset inventory; no data was changed.' }
+  }
+  if (!uuidPattern.test(hospitalId)) {
+    return { data: null, error: 'A valid hospital is required to reset inventory; no data was changed.' }
+  }
+
+  const scopedItemId = itemId && itemId !== 'all' ? itemId : undefined
+  if (scopedItemId && !uuidPattern.test(scopedItemId)) {
+    return { data: null, error: 'A valid inventory item is required; no data was changed.' }
+  }
+
   try {
-    const isSpecificItem = itemId && itemId !== 'all'
-    let deletedCount = 0
+    const { data, error } = await supabase.rpc('clear_stock_history_and_reset_inventory', {
+      p_hospital_id: hospitalId,
+      p_item_id: scopedItemId ?? null,
+    })
+    if (error) return { data: null, error: `Inventory reset RPC failed: ${error.message}` }
 
-    if (isSupabaseConfigured()) {
-      if (isSpecificItem) {
-        // Delete transactions for specific item (try item_id first, then fallback queries)
-        const { count: c1 } = await supabase
-          .from('pharmacy_stock_transactions')
-          .delete({ count: 'exact' })
-          .eq('item_id', itemId)
-        
-        deletedCount = c1 || 0
+    const countKeys = [
+      'deletedTransactionsCount',
+      'deletedBatchesCount',
+      'resetDrugInventoryRows',
+      'resetNonDrugInventoryRows',
+    ] as const
+    if (!data || typeof data !== 'object' || Array.isArray(data)) {
+      return { data: null, error: 'Inventory reset RPC returned an invalid count result.' }
+    }
 
-        // Delete batches for specific item
-        await supabase
-          .from('pharmacy_stock_batches')
-          .delete()
-          .eq('item_id', itemId)
-
-        // Reset current stock counts
-        await supabase.from('facility_drug_inventory').update({ facility_stock: 0, updated_at: new Date().toISOString() }).eq('drug_id', itemId)
-        await supabase.from('facility_non_drug_inventory').update({ facility_stock: 0, updated_at: new Date().toISOString() }).eq('nondrug_id', itemId)
-      } else {
-        // Delete ALL stock transactions in the database unconditionally
-        const { count: cAll } = await supabase
-          .from('pharmacy_stock_transactions')
-          .delete({ count: 'exact' })
-          .neq('id', '00000000-0000-0000-0000-000000000000')
-
-        deletedCount = cAll || 0
-
-        // Delete ALL stock batches in the database unconditionally
-        await supabase
-          .from('pharmacy_stock_batches')
-          .delete()
-          .neq('id', '00000000-0000-0000-0000-000000000000')
-
-        // Reset current stock counts for all items
-        await supabase.from('facility_drug_inventory').update({ facility_stock: 0, updated_at: new Date().toISOString() }).neq('id', '00000000-0000-0000-0000-000000000000')
-        await supabase.from('facility_non_drug_inventory').update({ facility_stock: 0, updated_at: new Date().toISOString() }).neq('id', '00000000-0000-0000-0000-000000000000')
+    const result = data as Record<(typeof countKeys)[number], unknown>
+    for (const key of countKeys) {
+      if (typeof result[key] !== 'number' || !Number.isSafeInteger(result[key]) || result[key] < 0) {
+        return { data: null, error: `Inventory reset RPC returned an invalid ${key} count.` }
       }
     }
 
-    // 4. Reset in-memory mock stock values & localStorage caches if any
-    mockDrugs.forEach(d => {
-      if (!isSpecificItem || d.id === itemId) {
-        d.current_stock = 0
-        d.stock_status = 'out_of_stock'
-      }
-    })
-    mockNonDrugs.forEach(n => {
-      if (!isSpecificItem || n.id === itemId) {
-        n.current_stock = 0
-        n.stock_status = 'out_of_stock'
-      }
-    })
-
-    // Also update localStorage facility cache if present
-    try {
-      const drugCacheKey = `facility_drug_items_${hospitalId}`
-      const rawDrug = localStorage.getItem(drugCacheKey)
-      if (rawDrug) {
-        const cached = JSON.parse(rawDrug)
-        if (Array.isArray(cached)) {
-          const updated = cached.map((c: any) => {
-            if (!isSpecificItem || c.id === itemId || c.drug_id === itemId) {
-              return { ...c, facility_stock: 0 }
-            }
-            return c
-          })
-          localStorage.setItem(drugCacheKey, JSON.stringify(updated))
-        }
-      }
-
-      const nonDrugCacheKey = `facility_non_drug_items_${hospitalId}`
-      const rawNonDrug = localStorage.getItem(nonDrugCacheKey)
-      if (rawNonDrug) {
-        const cached = JSON.parse(rawNonDrug)
-        if (Array.isArray(cached)) {
-          const updated = cached.map((c: any) => {
-            if (!isSpecificItem || c.id === itemId || c.nondrug_id === itemId) {
-              return { ...c, facility_stock: 0 }
-            }
-            return c
-          })
-          localStorage.setItem(nonDrugCacheKey, JSON.stringify(updated))
-        }
-      }
-    } catch (e) {
-      console.warn('Error clearing local cache:', e)
+    return {
+      data: {
+        deletedTransactionsCount: result.deletedTransactionsCount as number,
+        deletedBatchesCount: result.deletedBatchesCount as number,
+        resetDrugInventoryRows: result.resetDrugInventoryRows as number,
+        resetNonDrugInventoryRows: result.resetNonDrugInventoryRows as number,
+      },
+      error: null,
     }
-
-    return { data: { deletedTransactionsCount: deletedCount }, error: null }
   } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown inventory reset failure'
     console.error('Error clearing stock transactions:', error)
-    return { data: null, error: error instanceof Error ? error.message : 'Failed to clear stock transactions' }
+    return { data: null, error: `Inventory reset RPC failed: ${message}` }
   }
 }
 

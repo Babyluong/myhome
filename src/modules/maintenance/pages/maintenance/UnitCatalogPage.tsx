@@ -1,21 +1,7 @@
 // @ts-nocheck
 import React, { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import {
-  Search,
-  Plus,
-  Edit,
-  History,
-  RefreshCw,
-  Filter,
-  Building2,
-  Package,
-  Users,
-  AlertCircle,
-  CheckCircle2,
-  XCircle,
-  TrendingUp,
-} from 'lucide-react'
+import 'framer-motion'
+import { Search, Plus, Edit, History, RefreshCw, Building2, Package, AlertCircle, CheckCircle2 } from 'lucide-react'
 import {
   Button,
   Input,
@@ -39,14 +25,7 @@ import {
   syncUnitCatalogCounts,
   getAvailableDepartments,
 } from '@/services/pharmacy/unitCatalogService'
-import {
-  getCatalogItems,
-  addCatalogItem,
-  addCatalogItems,
-  updateCatalogItem,
-  deleteCatalogItem,
-  toggleCatalogItem,
-} from '@/services/pharmacy/unitCatalogItemService'
+import { getCatalogItems, addCatalogItems, deleteCatalogItem, toggleCatalogItem } from '@/services/pharmacy/unitCatalogItemService'
 import { getDrugCatalog } from '@/services/pharmacy/drugCatalogService'
 import { getNonDrugCatalog } from '@/services/pharmacy/nonDrugCatalogService'
 import type {
@@ -100,7 +79,7 @@ const UnitCatalogFormModal: React.FC<UnitCatalogFormModalProps> = ({
     Array<{ id: string; department_code: string; department_name: string; module_code: string }>
   >([])
   const [users, setUsers] = useState<Array<{ id: string; full_name: string; employee_id: string }>>([])
-  const [isLoading, setIsLoading] = useState(false)
+  useState(false);
   const [isLoadingDepartments, setIsLoadingDepartments] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
   const [departmentsError, setDepartmentsError] = useState<string | null>(null)
@@ -1158,26 +1137,7 @@ export const UnitCatalogPage: React.FC = () => {
     }
   }
 
-  const handleDelete = async (catalog: UnitCatalogWithRelations) => {
-    if (!user?.id) return
-    const deptName = catalog.department?.department_name || 'this department'
-    if (!confirm(`Are you sure you want to delete the catalog for ${deptName}?`)) {
-      return
-    }
-
-    try {
-      const result = await deleteUnitCatalog(catalog.id, user.id)
-      if (result.error) {
-        showError('Error', result.error)
-        return
-      }
-      showSuccess('Success', 'Unit catalog deleted successfully')
-      await loadCatalogs()
-      await loadSummary()
-    } catch (error) {
-      console.error('Error deleting catalog:', error)
-    }
-  }
+  
 
   const handleSync = async () => {
     if (!user?.hospital_id) return

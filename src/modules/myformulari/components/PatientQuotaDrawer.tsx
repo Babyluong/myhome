@@ -1,24 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react'
-import {
-  X,
-  Users,
-  CheckCircle2,
-  Clock,
-  AlertTriangle,
-  UserPlus,
-  Search,
-  Building2,
-  FileCheck,
-  Stethoscope,
-  Calendar,
-  Package,
-  Trash2,
-  History,
-  Check,
-  ArrowRight,
-  ShieldCheck,
-  AlertCircle
-} from 'lucide-react'
+import { X, Users, CheckCircle2, Clock, AlertTriangle, UserPlus, Search, Building2, FileCheck, Stethoscope, Calendar, Package, Trash2, History, Check } from 'lucide-react'
 import { DrugQuotaItem, PatientQuotaRecord, PatientDispenseStatus } from '../types/drugQuotaTypes'
 import {
   getPatientsForDrugQuota,

@@ -1,39 +1,8 @@
 // src/modules/myformulari/pages/AntidoteProtocolPage.tsx
 import React, { useState, useMemo } from 'react'
-import {
-  ShieldAlert,
-  Search,
-  Filter,
-  Flame,
-  Clock,
-  Building2,
-  PhoneCall,
-  Printer,
-  ChevronRight,
-  ChevronDown,
-  ChevronUp,
-  Sparkles,
-  Layers,
-  HeartPulse,
-  Activity,
-  AlertTriangle,
-  FileText,
-  Syringe,
-  CheckCircle2,
-  Info,
-  List,
-  LayoutGrid,
-  ArrowUpDown,
-  ArrowUp,
-  ArrowDown,
-  Copy,
-  Check,
-  ExternalLink,
-  SlidersHorizontal,
-  Bookmark
-} from 'lucide-react'
+import { ShieldAlert, Search, Filter, Flame, Clock, Building2, Printer, ChevronRight, ChevronDown, ChevronUp, Layers, HeartPulse, Activity, Syringe, Info, List, LayoutGrid, ArrowUpDown, ArrowUp, ArrowDown, Copy, Check, ExternalLink } from 'lucide-react'
 import { KKM_ANTIDOTE_DATABASE, TOXIDROME_CATEGORIES } from '../data/antidoteDatabase'
-import { AntidoteEntry, KKMStockTier, ToxidromeCategory } from '../types/antidoteTypes'
+import { AntidoteEntry, KKMStockTier } from '../types/antidoteTypes'
 import { AntidoteStockBadge } from '../components/AntidoteStockBadge'
 import { PRNHotlineCard } from '../components/PRNHotlineCard'
 import { AntidoteDetailModal } from '../components/AntidoteDetailModal'
@@ -707,7 +676,7 @@ export const AntidoteProtocolPage: React.FC = () => {
             <div
               key={item.id}
               onClick={() => handleOpenDetail(item)}
-              className="bg-surface rounded-2xl border border-border-default p-6 shadow-elevation-1 hover:border-border-strong hover:-translate-y-0.5 transition-all duration-150 flex flex-col justify-between group cursor-pointer relative overflow-hidden"
+              className="bg-surface rounded-2xl border border-border-default p-6 shadow-elevation-1 hover:border-border-strong hover:-translate-y-0.5 transition-[transform,opacity,border-color,box-shadow] duration-150 flex flex-col justify-between group cursor-pointer relative overflow-hidden"
             >
               {/* Top Accent Strip */}
               <div

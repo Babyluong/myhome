@@ -1,0 +1,5673 @@
+{
+  "taskId": "HOME-FIXES-20261013",
+  "sourceLog": "docs/test-reports/2026-10-13-home-health-lint.log",
+  "files": [
+    {
+      "file": "src/components/AppShell.tsx",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/AuthWrapper.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/BorrowingReviewModal.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/BufferLevelTable.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/ClientOnly.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/ErrorBoundary.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/InventorySearchFilter.tsx",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 3,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/InventoryTable.tsx",
+      "errors": 5,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 2,
+        "no-case-declarations": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/ItemAnalyticsModal.tsx",
+      "errors": 5,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 1,
+        "@typescript-eslint/no-unused-vars": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/LoanReviewModal.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/ManualIssuanceModal.tsx",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 1,
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/MedicalOxygenSearchFilter.tsx",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/MedicalOxygenTable.tsx",
+      "errors": 10,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 7,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/Nav.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/PhysicalIssuanceModal.tsx",
+      "errors": 3,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 2,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/ReviewModal.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/SearchAndFilter.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/SidebarNav.tsx",
+      "errors": 4,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/TransactionDetailsModal.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/UnitItemModal.tsx",
+      "errors": 4,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1,
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/charts/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/forms/AccessRequestForm.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "react-refresh/only-export-components": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/forms/ChangePasswordForm.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "react-refresh/only-export-components": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/forms/DepartmentForm.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "react-refresh/only-export-components": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/forms/HospitalAdminForm.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "react-refresh/only-export-components": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/forms/HospitalForm.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "react-refresh/only-export-components": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/forms/InquiryForm.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "react-refresh/only-export-components": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/forms/LoginForm.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "react-refresh/only-export-components": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/forms/ResetPasswordForm.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "react-refresh/only-export-components": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/forms/UserForm.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "react-refresh/only-export-components": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/forms/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/kunci/ScanKunciMovementModal.tsx",
+      "errors": 9,
+      "warnings": 3,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 4,
+        "react-hooks/exhaustive-deps": 3,
+        "@typescript-eslint/no-explicit-any": 5
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/layout/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/AuditReconciliationSummaryModal.tsx",
+      "errors": 5,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 4
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/CreateReceiveDocumentModal.tsx",
+      "errors": 14,
+      "warnings": 2,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 6,
+        "@typescript-eslint/no-explicit-any": 7,
+        "react-hooks/exhaustive-deps": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/CreateRequestDocumentModal.tsx",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/CreateReturnDocumentModal.tsx",
+      "errors": 14,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 10,
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-explicit-any": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/CylinderDispatchPrintView.tsx",
+      "errors": 9,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 8,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/CylinderDispatchTable.tsx",
+      "errors": 5,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 3,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/CylinderKpiCards.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/CylinderOfflineBanner.tsx",
+      "errors": 7,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 6
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/CylinderStockReconciliationModal.tsx",
+      "errors": 14,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 9,
+        "@typescript-eslint/no-explicit-any": 4
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/DeleteCylinderModal.tsx",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 4,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/DeleteDispatchConfirmModal.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/DispatchRequestDetailModal.tsx",
+      "errors": 27,
+      "warnings": 8,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 9,
+        "react-refresh/only-export-components": 5,
+        "@typescript-eslint/no-explicit-any": 17,
+        "react-hooks/exhaustive-deps": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/EditCylinderModal.tsx",
+      "errors": 5,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 3,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/EmptyCylinderListModal.tsx",
+      "errors": 3,
+      "warnings": 2,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 2,
+        "react-hooks/exhaustive-deps": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/ManualIssueModal.tsx",
+      "errors": 32,
+      "warnings": 2,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 3,
+        "@typescript-eslint/no-explicit-any": 28,
+        "react-hooks/exhaustive-deps": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/ReceiveDocumentPrintView.tsx",
+      "errors": 10,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 3,
+        "@typescript-eslint/no-explicit-any": 6,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/ReceiveInterFacilityModal.tsx",
+      "errors": 12,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 6,
+        "@typescript-eslint/no-explicit-any": 5
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/RegisterAvailableCylindersModal.tsx",
+      "errors": 5,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 3,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/RequestDocumentPrintView.tsx",
+      "errors": 3,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-unused-vars": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/ReturnDocumentPrintView.tsx",
+      "errors": 14,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 11,
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-unused-vars": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/ReturnInterFacilityModal.tsx",
+      "errors": 24,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 15,
+        "@typescript-eslint/no-explicit-any": 8,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/ScanEmptyCylinderModal.tsx",
+      "errors": 38,
+      "warnings": 2,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 6,
+        "@typescript-eslint/no-explicit-any": 32,
+        "react-hooks/exhaustive-deps": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/ScanReconciliationModal.tsx",
+      "errors": 6,
+      "warnings": 5,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 2,
+        "react-refresh/only-export-components": 3,
+        "react-hooks/exhaustive-deps": 2,
+        "@typescript-eslint/no-explicit-any": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/StoreBalanceGrid.tsx",
+      "errors": 5,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 3,
+        "react-refresh/only-export-components": 1,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/StoreUsageBalanceTable.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/SupplierCylinderTrackingSection.tsx",
+      "errors": 20,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 13,
+        "@typescript-eslint/no-explicit-any": 6,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/SupplierReturnsSection.tsx",
+      "errors": 42,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 3,
+        "@typescript-eslint/no-explicit-any": 39,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/UnitDistributionTable.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/oxygen/UnitRequestModal.tsx",
+      "errors": 11,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 6,
+        "@typescript-eslint/no-explicit-any": 4,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/pharmacy/ExcelImport.tsx",
+      "errors": 17,
+      "warnings": 2,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 14,
+        "react-hooks/exhaustive-deps": 2,
+        "@typescript-eslint/no-unused-vars": 1,
+        "no-irregular-whitespace": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/shared/ContactModal.tsx",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/shared/JataNegara.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/shared/PDFViewer.tsx",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 5
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/shared/PdfPreviewModal.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/shared/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/ui/Icons.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "react-refresh/only-export-components": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/ui/Modal.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "react-refresh/only-export-components": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/ui/PDFUpload.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "react-refresh/only-export-components": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/ui/button.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "react-refresh/only-export-components": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/ui/data-table.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/ui/empty-state.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "react-refresh/only-export-components": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/ui/input.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "react-refresh/only-export-components": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/components/ui/skeleton.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "react-refresh/only-export-components": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/config/systemReleases.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/hooks/usePWAInstall.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/lib/drugCategorizer.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/middleware.ts",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/admin/pages/accessRequests/AccessRequestDetailPage.tsx",
+      "errors": 3,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 2,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/accessRequests/AccessRequestListPage.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/accessRequests/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/alerts/AlertCenterPage.tsx",
+      "errors": 7,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 4,
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/alerts/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/auditLogs/AuditLogPage.tsx",
+      "errors": 6,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 5,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/auditLogs/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/backups/BackupManagementPage.tsx",
+      "errors": 5,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 4,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/backups/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/clinics/ClinicDetailPage.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/clinics/ClinicListPage.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/departments/DepartmentDetailPage.tsx",
+      "errors": 5,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 4,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/departments/DepartmentListPage.tsx",
+      "errors": 2,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/departments/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/hospitals/HospitalDetailPage.tsx",
+      "errors": 10,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 8,
+        "@typescript-eslint/no-explicit-any": 1,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/hospitals/HospitalListPage.tsx",
+      "errors": 4,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 3,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/hospitals/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/modules/ModuleAccessControlPage.tsx",
+      "errors": 8,
+      "warnings": 2,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 7,
+        "react-hooks/exhaustive-deps": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/modules/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/monitoring/SystemMonitoringPage.tsx",
+      "errors": 5,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 2,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/monitoring/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/roles/RoleListPage.tsx",
+      "errors": 3,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 2,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/roles/RolePermissionPage.tsx",
+      "errors": 3,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-unused-vars": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/roles/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/settings/SystemSettingsPage.tsx",
+      "errors": 3,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 2,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/settings/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/systemLogs/SystemLogsPage.tsx",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 5
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/systemLogs/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/users/UserDetailPage.tsx",
+      "errors": 4,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 3,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/users/UserListPage.tsx",
+      "errors": 9,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 8,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/pages/users/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/admin/services/accessRequestManagementService.ts",
+      "errors": 8,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 5,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/admin/services/accessRequestService.ts",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/admin/services/alertService.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/admin/services/auditLogService.ts",
+      "errors": 4,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 2,
+        "prefer-const": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/admin/services/backupService.ts",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/admin/services/departmentService.ts",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "prefer-const": 4,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/admin/services/hospitalService.ts",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/admin/services/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/admin/services/moduleService.ts",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 4,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/admin/services/monitoringService.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/admin/services/roleService.ts",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1,
+        "prefer-const": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/admin/services/systemAdminFixService.ts",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/admin/services/systemAdminService.ts",
+      "errors": 7,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1,
+        "@typescript-eslint/no-explicit-any": 5
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/admin/services/systemLogService.ts",
+      "errors": 4,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 2,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/admin/services/systemSettingsService.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/admin/services/userAccountFixService.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/admin/services/userService.ts",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1,
+        "prefer-const": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/auth/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/auth/pages/LoginPage.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/auth/services/authService.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/auth/services/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/catalog/pages/catalog/ContractCatalogPage.tsx",
+      "errors": 8,
+      "warnings": 2,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 3,
+        "@typescript-eslint/no-explicit-any": 4,
+        "react-hooks/exhaustive-deps": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/catalog/pages/catalog/DrugCatalogPage.tsx",
+      "errors": 36,
+      "warnings": 3,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 7,
+        "@typescript-eslint/no-explicit-any": 28,
+        "react-hooks/exhaustive-deps": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/catalog/pages/catalog/FacilityCatalogPage.tsx",
+      "errors": 28,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 7,
+        "@typescript-eslint/no-explicit-any": 21
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/catalog/pages/catalog/NonDrugCatalogPage.tsx",
+      "errors": 26,
+      "warnings": 3,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 7,
+        "@typescript-eslint/no-explicit-any": 18,
+        "react-hooks/exhaustive-deps": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/catalog/pages/catalog/SupplierCatalogPage.tsx",
+      "errors": 11,
+      "warnings": 2,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 8,
+        "react-hooks/exhaustive-deps": 2,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/catalog/services/catalogService.ts",
+      "errors": 7,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 4,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/catalog/services/drugCatalogService.ts",
+      "errors": 10,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1,
+        "@typescript-eslint/no-explicit-any": 7,
+        "no-extra-semi": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/catalog/services/nonDrugCatalogService.ts",
+      "errors": 10,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1,
+        "@typescript-eslint/no-explicit-any": 7,
+        "no-extra-semi": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/distribution/components/IndentIssuePrintView.tsx",
+      "errors": 8,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 4,
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-explicit-any": 4
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/distribution/pages/distribution/IndentEntitlementPage.tsx",
+      "errors": 7,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 3,
+        "@typescript-eslint/no-explicit-any": 3,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/distribution/pages/distribution/IndentRequestDetailPage.tsx",
+      "errors": 5,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 4,
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/distribution/pages/distribution/IndentRequestFormPage.tsx",
+      "errors": 5,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 4
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/distribution/pages/distribution/IndentRequestListPage.tsx",
+      "errors": 9,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 4,
+        "@typescript-eslint/no-explicit-any": 4
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/distribution/pages/distribution/IssueCounterPage.tsx",
+      "errors": 17,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 9,
+        "@typescript-eslint/no-explicit-any": 5,
+        "react-hooks/exhaustive-deps": 1,
+        "no-empty": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/distribution/pages/distribution/TransferRequestListPage.tsx",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/distribution/pages/distribution/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/distribution/services/distributionService.ts",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/distribution/services/indentService.ts",
+      "errors": 31,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 4,
+        "no-empty": 3,
+        "prefer-const": 2,
+        "@typescript-eslint/no-explicit-any": 21
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/financial/pages/financial/APPLAllocationPage.tsx",
+      "errors": 22,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 12,
+        "@typescript-eslint/no-explicit-any": 9
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/financial/pages/financial/BudgetOverviewPage.tsx",
+      "errors": 4,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 3,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/financial/pages/financial/CCAllocationPage.tsx",
+      "errors": 23,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 12,
+        "@typescript-eslint/no-explicit-any": 10
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/financial/pages/financial/HospitalBudgetForecastPage.tsx",
+      "errors": 17,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 12,
+        "@typescript-eslint/no-explicit-any": 4,
+        "react-hooks/exhaustive-deps": 1,
+        "prefer-const": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/financial/pages/financial/LPAllocationPage.tsx",
+      "errors": 13,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 8,
+        "@typescript-eslint/no-explicit-any": 4,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/financial/pages/financial/WarrantPage.tsx",
+      "errors": 24,
+      "warnings": 2,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 16,
+        "@typescript-eslint/no-explicit-any": 7,
+        "react-hooks/exhaustive-deps": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/financial/pages/financial/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/financial/services/applAllocationService.ts",
+      "errors": 16,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 3,
+        "@typescript-eslint/no-explicit-any": 10,
+        "prefer-const": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/financial/services/applExportService.ts",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/financial/services/budgetEngine.ts",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1,
+        "@typescript-eslint/no-explicit-any": 4
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/financial/services/budgetService.ts",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 5
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/financial/services/ccAllocationService.ts",
+      "errors": 11,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 9,
+        "prefer-const": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/financial/services/ccExportService.ts",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/financial/services/hospitalBudgetService.ts",
+      "errors": 4,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 3,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/financial/services/lpAllocationService.ts",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/financial/services/warrantExportService.ts",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/financial/services/warrantService.ts",
+      "errors": 10,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 9
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/hospital-admin/pages/memos/MemoListPage.tsx",
+      "errors": 5,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 4,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hospital-admin/pages/sensitiveData/SensitiveDataRequestDetailPage.tsx",
+      "errors": 3,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 2,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hospital-admin/pages/sensitiveData/SensitiveDataRequestListPage.tsx",
+      "errors": 3,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 2,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hospital-admin/services/hospitalAdminService.ts",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/hospital-admin/services/hospitalBackupService.ts",
+      "errors": 4,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 3
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/hospital-admin/services/hospitalHealthService.ts",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/hospital-admin/services/hospitalLogService.ts",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/hospital-admin/services/memoService.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/hospital-admin/services/patientDatabaseMonitorService.ts",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/hospital-admin/services/sensitiveDataRequestService.ts",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/hub/components/AdminBroadcastModal.tsx",
+      "errors": 11,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 7,
+        "@typescript-eslint/no-explicit-any": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/components/SystemBroadcastBanner.tsx",
+      "errors": 5,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 3,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/components/SystemUpdateLogModal.tsx",
+      "errors": 8,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 5,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/ModuleHubPage.tsx",
+      "errors": 12,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 11
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/gallery/AlbumDetailPage.tsx",
+      "errors": 7,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 5,
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/gallery/MyGalleryPage.tsx",
+      "errors": 2,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/modules/AdminSubMenu.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/modules/BorangSubMenu.tsx",
+      "errors": 7,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 6
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/modules/CutiSubMenu.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/modules/CylinderSubMenu.tsx",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 2,
+        "@typescript-eslint/no-explicit-any": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/modules/FileSubMenu.tsx",
+      "errors": 8,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 7
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/modules/FormulariSubMenu.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/modules/InventorySubMenu.tsx",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 4,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/modules/KunciSubMenu.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/modules/PorterSubMenu.tsx",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/modules/StaffSubMenu.tsx",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 6
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/modules/SuhuSubMenu.tsx",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/modules/SuratSubMenu.tsx",
+      "errors": 8,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 4,
+        "@typescript-eslint/no-explicit-any": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/modules/TempahanSubMenu.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/modules/TimeOffSubMenu.tsx",
+      "errors": 4,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 4
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/modules/TransporterSubMenu.tsx",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 2,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/modules/WarrantSubMenu.tsx",
+      "errors": 8,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 6,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/modules/admin/AdminApprovalsTab.tsx",
+      "errors": 7,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 5,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/modules/admin/AdminDepartmentsTab.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/modules/admin/AdminRbacTab.tsx",
+      "errors": 19,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 12,
+        "@typescript-eslint/no-explicit-any": 7
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/modules/admin/AdminSystemLogsTab.tsx",
+      "errors": 9,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 6,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/hub/pages/modules/admin/AdminUsersTab.tsx",
+      "errors": 10,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 6,
+        "@typescript-eslint/no-explicit-any": 4
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/inventory/components/FacilityDrugMobileCard.tsx",
+      "errors": 4,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 3,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/inventory/components/FacilityNonDrugMobileCard.tsx",
+      "errors": 4,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 2,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/inventory/components/StoreLocationSelector.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/inventory/context/InventoryStoreContext.tsx",
+      "errors": 2,
+      "warnings": 3,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 2,
+        "react-hooks/exhaustive-deps": 2,
+        "react-refresh/only-export-components": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/inventory/pages/inventory/APPLInventoryPage.tsx",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1,
+        "@typescript-eslint/no-explicit-any": 4
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/inventory/pages/inventory/DrugInventoryPage.tsx",
+      "errors": 52,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 5,
+        "react-hooks/rules-of-hooks": 35,
+        "@typescript-eslint/no-explicit-any": 11
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/inventory/pages/inventory/FacilityDrugInventoryPage.tsx",
+      "errors": 46,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 15,
+        "@typescript-eslint/no-explicit-any": 30
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/inventory/pages/inventory/FacilityNonDrugInventoryPage.tsx",
+      "errors": 58,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 18,
+        "react-refresh/only-export-components": 1,
+        "@typescript-eslint/no-explicit-any": 39
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/inventory/pages/inventory/InventoryOverviewPage.tsx",
+      "errors": 14,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 10,
+        "@typescript-eslint/no-explicit-any": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/inventory/pages/inventory/InventoryReportPage.tsx",
+      "errors": 10,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 6,
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-explicit-any": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/inventory/pages/inventory/KewPs4LedgerPage.tsx",
+      "errors": 75,
+      "warnings": 4,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 26,
+        "@typescript-eslint/no-explicit-any": 48,
+        "react-hooks/exhaustive-deps": 4
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/inventory/pages/inventory/NearExpiryPage.tsx",
+      "errors": 19,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 15,
+        "no-empty": 1,
+        "@typescript-eslint/no-explicit-any": 2,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/inventory/pages/inventory/NonDrugInventoryPage.tsx",
+      "errors": 49,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 3,
+        "react-hooks/rules-of-hooks": 34,
+        "@typescript-eslint/no-explicit-any": 11
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/inventory/pages/inventory/SlowMovingPage.tsx",
+      "errors": 2,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/inventory/pages/inventory/StockMovementScannerPage.tsx",
+      "errors": 10,
+      "warnings": 2,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 5,
+        "@typescript-eslint/no-explicit-any": 3,
+        "react-hooks/exhaustive-deps": 2,
+        "no-empty": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/inventory/pages/inventory/StoreLocationManagementPage.tsx",
+      "errors": 25,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 7,
+        "@typescript-eslint/no-explicit-any": 15,
+        "no-empty": 3,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/inventory/pages/inventory/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/inventory/services/inventoryService.ts",
+      "errors": 109,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 9,
+        "no-empty": 8,
+        "@typescript-eslint/no-explicit-any": 80,
+        "prefer-const": 7,
+        "no-extra-semi": 2,
+        "no-useless-escape": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/maintenance/pages/maintenance/StockLocationPage.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/maintenance/pages/maintenance/StockVerificationPage.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/maintenance/pages/maintenance/UnitCatalogPage.tsx",
+      "errors": 15,
+      "warnings": 6,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 10,
+        "react-hooks/exhaustive-deps": 6,
+        "@typescript-eslint/no-explicit-any": 4
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/maintenance/pages/maintenance/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/maintenance/services/maintenanceService.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/maintenance/services/unitCatalogItemService.ts",
+      "errors": 7,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 6
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/maintenance/services/unitCatalogService.ts",
+      "errors": 4,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 2,
+        "prefer-const": 1,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mycrossborder/pages/CrossborderCreatePage.tsx",
+      "errors": 9,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 4,
+        "@typescript-eslint/no-explicit-any": 5
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mycrossborder/pages/CrossborderDashboardPage.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mycrossborder/pages/CrossborderDetailPage.tsx",
+      "errors": 13,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 3,
+        "@typescript-eslint/no-explicit-any": 10,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mycrossborder/pages/CrossborderLogPage.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mycrossborder/services/crossborderPdfService.ts",
+      "errors": 17,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 17
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mycrossborder/services/crossborderService.ts",
+      "errors": 16,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 6,
+        "@typescript-eslint/no-explicit-any": 10
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mycylinder/components/CylinderQrTag.tsx",
+      "errors": 2,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 2,
+        "react-refresh/only-export-components": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mycylinder/hooks/useCylinderOffline.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mycylinder/pages/oxygen/CylinderKewPs4LedgerPage.tsx",
+      "errors": 49,
+      "warnings": 3,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 41,
+        "react-hooks/exhaustive-deps": 3,
+        "@typescript-eslint/no-explicit-any": 7
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mycylinder/pages/oxygen/CylinderMaintenancePage.tsx",
+      "errors": 10,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 6,
+        "@typescript-eslint/no-explicit-any": 3,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mycylinder/pages/oxygen/CylinderReportPage.tsx",
+      "errors": 110,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 29,
+        "@typescript-eslint/no-explicit-any": 79,
+        "prefer-const": 1,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mycylinder/pages/oxygen/OxygenAnalytics.tsx",
+      "errors": 3,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 2,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mycylinder/pages/oxygen/OxygenDashboardPage.tsx",
+      "errors": 89,
+      "warnings": 3,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 35,
+        "@typescript-eslint/no-explicit-any": 52,
+        "no-unsafe-optional-chaining": 1,
+        "react-hooks/exhaustive-deps": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mycylinder/pages/oxygen/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mycylinder/services/cylinderDispatchPdfService.ts",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1,
+        "@typescript-eslint/no-explicit-any": 3,
+        "prefer-const": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mycylinder/services/cylinderDispatchService.ts",
+      "errors": 32,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 28,
+        "prefer-const": 3
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mycylinder/services/cylinderKewPs4Service.ts",
+      "errors": 38,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 33,
+        "no-useless-escape": 3,
+        "prefer-const": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mycylinder/services/cylinderMaintenanceService.ts",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 6
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mycylinder/services/cylinderOfflineDB.ts",
+      "errors": 18,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 15,
+        "@typescript-eslint/no-unused-vars": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mycylinder/services/cylinderOfflineService.ts",
+      "errors": 17,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1,
+        "@typescript-eslint/no-explicit-any": 15
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mycylinder/services/cylinderReportService.ts",
+      "errors": 27,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 17,
+        "@typescript-eslint/no-unused-vars": 4,
+        "prefer-const": 2,
+        "no-extra-semi": 3
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mycylinder/services/cylinderSyncEngine.ts",
+      "errors": 7,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 5,
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mycylinder/services/oxygenPdfService.ts",
+      "errors": 12,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1,
+        "@typescript-eslint/no-explicit-any": 10
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mycylinder/services/oxygenService.ts",
+      "errors": 147,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 5,
+        "@typescript-eslint/no-explicit-any": 130,
+        "no-empty": 9,
+        "prefer-const": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/myformulari/components/AddEditPaediatricProtocolModal.tsx",
+      "errors": 5,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 4,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/components/AddPatientQuotaModal.tsx",
+      "errors": 11,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 9,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/components/AddQuotaDrugModal.tsx",
+      "errors": 8,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 8
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/components/AddStockDisruptionModal.tsx",
+      "errors": 7,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 6,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/components/AntidoteDetailModal.tsx",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 6
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/components/AntimicrobialTable.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/components/ArtemetherScheduleCalculator.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/components/DilutionCard.tsx",
+      "errors": 11,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 11
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/components/DrugBadge.tsx",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/components/DrugCard.tsx",
+      "errors": 9,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 9
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/components/DrugInteractionModal.tsx",
+      "errors": 4,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 4
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/components/EditQuotaDrugModal.tsx",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 6
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/components/InventoryDrugPickerModal.tsx",
+      "errors": 7,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 4,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/components/NAGCategoryDirectory.tsx",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 6
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/components/NAGClinicalMonograph.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/components/NAGMasterSidebar.tsx",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 6
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/components/NAGSyncManagerModal.tsx",
+      "errors": 5,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 4,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/components/PRNHotlineCard.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/components/PaediatricDoseCalculatorModal.tsx",
+      "errors": 7,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 4,
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-explicit-any": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/components/PatientQuotaDrawer.tsx",
+      "errors": 4,
+      "warnings": 2,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 3,
+        "react-hooks/exhaustive-deps": 2,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/components/QuotaDispenseHistoryModal.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/components/RecordQuotaDispenseModal.tsx",
+      "errors": 8,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 8
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/components/ShelfLifeWidget.tsx",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/data/antimicrobialData.ts",
+      "errors": 4,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 3,
+        "no-useless-escape": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/myformulari/data/formulariDatabase.ts",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/myformulari/pages/AntidoteProtocolPage.tsx",
+      "errors": 8,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 8
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/pages/AntimicrobialGuidelinePage.tsx",
+      "errors": 4,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 4
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/pages/DilutionProtocolPage.tsx",
+      "errors": 15,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 14,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/pages/DrugAlternativesPage.tsx",
+      "errors": 5,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 4,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/pages/DrugDetailPage.tsx",
+      "errors": 13,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 10,
+        "@typescript-eslint/no-explicit-any": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/pages/DrugQuotaPage.tsx",
+      "errors": 16,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 13,
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-explicit-any": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/pages/FormulariDashboardPage.tsx",
+      "errors": 19,
+      "warnings": 2,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 19,
+        "react-hooks/exhaustive-deps": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/pages/HamListPage.tsx",
+      "errors": 8,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 6,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/pages/HospitalLawasFormulariPage.tsx",
+      "errors": 12,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 7,
+        "@typescript-eslint/no-explicit-any": 4
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/pages/LasaListPage.tsx",
+      "errors": 10,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 8,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/pages/PaediatricCataloguePage.tsx",
+      "errors": 21,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 12,
+        "@typescript-eslint/no-explicit-any": 8
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myformulari/services/drugQuotaService.ts",
+      "errors": 9,
+      "warnings": 0,
+      "rules": {
+        "no-empty": 5,
+        "@typescript-eslint/no-explicit-any": 4
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/myformulari/services/formulariService.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/myformulari/services/fukkmMatcher.ts",
+      "errors": 8,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 8
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/myformulari/services/nagService.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/myformulari/services/paediatricCataloguePdfService.ts",
+      "errors": 8,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 5,
+        "no-empty": 1,
+        "no-extra-semi": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/myformulari/services/paediatricCatalogueService.ts",
+      "errors": 7,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 2,
+        "@typescript-eslint/no-explicit-any": 4,
+        "prefer-const": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/myformulari/services/paediatricDoseService.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/myformulari/services/patientQuotaService.ts",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/myformulari/services/stockDisruptionService.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "no-empty": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mykunci/pages/KunciAuditPage.tsx",
+      "errors": 6,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 4,
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mykunci/pages/KunciDashboardPage.tsx",
+      "errors": 17,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 13,
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-explicit-any": 4
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mykunci/pages/KunciLogPage.tsx",
+      "errors": 10,
+      "warnings": 2,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 6,
+        "react-hooks/exhaustive-deps": 2,
+        "@typescript-eslint/no-explicit-any": 4
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mykunci/pages/KunciPolicyPage.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mykunci/pages/KunciRegistryPage.tsx",
+      "errors": 12,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 6,
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-explicit-any": 6
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mykunci/services/kunciService.ts",
+      "errors": 20,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 2,
+        "@typescript-eslint/no-explicit-any": 14,
+        "no-empty": 4
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mymsds/components/GhsPictogram.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1,
+        "react-refresh/only-export-components": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mymsds/components/MsdsChemicalCard.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mymsds/components/MsdsDetailModal.tsx",
+      "errors": 7,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 7
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mymsds/pages/MyMsdsDashboardPage.tsx",
+      "errors": 8,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 8
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myperolehan/components/AddOrEditPerihalItemModal.tsx",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 5,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myperolehan/components/AddWarrantModal.tsx",
+      "errors": 2,
+      "warnings": 3,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1,
+        "react-hooks/exhaustive-deps": 3,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myperolehan/components/BudgetSummaryCards.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myperolehan/components/CreateAdminPOModal.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myperolehan/components/RecordPaymentModal.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myperolehan/pages/MyPerolehanDashboard.tsx",
+      "errors": 14,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 14,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myperolehan/pages/tabs/PengurusanBudgetTab.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myperolehan/pages/tabs/PerihalSuppliersTab.tsx",
+      "errors": 4,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 3,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myperolehan/pages/tabs/PerolehanOverviewTab.tsx",
+      "errors": 4,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 4
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myperolehan/pages/tabs/PurchaseOrdersTab.tsx",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myperolehan/pages/tabs/ReceivingPaymentsTab.tsx",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myperolehan/services/perolehanAdminService.ts",
+      "errors": 18,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 7,
+        "@typescript-eslint/no-explicit-any": 11
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/myphis/pages/MyPhisDashboardPage.tsx",
+      "errors": 16,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 11,
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-explicit-any": 5
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myphis/services/myphisService.ts",
+      "errors": 4,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 4
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/myporter/components/HandoverVerificationModal.tsx",
+      "errors": 2,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 2,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myporter/components/PorterAudioAlert.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myporter/components/PorterRadarAlertModal.tsx",
+      "errors": 5,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 5,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myporter/pages/PorterDashboardPage.tsx",
+      "errors": 10,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 9,
+        "@typescript-eslint/no-explicit-any": 1,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myporter/pages/PorterDriverPanelPage.tsx",
+      "errors": 23,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 19,
+        "@typescript-eslint/no-explicit-any": 4,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myporter/pages/PorterManagerDispatchPage.tsx",
+      "errors": 20,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 18,
+        "@typescript-eslint/no-explicit-any": 2,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myporter/pages/PorterMyRequestsPage.tsx",
+      "errors": 15,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 13,
+        "@typescript-eslint/no-explicit-any": 2,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myporter/pages/PorterReceiverPanelPage.tsx",
+      "errors": 15,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 13,
+        "@typescript-eslint/no-explicit-any": 2,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myporter/pages/PorterReportsPage.tsx",
+      "errors": 14,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 13,
+        "@typescript-eslint/no-explicit-any": 1,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myporter/pages/PorterRequestWizardPage.tsx",
+      "errors": 24,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 22,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myporter/pages/PorterRoleAssignmentPage.tsx",
+      "errors": 11,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 9,
+        "@typescript-eslint/no-explicit-any": 2,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myporter/pages/PorterRosterPage.tsx",
+      "errors": 19,
+      "warnings": 2,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 13,
+        "@typescript-eslint/no-explicit-any": 6,
+        "react-hooks/exhaustive-deps": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myporter/services/porterRosterPdfService.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/myporter/services/porterService.ts",
+      "errors": 36,
+      "warnings": 0,
+      "rules": {
+        "no-irregular-whitespace": 1,
+        "@typescript-eslint/no-unused-vars": 3,
+        "@typescript-eslint/no-explicit-any": 32
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/myprepacking/components/GalenicalPreparationMonographModal.tsx",
+      "errors": 5,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 5
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myprepacking/components/PrepackBatchCreateModal.tsx",
+      "errors": 9,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 7,
+        "@typescript-eslint/no-explicit-any": 2,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myprepacking/components/PrepackBringForwardModal.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myprepacking/components/PrepackCheckFoundModal.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myprepacking/components/PrepackDrugPickerModal.tsx",
+      "errors": 2,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1,
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myprepacking/components/PrepackItemModal.tsx",
+      "errors": 8,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 8
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myprepacking/components/PrepackLabelPrintModal.tsx",
+      "errors": 8,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 7,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myprepacking/components/PrepackStoreVerificationModal.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myprepacking/components/PrepackUsageModal.tsx",
+      "errors": 9,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 7,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myprepacking/components/RecentBatchesPanel.tsx",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myprepacking/components/StoreToCounterTransferModal.tsx",
+      "errors": 11,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 8,
+        "@typescript-eslint/no-explicit-any": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myprepacking/components/formulationEditor/FormulationAuditHistoryTab.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myprepacking/components/formulationEditor/FormulationGeneralTab.tsx",
+      "errors": 8,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 7,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myprepacking/components/formulationEditor/FormulationIngredientsTab.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myprepacking/components/formulationEditor/FormulationProcedureTab.tsx",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "no-useless-escape": 6
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myprepacking/data/kkmGalenicalMonographs.ts",
+      "errors": 15,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 3,
+        "@typescript-eslint/no-explicit-any": 9,
+        "prefer-const": 3
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/myprepacking/pages/PrepackBatchListPage.tsx",
+      "errors": 5,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 4,
+        "@typescript-eslint/no-explicit-any": 1,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myprepacking/pages/PrepackDashboardPage.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 1,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myprepacking/pages/PrepackItemListPage.tsx",
+      "errors": 13,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 9,
+        "@typescript-eslint/no-explicit-any": 4,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myprepacking/pages/PrepackKewPs4LedgerPage.tsx",
+      "errors": 10,
+      "warnings": 2,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 10,
+        "react-hooks/exhaustive-deps": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myprepacking/pages/PrepackLabelStudioPage.tsx",
+      "errors": 8,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 6,
+        "@typescript-eslint/no-explicit-any": 2,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myprepacking/pages/PrepackReportsPage.tsx",
+      "errors": 4,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 3,
+        "@typescript-eslint/no-explicit-any": 1,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myprepacking/pages/PrepackStockMovementPage.tsx",
+      "errors": 13,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 12,
+        "@typescript-eslint/no-explicit-any": 1,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myprepacking/pages/PrepackUsageHistoryPage.tsx",
+      "errors": 7,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 6,
+        "@typescript-eslint/no-explicit-any": 1,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/myprepacking/services/prepackKewPs4Service.ts",
+      "errors": 28,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 5,
+        "@typescript-eslint/no-explicit-any": 23
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/myprepacking/services/prepackService.ts",
+      "errors": 46,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 44,
+        "no-empty": 1,
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/myprepacking/types/prepack.ts",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mypriviledging/components/CredentialingCriteriaView.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mypriviledging/components/PriviledgingCertificatePrint.tsx",
+      "errors": 9,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 9
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mypriviledging/components/PriviledgingHeader.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mypriviledging/components/ProcedureCatalogExplorer.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mypriviledging/components/StaffCompetencyMatrix.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mypriviledging/components/SubmissionsTable.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mypriviledging/components/SubmitProcedureModal.tsx",
+      "errors": 4,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 4
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mypriviledging/data/defaultPriviledgingData.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mypriviledging/pages/AdminReviewQueuePage.tsx",
+      "errors": 0,
+      "warnings": 1,
+      "rules": {
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mypriviledging/pages/CredentialingCriteriaPage.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mypriviledging/pages/MySubmissionsPage.tsx",
+      "errors": 2,
+      "warnings": 1,
+      "rules": {
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-unused-vars": 1,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mypriviledging/pages/PriviledgingDashboardPage.tsx",
+      "errors": 3,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 2,
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mypriviledging/pages/ProcedureCatalogPage.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mypriviledging/services/priviledgingService.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mystaff/components/AuditLogDrawer.tsx",
+      "errors": 5,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 5
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mystaff/components/AuditReasonModal.tsx",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mystaff/pages/StaffCalendarPage.tsx",
+      "errors": 5,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 5,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mystaff/pages/StaffDashboardPage.tsx",
+      "errors": 12,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 11,
+        "@typescript-eslint/no-explicit-any": 1,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mystaff/pages/StaffDeadlinePage.tsx",
+      "errors": 13,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 11,
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mystaff/pages/StaffHodPage.tsx",
+      "errors": 11,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 9,
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mystaff/pages/StaffLeaveApplyPage.tsx",
+      "errors": 9,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 8,
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mystaff/pages/StaffLeavePage.tsx",
+      "errors": 6,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 6,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mystaff/pages/StaffMovementPage.tsx",
+      "errors": 15,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 8,
+        "@typescript-eslint/no-explicit-any": 7,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mystaff/pages/StaffOrgChartPage.tsx",
+      "errors": 25,
+      "warnings": 5,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 14,
+        "react-refresh/only-export-components": 2,
+        "no-empty": 3,
+        "react-hooks/exhaustive-deps": 3,
+        "@typescript-eslint/no-explicit-any": 5,
+        "prefer-const": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mystaff/pages/StaffReminderPage.tsx",
+      "errors": 6,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 5,
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mystaff/services/staffOrgChartService.ts",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 3
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mystaff/services/staffService.ts",
+      "errors": 20,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1,
+        "@typescript-eslint/no-explicit-any": 17,
+        "prefer-const": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mysuhu/pages/AdminSetupPage.tsx",
+      "errors": 8,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 5,
+        "react-hooks/exhaustive-deps": 1,
+        "@typescript-eslint/no-explicit-any": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mysuhu/pages/BreachLogPage.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mysuhu/pages/DepartmentSuhuPage.tsx",
+      "errors": 13,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 7,
+        "@typescript-eslint/no-explicit-any": 6,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mysuhu/pages/SuhuDashboardPage.tsx",
+      "errors": 4,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 4
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mysuhu/pages/UnitDetailPage.tsx",
+      "errors": 5,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 3,
+        "@typescript-eslint/no-explicit-any": 2,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mysuhu/services/suhuReportService.ts",
+      "errors": 29,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1,
+        "@typescript-eslint/no-explicit-any": 28
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mysuhu/services/suhuService.ts",
+      "errors": 16,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 16
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mytempahan/components/BookingDetailDrawer.tsx",
+      "errors": 5,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 5
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytempahan/pages/TempahanApprovalQueuePage.tsx",
+      "errors": 12,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 12
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytempahan/pages/TempahanCalendarPage.tsx",
+      "errors": 17,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 13,
+        "@typescript-eslint/no-explicit-any": 4
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytempahan/pages/TempahanDashboardPage.tsx",
+      "errors": 12,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 12,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytempahan/pages/TempahanMyBookingsPage.tsx",
+      "errors": 11,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 11
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytempahan/pages/TempahanReportsPage.tsx",
+      "errors": 12,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 12
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytempahan/pages/TempahanRequestFormPage.tsx",
+      "errors": 22,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 15,
+        "@typescript-eslint/no-explicit-any": 7
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytempahan/pages/TempahanRoomRegistryPage.tsx",
+      "errors": 19,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 15,
+        "@typescript-eslint/no-explicit-any": 4
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytempahan/services/tempahanExportService.ts",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mytempahan/services/tempahanPdfService.ts",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mytempahan/services/tempahanService.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mytempahan/services/tempahanValidation.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mytimeoff/pages/TimeOffClaimPage.tsx",
+      "errors": 7,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 4,
+        "prefer-const": 2,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytimeoff/pages/TimeOffDashboardPage.tsx",
+      "errors": 8,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 8,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytimeoff/pages/TimeOffHistoryPage.tsx",
+      "errors": 8,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 8,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytimeoff/pages/TimeOffHodPage.tsx",
+      "errors": 4,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 4,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytimeoff/pages/TimeOffMyClaimsPage.tsx",
+      "errors": 6,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 6,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytimeoff/pages/TimeOffRedeemPage.tsx",
+      "errors": 7,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 6,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytimeoff/services/toilService.ts",
+      "errors": 13,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 13
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mytransporter/pages/TransporterAdminApprovalPage.tsx",
+      "errors": 9,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 6,
+        "@typescript-eslint/no-explicit-any": 3,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytransporter/pages/TransporterAvailabilityPage.tsx",
+      "errors": 3,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 2,
+        "@typescript-eslint/no-explicit-any": 1,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytransporter/pages/TransporterDashboardPage.tsx",
+      "errors": 5,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 3,
+        "@typescript-eslint/no-explicit-any": 2,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytransporter/pages/TransporterDriverMonitorPage.tsx",
+      "errors": 14,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 9,
+        "@typescript-eslint/no-explicit-any": 5,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytransporter/pages/TransporterDriverPanelPage.tsx",
+      "errors": 13,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 5,
+        "@typescript-eslint/no-explicit-any": 8,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytransporter/pages/TransporterMyRequestsPage.tsx",
+      "errors": 14,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 5,
+        "@typescript-eslint/no-explicit-any": 9,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytransporter/pages/TransporterReportsPage.tsx",
+      "errors": 13,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 4,
+        "@typescript-eslint/no-explicit-any": 8,
+        "react-hooks/exhaustive-deps": 1,
+        "prefer-const": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytransporter/pages/TransporterRequestFormPage.tsx",
+      "errors": 20,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 9,
+        "@typescript-eslint/no-explicit-any": 11,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytransporter/pages/TransporterRoleAssignmentPage.tsx",
+      "errors": 11,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 9,
+        "@typescript-eslint/no-explicit-any": 2,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytransporter/pages/TransporterVehicleIssuesPage.tsx",
+      "errors": 13,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 8,
+        "@typescript-eslint/no-explicit-any": 5,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytransporter/pages/TransporterVehicleMovementPage.tsx",
+      "errors": 22,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 12,
+        "@typescript-eslint/no-explicit-any": 10,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytransporter/pages/TransporterVehicleRegistryPage.tsx",
+      "errors": 12,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 8,
+        "@typescript-eslint/no-explicit-any": 4,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mytransporter/services/transporterCrossborderPdf.ts",
+      "errors": 12,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 12
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mytransporter/services/transporterService.ts",
+      "errors": 51,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 6,
+        "@typescript-eslint/no-explicit-any": 45
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/mywarrant/pages/dashboard/PharmacyLogisticsDashboard.tsx",
+      "errors": 7,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 6,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mywarrant/pages/dashboard/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mywarrant/pages/mywarrant/MyWarrantDashboard.tsx",
+      "errors": 7,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 4,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/mywarrant/services/pharmacyDashboardService.ts",
+      "errors": 4,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 3
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/procurement/pages/procurement/APPLPenaltyDetailPage.tsx",
+      "errors": 37,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 12,
+        "@typescript-eslint/no-explicit-any": 24
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/procurement/pages/procurement/CCPenaltyDetailPage.tsx",
+      "errors": 24,
+      "warnings": 2,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 3,
+        "@typescript-eslint/no-explicit-any": 20,
+        "react-hooks/exhaustive-deps": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/procurement/pages/procurement/CreditNoteAuditPage.tsx",
+      "errors": 10,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 3,
+        "@typescript-eslint/no-unused-vars": 6,
+        "@typescript-eslint/no-explicit-any": 1,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/procurement/pages/procurement/ExcelUploadModal.tsx",
+      "errors": 11,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 4,
+        "@typescript-eslint/no-explicit-any": 6
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/procurement/pages/procurement/GoodsReceivingForm.tsx",
+      "errors": 39,
+      "warnings": 2,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 3,
+        "@typescript-eslint/no-unused-vars": 5,
+        "@typescript-eslint/no-explicit-any": 31,
+        "react-hooks/exhaustive-deps": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/procurement/pages/procurement/LPOListPage.tsx",
+      "errors": 39,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 15,
+        "@typescript-eslint/no-explicit-any": 21,
+        "prefer-const": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/procurement/pages/procurement/OrderTrackingPage.tsx",
+      "errors": 10,
+      "warnings": 2,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 4,
+        "@typescript-eslint/no-explicit-any": 5,
+        "react-hooks/exhaustive-deps": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/procurement/pages/procurement/PaymentPage.tsx",
+      "errors": 14,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 13
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/procurement/pages/procurement/PenaltyDetailPage.tsx",
+      "errors": 3,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 2,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/procurement/pages/procurement/PenaltyPage.tsx",
+      "errors": 11,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 10,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/procurement/pages/procurement/PurchaseOrderCreatePage.tsx",
+      "errors": 108,
+      "warnings": 6,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 18,
+        "@typescript-eslint/no-explicit-any": 87,
+        "prefer-const": 1,
+        "react-hooks/exhaustive-deps": 6,
+        "no-empty": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/procurement/pages/procurement/PurchaseOrderDetailPage.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/procurement/pages/procurement/PurchaseOrderDetailView.tsx",
+      "errors": 90,
+      "warnings": 3,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 17,
+        "@typescript-eslint/no-explicit-any": 70,
+        "react-hooks/exhaustive-deps": 3,
+        "prefer-const": 1,
+        "no-empty": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/procurement/pages/procurement/PurchaseOrderListPage.tsx",
+      "errors": 18,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 16,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/procurement/pages/procurement/ReceivingPage.tsx",
+      "errors": 22,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 6,
+        "@typescript-eslint/no-explicit-any": 15
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/procurement/pages/procurement/SupplierPerformancePage.tsx",
+      "errors": 13,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 8,
+        "@typescript-eslint/no-explicit-any": 4,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/procurement/pages/procurement/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/procurement/services/applPenaltyPdfService.ts",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 2,
+        "@typescript-eslint/no-explicit-any": 3
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/procurement/services/ccPenaltyPdfService.ts",
+      "errors": 17,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 3,
+        "@typescript-eslint/no-explicit-any": 13
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/procurement/services/creditNoteService.ts",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1,
+        "@typescript-eslint/no-explicit-any": 4
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/procurement/services/excelUploadService.ts",
+      "errors": 20,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 18,
+        "no-async-promise-executor": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/procurement/services/grPdfService.ts",
+      "errors": 15,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 2,
+        "@typescript-eslint/no-explicit-any": 12
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/procurement/services/lpoService.ts",
+      "errors": 33,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 28,
+        "prefer-const": 3,
+        "no-empty": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/procurement/services/orderTrackingReportPdfService.ts",
+      "errors": 15,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 13,
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/procurement/services/orderTrackingService.ts",
+      "errors": 26,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 2,
+        "@typescript-eslint/no-explicit-any": 23
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/procurement/services/paymentExcelParser.ts",
+      "errors": 15,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 13,
+        "no-async-promise-executor": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/procurement/services/penaltyService.ts",
+      "errors": 22,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 20,
+        "prefer-const": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/procurement/services/poPdfService.ts",
+      "errors": 23,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 19,
+        "@typescript-eslint/no-unused-vars": 2,
+        "prefer-const": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/procurement/services/procurementService.ts",
+      "errors": 46,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 5,
+        "@typescript-eslint/no-explicit-any": 33,
+        "no-empty": 7
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/procurement/services/receivingService.ts",
+      "errors": 10,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 9
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/profile/components/EditProfileModal.tsx",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 4,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/profile/components/ProfileChangeLogCard.tsx",
+      "errors": 4,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 2,
+        "@typescript-eslint/no-explicit-any": 1,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/profile/components/ProfilePhotoModal.tsx",
+      "errors": 7,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 4,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/profile/pages/profile/ProfilePage.tsx",
+      "errors": 4,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/profile/services/profileService.ts",
+      "errors": 25,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1,
+        "@typescript-eslint/no-explicit-any": 23
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/reports/pages/reports/FinancialReportPage.tsx",
+      "errors": 22,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 5,
+        "@typescript-eslint/no-explicit-any": 14,
+        "prefer-const": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/reports/pages/reports/ProcurementReportPage.tsx",
+      "errors": 23,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 10,
+        "@typescript-eslint/no-explicit-any": 12
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/reports/pages/reports/ReportsPage.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/reports/pages/reports/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/modules/reports/services/financialReportPdfService.ts",
+      "errors": 11,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 9,
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/reports/services/financialReportService.ts",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 5
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/reports/services/pdfMergeService.ts",
+      "errors": 5,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 3,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/reports/services/procurementReportPdfService.ts",
+      "errors": 12,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 10,
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/modules/reports/services/procurementReportService.ts",
+      "errors": 22,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 20,
+        "no-inner-declarations": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/pages/dashboard/DashboardPage.tsx",
+      "errors": 4,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 2,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/pages/dashboard/HospitalAdminDashboard.tsx",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 5
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/pages/dashboard/SystemAdminDashboard.tsx",
+      "errors": 8,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 5,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/pages/error/UnauthorizedPage.tsx",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/pages/pharmacy/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/routes/ProtectedRoute.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/routes/routes.tsx",
+      "errors": 15,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 15
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/services/aiService.ts",
+      "errors": 17,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 16,
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/services/baseService.ts",
+      "errors": 5,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1,
+        "@typescript-eslint/no-explicit-any": 4
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/services/emailService.ts",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/services/facilityService.ts",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 2,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/services/offlineAdapter.ts",
+      "errors": 18,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 2,
+        "@typescript-eslint/no-explicit-any": 16
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/services/offlineFetch.ts",
+      "errors": 11,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 10,
+        "no-empty": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/services/offlinePreloader.ts",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/services/offlineQueue.ts",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/services/offlineSyncService.ts",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 6
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/services/pharmacy/facilityDrugInventoryService.ts",
+      "errors": 21,
+      "warnings": 0,
+      "rules": {
+        "no-empty": 2,
+        "@typescript-eslint/no-explicit-any": 18,
+        "prefer-const": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/services/pharmacy/facilityInventoryExcelService.ts",
+      "errors": 24,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 24
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/services/pharmacy/facilityNonDrugInventoryService.ts",
+      "errors": 10,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 9,
+        "no-empty": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/services/pharmacy/formulariPdfService.ts",
+      "errors": 18,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 3,
+        "@typescript-eslint/no-explicit-any": 13,
+        "no-empty": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/services/pharmacy/googleSheetsService.ts",
+      "errors": 18,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 14,
+        "prefer-const": 1,
+        "no-useless-escape": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/services/pharmacy/index.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/services/pharmacy/mockData.ts",
+      "errors": 12,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 11
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/services/pharmacy/pharmacySettingsService.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/services/pharmacy/storeLocationPdfService.ts",
+      "errors": 12,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 9,
+        "no-empty": 1,
+        "prefer-const": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/services/pharmacy/storeLocationService.ts",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "no-empty": 2,
+        "@typescript-eslint/no-explicit-any": 4
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/services/pharmacy/storeSubLocationService.ts",
+      "errors": 4,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 3,
+        "no-empty": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/services/pharmacy/uploadService.ts",
+      "errors": 5,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-unused-vars": 1,
+        "@typescript-eslint/no-explicit-any": 3
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/services/rbacService.ts",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/services/supabase.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/services/systemAnnouncementService.ts",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/ban-ts-comment": 1,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/services/webSearchService.ts",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/shared/components/forms/AccessRequestForm.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/shared/components/forms/ChangePasswordForm.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/shared/components/forms/DepartmentForm.tsx",
+      "errors": 4,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 4,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/shared/components/forms/HospitalAdminForm.tsx",
+      "errors": 4,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 4
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/shared/components/forms/LoginForm.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/shared/components/forms/UserForm.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/shared/components/layout/Header.tsx",
+      "errors": 6,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 4,
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/shared/components/layout/MainLayout.tsx",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/shared/components/layout/Sidebar.tsx",
+      "errors": 10,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 5,
+        "@typescript-eslint/no-explicit-any": 4,
+        "no-empty": 1,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/shared/components/mobile/MobileModuleNavList.tsx",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 2,
+        "no-empty": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/shared/components/mobile/MoreSheet.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/shared/components/mobile/TabBar.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/shared/components/ui/ConfirmationDialog.tsx",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 3
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/shared/components/ui/DataTable.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/shared/components/ui/OfflineSyncDrawer.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/shared/components/ui/PDFUpload.tsx",
+      "errors": 1,
+      "warnings": 1,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 1,
+        "react-hooks/exhaustive-deps": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/shared/components/ui/button.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/shared/components/ui/dialog.tsx",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/shared/components/ui/select.tsx",
+      "errors": 7,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 7
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/shared/components/ui/skeleton.tsx",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/shared/components/ui/table.tsx",
+      "errors": 8,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 6,
+        "@typescript-eslint/no-unused-vars": 2
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/shared/components/ui/tabs.tsx",
+      "errors": 5,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 5
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/shared/config/mobileTabs.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/shared/config/navigationConfig.ts",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 3
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/shared/contexts/LanguageContext.tsx",
+      "errors": 0,
+      "warnings": 1,
+      "rules": {
+        "react-refresh/only-export-components": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/shared/hooks/usePermission.ts",
+      "errors": 1,
+      "warnings": 2,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 1,
+        "react-hooks/exhaustive-deps": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/shared/lib/passwordUtils.ts",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "no-useless-escape": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/shared/lib/pdfParser.ts",
+      "errors": 17,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 2,
+        "@typescript-eslint/no-explicit-any": 8,
+        "no-useless-escape": 7
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/shared/lib/utils.ts",
+      "errors": 4,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 3,
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/shared/lib/validation.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/shared/lib/validators.ts",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "no-useless-escape": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/shared/stores/toastStore.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/shared/types/hospital-admin.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/shared/types/mystaff.ts",
+      "errors": 3,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 2,
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/shared/types/mytimeoff.ts",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/shared/utils/cacheBuster.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-unused-vars": 1
+      },
+      "owner": "babyluong"
+    },
+    {
+      "file": "src/shared/utils/cylinderRbac.ts",
+      "errors": 7,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 7
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/shared/utils/inventoryRbac.ts",
+      "errors": 1,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 1
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/shared/utils/itemCodeUtils.ts",
+      "errors": 11,
+      "warnings": 0,
+      "rules": {
+        "prefer-const": 1,
+        "@typescript-eslint/no-explicit-any": 5,
+        "no-useless-escape": 5
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/stores/rbacStore.ts",
+      "errors": 2,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 2
+      },
+      "owner": "babyhien"
+    },
+    {
+      "file": "src/types/pharmacy/index.ts",
+      "errors": 10,
+      "warnings": 0,
+      "rules": {
+        "@typescript-eslint/no-explicit-any": 10
+      },
+      "owner": "babyhien"
+    }
+  ]
+}

@@ -1,19 +1,5 @@
 import React from 'react'
-import {
-  X,
-  History,
-  Calendar,
-  User,
-  Stethoscope,
-  Building2,
-  FileText,
-  Clock,
-  ArrowDownRight,
-  Package,
-  ShieldCheck,
-  Edit,
-  CheckCircle2
-} from 'lucide-react'
+import { X, History, Calendar, User, Stethoscope, Building2, FileText, Clock, ArrowDownRight, Package, ShieldCheck, Edit } from 'lucide-react'
 import { DrugQuotaItem } from '../types/drugQuotaTypes'
 
 interface QuotaDispenseHistoryModalProps {

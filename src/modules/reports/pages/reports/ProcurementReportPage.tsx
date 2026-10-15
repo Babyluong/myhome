@@ -6,38 +6,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
 import { Spinner } from '@/components/ui'
 import { cn, formatCurrency } from '@/lib/utils'
-import { 
-  ChevronRight, 
-  ChevronDown,
-  Search,
-  Sparkles,
-  FileText,
-  FileSpreadsheet,
-  Truck,
-  PackageCheck,
-  CreditCard,
-  FileWarning,
-  ShieldAlert,
-  FileSignature,
-  Star,
-  Calendar,
-  RefreshCw,
-  Download,
-  TrendingUp,
-  TrendingDown,
-  ArrowUpRight,
-  ArrowDownRight,
-  Activity,
-  BarChart3,
-  PieChart as PieChartIcon,
-  Zap,
-  Shield,
-  Clock,
-  CheckCircle2,
-  XCircle,
-  AlertTriangle,
-  Eye
-} from 'lucide-react'
+import { ChevronRight, ChevronDown, Search, Sparkles, FileText, FileSpreadsheet, Truck, PackageCheck, CreditCard, FileWarning, ShieldAlert, FileSignature, Star, Calendar, RefreshCw, Download, TrendingUp, TrendingDown, ArrowUpRight, Activity, BarChart3, PieChart as PieChartIcon, Zap, Shield, Clock, CheckCircle2, XCircle, AlertTriangle, Eye } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
@@ -232,10 +201,10 @@ function HorizontalBar({ label, value, max, color, delay = 0 }: { label: string,
       </div>
       <div className="h-2.5 bg-slate-200/60 rounded-full overflow-hidden">
         <motion.div
-          className="h-full rounded-full"
-          style={{ backgroundColor: color }}
-          initial={{ width: 0 }}
-          animate={{ width: `${pct}%` }}
+          style={{ backgroundColor: color, transformOrigin: 'left' }}
+          className="h-full w-full rounded-full"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: pct / 100 }}
           transition={{ duration: 1, delay, ease: 'easeOut' }}
         />
       </div>
@@ -266,10 +235,10 @@ export default function ProcurementReportPage() {
   const [selectedRadarSupplier, setSelectedRadarSupplier] = useState<string>('')
   const [supplierSearch, setSupplierSearch] = useState('')
   const [supplierLimit, setSupplierLimit] = useState<number>(5)
-  const [penaltySearch, setPenaltySearch] = useState('')
-  const [penaltyStatusFilter, setPenaltyStatusFilter] = useState('all')
-  const [penaltyTypeFilter, setPenaltyTypeFilter] = useState('all')
-  const [penaltyPaymentFilter, setPenaltyPaymentFilter] = useState('all')
+  const [penaltySearch, ] = useState('')
+  const [penaltyStatusFilter, ] = useState('all')
+  const [penaltyTypeFilter, ] = useState('all')
+  const [penaltyPaymentFilter, ] = useState('all')
   
   // ETA & Late Order Tracking States
   const [expandedSuppliers, setExpandedSuppliers] = useState<Record<string, boolean>>({})
@@ -828,10 +797,10 @@ export default function ProcurementReportPage() {
                                     </div>
                                     <div className="h-1.5 bg-subtle rounded-full overflow-hidden">
                                       <motion.div
-                                        className="h-full rounded-full"
-                                        style={{ backgroundColor: color }}
-                                        initial={{ width: 0 }}
-                                        animate={{ width: `${percentage}%` }}
+                                        style={{ backgroundColor: color, transformOrigin: 'left' }}
+                                        className="h-full w-full rounded-full"
+                                        initial={{ scaleX: 0 }}
+                                        animate={{ scaleX: percentage / 100 }}
                                         transition={{ duration: 1.2, ease: 'easeOut', delay: idx * 0.05 }}
                                       />
                                     </div>

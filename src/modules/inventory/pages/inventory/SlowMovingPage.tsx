@@ -108,31 +108,33 @@ export const SlowMovingPage: React.FC = () => {
         </div>
 
         {/* Filter Controls */}
-        <div className="flex flex-wrap items-center gap-3 self-start sm:self-center relative z-10">
-          <StoreLocationSelector />
-          <div className="flex items-center gap-2 bg-slate-950/80 border border-slate-800 rounded-xl px-3.5 py-2 shadow-inner">
-            <Filter className="w-4 h-4 text-slate-400" />
-            <span className="text-xs font-medium text-slate-400">Tempoh Tiada Pergerakan:</span>
-            <select
-              value={daysSinceMovement.toString()}
-              onChange={(e) => setDaysSinceMovement(Number(e.target.value))}
-              className="bg-transparent font-bold text-xs text-amber-300 focus:outline-none cursor-pointer"
-            >
-              <option value="30" className="bg-slate-900 text-white">30 hari +</option>
-              <option value="60" className="bg-slate-900 text-white">60 hari +</option>
-              <option value="90" className="bg-slate-900 text-white">90 hari +</option>
-              <option value="120" className="bg-slate-900 text-white">120 hari +</option>
-              <option value="180" className="bg-slate-900 text-white">180 hari +</option>
-            </select>
-          </div>
+        <div className="flex flex-col items-start sm:items-end gap-2.5 w-full sm:w-auto relative z-10 shrink-0">
+          <StoreLocationSelector className="w-full sm:w-auto" />
+          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-start sm:justify-end">
+            <div className="flex items-center gap-2 bg-slate-950/80 border border-slate-800 rounded-xl px-3 py-1.5 shadow-inner">
+              <Filter className="w-3.5 h-3.5 text-slate-400" />
+              <span className="text-xs font-medium text-slate-400">Tempoh:</span>
+              <select
+                value={daysSinceMovement.toString()}
+                onChange={(e) => setDaysSinceMovement(Number(e.target.value))}
+                className="bg-transparent font-bold text-xs text-amber-300 focus:outline-none cursor-pointer"
+              >
+                <option value="30" className="bg-slate-900 text-white">30 hari +</option>
+                <option value="60" className="bg-slate-900 text-white">60 hari +</option>
+                <option value="90" className="bg-slate-900 text-white">90 hari +</option>
+                <option value="120" className="bg-slate-900 text-white">120 hari +</option>
+                <option value="180" className="bg-slate-900 text-white">180 hari +</option>
+              </select>
+            </div>
 
-          <button
-            onClick={() => void loadData()}
-            className="p-2.5 rounded-xl border border-slate-800 bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white transition-colors duration-150 shadow-md"
-            title="Muat Semula Data"
-          >
-            <RefreshCw className={cn("w-4 h-4", isLoading && "animate-spin text-amber-400")} />
-          </button>
+            <button
+              onClick={() => void loadData()}
+              className="p-2 rounded-xl border border-slate-800 bg-slate-900/90 hover:bg-slate-800 text-slate-300 hover:text-white transition-colors duration-150 shadow-md"
+              title="Muat Semula Data"
+            >
+              <RefreshCw className={cn("w-3.5 h-3.5", isLoading && "animate-spin text-amber-400")} />
+            </button>
+          </div>
         </div>
       </div>
 

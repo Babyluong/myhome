@@ -1,0 +1,25 @@
+{
+  "version": 2,
+  "taskId": "T-000",
+  "baselineRevision": "<resolved-full-git-commit-sha>",
+  "baselinePaths": [],
+  "baselineSnapshotPath": "docs/audits/T-000.baseline.json",
+  "baselineSnapshotSha256": "<sha256-of-the-captured-snapshot-file>",
+  "approval": {
+    "approvedBy": "user",
+    "date": "<approval-date>",
+    "evidence": "<existing-user-authorization>",
+    "scope": "<concrete-approved-scope>",
+    "amriApproved": false
+  },
+  "ownerOverrides": {},
+  "acceptanceCriteria": ["<observable-task-result>"],
+  "slices": [
+    { "agent": "amri", "allowedPaths": [], "goal": "Supervise the approved task", "acceptanceCriteria": ["Review evidence and scope"], "dependencies": [], "reportTo": "amri" },
+    { "agent": "babybun", "allowedPaths": [], "goal": "Record the applicable plan", "acceptanceCriteria": ["Approved scope and exact owners recorded"], "dependencies": [], "reportTo": "amri" },
+    { "agent": "babyluong", "allowedPaths": [], "goal": "Implement assigned presentation", "acceptanceCriteria": ["Assigned UI behavior verified"], "dependencies": [], "reportTo": "amri" },
+    { "agent": "babyhien", "allowedPaths": [], "goal": "Implement assigned trusted logic", "acceptanceCriteria": ["Affected data and access contracts preserved"], "dependencies": [], "reportTo": "amri" },
+    { "agent": "babyaaralyn", "allowedPaths": [], "goal": "Verify assigned criteria", "acceptanceCriteria": ["Observed checks and limitations recorded"], "dependencies": [], "reportTo": "amri" }
+  ],
+  "status": "PLANNED"
+}

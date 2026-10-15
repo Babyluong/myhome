@@ -1,25 +1,7 @@
 // src/components/kunci/ScanKunciMovementModal.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import jsQR from 'jsqr';
-import { 
-  X, 
-  QrCode, 
-  AlertCircle, 
-  RefreshCw, 
-  CheckCircle2, 
-  Camera, 
-  Keyboard, 
-  Check, 
-  Volume2, 
-  VolumeX, 
-  Search, 
-  Database,
-  Lock,
-  UserCheck,
-  Building,
-  Clock,
-  Upload
-} from 'lucide-react';
+import { QrCode, AlertCircle, RefreshCw, CheckCircle2, Camera, Keyboard, Volume2, VolumeX, Search, Lock, UserCheck, Building, Clock } from 'lucide-react'
 import { 
   getKunciByKod, 
   checkoutKunci, 

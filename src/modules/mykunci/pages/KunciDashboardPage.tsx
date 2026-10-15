@@ -1,21 +1,7 @@
 // src/modules/mykunci/pages/KunciDashboardPage.tsx
 import React, { useEffect, useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  Key, 
-  Clock, 
-  AlertTriangle, 
-  CheckCircle,
-  Plus, 
-  ArrowRight,
-  ShieldAlert,
-  UserCheck,
-  Calendar,
-  AlertCircle,
-  Building,
-  ChevronRight,
-  QrCode
-} from 'lucide-react'
+import { Key, CheckCircle, Plus, ShieldAlert, UserCheck, Building, QrCode } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
@@ -29,19 +15,9 @@ import { getDepartmentsByHospital } from '@/modules/admin/services/departmentSer
 import { getUsers } from '@/services/userService'
 import type { KunciDaftar, KunciLog } from '@/shared/types/mykunci'
 import type { Department, User } from '@/shared/types'
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardContent, 
-  Button, 
-  Badge, 
-  Modal,
-  FileUpload,
-  ModulePageHeader
-} from '@/components/ui'
+import { Modal, FileUpload, ModulePageHeader } from '@/components/ui'
 import { ScanKunciMovementModal } from '@/components/kunci/ScanKunciMovementModal'
-import { Skeleton, SkeletonCard, SkeletonTable, SkeletonMobileCardList } from '@/shared/components/ui/skeleton'
+import { Skeleton, SkeletonTable, SkeletonMobileCardList } from '@/shared/components/ui/skeleton'
 import { Fab } from '@/shared/components/mobile'
 
 export const KunciDashboardPage: React.FC = () => {

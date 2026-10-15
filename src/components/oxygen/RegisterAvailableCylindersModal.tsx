@@ -1,21 +1,9 @@
 // @ts-nocheck
-import React, { useState, useEffect, useRef } from 'react';
-import { 
-  X, 
-  QrCode, 
-  Plus, 
-  Trash2, 
-  Upload, 
-  CheckCircle, 
-  AlertCircle, 
-  RefreshCw, 
-  Layers, 
-  FileText,
-  Barcode
-} from 'lucide-react';
+import React, { useState, useEffect } from 'react'
+import { X, QrCode, Plus, Trash2, Upload, CheckCircle, AlertCircle, RefreshCw, FileText, Barcode } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore';
 import { useLanguage } from '@/shared/contexts/LanguageContext';
-import { bulkUpsertAvailableCylinders, CylinderInputItem } from '@/modules/mycylinder/services/oxygenService';
+import { bulkUpsertAvailableCylinders } from '@/modules/mycylinder/services/oxygenService'
 
 interface RegisterAvailableCylindersModalProps {
   isOpen: boolean;

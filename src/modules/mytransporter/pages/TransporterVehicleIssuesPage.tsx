@@ -1,21 +1,7 @@
 // src/modules/mytransporter/pages/TransporterVehicleIssuesPage.tsx
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  ArrowLeft, 
-  AlertTriangle, 
-  Check, 
-  Eye, 
-  Settings, 
-  Trash2, 
-  AlertCircle, 
-  Wrench, 
-  Activity, 
-  User, 
-  Plus, 
-  Camera, 
-  X 
-} from 'lucide-react'
+import { ArrowLeft, AlertTriangle, Wrench, User, Plus, Camera, X } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
@@ -27,15 +13,7 @@ import {
   reportVehicleIssue 
 } from '../services/transporterService'
 import type { VehicleIssueReport, StatusIsu, TransportVehicle } from '@/shared/types/mytransporter'
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardContent, 
-  Button, 
-  Badge, 
-  Input 
-} from '@/components/ui'
+import { Card, CardContent, Button, Badge, Input } from '@/components/ui'
 
 const TransporterVehicleIssuesPage: React.FC = () => {
   const navigate = useNavigate()

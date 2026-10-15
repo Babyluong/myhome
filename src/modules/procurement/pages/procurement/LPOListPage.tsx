@@ -1,46 +1,23 @@
-// @ts-nocheck
 import React, { useEffect, useState, useCallback, useRef } from 'react'
 import { supabase } from '@/services/supabase'
-import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
 import { Spinner, SlideOver } from '@/components/ui'
-import { getLPOList, getLPOStats, uploadLPO, updateLPOStatus, bulkVerifyLPOs, bulkUploadLPOs, getPendingPOsForLPO, checkDuplicateLPO, getExistingLPONumbers, getExistingPOIdsWithLPO, repairLPONumber, getAllLPOsForAudit, rebindLPO } from '@/services/pharmacy/lpoService'
+import { getLPOList, getLPOStats, uploadLPO, updateLPOStatus, bulkVerifyLPOs, getPendingPOsForLPO, checkDuplicateLPO, getExistingLPONumbers, getExistingPOIdsWithLPO, repairLPONumber, getAllLPOsForAudit, rebindLPO } from '@/services/pharmacy/lpoService'
 import type { LPOAuditRecord } from '@/services/pharmacy/lpoService'
 import { WARRANT_CATEGORIES, WARRANT_DEPARTMENTS } from '@/services/pharmacy/warrantService'
 import { getPurchaseOrderById } from '@/services/pharmacy/procurementService'
 import { useToast } from '@/stores/toastStore'
-import * as XLSX from 'xlsx'
+import 'xlsx'
 import { getProcurementMetadata } from '@/services/pharmacy/procurementService'
-import type { LPOListItem, LPOStats, LPOUploadData, LPOStatus, LPOPaymentStatus, PurchaseOrderWithRelations } from '@/types/pharmacy'
+import type { LPOListItem, LPOStats, LPOUploadData, PurchaseOrderWithRelations } from '@/types/pharmacy'
 import { PurchaseOrderDetailView } from './PurchaseOrderDetailView'
-import { ROUTES } from '@/lib/constants'
-import { 
-  IconShoppingCart, 
-  IconSearch, 
-  IconReceipt, 
-  IconMoney, 
-  IconClock, 
-  IconCheck, 
-  IconArrowLeft,
-  IconArrowRight,
-  IconX,
-  IconUpload,
-  IconFileText,
-  IconBuildingStore,
-  IconCloud,
-  IconRefresh,
-  IconPlus,
-  IconCheckCircle,
-  IconChevronLeft,
-  IconChevronRight,
-  IconShield
-} from '@/components/ui/Icons'
+import '@/lib/constants'
+import { IconShoppingCart, IconSearch, IconReceipt, IconMoney, IconClock, IconCheck, IconX, IconUpload, IconFileText, IconCloud, IconRefresh, IconPlus, IconCheckCircle, IconChevronLeft, IconChevronRight, IconShield } from '@/components/ui/Icons'
 import { formatCurrency, calculateFileHash, cn } from '@/lib/utils'
 import { extractLpoNumberFromPdf, extractTextFromPdf, extractDatesFromPdf } from '@/lib/pdfParser'
 import { ChevronRight, Sparkles, ExternalLink } from 'lucide-react'
 
 export const LPOListPage: React.FC = () => {
-  const navigate = useNavigate()
   const { user } = useAuthStore()
   const hospitalId = user?.hospital_id
   const toast = useToast()
@@ -85,7 +62,7 @@ export const LPOListPage: React.FC = () => {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false)
   const [uploadTargetPO, setUploadTargetPO] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
-  const [uploadData, setUploadData] = useState<LPOUploadData>({
+  const [uploadData, setUploadData] = useState<Omit<LPOUploadData, 'document_file'> & { document_file?: File }>({
     lpo_number: '',
     document_date: new Date().toISOString().split('T')[0],
     expected_delivery_date: undefined
@@ -96,17 +73,21 @@ export const LPOListPage: React.FC = () => {
   // Bulk Upload State
   const [isBulkUploadModalOpen, setIsBulkUploadModalOpen] = useState(false)
   const [activeRowIndex, setActiveRowIndex] = useState(-1)
-  const [bulkPdfRows, setBulkPdfRows] = useState<{
+  type BulkPdfRow = {
     file: File,
     selectedPoId: string,
     lpoNumber: string,
-    status: 'pending' | 'matched' | 'error' | 'valid',
+    status: 'pending' | 'matched' | 'error' | 'valid' | 'processing' | 'duplicate',
     objectUrl?: string,
     fileHash: string,
     inDocLpo?: string,
     matchReason?: string,
-    matchScore?: number
-  }[]>([])
+    matchScore?: number,
+    documentDate?: string | null,
+    expectedDeliveryDate?: string | null,
+    errorMsg?: string
+  }
+  const [bulkPdfRows, setBulkPdfRows] = useState<BulkPdfRow[]>([])
 
   // Move PDF Preview to a separate component to manage Blob URLs properly
   const PDFPreview = ({ file, url: initialUrl }: { file?: File, url?: string }) => {
@@ -142,8 +123,8 @@ export const LPOListPage: React.FC = () => {
       />
     )
   }
-  const [activePoDetails, setActivePoDetails] = useState<PurchaseOrderWithRelations | null>(null)
-  const [isLoadingPoDetails, setIsLoadingPoDetails] = useState(false)
+  const [, setActivePoDetails] = useState<PurchaseOrderWithRelations | null>(null)
+  const [, setIsLoadingPoDetails] = useState(false)
   const [poSearch, setPoSearch] = useState('')
   const [pendingPOs, setPendingPOs] = useState<{ 
     id: string, 
@@ -152,9 +133,9 @@ export const LPOListPage: React.FC = () => {
     manual_supplier_name: string | null, 
     supplier_name?: string,
     order_date: string,
-    items?: any[]
+    items?: Array<Pick<NonNullable<PurchaseOrderWithRelations['items']>[number], 'id' | 'item_name' | 'item_code' | 'quantity_ordered' | 'unit_price'>>
   }[]>([])
-  const [bulkUploadErrors, setBulkUploadErrors] = useState<string[]>([])
+  const [, setBulkUploadErrors] = useState<string[]>([])
   const [dbLinkedPoIds, setDbLinkedPoIds] = useState<Set<string>>(new Set())
   const [leftSidebarTab, setLeftSidebarTab] = useState<'queue' | 'dismissed'>('queue')
   const [skippedRows, setSkippedRows] = useState<{
@@ -304,7 +285,7 @@ export const LPOListPage: React.FC = () => {
         hospitalId,
         uploadTargetPO,
         user.id,
-        uploadData
+        { ...uploadData, document_file: fileInputRef.current?.files?.[0] as File }
       )
       
       if (error) throw new Error(error)
@@ -379,8 +360,6 @@ export const LPOListPage: React.FC = () => {
     const totalToAnalyze = fileList.length
 
     const fileDataMap = await Promise.all(fileList.map(async (file) => {
-      const fileName = file.name.replace(/\.[^/.]+$/, "")
-      
       // A. Calculate Hash (Bulletproof Duplicate Detection)
       const fileHash = await calculateFileHash(file)
 
@@ -396,13 +375,13 @@ export const LPOListPage: React.FC = () => {
       } catch (e) { console.error("PDF Extraction failed", e) }
 
       // C. Extract expected delivery date and document date from PDF
-      let extractedDates = { documentDate: null, expectedDeliveryDate: null }
+      let extractedDates: { documentDate: string | null; expectedDeliveryDate: string | null } = { documentDate: null, expectedDeliveryDate: null }
       try {
         extractedDates = await extractDatesFromPdf(file)
       } catch (e) { console.error("PDF Date Extraction failed", e) }
 
       // D. Smart Filename Matcher
-      let extractedLpo = ''
+      const extractedLpo = ''
       
       analyzedCount++
       setBulkProcessingProgress(Math.round((analyzedCount / totalToAnalyze) * 100))
@@ -420,8 +399,8 @@ export const LPOListPage: React.FC = () => {
       }
     }))
 
-    const finalRows: any[] = []
-    const newSkipped: any[] = []
+    const finalRows: Array<typeof fileDataMap[number]> = []
+    const newSkipped: typeof skippedRows = []
 
     fileDataMap.forEach(data => {
       let fileNameLower = data.file.name.toLowerCase()
@@ -478,7 +457,7 @@ export const LPOListPage: React.FC = () => {
     const validRows = finalRows.map(data => {
       const { file, extractedLpo, inDocLpo, fileHash, rawText } = data
       let selectedPoId = ''
-      let finalLpo = inDocLpo || extractedLpo || ''
+      const finalLpo = inDocLpo || extractedLpo || ''
       let matchReason = ''
       let matchScore = 0
 
@@ -504,23 +483,22 @@ export const LPOListPage: React.FC = () => {
         }
 
         // 2. Amount Check (High Confidence: +45)
-        let amountMatch = false
         if (po.total_amount > 0) {
           const amountStr1 = po.total_amount.toFixed(2)
           const amountStr2 = Math.floor(po.total_amount).toString()
           if (textNoCommas.includes(amountStr1) || textNoCommas.includes(amountStr2)) {
             score += 45
-            amountMatch = true
           }
         }
 
         // 3. Supplier Name Check (Medium Confidence: +20)
-        if (po.supplier_name && po.supplier_name.length > 3) {
-            const cleanSupplier = po.supplier_name.toUpperCase()
+        const supplierName = po.manual_supplier_name || ''
+        if (supplierName.length > 3) {
+            const cleanSupplier = supplierName.toUpperCase()
               .replace(/\s+(SDN\s+BHD|BHD|ENTERPRISE|LIMITED|INC)\.?\b/gi, '')
               .trim()
             
-            const supplierParts = cleanSupplier.split(' ').filter(p => p.length > 3)
+            const supplierParts = cleanSupplier.split(' ').filter((part: string) => part.length > 3)
             for (const part of supplierParts) {
               if (textLower.includes(part.toLowerCase())) {
                 score += 25
@@ -530,9 +508,10 @@ export const LPOListPage: React.FC = () => {
         }
 
         // 4. Item-Level Matching (Medium Confidence: +15 per item, max 45)
-        if ((po as any).items && (po as any).items.length > 0) {
+        const pendingItems = 'items' in po ? po.items as Array<Pick<NonNullable<PurchaseOrderWithRelations['items']>[number], 'id' | 'item_name' | 'item_code' | 'quantity_ordered' | 'unit_price'>> | undefined : undefined
+        if (pendingItems?.length) {
           let itemMatches = 0
-          for (const item of (po as any).items) {
+          for (const item of pendingItems) {
             const nameLower = (item.item_name || '').toLowerCase()
             const codeLower = (item.item_code || '').toLowerCase()
             
@@ -549,8 +528,8 @@ export const LPOListPage: React.FC = () => {
                 'sachet', 'sachets', 'vial', 'vials', 'ampoule', 'ampoules',
                 'mega', 'unit', 'units'
               ]
-              const distinctiveParts = nameLower.split(' ').filter(p => p.length > 4 && !PHARMA_STOP_WORDS.includes(p))
-              if (distinctiveParts.length > 0 && distinctiveParts.some(p => textLower.includes(p))) {
+              const distinctiveParts = nameLower.split(' ').filter((part: string) => part.length > 4 && !PHARMA_STOP_WORDS.includes(part))
+              if (distinctiveParts.length > 0 && distinctiveParts.some((part: string) => textLower.includes(part))) {
                 itemMatches++
               }
             }
@@ -592,11 +571,12 @@ export const LPOListPage: React.FC = () => {
         matchReason = 'Suggested: Verify Match'
       }
 
+      const status: BulkPdfRow['status'] = selectedPoId && matchScore >= 80 ? 'matched' : 'pending'
       return {
         file,
         selectedPoId,
         lpoNumber: finalLpo,
-        status: (selectedPoId && matchScore >= 80 ? 'matched' : 'pending') as any,
+        status,
         objectUrl: URL.createObjectURL(file),
         fileHash,
         inDocLpo,
@@ -694,8 +674,8 @@ export const LPOListPage: React.FC = () => {
 
         const { error } = await uploadLPO(hospitalId, row.selectedPoId, user.id, {
           lpo_number: row.lpoNumber,
-          document_date: (row as any).documentDate || new Date().toISOString().split('T')[0],
-          expected_delivery_date: (row as any).expectedDeliveryDate || undefined,
+          document_date: row.documentDate || new Date().toISOString().split('T')[0],
+          expected_delivery_date: row.expectedDeliveryDate || undefined,
           document_file: row.file,
           file_hash: row.fileHash
         })
@@ -794,7 +774,7 @@ export const LPOListPage: React.FC = () => {
           .in('id', lpoIds)
 
         pendingVerificationIds = relations
-          ?.filter(r => r.lpo_number && (r.pharmacy_purchase_orders as any)?.po_number)
+          ?.filter(r => r.lpo_number && Array.isArray(r.pharmacy_purchase_orders) && r.pharmacy_purchase_orders.some(po => po.po_number))
           .map(r => r.id) || []
 
       } catch (err) {
@@ -922,9 +902,9 @@ export const LPOListPage: React.FC = () => {
       } else {
         toast.info("Sync Finished", "No new LPO numbers were identified. Some documents might be scanned images or missing numbers.")
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Global sync failed:', err)
-      toast.error('Sync failed', err.message || 'An error occurred during global sync.')
+      toast.error('Sync failed', err instanceof Error ? err.message : 'An error occurred during global sync.')
     } finally {
       setIsSyncing(false)
     }
@@ -959,7 +939,7 @@ export const LPOListPage: React.FC = () => {
 
     try {
       // 1. Fetch all LPO-PO pairs + all approved POs for rebinding selector
-      const [auditRes, poRes] = await Promise.all([
+      const [auditRes] = await Promise.all([
         getAllLPOsForAudit(hospitalId),
         getPendingPOsForLPO(hospitalId),
       ])
@@ -980,12 +960,12 @@ export const LPOListPage: React.FC = () => {
         .not('po_number', 'ilike', 'SQ-%')
         .not('po_number', 'ilike', 'INV-%')
 
-      const allPOs = (approvedPOs || []).map((p: any) => ({
+      const allPOs = (approvedPOs || []).map((p) => ({
         id: p.id,
         po_number: p.po_number,
         total_amount: p.total_amount || 0,
-        supplier_name: p.manual_supplier_name || p.supplier?.company_name || '',
-        items: (p.items || []).map((i: any) => ({ item_name: i.item_name || '' }))
+        supplier_name: p.manual_supplier_name || p.supplier?.[0]?.company_name || '',
+        items: (p.items || []).map((i) => ({ item_name: i.item_name || '' }))
       }))
       setAllApprovedPOs(allPOs)
 
@@ -1137,25 +1117,9 @@ export const LPOListPage: React.FC = () => {
   }
 
   // Status Badge formatting
-  const getStatusBadge = (status: LPOStatus) => {
-    const map: Record<LPOStatus, { label: string, classes: string }> = {
-      draft: { label: 'Draft', classes: 'bg-subtle text-text-primary border border-border-default' },
-      sent: { label: 'Sent', classes: 'bg-blue-100 text-blue-400 border border-blue-500/20' },
-      verified: { label: 'Verified', classes: 'bg-emerald-100 text-emerald-400 border border-emerald-500/20' }
-    }
-    const s = map[status] || map.draft
-    return <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${s.classes}`}>{s.label}</span>
-  }
 
-  const getPaymentStatusBadge = (status: LPOPaymentStatus) => {
-    const map: Record<LPOPaymentStatus, { label: string, classes: string }> = {
-      pending: { label: 'Pending', classes: 'bg-amber-100 text-amber-400 border border-amber-500/20' },
-      processing: { label: 'Processing', classes: 'bg-blue-100 text-blue-400 border border-blue-500/20' },
-      paid: { label: 'Paid', classes: 'bg-emerald-100 text-emerald-400 border border-emerald-500/20' }
-    }
-    const s = map[status] || map.pending
-    return <span className={`px-2.5 py-1 rounded-full text-xs font-medium ${s.classes}`}>{s.label}</span>
-  }
+
+
   return (
     <div className="min-h-screen bg-[#f8fafc] relative font-sans overflow-x-hidden selection:bg-slate-900 selection:text-white">
       {/* Premium Ambient Radial Lights */}
@@ -2201,15 +2165,15 @@ export const LPOListPage: React.FC = () => {
                                       </div>
                                       <div className="text-right shrink-0">
                                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Supplier</p>
-                                        <p className="text-xs font-bold text-text-secondary truncate max-w-[160px]">{(matchedPo as any).supplier_name}</p>
+                                        <p className="text-xs font-bold text-text-secondary truncate max-w-[160px]">{matchedPo.manual_supplier_name || matchedPo.supplier_name || '—'}</p>
                                       </div>
                                     </div>
                                   </div>
 
                                   {/* Item List Preview */}
                                   <div className="space-y-2">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">PO Items ({ (matchedPo as any).items?.length || 0})</p>
-                                    {((matchedPo as any).items || []).slice(0, 5).map((item: any) => (
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">PO Items ({ matchedPo.items?.length || 0})</p>
+                                    {(matchedPo.items || []).slice(0, 5).map((item) => (
                                       <div key={item.id} className="bg-white/50 p-3 rounded-xl border border-border-subtle flex justify-between items-center gap-4">
                                         <div className="flex-1 min-w-0">
                                           <p className="text-[11px] font-bold text-text-secondary truncate">{item.item_name}</p>
@@ -2220,8 +2184,8 @@ export const LPOListPage: React.FC = () => {
                                         </div>
                                       </div>
                                     ))}
-                                    {((matchedPo as any).items?.length || 0) > 5 && (
-                                      <p className="text-center text-[9px] font-bold text-slate-400 italic">+{(matchedPo as any).items.length - 5} more items...</p>
+                                    {(matchedPo.items?.length || 0) > 5 && (
+                                      <p className="text-center text-[9px] font-bold text-slate-400 italic">+{(matchedPo.items?.length ?? 0) - 5} more items...</p>
                                     )}
                                   </div>
                                 </div>
@@ -2236,7 +2200,7 @@ export const LPOListPage: React.FC = () => {
                                   onClick={() => {
                                     const newRows = [...bulkPdfRows];
                                     newRows[activeRowIndex].selectedPoId = '';
-                                    newRows[activeRowIndex].status = 'pending' as any;
+                                    newRows[activeRowIndex].status = 'pending';
                                     setBulkPdfRows(newRows);
                                   }}
                                   className="text-[10px] font-black text-slate-400 hover:text-red-500 transition-colors uppercase tracking-widest"
@@ -2329,7 +2293,7 @@ export const LPOListPage: React.FC = () => {
                                   <div className={`h-px w-full my-4 ${isSelected ? 'bg-blue-500/10' : 'bg-subtle/50'}`} />
 
                                   <div className="space-y-3">
-                                    {(po.items || []).slice(0, 5).map((item: any, i: number) => (
+                                    {(po.items || []).slice(0, 5).map((item, i) => (
                                       <div key={i} className="flex justify-between items-start group/item">
                                         <div className="flex-1 min-w-0 pr-4">
                                           <p className={`text-[11px] font-black leading-tight ${isSelected ? 'text-blue-400 dark:text-blue-300 font-bold' : 'text-text-secondary'}`}>

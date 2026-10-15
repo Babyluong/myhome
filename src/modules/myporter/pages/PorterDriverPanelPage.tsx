@@ -1,26 +1,10 @@
 // src/modules/myporter/pages/PorterDriverPanelPage.tsx
 import React, { useEffect, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  PersonStanding, 
-  Radio, 
-  MapPin, 
-  Check, 
-  CheckCircle2, 
-  Clock, 
-  Phone, 
-  Shield, 
-  AlertCircle, 
-  Play, 
-  Camera, 
-  Star, 
-  ChevronRight,
-  Sparkles,
-  Volume2
-} from 'lucide-react'
+import 'framer-motion'
+import { PersonStanding, Radio, MapPin, CheckCircle2, Clock, Play, Star } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
-import { Button, Card, CardHeader, CardTitle, CardContent, Badge } from '@/components/ui'
+import { Button } from '@/components/ui'
 import { 
   getPorterJobs, 
   getPorterProfiles, 
@@ -33,7 +17,7 @@ import type {
   PorterProfile, 
   PorterStaffStatus 
 } from '@/shared/types/myporter'
-import { JobStatusBadge, UrgencyBadge, StaffStatusBadge } from '../components/PorterStatusBadge'
+import { UrgencyBadge } from '../components/PorterStatusBadge'
 import { PorterRadarAlertModal } from '../components/PorterRadarAlertModal'
 import { soundAlert } from '../components/PorterAudioAlert'
 
@@ -46,7 +30,7 @@ export const PorterDriverPanelPage: React.FC = () => {
   const [activeJob, setActiveJob] = useState<PorterJobRequest | null>(null)
   const [radarJob, setRadarJob] = useState<PorterJobRequest | null>(null)
   const [isRadarOpen, setIsRadarOpen] = useState(false)
-  const [loading, setLoading] = useState(true)
+  const [, setLoading] = useState(true)
 
   const fetchDriverData = async () => {
     try {

@@ -1,21 +1,7 @@
 // @ts-nocheck
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  ArrowLeft, 
-  Package, 
-  LayoutDashboard,
-  Pill,
-  Layers,
-  AlertTriangle,
-  Clock,
-  TrendingDown,
-  ScrollText,
-  MapPin,
-  ChevronRight,
-  ShieldCheck,
-  Activity
-} from 'lucide-react'
+import { ArrowLeft, Package, LayoutDashboard, Pill, Layers, AlertTriangle, Clock, TrendingDown, ScrollText, MapPin } from 'lucide-react'
 import { ROUTES } from '@/lib/constants'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { Badge, Skeleton } from '@/components/ui'

@@ -2,57 +2,11 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
-import { 
-  ArrowLeft, 
-  Thermometer, 
-  AlertTriangle, 
-  CheckCircle,
-  Plus, 
-  Settings, 
-  MapPin, 
-  Edit2, 
-  Clock, 
-  Info,
-  Save,
-  Trash2,
-  Calendar,
-  AlertCircle,
-  Download,
-  Activity,
-  Camera,
-  Eye,
-  X,
-  Image as ImageIcon
-} from 'lucide-react'
+import { ArrowLeft, Thermometer, AlertTriangle, CheckCircle, Plus, Settings, MapPin, Edit2, Clock, Info, Trash2, Calendar, AlertCircle, Download, Activity, Camera, Eye, X, Image as ImageIcon } from 'lucide-react'
 import { Badge, Spinner, SlideOver, ModulePageHeader } from '@/components/ui'
-import { 
-  LineChart, 
-  Line, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
-  ResponsiveContainer, 
-  ReferenceLine,
-  ReferenceArea,
-  Legend
-} from 'recharts'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, ReferenceArea } from 'recharts'
 import { format } from 'date-fns'
-import { 
-  getLokasi, 
-  createLokasi,
-  getUnitPemantauan, 
-  createUnitPemantauan, 
-  updateUnitPemantauan,
-  updateThresholdConfig,
-  logTemperature,
-  getReadings,
-  deleteAutoPlottedReadings,
-  updateReadingValues,
-  getDefaultThresholds,
-  uploadEquipmentPhoto,
-  deleteEquipmentPhoto
-} from '@/modules/mysuhu/services/suhuService'
+import { getLokasi, createLokasi, getUnitPemantauan, createUnitPemantauan, updateUnitPemantauan, updateThresholdConfig, logTemperature, getReadings, updateReadingValues, getDefaultThresholds, uploadEquipmentPhoto, deleteEquipmentPhoto } from '@/modules/mysuhu/services/suhuService'
 import { getDepartmentsByHospital } from '@/services/departmentService'
 import { useAuthStore } from '@/stores/authStore'
 import { downloadPdfReport } from '@/modules/mysuhu/services/suhuReportService'
@@ -106,9 +60,9 @@ export const DepartmentSuhuPage: React.FC = () => {
   const [detailLogTemp, setDetailLogTemp] = useState('')
   const [detailLogTempMin, setDetailLogTempMin] = useState('')
   const [detailLogTempMax, setDetailLogTempMax] = useState('')
-  const [activeLogTab, setActiveLogTab] = useState<'current' | 'min' | 'max'>('current')
+  useState<'current' | 'min' | 'max'>('current');
   const [detailLogNota, setDetailLogNota] = useState('')
-  const [detailLogDateTime, setDetailLogDateTime] = useState('')
+  const [, setDetailLogDateTime] = useState('')
   const [detailBreachInfo, setDetailBreachInfo] = useState<{ temp: number; status: 'warning' | 'breach' } | null>(null)
 
   // Detail Inline Editing States

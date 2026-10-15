@@ -1,0 +1,70 @@
+{
+  "version": 2,
+  "description": "Default routing by responsibility. Exact owners and test patterns take precedence over primary globs; fallback routing applies only to otherwise unowned source. An Amri-approved exact task override resolves semantic cross-lane work before edits.",
+  "owners": {
+    "amri": [
+      "AGENTS.md",
+      ".agents/AGENTS.md",
+      ".agents/skills/**",
+      ".codex/**",
+      "docs/AGENT_RULES_SOURCES.md",
+      "docs/AGENT_OWNERSHIP.json",
+      "docs/audits/**"
+    ],
+    "babybun": [
+      "docs/tasks/**",
+      "docs/DECISIONS.md",
+      "docs/SESSION_HANDOFF.md",
+      ".agents/CODEBASE_ROUTER.json"
+    ],
+    "babyluong": [
+      "src/components/**",
+      "src/pages/**",
+      "src/modules/**/components/**",
+      "src/modules/**/pages/**",
+      "src/routes/routes.tsx",
+      "src/shared/components/**",
+      "src/shared/layout/**",
+      "src/index.css"
+    ],
+    "babyhien": [
+      "src/services/**",
+      "src/hooks/**",
+      "src/modules/**/services/**",
+      "src/modules/**/hooks/**",
+      "supabase/**",
+      "scripts/**"
+    ],
+    "babyaaralyn": [
+      "tests/**",
+      "specs/**",
+      "docs/test-reports/**"
+    ]
+  },
+  "exactOwners": {
+    "src/App.tsx": "babyluong",
+    "src/main.tsx": "babyluong",
+    "tailwind.config.js": "babyluong",
+    "docs/DESIGN_SYSTEM.md": "babyluong",
+    "package.json": "babyhien",
+    "package-lock.json": "babyhien",
+    "eslint.config.mjs": "babyhien",
+    "scripts/test-ipd-locations.cjs": "babyaaralyn",
+    "postcss.config.js": "babyhien",
+    "postcss.config.mjs": "babyhien",
+    "next.config.ts": "babyhien",
+    "tsconfig.json": "babyhien",
+    "tsconfig.node.json": "babyhien",
+    "vite.config.ts": "babyhien"
+  },
+  "testPatterns": ["tests/**", "specs/**", "**/*.test.*", "**/*.spec.*", "**/__tests__/**", "scripts/test-*.cjs"],
+  "fallbackOwners": [{"pattern": "src/**", "agent": "babyhien"}],
+  "rules": [
+    "Every active task uses unique exact allowed paths; glob routing never grants a task permission.",
+    "An exact owner takes precedence, then test patterns, then primary globs, then fallback routing.",
+    "Responsibility controls dispatch. Amri records approval.amriApproved and an exact ownerOverrides entry when a task differs from default routing.",
+    "Each override must match one assigned path and its sole specialist; tests remain QA responsibility and governance remains Amri responsibility.",
+    "Amri captures content hashes before edits, pins the snapshot digest and verifies all subsequent changes, including already dirty files and rename source paths.",
+    "Path validation does not establish runtime filesystem isolation or prove which process edited a file."
+  ]
+}

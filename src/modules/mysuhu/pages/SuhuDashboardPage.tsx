@@ -1,15 +1,7 @@
 // src/modules/mysuhu/pages/SuhuDashboardPage.tsx
 import React, { useEffect, useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  Thermometer, 
-  AlertTriangle, 
-  CheckCircle,
-  Building,
-  ArrowRight,
-  ShieldAlert,
-  AlertCircle
-} from 'lucide-react'
+import { Thermometer, Building, ShieldAlert } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { Badge, ModulePageHeader } from '@/components/ui'
 import { Skeleton } from '@/shared/components/ui/skeleton'

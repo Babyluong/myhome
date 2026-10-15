@@ -9,3 +9,12 @@ dist
 scratch/
 .cursor/
 .playwright-mcp/
+
+# Share repository agent policy and skills; keep private per-agent memory local.
+!.agents/
+!.agents/AGENTS.md
+!.agents/skills/
+!.agents/skills/**/
+!.agents/skills/**/SKILL.md
+.agents/memory/
+.agents/memory/**

@@ -1,8 +1,8 @@
 ﻿// @ts-nocheck
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Mail, MessageSquare, Bot, X, Send, Phone, MapPin } from 'lucide-react'
-import { Modal, Button, Input, Textarea } from '@/components/ui'
+import { Mail, MessageSquare, Bot, Send, Phone, MapPin } from 'lucide-react'
+import { Modal, Button, Input } from '@/components/ui'
 import { InquiryForm } from '@/components/forms'
 import { cn } from '@/lib/utils'
 

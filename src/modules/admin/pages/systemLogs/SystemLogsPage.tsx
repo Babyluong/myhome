@@ -1,31 +1,8 @@
 // @ts-nocheck
 import React, { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  FileText,
-  Search,
-  RefreshCw,
-  Download,
-  Filter,
-  AlertTriangle,
-  AlertCircle,
-  Info,
-  Shield,
-  User,
-  Settings,
-  LogIn,
-  Activity,
-  Calendar,
-  X,
-  Eye,
-  Building2,
-  FileJson,
-  FileSpreadsheet,
-  ChevronRight,
-  ChevronDown,
-  Sparkles,
-} from 'lucide-react'
-import { Badge, Pagination, LoadingOverlay, Modal } from '@/components/ui'
+import { FileText, Search, RefreshCw, Download, Filter, AlertTriangle, AlertCircle, Info, Shield, User, Settings, LogIn, Activity, Eye, FileJson, FileSpreadsheet, ChevronRight, ChevronDown, Sparkles } from 'lucide-react'
+import { Pagination, LoadingOverlay, Modal } from '@/components/ui'
 import {
   getSystemLogs,
   getSystemLogStatistics,

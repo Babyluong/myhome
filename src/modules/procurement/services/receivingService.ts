@@ -1,8 +1,11 @@
-// @ts-nocheck
 import { supabase, isSupabaseConfigured } from '@/services/supabase'
 import type { ApiResponse } from '@/types'
 import type { 
-  GoodsReceipt
+  GoodsReceipt,
+  GoodsReceiptItem,
+  PharmacyLPO,
+  PurchaseOrderWithRelations,
+  SupplierPenalty
 } from '@/types/pharmacy'
 import { createCreditNoteDraft, approveCreditNote } from './creditNoteService'
 import { checkAndCreateLatePenalty } from './penaltyService'
@@ -21,6 +24,83 @@ export interface GoodsReceiptCreate {
   document_url?: string
   document_urls?: string[]
   items: GoodsReceiptItemCreate[]
+}
+
+interface GoodsReceiptHistoryItem {
+  id: string
+  gr_id: string
+  po_item_id: string
+  item_code?: string | null
+  quantity_received?: number | null
+  quantity_accepted?: number | null
+  quantity_rejected?: number | null
+  batch_number?: string | null
+  expiry_date?: string | null
+  manufacturing_date?: string | null
+  disposition?: string | null
+  po_item?: {
+    item_name?: string | null
+    item_code?: string | null
+    packaging_description?: string | null
+    unit_price?: number | null
+  } | null
+}
+
+interface GoodsReceiptHistoryRecord extends Omit<GoodsReceipt, 'status' | 'po_id' | 'delivery_note_number' | 'document_url' | 'document_urls'> {
+  status: string
+  po_id?: string | null
+  delivery_note_number?: string | null
+  document_url?: string | null
+  document_urls?: string[] | null
+  received_by_user?: { full_name: string } | null
+  items?: GoodsReceiptHistoryItem[]
+}
+
+interface ReceivingHistoryRow {
+  id: string
+  hospital_id: string
+  lpo_id: string
+  do_number: string | null
+  receiving_date: string
+  status: string
+  received_by: string
+  created_at: string
+  received_by_user?: { full_name: string } | null
+  do_document_url: string | null
+  do_document_urls: string[] | null
+  items?: Array<{
+    id: string
+    lpo_item_id: string
+    received_quantity: number
+    batch_number: string | null
+    expiry_date: string | null
+    manufactured_date: string | null
+    po_item?: GoodsReceiptHistoryItem['po_item']
+  }>
+}
+
+interface ReceivingDetailRow {
+  id: string
+  hospital_id: string
+  lpo_id: string
+  do_number: string | null
+  receiving_date: string
+  status: string
+  received_by: string
+  created_at: string
+  received_by_user?: { full_name: string; jawatan?: string | null } | null
+  do_document_url: string | null
+  do_document_urls: string[] | null
+  items?: ReceivingHistoryRow['items']
+  penalties?: SupplierPenalty[]
+  lpo?: (PharmacyLPO & {
+    purchase_order?: PurchaseOrderWithRelations & { supplier?: { company_name: string } | null }
+  }) | null
+}
+
+type ReceivingPurchaseOrderDetail = PurchaseOrderWithRelations & {
+  items: NonNullable<PurchaseOrderWithRelations['items']>
+  lpo: Array<PharmacyLPO & { tracking?: Array<{ expected_delivery_date: string | null }> }>
 }
 
 export interface BatchEntry {
@@ -87,7 +167,7 @@ async function generateGRNumber(hospitalId: string): Promise<string> {
 /**
  * Fetch a PO with its items for receiving
  */
-export async function getReceivingDetail(poId: string): Promise<ApiResponse<any>> {
+export async function getReceivingDetail(poId: string): Promise<ApiResponse<ReceivingPurchaseOrderDetail>> {
   try {
     if (!isSupabaseConfigured()) throw new Error('Supabase not configured')
 
@@ -141,8 +221,8 @@ export async function createGoodsReceipt(
     }
 
     // 1. Create the GR Header with collision retry loop for high concurrency
-    let grData: any = null
-    let grError: any = null
+    let grData: GoodsReceipt | null = null
+    let grError: { code?: string; message?: string } | null = null
     let attempts = 0
 
     while (attempts < 5) {
@@ -349,7 +429,7 @@ export async function createGoodsReceipt(
         // Level 2: po_item_id via a sub-query (handles manual items with null item_id)
         // Level 3: if all PO items are now fully received, bulk-update the entire LPO
         if (data.lpo_id) {
-          const trackingUpdate: any = {
+          const trackingUpdate: Record<string, string | number | boolean> = {
             updated_at: new Date().toISOString()
           }
 
@@ -593,25 +673,29 @@ export async function getGoodsReceiptDetail(grId: string): Promise<ApiResponse<G
 
     if (recData) {
       // Map to GoodsReceipt shape
-      const mapped: any = {
-        id: recData.id,
-        hospital_id: recData.hospital_id,
-        po_id: recData.lpo?.purchase_order?.id,
-        lpo_id: recData.lpo_id,
-        gr_number: recData.do_number || `REC-${recData.id.substring(0,8)}`.toUpperCase(),
-        receipt_date: recData.receiving_date,
-        delivery_note_number: recData.do_number,
-        status: recData.status,
-        received_by: recData.received_by,
-        created_at: recData.created_at,
-        received_by_user: recData.received_by_user,
-        purchase_order: recData.lpo?.purchase_order,
-        penalties: recData.penalties,
-        document_url: recData.do_document_url,
-        document_urls: recData.do_document_urls || [],
-        items: recData.items?.map((i: any) => ({
+      const receivingDetail = recData as ReceivingDetailRow
+      const mapped: GoodsReceiptHistoryRecord & {
+        purchase_order?: PurchaseOrderWithRelations
+        penalties?: SupplierPenalty[]
+      } = {
+        id: receivingDetail.id,
+        hospital_id: receivingDetail.hospital_id,
+        po_id: receivingDetail.lpo?.purchase_order?.id,
+        lpo_id: receivingDetail.lpo_id,
+        gr_number: receivingDetail.do_number || `REC-${receivingDetail.id.substring(0,8)}`.toUpperCase(),
+        receipt_date: receivingDetail.receiving_date,
+        delivery_note_number: receivingDetail.do_number,
+        status: receivingDetail.status,
+        received_by: receivingDetail.received_by,
+        created_at: receivingDetail.created_at,
+        received_by_user: receivingDetail.received_by_user,
+        purchase_order: receivingDetail.lpo?.purchase_order,
+        penalties: receivingDetail.penalties,
+        document_url: receivingDetail.do_document_url,
+        document_urls: receivingDetail.do_document_urls || [],
+        items: receivingDetail.items?.map(i => ({
           id: i.id,
-          gr_id: recData.id,
+          gr_id: receivingDetail.id,
           po_item_id: i.lpo_item_id,
           quantity_received: i.received_quantity,
           quantity_accepted: i.received_quantity,
@@ -636,7 +720,7 @@ export async function getGoodsReceiptDetail(grId: string): Promise<ApiResponse<G
 /**
  * Fetch GR history for a specific PO
  */
-export async function getGoodsReceiptHistory(poId: string): Promise<ApiResponse<GoodsReceipt[]>> {
+export async function getGoodsReceiptHistory(poId: string): Promise<ApiResponse<GoodsReceiptHistoryRecord[]>> {
   try {
     if (!isSupabaseConfigured()) throw new Error('Supabase not configured')
 
@@ -655,15 +739,16 @@ export async function getGoodsReceiptHistory(poId: string): Promise<ApiResponse<
 
     if (grError) throw grError
 
-    let combinedGr = (grData || []) as GoodsReceipt[]
+    let combinedGr = (grData || []) as GoodsReceiptHistoryRecord[]
 
     // Fetch LPOs for this PO
-    const { data: lpos } = await supabase.from('pharmacy_lpo').select('id').eq('po_id', poId)
+    const { data: lpos, error: lpoError } = await supabase.from('pharmacy_lpo').select('id').eq('po_id', poId)
+    if (lpoError) throw lpoError
     const lpoIds = lpos?.map(l => l.id) || []
 
     if (lpoIds.length > 0) {
       // Fetch receiving records from newer system
-      const { data: receivingData } = await supabase
+      const { data: receivingData, error: receivingError } = await supabase
         .from('pharmacy_receiving')
         .select(`
           *,
@@ -676,8 +761,10 @@ export async function getGoodsReceiptHistory(poId: string): Promise<ApiResponse<
         .in('lpo_id', lpoIds)
         .order('created_at', { ascending: false })
 
+      if (receivingError) throw receivingError
+
       if (receivingData && receivingData.length > 0) {
-        const mappedReceiving = receivingData.map((r: any) => ({
+        const mappedReceiving = (receivingData as ReceivingHistoryRow[]).map(r => ({
           id: r.id,
           hospital_id: r.hospital_id,
           po_id: poId,
@@ -691,7 +778,7 @@ export async function getGoodsReceiptHistory(poId: string): Promise<ApiResponse<
           received_by_user: r.received_by_user,
           document_url: r.do_document_url,
           document_urls: r.do_document_urls || [],
-          items: r.items?.map((i: any) => ({
+          items: r.items?.map(i => ({
             id: i.id,
             gr_id: r.id,
             po_item_id: i.lpo_item_id, // Best match
@@ -891,7 +978,7 @@ export async function updateGoodsReceipt(
   grId: string, 
   data: Partial<GoodsReceipt> & { 
     modification_reason: string,
-    items?: any[] 
+    items?: Array<Partial<GoodsReceiptItem> & { id: string }>
   }
 ): Promise<ApiResponse<GoodsReceipt>> {
   try {

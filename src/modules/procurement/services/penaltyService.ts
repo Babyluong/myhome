@@ -1,7 +1,6 @@
-// @ts-nocheck
 import { supabase, isSupabaseConfigured } from '@/services/supabase'
 import type { ApiResponse } from '@/types'
-import type { SupplierPenalty, PenaltyStatus } from '@/types/pharmacy'
+import type { SupplierPenalty, PenaltyStatus, PenaltyType } from '@/types/pharmacy'
 import { getPurchaseOrderById as getPurchaseOrder } from './procurementService'
 import { isApplOrder } from '@/shared/lib/utils'
 
@@ -25,8 +24,49 @@ export interface PerformanceStandard {
   sort_order: number
 }
 
+export interface PenaltyStats {
+  total: number
+  pending: number
+  enforced: number
+  waived: number
+  approved: number
+  appl_count: number
+  cc_count: number
+  appl_amount: number
+  cc_amount: number
+}
+
+type PenaltyCreateInput = Omit<Partial<SupplierPenalty>, 'penalty_type'> & {
+  penalty_type?: PenaltyType | 'appl' | 'cc'
+}
+
+interface PenaltyUpdateInput extends Partial<SupplierPenalty> {
+  approved_by_name?: string
+  approved_by_designation?: string
+  do_number?: string
+  performance_standards_violated?: string[]
+  payment_kaedah?: number
+  payment_reference?: string
+  quantity?: number
+  unit_price?: number
+  total_order_value?: number
+  failed_product_value?: number
+  prepared_by_user_id?: string
+  verified_by_user_id?: string
+  prepared_by_name?: string
+  prepared_by_designation?: string
+  verified_by_name?: string
+  verified_by_designation?: string
+  prepared_at?: string
+  verified_at?: string
+}
+
+function errorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback
+}
+
 export async function createPenalty(
-  data: Partial<SupplierPenalty>
+  data: PenaltyCreateInput
 ): Promise<ApiResponse<SupplierPenalty>> {
   try {
     if (!isSupabaseConfigured()) {
@@ -42,9 +82,9 @@ export async function createPenalty(
     if (error) throw error
 
     return { data: penalty, error: null }
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error creating penalty:', error)
-    return { data: null, error: error.message }
+    return { data: null, error: errorMessage(error, 'Failed to create penalty') }
   }
 }
 
@@ -57,6 +97,54 @@ export interface PaginatedPenaltyResponse {
     totalPages: number
   }
   error: string | null
+}
+
+interface PenaltyByIdRecord extends Omit<SupplierPenalty, 'status' | 'supplier' | 'purchase_order' | 'goods_receipt' | 'lpo'> {
+  status: string
+  approved_by?: string
+  approved_at?: string
+  penalty_paid?: boolean
+  payment_kaedah?: number
+  payment_reference?: string
+  quantity?: number
+  unit_price?: number
+  total_order_value?: number
+  failed_product_value?: number
+  performance_standards_violated?: string[]
+  prepared_by_user_id?: string
+  verified_by_user_id?: string
+  prepared_by_name?: string
+  prepared_by_designation?: string
+  verified_by_name?: string
+  verified_by_designation?: string
+  prepared_at?: string
+  verified_at?: string
+  supplier?: { id: string; company_name: string; address: string | null; phone: string | null; email: string | null; contact_person: string | null; registration_number: string | null } | null
+  purchase_order?: {
+    id: string
+    po_number: string
+    po_type: string
+    order_date: string
+    total_amount: number
+    vote_code: string | null
+    category: string | null
+    items: Array<{
+      id: string
+      item_code: string | null
+      item_name: string | null
+      quantity_ordered: number
+      unit_price: number
+      total_price: number
+      deliveries?: Array<{ id: string; delivery_number: string; quantity_late?: number; days_delayed?: number; is_penalty_applicable?: boolean }>
+    }>
+  } | null
+  goods_receipt?: { id: string; gr_number: string; receipt_date: string; delivery_note_number: string | null } | null
+  lpo?: { id: string; lpo_number: string; document_date: string; expected_delivery_date: string | null; document_url: string | null } | null
+  order_tracking?: { item_code: string | null; item_name: string | null } | null
+  receiving?: { receiving_date: string; do_number: string | null } | null
+  prepared_by?: { id: string; full_name: string; jawatan: string | null } | null
+  verified_by?: { id: string; full_name: string; jawatan: string | null } | null
+  approved_by_user?: { id: string; full_name: string; jawatan: string | null } | null
 }
 
 export async function getPenalties(
@@ -119,17 +207,17 @@ export async function getPenalties(
       },
       error: null
     }
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error fetching penalties:', error)
     return {
       data: [],
       meta: { total: 0, page: 1, limit: 10, totalPages: 0 },
-      error: error.message
+      error: errorMessage(error, 'Failed to fetch penalties')
     }
   }
 }
 
-export async function getPenaltyStats(hospitalId: string): Promise<ApiResponse<any>> {
+export async function getPenaltyStats(hospitalId: string): Promise<ApiResponse<PenaltyStats>> {
   try {
     if (!isSupabaseConfigured()) {
       return {
@@ -162,15 +250,15 @@ export async function getPenaltyStats(hospitalId: string): Promise<ApiResponse<a
     }
 
     return { data: stats, error: null }
-  } catch (error: any) {
-    return { data: null, error: error.message }
+  } catch (error) {
+    return { data: null, error: errorMessage(error, 'Failed to fetch penalty statistics') }
   }
 }
 
 /**
  * Fetches a single penalty by ID with full relational data
  */
-export async function getPenaltyById(id: string): Promise<ApiResponse<any>> {
+export async function getPenaltyById(id: string): Promise<ApiResponse<PenaltyByIdRecord>> {
   try {
     if (!isSupabaseConfigured()) return { data: null, error: 'Database not configured' }
 
@@ -195,21 +283,24 @@ export async function getPenaltyById(id: string): Promise<ApiResponse<any>> {
 
     // Map performance standards UUIDs back to codes for the frontend
     if (data && data.performance_standards_violated && data.performance_standards_violated.length > 0) {
-      const { data: standardsData } = await supabase
+      const { data: standardsData, error: standardsError } = await supabase
         .from('penalty_performance_standards')
         .select('id, code')
+
+      if (standardsError) throw standardsError
       
       if (standardsData && standardsData.length > 0) {
-        const idToCodeMap = new Map(standardsData.map((s: any) => [s.id, s.code]))
+        const standards = standardsData as Array<{ id: string; code: string }>
+        const idToCodeMap = new Map(standards.map(({ id, code }) => [id, code]))
         data.performance_standards_violated = data.performance_standards_violated
           .map((uid: string) => idToCodeMap.get(uid) || uid)
       }
     }
 
     return { data, error: null }
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error fetching penalty by ID:', error)
-    return { data: null, error: error.message }
+    return { data: null, error: errorMessage(error, 'Failed to fetch penalty') }
   }
 }
 
@@ -218,8 +309,8 @@ export async function getPenaltyById(id: string): Promise<ApiResponse<any>> {
  */
 export async function updatePenaltyDetails(
   id: string,
-  updates: Record<string, any>
-): Promise<ApiResponse<any>> {
+  updates: PenaltyUpdateInput
+): Promise<ApiResponse<SupplierPenalty>> {
   try {
     if (!isSupabaseConfigured()) return { data: null, error: 'Database not configured' }
 
@@ -232,17 +323,20 @@ export async function updatePenaltyDetails(
     // Map performance standards codes to UUIDs if standard codes (like "PS05") are passed
     if (cleanedUpdates.performance_standards_violated && Array.isArray(cleanedUpdates.performance_standards_violated)) {
       const isUuid = (str: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(str)
-      const hasCodes = cleanedUpdates.performance_standards_violated.some((code: string) => !isUuid(code))
+      const hasCodes = cleanedUpdates.performance_standards_violated.some(code => !isUuid(code))
 
       if (hasCodes) {
-        const { data: standardsData } = await supabase
+        const { data: standardsData, error: standardsError } = await supabase
           .from('penalty_performance_standards')
           .select('id, code')
+
+        if (standardsError) throw standardsError
         
         if (standardsData && standardsData.length > 0) {
-          const codeToIdMap = new Map(standardsData.map((s: any) => [s.code, s.id]))
+          const standards = standardsData as Array<{ id: string; code: string }>
+          const codeToIdMap = new Map(standards.map(({ id, code }) => [code, id]))
           cleanedUpdates.performance_standards_violated = cleanedUpdates.performance_standards_violated
-            .map((code: string) => isUuid(code) ? code : codeToIdMap.get(code))
+            .map(code => isUuid(code) ? code : codeToIdMap.get(code))
             .filter((val): val is string => !!val)
         }
       }
@@ -257,9 +351,9 @@ export async function updatePenaltyDetails(
 
     if (error) throw error
     return { data, error: null }
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error updating penalty:', error)
-    return { data: null, error: error.message }
+    return { data: null, error: errorMessage(error, 'Failed to update penalty') }
   }
 }
 
@@ -269,7 +363,7 @@ export async function updatePenaltyDetails(
 export async function approvePenalty(
   id: string,
   userId: string
-): Promise<ApiResponse<any>> {
+): Promise<ApiResponse<SupplierPenalty>> {
   try {
     if (!isSupabaseConfigured()) return { data: null, error: 'Database not configured' }
 
@@ -287,9 +381,9 @@ export async function approvePenalty(
 
     if (error) throw error
     return { data, error: null }
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error approving penalty:', error)
-    return { data: null, error: error.message }
+    return { data: null, error: errorMessage(error, 'Failed to approve penalty') }
   }
 }
 
@@ -308,9 +402,9 @@ export async function getPerformanceStandards(): Promise<ApiResponse<Performance
 
     if (error) throw error
     return { data: data as PerformanceStandard[], error: null }
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error fetching performance standards:', error)
-    return { data: [], error: error.message }
+    return { data: [], error: errorMessage(error, 'Failed to fetch performance standards') }
   }
 }
 
@@ -325,7 +419,7 @@ export async function updatePenaltyStatus(
       return { data: null, error: 'Database not configured' }
     }
 
-    const updates: any = {
+    const updates: Partial<SupplierPenalty> = {
       status,
       updated_at: new Date().toISOString()
     }
@@ -347,9 +441,9 @@ export async function updatePenaltyStatus(
     if (error) throw error
 
     return { data: data as SupplierPenalty, error: null }
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error updating penalty:', error)
-    return { data: null, error: error.message }
+    return { data: null, error: errorMessage(error, 'Failed to update penalty') }
   }
 }
 
@@ -367,7 +461,7 @@ export async function deletePenalty(
     }
 
     // Insert into approval_logs first for auditability
-    await supabase
+    const { error: auditError } = await supabase
       .from('approval_logs')
       .insert({
         entity_type: 'penalty',
@@ -378,6 +472,8 @@ export async function deletePenalty(
         created_at: new Date().toISOString()
       })
 
+    if (auditError) throw auditError
+
     // Perform actual deletion
     const { error } = await supabase
       .from('pharmacy_penalties')
@@ -387,9 +483,9 @@ export async function deletePenalty(
     if (error) throw error
 
     return { data: true, error: null }
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error deleting penalty:', error)
-    return { data: false, error: error.message }
+    return { data: false, error: errorMessage(error, 'Failed to delete penalty') }
   }
 }
 
@@ -420,24 +516,28 @@ export async function checkAndCreateLatePenalty(
     const po = poRes.data
     
     // Check for existing penalty for this LPO / GR to prevent duplicates
-    const actualLpoId = lpoId || (po as any).lpo_id
+    const actualLpoId = lpoId || po.lpo?.[0]?.id
     if (actualLpoId) {
-      const { data: existingPenalty } = await supabase
+      const { data: existingPenalty, error: existingPenaltyError } = await supabase
         .from('pharmacy_penalties')
         .select('id')
         .eq('lpo_id', actualLpoId)
         .maybeSingle()
+
+      if (existingPenaltyError) throw existingPenaltyError
 
       if (existingPenalty) {
         console.log(`[PENALTY] Duplicate prevention: Penalty already exists for LPO ${actualLpoId}`);
         return { data: null, error: null }
       }
     } else if (grId) {
-      const { data: existingPenalty } = await supabase
+      const { data: existingPenalty, error: existingPenaltyError } = await supabase
         .from('pharmacy_penalties')
         .select('id')
         .eq('gr_id', grId)
         .maybeSingle()
+
+      if (existingPenaltyError) throw existingPenaltyError
 
       if (existingPenalty) {
         console.log(`[PENALTY] Duplicate prevention: Penalty already exists for GR ${grId}`);
@@ -453,11 +553,13 @@ export async function checkAndCreateLatePenalty(
     
     if (actualLpoId) {
       // 1. Always prioritize LPO-level expected delivery date first
-      const { data: lpoData } = await supabase
+      const { data: lpoData, error: lpoError } = await supabase
         .from('pharmacy_lpo')
         .select('expected_delivery_date')
         .eq('id', actualLpoId)
         .maybeSingle()
+
+      if (lpoError) throw lpoError
         
       if (lpoData?.expected_delivery_date) {
         expectedDate = lpoData.expected_delivery_date
@@ -473,7 +575,8 @@ export async function checkAndCreateLatePenalty(
         query = query.eq('item_code', resolvedItemCode)
       }
 
-      const { data: trackingItems } = await query.limit(1)
+      const { data: trackingItems, error: trackingError } = await query.limit(1)
+      if (trackingError) throw trackingError
       if (trackingItems && trackingItems.length > 0) {
         resolvedTrackingId = trackingItems[0].id
         if (!expectedDate && trackingItems[0].expected_delivery_date) {
@@ -504,9 +607,9 @@ export async function checkAndCreateLatePenalty(
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
       // Dynamically resolve penalty type ('appl' or 'cc') based on the PO's vote code or category
-      let penaltyType = isApplOrder(po) ? 'appl' : 'cc'
+      const penaltyType: 'appl' | 'cc' = isApplOrder(po) ? 'appl' : 'cc'
 
-      const penaltyData: Partial<SupplierPenalty> = {
+      const penaltyData: PenaltyCreateInput = {
         hospital_id: hospitalId,
         supplier_id: po.supplier_id,
         po_id: po.id,
@@ -515,7 +618,7 @@ export async function checkAndCreateLatePenalty(
         order_tracking_id: resolvedTrackingId,
         item_name: resolvedItemName,
         item_code: resolvedItemCode,
-        penalty_type: penaltyType as any,
+        penalty_type: penaltyType,
         days_delayed: diffDays,
         expected_delivery_date: expectedDate,
         actual_delivery_date: receiptDate,
@@ -529,8 +632,8 @@ export async function checkAndCreateLatePenalty(
     }
 
     return { data: null, error: null }
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error checking late penalty:', error)
-    return { data: null, error: error.message }
+    return { data: null, error: errorMessage(error, 'Failed to check late penalty') }
   }
 }

@@ -1,17 +1,5 @@
 import React from 'react'
-import {
-  Flame,
-  Skull,
-  Biohazard,
-  AlertTriangle,
-  Activity,
-  Wind,
-  Droplet,
-  Zap,
-  Globe,
-  Sparkles,
-  ShieldAlert
-} from 'lucide-react'
+import { Flame, Skull, AlertTriangle, Activity, Wind, Droplet, Zap, Globe, Sparkles, ShieldAlert } from 'lucide-react'
 
 interface GhsPictogramProps {
   code: string

@@ -1,24 +1,7 @@
 // src/modules/mysuhu/pages/AdminSetupPage.tsx
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  ArrowLeft, 
-  Settings, 
-  MapPin, 
-  Thermometer, 
-  Plus, 
-  Edit2, 
-  Save, 
-  Power, 
-  Info, 
-  CheckCircle, 
-  AlertTriangle,
-  Camera,
-  Eye,
-  X,
-  Trash2,
-  Image as ImageIcon
-} from 'lucide-react'
+import { ArrowLeft, Settings, MapPin, Thermometer, Plus, Edit2, Power, Info, CheckCircle, Camera, X, Image as ImageIcon } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { Badge, Spinner } from '@/components/ui'
 import { 
@@ -239,21 +222,7 @@ export const AdminSetupPage: React.FC = () => {
     }
   }
 
-  const handleDeletePhotoForUnit = async (unitId: string) => {
-    if (!confirm('Adakah anda pasti ingin memadam foto unit ini?')) return
-    setUploadingUnitId(unitId)
-    try {
-      const res = await deleteEquipmentPhoto(unitId)
-      if (res.error) throw new Error(res.error)
-      triggerNotification('Foto peralatan berjaya dipadam.')
-      await loadData()
-    } catch (err: any) {
-      console.error('Failed to delete photo:', err)
-      alert(err?.message || 'Gagal memadam foto')
-    } finally {
-      setUploadingUnitId(null)
-    }
-  }
+  
 
   // Toggle Unit status
   const handleToggleUnitStatus = async (unit: UnitPemantauanWithRelations) => {

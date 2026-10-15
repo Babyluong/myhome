@@ -3,22 +3,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  ArrowLeft,
-  Users,
-  LayoutDashboard,
-  Calendar,
-  Briefcase,
-  CalendarDays,
-  Clock,
-  Bell,
-  ShieldCheck,
-  Activity,
-  CheckCircle2,
-  AlertTriangle,
-  GraduationCap,
-  Network
-} from 'lucide-react'
+import { ArrowLeft, Users, LayoutDashboard, Calendar, Briefcase, Clock, Bell, CheckCircle2, Network } from 'lucide-react'
 import { ROUTES } from '@/lib/constants'
 import { Badge, Skeleton } from '@/components/ui'
 import { useLanguage } from '@/shared/contexts/LanguageContext'

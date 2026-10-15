@@ -1,24 +1,7 @@
 ﻿// @ts-nocheck
 import React, { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
-import {
-  Activity,
-  Database,
-  HardDrive,
-  Zap,
-  Cpu,
-  MemoryStick,
-  Wifi,
-  RefreshCw,
-  CheckCircle,
-  AlertTriangle,
-  XCircle,
-  TrendingUp,
-  Clock,
-  Users,
-  Building2,
-  Settings,
-} from 'lucide-react'
+import { Activity, Database, HardDrive, Zap, Cpu, MemoryStick, Wifi, RefreshCw, CheckCircle, AlertTriangle, XCircle, Users, Building2, Settings } from 'lucide-react'
 import { Button, Badge, LoadingOverlay, Select } from '@/components/ui'
 import { getSystemStatistics } from '@/services/systemAdminService'
 import { getLatestHealthStatus } from '@/services/monitoringService'

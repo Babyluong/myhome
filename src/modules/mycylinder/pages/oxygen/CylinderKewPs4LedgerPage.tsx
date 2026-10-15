@@ -1,84 +1,15 @@
 // @ts-nocheck
 import React, { useEffect, useState, useMemo, useRef } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  FileText, 
-  ArrowLeft, 
-  Search, 
-  Calendar, 
-  TrendingUp, 
-  User, 
-  MapPin, 
-  Clock, 
-  Printer, 
-  Layers, 
-  ArrowDownCircle, 
-  ArrowUpCircle,
-  Download,
-  Filter,
-  Building2,
-  PackageCheck,
-  PackageMinus,
-  Building,
-  RefreshCw,
-  SlidersHorizontal,
-  ChevronRight,
-  ShieldAlert,
-  BarChart3,
-  QrCode,
-  Camera,
-  X,
-  CheckCircle2,
-  AlertTriangle,
-  Volume2,
-  PlusCircle,
-  MinusCircle,
-  Package,
-  Tag,
-  Truck,
-  Hash,
-  Sparkles,
-  Lock,
-  Pencil,
-  ClipboardCheck,
-  History,
-  RotateCcw,
-  Trash2,
-  FastForward,
-  ShieldCheck,
-  Scale,
-  FileCheck,
-  CheckCheck,
-  AirVent,
-  Activity,
-  Boxes,
-  Database
-} from 'lucide-react'
-import jsQR from 'jsqr'
+import 'framer-motion'
+import { FileText, Search, Calendar, MapPin, Clock, Printer, Layers, Download, Building2, Building, SlidersHorizontal, ChevronRight, BarChart3, QrCode, X, CheckCircle2, AlertTriangle, Lock, ClipboardCheck, Trash2, FastForward, ShieldCheck, FileCheck, CheckCheck, AirVent, Boxes } from 'lucide-react'
+import 'jsqr'
 import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 import { useAuthStore } from '@/stores/authStore'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
-import { Table, Spinner, Input, Badge, Select, Button, Modal } from '@/components/ui'
+import { Spinner, Input, Badge, Select, Button, Modal } from '@/components/ui'
 import { ROUTES } from '@/shared/constants/routes'
 import { JATA_NEGARA_BASE64 } from '@/modules/mytransporter/pages/jataNegaraBase64'
-import { 
-  getCylinderLedgerItems,
-  getCylinderTransactions,
-  recordCylinderReceiptTransaction,
-  recordCylinderIssueTransaction,
-  recordCylinderCheckFoundTransaction,
-  recordCylinderBringForwardTransaction,
-  recordCylinderStoreVerification,
-  getCylinderStoreVerificationHistory,
-  deleteCylinderStoreVerificationRecord,
-  getCylinderDepartmentBreakdown,
-  clearCylinderTransactions,
-  type CylinderLedgerItem,
-  type CylinderTransactionRow,
-  type CylinderDeptBreakdown,
-  type CylinderStoreVerificationRecord,
-  CYLINDER_STANDARD_PRICES
-} from '../../services/cylinderKewPs4Service'
+import { getCylinderLedgerItems, getCylinderTransactions, recordCylinderCheckFoundTransaction, recordCylinderBringForwardTransaction, recordCylinderStoreVerification, getCylinderStoreVerificationHistory, deleteCylinderStoreVerificationRecord, getCylinderDepartmentBreakdown, clearCylinderTransactions, type CylinderLedgerItem, type CylinderTransactionRow, type CylinderDeptBreakdown, type CylinderStoreVerificationRecord, CYLINDER_STANDARD_PRICES } from '../../services/cylinderKewPs4Service'
 
 const DEFAULT_GAS_SUPPLIERS = [
   { id: 'sup-gas-001', company_name: 'Linde EOX Sdn Bhd (Caw. Miri)', supplier_code: 'SUP-LINDE-01' },
@@ -126,7 +57,7 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
   const [activeDatePreset, setActiveDatePreset] = useState<'today' | 'week' | 'month' | '3months' | 'all'>('all')
   const [selectedTxType, setSelectedTxType] = useState<string>('all')
   const [selectedWard, setSelectedWard] = useState<string>('all')
-  const [refSearch, setRefSearch] = useState<string>('')
+  const [refSearch, ] = useState<string>('')
 
   // UI Loading States
   const [isLoadingCatalog, setIsLoadingCatalog] = useState(false)
@@ -179,8 +110,8 @@ export const CylinderKewPs4LedgerPage: React.FC = () => {
 
   // QR Scanner Modal State
   const [isQrModalOpen, setIsQrModalOpen] = useState(false)
-  const [qrScanResult, setQrScanResult] = useState<string | null>(null)
-  const [isCameraActive, setIsCameraActive] = useState(false)
+  useState<string | null>(null);
+  useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const canvasRef = useRef<HTMLCanvasElement | null>(null)
   const animationFrameRef = useRef<number | null>(null)

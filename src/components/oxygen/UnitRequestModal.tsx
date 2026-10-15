@@ -1,10 +1,6 @@
 // @ts-nocheck
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { 
-  X, Plus, Trash2, ShieldAlert, FileText, User as UserIcon,
-  Building2, Building, ArrowRight, ArrowLeftRight, Share2, 
-  MapPin, Search, Check, Sparkles, Minus, Flame, Layers
-} from 'lucide-react';
+import { X, Plus, Trash2, ShieldAlert, FileText, Building2, Building, ArrowRight, Share2, MapPin, Check, Sparkles, Minus } from 'lucide-react'
 import type { User } from '@/types';
 import { COMMON_EXTERNAL_FACILITIES } from '@/modules/mycylinder/constants/externalFacilities';
 

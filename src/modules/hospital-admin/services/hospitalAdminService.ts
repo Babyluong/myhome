@@ -119,7 +119,7 @@ export async function createHospitalAdmin(
       const authResult = await createAuthUser(
         params.email,
         params.password,
-        newUserId // Use the pre-generated UUID
+        newUserId, { hospitalId: params.hospital_id, roleId: hospitalAdminRoleId }
       )
 
       if (!authResult.success || !authResult.authUserId) {
@@ -167,19 +167,12 @@ export async function createHospitalAdmin(
         
         // Attempt to delete the auth user (best effort, may fail if service role key not available)
         try {
-          const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-          const serviceRoleKey = import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY
-          if (serviceRoleKey && serviceRoleKey !== 'placeholder-service-key') {
-            await fetch(`${supabaseUrl}/auth/v1/admin/users/${newUserId}`, {
-              method: 'DELETE',
-              headers: {
-                Authorization: `Bearer ${serviceRoleKey}`,
-                apikey: serviceRoleKey,
-              },
-            })
-          }
+          const { data: cleanup, error: cleanupError } = await supabase.functions.invoke('admin-user-ops', {
+            body: { action: 'delete_user', authUserId: actualAuthUserId },
+          })
+          if (cleanupError || !cleanup?.success) return { success: false, error: 'Profile creation failed; Auth account cleanup requires administrator reconciliation.' }
         } catch (cleanupError) {
-          console.error('Failed to cleanup auth user after profile insert failure:', cleanupError)
+          return { success: false, error: 'Profile creation failed; Auth account cleanup requires administrator reconciliation.' }
         }
         
         throw userError

@@ -1,7 +1,7 @@
 ﻿// @ts-nocheck
 // Clinic Detail Page - Uses same component as Hospital but with clinic context
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import 'react-router-dom'
 import { HospitalDetailPage as BaseDetailPage } from '../hospitals/HospitalDetailPage'
 
 export const ClinicDetailPage: React.FC = () => {

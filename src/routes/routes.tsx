@@ -6,7 +6,7 @@ import {
   Navigate,
 } from 'react-router-dom'
 import { MainLayout, HubLayout } from '@/components/layout'
-import { LoadingOverlay, ModulePageSkeleton } from '@/components/ui'
+import { ModulePageSkeleton } from '@/components/ui'
 import { ProtectedRoute } from './ProtectedRoute'
 import { ROUTES, SYSTEM_ROLES } from '@/lib/constants'
 import { isPharmacyLogisticsUser } from '@/shared/utils/inventoryRbac'
@@ -2377,7 +2377,7 @@ const router = createBrowserRouter(
               SYSTEM_ROLES.PHARMACY_STAFF,
             ]}
             departmentCheck={isPharmacyLogisticsUser}
-            redirectTo="/pharmacy/inventory"
+            redirectTo="/pharmacy/inventory/facility-drugs"
           >
             <Suspense fallback={<PageLoader />}>
               <DrugInventoryPage />
@@ -2400,7 +2400,7 @@ const router = createBrowserRouter(
               SYSTEM_ROLES.PHARMACY_STAFF,
             ]}
             departmentCheck={isPharmacyLogisticsUser}
-            redirectTo="/pharmacy/inventory"
+            redirectTo="/pharmacy/inventory/facility-non-drugs"
           >
             <Suspense fallback={<PageLoader />}>
               <NonDrugInventoryPage />

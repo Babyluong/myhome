@@ -1,20 +1,5 @@
 import React, { useState } from 'react'
-import {
-  X,
-  AlertTriangle,
-  Calendar,
-  Layers,
-  Plus,
-  Trash2,
-  CheckCircle2,
-  Building2,
-  Pill,
-  Package,
-  Clock,
-  Sparkles,
-  ShieldCheck,
-  Stethoscope
-} from 'lucide-react'
+import { X, AlertTriangle, Layers, Plus, Trash2, CheckCircle2, Pill, Package, Clock } from 'lucide-react'
 import {
   StockDisruptionRecord,
   DisruptionSeverity,

@@ -5,25 +5,7 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import { useAuthStore } from '@/stores/authStore'
 import { supabase } from '@/services/supabase'
-import {
-  Wrench,
-  Search,
-  Plus,
-  Trash2,
-  CheckCircle,
-  Clock,
-  AlertTriangle,
-  XCircle,
-  FileText,
-  ChevronRight,
-  Eye,
-  Check,
-  X,
-  Loader2,
-  DollarSign,
-  Building,
-  Info
-} from 'lucide-react'
+import { Wrench, Search, Plus, Trash2, CheckCircle, Clock, AlertTriangle, XCircle, Eye, X, Loader2 } from 'lucide-react'
 import { cn, formatCurrency } from '@/lib/utils'
 import { motion, AnimatePresence } from 'framer-motion'
 import {

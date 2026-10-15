@@ -1,4 +1,3 @@
-// @ts-nocheck
 /**
  * Pharmacy Oxygen Management Service
  * Handles medical oxygen cylinder tracking and consumption
@@ -8,6 +7,11 @@ import { supabase, isSupabaseConfigured } from '@/services/supabase'
 import type { ApiResponse, PaginatedResponse } from '@/types'
 import type {
   OxygenCylinder,
+  OxygenCylinderStatus,
+  OxygenCylinderDepartmentInfo,
+  OxygenCylinderLocationInfo,
+  OxygenCylinderSizeInfo,
+  OxygenCylinderTypeRelationInfo,
   OxygenCylinderWithRelations,
   OxygenCylinderTypeInfo,
   OxygenConsumption,
@@ -19,22 +23,444 @@ import type {
   OxygenReceptionItem,
   OxygenFinancialSummary,
   OxygenReturnDocument,
-  OxygenReturnDocumentItem,
   OxygenReturnDocumentWithRelations,
   OxygenRequestDocument,
-  OxygenRequestDocumentItem,
   OxygenRequestDocumentWithRelations,
   OxygenReceiveDocument,
-  OxygenReceiveDocumentItem,
   OxygenReceiveDocumentWithRelations,
   SupplierTrackedCylinder,
   SupplierCylinderTrackingSummary,
 } from '@/types/pharmacy'
-import {
-  mockOxygenCylinders,
-  mockOxygenCylinderTypes,
-} from '@/services/pharmacy/mockData'
 import { cylinderOfflineDB } from './cylinderOfflineDB'
+
+type OxygenCylinderSizeRelation = {
+  capacity?: number | string | null
+  code?: string | null
+  is_loan?: boolean | null
+}
+
+type OxygenCylinderTypeRelation = {
+  code?: string | null
+  name?: string | null
+}
+
+type OxygenDepartmentRelation = {
+  id: string
+  department_name?: string | null
+  name?: string | null
+}
+
+type OxygenCylinderRelation<T> = T | T[] | null
+
+type OxygenCylinderListRow = OxygenCylinderWithRelations & {
+  is_active?: boolean | null
+  is_loan?: boolean | null
+  display_name?: string | null
+  status: OxygenCylinderStatus
+  department?: OxygenCylinderRelation<OxygenDepartmentRelation>
+}
+
+type OxygenCylinderSummaryRow = {
+  status: string
+  is_active?: boolean | null
+  cylinder_size_id?: string | null
+  cylinder_type_id?: string | null
+  size_info?: unknown
+  type_info?: unknown
+}
+
+type PricingHistoryCreator = {
+  full_name?: string | null
+  email?: string | null
+  jawatan?: string | null
+}
+
+type OxygenPricingHistoryItem = {
+  id: string
+  hospital_id: string
+  created_at: string
+  effective_from: string
+  cylinder_size_code: string
+  refill_price: number
+  loan_rate?: number | null
+  creator?: PricingHistoryCreator | null
+}
+
+type OxygenPricingHistoryRow = OxygenPricingHistoryItem & { created_by?: string | null }
+
+type ReceptionItemProjection = {
+  unit_price: number | null
+  quantity: number | null
+  size_info: OxygenCylinderRelation<{ code: string | null; unit: string | null }>
+}
+
+type ReceptionProjection = OxygenReceptionRecord & { items?: ReceptionItemProjection[] | null }
+
+type GroupedReception = OxygenReceptionRecord & {
+  ids: string[]
+  delivery_order_nos: string[]
+  sales_order_nos: string[]
+  is_vie_tank: boolean
+}
+
+type OxygenComboProjection = {
+  id: string
+  size_id: string
+  type_id: string
+  display_name: string
+  type_info?: OxygenCylinderRelation<OxygenCylinderTypeRelation>
+}
+
+type CylinderInventoryProjection = {
+  cylinder_size_id: string | null
+  cylinder_type_id: string | null
+  status: string
+  current_location: string | null
+  updated_at: string | null
+}
+
+type DepartmentCylinderItem = {
+  id: string
+  serial_number: string
+  qr_code: string
+  display_name: string
+  status: string
+  updated_at: string
+}
+
+type DepartmentRequestItem = {
+  size_code: string
+  quantity: number
+  quantity_issued: number
+}
+
+type DepartmentRequestSummary = {
+  id: string
+  request_number: string
+  status: string
+  created_at: string
+  items: DepartmentRequestItem[]
+}
+
+type DepartmentCylinderSummary = {
+  department_id: string
+  department_name: string
+  in_use: number
+  available: number
+  total: number
+  status: 'OK' | 'Low' | 'Critical'
+  cylinders: DepartmentCylinderItem[]
+  requests?: DepartmentRequestSummary[]
+}
+
+type StoreUsageInventoryProjection = {
+  cylinder_size_id: string | null
+  cylinder_type_id: string | null
+  status: string
+  current_location: string | null
+  is_active: boolean | null
+}
+
+type ReceptionMovementProjection = {
+  id: string
+  cylinder_size_id: string | null
+  cylinder_type_id: string | null
+  reception?: OxygenCylinderRelation<{ reception_date: string | null; hospital_id: string | null }>
+}
+
+type CylinderMovementProjection = {
+  id: string
+  moved_at: string
+  movement_type: string
+  from_location: string | null
+  to_location: string | null
+  cylinder?: OxygenCylinderRelation<{ cylinder_size_id: string | null; cylinder_type_id: string | null }>
+}
+
+type ReturnDocumentCylinderProjection = {
+  id: string
+  serial_number: string
+  qr_code: string | null
+  cylinder_size_id: string | null
+  cylinder_type_id: string | null
+  supplier_tagged: boolean | null
+  type_info?: OxygenCylinderRelation<{ id: string; name: string | null; code: string | null }>
+  size_info?: OxygenCylinderRelation<{ id: string; code: string | null; capacity: number | string | null; is_loan: boolean | null }>
+}
+
+type ReturnDocumentItemProjection = {
+  id: string
+  cylinder_id: string | null
+  cylinder?: OxygenCylinderRelation<ReturnDocumentCylinderProjection>
+}
+
+type ReturnDocumentProjection = OxygenReturnDocumentWithRelations & { items?: ReturnDocumentItemProjection[] | null }
+type CylinderComboProjection = { size_id: string; type_id: string; display_name: string | null }
+type GeneratedComboProjection = {
+  id: string
+  size_id: string
+  type_id: string
+  display_name: string | null
+  size_info: OxygenCylinderRelation<OxygenCylinderSizeRelation>
+  type_info: OxygenCylinderRelation<OxygenCylinderTypeRelation>
+}
+type GeneratedCylinderRow = OxygenCylinderWithRelations & {
+  current_location: string | null
+  qr_code: string | null
+  size_info?: OxygenCylinderRelation<OxygenCylinderSizeRelation>
+  type_info?: OxygenCylinderRelation<OxygenCylinderTypeRelation>
+}
+type SupplierCylinderConflictRow = { serial_number: string; cylinder_type_id: string | null; qr_code: string | null }
+type SupplierTaggedInsertRow = {
+  hospital_id: string
+  serial_number: string
+  cylinder_size_id: string | null
+  cylinder_type_id: string | null
+  status: 'available'
+  qr_code: string
+  current_location: 'Store'
+  supplier_tagged: true
+  supplier_tag_source: 'manual'
+  is_verified: true
+  qr_tagged_at: string
+  qr_tagged_by: string
+  created_at: string
+  updated_at: string
+}
+type ReturnDocumentCylinderIdProjection = { cylinder_id: string | null }
+type ExistingCylinderLookupRow = { id: string; serial_number: string; qr_code: string | null }
+type BulkCylinderInsertRow = {
+  hospital_id: string
+  serial_number: string
+  qr_code: string
+  qr_code_value: string
+  cylinder_size_id: string
+  cylinder_type_id: string
+  status: 'available'
+  current_location: 'Store'
+  scanned_location: 'Store'
+  scanned_by_name: string | null
+  supplier_tagged: boolean
+  supplier_tag_source: string | null
+  created_at: string
+  updated_at: string
+  last_reconciled_at: string
+}
+type SupplierTrackedDocumentProjection = {
+  id: string
+  document_number: string
+  returned_date?: string | null
+  received_date?: string | null
+  delivery_order_no?: string | null
+  supplier_id: string | null
+  created_at: string
+  supplier?: OxygenCylinderRelation<{ company_name: string | null; supplier_code: string | null }>
+  items?: Array<{ cylinder_id: string | null }> | null
+}
+type ReceivePriorCylinderProjection = {
+  id: string
+  serial_number: string
+  current_location: string | null
+  department_id: string | null
+  status: string
+}
+type DeletedCylinderProjection = {
+  id: string
+  serial_number: string
+  qr_code: string | null
+  current_location: string | null
+  status: string
+  cylinder_size_id: string | null
+  cylinder_type_id: string | null
+  hospital_id: string
+}
+type ReceiveCylinderUpdate = {
+  serial_number: string
+  updated_at: string
+  qr_code?: string
+  qr_code_value?: string
+}
+type CylinderUpdatePayload = {
+  current_location: string
+  scanned_location: string
+  status: string
+  updated_at: string
+  qr_tagged_at: string
+  last_reconciled_at: string
+  qr_tagged_by?: string | null
+  scanned_by_name?: string | null
+}
+type CylinderSearchRow = OxygenCylinderWithRelations & {
+  size_code?: string | null
+  is_active?: boolean | null
+  size_info?: OxygenCylinderRelation<OxygenCylinderSizeRelation>
+  type_info?: OxygenCylinderRelation<OxygenCylinderTypeRelation>
+  department?: OxygenCylinderRelation<OxygenDepartmentRelation>
+}
+type ReturnTrackingInfo = {
+  docId: string
+  docNumber: string
+  returnedDate: string
+  supplierId: string | null
+  supplierName?: string | null
+  supplierCode?: string | null
+  createdAt: string
+}
+type ReceiveTrackingInfo = {
+  docId: string
+  docNumber: string
+  deliveryOrderNo: string
+  receivedDate: string
+  supplierId: string | null
+  supplierName?: string | null
+  supplierCode?: string | null
+  createdAt: string
+}
+type SupplierMovementProjection = {
+  cylinder_id: string
+  movement_type: string
+  moved_at: string
+  remarks: string | null
+}
+type CylinderReconciliationRow = {
+  id: string
+  serial_number: string
+  qr_code: string | null
+  cylinder_size_id: string | null
+  cylinder_type_id: string | null
+  department_id: string | null
+  created_at: string
+  updated_at: string | null
+  status: string
+  current_location: OxygenCylinderLocationInfo | null
+  size_info?: OxygenCylinderRelation<OxygenCylinderSizeRelation>
+  type_info?: OxygenCylinderRelation<OxygenCylinderTypeRelation>
+  department?: OxygenCylinderRelation<OxygenDepartmentRelation>
+  supplier_tagged: boolean | null
+  is_active?: boolean | null
+}
+type OxygenReceiveProjection = OxygenReceiveDocument & {
+  items?: ReturnDocumentItemProjection[] | null
+}
+type CachedOxygenCylinder = OxygenCylinderWithRelations & {
+  type_id?: string
+  location_id?: string
+  is_active?: boolean | null
+  is_loan?: boolean | null
+  display_name?: string | null
+}
+
+function getUnknownRelation(value: unknown): unknown {
+  return Array.isArray(value) ? value[0] : value
+}
+
+function getOxygenLocationName(value: OxygenCylinderLocationInfo | null | undefined, fallback: string): string {
+  if (typeof value === 'string') return value
+  if (value && 'location_name' in value && typeof value.location_name === 'string') return value.location_name
+  return fallback
+}
+
+function getServiceErrorMessage(error: unknown, fallback: string): string {
+  if (error instanceof Error) return error.message || fallback
+  if (typeof error === 'object' && error !== null && 'message' in error && typeof error.message === 'string') {
+    return error.message || fallback
+  }
+  return fallback
+}
+
+function hasErrorCode(error: unknown, code: string): boolean {
+  return typeof error === 'object' && error !== null && 'code' in error && error.code === code
+}
+
+function getRelatedCode(relation: unknown): string | undefined {
+  const value = Array.isArray(relation) ? relation[0] : relation
+  if (typeof value !== 'object' || value === null || !('code' in value)) return undefined
+  return typeof value.code === 'string' ? value.code : undefined
+}
+
+function getSingleRelation<T>(relation: OxygenCylinderRelation<T> | undefined): T | undefined {
+  return Array.isArray(relation) ? relation[0] : relation ?? undefined
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+const oxygenCylinderStatuses = new Set<string>([
+  'full', 'empty', 'in_use', 'maintenance', 'disposed', 'available', 'issued',
+  'returned_to_supplier', 'damaged', 'deactivated', 'archived', 'cleared', 'written_off',
+])
+
+function isOxygenCylinderStatus(value: string): value is OxygenCylinderStatus {
+  return oxygenCylinderStatuses.has(value)
+}
+
+function parseCachedOxygenCylinder(value: unknown): CachedOxygenCylinder | null {
+  if (!isRecord(value) || typeof value.id !== 'string' || typeof value.hospital_id !== 'string' ||
+    typeof value.serial_number !== 'string' || typeof value.created_at !== 'string' ||
+    typeof value.status !== 'string' || !isOxygenCylinderStatus(value.status)) {
+    return null
+  }
+
+  const sizeInfoValue = getUnknownRelation(value.size_info)
+  const typeInfoValue = getUnknownRelation(value.type_info)
+  const departmentValue = getUnknownRelation(value.assigned_ward)
+  const currentLocationValue = getUnknownRelation(value.current_location)
+  const sizeInfo: OxygenCylinderSizeInfo | undefined = isRecord(sizeInfoValue) ? {
+    id: typeof sizeInfoValue.id === 'string' ? sizeInfoValue.id : undefined,
+    code: typeof sizeInfoValue.code === 'string' ? sizeInfoValue.code : null,
+    capacity: typeof sizeInfoValue.capacity === 'number' || typeof sizeInfoValue.capacity === 'string' ? sizeInfoValue.capacity : null,
+    is_loan: typeof sizeInfoValue.is_loan === 'boolean' ? sizeInfoValue.is_loan : null,
+    unit: typeof sizeInfoValue.unit === 'string' ? sizeInfoValue.unit : null,
+  } : undefined
+  const typeInfo: OxygenCylinderTypeRelationInfo | undefined = isRecord(typeInfoValue) ? {
+    id: typeof typeInfoValue.id === 'string' ? typeInfoValue.id : undefined,
+    type_code: typeof typeInfoValue.type_code === 'string' ? typeInfoValue.type_code : undefined,
+    type_name: typeof typeInfoValue.type_name === 'string' ? typeInfoValue.type_name : undefined,
+    capacity_liters: typeof typeInfoValue.capacity_liters === 'number' ? typeInfoValue.capacity_liters : undefined,
+    code: typeof typeInfoValue.code === 'string' ? typeInfoValue.code : null,
+    name: typeof typeInfoValue.name === 'string' ? typeInfoValue.name : null,
+  } : undefined
+  const department: OxygenCylinderDepartmentInfo | undefined = isRecord(departmentValue) && typeof departmentValue.id === 'string' ? {
+    id: departmentValue.id,
+    department_name: typeof departmentValue.department_name === 'string' ? departmentValue.department_name : null,
+    name: typeof departmentValue.name === 'string' ? departmentValue.name : null,
+  } : undefined
+  const currentLocation: OxygenCylinderLocationInfo | undefined = typeof currentLocationValue === 'string'
+    ? currentLocationValue
+    : isRecord(currentLocationValue) && typeof currentLocationValue.location_name === 'string'
+      ? { location_name: currentLocationValue.location_name }
+      : undefined
+
+  return {
+    id: value.id,
+    hospital_id: value.hospital_id,
+    serial_number: value.serial_number,
+    created_at: value.created_at,
+    updated_at: typeof value.updated_at === 'string' ? value.updated_at : undefined,
+    status: value.status,
+    type_id: typeof value.type_id === 'string' ? value.type_id : undefined,
+    cylinder_size_id: typeof value.cylinder_size_id === 'string' ? value.cylinder_size_id : undefined,
+    cylinder_type_id: typeof value.cylinder_type_id === 'string' ? value.cylinder_type_id : null,
+    current_location_id: typeof value.current_location_id === 'string' ? value.current_location_id : undefined,
+    assigned_ward_id: typeof value.assigned_ward_id === 'string' ? value.assigned_ward_id : undefined,
+    current_location: currentLocation,
+    assigned_ward: department,
+    size_info: sizeInfo,
+    type_info: typeInfo,
+    qr_code: typeof value.qr_code === 'string' ? value.qr_code : undefined,
+    qr_code_value: typeof value.qr_code_value === 'string' ? value.qr_code_value : null,
+    qr_tagged_at: typeof value.qr_tagged_at === 'string' ? value.qr_tagged_at : null,
+    qr_tagged_by: typeof value.qr_tagged_by === 'string' ? value.qr_tagged_by : null,
+    supplier_tagged: typeof value.supplier_tagged === 'boolean' ? value.supplier_tagged : undefined,
+    supplier_tag_source: typeof value.supplier_tag_source === 'string' ? value.supplier_tag_source : undefined,
+    department_id: typeof value.department_id === 'string' ? value.department_id : undefined,
+    location_id: typeof value.location_id === 'string' ? value.location_id : undefined,
+    is_active: typeof value.is_active === 'boolean' ? value.is_active : null,
+    is_loan: typeof value.is_loan === 'boolean' ? value.is_loan : null,
+    display_name: typeof value.display_name === 'string' ? value.display_name : null,
+  }
+}
 
 /**
  * Get all oxygen cylinders
@@ -56,13 +482,17 @@ export async function getOxygenCylinders(
 
   // Fast offline return directly from local IndexedDB
   if (!isOnline) {
-    let cylinders: any[] = []
+    let cylinders: CachedOxygenCylinder[] = []
     try {
       const cached = await cylinderOfflineDB.getAllCylinders(hospitalId)
       if (cached && cached.length > 0) {
-        cylinders = [...cached]
+        cylinders = cached
+          .map(parseCachedOxygenCylinder)
+          .filter((cylinder): cylinder is CachedOxygenCylinder => cylinder !== null)
       }
-    } catch (_) {}
+    } catch {
+      // The offline cache is optional; continue with the normal offline response.
+    }
 
     if (filter?.status) {
       cylinders = cylinders.filter(c => c.status === filter.status)
@@ -149,7 +579,7 @@ export async function getOxygenCylinders(
 
       // Supabase / PostgREST limits single queries to 1000 rows max.
       // We perform page batching loops if pageSize is larger than 1000.
-      let fetchedData: any[] = []
+      let fetchedData: OxygenCylinderListRow[] = []
       let totalCount = 0
       
       if (pageSize > 1000) {
@@ -192,23 +622,28 @@ export async function getOxygenCylinders(
       }
 
       // Helper: safely resolve capacity string from size_info (handles null/0/array)
-      const resolveCapacityStr = (sizeInfo: any, displayName?: string): string => {
-        const cap = Array.isArray(sizeInfo) ? sizeInfo[0]?.capacity : sizeInfo?.capacity
-        if (cap && parseFloat(cap) > 0) return String(cap)
+      const resolveCapacityStr = (
+        sizeInfo: OxygenCylinderRelation<OxygenCylinderSizeRelation> | undefined,
+        displayName?: string | null
+      ): string => {
+        const cap = getSingleRelation(sizeInfo)?.capacity
+        if (cap && parseFloat(String(cap)) > 0) return String(cap)
         // Fallback: extract from display_name e.g. "P101 – D (0.5m3)"
         const match = (displayName || '').match(/(\d+\.?\d*)\s*m3/i)
         if (match) return match[1]
         return ''
       }
 
-      const rows: any[] = []
+      const rows: OxygenCylinderWithRelations[] = []
 
       for (const row of fetchedData) {
         // Normalise size_info to always be an object (Supabase may return array or object)
-        const sizeInfo = Array.isArray(row.size_info) ? row.size_info[0] : row.size_info
+        const sizeInfo = getSingleRelation(row.size_info)
         const capStr = resolveCapacityStr(sizeInfo, row.display_name)
         const isLoan = row.is_loan || (sizeInfo && (sizeInfo.is_loan || sizeInfo.code?.startsWith('101-')))
-        const rawTypeCode = row.type_info?.code || (
+        const typeInfo = getSingleRelation(row.type_info)
+        const department = getSingleRelation(row.department)
+        const rawTypeCode = typeInfo?.code || (
           sizeInfo?.code === 'P101-D' || sizeInfo?.code === 'P101-E' || sizeInfo?.code === '101-F' ? 'PI' : 'BN'
         )
 
@@ -217,20 +652,21 @@ export async function getOxygenCylinders(
           size_info: sizeInfo,
           qr_code_value: row.qr_code_value || row.qr_code,
           type_info: {
-            ...row.type_info,
-            code: row.type_info?.code || rawTypeCode,
-            name: row.type_info?.name || (rawTypeCode === 'BN' ? 'Bullnose' : 'Pin Index'),
+            ...typeInfo,
+            code: typeInfo?.code || rawTypeCode,
+            name: typeInfo?.name || (rawTypeCode === 'BN' ? 'Bullnose' : 'Pin Index'),
             type_name: sizeInfo 
               ? isLoan
                 ? `Loan ${sizeInfo.code} (${capStr}M³)`
                 : `Standard ${sizeInfo.code} ${rawTypeCode} (${capStr}M³)`.replace(/\s+/g, ' ')
-              : row.type_info?.name || (isLoan ? 'Loan Cylinder' : 'Standard Cylinder')
+              : typeInfo?.name || (isLoan ? 'Loan Cylinder' : 'Standard Cylinder')
           },
           current_location: {
-            location_name: row.current_location || 'Central Store'
+            location_name: getOxygenLocationName(row.current_location, 'Central Store')
           },
-          assigned_ward: row.department ? {
-            department_name: row.department.department_name || row.department.name
+          assigned_ward: department ? {
+            id: department.id,
+            department_name: department.department_name || department.name
           } : null
         })
       }
@@ -252,17 +688,17 @@ export async function getOxygenCylinders(
       }
     }
 
-    // Fallback to local IndexedDB cache or in-memory mock data
-    let cylinders: any[] = []
+    // Offline reads may use the previously synchronized local cache.
+    let cylinders: CachedOxygenCylinder[] = []
     try {
       const cached = await cylinderOfflineDB.getAllCylinders(hospitalId)
       if (cached && cached.length > 0) {
-        cylinders = [...cached]
+        cylinders = cached
+          .map(parseCachedOxygenCylinder)
+          .filter((cylinder): cylinder is CachedOxygenCylinder => cylinder !== null)
       }
-    } catch (_) {}
-
-    if (cylinders.length === 0) {
-      cylinders = [...mockOxygenCylinders]
+    } catch {
+      // An unavailable cache yields no offline records.
     }
 
     if (filter?.status) {
@@ -298,45 +734,6 @@ export async function getOxygenCylinders(
     }
   } catch (error) {
     console.error('Error fetching oxygen cylinders:', error)
-    try {
-      const cached = await cylinderOfflineDB.getAllCylinders(hospitalId)
-      if (cached && cached.length > 0) {
-        let pool = cached
-        if (filter?.status) {
-          pool = pool.filter(c => c.status === filter.status)
-        }
-        if (filter?.type_id) {
-          pool = pool.filter(c => c.cylinder_type_id === filter.type_id)
-        }
-        const total = pool.length
-        const start = (page - 1) * pageSize
-        const paginated = pool.slice(start, start + pageSize)
-        return {
-          data: {
-            data: paginated as any,
-            total,
-            page,
-            pageSize,
-            totalPages: Math.ceil(total / pageSize),
-          },
-          error: null,
-        }
-      }
-    } catch (_) {}
-
-    if (typeof navigator !== 'undefined' && !navigator.onLine) {
-      return {
-        data: {
-          data: [],
-          total: 0,
-          page,
-          pageSize,
-          totalPages: 0,
-        },
-        error: null,
-      }
-    }
-
     return {
       data: null,
       error: error instanceof Error ? error.message : 'Failed to fetch oxygen cylinders',
@@ -366,7 +763,7 @@ export async function getOxygenCylinderById(
         .single()
 
       if (error) {
-        if ((error as any).code === 'PGRST116') {
+        if (hasErrorCode(error, 'PGRST116')) {
           return { data: null, error: 'Oxygen cylinder not found' }
         }
         throw error
@@ -396,21 +793,16 @@ export async function getOxygenCylinderById(
         current_location: {
           location_name: data.current_location || 'Central Store'
         },
-        assigned_ward: data.department ? {
-          department_name: data.department.department_name || data.department.name
+          assigned_ward: getSingleRelation(data.department) ? {
+            id: getSingleRelation(data.department)?.id,
+            department_name: getSingleRelation(data.department)?.department_name || getSingleRelation(data.department)?.name
         } : null
       }
 
       return { data: formatted as unknown as OxygenCylinderWithRelations, error: null }
     }
 
-    const cylinder = mockOxygenCylinders.find(c => c.id === cylinderId)
-    
-    if (!cylinder) {
-      return { data: null, error: 'Oxygen cylinder not found' }
-    }
-
-    return { data: cylinder, error: null }
+    return { data: null, error: 'Supabase is not configured' }
   } catch (error) {
     console.error('Error fetching oxygen cylinder:', error)
     return {
@@ -441,11 +833,18 @@ export async function getOxygenCylinderTypes(): Promise<ApiResponse<OxygenCylind
 
       if (error) throw error
 
-      const mapped = (data || []).map((row: any) => {
+      const mapped: OxygenCylinderTypeInfo[] = (data || []).map((row: {
+        id: string
+        display_name: string | null
+        size_id: string
+        type_id: string
+        size_info: OxygenCylinderRelation<OxygenCylinderSizeRelation>
+        type_info: OxygenCylinderRelation<OxygenCylinderTypeRelation>
+      }) => {
         // --- Capacity Resolution (multi-tier fallback) ---
         // Tier 1: Use size_info.capacity if it's a valid positive number
         const rawCapacity = Array.isArray(row.size_info) ? row.size_info[0]?.capacity : row.size_info?.capacity
-        let capacityVal = rawCapacity && parseFloat(rawCapacity) > 0 ? parseFloat(rawCapacity) : 0
+        let capacityVal = rawCapacity && parseFloat(String(rawCapacity)) > 0 ? parseFloat(String(rawCapacity)) : 0
 
         // Tier 2: If capacity is still 0/missing, extract M³ from display_name e.g. "P101 – D (0.5m3)"
         if (!capacityVal) {
@@ -472,12 +871,12 @@ export async function getOxygenCylinderTypes(): Promise<ApiResponse<OxygenCylind
           size_id: row.size_id,
           type_id: row.type_id
         }
-      }) as unknown as OxygenCylinderTypeInfo[]
+      })
 
       return { data: mapped, error: null }
     }
 
-    return { data: mockOxygenCylinderTypes, error: null }
+    return { data: null, error: 'Supabase is not configured' }
   } catch (error) {
     console.error('Error fetching oxygen cylinder types:', error)
     return {
@@ -498,7 +897,12 @@ export async function updateOxygenCylinderStatus(
 ): Promise<ApiResponse<OxygenCylinder>> {
   try {
     if (isSupabaseConfigured()) {
-      const updateData: Record<string, any> = {
+      const updateData: {
+        status: typeof status
+        updated_at: string
+        current_location?: string
+        department_id?: string
+      } = {
         status,
         updated_at: new Date().toISOString(),
       }
@@ -521,22 +925,7 @@ export async function updateOxygenCylinderStatus(
       return { data: data as OxygenCylinder, error: null }
     }
 
-    await new Promise(resolve => setTimeout(resolve, 500))
-
-    const cylinder = mockOxygenCylinders.find(c => c.id === cylinderId)
-    if (!cylinder) {
-      return { data: null, error: 'Oxygen cylinder not found' }
-    }
-
-    const updated: OxygenCylinder = {
-      ...cylinder,
-      status,
-      current_location_id: locationId || cylinder.current_location_id,
-      assigned_ward_id: assignedWardId || cylinder.assigned_ward_id,
-      updated_at: new Date().toISOString(),
-    }
-
-    return { data: updated, error: null }
+    return { data: null, error: 'Supabase is not configured' }
   } catch (error) {
     console.error('Error updating oxygen cylinder status:', error)
     return {
@@ -582,22 +971,7 @@ export async function recordOxygenConsumption(
       return { data: inserted as OxygenConsumption, error: null }
     }
 
-    await new Promise(resolve => setTimeout(resolve, 500))
-
-    const newConsumption: OxygenConsumption = {
-      id: `oc-${Date.now()}`,
-      hospital_id: hospitalId,
-      cylinder_id: cylinderId,
-      department_id: departmentId,
-      consumption_date: new Date().toISOString().split('T')[0],
-      quantity_used: quantityUsed,
-      unit,
-      recorded_by: userId,
-      notes,
-      created_at: new Date().toISOString(),
-    }
-
-    return { data: newConsumption, error: null }
+    return { data: null, error: 'Supabase is not configured' }
   } catch (error) {
     console.error('Error recording oxygen consumption:', error)
     return {
@@ -654,10 +1028,7 @@ export async function getOxygenConsumptionHistory(
       return { data: (data || []) as OxygenConsumptionWithRelations[], error: null }
     }
 
-    // Simple mock history when Supabase is not configured
-    const consumption: OxygenConsumptionWithRelations[] = []
-
-    return { data: consumption, error: null }
+    return { data: null, error: 'Supabase is not configured' }
   } catch (error) {
     console.error('Error fetching oxygen consumption history:', error)
     return {
@@ -675,13 +1046,25 @@ export async function getOxygenSummary(hospitalId: string): Promise<ApiResponse<
 
   // Fast offline return directly from local IndexedDB
   if (!isOnline) {
-    let list: any[] = []
+    let list: OxygenCylinderSummaryRow[] = []
     try {
       const cached = await cylinderOfflineDB.getAllCylinders(hospitalId)
       if (cached && cached.length > 0) {
-        list = cached.filter(c => c.status !== 'deactivated' && c.is_active !== false)
+        list = cached
+          .map(parseCachedOxygenCylinder)
+          .filter((cylinder): cylinder is CachedOxygenCylinder => cylinder !== null && cylinder.status !== 'deactivated' && cylinder.is_active !== false)
+          .map(({ status, is_active, cylinder_size_id, cylinder_type_id, size_info, type_info }) => ({
+            status,
+            is_active,
+            cylinder_size_id,
+            cylinder_type_id,
+            size_info,
+            type_info,
+          }))
       }
-    } catch (_) {}
+    } catch {
+      // A cache read failure must not hide the original network failure.
+    }
 
     const summary: OxygenSummary = {
       total_cylinders: list.length,
@@ -690,13 +1073,13 @@ export async function getOxygenSummary(hospitalId: string): Promise<ApiResponse<
       in_use_cylinders: list.filter(c => c.status === 'issued').length,
       maintenance_cylinders: 0,
       cylinders_by_type: [
-        { type: 'B', count: list.filter(c => c.type_info?.code === 'BN' || c.cylinder_type_id === 'BN').length },
-        { type: 'D', count: list.filter(c => c.size_info?.code === 'P101-D' || c.cylinder_size_id === 'P101-D').length },
-        { type: 'E', count: list.filter(c => c.size_info?.code === 'P101-E' || c.cylinder_size_id === 'P101-E').length },
+        { type: 'B', count: list.filter(c => getRelatedCode(c.type_info) === 'BN' || c.cylinder_type_id === 'BN').length },
+        { type: 'D', count: list.filter(c => getRelatedCode(c.size_info) === 'P101-D' || c.cylinder_size_id === 'P101-D').length },
+        { type: 'E', count: list.filter(c => getRelatedCode(c.size_info) === 'P101-E' || c.cylinder_size_id === 'P101-E').length },
         { type: 'M', count: 0 },
       ],
-      daily_consumption: 45,
-      monthly_consumption: 1350,
+      daily_consumption: null,
+      monthly_consumption: null,
     }
 
     return { data: summary, error: null }
@@ -713,16 +1096,28 @@ export async function getOxygenSummary(hospitalId: string): Promise<ApiResponse<
 
       if (error && typeof navigator !== 'undefined' && navigator.onLine) throw error
 
-      let list = (cylinders || []) as any[]
+      let list: OxygenCylinderSummaryRow[] = cylinders || []
 
       // If empty or offline, attempt reading cached cylinders from local IndexedDB
       if (list.length === 0) {
         try {
           const cached = await cylinderOfflineDB.getAllCylinders(hospitalId)
           if (cached && cached.length > 0) {
-            list = cached.filter(c => c.status !== 'deactivated' && c.is_active !== false)
+            list = cached
+              .map(parseCachedOxygenCylinder)
+              .filter((cylinder): cylinder is CachedOxygenCylinder => cylinder !== null && cylinder.status !== 'deactivated' && cylinder.is_active !== false)
+              .map(({ status, is_active, cylinder_size_id, cylinder_type_id, size_info, type_info }) => ({
+                status,
+                is_active,
+                cylinder_size_id,
+                cylinder_type_id,
+                size_info,
+                type_info,
+              }))
           }
-        } catch (_) {}
+        } catch {
+          // Keep the already-loaded result when the optional cache is unavailable.
+        }
       }
 
       // Calculate summaries based on actual statuses
@@ -733,84 +1128,21 @@ export async function getOxygenSummary(hospitalId: string): Promise<ApiResponse<
         in_use_cylinders: list.filter(c => c.status === 'issued').length,
         maintenance_cylinders: 0, // No maintenance status exists in active DB
         cylinders_by_type: [
-          { type: 'B', count: list.filter(c => c.type_info?.code === 'BN').length },
-          { type: 'D', count: list.filter(c => c.size_info?.code === 'P101-D').length },
-          { type: 'E', count: list.filter(c => c.size_info?.code === 'P101-E').length },
+          { type: 'B', count: list.filter(c => getRelatedCode(c.type_info) === 'BN').length },
+          { type: 'D', count: list.filter(c => getRelatedCode(c.size_info) === 'P101-D').length },
+          { type: 'E', count: list.filter(c => getRelatedCode(c.size_info) === 'P101-E').length },
           { type: 'M', count: 0 },
         ],
-        daily_consumption: 45,
-        monthly_consumption: 1350,
+        daily_consumption: null,
+        monthly_consumption: null,
       }
 
       return { data: summary, error: null }
     }
 
-    const cylinders = mockOxygenCylinders
-
-    const summary: OxygenSummary = {
-      total_cylinders: cylinders.length,
-      full_cylinders: cylinders.filter(c => c.status === 'full').length,
-      empty_cylinders: cylinders.filter(c => c.status === 'empty').length,
-      in_use_cylinders: cylinders.filter(c => c.status === 'in_use').length,
-      maintenance_cylinders: cylinders.filter(c => c.status === 'maintenance').length,
-      cylinders_by_type: [
-        { type: 'B', count: cylinders.filter(c => c.type_info?.type_code === 'B').length },
-        { type: 'D', count: cylinders.filter(c => c.type_info?.type_code === 'D').length },
-        { type: 'E', count: cylinders.filter(c => c.type_info?.type_code === 'E').length },
-        { type: 'M', count: cylinders.filter(c => c.type_info?.type_code === 'M').length },
-      ],
-      daily_consumption: 45,
-      monthly_consumption: 1350,
-    }
-
-    return { data: summary, error: null }
+    return { data: null, error: 'Supabase is not configured' }
   } catch (error) {
     console.error('Error fetching oxygen summary:', error)
-    try {
-      const cached = await cylinderOfflineDB.getAllCylinders(hospitalId)
-      if (cached && cached.length > 0) {
-        return {
-          data: {
-            total_cylinders: cached.length,
-            full_cylinders: cached.filter(c => c.status === 'available').length,
-            empty_cylinders: cached.filter(c => c.status === 'returned_to_supplier').length,
-            in_use_cylinders: cached.filter(c => c.status === 'issued').length,
-            maintenance_cylinders: 0,
-            cylinders_by_type: [
-              { type: 'B', count: cached.filter(c => c.type_info?.code === 'BN').length },
-              { type: 'D', count: cached.filter(c => c.size_info?.code === 'P101-D').length },
-              { type: 'E', count: cached.filter(c => c.size_info?.code === 'P101-E').length },
-              { type: 'M', count: 0 },
-            ],
-            daily_consumption: 45,
-            monthly_consumption: 1350,
-          },
-          error: null,
-        }
-      }
-    } catch (_) {}
-
-    if (typeof navigator !== 'undefined' && !navigator.onLine) {
-      return {
-        data: {
-          total_cylinders: 0,
-          full_cylinders: 0,
-          empty_cylinders: 0,
-          in_use_cylinders: 0,
-          maintenance_cylinders: 0,
-          cylinders_by_type: [
-            { type: 'B', count: 0 },
-            { type: 'D', count: 0 },
-            { type: 'E', count: 0 },
-            { type: 'M', count: 0 },
-          ],
-          daily_consumption: 0,
-          monthly_consumption: 0,
-        },
-        error: null,
-      }
-    }
-
     return {
       data: null,
       error: error instanceof Error ? error.message : 'Failed to fetch oxygen summary',
@@ -842,16 +1174,7 @@ export async function getCylindersRequiringMaintenance(
       return { data: (data || []) as OxygenCylinderWithRelations[], error: null }
     }
 
-    const today = new Date()
-    const thirtyDaysFromNow = new Date(today.getTime() + 30 * 24 * 60 * 60 * 1000)
-
-    const cylinders = mockOxygenCylinders.filter(c => {
-      if (!c.next_maintenance_date) return false
-      const maintenanceDate = new Date(c.next_maintenance_date)
-      return maintenanceDate <= thirtyDaysFromNow
-    })
-
-    return { data: cylinders, error: null }
+    return { data: null, error: 'Supabase is not configured' }
   } catch (error) {
     console.error('Error fetching cylinders requiring maintenance:', error)
     return {
@@ -935,7 +1258,7 @@ export async function updateOxygenReceptionsVoteCode(
       const cleanIds = (receptionIds || []).filter(Boolean)
       if (cleanIds.length === 0) return { data: true, error: null }
 
-      const updatePayload: Record<string, any> = { vote_code: voteCode }
+      const updatePayload: { vote_code: string; vote_activity?: string } = { vote_code: voteCode }
       if (voteActivity) updatePayload.vote_activity = voteActivity
 
       const { error } = await supabase
@@ -1219,7 +1542,7 @@ export async function getOxygenLatestPricing(
       if (error) throw error
 
       const uniqueConfigs: Record<string, OxygenPricingConfig> = {}
-      ;(data || []).forEach((row: any) => {
+      ;(data || []).forEach((row: OxygenPricingConfig) => {
         const isLinde = !row.supplier_name || String(row.supplier_name).toLowerCase().includes('linde')
         const supplierKey = isLinde ? 'linde_default' : String(row.supplier_name).trim().toLowerCase()
         const key = `${supplierKey}__${row.cylinder_size_code}`
@@ -1351,7 +1674,7 @@ export async function updateCylinderPrices(
  */
 export async function getOxygenPricingHistory(
   hospitalId: string
-): Promise<ApiResponse<any[]>> {
+): Promise<ApiResponse<OxygenPricingHistoryItem[]>> {
   try {
     if (isSupabaseConfigured()) {
       // Try to select with joined creator
@@ -1373,7 +1696,9 @@ export async function getOxygenPricingHistory(
         if (errorNoJoin) throw errorNoJoin
 
         // Fetch users separately
-        const userIds = Array.from(new Set((dataNoJoin || []).map(row => row.created_by).filter(Boolean)))
+        const userIds = Array.from(new Set((dataNoJoin || [])
+          .map((row: OxygenPricingHistoryRow) => row.created_by)
+          .filter((id): id is string => Boolean(id))))
         if (userIds.length > 0) {
           const { data: users, error: usersError } = await supabase
             .from('users')
@@ -1381,10 +1706,10 @@ export async function getOxygenPricingHistory(
             .in('id', userIds)
           
           if (!usersError && users) {
-            const userMap = new Map(users.map(u => [u.id, u]))
-            const enriched = dataNoJoin.map(row => ({
+            const userMap = new Map(users.map((user: PricingHistoryCreator & { id: string }) => [user.id, user]))
+            const enriched: OxygenPricingHistoryItem[] = dataNoJoin.map((row: OxygenPricingHistoryRow) => ({
               ...row,
-              creator: userMap.get(row.created_by) || null
+              creator: row.created_by ? userMap.get(row.created_by) || null : null
             }))
             return { data: enriched, error: null }
           }
@@ -1434,16 +1759,16 @@ export async function getOxygenReceptionsList(
       if (error) throw error
 
       // Helper: determine if a reception row contains any VIE/Bulk-Liquid items
-      const rowIsVie = (row: any): boolean => {
+      const rowIsVie = (row: ReceptionProjection): boolean => {
         if (!Array.isArray(row.items) || row.items.length === 0) return false
-        return row.items.some((itm: any) => {
-          const code = (itm.size_info?.code || itm.size_code || itm.code || '').toLowerCase()
+        return row.items.some((itm) => {
+          const code = getRelatedCode(itm.size_info) || ''
           return code.includes('vie') || code.includes('liquid')
         })
       }
 
-      const grouped: Record<string, any> = {}
-      ;(data || []).forEach((row: any) => {
+      const grouped: Record<string, GroupedReception> = {}
+      ;(data || []).forEach((row: ReceptionProjection) => {
         const isPending = row.status === 'pending' || row.status === 'pending_delivery' || !row.delivery_order_no || String(row.delivery_order_no).toUpperCase().startsWith('PENDING')
         const date = row.reception_date
         const vCode = String(row.vote_code || '080702').trim()
@@ -1485,8 +1810,8 @@ export async function getOxygenReceptionsList(
         }
       })
 
-      const combinedData = Object.values(grouped).map((row: any) => {
-        let cleanRefill = row.refill_amount
+      const combinedData = Object.values(grouped).map((row) => {
+        const cleanRefill = row.refill_amount
         let cleanLoan = row.loan_amount
         const isBorneo = (row.supplier_name || '').toLowerCase().includes('borneo') || row.delivery_order_nos.some((d: string) => d.includes('D26/07-052'))
         if (isBorneo && cleanRefill === 15000 && (cleanLoan > 950 || Math.abs(cleanLoan - 1000.80) < 5)) {
@@ -1501,7 +1826,7 @@ export async function getOxygenReceptionsList(
           delivery_order_no: row.delivery_order_nos.join(' / '),
           sales_order_no: row.sales_order_nos.join(' / '),
         }
-      }) as OxygenReceptionRecord[]
+      })
 
       return {
         data: combinedData,
@@ -1540,7 +1865,7 @@ export async function getOxygenSystemSettings(
         .single()
 
       if (error) {
-        if ((error as any).code === 'PGRST116') {
+        if (hasErrorCode(error, 'PGRST116')) {
           // If not exists, insert a default row
           const { data: inserted, error: iError } = await supabase
             .from('pharmacy_oxygen_system_settings')
@@ -1578,7 +1903,7 @@ export async function createOxygenReceptionRecord(
   try {
     if (isSupabaseConfigured()) {
       // 1. Insert the main reception record
-      const insertPayload: any = {
+      const insertPayload: Omit<OxygenReceptionRecord, 'id' | 'created_at' | 'updated_at' | 'total_amount' | 'ids' | 'is_vie_tank'> & { supplier_name?: string | null } = {
           hospital_id: hospitalId,
           reception_date: recordData.reception_date,
           delivery_order_no: recordData.delivery_order_no,
@@ -1601,7 +1926,8 @@ export async function createOxygenReceptionRecord(
       // If PostgREST schema cache hasn't caught up with supplier_name column, retry without it
       if (rError && (rError.code === 'PGRST204' || rError.message?.includes('supplier_name'))) {
         console.warn('supplier_name column not in schema cache yet, retrying without it:', rError)
-        const { supplier_name: _ignored, ...fallbackPayload } = insertPayload
+        const fallbackPayload = { ...insertPayload }
+        delete fallbackPayload.supplier_name
         const retryResult = await supabase
           .from('pharmacy_oxygen_reception_records')
           .insert(fallbackPayload)
@@ -1630,7 +1956,7 @@ export async function createOxygenReceptionRecord(
           cylinder_size_id: itm.cylinder_size_id,
           cylinder_type_id: itm.cylinder_type_id,
           unit_price: itm.unit_price,
-          quantity: (itm as any).quantity != null ? (itm as any).quantity : 1,
+          quantity: itm.quantity ?? 1,
         }))
 
         const { error: iError } = await supabase
@@ -1672,7 +1998,12 @@ export async function updateOxygenReceptionArrival(
 ): Promise<ApiResponse<OxygenReceptionRecord>> {
   try {
     if (isSupabaseConfigured()) {
-      const updatePayload: any = {
+      const updatePayload: {
+        delivery_order_no: string
+        reception_date: string
+        status: OxygenReceptionRecord['status']
+        sales_order_no?: string
+      } = {
         delivery_order_no: deliveryOrderNo.trim(),
         reception_date: arrivalDate,
         status: 'completed',
@@ -1759,10 +2090,10 @@ export async function getCylinderInventoryByType(
       const thirtyDaysAgo = new Date()
       thirtyDaysAgo.setDate(now.getDate() - 30)
 
-      const results = (combos || []).map((combo: any) => {
-        const typeInfo = Array.isArray(combo.type_info) ? combo.type_info[0] : combo.type_info
+      const results = (combos || []).map((combo: OxygenComboProjection) => {
+        const typeInfo = getSingleRelation(combo.type_info)
         const matchingCylinders = (inventory || []).filter(
-          (c: any) =>
+          (c: CylinderInventoryProjection) =>
             c.cylinder_size_id === combo.size_id &&
             c.cylinder_type_id === combo.type_id &&
             c.status !== 'archived' &&
@@ -1775,7 +2106,7 @@ export async function getCylinderInventoryByType(
         let empty = 0
         let returned = 0
 
-        matchingCylinders.forEach((c: any) => {
+        matchingCylinders.forEach((c: CylinderInventoryProjection) => {
           const loc = (c.current_location || '').toLowerCase()
           if ((c.status === 'available' || c.status === 'full') && loc !== 'supplier' && loc !== 'archived') {
             available++
@@ -1869,17 +2200,19 @@ export async function getCylindersByDepartment(
       if (comboError) throw comboError
 
       const comboMap = new Map<string, string>()
-      ;(combos || []).forEach((c: any) => {
-        comboMap.set(`${c.size_id}_${c.type_id}`, c.display_name)
+      ;(combos || []).forEach((c: { size_id: string; type_id: string; display_name: string }) => {
+        if (c.display_name) comboMap.set(`${c.size_id}_${c.type_id}`, c.display_name)
       })
 
       // Fetch sizes for code mapping
-      const { data: sizes } = await supabase
+      const { data: sizes, error: sizesError } = await supabase
         .from('pharmacy_oxygen_cylinder_sizes')
         .select('id, code')
 
+      if (sizesError) throw sizesError
+
       const sizeMap = new Map<string, string>()
-      ;(sizes || []).forEach((s: any) => {
+      ;(sizes || []).forEach((s: { id: string; code: string }) => {
         sizeMap.set(s.id, s.code)
       })
 
@@ -1903,11 +2236,22 @@ export async function getCylindersByDepartment(
 
       if (invError) throw invError
 
-      const deptMap: { [key: string]: any[] } = {}
-      ;(inventory || []).forEach((c: any) => {
+      const deptMap: Record<string, DepartmentCylinderItem[]> = {}
+      ;(inventory || []).forEach((c: {
+        id: string
+        serial_number: string
+        qr_code: string | null
+        status: string
+        updated_at: string | null
+        department_id: string | null
+        cylinder_size_id: string | null
+        cylinder_type_id: string | null
+        is_active?: boolean | null
+      }) => {
         if (c.status === 'written_off' || c.status === 'disposed' || c.status === 'archived' || c.status === 'cleared' || c.status === 'deactivated' || c.is_active === false) {
           return
         }
+        if (!c.department_id) return
         if (!deptMap[c.department_id]) {
           deptMap[c.department_id] = []
         }
@@ -1915,10 +2259,10 @@ export async function getCylindersByDepartment(
         deptMap[c.department_id].push({
           id: c.id,
           serial_number: c.serial_number,
-          qr_code: c.qr_code,
+          qr_code: c.qr_code || '',
           display_name: displayName,
           status: c.status,
-          updated_at: c.updated_at
+          updated_at: c.updated_at || ''
         })
       })
 
@@ -1942,12 +2286,19 @@ export async function getCylindersByDepartment(
 
       if (reqError) throw reqError
 
-      const requestsByDept: { [key: string]: any[] } = {}
-      ;(deptRequests || []).forEach((r: any) => {
+      const requestsByDept: Record<string, DepartmentRequestSummary[]> = {}
+      ;(deptRequests || []).forEach((r: {
+        id: string
+        request_id: string
+        status: string
+        created_at: string
+        department_id: string
+        items?: Array<{ cylinder_size_id: string; quantity: number; quantity_issued: number | null }> | null
+      }) => {
         if (!requestsByDept[r.department_id]) {
           requestsByDept[r.department_id] = []
         }
-        const mappedItems = (r.items || []).map((itm: any) => ({
+        const mappedItems = (r.items || []).map((itm) => ({
           size_code: sizeMap.get(itm.cylinder_size_id) || 'Unknown Size',
           quantity: itm.quantity,
           quantity_issued: itm.quantity_issued || 0
@@ -1961,16 +2312,15 @@ export async function getCylindersByDepartment(
         })
       })
 
-      const results = (depts || [])
-        .map((d: any) => {
+      const results = (depts || []).flatMap((d: { id: string; department_name: string | null }): DepartmentCylinderSummary[] => {
           const cylinders = deptMap[d.id] || []
           const requests = requestsByDept[d.id] || []
 
-          if (cylinders.length === 0 && requests.length === 0) return null
+          if (cylinders.length === 0 && requests.length === 0) return []
 
-          const in_use = cylinders.filter((c: any) => c.status === 'issued' || c.status === 'in_use').length
-          const available = cylinders.filter((c: any) => c.status === 'available').length
-          const empty = cylinders.filter((c: any) => c.status === 'empty').length
+          const in_use = cylinders.filter(c => c.status === 'issued' || c.status === 'in_use').length
+          const available = cylinders.filter(c => c.status === 'available').length
+          const empty = cylinders.filter(c => c.status === 'empty').length
           const total = cylinders.length
 
           // Determine department status:
@@ -1984,18 +2334,17 @@ export async function getCylindersByDepartment(
             status = 'Low'
           }
 
-          return {
+          return [{
             department_id: d.id,
-            department_name: d.department_name || d.name,
+            department_name: d.department_name || '',
             in_use,
             available,
             total,
             status,
             cylinders,
-            requests
-          }
+            requests,
+          }]
         })
-        .filter(Boolean) as any[]
 
       return { data: results, error: null }
     }
@@ -2052,7 +2401,7 @@ export async function getStoreUsageBalance(
       const end = endDate ? `${endDate}T23:59:59` : new Date().toISOString()
 
       // 2. Fetch live reception items in date range
-      const { data: recItems } = await supabase
+      const { data: recItems, error: receptionItemsError } = await supabase
         .from('pharmacy_oxygen_reception_items')
         .select(`
           id,
@@ -2063,8 +2412,10 @@ export async function getStoreUsageBalance(
         .gte('created_at', start)
         .lte('created_at', end)
 
+      if (receptionItemsError) throw receptionItemsError
+
       // 3. Fetch movements in date range (for issued and returned_to_supplier)
-      const { data: movements } = await supabase
+      const { data: movements, error: movementError } = await supabase
         .from('pharmacy_oxygen_cylinder_movements')
         .select(`
           id,
@@ -2078,18 +2429,22 @@ export async function getStoreUsageBalance(
         .gte('moved_at', start)
         .lte('moved_at', end)
 
+      if (movementError) throw movementError
+
       // 4. Fetch current inventory in hospital across all states
-      const { data: currentInventory } = await supabase
+      const { data: currentInventory, error: inventoryError } = await supabase
         .from('pharmacy_oxygen_cylinder_inventory')
         .select('cylinder_size_id, cylinder_type_id, status, current_location, is_active')
         .eq('hospital_id', hospitalId)
         .neq('status', 'deactivated')
         .eq('is_active', true)
 
-      const results = (combos || []).map((combo: any) => {
+      if (inventoryError) throw inventoryError
+
+      const results = (combos || []).map((combo: OxygenComboProjection) => {
         // Multi-location physical asset breakdown
         const matchingCyls = (currentInventory || []).filter(
-          (c: any) => c.cylinder_size_id === combo.size_id && 
+          (c: StoreUsageInventoryProjection) => c.cylinder_size_id === combo.size_id &&
                       c.cylinder_type_id === combo.type_id &&
                       c.status !== 'archived' &&
                       c.status !== 'cleared' &&
@@ -2103,7 +2458,7 @@ export async function getStoreUsageBalance(
         let in_use = 0
         let with_supplier = 0
 
-        matchingCyls.forEach((c: any) => {
+        matchingCyls.forEach((c: StoreUsageInventoryProjection) => {
           const loc = (c.current_location || '').toLowerCase()
           if ((c.status === 'available' || c.status === 'full') && !loc.includes('supplier')) {
             store_available++
@@ -2117,7 +2472,7 @@ export async function getStoreUsageBalance(
         })
 
         // Refills received in date range
-        const matchingRecItems = (recItems || []).filter((itm: any) => {
+        const matchingRecItems = (recItems || []).filter((itm: ReceptionMovementProjection) => {
           if (itm.cylinder_size_id !== combo.size_id) return false
           if (combo.type_id && itm.cylinder_type_id && itm.cylinder_type_id !== combo.type_id) return false
           return true
@@ -2125,15 +2480,17 @@ export async function getStoreUsageBalance(
         const received = matchingRecItems.length
 
         // Cylinders issued to units in date range
-        const matchingIssues = (movements || []).filter((m: any) => {
-          if (!m.cylinder || m.cylinder.cylinder_size_id !== combo.size_id || m.cylinder.cylinder_type_id !== combo.type_id) return false
+        const matchingIssues = (movements || []).filter((m: CylinderMovementProjection) => {
+          const cylinder = getSingleRelation(m.cylinder)
+          if (!cylinder || cylinder.cylinder_size_id !== combo.size_id || cylinder.cylinder_type_id !== combo.type_id) return false
           return m.movement_type === 'issued'
         })
         const issued = matchingIssues.length
 
         // Cylinders returned to supplier in date range (logistics tracking for empty shells sent for refilling)
-        const matchingReturns = (movements || []).filter((m: any) => {
-          if (!m.cylinder || m.cylinder.cylinder_size_id !== combo.size_id || m.cylinder.cylinder_type_id !== combo.type_id) return false
+        const matchingReturns = (movements || []).filter((m: CylinderMovementProjection) => {
+          const cylinder = getSingleRelation(m.cylinder)
+          if (!cylinder || cylinder.cylinder_size_id !== combo.size_id || cylinder.cylinder_type_id !== combo.type_id) return false
           return m.movement_type === 'sent_to_supplier'
         })
         const returned = matchingReturns.length
@@ -2159,8 +2516,8 @@ export async function getStoreUsageBalance(
           in_use,
           with_supplier,
           total_fleet: matchingCyls.length,
-          type_code: (Array.isArray(combo.type_info) ? combo.type_info[0] : combo.type_info)?.code,
-          type_name: (Array.isArray(combo.type_info) ? combo.type_info[0] : combo.type_info)?.name,
+          type_code: getSingleRelation(combo.type_info)?.code || undefined,
+          type_name: getSingleRelation(combo.type_info)?.name || undefined,
         }
       })
 
@@ -2211,22 +2568,25 @@ export async function getReturnDocuments(
       if (error) throw error
 
       // Fetch combos to manually map display_name
-      const { data: combos } = await supabase
+      const { data: combos, error: comboError } = await supabase
         .from('pharmacy_oxygen_size_type_combos')
         .select('size_id, type_id, display_name')
 
+      if (comboError) throw comboError
+
       const comboMap = new Map<string, string>()
-      ;(combos || []).forEach((c: any) => {
-        comboMap.set(`${c.size_id}_${c.type_id}`, c.display_name)
+      ;(combos || []).forEach((c: { size_id: string; type_id: string; display_name: string }) => {
+        if (c.display_name) comboMap.set(`${c.size_id}_${c.type_id}`, c.display_name)
       })
 
-      const enriched = (data || []).map((doc: any) => ({
+      const enriched = (data || []).map((doc: ReturnDocumentProjection) => ({
         ...doc,
-        items: (doc.items || []).map((item: any) => {
+        items: (doc.items || []).map((item: ReturnDocumentItemProjection) => {
           if (item.cylinder) {
-            const cyl = item.cylinder
+            const cyl = getSingleRelation(item.cylinder)
+            if (!cyl) return item
             const displayName = comboMap.get(`${cyl.cylinder_size_id}_${cyl.cylinder_type_id}`) || 'Standard Cylinder'
-            const typeInfo = cyl.type_info
+            const typeInfo = getSingleRelation(cyl.type_info)
 
             return {
               ...item,
@@ -2296,17 +2656,18 @@ export async function getReturnDocumentById(
         .select('size_id, type_id, display_name')
 
       const comboMap = new Map<string, string>()
-      ;(combos || []).forEach((c: any) => {
-        comboMap.set(`${c.size_id}_${c.type_id}`, c.display_name)
+      ;((combos || []) as CylinderComboProjection[]).forEach((c) => {
+        if (c.display_name) comboMap.set(`${c.size_id}_${c.type_id}`, c.display_name)
       })
 
       const enriched = {
         ...data,
-        items: (data.items || []).map((item: any) => {
+        items: ((data.items || []) as ReturnDocumentItemProjection[]).map((item) => {
           if (item.cylinder) {
-            const cyl = item.cylinder
+            const cyl = getSingleRelation(item.cylinder)
+            if (!cyl) return item
             const displayName = comboMap.get(`${cyl.cylinder_size_id}_${cyl.cylinder_type_id}`) || 'Standard Cylinder'
-            const typeInfo = cyl.type_info
+            const typeInfo = getSingleRelation(cyl.type_info)
 
             return {
               ...item,
@@ -2366,26 +2727,31 @@ export async function getEmptyCylindersInStore(
         .select('size_id, type_id, display_name')
 
       const comboMap = new Map<string, string>()
-      ;(combos || []).forEach((c: any) => {
-        comboMap.set(`${c.size_id}_${c.type_id}`, c.display_name)
+      ;((combos || []) as CylinderComboProjection[]).forEach((c) => {
+        if (c.display_name) comboMap.set(`${c.size_id}_${c.type_id}`, c.display_name)
       })
 
-      const rows = (data || []).map((row: any) => {
-        const displayName = comboMap.get(`${row.cylinder_size_id}_${row.cylinder_type_id}`) || row.size_info?.code || '101-F'
+      const rows = ((data || []) as OxygenCylinderListRow[]).map((row) => {
+        const sizeInfo = getSingleRelation(row.size_info)
+        const typeInfo = getSingleRelation(row.type_info)
+        const department = getSingleRelation(row.department)
+        const displayName = comboMap.get(`${row.cylinder_size_id}_${row.cylinder_type_id}`) || sizeInfo?.code || '101-F'
         return {
           ...row,
-          size_code: row.size_info?.code || displayName,
+          size_info: sizeInfo,
+          size_code: sizeInfo?.code || displayName,
           type_info: {
-            ...row.type_info,
+            ...typeInfo,
             type_name: displayName,
-            name: row.type_info?.name || displayName,
-            code: row.type_info?.code || (row.type_info?.name?.toLowerCase().includes('pin') ? 'PI' : 'BN'),
+            name: typeInfo?.name || displayName,
+            code: typeInfo?.code || (typeInfo?.name?.toLowerCase().includes('pin') ? 'PI' : 'BN'),
           },
           current_location: {
             location_name: typeof row.current_location === 'string' ? row.current_location : (row.current_location?.location_name || 'Pharmacy Store')
           },
-          assigned_ward: row.department ? {
-            department_name: row.department.department_name || row.department.name
+          assigned_ward: department ? {
+            id: department.id,
+            department_name: department.department_name || department.name
           } : null
         }
       }) as unknown as OxygenCylinderWithRelations[]
@@ -2411,9 +2777,14 @@ export async function createReturnDocument(
   returnDate: string,
   cylinderIds: string[],
   remarks: string,
-  createdBy: string
+  createdBy: string,
+  manualLoans?: Array<{ serial_number: string; qr_code?: string | null }>
 ): Promise<ApiResponse<OxygenReturnDocument>> {
   try {
+    if (manualLoans && manualLoans.length > 0) {
+      return { data: null, error: 'Register supplier-tagged loan cylinders before creating the return document.' }
+    }
+
     if (isSupabaseConfigured()) {
       const today = new Date()
       const yyyy = today.getFullYear()
@@ -2506,57 +2877,7 @@ export async function createReturnDocument(
       return { data: doc as OxygenReturnDocument, error: null }
     }
 
-    // Mock implementation fallback
-    const today = new Date()
-    const todayStr = today.toISOString().split('T')[0].replace(/-/g, '')
-    const randomSuffix = Math.floor(1000 + Math.random() * 9000)
-    const documentNumber = `O2-RET-${todayStr}-${randomSuffix}`
-
-    const mockDoc: any = {
-      id: `ret-mock-${randomSuffix}`,
-      hospital_id: hospitalId,
-      document_number: documentNumber,
-      supplier_id: supplierId,
-      status: 'completed',
-      returned_date: returnDate,
-      remarks: remarks || null,
-      created_by: createdBy,
-      created_at: new Date().toISOString(),
-      items: []
-    }
-
-    // Update state of cylinders in local mock list
-    cylinderIds.forEach(id => {
-      const c = mockOxygenCylinders.find(cyl => cyl.id === id)
-      if (c) {
-        c.status = 'returned_to_supplier'
-        c.current_location = {
-          ...c.current_location,
-          location_name: 'Supplier'
-        }
-      }
-    })
-
-    // Add manual loan cylinders to mock inventory if needed
-    if (manualLoans && manualLoans.length > 0) {
-      manualLoans.forEach(loan => {
-        const mockNewLoanCyl: any = {
-          id: `oc-mock-loan-${Math.random().toString(36).substring(7)}`,
-          hospital_id: hospitalId,
-          serial_number: loan.serial_number,
-          type_id: 'ct-002', // size code for loan cylinders
-          status: 'returned_to_supplier',
-          is_loan: true,
-          created_at: new Date().toISOString(),
-          type_info: { type_name: 'Loan Cylinder' },
-          current_location: { location_name: 'Supplier' },
-          qr_code_value: loan.qr_code || loan.serial_number
-        }
-        mockOxygenCylinders.push(mockNewLoanCyl)
-      })
-    }
-
-    return { data: mockDoc, error: null }
+    return { data: null, error: 'Supabase is not configured' }
   } catch (error) {
     console.error('Error creating return document:', error)
     return {
@@ -2727,15 +3048,7 @@ export async function assignCylinderQrTag(
       return { data: data as OxygenCylinder, error: null }
     }
 
-    // Mock implementation fallback
-    const cylinder = mockOxygenCylinders.find((c) => c.id === cylinderId)
-    if (!cylinder) return { data: null, error: 'Cylinder not found' }
-
-    cylinder.qr_code_value = qrValue
-    cylinder.qr_tagged_at = new Date().toISOString()
-    cylinder.qr_tagged_by = userId
-
-    return { data: cylinder, error: null }
+    return { data: null, error: 'Supabase is not configured' }
   } catch (error) {
     console.error('Error assigning QR tag:', error)
     return {
@@ -2772,17 +3085,7 @@ export async function deactivateCylinderQrTag(
       return { data: data as OxygenCylinder, error: null }
     }
 
-    // Mock implementation fallback
-    const cylinder = mockOxygenCylinders.find((c) => c.id === cylinderId)
-    if (!cylinder) return { data: null, error: 'Cylinder not found' }
-
-    cylinder.status = 'deactivated' as any
-    cylinder.is_active = false as any
-    cylinder.qr_code_value = null
-    cylinder.qr_tagged_at = null
-    cylinder.qr_tagged_by = null
-
-    return { data: cylinder, error: null }
+    return { data: null, error: 'Supabase is not configured' }
   } catch (error) {
     console.error('Error deactivating cylinder:', error)
     return {
@@ -2827,13 +3130,7 @@ export async function reactivateCylinder(
       return { data: data as OxygenCylinder, error: null }
     }
 
-    const cylinder = mockOxygenCylinders.find((c) => c.id === cylinderId)
-    if (!cylinder) return { data: null, error: 'Cylinder not found' }
-
-    cylinder.status = targetStatus as any
-    cylinder.is_active = true as any
-
-    return { data: cylinder, error: null }
+    return { data: null, error: 'Supabase is not configured' }
   } catch (error) {
     console.error('Error reactivating cylinder:', error)
     return {
@@ -2852,7 +3149,7 @@ export async function generateNewCylindersWithQr(
   try {
     if (isSupabaseConfigured()) {
       // 1. Fetch combo details — also fetch display_name as a reliable fallback for size code
-      const { data: combo, error: ce } = await supabase
+      const { data: comboResult, error: ce } = await supabase
         .from('pharmacy_oxygen_size_type_combos')
         .select(`
           id,
@@ -2867,9 +3164,8 @@ export async function generateNewCylindersWithQr(
 
       if (ce) throw ce
 
-      // Normalise size_info — Supabase may return array or object depending on FK direction
-      const rawSizeInfo: any = combo?.size_info
-      const sizeInfo: any = Array.isArray(rawSizeInfo) ? rawSizeInfo[0] : rawSizeInfo
+      const combo = comboResult as unknown as GeneratedComboProjection
+      const sizeInfo = getSingleRelation(combo.size_info)
 
       // Multi-tier sizeCode resolution:
       // Tier 1: size_info.code (most authoritative)
@@ -2921,7 +3217,7 @@ export async function generateNewCylindersWithQr(
 
         if (findErr) throw findErr
 
-        let returnedCylinder: any = existing
+        let returnedCylinder = existing as GeneratedCylinderRow | null
 
         if (!existing) {
           const { data: inserted, error: insertErr } = await supabase
@@ -2935,6 +3231,8 @@ export async function generateNewCylindersWithQr(
               qr_code: targetQr,
               qr_code_value: targetQr,
               current_location: 'Store',
+              qr_tagged_at: new Date().toISOString(),
+              qr_tagged_by: userId,
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString()
             })
@@ -2946,13 +3244,12 @@ export async function generateNewCylindersWithQr(
             .single()
 
           if (insertErr) throw insertErr
-          returnedCylinder = inserted
+          returnedCylinder = inserted as GeneratedCylinderRow
         }
 
         // Normalise size_info from returned cylinder
-        const retSizeInfo: any = Array.isArray(returnedCylinder.size_info)
-          ? returnedCylinder.size_info[0]
-          : returnedCylinder.size_info
+        if (!returnedCylinder) throw new Error('Cylinder was not returned after generation.')
+        const retSizeInfo = getSingleRelation(returnedCylinder.size_info)
         const retCapStr = retSizeInfo?.capacity ? String(retSizeInfo.capacity) : capStr
         const retSizeCode = retSizeInfo?.code || targetSerial
 
@@ -2973,7 +3270,20 @@ export async function generateNewCylindersWithQr(
       }
 
       // 2. Generate records for standard/trackable cylinders (P101-D, P101-E, P101-F, P101-HS, etc.)
-      const recordsToInsert: any[] = []
+      const recordsToInsert: Array<{
+        hospital_id: string
+        serial_number: string
+        cylinder_size_id: string
+        cylinder_type_id: string
+        status: 'available'
+        qr_code: string
+        qr_code_value: string
+        current_location: string
+        qr_tagged_at: string
+        qr_tagged_by: string
+        created_at: string
+        updated_at: string
+      }> = []
       const year = new Date().getFullYear()
 
       for (let i = 0; i < quantity; i++) {
@@ -2991,6 +3301,8 @@ export async function generateNewCylindersWithQr(
           qr_code: qrCodeValue,
           qr_code_value: qrCodeValue,
           current_location: 'Store',
+          qr_tagged_at: new Date().toISOString(),
+          qr_tagged_by: userId,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         })
@@ -3007,8 +3319,8 @@ export async function generateNewCylindersWithQr(
 
       if (error) throw error
 
-      const mapped = (data || []).map((row: any) => {
-        const rowSizeInfo: any = Array.isArray(row.size_info) ? row.size_info[0] : row.size_info
+      const mapped = ((data || []) as GeneratedCylinderRow[]).map((row) => {
+        const rowSizeInfo = getSingleRelation(row.size_info)
         const rowCapStr = rowSizeInfo?.capacity ? String(rowSizeInfo.capacity) : capStr
         const rowSizeCode = rowSizeInfo?.code || sizeCode
         const isRowLoan = rowSizeInfo?.is_loan || rowSizeCode.startsWith('101-')
@@ -3032,43 +3344,7 @@ export async function generateNewCylindersWithQr(
       return { data: mapped, error: null }
     }
 
-    // Mock implementation fallback
-    const comboInfo = mockOxygenCylinderTypes.find(t => t.id === comboId) || mockOxygenCylinderTypes[0]
-    const sizeCode = comboInfo?.type_code || 'GEN'
-    const year = new Date().getFullYear()
-
-    const createdCylinders: OxygenCylinderWithRelations[] = []
-
-    for (let i = 0; i < quantity; i++) {
-      const random5 = Math.floor(10000 + Math.random() * 90000)
-      const random8 = Math.floor(10000000 + Math.random() * 90000000)
-      const serialNumber = `OXY-${year}-${sizeCode}-${random5}`
-      const qrCodeValue = `kkm-oxy-${sizeCode.toLowerCase()}-${random8}`
-
-      const newCyl: OxygenCylinderWithRelations = {
-        id: `oc-new-${random8}`,
-        hospital_id: hospitalId,
-        serial_number: serialNumber,
-        type_id: comboId,
-        status: 'full',
-        current_location_id: 'loc-001',
-        last_fill_date: new Date().toISOString().split('T')[0],
-        next_maintenance_date: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        certification_expiry: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-        supplier_id: 'sup-001',
-        created_at: new Date().toISOString(),
-        type_info: comboInfo,
-        current_location: { id: 'loc-001', hospital_id: hospitalId, location_code: 'STORE', location_name: 'Central Store', location_type: 'store', is_active: true, created_at: '' },
-        qr_code_value: qrCodeValue,
-        qr_tagged_at: new Date().toISOString(),
-        qr_tagged_by: userId
-      }
-
-      mockOxygenCylinders.push(newCyl)
-      createdCylinders.push(newCyl)
-    }
-
-    return { data: createdCylinders, error: null }
+    return { data: null, error: 'Supabase is not configured' }
   } catch (error) {
     console.error('Error generating cylinders with QR:', error)
     return {
@@ -3090,7 +3366,7 @@ export async function addSupplierTaggedLoanCylinders(
   try {
     if (isSupabaseConfigured()) {
       // 1. Fetch combo details to get size_id and type_id
-      const { data: combo, error: ce } = await supabase
+      const { data: comboResult, error: ce } = await supabase
         .from('pharmacy_oxygen_size_type_combos')
         .select(`
           size_id,
@@ -3103,8 +3379,13 @@ export async function addSupplierTaggedLoanCylinders(
 
       if (ce) throw ce
 
-      const sizeId = combo?.size_id
-      const typeId = combo?.type_id
+      const combo = comboResult as unknown as {
+        size_id: string
+        type_id: string
+        type_info: OxygenCylinderRelation<{ code: string | null }>
+      }
+      const sizeId = combo.size_id
+      const typeId = combo.type_id
 
       // 2. Fetch existing cylinders to identify conflicts
       const { data: existing, error: findErr } = await supabase
@@ -3114,22 +3395,22 @@ export async function addSupplierTaggedLoanCylinders(
 
       if (findErr) throw findErr
 
-      const targetTypeCode = (combo as any)?.type_info?.code;
+      const targetTypeCode = getSingleRelation(combo.type_info)?.code || null
       const conflicts: string[] = []
-      const recordsToInsert: any[] = []
+      const recordsToInsert: SupplierTaggedInsertRow[] = []
 
       for (const tag of supplierTags) {
         const cleanTag = tag.trim().toUpperCase()
         const bareTag = cleanTag.replace(/^(?:O2-|02-)/i, '').replace(/-(?:PI|BN)$/i, '')
         
         // Match existing row with same base serial
-        const sameBaseRows = (existing || []).filter((r: any) => {
+        const sameBaseRows = ((existing || []) as SupplierCylinderConflictRow[]).filter((r) => {
           const rBase = (r.serial_number || '').toUpperCase().replace(/^(?:O2-|02-)/i, '').replace(/-(?:PI|BN)$/i, '')
           return rBase === bareTag
         })
 
         // Conflict only if exact same valve type already exists
-        const exactSameType = sameBaseRows.find((r: any) => r.cylinder_type_id === typeId)
+        const exactSameType = sameBaseRows.find((r) => r.cylinder_type_id === typeId)
         if (exactSameType) {
           conflicts.push(cleanTag)
           continue
@@ -3156,12 +3437,14 @@ export async function addSupplierTaggedLoanCylinders(
           supplier_tagged: true,
           supplier_tag_source: 'manual',
           is_verified: true,
+          qr_tagged_at: new Date().toISOString(),
+          qr_tagged_by: userId,
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString()
         })
       }
 
-      let insertedData: any[] = []
+      let insertedData: GeneratedCylinderRow[] = []
       if (recordsToInsert.length > 0) {
         const { data, error } = await supabase
           .from('pharmacy_oxygen_cylinder_inventory')
@@ -3172,11 +3455,11 @@ export async function addSupplierTaggedLoanCylinders(
             type_info:pharmacy_oxygen_cylinder_types(*)
           `)
         if (error) throw error
-        insertedData = data || []
+        insertedData = (data || []) as GeneratedCylinderRow[]
       }
 
-      const mapped = insertedData.map((row: any) => {
-        const rowSI: any = Array.isArray(row.size_info) ? row.size_info[0] : row.size_info
+      const mapped = insertedData.map((row) => {
+        const rowSI = getSingleRelation(row.size_info)
         const rowCap = rowSI?.capacity ? String(rowSI.capacity) : ''
         const rowCode = rowSI?.code || ''
         return {
@@ -3198,46 +3481,7 @@ export async function addSupplierTaggedLoanCylinders(
       return { data: { success: mapped, conflicts }, error: null }
     }
 
-    // Mock implementation fallback
-    const conflicts: string[] = []
-    const success: OxygenCylinderWithRelations[] = []
-    const comboInfo = mockOxygenCylinderTypes.find(t => t.id === comboId) || mockOxygenCylinderTypes[0]
-
-    for (const tag of supplierTags) {
-      const exists = mockOxygenCylinders.some(c => c.serial_number.toLowerCase() === tag.toLowerCase())
-      if (exists) {
-        conflicts.push(tag)
-      } else {
-        const random8 = Math.floor(10000000 + Math.random() * 90000000)
-        const newCyl: OxygenCylinderWithRelations = {
-          id: `oc-new-${random8}`,
-          hospital_id: hospitalId,
-          serial_number: tag,
-          type_id: comboId,
-          status: 'available',
-          current_location_id: 'loc-001',
-          last_fill_date: new Date().toISOString().split('T')[0],
-          next_maintenance_date: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-          certification_expiry: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
-          supplier_id: 'sup-001',
-          created_at: new Date().toISOString(),
-          type_info: {
-            ...comboInfo,
-            type_name: comboInfo ? `Loan ${comboInfo.type_code} (${comboInfo.capacity_liters / 1000}M³)` : 'Loan Cylinder'
-          },
-          current_location: { id: 'loc-001', hospital_id: hospitalId, location_code: 'STORE', location_name: 'Central Store', location_type: 'store', is_active: true, created_at: '' },
-          qr_code_value: tag,
-          qr_tagged_at: new Date().toISOString(),
-          qr_tagged_by: userId,
-          supplier_tagged: true,
-          supplier_tag_source: 'manual'
-        }
-        mockOxygenCylinders.push(newCyl)
-        success.push(newCyl)
-      }
-    }
-
-    return { data: { success, conflicts }, error: null }
+    return { data: null, error: 'Supabase is not configured' }
   } catch (error) {
     console.error('Error adding supplier tagged cylinders:', error)
     return {
@@ -3292,7 +3536,7 @@ export async function getCylinderByQrOrSerial(
 
     if (isSupabaseConfigured()) {
       // Helper to strictly check if cylinder matches expected size (e.g. 1.4m3 F size vs N size vs E size)
-      const matchesExpectedSize = (c: any): boolean => {
+      const matchesExpectedSize = (c: CylinderSearchRow): boolean => {
         if (!expectedSizeCode) return true;
         const target = expectedSizeCode.toUpperCase().trim();
         const cCode = (c.size_info?.code || c.size_code || '').toUpperCase().trim();
@@ -3325,7 +3569,9 @@ export async function getCylinderByQrOrSerial(
           if (segments.length > 0) {
             cleanCode = segments[segments.length - 1];
           }
-        } catch (e) {}
+        } catch {
+          // Treat non-URL input as a serial string and continue normalization.
+        }
       }
 
       // Detect valve suffix (e.g. "P101-E-0011 pi", "P101-F-0178 BN", "P101-F-0178-PI", "P101-F-0178 (PI)")
@@ -3341,10 +3587,9 @@ export async function getCylinderByQrOrSerial(
         }
       }
 
-      // Safe hospital ID resolution (fallback to known valid hospital UUID if empty or uninitialized)
-      let targetHospitalId = (hospitalId || '').trim();
+      const targetHospitalId = hospitalId.trim()
       if (!targetHospitalId || targetHospitalId === 'undefined' || targetHospitalId === 'null') {
-        targetHospitalId = '85bb6adc-b868-428b-83f4-e5af2f5cf904';
+        return { data: null, error: 'A valid hospital ID is required to register a scanned cylinder.' }
       }
 
       /**
@@ -3380,7 +3625,8 @@ export async function getCylinderByQrOrSerial(
             query = query.eq('hospital_id', targetHospitalId);
           }
 
-          const { data: rows, error } = await query.limit(20);
+          const { data: rawRows, error } = await query.limit(20);
+          const rows = rawRows as CylinderSearchRow[] | null
 
           if (error) {
             console.warn('fetchByExact query notice:', error);
@@ -3557,7 +3803,7 @@ export async function getCylinderByQrOrSerial(
           const { data: wildcardData, error: wildcardErr } = await wildcardQuery;
 
           if (!wildcardErr && wildcardData && wildcardData.length > 0) {
-            const validCandidates = wildcardData.filter((c: any) => {
+            const validCandidates = (wildcardData as CylinderSearchRow[]).filter((c) => {
               if (c.status === 'deactivated' || c.is_active === false) return false;
               const sn = (c.serial_number || '').toUpperCase();
               const qr = (c.qr_code || '').toUpperCase();
@@ -3565,7 +3811,7 @@ export async function getCylinderByQrOrSerial(
             });
 
             if (validCandidates.length > 0) {
-              const nonExcluded = validCandidates.filter((c: any) => !excludeIds.includes(c.id));
+              const nonExcluded = validCandidates.filter((c) => !excludeIds.includes(c.id));
               const candidates = nonExcluded.length > 0 ? nonExcluded : validCandidates;
 
               const STATUS_PRIORITY: Record<string, number> = {
@@ -3609,8 +3855,8 @@ export async function getCylinderByQrOrSerial(
           .limit(20);
 
         if (containsData && containsData.length > 0) {
-          const nonDeactivated = containsData.filter((c: any) => c.status !== 'deactivated' && c.is_active !== false);
-          const nonExcluded = nonDeactivated.filter((c: any) => !excludeIds.includes(c.id));
+          const nonDeactivated = (containsData as CylinderSearchRow[]).filter((c) => c.status !== 'deactivated' && c.is_active !== false);
+          const nonExcluded = nonDeactivated.filter((c) => !excludeIds.includes(c.id));
           const candidates = nonExcluded.length > 0 ? nonExcluded : nonDeactivated;
 
           let filtered = candidates;
@@ -3618,7 +3864,7 @@ export async function getCylinderByQrOrSerial(
             filtered = filtered.filter(matchesExpectedSize);
           }
           if (preferredValve) {
-            const valveMatches = filtered.filter((c: any) => {
+            const valveMatches = filtered.filter((c) => {
               const vc = (c.type_info?.code || '').toUpperCase();
               return vc === preferredValve || (c.serial_number && c.serial_number.toUpperCase().includes(`-${preferredValve}`));
             });
@@ -3643,7 +3889,7 @@ export async function getCylinderByQrOrSerial(
 
       // If an expectedSizeCode was explicitly requested, ensure the matched cylinder conforms to it
       if (expectedSizeCode && !matchesExpectedSize(data)) {
-        const actualCode = data.size_info?.code || (data as any).size_code || 'Unknown'
+        const actualCode = data.size_info?.code || data.size_code || 'Unknown'
         const actualCap = data.size_info?.capacity ? `${Number(data.size_info.capacity)} M³` : ''
         return {
           data: null,
@@ -3657,8 +3903,8 @@ export async function getCylinderByQrOrSerial(
         .select('size_id, type_id, display_name')
 
       const comboMap = new Map<string, string>()
-      ;(combos || []).forEach((c: any) => {
-        comboMap.set(`${c.size_id}_${c.type_id}`, c.display_name)
+      ;((combos || []) as CylinderComboProjection[]).forEach((c) => {
+        if (c.display_name) comboMap.set(`${c.size_id}_${c.type_id}`, c.display_name)
       })
 
       const displayName = comboMap.get(`${data.cylinder_size_id}_${data.cylinder_type_id}`) || 'Standard Cylinder'
@@ -3671,25 +3917,16 @@ export async function getCylinderByQrOrSerial(
         current_location: {
           location_name: data.current_location || 'Central Store'
         },
-        assigned_ward: data.department ? {
-          department_name: data.department.department_name || data.department.name
+          assigned_ward: getSingleRelation(data.department) ? {
+            id: getSingleRelation(data.department)?.id,
+            department_name: getSingleRelation(data.department)?.department_name || getSingleRelation(data.department)?.name
         } : null
       } as unknown as OxygenCylinderWithRelations
 
       return { data: mapped, error: null }
     }
 
-    // Mock search fallback
-    const matched = mockOxygenCylinders.find(
-      c => c.serial_number.toLowerCase() === code.toLowerCase() ||
-           (c.qr_code_value && c.qr_code_value.toLowerCase() === code.toLowerCase())
-    )
-
-    if (matched) {
-      return { data: matched, error: null }
-    }
-
-    return { data: null, error: 'Cylinder not found' }
+    return { data: null, error: 'Supabase is not configured' }
   } catch (error) {
     console.error('Error finding cylinder:', error)
     return {
@@ -3715,7 +3952,9 @@ export async function getAllCylindersByQrOrSerial(
         const url = new URL(cleanCode);
         const segments = url.pathname.split('/').filter(Boolean);
         if (segments.length > 0) cleanCode = segments[segments.length - 1];
-      } catch (e) {}
+      } catch {
+        // Treat non-URL input as a serial string and continue normalization.
+      }
     }
 
     let baseCode = cleanCode;
@@ -3729,9 +3968,9 @@ export async function getAllCylindersByQrOrSerial(
       if (!preferredValve) preferredValve = vType;
     }
 
-    let targetHospitalId = (hospitalId || '').trim();
+    const targetHospitalId = hospitalId.trim()
     if (!targetHospitalId || targetHospitalId === 'undefined' || targetHospitalId === 'null') {
-      targetHospitalId = '85bb6adc-b868-428b-83f4-e5af2f5cf904';
+      return { data: null, error: 'A valid hospital ID is required to search cylinders.' }
     }
 
     if (isSupabaseConfigured()) {
@@ -3752,7 +3991,7 @@ export async function getAllCylindersByQrOrSerial(
         orConditions.push(`serial_number.ilike.${term}-%`);
       });
 
-      let query = supabase
+      const query = supabase
         .from('pharmacy_oxygen_cylinder_inventory')
         .select(`
           *,
@@ -3775,11 +4014,11 @@ export async function getAllCylindersByQrOrSerial(
         .select('size_id, type_id, display_name');
 
       const comboMap = new Map<string, string>();
-      (combos || []).forEach((c: any) => {
-        comboMap.set(`${c.size_id}_${c.type_id}`, c.display_name);
+      ((combos || []) as CylinderComboProjection[]).forEach((c) => {
+        if (c.display_name) if (c.display_name) comboMap.set(`${c.size_id}_${c.type_id}`, c.display_name);
       });
 
-      const mapped = rows.map((r: any) => {
+      const mapped = (rows as CylinderSearchRow[]).map((r) => {
         const displayName = comboMap.get(`${r.cylinder_size_id}_${r.cylinder_type_id}`) || 'Standard Cylinder';
         return {
           ...r,
@@ -3790,8 +4029,9 @@ export async function getAllCylindersByQrOrSerial(
           current_location: {
             location_name: r.current_location || 'Central Store',
           },
-          assigned_ward: r.department ? {
-            department_name: r.department.department_name || r.department.name,
+          assigned_ward: getSingleRelation(r.department) ? {
+            id: getSingleRelation(r.department)?.id,
+            department_name: getSingleRelation(r.department)?.department_name || getSingleRelation(r.department)?.name,
           } : null,
         };
       }) as unknown as OxygenCylinderWithRelations[];
@@ -3810,9 +4050,9 @@ export async function getAllCylindersByQrOrSerial(
     }
 
     return { data: [], error: null };
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Error in getAllCylindersByQrOrSerial:', err);
-    return { data: [], error: err.message || 'Error searching cylinders' };
+    return { data: [], error: getServiceErrorMessage(err, 'Error searching cylinders') };
   }
 }
 
@@ -3845,14 +4085,15 @@ export async function registerScannedCylinderOnTheFly(
         if (segments.length > 0) {
           cleanCode = segments[segments.length - 1];
         }
-      } catch (e) {}
+      } catch {
+        // Treat non-URL input as a serial string and continue normalization.
+      }
     }
     cleanCode = cleanCode.replace(/[\r\n]+/g, ' ').trim();
 
-    // Safe hospital ID resolution
-    let targetHospitalId = (hospitalId || '').trim();
+    const targetHospitalId = hospitalId.trim()
     if (!targetHospitalId || targetHospitalId === 'undefined' || targetHospitalId === 'null') {
-      targetHospitalId = '85bb6adc-b868-428b-83f4-e5af2f5cf904';
+      return { data: null, error: 'A valid hospital ID is required to search cylinders.' }
     }
 
     const targetLocation = options?.location || 'Pharmacy Store'
@@ -3891,7 +4132,7 @@ export async function registerScannedCylinderOnTheFly(
         const matchesValve = !requestedValve || !existingValve || existingValve === requestedValve;
 
         if (matchesValve) {
-          const updatePayload: any = {
+          const updatePayload: CylinderUpdatePayload = {
             current_location: targetLocation,
             scanned_location: targetLocation,
             status: dbStatus,
@@ -3902,7 +4143,7 @@ export async function registerScannedCylinderOnTheFly(
           if (options?.userId) updatePayload.qr_tagged_by = options.userId;
           if (options?.userName) updatePayload.scanned_by_name = options.userName;
 
-          const { data: updated, error: updErr } = await supabase
+          const { data: updated, error: updateError } = await supabase
             .from('pharmacy_oxygen_cylinder_inventory')
             .update(updatePayload)
             .eq('id', existing.data.id)
@@ -3912,6 +4153,8 @@ export async function registerScannedCylinderOnTheFly(
               type_info:pharmacy_oxygen_cylinder_types(*)
             `)
             .single();
+
+          if (updateError) throw updateError;
 
           return { data: updated || existing.data, error: null }
         }
@@ -3997,7 +4240,7 @@ export async function registerScannedCylinderOnTheFly(
       }
 
       // 4. Insert new cylinder row
-      const payload: any = {
+      const payload = {
         hospital_id: targetHospitalId,
         serial_number: finalSerial,
         qr_code: finalQr,
@@ -4170,15 +4413,7 @@ export async function markCylinderAsEmpty(
       return { data: updated as unknown as OxygenCylinderWithRelations, error: null }
     }
 
-    // Mock implementation fallback
-    const matched = mockOxygenCylinders.find(c => c.id === cylinderId)
-    if (matched) {
-      matched.status = 'empty'
-      matched.current_location = { location_name: 'Pharmacy Store' }
-      return { data: matched, error: null }
-    }
-
-    return { data: null, error: 'Cylinder not found' }
+    return { data: null, error: 'Supabase is not configured' }
   } catch (error) {
     console.error('Error updating cylinder empty status:', error)
     return {
@@ -4240,16 +4475,7 @@ export async function markMultipleCylindersAsEmpty(
       return { data: cylinderIds.length, error: null }
     }
 
-    // Mock fallback
-    cylinderIds.forEach(id => {
-      const matched = mockOxygenCylinders.find(c => c.id === id)
-      if (matched) {
-        matched.status = 'empty'
-        matched.current_location = { location_name: 'Pharmacy Store' }
-      }
-    })
-
-    return { data: cylinderIds.length, error: null }
+    return { data: null, error: 'Supabase is not configured' }
   } catch (error) {
     console.error('Error batch marking cylinders as empty:', error)
     return {
@@ -4267,7 +4493,7 @@ export async function updateReturnDocument(
   updates: { returned_date: string; supplier_id: string; status: 'draft' | 'completed' | 'cancelled'; remarks: string },
   reason: string,
   userId: string
-): Promise<ApiResponse<any>> {
+): Promise<ApiResponse<OxygenReturnDocument>> {
   try {
     if (isSupabaseConfigured()) {
       const { data: oldDoc, error: fetchErr } = await supabase
@@ -4309,7 +4535,7 @@ export async function updateReturnDocument(
       return { data: updatedDoc, error: null }
     }
 
-    return { data: { id: documentId, ...updates }, error: null }
+    return { data: null, error: 'Supabase is not configured' }
   } catch (error) {
     console.error('Error updating return document:', error)
     return { data: null, error: error instanceof Error ? error.message : 'Failed to update return document' }
@@ -4333,7 +4559,9 @@ export async function updateReturnDocumentCylinders(
 
       if (fetchErr) throw fetchErr;
 
-      const currentCylinderIds = (currentItems || []).map((x: any) => x.cylinder_id).filter(Boolean);
+      const currentCylinderIds = ((currentItems || []) as ReturnDocumentCylinderIdProjection[])
+        .map((item) => item.cylinder_id)
+        .filter((id): id is string => Boolean(id));
 
       const cleanNewCylinderIds = (newCylinderIds || []).filter(Boolean);
       const removedIds = currentCylinderIds.filter(id => !cleanNewCylinderIds.includes(id));
@@ -4453,7 +4681,7 @@ export async function updateRequestDocument(
   updates: { requested_date: string; supplier_id: string; status: 'draft' | 'completed' | 'cancelled'; remarks: string },
   reason: string,
   userId: string
-): Promise<ApiResponse<any>> {
+): Promise<ApiResponse<OxygenRequestDocument>> {
   try {
     if (isSupabaseConfigured()) {
       const { data: oldDoc, error: fetchErr } = await supabase
@@ -4495,7 +4723,7 @@ export async function updateRequestDocument(
       return { data: updatedDoc, error: null }
     }
 
-    return { data: { id: documentId, ...updates }, error: null }
+    return { data: null, error: 'Supabase is not configured' }
   } catch (error) {
     console.error('Error updating request document:', error)
     return { data: null, error: error instanceof Error ? error.message : 'Failed to update request document' }
@@ -4652,9 +4880,9 @@ export async function clearCylinderInventory(
       return { data: true, error: null }
     }
     return { data: true, error: null }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Error clearing cylinder inventory:', err)
-    return { data: false, error: err.message || 'Failed to clear inventory' }
+    return { data: false, error: getServiceErrorMessage(err, 'Failed to clear inventory') }
   }
 }
 
@@ -4666,7 +4894,7 @@ export async function updateCylinderValveType(
   cylinderId: string,
   targetTypeCode: 'BN' | 'PI',
   userId?: string
-): Promise<ApiResponse<any>> {
+): Promise<ApiResponse<OxygenCylinderWithRelations>> {
   try {
     if (isSupabaseConfigured()) {
       // 1. Get type ID for targetTypeCode
@@ -4720,7 +4948,7 @@ export async function updateCylinderValveType(
 
       return { data, error: null }
     }
-    return { data: null, error: null }
+    return { data: null, error: 'Supabase is not configured' }
   } catch (err) {
     console.error('Error updating cylinder valve type:', err)
     return {
@@ -4754,9 +4982,9 @@ export async function getOxygenCylinderSizes(): Promise<ApiResponse<OxygenCylind
       return { data: (data || []) as OxygenCylinderSizeOption[], error: null }
     }
     return { data: [], error: null }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Error fetching cylinder sizes:', err)
-    return { data: null, error: err.message || 'Failed to fetch cylinder sizes' }
+    return { data: null, error: getServiceErrorMessage(err, 'Failed to fetch cylinder sizes') }
   }
 }
 
@@ -4781,9 +5009,9 @@ export async function getOxygenCylinderValveTypes(): Promise<ApiResponse<OxygenC
       return { data: (data || []) as OxygenCylinderValveTypeOption[], error: null }
     }
     return { data: [], error: null }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Error fetching cylinder valve types:', err)
-    return { data: null, error: err.message || 'Failed to fetch cylinder valve types' }
+    return { data: null, error: getServiceErrorMessage(err, 'Failed to fetch cylinder valve types') }
   }
 }
 
@@ -4876,7 +5104,14 @@ export async function updateCylinderProfile(
       }
 
       // 4. Update the inventory table
-      const updateData: Record<string, any> = {
+      const updateData: {
+        serial_number: string
+        qr_code: string
+        qr_code_value: string
+        cylinder_size_id: string
+        updated_at: string
+        cylinder_type_id?: string
+      } = {
         serial_number: cleanSerial,
         qr_code: cleanSerial,
         qr_code_value: cleanSerial,
@@ -4945,8 +5180,8 @@ export async function updateCylinderProfile(
             serial_number: oldCyl?.serial_number,
             cylinder_size_id: oldCyl?.cylinder_size_id,
             cylinder_type_id: oldCyl?.cylinder_type_id,
-            size_code: (oldCyl as any)?.size_info?.code,
-            valve_code: (oldCyl as any)?.type_info?.code
+            size_code: getRelatedCode(oldCyl?.size_info),
+            valve_code: getRelatedCode(oldCyl?.type_info)
           },
           new_values: {
             serial_number: cleanSerial,
@@ -4969,7 +5204,7 @@ export async function updateCylinderProfile(
     }
 
     return { data: null, error: 'Database not configured' }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Error updating cylinder profile:', err)
     return { data: null, error: err instanceof Error ? err.message : 'Failed to update cylinder profile' }
   }
@@ -4988,7 +5223,10 @@ export async function registerTwinCylinder(
 ): Promise<ApiResponse<OxygenCylinderWithRelations>> {
   try {
     const cleanSerial = baseSerialNumber.trim().toUpperCase()
-    const targetHospitalId = hospitalId || '85bb6adc-b868-428b-83f4-e5af2f5cf904'
+    const targetHospitalId = hospitalId.trim()
+    if (!targetHospitalId || targetHospitalId === 'undefined' || targetHospitalId === 'null') {
+      return { data: null, error: 'A valid hospital ID is required to register a twin cylinder.' }
+    }
 
     if (isSupabaseConfigured()) {
       // 1. Fetch type info
@@ -5048,7 +5286,7 @@ export async function registerTwinCylinder(
       }
 
       // 3. Insert new twin cylinder
-      const payload: any = {
+      const payload = {
         hospital_id: targetHospitalId,
         serial_number: twinSerial,
         qr_code: twinQr,
@@ -5101,9 +5339,9 @@ export async function registerTwinCylinder(
     }
 
     return { data: null, error: 'Database not connected' }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Error registering twin cylinder:', err)
-    return { data: null, error: err.message || 'Failed to register twin cylinder' }
+    return { data: null, error: getServiceErrorMessage(err, 'Failed to register twin cylinder') }
   }
 }
 
@@ -5156,9 +5394,9 @@ export async function getCylindersForReconciliation(
       return { data: data || [], error: null }
     }
     return { data: [], error: null }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Error fetching cylinders for reconciliation:', err)
-    return { data: null, error: err.message || 'Failed to fetch cylinders for reconciliation' }
+    return { data: null, error: getServiceErrorMessage(err, 'Failed to fetch cylinders for reconciliation') }
   }
 }
 
@@ -5233,19 +5471,20 @@ export async function reconcileCylindersBatch(
       }
 
       // 3. Log stock adjustment record
-      await supabase.from('pharmacy_oxygen_stock_adjustments').insert({
+      const { error: adjustmentError } = await supabase.from('pharmacy_oxygen_stock_adjustments').insert({
         hospital_id: hospitalId,
         reason: 'stock_reconciliation',
         remarks: remarks || `Audit rekonsiliasi stok KEW.PS-14: ${cylinderIds.length} silinder disahkan tersedia di stor oleh ${auditorName}`,
         created_at: now
-      }).catch(e => console.warn('Could not insert stock adjustment log:', e))
+      })
+      if (adjustmentError) console.warn('Could not insert stock adjustment log:', adjustmentError)
 
       return { data: true, error: null }
     }
     return { data: true, error: null }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Error reconciling cylinders batch:', err)
-    return { data: false, error: err.message || 'Failed to reconcile cylinders' }
+    return { data: false, error: getServiceErrorMessage(err, 'Failed to reconcile cylinders') }
   }
 }
 
@@ -5287,7 +5526,7 @@ export async function bulkUpsertAvailableCylinders(
 
       const sizeId = combo.size_id
       const typeId = combo.type_id
-      const isLoan = Boolean(combo.size_info?.is_loan || combo.display_name?.toLowerCase().includes('loan'))
+      const isLoan = Boolean(getSingleRelation(combo.size_info)?.is_loan || combo.display_name?.toLowerCase().includes('loan'))
 
       // 2. Normalize and deduplicate input items
       const seenSerials = new Set<string>()
@@ -5318,16 +5557,16 @@ export async function bulkUpsertAvailableCylinders(
 
       if (fetchErr) throw fetchErr
 
-      const existingBySerial = new Map<string, any>()
-      const existingByQr = new Map<string, any>()
-      for (const ec of existingCyls || []) {
+      const existingBySerial = new Map<string, ExistingCylinderLookupRow>()
+      const existingByQr = new Map<string, ExistingCylinderLookupRow>()
+      for (const ec of (existingCyls || []) as ExistingCylinderLookupRow[]) {
         if (ec.serial_number) existingBySerial.set(ec.serial_number.toUpperCase(), ec)
         if (ec.qr_code) existingByQr.set(ec.qr_code.toUpperCase(), ec)
       }
 
       const now = new Date().toISOString()
       let updatedCount = 0
-      const toInsert: any[] = []
+      const toInsert: BulkCylinderInsertRow[] = []
 
       for (const item of cleanItems) {
         const existing = existingBySerial.get(item.serialNumber) || existingByQr.get(item.qrCode)
@@ -5423,9 +5662,9 @@ export async function bulkUpsertAvailableCylinders(
       data: { created: items.length, updated: 0, total: items.length },
       error: null,
     }
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Error in bulkUpsertAvailableCylinders:', err)
-    return { data: null, error: err.message || 'Failed to update available cylinders' }
+    return { data: null, error: getServiceErrorMessage(err, 'Failed to update available cylinders') }
   }
 }
 
@@ -5473,17 +5712,18 @@ export async function getReceiveDocuments(
         .select('size_id, type_id, display_name')
 
       const comboMap = new Map<string, string>()
-      ;(combos || []).forEach((c: any) => {
-        comboMap.set(`${c.size_id}_${c.type_id}`, c.display_name)
+      ;((combos || []) as CylinderComboProjection[]).forEach((c) => {
+        if (c.display_name) comboMap.set(`${c.size_id}_${c.type_id}`, c.display_name)
       })
 
-      const enriched = (data || []).map((doc: any) => ({
+      const enriched = ((data || []) as OxygenReceiveProjection[]).map((doc) => ({
         ...doc,
-        items: (doc.items || []).map((item: any) => {
+        items: (doc.items || []).map((item) => {
           if (item.cylinder) {
-            const cyl = item.cylinder
+            const cyl = getSingleRelation(item.cylinder)
+            if (!cyl) return item
             const displayName = comboMap.get(`${cyl.cylinder_size_id}_${cyl.cylinder_type_id}`) || 'Standard Cylinder'
-            const typeInfo = cyl.type_info
+            const typeInfo = getSingleRelation(cyl.type_info)
 
             return {
               ...item,
@@ -5552,23 +5792,25 @@ export async function getReceiveDocumentById(
         .select('size_id, type_id, display_name')
 
       const comboMap = new Map<string, string>()
-      ;(combos || []).forEach((c: any) => {
-        comboMap.set(`${c.size_id}_${c.type_id}`, c.display_name)
+      ;((combos || []) as CylinderComboProjection[]).forEach((c) => {
+        if (c.display_name) comboMap.set(`${c.size_id}_${c.type_id}`, c.display_name)
       })
 
       const enriched = {
         ...data,
-        items: (data.items || []).map((item: any) => {
+        items: ((data.items || []) as ReturnDocumentItemProjection[]).map((item) => {
           if (item.cylinder) {
-            const cyl = item.cylinder
+            const cyl = getSingleRelation(item.cylinder)
+            if (!cyl) return item
             const displayName = comboMap.get(`${cyl.cylinder_size_id}_${cyl.cylinder_type_id}`) || 'Standard Cylinder'
+            const typeInfo = getSingleRelation(cyl.type_info)
             return {
               ...item,
               cylinder: {
                 ...cyl,
                 combo: { display_name: displayName },
                 type_info: {
-                  ...cyl.type_info,
+                  ...typeInfo,
                   type_name: displayName,
                 },
               },
@@ -5635,29 +5877,31 @@ export async function searchCylindersInDatabase(
     if (error) throw error
 
     // Fetch combos for display name mapping
-    const { data: combos } = await supabase
+    const { data: combos, error: comboError } = await supabase
       .from('pharmacy_oxygen_size_type_combos')
       .select('size_id, type_id, display_name')
+    if (comboError) throw comboError
 
     const comboMap = new Map<string, string>()
-    ;(combos || []).forEach((c: any) => {
-      comboMap.set(`${c.size_id}_${c.type_id}`, c.display_name)
+    ;((combos || []) as CylinderComboProjection[]).forEach((c) => {
+      if (c.display_name) comboMap.set(`${c.size_id}_${c.type_id}`, c.display_name)
     })
 
-    const enriched = (data || []).map((cyl: any) => {
+    const enriched = ((data || []) as CylinderSearchRow[]).map((cyl) => {
       const displayName = comboMap.get(`${cyl.cylinder_size_id}_${cyl.cylinder_type_id}`) || 'Standard Cylinder'
+      const typeInfo = getSingleRelation(cyl.type_info)
       return {
         ...cyl,
         combo: { display_name: displayName },
         type_info: {
-          ...cyl.type_info,
+          ...typeInfo,
           type_name: displayName,
         },
       }
     })
 
     if (queryValve) {
-      enriched.sort((a: any, b: any) => {
+      enriched.sort((a, b) => {
         const aMatches = a.type_info?.code === queryValve || (a.serial_number && a.serial_number.toUpperCase().includes(`-${queryValve}`)) ? 1 : 0
         const bMatches = b.type_info?.code === queryValve || (b.serial_number && b.serial_number.toUpperCase().includes(`-${queryValve}`)) ? 1 : 0
         return bMatches - aMatches
@@ -5730,7 +5974,7 @@ export async function createReceiveDocument(
         } else {
           // Insert new cylinder
           const isLoan = serial.startsWith('101-') || serial.startsWith('101N') || serial.startsWith('101F')
-          const sizeId = newCyl.sizeId || (isLoan ? sizes?.find((s: any) => s.code === '101-N')?.id : defaultSizeId)
+          const sizeId = newCyl.sizeId || (isLoan ? sizes?.find((s) => s.code === '101-N')?.id : defaultSizeId)
           const typeId = newCyl.typeId || defaultTypeId
 
           const { data: inserted, error: insErr } = await supabase
@@ -5803,8 +6047,8 @@ export async function createReceiveDocument(
       .select('id, serial_number, current_location, department_id, status')
       .in('id', finalCylinderIds)
 
-    const priorMap = new Map<string, any>()
-    ;(priorCyls || []).forEach(c => priorMap.set(c.id, c))
+    const priorMap = new Map<string, ReceivePriorCylinderProjection>()
+    ;((priorCyls || []) as ReceivePriorCylinderProjection[]).forEach(c => priorMap.set(c.id, c))
 
     // 5. DIRECTLY UPDATE CYLINDERS TO AVAILABLE STOCK AT CENTRAL STORE
     const { error: updateError } = await supabase
@@ -6129,7 +6373,7 @@ export async function updateReceiveDocumentCylinders(
             currentCyl.qr_code === cleanOrigSerial || 
             currentCyl.qr_code_value === cleanOrigSerial
 
-          const cylUpdate: any = {
+          const cylUpdate: ReceiveCylinderUpdate = {
             serial_number: cleanNewSerial,
             updated_at: now,
           }
@@ -6204,7 +6448,7 @@ export async function updateReceiveDocumentCylinders(
             targetCylinderId = existing.id
           } else {
             const isLoan = serial.startsWith('101-') || serial.startsWith('101N') || serial.startsWith('101F')
-            const sizeId = newCyl.sizeId || (isLoan ? sizes?.find((s: any) => s.code === '101-N')?.id : defaultSizeId)
+            const sizeId = newCyl.sizeId || (isLoan ? sizes?.find((s) => s.code === '101-N')?.id : defaultSizeId)
             const typeId = newCyl.typeId || defaultTypeId
 
             const { data: inserted, error: insErr } = await supabase
@@ -6388,7 +6632,7 @@ export async function deleteOxygenCylinder(
   cylinderId: string,
   reason: string = 'Deleted from inventory audit',
   userId?: string
-): Promise<ApiResponse<{ success: boolean; deletedCylinder?: any }>> {
+): Promise<ApiResponse<{ success: boolean; deletedCylinder?: DeletedCylinderProjection }>> {
   try {
     if (!isSupabaseConfigured()) {
       return { data: null, error: 'Database not connected' }
@@ -6476,7 +6720,7 @@ export async function deleteOxygenCylindersBatch(
       .select('id, serial_number, qr_code, current_location, status')
       .in('id', cylinderIds)
 
-    const deletedSerials = (cyls || []).map((c: any) => c.serial_number)
+    const deletedSerials = ((cyls || []) as Array<{ serial_number: string }>).map((c) => c.serial_number)
 
     // 2. Clean up any related child records
     await supabase.from('pharmacy_oxygen_stock_adjustments').delete().in('cylinder_id', cylinderIds)
@@ -6536,17 +6780,7 @@ export async function getSupplierCylinderReconciliationData(
 ): Promise<ApiResponse<SupplierCylinderTrackingSummary>> {
   try {
     if (!isSupabaseConfigured()) {
-      return {
-        data: {
-          atSupplierCount: 0,
-          atSupplierOverdueCount: 0,
-          inHospitalCount: 0,
-          inHospitalEmptyCount: 0,
-          totalTracked: 0,
-          cylinders: []
-        },
-        error: null
-      }
+      return { data: null, error: 'Supabase is not configured' }
     }
 
     // 1. Fetch all cylinders in inventory with relations
@@ -6575,13 +6809,14 @@ export async function getSupplierCylinderReconciliationData(
     if (cylErr) throw cylErr
 
     // Fetch combos to map display_name
-    const { data: combos } = await supabase
+    const { data: combos, error: comboError } = await supabase
       .from('pharmacy_oxygen_size_type_combos')
       .select('size_id, type_id, display_name')
+    if (comboError) throw comboError
 
     const comboMap = new Map<string, string>()
-    ;(combos || []).forEach((c: any) => {
-      comboMap.set(`${c.size_id}_${c.type_id}`, c.display_name)
+    ;((combos || []) as CylinderComboProjection[]).forEach((c) => {
+      if (c.display_name) comboMap.set(`${c.size_id}_${c.type_id}`, c.display_name)
     })
 
     // 2. Fetch return documents with supplier & items
@@ -6604,17 +6839,18 @@ export async function getSupplierCylinderReconciliationData(
     if (retErr) throw retErr
 
     // Map each cylinder to its latest return document
-    const latestReturnMap = new Map<string, any>()
-    ;(returnDocs || []).forEach((doc: any) => {
-      (doc.items || []).forEach((item: any) => {
+    const latestReturnMap = new Map<string, ReturnTrackingInfo>()
+    ;((returnDocs || []) as SupplierTrackedDocumentProjection[]).forEach((doc) => {
+      const supplier = getSingleRelation(doc.supplier)
+      ;(doc.items || []).forEach((item) => {
         if (item.cylinder_id && !latestReturnMap.has(item.cylinder_id)) {
           latestReturnMap.set(item.cylinder_id, {
             docId: doc.id,
             docNumber: doc.document_number,
             returnedDate: doc.returned_date || doc.created_at,
             supplierId: doc.supplier_id,
-            supplierName: doc.supplier?.company_name || 'BORNEO INDAH SDN BHD',
-            supplierCode: doc.supplier?.supplier_code || '',
+            supplierName: supplier?.company_name,
+            supplierCode: supplier?.supplier_code || '',
             createdAt: doc.created_at,
           })
         }
@@ -6642,9 +6878,10 @@ export async function getSupplierCylinderReconciliationData(
     if (rcvErr) throw rcvErr
 
     // Map each cylinder to its latest receive document
-    const latestReceiveMap = new Map<string, any>()
-    ;(receiveDocs || []).forEach((doc: any) => {
-      (doc.items || []).forEach((item: any) => {
+    const latestReceiveMap = new Map<string, ReceiveTrackingInfo>()
+    ;((receiveDocs || []) as SupplierTrackedDocumentProjection[]).forEach((doc) => {
+      const supplier = getSingleRelation(doc.supplier)
+      ;(doc.items || []).forEach((item) => {
         if (item.cylinder_id && !latestReceiveMap.has(item.cylinder_id)) {
           latestReceiveMap.set(item.cylinder_id, {
             docId: doc.id,
@@ -6652,8 +6889,8 @@ export async function getSupplierCylinderReconciliationData(
             deliveryOrderNo: doc.delivery_order_no || '',
             receivedDate: doc.received_date || doc.created_at,
             supplierId: doc.supplier_id,
-            supplierName: doc.supplier?.company_name || 'BORNEO INDAH SDN BHD',
-            supplierCode: doc.supplier?.supplier_code || '',
+            supplierName: supplier?.company_name,
+            supplierCode: supplier?.supplier_code || '',
             createdAt: doc.created_at,
           })
         }
@@ -6661,19 +6898,20 @@ export async function getSupplierCylinderReconciliationData(
     })
 
     // 4. Also fetch movements to catch historical returns if document items were restructured
-    const { data: movements } = await supabase
+    const { data: movements, error: movementErr } = await supabase
       .from('pharmacy_oxygen_cylinder_movements')
       .select('cylinder_id, movement_type, moved_at, remarks')
       .eq('hospital_id', hospitalId)
       .in('movement_type', ['sent_to_supplier', 'received'])
       .order('moved_at', { ascending: false })
+    if (movementErr) throw movementErr
 
-    const movementReturnMap = new Map<string, any>()
-    ;(movements || []).forEach((m: any) => {
+    const movementReturnMap = new Map<string, { docNumber?: string; movedAt: string }>()
+    ;((movements || []) as SupplierMovementProjection[]).forEach((m) => {
       if (m.movement_type === 'sent_to_supplier' && !movementReturnMap.has(m.cylinder_id)) {
         const match = (m.remarks || '').match(/O2-RET-[A-Za-z0-9-]+/)
         movementReturnMap.set(m.cylinder_id, {
-          docNumber: match ? match[0] : 'O2-RET',
+          docNumber: match?.[0],
           movedAt: m.moved_at,
         })
       }
@@ -6683,9 +6921,9 @@ export async function getSupplierCylinderReconciliationData(
     const now = new Date()
     const trackedList: SupplierTrackedCylinder[] = []
 
-    for (const cyl of (cylinders || [])) {
+    for (const cyl of (cylinders || []) as CylinderReconciliationRow[]) {
       if (cyl.status === 'deactivated' || cyl.is_active === false) continue
-      const locRawStr = typeof cyl.current_location === 'object' ? (cyl.current_location as any)?.location_name || '' : (cyl.current_location || '')
+      const locRawStr = getOxygenLocationName(cyl.current_location, '')
       const locLower = locRawStr.toLowerCase().trim()
       const isExplicitSupplier = locLower === 'supplier' || locLower === 'premis pembekal'
       const isReturnedStatus = cyl.status === 'returned_to_supplier' || isExplicitSupplier
@@ -6693,10 +6931,13 @@ export async function getSupplierCylinderReconciliationData(
       const rcvInfo = latestReceiveMap.get(cyl.id)
       const movRet = movementReturnMap.get(cyl.id)
 
-      const comboName = comboMap.get(`${cyl.cylinder_size_id}_${cyl.cylinder_type_id}`) || cyl.type_info?.name || 'Standard Oxygen'
-      const sizeCode = cyl.size_info?.code || ''
-      const capacity = cyl.size_info?.capacity || (sizeCode === '101-N' || sizeCode === '101-F' ? '1.4 m³' : '')
-      const isLoan = Boolean(cyl.supplier_tagged || cyl.size_info?.is_loan)
+      const sizeInfo = getSingleRelation(cyl.size_info)
+      const typeInfo = getSingleRelation(cyl.type_info)
+      const department = getSingleRelation(cyl.department)
+      const sizeCode = sizeInfo?.code || ''
+      const comboName = comboMap.get(`${cyl.cylinder_size_id}_${cyl.cylinder_type_id}`) || typeInfo?.name || sizeCode
+      const capacity = sizeInfo?.capacity
+      const isLoan = Boolean(cyl.supplier_tagged || sizeInfo?.is_loan)
 
       // Active hospital circulation check: if status is available/empty/issued and not at supplier premises
       const isInHospitalCirculation =
@@ -6728,7 +6969,7 @@ export async function getSupplierCylinderReconciliationData(
 
       const isUnreceivedAtSupplier = !hasReturnedToHospital && (
         (isReturnedStatus && isExplicitSupplier) ||
-        (retInfo && (!rcvInfo || new Date(rcvDate).getTime() < new Date(retDate).getTime()))
+        (retInfo && (!rcvInfo || (rcvDate && new Date(rcvDate).getTime() < new Date(retDate).getTime())))
       )
 
       // Only track hospital-owned cylinders sent for refilling (exclude loan cylinders, which belong to the supplier)
@@ -6740,25 +6981,25 @@ export async function getSupplierCylinderReconciliationData(
         trackedList.push({
           id: cyl.id,
           serial_number: cyl.serial_number,
-          qr_code: cyl.qr_code,
-          cylinder_size_id: cyl.cylinder_size_id,
-          cylinder_type_id: cyl.cylinder_type_id,
+          qr_code: cyl.qr_code || undefined,
+          cylinder_size_id: cyl.cylinder_size_id || undefined,
+          cylinder_type_id: cyl.cylinder_type_id || undefined,
           size_code: sizeCode,
           size_name: sizeCode,
-          type_code: cyl.type_info?.code || '',
+          type_code: typeInfo?.code || '',
           type_name: comboName,
-          capacity,
+          capacity: capacity ?? undefined,
           supplier_tagged: Boolean(cyl.supplier_tagged),
           is_loan: isLoan,
-          supplier_id: retInfo?.supplierId || '',
-          supplier_name: retInfo?.supplierName || 'BORNEO INDAH SDN BHD',
+          supplier_id: retInfo?.supplierId || undefined,
+          supplier_name: retInfo?.supplierName || undefined,
           tracking_mode: 'at_supplier',
           document_id: retInfo?.docId,
-          document_number: retInfo?.docNumber || movRet?.docNumber || 'O2-RET-DISPATCH',
+          document_number: retInfo?.docNumber || movRet?.docNumber,
           document_date: retDate,
           days_elapsed: daysElapsed,
           is_overdue: isOverdue,
-          current_status: cyl.status || 'returned_to_supplier',
+          current_status: cyl.status,
           current_location: 'Supplier',
           assigned_ward: undefined
         })
@@ -6771,25 +7012,25 @@ export async function getSupplierCylinderReconciliationData(
           const entryDateTime = new Date(entryDate).getTime()
           const daysInHospital = Math.max(0, Math.floor((now.getTime() - (isNaN(entryDateTime) ? now.getTime() : entryDateTime)) / (1000 * 60 * 60 * 24)))
 
-          const deptName = cyl.department?.department_name
-          const rawLoc = typeof cyl.current_location === 'object' ? (cyl.current_location as any)?.location_name || 'Pharmacy Store' : (cyl.current_location || 'Pharmacy Store')
+          const deptName = department?.department_name
+          const rawLoc = getOxygenLocationName(cyl.current_location, 'Pharmacy Store')
           const locStr = deptName || rawLoc
 
           trackedList.push({
             id: cyl.id,
             serial_number: cyl.serial_number,
-            qr_code: cyl.qr_code,
-            cylinder_size_id: cyl.cylinder_size_id,
-            cylinder_type_id: cyl.cylinder_type_id,
+            qr_code: cyl.qr_code || undefined,
+            cylinder_size_id: cyl.cylinder_size_id || undefined,
+            cylinder_type_id: cyl.cylinder_type_id || undefined,
             size_code: sizeCode,
             size_name: sizeCode,
-            type_code: cyl.type_info?.code || '',
+            type_code: typeInfo?.code || '',
             type_name: comboName,
-            capacity,
+            capacity: capacity ?? undefined,
             supplier_tagged: Boolean(cyl.supplier_tagged),
             is_loan: isLoan,
             supplier_id: rcvInfo?.supplierId || '',
-            supplier_name: rcvInfo?.supplierName || 'BORNEO INDAH SDN BHD',
+            ...(rcvInfo?.supplierName ? { supplier_name: rcvInfo.supplierName } : {}),
             tracking_mode: 'in_hospital',
             document_id: rcvInfo?.docId,
             document_number: rcvInfo?.docNumber,
@@ -6799,7 +7040,7 @@ export async function getSupplierCylinderReconciliationData(
             is_overdue: daysInHospital > 30,
             current_status: cyl.status || 'available',
             current_location: locStr,
-            assigned_ward: deptName
+            assigned_ward: deptName || undefined
           })
         }
       }

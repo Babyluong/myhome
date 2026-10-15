@@ -1,22 +1,7 @@
 // src/modules/mytransporter/pages/TransporterDriverPanelPage.tsx
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  ArrowLeft, 
-  Car, 
-  CheckCircle, 
-  AlertTriangle,
-  Play,
-  Check,
-  Camera,
-  FileText,
-  MapPin,
-  Clock,
-  User,
-  Shield,
-  AlertCircle,
-  Info
-} from 'lucide-react'
+import { ArrowLeft, CheckCircle, AlertTriangle, Play, Check, Camera, MapPin, Clock, User, Shield, AlertCircle, Info } from 'lucide-react'
 import { Ambulance } from '../components/AmbulanceIcon'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
@@ -33,18 +18,8 @@ import {
   getRequestLogs,
   getInspections
 } from '../services/transporterService'
-import type { TransportRequest, TransportVehicle, VehicleInspection, TransportRequestLog } from '@/shared/types/mytransporter'
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardContent, 
-  Button, 
-  Input, 
-  Badge, 
-  Modal, 
-  SlideOver
-} from '@/components/ui'
+import type { TransportRequest, TransportVehicle, TransportRequestLog } from '@/shared/types/mytransporter'
+import { Card, CardHeader, CardContent, Button, Input, Badge, SlideOver } from '@/components/ui'
 
 const TransporterDriverPanelPage: React.FC = () => {
   const navigate = useNavigate()

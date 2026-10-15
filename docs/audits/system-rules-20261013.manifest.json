@@ -1,0 +1,167 @@
+{
+  "taskId": "SYSTEM-RULES-20261013",
+  "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+  "baselinePaths": [
+    ".gitignore",
+    "dist/index.html",
+    "docs/DECISIONS.md",
+    "docs/SESSION_HANDOFF.md",
+    "public/version.json",
+    "src/config/generatedReleases.json",
+    "src/config/systemReleases.ts",
+    "src/modules/inventory/components/StoreLocationSelector.tsx",
+    "src/modules/inventory/pages/inventory/DrugInventoryPage.tsx",
+    "src/modules/inventory/pages/inventory/FacilityDrugInventoryPage.tsx",
+    "src/modules/inventory/pages/inventory/FacilityNonDrugInventoryPage.tsx",
+    "src/modules/inventory/pages/inventory/InventoryOverviewPage.tsx",
+    "src/modules/inventory/pages/inventory/KewPs4LedgerPage.tsx",
+    "src/modules/inventory/pages/inventory/NearExpiryPage.tsx",
+    "src/modules/inventory/pages/inventory/NonDrugInventoryPage.tsx",
+    "src/modules/inventory/pages/inventory/SlowMovingPage.tsx",
+    "src/modules/inventory/pages/inventory/StoreLocationManagementPage.tsx",
+    "src/modules/myprepacking/components/PrepackDrugPickerModal.tsx",
+    "src/modules/myprepacking/services/prepackService.ts",
+    "src/routes/routes.tsx",
+    "src/services/pharmacy/storeLocationService.ts",
+    "src/services/pharmacy/storeSubLocationService.ts",
+    "src/shared/components/mobile/TabBar.tsx",
+    "src/shared/config/mobileTabs.ts",
+    "src/shared/utils/cacheBuster.ts",
+    ".agents/AGENTS.md",
+    ".agents/CODEBASE_ROUTER.json",
+    ".agents/skills/agent-monitor/SKILL.md",
+    ".agents/skills/amri/SKILL.md",
+    ".agents/skills/antislop-copywriting/SKILL.md",
+    ".agents/skills/antislop-human/SKILL.md",
+    ".agents/skills/babyaaralyn/SKILL.md",
+    ".agents/skills/babybun/SKILL.md",
+    ".agents/skills/babyhien/SKILL.md",
+    ".agents/skills/babyluong/SKILL.md",
+    ".agents/skills/brainstorming/SKILL.md",
+    ".agents/skills/caveman/SKILL.md",
+    ".agents/skills/codebase-memory/SKILL.md",
+    ".agents/skills/compact-code/SKILL.md",
+    ".agents/skills/emil-kowalski/SKILL.md",
+    ".agents/skills/error-guard/SKILL.md",
+    ".agents/skills/frontend-architecture/SKILL.md",
+    ".agents/skills/grill-me/SKILL.md",
+    ".agents/skills/impeccable/SKILL.md",
+    ".agents/skills/plan-first/SKILL.md",
+    ".agents/skills/security-gate/SKILL.md",
+    ".agents/skills/session-compactor/SKILL.md",
+    ".agents/skills/supabase-postgres-best-practices/SKILL.md",
+    ".agents/skills/system-design-pro/SKILL.md",
+    ".agents/skills/task-slicer/SKILL.md",
+    ".agents/skills/tasteskill/SKILL.md",
+    ".agents/skills/test-gate/SKILL.md",
+    ".agents/skills/zero-scan-router/SKILL.md",
+    ".codex/agents/babyaaralyn.toml",
+    ".codex/agents/babybun.toml",
+    ".codex/agents/babyhien.toml",
+    ".codex/agents/babyluong.toml",
+    ".codex/config.toml",
+    ".codex/task-manifest.template.json",
+    "AGENTS.md",
+    "docs/AGENT_OWNERSHIP.json",
+    "docs/AGENT_RULES_SOURCES.md",
+    "docs/audits/login-premium-20261012.manifest.json",
+    "docs/audits/login-premium-20261012.md",
+    "docs/tasks/T-015.md",
+    "docs/tasks/T-016.md",
+    "docs/test-reports/2026-10-12-inpatient-pharmacy-store-locations-report.md",
+    "scripts/check-agent-boundaries.cjs",
+    "scripts/refactor-store-location-page.cjs",
+    "scripts/test-ipd-locations.cjs",
+    "scripts/update-store-location-service.cjs",
+    "src/modules/inventory/components/FacilityDrugMobileCard.tsx",
+    "src/modules/inventory/components/FacilityNonDrugMobileCard.tsx",
+    "supabase/migrations/088_seed_inpatient_store_locations.sql"
+  ],
+  "slices": [
+    {
+      "agent": "amri",
+      "allowedPaths": [
+        "docs/audits/system-rules-20261013.manifest.json",
+        "docs/audits/system-rules-20261013.md",
+        "docs/audits/system-rules-20261013.tools.json"
+      ]
+    },
+    {
+      "agent": "babybun",
+      "allowedPaths": []
+    },
+    {
+      "agent": "babyluong",
+      "allowedPaths": []
+    },
+    {
+      "agent": "babyaaralyn",
+      "allowedPaths": []
+    }
+  ],
+  "acceptanceCriteria": [
+    "Inventory active session, global and repository guidance without exposing secrets",
+    "Audit all repository skills and four role configurations for conflicts and discoverability",
+    "Verify plugin metadata, available tools and limitations without installing or changing permissions",
+    "Trace login design failures to verified source or explicitly labelled historical evidence",
+    "Run focused policy, routing and baseline-preservation checks",
+    "Deliver prioritized evidence and proposed remedies without changing login or governance"
+  ],
+  "dependencies": {
+    "babyaaralyn": [
+      "ownership policy and audit manifest"
+    ],
+    "amri": [
+      "all three specialist reports",
+      "local plugin and session tool metadata"
+    ],
+    "babybun": [
+      "root AGENTS.md",
+      "role and skill files"
+    ],
+    "babyluong": [
+      "login graph coverage and current design system"
+    ]
+  },
+  "status": "AUDIT_COMPLETE_CORRECTIONS_PROPOSED",
+  "constraint": "Read-only inspection except Amri-owned audit records; no feature, policy, plugin or permission changes.",
+  "decision": "ACCEPT read-only audit as complete; system effectiveness FAIL on documented defects; remediation requires separate approved scope.",
+  "specialistReports": {
+    "babybun": {
+      "system": "FAIL",
+      "audit": "PASS",
+      "changedPaths": []
+    },
+    "babyluong": {
+      "designAcceptance": "NOT APPLICABLE",
+      "audit": "PASS",
+      "changedPaths": []
+    },
+    "babyaaralyn": {
+      "enforcement": "FAIL",
+      "audit": "PASS",
+      "changedPaths": []
+    },
+    "amri": {
+      "changedPaths": [
+        "docs/audits/system-rules-20261013.manifest.json",
+        "docs/audits/system-rules-20261013.md",
+        "docs/audits/system-rules-20261013.tools.json"
+      ],
+      "audit": "PASS"
+    }
+  },
+  "finalEvidence": {
+    "baselinePathCount": 74,
+    "currentRenderedLogin": "NOT VERIFIED",
+    "secretShapeScan": "PASS",
+    "nestedTools": 180,
+    "rootDirectInterfaces": 13,
+    "sourceOrPolicyImplementation": "NONE",
+    "boundaryResult": "PASS status=VALID changed_count=3",
+    "localLinkChecks": 22,
+    "currentChangedPathCount": 77,
+    "newAuditPathCount": 3,
+    "jsonParsing": "PASS"
+  }
+}

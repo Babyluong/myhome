@@ -1,34 +1,11 @@
 // @ts-nocheck
 import React, { useEffect, useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  DollarSign,
-  TrendingUp,
-  TrendingDown,
-  Wallet,
-  AlertTriangle,
-  Calendar,
-  RefreshCw,
-  Search,
-  Filter,
-  ChevronRight,
-  ChevronLeft,
-  ChevronsLeft,
-  ChevronsRight,
-  ChevronDown,
-  Info,
-  BarChart2,
-  PieChart,
-  X,
-  FileText,
-  ShoppingCart,
-  Sparkles,
-  Zap
-} from 'lucide-react'
+import { Wallet, AlertTriangle, Calendar, RefreshCw, Search, ChevronRight, ChevronLeft, ChevronsLeft, ChevronsRight, Info, BarChart2, PieChart, X, FileText, ShoppingCart, Sparkles } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
 import { cn, formatDateTime, formatCurrency, formatDate } from '@/lib/utils'
-import { Spinner, Button, Input, Select, Badge, Table } from '@/components/ui'
+import { Spinner, Badge } from '@/components/ui'
 import {
   getUnifiedBudgetSummary,
   getExpenseList
@@ -39,11 +16,9 @@ import {
 } from '@/services/pharmacy/applAllocationService'
 import { supabase } from '@/services/supabase'
 import { WARRANT_CATEGORIES, WARRANT_DEPARTMENTS, normalize } from '@/services/pharmacy/warrantService'
-import type { UnifiedBudgetSummary, PurchaseOrderWithRelations, PurchaseOrderItem } from '@/types/pharmacy'
+import type { UnifiedBudgetSummary, PurchaseOrderItem } from '@/types/pharmacy'
 
-interface PurchaseOrderItemWithDetails extends PurchaseOrderItem {
-  item_name?: string
-}
+
 
 export const APPLAllocationPage: React.FC = () => {
   const { user } = useAuthStore()

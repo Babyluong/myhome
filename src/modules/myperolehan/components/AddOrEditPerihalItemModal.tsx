@@ -1,7 +1,7 @@
 // src/modules/myperolehan/components/AddOrEditPerihalItemModal.tsx
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { X, Tag, Plus, Edit2, CheckCircle2 } from 'lucide-react'
+import { X, Tag, Edit2 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import {

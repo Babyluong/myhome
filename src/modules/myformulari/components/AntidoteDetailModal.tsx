@@ -1,26 +1,6 @@
 // src/modules/myformulari/components/AntidoteDetailModal.tsx
 import React from 'react'
-import {
-  X,
-  AlertTriangle,
-  Flame,
-  Clock,
-  ShieldCheck,
-  Building2,
-  Syringe,
-  Activity,
-  HeartPulse,
-  Thermometer,
-  Printer,
-  FileText,
-  HelpCircle,
-  Sparkles,
-  PhoneCall,
-  CheckCircle2,
-  AlertOctagon,
-  Lock,
-  Layers
-} from 'lucide-react'
+import { X, Building2, Syringe, Activity, HeartPulse, Thermometer, Printer, FileText, Sparkles, PhoneCall, CheckCircle2, AlertOctagon, Layers } from 'lucide-react'
 import { AntidoteEntry } from '../types/antidoteTypes'
 import { AntidoteStockBadge } from './AntidoteStockBadge'
 

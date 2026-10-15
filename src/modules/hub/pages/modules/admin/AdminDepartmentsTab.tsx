@@ -1,18 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Building2,
-  Users,
-  User,
-  Shield,
-  ArrowRight,
-  ChevronDown,
-  ChevronUp,
-  Search,
-  Filter,
-  Briefcase,
-  AlertCircle
-} from 'lucide-react'
+import { Building2, Users, User, Shield, ChevronDown, ChevronUp, Search, Briefcase, AlertCircle } from 'lucide-react'
 import { getDepartments } from '@/services/departmentService'
 import { getUsers } from '@/services/userService'
 import type { DepartmentWithRelations, UserWithRelations } from '@/types'
@@ -262,10 +250,10 @@ export const AdminDepartmentsTab: React.FC = () => {
                 <AnimatePresence>
                   {isExpanded && (
                     <motion.div
-                      initial={{ height: 0 }}
-                      animate={{ height: 'auto' }}
-                      exit={{ height: 0 }}
-                      className="overflow-hidden border-t border-slate-800"
+                      initial={{ scaleY: 0.96, opacity: 0 }}
+                      animate={{ scaleY: 1, opacity: 1 }}
+                      exit={{ scaleY: 0.96, opacity: 0 }}
+                      className="origin-top overflow-hidden border-t border-slate-800"
                     >
                       <div className="p-4 sm:p-5 bg-slate-950/60 space-y-3 sm:space-y-4">
                         <h4 className="text-xs font-bold text-teal-400 uppercase tracking-wider flex items-center gap-1.5">

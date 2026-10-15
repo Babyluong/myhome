@@ -3,19 +3,7 @@
 // Formatted for A4 High-Resolution Print and PDF Export
 
 import React, { useRef } from 'react';
-import {
-  Printer,
-  Download,
-  Share2,
-  CheckCircle2,
-  ShieldCheck,
-  QrCode,
-  ArrowLeft,
-  Award,
-  Calendar,
-  Building,
-  User
-} from 'lucide-react';
+import { Printer, ArrowLeft, Award } from 'lucide-react'
 import type { PrivilegingCertificateData } from '../types/priviledgingTypes';
 
 interface PriviledgingCertificatePrintProps {

@@ -1,14 +1,6 @@
 // src/modules/myprepacking/components/RecentBatchesPanel.tsx
 import React from 'react'
-import {
-  PackageCheck,
-  Printer,
-  ArrowRight,
-  Boxes,
-  Clock,
-  CheckCircle2,
-  AlertCircle
-} from 'lucide-react'
+import { PackageCheck, Printer, ArrowRight, Boxes } from 'lucide-react'
 import type { PrepackBatch } from '../types/prepack'
 import { Skeleton } from '@/shared/components/ui/skeleton'
 

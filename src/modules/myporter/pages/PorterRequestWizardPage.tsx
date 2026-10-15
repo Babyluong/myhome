@@ -1,28 +1,11 @@
 // src/modules/myporter/pages/PorterRequestWizardPage.tsx
 import React, { useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  ArrowLeft, 
-  ArrowRight, 
-  Check, 
-  Bed, 
-  FlaskConical, 
-  Droplets, 
-  Pill, 
-  AirVent, 
-  Shield, 
-  FileText, 
-  Activity,
-  MapPin,
-  Clock,
-  User,
-  AlertCircle,
-  Sparkles
-} from 'lucide-react'
+import { motion } from 'framer-motion'
+import { ArrowLeft, ArrowRight, Bed, FlaskConical, Droplets, Pill, AirVent, Shield, FileText, Activity, MapPin, Sparkles } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
-import { Button, Input, Card, CardHeader, CardTitle, CardContent } from '@/components/ui'
+import { Button, Input } from '@/components/ui'
 import { createPorterJob } from '../services/porterService'
 import type { 
   PorterTaskCategory, 
@@ -47,7 +30,7 @@ export const PorterRequestWizardPage: React.FC = () => {
 
   // Step 1: Category & Urgency
   const [category, setCategory] = useState<PorterTaskCategory>(defaultCategory)
-  const [subCategory, setSubCategory] = useState<string>('')
+  useState<string>('');
   const [urgency, setUrgency] = useState<PorterUrgency>('routine')
 
   // Step 2: Locations
@@ -71,34 +54,34 @@ export const PorterRequestWizardPage: React.FC = () => {
   // Patient fields
   const [patientName, setPatientName] = useState('')
   const [patientRn, setPatientRn] = useState('')
-  const [patientGender, setPatientGender] = useState<'Lelaki' | 'Perempuan'>('Lelaki')
-  const [patientAge, setPatientAge] = useState<number>(45)
+  const [patientGender, ] = useState<'Lelaki' | 'Perempuan'>('Lelaki')
+  const [patientAge, ] = useState<number>(45)
   const [mobility, setMobility] = useState<PatientMobility>('wheelchair')
   const [o2Dependent, setO2Dependent] = useState(false)
-  const [o2FlowRate, setO2FlowRate] = useState(3)
+  const [o2FlowRate, ] = useState(3)
   const [nurseEscort, setNurseEscort] = useState(false)
-  const [isolationPrecaution, setIsolationPrecaution] = useState<'NONE' | 'CONTACT' | 'DROPLET' | 'AIRBORNE'>('NONE')
+  const [isolationPrecaution, ] = useState<'NONE' | 'CONTACT' | 'DROPLET' | 'AIRBORNE'>('NONE')
 
   // Specimen fields
   const [specimenType, setSpecimenType] = useState(
     language === 'ms' ? 'Darah Lengkap (FBC & Renal Profile)' : 'Full Blood Picture (FBC & Renal Profile)'
   )
   const [tubeCount, setTubeCount] = useState(2)
-  const [isColdChain, setIsColdChain] = useState(false)
-  const [isUrgentAbg, setIsUrgentAbg] = useState(false)
+  const [isColdChain, ] = useState(false)
+  const [isUrgentAbg, ] = useState(false)
 
   // Blood bank fields
   const [bloodGroup, setBloodGroup] = useState('O+')
   const [bloodProductType, setBloodProductType] = useState<'PRBC' | 'PLATELET' | 'FFP' | 'CRYOPRECIPITATE' | 'MTP_BOX'>('PRBC')
-  const [bloodUnitCount, setBloodUnitCount] = useState(2)
+  const [bloodUnitCount, ] = useState(2)
 
   // Pharmacy fields
-  const [isDda, setIsDda] = useState(false)
-  const [prescriptionNo, setPrescriptionNo] = useState('')
+  const [isDda, ] = useState(false)
+  const [prescriptionNo, ] = useState('')
 
   // Gas / Equipment fields
-  const [cylinderSize, setCylinderSize] = useState<'E' | 'G' | 'J'>('E')
-  const [cylinderCount, setCylinderCount] = useState(2)
+  const [cylinderSize, ] = useState<'E' | 'G' | 'J'>('E')
+  const [cylinderCount, ] = useState(2)
 
   // Notes
   const [notes, setNotes] = useState('')
@@ -296,8 +279,9 @@ export const PorterRequestWizardPage: React.FC = () => {
           </div>
           <div className="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
             <motion.div
-              animate={{ width: `${(step / 4) * 100}%` }}
-              className="bg-gradient-to-r from-sky-500 to-blue-600 h-full"
+              animate={{ scaleX: step / 4 }}
+              style={{ transformOrigin: 'left' }}
+              className="w-full bg-gradient-to-r from-sky-500 to-blue-600 h-full"
             />
           </div>
         </div>

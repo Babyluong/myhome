@@ -1,24 +1,12 @@
 // src/modules/myporter/pages/PorterReceiverPanelPage.tsx
 import React, { useEffect, useState } from 'react'
-import { 
-  CheckCircle2, 
-  MapPin, 
-  Clock, 
-  Search, 
-  Filter, 
-  ShieldCheck, 
-  Package, 
-  Star, 
-  PenTool,
-  ArrowRight,
-  AlertCircle
-} from 'lucide-react'
+import { CheckCircle2, Clock, Search, ShieldCheck, Star, PenTool } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
-import { Button, Input, Card, CardHeader, CardTitle, CardContent } from '@/components/ui'
+import { Button } from '@/components/ui'
 import { getPorterJobs, receiverVerifyAndComplete } from '../services/porterService'
 import type { PorterJobRequest, HandoverProof, PorterRating } from '@/shared/types/myporter'
-import { JobStatusBadge, UrgencyBadge } from '../components/PorterStatusBadge'
+import { UrgencyBadge } from '../components/PorterStatusBadge'
 import { HandoverVerificationModal } from '../components/HandoverVerificationModal'
 import { soundAlert } from '../components/PorterAudioAlert'
 
@@ -27,7 +15,7 @@ export const PorterReceiverPanelPage: React.FC = () => {
   const toast = useToast()
 
   const [jobs, setJobs] = useState<PorterJobRequest[]>([])
-  const [loading, setLoading] = useState(true)
+  const [, setLoading] = useState(true)
   const [selectedJobForVerification, setSelectedJobForVerification] = useState<PorterJobRequest | null>(null)
   const [isVerificationModalOpen, setIsVerificationModalOpen] = useState(false)
   const [filterCategory, setFilterCategory] = useState<string>('all')

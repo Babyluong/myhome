@@ -1,40 +1,8 @@
-// @ts-nocheck
 import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  Baby,
-  Search,
-  Plus,
-  RefreshCw,
-  FileSpreadsheet,
-  Printer,
-  Calculator,
-  Pill,
-  ShieldCheck,
-  AlertTriangle,
-  Flame,
-  Droplets,
-  Layers,
-  LayoutGrid,
-  AlignJustify,
-  CheckCircle2,
-  Trash2,
-  Edit,
-  ExternalLink,
-  ChevronRight,
-  X,
-  Building2,
-  Package,
-  Activity,
-  Filter,
-  Save,
-  Loader2,
-  Clock,
-  Sparkles,
-} from 'lucide-react'
+import { Baby, Search, Plus, RefreshCw, FileSpreadsheet, Printer, Calculator, AlertTriangle, Flame, Droplets, LayoutGrid, AlignJustify, Trash2, Edit, ExternalLink, X, Filter, Save, Loader2 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
-import { useLanguage } from '@/shared/contexts/LanguageContext'
 import {
   loadPaediatricCatalogue,
   updatePaediatricCatalogueItem,
@@ -45,14 +13,17 @@ import {
 import { InventoryDrugPickerModal } from '../components/InventoryDrugPickerModal'
 import { PaediatricDoseCalculatorModal } from '../components/PaediatricDoseCalculatorModal'
 import { getAllFormulariDrugs } from '../services/formulariService'
+import type { DrugEntry } from '../types/formulariTypes'
+import { FormulariAssetError } from '../services/formulariAssetService'
 import { findBestFukkmMatch, synthesizeDrugEntryFromFacility } from '../services/fukkmMatcher'
 import { exportFacilityDrugInventoryToExcel } from '@/services/pharmacy/facilityInventoryExcelService'
+import type { FacilityDrugItem } from '@/services/pharmacy/facilityDrugInventoryService'
+import { loadFacilityDrugInventory } from '@/services/pharmacy/facilityDrugInventoryService'
 import { generatePaediatricCataloguePdf } from '../services/paediatricCataloguePdfService'
 
 export const PaediatricCataloguePage: React.FC = () => {
   const navigate = useNavigate()
   const { user } = useAuthStore()
-  const { language } = useLanguage()
   const { success: toastSuccess, error: toastError } = useToastStore()
 
   const hospitalId = user?.hospital_id || '85bb6adc-b868-428b-83f4-e5af2f5cf904'
@@ -62,7 +33,6 @@ export const PaediatricCataloguePage: React.FC = () => {
   const [items, setItems] = useState<PaediatricCatalogueItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isRefreshing, setIsRefreshing] = useState(false)
-  const [lastSynced, setLastSynced] = useState<Date>(new Date())
 
   // View & Filter states
   const [viewMode, setViewMode] = useState<'grid' | 'table'>('grid')
@@ -87,8 +57,24 @@ export const PaediatricCataloguePage: React.FC = () => {
   // Item deletion state
   const [deletingItemId, setDeletingItemId] = useState<string | null>(null)
   const [isExportingPdf, setIsExportingPdf] = useState(false)
+  const [openingMonographId, setOpeningMonographId] = useState<string | null>(null)
 
-  const fukkmCatalog = useMemo(() => getAllFormulariDrugs(), [])
+  const [fukkmCatalog, setFukkmCatalog] = useState<DrugEntry[]>([])
+  const [isFukkmLoading, setIsFukkmLoading] = useState(true)
+  const [fukkmError, setFukkmError] = useState<FormulariAssetError | null>(null)
+  const loadFukkmCatalog = useCallback(async () => {
+    setIsFukkmLoading(true)
+    setFukkmError(null)
+    try {
+      setFukkmCatalog(await getAllFormulariDrugs())
+    } catch (error) {
+      setFukkmError(error instanceof FormulariAssetError ? error : new FormulariAssetError('The formulary data could not be loaded.', 'unavailable', true))
+    } finally {
+      setIsFukkmLoading(false)
+    }
+  }, [])
+
+  useEffect(() => { void loadFukkmCatalog() }, [loadFukkmCatalog])
 
   // ─── Fetch Catalogue ────────────────────────────────────────────────────────
   const fetchCatalogueData = useCallback(async (showToast = false) => {
@@ -97,12 +83,11 @@ export const PaediatricCataloguePage: React.FC = () => {
       const res = await loadPaediatricCatalogue(hospitalId)
       setCatalogHeader(res.catalog)
       setItems(res.items)
-      setLastSynced(new Date())
       if (showToast) {
         toastSuccess('Paediatric Catalogue synchronized successfully with MyInventory.')
       }
-    } catch (err: any) {
-      toastError('Failed to load catalogue: ' + (err.message || 'Database error'))
+    } catch (error: unknown) {
+      toastError('Failed to load catalogue: ' + (error instanceof Error ? error.message : 'Database error'))
     } finally {
       setIsLoading(false)
       setIsRefreshing(false)
@@ -218,27 +203,36 @@ export const PaediatricCataloguePage: React.FC = () => {
   }, [items, searchTerm, selectedClinicalGroup, formulationFilter, prescriberFilter, stockFilter])
 
   // ─── Actions ───────────────────────────────────────────────────────────────
-  const handleOpenMonograph = (item: PaediatricCatalogueItem) => {
-    const facilityDrugShim: any = {
-      ...item.drug,
-      facility_stock: item.facility_stock,
-      min_buffer_level: item.min_limit,
-      location: item.store_location,
-      batch_number: item.batch_number,
-      expiry_date: item.expiry_date,
+  const handleOpenMonograph = async (item: PaediatricCatalogueItem) => {
+    if (isFukkmLoading || fukkmError) {
+      toastError(isFukkmLoading ? 'Formulary data is still loading.' : 'Formulary data is unavailable. Retry loading before opening a monograph.')
+      return
     }
-    const matched = findBestFukkmMatch(facilityDrugShim, fukkmCatalog)
-    const targetDrug = matched || synthesizeDrugEntryFromFacility(facilityDrugShim)
+    setOpeningMonographId(item.id)
+    try {
+      const inventory = await loadFacilityDrugInventory(hospitalId)
+      const facilityDrug = inventory.find(drug => drug.id === item.drug_id || drug.drug_code === item.drug.drug_code)
+      if (!facilityDrug) {
+        toastError('This catalogue item is not available in facility inventory. Refresh the catalogue and try again.')
+        return
+      }
+      const matched = findBestFukkmMatch(facilityDrug, fukkmCatalog)
+      const targetDrug = matched || synthesizeDrugEntryFromFacility(facilityDrug)
 
-    navigate(`/formulari/drug/${targetDrug.id}`, {
-      state: {
-        fromLawasFormulary: true,
-        facilityDrug: facilityDrugShim,
-        fukkmMatch: targetDrug,
-        backLabel: 'Paediatric Catalogue',
-        backPath: '/formulari/paediatric-catalogue',
-      },
-    })
+      navigate(`/formulari/drug/${targetDrug.id}`, {
+        state: {
+          fromLawasFormulary: true,
+          facilityDrug,
+          fukkmMatch: targetDrug,
+          backLabel: 'Paediatric Catalogue',
+          backPath: '/formulari/paediatric-catalogue',
+        },
+      })
+    } catch {
+      toastError('Facility inventory could not be loaded. Try again before opening this monograph.')
+    } finally {
+      setOpeningMonographId(null)
+    }
   }
 
   const handleOpenCalculator = (drugName: string) => {
@@ -265,8 +259,8 @@ export const PaediatricCataloguePage: React.FC = () => {
       toastSuccess(`Quota limits for ${editingItem.drug.drug_name} updated successfully.`)
       setEditingItem(null)
       fetchCatalogueData()
-    } catch (err: any) {
-      toastError('Failed to update quota limits: ' + (err.message || 'Server error'))
+    } catch (error: unknown) {
+      toastError('Failed to update quota limits: ' + (error instanceof Error ? error.message : 'Server error'))
     } finally {
       setIsUpdatingLimit(false)
     }
@@ -284,14 +278,14 @@ export const PaediatricCataloguePage: React.FC = () => {
       await removePaediatricCatalogueItem(item.id, catalogHeader.id)
       toastSuccess(`Medication ${item.drug.drug_name} removed from ward catalogue.`)
       fetchCatalogueData()
-    } catch (err: any) {
-      toastError('Failed to remove medication: ' + (err.message || 'Server error'))
+    } catch (error: unknown) {
+      toastError('Failed to remove medication: ' + (error instanceof Error ? error.message : 'Server error'))
     } finally {
       setDeletingItemId(null)
     }
   }
 
-  const handleExportExcel = () => {
+  const handleExportExcel = async () => {
     try {
       const sourceItems = filteredItems.length > 0 ? filteredItems : items
       const sortedSource = [...sourceItems].sort((a, b) => {
@@ -300,23 +294,28 @@ export const PaediatricCataloguePage: React.FC = () => {
         return nameA.localeCompare(nameB, undefined, { sensitivity: 'base', numeric: true })
       })
 
-      const exportItems = sortedSource.map(i => ({
-        ...i.drug,
-        facility_stock: i.facility_stock,
-        min_buffer_level: i.min_limit,
-        location: i.store_location,
-        notes: `Paediatric Ward Catalogue (Min: ${i.min_limit}, Reorder: ${i.reorder_level}, Max: ${i.max_limit || '-'})`,
-      }))
+      const inventory = await loadFacilityDrugInventory(hospitalId)
+      const exportItems: FacilityDrugItem[] = sortedSource.map(item => {
+        const facilityDrug = inventory.find(drug => drug.id === item.drug_id || drug.drug_code === item.drug.drug_code)
+        if (!facilityDrug) throw new Error(`Inventory record unavailable for ${item.drug.drug_name}`)
+        return {
+          ...facilityDrug,
+          facility_stock: item.facility_stock,
+          min_buffer_level: item.min_limit,
+          location: item.store_location,
+          notes: `Paediatric Ward Catalogue (Min: ${item.min_limit}, Reorder: ${item.reorder_level}, Max: ${item.max_limit || '-'})`,
+        }
+      })
 
-      exportFacilityDrugInventoryToExcel(exportItems as any, {
+      exportFacilityDrugInventoryToExcel(exportItems, {
         hospitalName: 'Hospital Lawas',
         departmentName: 'Paediatric Ward (Wad Pediatrik)',
-        generatedBy: user?.name || 'Pharmacist',
-        generatedByTitle: user?.role || 'Pharmacist',
+        generatedBy: user?.full_name || 'Pharmacist',
+        generatedByTitle: user?.role ? String(user.role) : 'Pharmacist',
         filename: `Paediatric_Catalogue_Hospital_Lawas_${new Date().getFullYear()}.xlsx`,
       })
       toastSuccess('Paediatric Catalogue Excel file exported successfully.')
-    } catch (err: any) {
+    } catch {
       toastError('Failed to export Excel file.')
     }
   }
@@ -328,13 +327,13 @@ export const PaediatricCataloguePage: React.FC = () => {
       await generatePaediatricCataloguePdf(itemsToExport, {
         hospitalName: 'Hospital Lawas',
         departmentName: 'Paediatric Ward & Pharmacy Department',
-        generatedBy: user?.name || user?.full_name || 'Pharmacist',
-        generatedByTitle: user?.role || user?.jawatan || 'Pharmacist',
+        generatedBy: user?.full_name || 'Pharmacist',
+        generatedByTitle: user?.role ? String(user.role) : 'Pharmacist',
       })
       toastSuccess('Official Paediatric Catalogue PDF document generated & downloaded successfully.')
-    } catch (err: any) {
-      console.error('Error generating PDF:', err)
-      toastError('Failed to generate PDF: ' + (err.message || 'Unknown error'))
+    } catch (error: unknown) {
+      console.error('Error generating PDF:', error)
+      toastError('Failed to generate PDF: ' + (error instanceof Error ? error.message : 'Unknown error'))
     } finally {
       setIsExportingPdf(false)
     }
@@ -342,6 +341,9 @@ export const PaediatricCataloguePage: React.FC = () => {
 
   return (
     <div className="w-full min-h-screen text-text-primary p-4 md:p-6 lg:p-8 space-y-6">
+      {isFukkmLoading && <p className="rounded-lg border border-border-default bg-subtle px-4 py-3 text-sm text-text-muted" role="status">Loading FUKKM monographs…</p>}
+      {openingMonographId && <p className="rounded-lg border border-border-default bg-subtle px-4 py-3 text-sm text-text-muted" role="status">Loading facility record for {items.find(item => item.id === openingMonographId)?.drug.drug_name || 'selected medicine'}…</p>}
+      {fukkmError && <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-rose-500/30 bg-rose-500/5 px-4 py-3" role="alert"><p className="text-sm text-text-primary">{fukkmError.message}</p><button type="button" onClick={() => fukkmError.retryable ? void loadFukkmCatalog() : window.location.reload()} className="rounded-md border border-border-default bg-surface px-3 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-base focus-visible:outline-offset-2">{fukkmError.retryable ? 'Retry' : 'Reload formulary'}</button></div>}
       {/* Official Government Module Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-border-default">
         <div className="flex items-start gap-4">
@@ -515,7 +517,7 @@ export const PaediatricCataloguePage: React.FC = () => {
             {/* Stock Status */}
             <select
               value={stockFilter}
-              onChange={e => setStockFilter(e.target.value as any)}
+              onChange={e => setStockFilter((['all', 'in_stock', 'low_stock', 'nil'] as const).find(filter => filter === e.currentTarget.value) ?? 'all')}
               className="px-3 py-2 bg-surface border border-border-default rounded-lg text-xs text-text-secondary focus:outline-none focus:border-accent-base"
             >
               <option value="all">All Stock Levels</option>

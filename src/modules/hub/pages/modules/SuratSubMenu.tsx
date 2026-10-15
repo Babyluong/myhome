@@ -1,20 +1,7 @@
 // @ts-nocheck
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  ArrowLeft, 
-  Mail, 
-  Send, 
-  Inbox, 
-  FileText, 
-  Bell, 
-  Clock, 
-  CheckCircle2, 
-  AlertTriangle,
-  Archive,
-  ChevronRight,
-  ScrollText
-} from 'lucide-react'
+import { ArrowLeft, Mail, Send, Inbox, Clock, CheckCircle2, AlertTriangle, Archive, ScrollText } from 'lucide-react'
 import { ROUTES } from '@/lib/constants'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
 import { Badge, Skeleton } from '@/components/ui'

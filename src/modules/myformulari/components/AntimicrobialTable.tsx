@@ -1,20 +1,5 @@
 import React, { useState } from 'react'
-import {
-  ShieldCheck,
-  AlertCircle,
-  Clock,
-  FileText,
-  CheckCircle2,
-  Baby,
-  User,
-  Calculator,
-  Copy,
-  Check,
-  AlertTriangle,
-  ArrowRightLeft,
-  BookOpen,
-  Sparkles
-} from 'lucide-react'
+import { ShieldCheck, AlertCircle, Clock, FileText, CheckCircle2, Baby, User, Calculator, Copy, Check, AlertTriangle, ArrowRightLeft } from 'lucide-react'
 import { NAGInfectionGuideline } from '../types/formulariTypes'
 
 interface AntimicrobialTableProps {

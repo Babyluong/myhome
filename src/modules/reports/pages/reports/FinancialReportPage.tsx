@@ -6,29 +6,7 @@ import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
 import { Spinner } from '@/components/ui'
 import { cn, formatCurrency } from '@/lib/utils'
-import { 
-  ChevronRight, 
-  Sparkles,
-  FileText,
-  FileSpreadsheet,
-  Calendar,
-  RefreshCw,
-  Download,
-  TrendingUp,
-  TrendingDown,
-  ArrowUpRight,
-  ArrowDownRight,
-  Activity,
-  BarChart3,
-  PieChart as PieChartIcon,
-  CheckCircle2,
-  AlertTriangle,
-  Landmark,
-  ListTodo,
-  TrendingUp as ForecastIcon,
-  History,
-  DollarSign
-} from 'lucide-react'
+import { ChevronRight, Sparkles, FileText, FileSpreadsheet, Calendar, RefreshCw, Download, TrendingUp, ArrowUpRight, Activity, BarChart3, PieChart as PieChartIcon, Landmark, ListTodo, TrendingUp as ForecastIcon, History, DollarSign } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
@@ -251,13 +229,14 @@ function HorizontalBar({ label, value, max, color, delay = 0 }: { label: string,
       </div>
       <div className="h-2.5 bg-subtle rounded-full overflow-hidden relative">
         <motion.div
-          className="h-full rounded-full"
-          style={{ 
+          style={{
             backgroundColor: color,
-            backgroundImage: `linear-gradient(to right, ${color}, ${color}aa)`
+            backgroundImage: `linear-gradient(to right, ${color}, ${color}aa)`,
+            transformOrigin: 'left',
           }}
-          initial={{ width: 0 }}
-          animate={{ width: `${pct}%` }}
+          className="h-full w-full rounded-full"
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: pct / 100 }}
           transition={{ duration: 1.2, delay, ease: 'easeOut' }}
         />
       </div>

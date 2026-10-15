@@ -1,14 +1,6 @@
 // src/modules/myprepacking/components/PrepackDrugPickerModal.tsx
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
-import {
-  Search,
-  X,
-  Pill,
-  Loader2,
-  Check,
-  Package,
-  ArrowRight
-} from 'lucide-react'
+import React, { useState, useEffect, useMemo } from 'react'
+import { Search, X, Loader2, Check, Package, ArrowRight, Building } from 'lucide-react'
 import { Modal } from '@/components/ui'
 import {
   searchFacilityCatalogDrugs,
@@ -20,46 +12,54 @@ interface PrepackDrugPickerModalProps {
   onClose: () => void
   onSelectDrug: (drug: FacilityCatalogDrugOption) => void
   selectedDrugId?: string | null
+  storeLocationId?: string | null
+  storeName?: string
 }
 
 export const PrepackDrugPickerModal: React.FC<PrepackDrugPickerModalProps> = ({
   isOpen,
   onClose,
   onSelectDrug,
-  selectedDrugId
+  selectedDrugId,
+  storeLocationId,
+  storeName = 'Farmasi Pesakit Dalam (Inpatient)'
 }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'tablet' | 'liquid' | 'cream' | 'other'>('all')
   const [drugs, setDrugs] = useState<FacilityCatalogDrugOption[]>([])
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [retryRequest, setRetryRequest] = useState(0)
 
-  const fetchDrugs = useCallback(async (query: string) => {
-    setLoading(true)
-    try {
-      const { data } = await searchFacilityCatalogDrugs(query)
-      setDrugs(data || [])
-    } catch (err) {
-      console.error('Error fetching catalog drugs for picker:', err)
-      setDrugs([])
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
-  useEffect(() => {
-    if (isOpen) {
-      fetchDrugs(searchTerm)
-    }
-  }, [isOpen, fetchDrugs])
-
-  // Debounced search
   useEffect(() => {
     if (!isOpen) return
+    let active = true
+    setLoading(true)
+    setDrugs([])
+    setError(null)
+    const fetchDrugs = async () => {
+      try {
+        const result = await searchFacilityCatalogDrugs(searchTerm, undefined, storeLocationId || undefined)
+        if (!active) return
+        if (result.error) {
+          setError('Unable to load the medication catalog. Please try again.')
+        } else {
+          setDrugs(result.data || [])
+        }
+      } catch {
+        if (active) setError('Unable to load the medication catalog. Please try again.')
+      } finally {
+        if (active) setLoading(false)
+      }
+    }
     const timer = setTimeout(() => {
-      fetchDrugs(searchTerm)
+      void fetchDrugs()
     }, 200)
-    return () => clearTimeout(timer)
-  }, [searchTerm, isOpen, fetchDrugs])
+    return () => {
+      active = false
+      clearTimeout(timer)
+    }
+  }, [searchTerm, isOpen, storeLocationId, retryRequest])
 
   // Filter by dosage form category
   const filteredDrugs = useMemo(() => {
@@ -87,22 +87,34 @@ export const PrepackDrugPickerModal: React.FC<PrepackDrugPickerModalProps> = ({
       size="3xl"
     >
       <div className="space-y-4 py-1">
-        {/* Subtitle & Explainer */}
-        <div className="flex items-center justify-between border-b border-border-subtle pb-3">
+        {/* Subtitle & Explainer with Inpatient Pharmacy Store Context */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border-subtle pb-3">
           <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-bold bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/25">
+                <Building className="w-3 h-3 text-teal-600 dark:text-teal-400" />
+                <span>{storeName}</span>
+              </span>
+              <span className="text-[11px] text-text-muted">
+                Facility Drug Inventory
+              </span>
+            </div>
             <p className="text-xs text-text-muted">
-              Select a master medication from official hospital stock. Item code, baseline dosage, and form link automatically.
+              Select an official medication from Inpatient Pharmacy inventory. Item code, baseline dosage, and form link automatically.
             </p>
           </div>
-          <span className="text-[11px] font-mono px-2 py-0.5 rounded bg-subtle text-text-secondary border border-border-subtle shrink-0">
-            {filteredDrugs.length} Drugs Available
-          </span>
+          <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+            <span className="text-[11px] font-mono px-2.5 py-1 rounded-md bg-subtle text-text-primary border border-border-subtle font-semibold">
+              {filteredDrugs.length} Drugs Available
+            </span>
+          </div>
         </div>
 
         {/* Search Bar */}
         <div className="relative">
           <input
             type="text"
+            aria-label="Search medication catalog"
             autoFocus
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -115,6 +127,7 @@ export const PrepackDrugPickerModal: React.FC<PrepackDrugPickerModalProps> = ({
           ) : searchTerm ? (
             <button
               type="button"
+              aria-label="Clear medication search"
               onClick={() => setSearchTerm('')}
               className="absolute right-3.5 top-3 text-text-muted hover:text-text-primary transition-colors cursor-pointer"
             >
@@ -125,17 +138,17 @@ export const PrepackDrugPickerModal: React.FC<PrepackDrugPickerModalProps> = ({
 
         {/* Dosage Form Filter Tabs */}
         <div className="flex flex-wrap items-center gap-1.5">
-          {[
+          {([
             { id: 'all', label: 'All Forms' },
             { id: 'tablet', label: 'Tablets & Capsules' },
             { id: 'liquid', label: 'Oral Liquids & Syrups' },
             { id: 'cream', label: 'Creams & Ointments' },
             { id: 'other', label: 'Other Forms' }
-          ].map((cat) => (
+          ] as const).map((cat) => (
             <button
               key={cat.id}
               type="button"
-              onClick={() => setCategoryFilter(cat.id as any)}
+              onClick={() => setCategoryFilter(cat.id)}
               className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors active:scale-[0.98] cursor-pointer ${
                 categoryFilter === cat.id
                   ? 'bg-teal-700 text-white shadow-xs'
@@ -150,7 +163,14 @@ export const PrepackDrugPickerModal: React.FC<PrepackDrugPickerModalProps> = ({
         {/* Drugs List / Table */}
         <div className="border border-border-default rounded-xl overflow-hidden bg-surface">
           <div className="max-h-96 overflow-y-auto divide-y divide-border-subtle">
-            {loading && filteredDrugs.length === 0 ? (
+            {error ? (
+              <div className="py-8 px-4 text-center" role="alert">
+                <p className="text-sm text-text-primary">{error}</p>
+                <button type="button" onClick={() => setRetryRequest(value => value + 1)} className="mt-3 px-3 py-2 rounded-lg text-accent-base focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-base">
+                  Try again
+                </button>
+              </div>
+            ) : loading ? (
               <div className="py-12 flex flex-col items-center justify-center text-center">
                 <Loader2 className="w-6 h-6 text-teal-600 dark:text-teal-400 animate-spin mb-2" />
                 <span className="text-xs text-text-muted">Searching MyInventory catalog records...</span>
@@ -171,10 +191,6 @@ export const PrepackDrugPickerModal: React.FC<PrepackDrugPickerModalProps> = ({
                 return (
                   <div
                     key={drug.id}
-                    onClick={() => {
-                      onSelectDrug(drug)
-                      onClose()
-                    }}
                     className={`p-3.5 flex items-center justify-between gap-3 transition-colors cursor-pointer group ${
                       isSelected
                         ? 'bg-teal-500/10 dark:bg-teal-500/15 border-l-4 border-l-teal-600'
@@ -214,7 +230,7 @@ export const PrepackDrugPickerModal: React.FC<PrepackDrugPickerModalProps> = ({
                       {drug.facility_stock !== null && drug.facility_stock !== undefined && (
                         <div className="text-right hidden sm:block">
                           <span className="text-[10px] uppercase font-bold text-text-muted block">Store Stock</span>
-                          <span className="font-mono text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                          <span className={`font-mono text-xs font-bold ${(drug.facility_stock || 0) > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-text-muted'}`}>
                             {drug.facility_stock.toLocaleString()}
                           </span>
                         </div>
@@ -222,6 +238,11 @@ export const PrepackDrugPickerModal: React.FC<PrepackDrugPickerModalProps> = ({
 
                       <button
                         type="button"
+                        aria-label={`Select ${drug.drug_name}`}
+                        onClick={() => {
+                          onSelectDrug(drug)
+                          onClose()
+                        }}
                         className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors active:scale-[0.98] cursor-pointer ${
                           isSelected
                             ? 'bg-teal-700 text-white shadow-xs'

@@ -1,13 +1,12 @@
-// @ts-nocheck
 /**
  * Non-Drug Catalog Service (Unified Wrapper around MyInventory inventoryService)
  * All non-drug catalog operations query and manipulate the MyInventory single source of truth.
  */
 
 import { supabase, isSupabaseConfigured } from '@/services/supabase'
-import { mockNonDrugs } from '@/services/pharmacy/mockData'
-import type { ApiResponse, PaginatedResponse } from '@/types'
+import type { ApiResponse } from '@/types'
 import type { NonDrug, NonDrugWithRelations } from '@/types/pharmacy'
+import type { InventoryFilter } from '@/types/pharmacy'
 import {
   getNonDrugs as getNonDrugCatalog,
   getNonDrugById,
@@ -28,15 +27,23 @@ export {
   getNonDrugCategories,
 }
 
-export type { NonDrugCatalogFilter, NonDrugCatalogKPIs } from '@/types/pharmacy'
+export type NonDrugCatalogFilter = InventoryFilter & { supplier_id?: string }
 
-export async function getNonDrugCatalogKPIs(hospitalId: string) {
+export interface NonDrugCatalogKPIs {
+  total: number
+  active: number
+  inactive: number
+}
+
+export async function getNonDrugCatalogKPIs(
+  hospitalId: string
+): Promise<ApiResponse<NonDrugCatalogKPIs>> {
   const result = await getNonDrugCatalog(hospitalId, undefined, 1, 1000)
   if (result.error || !result.data) {
     return { data: { total: 0, active: 0, inactive: 0 }, error: result.error }
   }
   const items = result.data.data || []
-  const active = items.filter((nd: any) => nd.status === 'active').length
+  const active = items.filter((nonDrug: NonDrugWithRelations) => nonDrug.status === 'active').length
   return {
     data: {
       total: items.length,
@@ -58,7 +65,7 @@ export async function searchNonDrugs(
   if (!query || query.length < 2) {
     return { data: [], error: null }
   }
-  const result = await getNonDrugCatalog(hospitalId, { search: query } as any, 1, limit)
+  const result = await getNonDrugCatalog(hospitalId, { search: query }, 1, limit)
   return {
     data: result.data?.data || [],
     error: result.error,
@@ -70,13 +77,13 @@ export async function searchNonDrugs(
  */
 export async function exportNonDrugCatalog(
   hospitalId: string,
-  filter?: any
+  filter?: NonDrugCatalogFilter
 ): Promise<ApiResponse<string>> {
   try {
     const result = await getNonDrugCatalog(hospitalId, filter, 1, 10000)
     
-    if (!result.data) {
-      return { data: null, error: 'Failed to fetch non-drugs for export' }
+    if (result.error || !result.data) {
+      return { data: null, error: result.error || 'Failed to fetch non-drugs for export' }
     }
 
     const headers = [
@@ -91,13 +98,13 @@ export async function exportNonDrugCatalog(
       'Price',
     ]
 
-    const rows = (result.data.data || []).map((item: any) => [
+    const rows = (result.data.data || []).map((item: NonDrugWithRelations) => [
       item.item_code || '',
       item.item_name || '',
       item.sku || '',
       item.pku || '',
       item.category?.category_name || '',
-      item.supplier?.company_name || item.supplier?.supplier_name || '',
+      item.supplier?.company_name || '',
       item.procurement_vote?.toUpperCase() || '',
       item.status || 'active',
       typeof item.price === 'number' ? item.price.toFixed(2) : '0.00',
@@ -128,6 +135,9 @@ export async function batchImportNonDrugs(
 ): Promise<ApiResponse<{ success: number; errors: string[] }>> {
   try {
     const supabaseConfigured = isSupabaseConfigured()
+    if (!supabaseConfigured) {
+      return { data: null, error: 'Non-drug catalog is unavailable because Supabase is not configured.' }
+    }
     const errors: string[] = []
     let successCount = 0
 
@@ -167,11 +177,14 @@ export async function batchImportNonDrugs(
             .in('item_code', chunk)
 
           if (error) {
-            errors.push(`Failed to check existing non-drug items for some codes: ${error.message}`)
-            break
+            return {
+              data: { success: 0, errors: [`Failed to check existing non-drugs: ${error.message}`] },
+              error: null,
+            }
           }
 
-          ;(data || []).forEach((row: any) => {
+          const existingRows = data || []
+          existingRows.forEach((row: { id: string; item_code: string } | null) => {
             if (!row || !row.item_code || !row.id) return
             const code = String(row.item_code).trim().toUpperCase()
             existingByCode!.set(code, { id: row.id })
@@ -179,6 +192,10 @@ export async function batchImportNonDrugs(
         }
       } catch (preloadError) {
         console.error('[batchImportNonDrugs] Exception while preloading existing items:', preloadError)
+        return {
+          data: { success: 0, errors: ['Failed to check existing non-drugs before import.'] },
+          error: null,
+        }
       }
     }
     
@@ -242,11 +259,6 @@ export async function batchImportNonDrugs(
         if (existingByCode) {
           existing = existingByCode.get(itemCode) || null
         }
-      } else {
-        const found = mockNonDrugs.find(
-          d => d.item_code === itemCode && d.hospital_id === hospitalId
-        )
-        existing = found ? { id: found.id } : null
       }
 
       if (existing) {
@@ -254,7 +266,7 @@ export async function batchImportNonDrugs(
           const updateResult = await updateNonDrug(existing.id, {
             ...nonDrugData,
             hospital_id: hospitalId,
-          } as any)
+          })
           if (updateResult.error) {
             errors.push(`Row ${i + 2}: ${updateResult.error}`)
           } else {
@@ -267,7 +279,7 @@ export async function batchImportNonDrugs(
         try {
           const createResult = await createNonDrug(hospitalId, {
             ...nonDrugData,
-          } as any)
+          })
           if (createResult.error) {
             errors.push(`Row ${i + 2}: ${createResult.error}`)
           } else {

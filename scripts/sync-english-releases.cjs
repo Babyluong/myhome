@@ -1,3 +1,4 @@
+if (!process.argv.includes('--publish') && !process.argv.includes('--preview')) { console.error('Explicit --publish required'); process.exit(1); }
 const fs = require('fs');
 const path = require('path');
 const dotenv = require('dotenv');
@@ -7,7 +8,7 @@ dotenv.config();
 const { createClient } = require('@supabase/supabase-js');
 
 const supabaseUrl = process.env.VITE_SUPABASE_URL;
-const serviceKey = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 if (!supabaseUrl || !serviceKey) {
   console.error('[Sync] Supabase credentials missing from .env');
@@ -148,37 +149,30 @@ const CANONICAL_RELEASES = [
 ];
 
 async function sync() {
-  console.log('[Sync] Removing anomalous build-7c257cc entry...');
-  const { error: delErr } = await supabase
-    .from('system_announcements')
-    .delete()
-    .eq('version_tag', 'build-7c257cc');
-
-  if (delErr) {
-    console.warn('[Sync] Note on delete build-7c257cc:', delErr.message);
-  } else {
-    console.log('[Sync] Removed build-7c257cc successfully.');
-  }
-
   // Fetch current rows
   const { data: currentRows, error: fetchErr } = await supabase
     .from('system_announcements')
-    .select('id, version_tag');
+    .select('id, version_tag,created_by,created_by_name,metadata');
 
   if (fetchErr) {
-    console.error('[Sync] Error fetching current rows:', fetchErr.message);
-    return;
+    throw fetchErr;
   }
 
   const existingMap = new Map();
   for (const row of currentRows || []) {
     if (row.version_tag) {
-      existingMap.set(row.version_tag, row.id);
+      if (existingMap.has(row.version_tag)) throw new Error('Ambiguous release version');
+      existingMap.set(row.version_tag, row);
     }
   }
 
-  for (const rel of CANONICAL_RELEASES) {
-    const existingId = existingMap.get(rel.version_tag);
+  const plan = CANONICAL_RELEASES.map(rel => {
+    const prior = existingMap.get(rel.version_tag);
+    if (prior && prior.metadata?.managed_by !== 'home_release_engine' && !(prior.created_by === null && prior.created_by_name === rel.created_by_name)) throw new Error('Unmanaged release conflict');
+    return { rel, existingId: prior?.id };
+  });
+  if (process.argv.includes('--preview')) { console.log(JSON.stringify({ preview: true, writes: 0, plan: plan.map(entry => ({ action: entry.existingId ? 'update' : 'insert', id: entry.existingId, version: entry.rel.version_tag })) })); return; }
+  for (const { rel, existingId } of plan) {
     if (existingId) {
       console.log(`[Sync] Updating existing record for ${rel.version_tag} (${existingId}) to English...`);
       const { error: updateErr } = await supabase
@@ -195,14 +189,14 @@ async function sync() {
           affected_modules: rel.affected_modules,
           created_by_name: rel.created_by_name,
           is_active: rel.is_active,
-          metadata: rel.metadata,
+          metadata: { ...rel.metadata, managed_by: 'home_release_engine' },
           created_at: rel.created_at,
           updated_at: new Date().toISOString()
         })
         .eq('id', existingId);
 
       if (updateErr) {
-        console.error(`[Sync] Failed to update ${rel.version_tag}:`, updateErr.message);
+        throw updateErr;
       } else {
         console.log(`[Sync] Successfully updated ${rel.version_tag} to English.`);
       }
@@ -223,27 +217,20 @@ async function sync() {
           created_by: null,
           created_by_name: rel.created_by_name,
           is_active: rel.is_active,
-          metadata: rel.metadata,
+          metadata: { ...rel.metadata, managed_by: 'home_release_engine' },
           created_at: rel.created_at,
           updated_at: new Date().toISOString()
         });
 
       if (insErr) {
-        console.error(`[Sync] Failed to insert ${rel.version_tag}:`, insErr.message);
+        throw insErr;
       } else {
         console.log(`[Sync] Successfully inserted ${rel.version_tag} into Supabase.`);
       }
     }
   }
 
-  console.log('[Sync] Done. Querying final state...');
-  const { data: finalRows } = await supabase
-    .from('system_announcements')
-    .select('version_tag, title, created_at')
-    .order('created_at', { ascending: false });
-
-  console.log('[Sync] Final announcements state in Supabase:');
-  console.log(JSON.stringify(finalRows, null, 2));
+  console.log('[Sync] Managed release publication completed');
 }
 
-sync();
+sync().catch(() => { console.error('[Sync] Publishing failed'); process.exitCode = 1; });

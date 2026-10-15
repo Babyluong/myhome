@@ -3,30 +3,12 @@
 // Built to match MyWarrantDashboard.tsx structure, sidebar, colors, and layout components 100%
 
 import React, { useEffect, useState } from 'react'
-import { Link, useNavigate, useLocation } from 'react-router-dom'
-import {
-  BarChart3,
-  Wallet,
-  FileText,
-  ShoppingCart,
-  PieChart,
-  Activity,
-  Clock,
-  ArrowRight,
-  ClipboardList,
-  LayoutDashboard,
-  Loader2,
-  Sparkles,
-  ChevronRight,
-  Building,
-  HardHat,
-  CreditCard,
-  Plus
-} from 'lucide-react'
-import { ROUTES } from '@/lib/constants'
-import { supabase } from '@/services/supabase'
-import { motion, AnimatePresence } from 'framer-motion'
-import { Skeleton, SkeletonCard } from '@/shared/components/ui/skeleton'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { BarChart3, Wallet, ShoppingCart, PieChart, Activity, ArrowRight, ClipboardList, CreditCard, Plus } from 'lucide-react'
+import '@/lib/constants'
+import '@/services/supabase'
+import 'framer-motion'
+import { Skeleton } from '@/shared/components/ui/skeleton'
 import { ModulePageHeader } from '@/components/ui'
 import { Fab } from '@/shared/components/mobile'
 

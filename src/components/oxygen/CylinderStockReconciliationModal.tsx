@@ -1,37 +1,10 @@
 // @ts-nocheck
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { 
-  X, 
-  Search, 
-  QrCode, 
-  CheckCircle2, 
-  Check, 
-  CheckCheck, 
-  AlertCircle, 
-  Building2, 
-  Truck, 
-  Boxes, 
-  Layers, 
-  RefreshCw, 
-  ExternalLink, 
-  Sparkles, 
-  ShieldCheck, 
-  Filter,
-  FileText,
-  Barcode,
-  Camera,
-  Warehouse,
-  Activity,
-  UserCheck,
-  Calendar,
-  Clock,
-  Printer,
-  Plus
-} from 'lucide-react';
+import { X, Search, CheckCircle2, Check, CheckCheck, AlertCircle, Building2, Truck, Boxes, Layers, RefreshCw, ExternalLink, ShieldCheck, FileText, Barcode, Camera, Warehouse, UserCheck, Plus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/stores/authStore';
 import { useLanguage } from '@/shared/contexts/LanguageContext';
-import { Modal, Button, Input, Badge } from '@/components/ui';
+import { Modal, Button, Input } from '@/components/ui'
 import { JATA_NEGARA_BASE64 } from '@/modules/mytransporter/pages/jataNegaraBase64';
 import { 
   getCylindersForReconciliation, 

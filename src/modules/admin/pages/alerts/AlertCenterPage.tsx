@@ -1,25 +1,7 @@
 ﻿// @ts-nocheck
 import React, { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
-import {
-  Bell,
-  AlertTriangle,
-  XCircle,
-  CheckCircle,
-  Info,
-  RefreshCw,
-  Filter,
-  Check,
-  X,
-  Eye,
-  EyeOff,
-  Download,
-  Search,
-  Shield,
-  Activity,
-  Database,
-  Settings,
-} from 'lucide-react'
+import { Bell, AlertTriangle, XCircle, Info, RefreshCw, Filter, Check, Eye, Search, Shield, Activity, Database, Settings } from 'lucide-react'
 import { Button, Badge, Select, Input, Pagination, LoadingOverlay, Modal } from '@/components/ui'
 import {
   getSystemAlerts,

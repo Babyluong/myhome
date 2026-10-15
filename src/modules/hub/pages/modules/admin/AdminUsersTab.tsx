@@ -1,31 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import {
-  Users,
-  Search,
-  Filter,
-  UserCheck,
-  Shield,
-  Building2,
-  Mail,
-  Phone,
-  Edit,
-  X,
-  Save,
-  CheckCircle,
-  AlertCircle,
-  Lock,
-  KeyRound,
-  Eye,
-  EyeOff,
-  Copy,
-  Check,
-  RefreshCw,
-  Send,
-  Sparkles,
-  ChevronDown,
-  ChevronUp
-} from 'lucide-react'
+import { Search, Shield, Building2, Edit, X, Save, AlertCircle, Lock, KeyRound, Eye, EyeOff, Copy, Check, RefreshCw, Send, Sparkles, ChevronDown, ChevronUp } from 'lucide-react'
 import { getUsers, updateUser, adminResetUserPassword } from '@/services/userService'
 import { sendPasswordResetEmail } from '@/services/emailService'
 import { getAllRoles } from '@/services/roleService'
@@ -743,10 +718,10 @@ export const AdminUsersTab: React.FC = () => {
                       <AnimatePresence>
                         {isPasswordSectionOpen && (
                           <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="p-4 space-y-3.5 border-t border-amber-500/10"
+                            initial={{ opacity: 0, scaleY: 0.96 }}
+                            animate={{ opacity: 1, scaleY: 1 }}
+                            exit={{ opacity: 0, scaleY: 0.96 }}
+                            className="origin-top p-4 space-y-3.5 border-t border-amber-500/10"
                           >
                             {isSuperAdmin ? (
                               <>

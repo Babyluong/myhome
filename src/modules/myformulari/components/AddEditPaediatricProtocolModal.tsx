@@ -1,20 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import {
-  X,
-  Plus,
-  Trash2,
-  Building2,
-  Pill,
-  Layers,
-  Sparkles,
-  AlertCircle,
-  HelpCircle,
-  Clock,
-  ShieldAlert,
-  FileText,
-  Save,
-  Check
-} from 'lucide-react'
+import { X, Plus, Trash2, Building2, Layers, AlertCircle, ShieldAlert, FileText, Save, Check } from 'lucide-react'
 import {
   PaediatricDrugPreset,
   PaediatricIndication,

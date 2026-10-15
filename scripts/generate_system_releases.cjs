@@ -6,6 +6,7 @@ const rootDir = path.resolve(__dirname, '..');
 
 // Safe file writing with retry for Windows file locks
 function safeWriteFileSync(filePath, content) {
+  if (process.argv.includes('--preview')) return;
   const tmpPath = `${filePath}.${Date.now()}.tmp`;
   try {
     fs.writeFileSync(tmpPath, content, 'utf8');
@@ -21,7 +22,7 @@ function safeWriteFileSync(filePath, content) {
 }
 
 // Load environment variables from .env if available
-try {
+if (process.argv.includes('--publish') || process.argv.includes('--preview')) try {
   const dotenvPath = path.join(rootDir, '.env');
   if (fs.existsSync(dotenvPath)) {
     const dotenv = require('dotenv');
@@ -527,31 +528,17 @@ export const SYSTEM_RELEASES: SystemAnnouncement[] = ${JSON.stringify(ALL_SYSTEM
 safeWriteFileSync(systemReleasesTsPath, tsContent);
 console.log(`[System Release Engine] Written ${systemReleasesTsPath}`);
 
-// 7. Update cache buster version in src/shared/utils/cacheBuster.ts
-try {
-  const cacheBusterPath = path.join(rootDir, 'src', 'shared', 'utils', 'cacheBuster.ts');
-  if (fs.existsSync(cacheBusterPath)) {
-    let cbContent = fs.readFileSync(cacheBusterPath, 'utf8');
-    const newCacheVersion = `HOME_CACHE_V${new Date().toISOString().replace(/[-:T.]/g, '').slice(0, 12)}`;
-    cbContent = cbContent.replace(
-      /export const SYSTEM_CACHE_VERSION = '.*?'/,
-      `export const SYSTEM_CACHE_VERSION = '${newCacheVersion}'`
-    );
-    safeWriteFileSync(cacheBusterPath, cbContent);
-    console.log(`[System Release Engine] Bumped Cache Buster to ${newCacheVersion}`);
-  }
-} catch (e) {
-  console.warn('[System Release Engine] Cache buster update warning:', e.message);
-}
-
 // 8. Synchronize to Supabase system_announcements table
 async function syncToSupabase() {
   const supabaseUrl = process.env.VITE_SUPABASE_URL;
-  const serviceKey = process.env.VITE_SUPABASE_SERVICE_ROLE_KEY || process.env.VITE_SUPABASE_ANON_KEY;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!supabaseUrl || !serviceKey) {
-    console.log('[System Release Engine] Supabase credentials not found in env, skipping remote DB sync.');
-    return;
+    if (process.argv.includes('--preview')) {
+      console.log(JSON.stringify({ preview: true, remoteInspected: false, writes: 0, candidateVersions: ALL_SYSTEM_RELEASES.map(release => release.version_tag) }));
+      return;
+    }
+    throw new Error('Server publishing credentials missing');
   }
 
   try {
@@ -562,37 +549,33 @@ async function syncToSupabase() {
 
     console.log('[System Release Engine] Connecting to Supabase for release synchronization...');
     
-    // Purge legacy build-* and non-standard release records
-    const { error: purgeBuildErr } = await supabase
-      .from('system_announcements')
-      .delete()
-      .or('version_tag.ilike.build%,content.ilike.%Lawas%');
-
-    if (purgeBuildErr) {
-      console.warn('[System Release Engine] Purge build tags notice:', purgeBuildErr.message);
-    } else {
-      console.log('[System Release Engine] Purged legacy build- tag entries from Supabase.');
-    }
-
     // Fetch existing announcements
     const { data: existing, error: fetchErr } = await supabase
       .from('system_announcements')
-      .select('id, version_tag, title');
+      .select('id, version_tag, title, created_by, created_by_name, metadata');
 
     if (fetchErr) {
-      console.warn('[System Release Engine] Could not query Supabase announcements:', fetchErr.message);
-      return;
+      throw fetchErr;
     }
 
     const existingMap = new Map();
     for (const r of (existing || [])) {
       if (r.version_tag) {
-        existingMap.set(r.version_tag, r.id);
+        if (existingMap.has(r.version_tag)) throw new Error(`Ambiguous release version ${r.version_tag}`);
+        existingMap.set(r.version_tag, r);
       }
     }
 
-    for (const release of ALL_SYSTEM_RELEASES) {
-      const existingId = existingMap.get(release.version_tag);
+    const plan = ALL_SYSTEM_RELEASES.map(release => {
+      const previous = existingMap.get(release.version_tag);
+      if (previous && previous.metadata?.managed_by !== 'home_release_engine' && !(previous.created_by === null && previous.created_by_name === release.created_by_name)) throw new Error(`Unmanaged release conflict ${release.version_tag}`);
+      return { release, existingId: previous?.id };
+    });
+    if (process.argv.includes('--preview')) {
+      console.log(JSON.stringify({ preview: true, writes: 0, plan: plan.map(entry => ({ action: entry.existingId ? 'update' : 'insert', id: entry.existingId, version_tag: entry.release.version_tag })) }));
+      return;
+    }
+    for (const { release, existingId } of plan) {
 
       if (existingId) {
         // Update existing record
@@ -611,13 +594,13 @@ async function syncToSupabase() {
             affected_modules: release.affected_modules,
             created_by_name: release.created_by_name,
             is_active: release.is_active,
-            metadata: release.metadata || {},
+            metadata: { ...release.metadata, managed_by: 'home_release_engine' },
             updated_at: new Date().toISOString()
           })
           .eq('id', existingId);
 
         if (updateErr) {
-          console.warn(`[System Release Engine] Could not update ${release.version_tag}:`, updateErr.message);
+          throw updateErr;
         }
       } else {
         // Insert new release
@@ -637,28 +620,29 @@ async function syncToSupabase() {
             created_by: null,
             created_by_name: release.created_by_name,
             is_active: release.is_active,
-            metadata: release.metadata || {},
+            metadata: { ...release.metadata, managed_by: 'home_release_engine' },
             created_at: release.created_at || new Date().toISOString(),
             updated_at: release.updated_at || new Date().toISOString()
           });
 
         if (insertErr) {
-          console.warn(`[System Release Engine] Could not insert ${release.version_tag}:`, insertErr.message);
+          throw insertErr;
         } else {
           console.log(`[System Release Engine] Successfully inserted ${release.version_tag} into Supabase!`);
         }
       }
     }
   } catch (err) {
-    console.warn('[System Release Engine] Supabase sync error:', err.message);
+    throw err;
   }
 }
 
 // Execute sync
-syncToSupabase().then(() => {
-  console.log('[System Release Engine] Automated release generation and database parity completed.');
+(process.argv.includes('--publish') || process.argv.includes('--preview') ? syncToSupabase() : Promise.resolve()).then(() => {
+  console.log('[System Release Engine] Release workflow completed.');
   console.log('----------------------------------------------------');
 }).catch(err => {
-  console.error('[System Release Engine] Error during release sync:', err);
+  console.error('[System Release Engine] Release publishing failed:', err.message);
+  process.exitCode = 1;
   console.log('----------------------------------------------------');
 });

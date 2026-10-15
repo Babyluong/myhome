@@ -2,31 +2,11 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import path from 'path'
-import { execSync } from 'child_process'
-import fs from 'fs'
-
-// Custom Vite Plugin: Automatically generates releases and synchronizes database on every build/dev
-function systemReleasesPlugin() {
-  return {
-    name: 'system-releases-plugin',
-    buildStart() {
-      try {
-        const scriptPath = path.resolve(__dirname, 'scripts/generate_system_releases.cjs')
-        if (fs.existsSync(scriptPath)) {
-          execSync(`node "${scriptPath}"`, { stdio: 'inherit' })
-        }
-      } catch (err: any) {
-        console.warn('[Vite Plugin] System release generation notice:', err?.message)
-      }
-    }
-  }
-}
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
-    systemReleasesPlugin(),
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
@@ -123,12 +103,27 @@ export default defineConfig({
         ],
       },
       workbox: {
+        importScripts: ['/sw-capabilities-v2.js'],
         maximumFileSizeToCacheInBytes: 30 * 1024 * 1024,
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         skipWaiting: true,
         clientsClaim: true,
         cleanupOutdatedCaches: true,
         runtimeCaching: [
+          {
+            urlPattern: /\/formulari\/formulari-data\.json(?:\?.*)?$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'formulari-assets',
+              expiration: {
+                maxEntries: 1,
+                maxAgeSeconds: 60 * 60 * 24 * 365,
+              },
+              cacheableResponse: {
+                statuses: [200],
+              },
+            },
+          },
           {
             urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
             handler: 'CacheFirst',
@@ -151,35 +146,6 @@ export default defineConfig({
               expiration: {
                 maxEntries: 20,
                 maxAgeSeconds: 60 * 60 * 24 * 365,
-              },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
-          },
-          {
-            urlPattern: /^https:\/\/.*\.supabase\.co\/rest\/v1\/.*/i,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'supabase-api-cache',
-              networkTimeoutSeconds: 4,
-              expiration: {
-                maxEntries: 500,
-                maxAgeSeconds: 60 * 60 * 24 * 7, // 7 days stale cache fallback
-              },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
-          },
-          {
-            urlPattern: /^https:\/\/.*\.supabase\.co\/storage\/v1\/.*/i,
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'supabase-storage-cache',
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
               },
               cacheableResponse: {
                 statuses: [0, 200],

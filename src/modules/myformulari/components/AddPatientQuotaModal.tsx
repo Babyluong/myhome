@@ -1,16 +1,5 @@
 import React, { useState } from 'react'
-import {
-  X,
-  UserPlus,
-  Building2,
-  Calendar,
-  AlertCircle,
-  FileCheck,
-  Stethoscope,
-  Users,
-  CheckCircle2,
-  HeartPulse
-} from 'lucide-react'
+import { X, UserPlus, AlertCircle } from 'lucide-react'
 import { DrugQuotaItem, PatientQuotaRecord, ApprovalAuthorityType } from '../types/drugQuotaTypes'
 import { addPatientQuota } from '../services/patientQuotaService'
 
@@ -32,10 +21,10 @@ export const AddPatientQuotaModal: React.FC<AddPatientQuotaModalProps> = ({
   const [patientMyKad, setPatientMyKad] = useState('')
   const [age, setAge] = useState<number | ''>(60)
   const [gender, setGender] = useState<'Lelaki' | 'Perempuan'>('Lelaki')
-  const [contactNumber, setContactNumber] = useState('')
+  const [contactNumber, ] = useState('')
   
   const [prescriberName, setPrescriberName] = useState('Dr. Pakar Perunding')
-  const [prescriberMmc, setPrescriberMmc] = useState('MMC-')
+  const [prescriberMmc, ] = useState('MMC-')
   const [clinicDepartment, setClinicDepartment] = useState(quotaItem.department || 'Klinik Pakar')
   const [clinicalIndication, setClinicalIndication] = useState(quotaItem.approvedIndications?.[0] || '')
   

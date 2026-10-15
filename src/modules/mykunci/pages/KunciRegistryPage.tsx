@@ -1,19 +1,6 @@
 // src/modules/mykunci/pages/KunciRegistryPage.tsx
 import React, { useEffect, useState, useMemo } from 'react'
-import { 
-  Key, 
-  Plus, 
-  Search, 
-  Filter, 
-  Edit2, 
-  Trash2, 
-  Building2, 
-  Lock, 
-  ShieldCheck, 
-  AlertCircle,
-  Eye,
-  QrCode
-} from 'lucide-react'
+import { Plus, Search, Edit2, Trash2, Building2, Lock, AlertCircle, QrCode } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
@@ -24,15 +11,7 @@ import {
   deleteKunci 
 } from '@/modules/mykunci/services/kunciService'
 import type { KunciDaftar, KunciJenis, KunciKawalan, KunciStatus, SampulStatus } from '@/shared/types/mykunci'
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardContent, 
-  Button, 
-  Badge, 
-  Modal 
-} from '@/components/ui'
+import { Card, CardContent, Button, Badge, Modal } from '@/components/ui'
 import QRCode from 'qrcode'
 import { Fab } from '@/shared/components/mobile'
 

@@ -1,61 +1,24 @@
-// @ts-nocheck
-import React, { useState, useEffect, useRef, useMemo, useId } from 'react'
+import React, { useState, useEffect, useRef, useMemo, useId, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  IconShoppingCart, 
-  IconPlus, 
-  IconCheck, 
-  IconFileSearch, 
-  IconFilePen,
-  IconX,
-  IconPrinter,
-  IconSave,
-  IconAlertCircle,
-  IconCalculator,
-  IconArrowLeft,
-  IconEdit,
-  IconTrash,
-  IconSend,
-  IconCheckCircle,
-  IconSettings,
-  IconChevronRight,
-  IconHistory,
-  IconUpload
-} from '@/components/ui/Icons'
+import { IconFilePen, IconX, IconPrinter, IconSave, IconAlertCircle, IconEdit, IconCheckCircle, IconSettings, IconHistory, IconUpload } from '@/components/ui/Icons'
 import { useAuthStore } from '@/stores/authStore'
 import { useToastStore } from '@/stores/toastStore'
-import { Button, Spinner, Badge, ConfirmationDialog, Modal, Input, Select } from '@/components/ui'
+import { Button, Spinner, Modal, Input, Select } from '@/components/ui'
 import { uploadLPO, checkDuplicateLPO } from '@/services/pharmacy/lpoService'
 import { extractLpoNumberFromPdf, extractDatesFromPdf } from '@/lib/pdfParser'
-import { 
-  getPurchaseOrderById, 
-  rejectPurchaseOrder, 
-  deletePurchaseOrder, 
-  submitPurchaseOrder, 
-  approvePurchaseOrder, 
-  sendPurchaseOrder 
-} from '@/services/pharmacy/procurementService'
+import { getPurchaseOrderById, rejectPurchaseOrder, approvePurchaseOrder } from '@/services/pharmacy/procurementService'
 import { supabase } from '@/services/supabase'
-import { getWarrants } from '@/services/pharmacy/warrantService'
+import '@/services/pharmacy/warrantService'
 import { getPharmacyPOSignatures, updatePharmacyPOSignatures, type PharmacyPOSignatures } from '@/services/pharmacy/pharmacySettingsService'
 import { generatePurchaseOrderPdf, openPdfForPrint, cleanupPdfUrl } from '@/services/pharmacy/poPdfService'
 import { getBudgetForPO } from '@/services/pharmacy/budgetEngine'
-import type { PurchaseOrderWithRelations, PurchaseOrderItem } from '@/types/pharmacy'
+import type { PurchaseOrderWithRelations, PurchaseOrderItem, PharmacyActivityLogWithRelations, WarrantDepartment } from '@/types/pharmacy'
+import type { User } from '@/shared/types/auth'
 import { ROUTES } from '@/lib/constants'
 import { cn, formatCurrency, formatDateTime, isContractExpired, isApplOrder } from '@/lib/utils'
 import { normalizeRealMdcCode, resolveGenuineItemCode, isSyntheticMockCode } from '@/shared/utils/itemCodeUtils'
 
-const getStatusColor = (status: string) => {
-  switch (status || '') {
-    case 'completed': return 'bg-emerald-500/10 border-emerald-500/20 text-emerald-700'
-    case 'pending_approval':
-    case 'draft': return 'bg-amber-500/10 border-amber-500/20 text-amber-700'
-    case 'cancelled': return 'bg-rose-500/10 border-rose-500/20 text-rose-700'
-    case 'approved':
-    case 'sent': return 'bg-blue-500/10 border-blue-500/20 text-blue-700'
-    default: return 'bg-subtle/50 border-border-default text-text-secondary'
-  }
-}
+
 
 interface PurchaseOrderDetailViewProps {
   id?: string
@@ -63,6 +26,61 @@ interface PurchaseOrderDetailViewProps {
   isSlideOver?: boolean
   onMutate?: () => void
 }
+
+type DetailPurchaseOrderItem = Omit<PurchaseOrderItem, 'lead_time_days'> & {
+  item_name?: string
+  item_code?: string
+  packaging_description?: string
+  contract_number?: string
+  delivery_period?: string | number
+  lead_time_days?: number | string
+  contract_end_date?: string
+  cc_contract_status?: string
+  contract_status?: string
+}
+
+type DetailActivityLog = Pick<PharmacyActivityLogWithRelations, 'id' | 'action' | 'created_at'> & {
+  notes?: string
+  approver?: { full_name?: string }
+}
+
+const isSQOrder = (poType?: string) => poType === 'sq'
+
+type DetailPurchaseOrder = PurchaseOrderWithRelations & {
+  creator?: Pick<User, 'full_name'>
+  activity_logs?: DetailActivityLog[]
+  lpo_number?: string
+  document_date?: string
+  cancelled_by_name?: string
+  cancelled_at?: string
+}
+
+type CatalogRecord = {
+  id?: string
+  item_name?: string
+  item_code?: string
+  drug_name?: string
+  drug_code?: string
+  cc_contract_number?: string
+  kkm_contract_number?: string
+  contract_number?: string
+  delivery_period?: string | number
+  lead_time_days?: number
+  delivery_timeframe?: string | number
+  cc_contract_end_date?: string
+  contract_end_date?: string
+  contract_expiry?: string
+  end_date?: string
+  cc_contract_status?: string
+  contract_status?: string
+  contract_name?: string
+  unit_price?: number
+  price?: number
+  packaging_description?: string
+  unit_of_measure?: string
+}
+
+type HospitalUser = Pick<User, 'id' | 'full_name' | 'jawatan'>
 
 export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = ({ id, onClose, isSlideOver, onMutate }) => {
   const navigate = useNavigate()
@@ -72,11 +90,11 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
   const reactId = useId()
   const uniquePrintContainerId = `po-print-container-${reactId.replace(/:/g, '')}`
 
-  const [order, setOrder] = useState<PurchaseOrderWithRelations | null>(null)
-  const [items, setItems] = useState<Array<PurchaseOrderItem & { item_name?: string; item_code?: string; packaging_description?: string }>>([])
+  const [order, setOrder] = useState<DetailPurchaseOrder | null>(null)
+  const [items, setItems] = useState<DetailPurchaseOrderItem[]>([])
   const [balance, setBalance] = useState<number | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [logs, setLogs] = useState<any[]>([])
+  const [logs, setLogs] = useState<DetailActivityLog[]>([])
   
   // Compute display logs (including synthetic ones)
   const displayLogs = useMemo(() => {
@@ -87,7 +105,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
       const lines = order.notes.split('\n')
       const modLine = lines.find(l => l.includes('Edit Request'))
       if (modLine) {
-        let fallbackUser = (order as any)?.creator?.full_name || 'Authorized Officer'
+        let fallbackUser = order.creator?.full_name || 'Authorized Officer'
         let fallbackReason = ''
         let fallbackDateStr = order.updated_at || new Date().toISOString()
 
@@ -124,7 +142,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
     }
 
     return dbLogs.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-  }, [logs, order?.notes, order?.updated_at, (order as any)?.creator?.full_name])
+  }, [logs, order])
 
   const latestMod = useMemo(() => 
     displayLogs.find(l => l.action === 'modified'),
@@ -153,8 +171,8 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
     headPosition: 'PEGAWAI FARMASI UF 12',
   })
   const [tempSignatures, setTempSignatures] = useState<PharmacyPOSignatures>(signatures)
-  const [isSavingSignatures, setIsSavingSignatures] = useState(false)
-  const [hospitalUsers, setHospitalUsers] = useState<any[]>([])
+  const [, setIsSavingSignatures] = useState(false)
+  const [hospitalUsers, setHospitalUsers] = useState<HospitalUser[]>([])
 
   // LPO Upload/Change Modal state
   const [isUploadLpoModalOpen, setIsUploadLpoModalOpen] = useState(false)
@@ -209,7 +227,8 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
     e.preventDefault()
     if (!hospitalId || !user?.id || !id) return
 
-    if (!lpoUploadData.lpo_number || !lpoUploadData.document_date || !lpoUploadData.document_file) {
+    const documentFile = lpoUploadData.document_file
+    if (!lpoUploadData.lpo_number || !lpoUploadData.document_date || !documentFile) {
       showError('Required Fields Missing', 'Please fill in all required fields and select a PDF document')
       return
     }
@@ -225,7 +244,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
         hospitalId,
         id,
         user.id,
-        lpoUploadData
+        { ...lpoUploadData, document_file: documentFile }
       )
       if (error) throw new Error(error)
 
@@ -276,7 +295,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
     void loadSignatures()
   }, [hospitalId, order?.department])
 
-  const loadOrder = async () => {
+  const loadOrder = useCallback(async () => {
     if (!id || !hospitalId) return
     setIsLoading(true)
     try {
@@ -292,11 +311,11 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
       }
 
       if (result.data) {
-        const poData = result.data
+        const poData: DetailPurchaseOrder = result.data
         setOrder(poData)
         
         // Resolve item details (names/codes) with fallback to stored values
-        const resolvedItems = (poData.items || []).map((item) => {
+        const resolvedItems: DetailPurchaseOrderItem[] = (poData.items || []).map((item) => {
           return {
             ...item,
             item_name: item.item_name || 'Unknown Item',
@@ -327,7 +346,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                 const nameCol = isDrug ? 'drug_name' : 'item_name'
                 const codeCol = isDrug ? 'drug_code' : 'item_code'
 
-                let stdData: any = null
+                let stdData: CatalogRecord | null = null
                 
                 // A. Match by ID
                 if (item.item_id && item.item_id !== 'null') {
@@ -347,7 +366,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                     .select('*');
                   
                   if (candidatesByCode) {
-                    const matchedByCode = candidatesByCode.find((c: any) => {
+                    const matchedByCode = candidatesByCode.find((c: CatalogRecord) => {
                       const cCode = (c[codeCol] || c.drug_code || c.item_code || '').replace(/[^a-z0-9]/gi, '');
                       return cCode && cleanCode && (cCode === cleanCode || cCode.includes(cleanCode) || cleanCode.includes(cCode));
                     });
@@ -360,7 +379,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                   if (!stdData && !isDrug) {
                     const { data: drugCandidates } = await supabase.from('drugs').select('*');
                     if (drugCandidates) {
-                      const matchedDrug = drugCandidates.find((c: any) => {
+                      const matchedDrug = drugCandidates.find((c: CatalogRecord) => {
                         const cCode = (c.drug_code || c.item_code || '').replace(/[^a-z0-9]/gi, '');
                         return cCode && cleanCode && (cCode === cleanCode || cCode.includes(cleanCode) || cleanCode.includes(cCode));
                       });
@@ -377,7 +396,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                     .select('*');
                   
                   if (candidatesByName) {
-                    const matchedByName = candidatesByName.find((c: any) => {
+                    const matchedByName = candidatesByName.find((c: CatalogRecord) => {
                       const cName = (c[nameCol] || c.drug_name || c.item_name || '').replace(/\+/g, 'dan').toLowerCase().trim();
                       return cName === normItemName || cName.includes(normItemName) || normItemName.includes(cName);
                     });
@@ -406,7 +425,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                 }
                 
                 let cNo = stdData ? (stdData.cc_contract_number || stdData.kkm_contract_number || stdData.contract_number) : null
-                let lTime = stdData ? (stdData.delivery_period || null) : null // NOTE: do NOT fall back to lead_time_days here — that is the inventory reorder lead time (defaults to 7), not the contract delivery period
+                let lTime: string | number | null = stdData ? (stdData.delivery_period || null) : null // NOTE: do NOT fall back to lead_time_days here — that is the inventory reorder lead time (defaults to 7), not the contract delivery period
                 let cEnd = stdData ? (stdData.cc_contract_end_date || stdData.contract_end_date || stdData.contract_expiry) : null
                 let myPrice = stdData?.price ? Number(stdData.price) : null
                 
@@ -415,7 +434,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                   if (stdData?.packaging_description && stdData.packaging_description !== 'unit') rawPkg = stdData.packaging_description;
                   else if (stdData?.unit_of_measure && stdData.unit_of_measure !== 'unit') rawPkg = stdData.unit_of_measure;
                 }
-                let myPkg = rawPkg;
+                const myPkg = rawPkg;
 
                 // Fallback: if cNo is present but lTime or cEnd is missing, look up contracts catalog by contract_number
                 if (cNo && (!lTime || !cEnd)) {
@@ -429,11 +448,13 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                       .maybeSingle();
 
                     if (contractByNo) {
-                      lTime = lTime || contractByNo.delivery_period || contractByNo.metadata?.['tempoh serahan'] || contractByNo.delivery_timeframe;
+                      lTime = lTime || contractByNo.delivery_period || contractByNo.metadata?.['tempoh serahan'] || contractByNo.delivery_timeframe || null;
                       cEnd = cEnd || contractByNo.end_date || contractByNo.contract_end_date || contractByNo.contract_expiry;
                       if (!myPrice && contractByNo.unit_price) myPrice = Number(contractByNo.unit_price);
                     }
-                  } catch (_cErr) {}
+                  } catch (lookupError) {
+                    console.warn('Contract number lookup failed:', lookupError)
+                  }
                 }
 
                 // Fallback: if contract number is missing on drug/non_drug record, search contracts catalog by supplier and item name keywords
@@ -452,12 +473,12 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                     }
 
                     const { data: candidateContracts } = await query;
-                    let matchedContract: any = null;
+                    let matchedContract: CatalogRecord | null = null;
                     if (candidateContracts && candidateContracts.length > 0) {
-                      matchedContract = candidateContracts.find((c: any) => {
+                      matchedContract = candidateContracts.find((c: CatalogRecord) => {
                         const cName = (c.contract_name || '').toLowerCase();
                         return words.every(w => cName.includes(w));
-                      }) || candidateContracts.find((c: any) => {
+                      }) || candidateContracts.find((c: CatalogRecord) => {
                         const cName = (c.contract_name || '').toLowerCase();
                         const mainWords = words.filter(w => w !== 'dan' && w !== 'injection' && w !== 'tablet');
                         return mainWords.length > 0 && mainWords.every(w => cName.includes(w));
@@ -470,7 +491,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                         .select('*')
                         .ilike('contract_name', `%${words[0] || ''}%`);
                       if (nameContracts) {
-                        matchedContract = nameContracts.find((c: any) => {
+                        matchedContract = nameContracts.find((c: CatalogRecord) => {
                           const cName = (c.contract_name || '').toLowerCase();
                           const mainWords = words.filter(w => w !== 'dan' && w !== 'injection' && w !== 'tablet');
                           return mainWords.length > 0 && mainWords.every(w => cName.includes(w));
@@ -480,12 +501,12 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
 
                     if (matchedContract) {
                       cNo = matchedContract.contract_number;
-                      lTime = lTime || matchedContract.delivery_period || matchedContract.lead_time_days || matchedContract.delivery_timeframe;
+                      lTime = lTime || matchedContract.delivery_period || matchedContract.lead_time_days || matchedContract.delivery_timeframe || null;
                       cEnd = cEnd || matchedContract.end_date || matchedContract.contract_end_date || matchedContract.contract_expiry;
                       if (!myPrice && matchedContract.unit_price) myPrice = Number(matchedContract.unit_price);
                     }
-                  } catch (cErr) {
-                    // Ignore lookup error
+                  } catch (lookupError) {
+                    console.warn('Contract enrichment lookup failed:', lookupError)
                   }
                 }
 
@@ -499,11 +520,11 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                     item_code: displayCode,
                     // unit_price intentionally NOT overwritten — preserve the stored purchase price
                     packaging_description: (myPkg && myPkg !== 'unit') ? myPkg : (item.packaging_description && item.packaging_description !== 'unit' ? item.packaging_description : (myPkg || item.packaging_description)),
-                    contract_number: cNo || (item as any).contract_number,
-                    delivery_period: lTime ? (typeof lTime === 'number' ? `${lTime} hari` : lTime) : (item as any).delivery_period,
-                    lead_time_days: lTime || (item as any).lead_time_days,
-                    contract_end_date: cEnd || (item as any).contract_end_date,
-                    cc_contract_status: stdData?.cc_contract_status || stdData?.contract_status || (item as any).cc_contract_status || (item as any).contract_status
+                    contract_number: cNo || item.contract_number,
+                    delivery_period: lTime ? (typeof lTime === 'number' ? `${lTime} hari` : lTime) : item.delivery_period,
+                    lead_time_days: lTime || item.lead_time_days,
+                    contract_end_date: cEnd || item.contract_end_date,
+                    cc_contract_status: stdData?.cc_contract_status || stdData?.contract_status || item.cc_contract_status || item.contract_status
                   }
                 }
 
@@ -516,17 +537,18 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                   .maybeSingle()
 
                 if (applData) {
-                  const cNo = (applData as any).cc_contract_number || (applData as any).kkm_contract_number || (applData as any).contract_number
-                  const lTime = (applData as any).delivery_period || (applData as any).lead_time_days
-                  const cEnd = (applData as any).cc_contract_end_date || (applData as any).contract_end_date
+                  const applRecord = applData as CatalogRecord
+                  const cNo = applRecord.cc_contract_number || applRecord.kkm_contract_number || applRecord.contract_number
+                  const lTime = applRecord.delivery_period || applRecord.lead_time_days
+                  const cEnd = applRecord.cc_contract_end_date || applRecord.contract_end_date
                   return {
                     ...item,
                     item_name: applData.item_name || item.item_name,
                     item_code: applData.item_code || item.item_code,
-                    contract_number: cNo || (item as any).contract_number,
-                    delivery_period: lTime ? (typeof lTime === 'number' ? `${lTime} hari` : lTime) : (item as any).delivery_period,
-                    lead_time_days: lTime || (item as any).lead_time_days,
-                    contract_end_date: cEnd || (item as any).contract_end_date
+                    contract_number: cNo || item.contract_number,
+                    delivery_period: lTime ? (typeof lTime === 'number' ? `${lTime} hari` : lTime) : item.delivery_period,
+                    lead_time_days: lTime || item.lead_time_days,
+                    contract_end_date: cEnd || item.contract_end_date
                   }
                 }
 
@@ -539,17 +561,18 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                   .maybeSingle()
 
                 if (lpData) {
-                  const cNo = (lpData as any).cc_contract_number || (lpData as any).kkm_contract_number || (lpData as any).contract_number
-                  const lTime = (lpData as any).delivery_period || (lpData as any).lead_time_days
-                  const cEnd = (lpData as any).cc_contract_end_date || (lpData as any).contract_end_date
+                  const lpRecord = lpData as CatalogRecord
+                  const cNo = lpRecord.cc_contract_number || lpRecord.kkm_contract_number || lpRecord.contract_number
+                  const lTime = lpRecord.delivery_period || lpRecord.lead_time_days
+                  const cEnd = lpRecord.cc_contract_end_date || lpRecord.contract_end_date
                   return {
                     ...item,
                     item_name: lpData.item_name || item.item_name,
                     item_code: lpData.item_code || item.item_code,
-                    contract_number: cNo || (item as any).contract_number,
-                    delivery_period: lTime ? (typeof lTime === 'number' ? `${lTime} hari` : lTime) : (item as any).delivery_period,
-                    lead_time_days: lTime || (item as any).lead_time_days,
-                    contract_end_date: cEnd || (item as any).contract_end_date
+                    contract_number: cNo || item.contract_number,
+                    delivery_period: lTime ? (typeof lTime === 'number' ? `${lTime} hari` : lTime) : item.delivery_period,
+                    lead_time_days: lTime || item.lead_time_days,
+                    contract_end_date: cEnd || item.contract_end_date
                   }
                 }
 
@@ -561,16 +584,16 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                   .maybeSingle()
 
                 if (contractData) {
-                  const cNo = contractData.contract_number || (item as any).contract_number
-                  const lTime = contractData.delivery_period || contractData.delivery_timeframe || contractData.lead_time_days || (item as any).delivery_period
-                  const cEnd = contractData.contract_end_date || contractData.contract_expiry || (item as any).contract_end_date
+                  const cNo = contractData.contract_number || item.contract_number
+                  const lTime = contractData.delivery_period || contractData.delivery_timeframe || contractData.lead_time_days || item.delivery_period
+                  const cEnd = contractData.contract_end_date || contractData.contract_expiry || item.contract_end_date
                   return {
                     ...item,
                     item_name: contractData.contract_name || item.item_name,
                     item_code: contractData.item_code || item.item_code,
                     contract_number: cNo,
-                    delivery_period: lTime ? (typeof lTime === 'number' ? `${lTime} hari` : lTime) : (item as any).delivery_period,
-                    lead_time_days: lTime || (item as any).lead_time_days,
+                    delivery_period: lTime ? (typeof lTime === 'number' ? `${lTime} hari` : lTime) : item.delivery_period,
+                    lead_time_days: lTime || item.lead_time_days,
                     contract_end_date: cEnd
                   }
                 }
@@ -584,16 +607,16 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                     .maybeSingle()
                   
                   if (contractByName) {
-                    const cNo = contractByName.contract_number || (item as any).contract_number
-                    const lTime = contractByName.delivery_period || contractByName.delivery_timeframe || contractByName.lead_time_days || (item as any).delivery_period
-                    const cEnd = contractByName.contract_end_date || contractByName.contract_expiry || (item as any).contract_end_date
+                    const cNo = contractByName.contract_number || item.contract_number
+                    const lTime = contractByName.delivery_period || contractByName.delivery_timeframe || contractByName.lead_time_days || item.delivery_period
+                    const cEnd = contractByName.contract_end_date || contractByName.contract_expiry || item.contract_end_date
                     return {
                       ...item,
                       item_name: contractByName.contract_name || item.item_name,
                       item_code: contractByName.item_code || item.item_code,
                       contract_number: cNo,
-                      delivery_period: lTime ? (typeof lTime === 'number' ? `${lTime} hari` : lTime) : (item as any).delivery_period,
-                      lead_time_days: lTime || (item as any).lead_time_days,
+                      delivery_period: lTime ? (typeof lTime === 'number' ? `${lTime} hari` : lTime) : item.delivery_period,
+                      lead_time_days: lTime || item.lead_time_days,
                       contract_end_date: cEnd
                     }
                   }
@@ -611,7 +634,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
           // BUT skip expired contracts — if the contract is expired, don't backfill it
           const orderRefDate = poData?.order_date || poData?.created_at;
           const firstActiveContractNo = enrichedItems.find(i => {
-            const cNo = (i as any).contract_number;
+            const cNo = i.contract_number;
             if (!cNo) return false;
             return !isContractExpired(i, orderRefDate);
           })?.contract_number;
@@ -648,23 +671,25 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
         })()
         
         // Use pre-fetched logs from service if available
-        if ((poData as any).activity_logs) {
-          setLogs((poData as any).activity_logs)
+        if (poData.activity_logs) {
+          setLogs(poData.activity_logs)
         }
         
         // Define parallel tasks
         const tasks = []
 
         // Task 1: Load balance from budget engine
-        if (poData.vote_code && poData.vote_activity) {
+        const voteCode = poData.vote_code
+        const voteActivity = poData.vote_activity
+        if (voteCode && voteActivity) {
           const loadBalance = async () => {
             try {
               const budget = await getBudgetForPO(
                 hospitalId,
-                poData.vote_code as any,
-                poData.vote_activity as any,
-                (poData.department || 'all') as any,
-                poData.category as any,
+                voteCode,
+                voteActivity,
+                poData.department ? (poData.department as WarrantDepartment) : 'all',
+                poData.category,
                 poData.id, // Exclude current PO from expenses to get "Balance Before"
                 poData.order_date // Use PO date for historical accuracy
               )
@@ -708,7 +733,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
 
                 // Or fallback to manual names
                 const names = siblings
-                  .map(s => s.manual_supplier_name || (s.supplier as any)?.company_name)
+                  .map(s => s.manual_supplier_name || s.supplier[0]?.company_name)
                   .filter(Boolean) as string[]
                 setInvitedSuppliers(Array.from(new Set(names)))
               }
@@ -720,7 +745,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
         }
 
         // Task 3: Fetch activity logs (only if not pre-fetched)
-        if (!(poData as any).activity_logs) {
+        if (!poData.activity_logs) {
           const loadLogs = async () => {
             try {
               const { data: logData } = await supabase
@@ -749,11 +774,11 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [id, hospitalId, showError, isSlideOver, navigate, onClose])
 
   useEffect(() => {
     void loadOrder()
-  }, [id, hospitalId])
+  }, [loadOrder])
 
 
   // Action Handlers
@@ -824,9 +849,9 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
       } else {
         showError('Print Error', result.error || 'Failed to generate PDF')
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Error generating PDF:', error)
-      showError('Print Error', error?.message || 'Failed to generate PDF.')
+      showError('Print Error', error instanceof Error ? error.message : 'Failed to generate PDF.')
     } finally {
       setIsPrinting(false)
     }
@@ -916,19 +941,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
     }).toUpperCase()
   }
 
-  const renderStatusBadge = (status: string) => {
-    const statusMap: Record<string, { color: 'success' | 'warning' | 'error' | 'info' | 'gray' | 'primary'; label: string }> = {
-      draft: { color: 'gray', label: 'Draft' },
-      pending_approval: { color: 'warning', label: 'Pending Approval' },
-      approved: { color: 'success', label: 'Approved' },
-      sent: { color: 'info', label: 'Sent' },
-      partial_received: { color: 'warning', label: 'Partial Received' },
-      completed: { color: 'success', label: 'Completed' },
-      cancelled: { color: 'error', label: 'Cancelled' },
-    }
-    const statusInfo = statusMap[status] || { color: 'gray', label: status }
-    return <Badge variant={statusInfo.color}>{statusInfo.label}</Badge>
-  }
+
 
   // --- High-Fidelity Render Helpers ---
 
@@ -1034,23 +1047,23 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                   </div>
                   <div className="border-b border-border-default pb-0.5">
                     <label className="text-[8pt] font-bold text-text-muted uppercase block">
-                      {order?.po_type === 'sq' ? 'INV SQ No.' : 'No. Kontrak / Contract No.'}
+                      {isSQOrder(order?.po_type) ? 'INV SQ No.' : 'No. Kontrak / Contract No.'}
                     </label>
                     <p className="text-[10.5pt] font-bold text-text-primary">
-                      {order?.po_type === 'sq'
+                      {isSQOrder(order?.po_type)
                         ? (order?.inv_sq_number || '-')
                         : (isApplOrder(order) || order?.po_type === 'manual'
                           ? '-'
                           : (() => {
                               const refD = order?.order_date || order?.created_at;
-                              const purchasedUnderSQ = !!(order?.inv_sq_number && order?.po_type !== 'sq');
-                              const anyItemExpired = items && items.length > 0 && items.some((it: any) => isContractExpired(it, refD));
+                              const purchasedUnderSQ = !!(order?.inv_sq_number && !isSQOrder(order?.po_type));
+                              const anyItemExpired = items && items.length > 0 && items.some((it: DetailPurchaseOrderItem) => isContractExpired(it, refD));
                               return (purchasedUnderSQ || anyItemExpired) ? '-' : (order?.kkm_contract_number || order?.supplier?.contract_number || '-');
                             })()
                         )}
                     </p>
                   </div>
-                  {order?.inv_sq_number && order?.po_type !== 'sq' && (
+                  {order?.inv_sq_number && !isSQOrder(order?.po_type) && (
                     <div className="border-b border-border-default pb-0.5">
                       <label className="text-[8pt] font-bold text-text-muted uppercase block">Inv / SQ Number</label>
                       <p className="text-[10.5pt] font-bold text-text-primary">{order.inv_sq_number}</p>
@@ -1140,10 +1153,10 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
           </thead>
           <tbody className="text-text-primary">
             {pageItems.map((item, index) => {
-              const contractNo = (item as any).contract_number || order?.kkm_contract_number || order?.supplier?.contract_number;
-              const rawDeliveryPeriod = (item as any).delivery_period || order?.supplier?.delivery_period;
+              const contractNo = item.contract_number || order?.kkm_contract_number || order?.supplier?.contract_number;
+              const rawDeliveryPeriod = item.delivery_period || order?.supplier?.delivery_period;
               const deliveryPeriod = rawDeliveryPeriod ? String(rawDeliveryPeriod).trim() : 'Tempoh serahan adalah tidak melebihi 30 hari daripada tarikh pesanan untuk 1 bulan pertama tempoh kontrak. Selepas 1 bulan pertama tempoh kontrak dan seterusnya, tempoh serahan adalah tidak melebihi 21 hari daripada tarikh pesanan. Pengiraan tempoh pesanan bermula sehari selepas tarikh pesanan rasmi dikeluarkan.';
-              const contractEndDate = (item as any).contract_end_date || order?.supplier?.contract_end_date;
+              const contractEndDate = item.contract_end_date || order?.supplier?.contract_end_date;
               const refD = order?.order_date || order?.created_at;
               const purchasedUnderSQ = !!(order?.inv_sq_number && order?.po_type !== 'sq');
               const contractIsExpired = purchasedUnderSQ || isContractExpired(item, refD);
@@ -1299,7 +1312,7 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                       const finalCode = cleanCode || (!isSyntheticMockCode(item.item_code) ? item.item_code : '');
                       return (!finalCode || 
                         isSyntheticMockCode(finalCode) ||
-                        finalCode === (item as any).contract_number || 
+                        finalCode === item.contract_number ||
                         finalCode === order?.kkm_contract_number || 
                         finalCode === order?.supplier?.contract_number) ? '-' : finalCode;
                     })()}
@@ -1714,8 +1727,8 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
                 <Button 
                   onClick={() => {
                     setLpoUploadData({
-                      lpo_number: (order as any).lpo_number || '',
-                      document_date: (order as any).document_date || new Date().toISOString().split('T')[0]
+                      lpo_number: order.lpo_number || '',
+                      document_date: order.document_date || new Date().toISOString().split('T')[0]
                     })
                     setIsUploadLpoModalOpen(true)
                   }} 
@@ -1764,9 +1777,9 @@ export const PurchaseOrderDetailView: React.FC<PurchaseOrderDetailViewProps> = (
               </p>
               <div className="flex items-center gap-2 mt-2 pt-2 border-t border-rose-100/50">
                 <p className="text-rose-400 dark:text-rose-300 font-bold/60 font-semibold text-[10px] uppercase tracking-wide">Cancelled By:</p>
-                <p className="text-rose-700 text-xs font-semibold">{(order as any).cancelled_by_name || 'Pegawai Bertanggungjawab'}</p>
-                {(order as any).cancelled_at && (
-                  <span className="text-rose-400 text-xs font-normal ml-1">â€¢ {formatDateTime((order as any).cancelled_at)}</span>
+                <p className="text-rose-700 text-xs font-semibold">{order.cancelled_by_name || 'Pegawai Bertanggungjawab'}</p>
+                {order.cancelled_at && (
+                  <span className="text-rose-400 text-xs font-normal ml-1">â€¢ {formatDateTime(order.cancelled_at)}</span>
                 )}
               </div>
             </div>

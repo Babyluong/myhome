@@ -3,30 +3,7 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  ChevronLeft,
-  ChevronRight,
-  Plus,
-  ArrowLeft,
-  Users,
-  Clock,
-  MapPin,
-  CalendarDays,
-  Briefcase,
-  GraduationCap,
-  Stethoscope,
-  Presentation,
-  Palmtree,
-  Timer,
-  Car,
-  FileText,
-  Building2,
-  CheckCircle2,
-  Check,
-  Sparkles,
-  Info,
-  type LucideIcon
-} from 'lucide-react'
+import { ChevronLeft, ChevronRight, Plus, ArrowLeft, Users, Clock, MapPin, CalendarDays, Briefcase, GraduationCap, Stethoscope, Presentation, Palmtree, Timer, Car, Check, Info, type LucideIcon } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import { useLanguage } from '@/shared/contexts/LanguageContext'

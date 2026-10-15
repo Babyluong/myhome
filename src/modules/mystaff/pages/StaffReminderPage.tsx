@@ -1,37 +1,6 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  Bell,
-  Plus,
-  ArrowLeft,
-  Calendar,
-  Clock,
-  CheckCircle2,
-  Stethoscope,
-  GraduationCap,
-  Briefcase,
-  AlertCircle,
-  Megaphone,
-  MapPin,
-  Link,
-  ExternalLink,
-  FileText,
-  UploadCloud,
-  Download,
-  Paperclip,
-  Trash2,
-  Pencil,
-  History,
-  ShieldAlert,
-  Flame,
-  Globe,
-  Sparkles,
-  Info,
-  Check,
-  Search,
-  ShieldCheck,
-  Edit3
-} from 'lucide-react'
+import { Bell, Plus, ArrowLeft, Calendar, Clock, CheckCircle2, Stethoscope, GraduationCap, Briefcase, AlertCircle, Link, ExternalLink, FileText, UploadCloud, Download, Paperclip, Trash2, Pencil, History, ShieldAlert, Flame, Globe, Info, Check, Search, ShieldCheck, Edit3 } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
@@ -58,7 +27,7 @@ export const StaffReminderPage: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const [reminders, setReminders] = useState<StaffReminder[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const [, setIsLoading] = useState(true)
   const [isSlideOverOpen, setIsSlideOverOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 

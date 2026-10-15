@@ -1,23 +1,6 @@
 // @ts-nocheck
 import React, { useState, useMemo } from 'react';
-import { 
-  Database, 
-  AlertTriangle, 
-  Search, 
-  Filter, 
-  CheckCircle2, 
-  Clock, 
-  Truck, 
-  Layers, 
-  Zap, 
-  Activity, 
-  LayoutGrid, 
-  List, 
-  GitCommit, 
-  X, 
-  RotateCcw,
-  ArrowRight
-} from 'lucide-react';
+import { Database, AlertTriangle, Search, CheckCircle2, Truck, Layers, Zap, Activity, LayoutGrid, List, GitCommit, X, RotateCcw } from 'lucide-react'
 import { useLanguage } from '@/shared/contexts/LanguageContext';
 
 export interface ComboInventory {

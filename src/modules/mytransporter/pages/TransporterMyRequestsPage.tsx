@@ -1,22 +1,7 @@
 // src/modules/mytransporter/pages/TransporterMyRequestsPage.tsx
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  ArrowLeft, 
-  Car, 
-  Search, 
-  Calendar, 
-  Printer, 
-  Trash2, 
-  Info,
-  Clock,
-  User,
-  Shield,
-  FileText,
-  Plus,
-  ClipboardList,
-  Truck
-} from 'lucide-react'
+import { ArrowLeft, Car, Search, Calendar, Printer, Trash2, Info, Shield, FileText, Plus, ClipboardList, Truck } from 'lucide-react'
 import { Ambulance } from '../components/AmbulanceIcon'
 import { CrossborderDetailsPanel } from '../components/CrossborderDetailsPanel'
 import { 
@@ -35,17 +20,7 @@ import {
   getRequestLogs
 } from '../services/transporterService'
 import type { TransportRequest, TransportRequestLog } from '@/shared/types/mytransporter'
-import { 
-  Card, 
-  CardHeader, 
-  CardTitle, 
-  CardContent, 
-  Button, 
-  Badge, 
-  Input, 
-  Select,
-  SlideOver
-} from '@/components/ui'
+import { Card, CardContent, Button, Badge, Input, SlideOver } from '@/components/ui'
 
 const TransporterMyRequestsPage: React.FC = () => {
   const navigate = useNavigate()

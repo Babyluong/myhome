@@ -1,26 +1,5 @@
 import React, { useState, useMemo } from 'react'
-import {
-  Beaker,
-  FileText,
-  Printer,
-  Edit2,
-  PackageCheck,
-  AlertTriangle,
-  CheckCircle2,
-  Clock,
-  ShieldAlert,
-  Info,
-  X,
-  Thermometer,
-  Layers,
-  ChevronRight,
-  BookOpen,
-  FlaskConical,
-  Scale,
-  Sparkles,
-  Calculator,
-  History
-} from 'lucide-react'
+import { Printer, Edit2, PackageCheck, AlertTriangle, CheckCircle2, Clock, ShieldAlert, Info, X, Layers, BookOpen, FlaskConical, Scale, Calculator, History } from 'lucide-react'
 import type { PrepackItem } from '../types/prepack'
 import { getGalenicalMonograph } from '../data/kkmGalenicalMasterDatabase'
 import { FormulationAuditHistoryTab } from './formulationEditor/FormulationAuditHistoryTab'

@@ -1,17 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react'
-import {
-  ShieldCheck,
-  Printer,
-  FileCheck,
-  Activity,
-  Baby,
-  User,
-  Calculator,
-  Clock,
-  RefreshCw,
-  BookOpen,
-  ArrowLeft
-} from 'lucide-react'
+import { ShieldCheck, Printer, FileCheck, Calculator, RefreshCw, BookOpen, ArrowLeft } from 'lucide-react'
 import {
   NAGInfectionGuideline,
   NAGPopulation,

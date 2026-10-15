@@ -1,40 +1,6 @@
 import React, { useEffect, useState, useMemo, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  Briefcase,
-  Plus,
-  ArrowLeft,
-  Search,
-  Calendar,
-  Clock,
-  MapPin,
-  Car,
-  FileText,
-  CheckCircle2,
-  AlertCircle,
-  GraduationCap,
-  Stethoscope,
-  Presentation,
-  Users,
-  UserCheck,
-  Building,
-  Sparkles,
-  Info,
-  X,
-  User,
-  ShieldCheck,
-  Palmtree,
-  Timer,
-  Paperclip,
-  UploadCloud,
-  Download,
-  Trash2,
-  Pencil,
-  History,
-  ExternalLink,
-  Link,
-  Edit3
-} from 'lucide-react'
+import { Briefcase, Plus, ArrowLeft, Search, Calendar, Clock, MapPin, FileText, CheckCircle2, GraduationCap, Stethoscope, Presentation, Users, UserCheck, Info, User, ShieldCheck, Palmtree, Timer, Paperclip, UploadCloud, Download, Trash2, Pencil, History, Edit3 } from 'lucide-react'
 import { supabase, isSupabaseConfigured } from '@/services/supabase'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
@@ -48,7 +14,7 @@ import {
 } from '@/modules/mystaff/services/staffService'
 import { getUsers } from '@/services/userService'
 import type { StaffMovement, MovementType } from '@/shared/types/mystaff'
-import { Button, SlideOver, Badge, Spinner, SkeletonTable, SkeletonMobileCardList, Skeleton } from '@/components/ui'
+import { Button, SlideOver, Badge, Spinner, SkeletonTable, SkeletonMobileCardList } from '@/components/ui'
 import { AuditReasonModal } from '../components/AuditReasonModal'
 import { AuditLogDrawer } from '../components/AuditLogDrawer'
 

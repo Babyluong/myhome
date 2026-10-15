@@ -1,21 +1,9 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import { 
-  Pill, 
-  Droplets, 
-  ShieldAlert, 
-  AlertTriangle, 
-  ChevronRight, 
-  Activity, 
-  Layers, 
-  ArrowRight,
-  TrendingDown,
-  Building2,
-  Clock
-} from 'lucide-react'
+import { Droplets, ChevronRight, Layers } from 'lucide-react'
 import { DrugEntry } from '../types/formulariTypes'
 import { PrescriberBadge, HAMBadge, LASABadge, PoisonBadge, NAGBadge } from './DrugBadge'
-import { TallManLettering } from './TallManLettering'
+import './TallManLettering'
 import { QuotaProgressBar } from './QuotaProgressBar'
 
 interface DrugCardProps {

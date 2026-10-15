@@ -1,31 +1,8 @@
 // src/modules/myporter/pages/PorterReportsPage.tsx
 import React, { useEffect, useState, useMemo } from 'react'
-import { 
-  BarChart3, 
-  TrendingUp, 
-  Download, 
-  Calendar, 
-  CheckCircle2, 
-  AlertTriangle, 
-  Clock, 
-  FileText,
-  Filter,
-  Users,
-  Star,
-  Layers,
-  ArrowUpDown,
-  Search,
-  Eye,
-  Shield,
-  Activity,
-  Bed,
-  Droplets,
-  FlaskConical,
-  Pill,
-  AirVent
-} from 'lucide-react'
+import { BarChart3, TrendingUp, Download, FileText, Users, Star, Layers, Search, Eye, Shield, Bed, Droplets, FlaskConical, Pill, AirVent } from 'lucide-react'
 import { useToast } from '@/stores/toastStore'
-import { Button, Modal, Card, CardHeader, CardTitle, CardContent, Input } from '@/components/ui'
+import { Button, Modal } from '@/components/ui'
 import { getPorterJobs, getPorterStats, getPorterProfiles } from '../services/porterService'
 import type { PorterJobRequest, PorterAggregateStats, PorterProfile } from '@/shared/types/myporter'
 
@@ -45,7 +22,7 @@ export const PorterReportsPage: React.FC = () => {
   const [stats, setStats] = useState<PorterAggregateStats | null>(null)
   const [jobs, setJobs] = useState<PorterJobRequest[]>([])
   const [porters, setPorters] = useState<PorterProfile[]>([])
-  const [loading, setLoading] = useState(true)
+  const [, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'workload' | 'category' | 'logs'>('workload')
   const [searchQuery, setSearchQuery] = useState('')
 

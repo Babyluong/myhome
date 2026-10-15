@@ -1,0 +1,2815 @@
+{
+  "generatedAt": "2026-10-14T02:24:42.146Z",
+  "release": {
+    "name": "hospital-operation-management-ecosystem",
+    "version": "2.8.1",
+    "releaseVersion": "v2.8.1",
+    "commit": "f1d4918",
+    "buildTimestamp": "2026-10-12T13:48:42.172Z",
+    "branch": "refactor/module-folders",
+    "dependencies": 28,
+    "devDependencies": 21,
+    "dependencyList": [
+      "@hookform/resolvers",
+      "@react-three/drei",
+      "@react-three/fiber",
+      "@supabase/supabase-js",
+      "@types/three",
+      "clsx",
+      "date-fns",
+      "dotenv",
+      "framer-motion",
+      "idb-keyval",
+      "jspdf",
+      "jspdf-autotable",
+      "jsqr",
+      "lucide-react",
+      "pdf-lib",
+      "pdfjs-dist",
+      "qrcode",
+      "react",
+      "react-dom",
+      "react-hook-form",
+      "react-router-dom",
+      "recharts",
+      "tailwind-merge",
+      "tesseract.js",
+      "three",
+      "xlsx",
+      "zod",
+      "zustand"
+    ]
+  },
+  "scale": {
+    "srcFiles": 1150,
+    "codeFiles": 1131,
+    "components": 687,
+    "loc": 488332,
+    "moduleDirs": 28,
+    "moduleDirList": [
+      "admin",
+      "auth",
+      "catalog",
+      "distribution",
+      "financial",
+      "hospital-admin",
+      "hub",
+      "inventory",
+      "maintenance",
+      "mycrossborder",
+      "mycylinder",
+      "myformulari",
+      "mykunci",
+      "mymsds",
+      "myperolehan",
+      "myphis",
+      "myporter",
+      "myprepacking",
+      "mypriviledging",
+      "mystaff",
+      "mysuhu",
+      "mytempahan",
+      "mytimeoff",
+      "mytransporter",
+      "mywarrant",
+      "procurement",
+      "profile",
+      "reports"
+    ],
+    "sharedServices": 97,
+    "testFiles": 16
+  },
+  "database": {
+    "migrationFiles": 93,
+    "firstMigration": "000_base_tables.sql",
+    "lastMigration": "20260813_distribution_indent.sql",
+    "tables": 80,
+    "tableList": [
+      "access_requests",
+      "ambang_suhu",
+      "appl_approved_suppliers",
+      "appl_sync_logs",
+      "audit_logs",
+      "bacaan_suhu",
+      "crossborder_escorts",
+      "crossborder_patients",
+      "crossborder_transfers",
+      "departments",
+      "distribution_indent_entitlements",
+      "distribution_indent_request_items",
+      "distribution_indent_requests",
+      "drug_categories",
+      "drugs",
+      "emergency_contacts",
+      "facility_drug_inventory",
+      "facility_nondrug_inventory",
+      "first",
+      "for",
+      "hospital_forecast_justifications",
+      "hospital_health_metrics",
+      "hospital_logs",
+      "hospital_modules",
+      "hospitals",
+      "kunci_audit_bulanan",
+      "kunci_daftar",
+      "kunci_log",
+      "lokasi",
+      "lp_sync_logs",
+      "memos",
+      "myphis_disk_changes",
+      "myphis_navigation_logs",
+      "non_drug_categories",
+      "non_drugs",
+      "permissions",
+      "pharmacy_cylinder_dispatch_request_items",
+      "pharmacy_cylinder_dispatch_requests",
+      "pharmacy_oxygen_cylinder_maintenance",
+      "pharmacy_oxygen_cylinder_maintenance_items",
+      "pharmacy_oxygen_receive_document_items",
+      "pharmacy_oxygen_receive_documents",
+      "pharmacy_oxygen_request_document_items",
+      "pharmacy_oxygen_request_documents",
+      "pharmacy_oxygen_return_document_items",
+      "pharmacy_oxygen_return_documents",
+      "pharmacy_supplier_penalties",
+      "prepack_batches",
+      "prepack_formulation_audit_logs",
+      "prepack_items",
+      "prepack_kewps4_transactions",
+      "prepack_store_verifications",
+      "prepack_transfers",
+      "prepack_usage_logs",
+      "role_permissions",
+      "roles",
+      "sensitive_data_access_logs",
+      "sensitive_data_requests",
+      "staff_deadlines",
+      "staff_leave_applications",
+      "staff_leave_quotas",
+      "staff_leave_types",
+      "staff_movements",
+      "staff_org_chart",
+      "staff_reminders",
+      "store_locations",
+      "suppliers",
+      "system_alerts",
+      "system_announcements",
+      "system_backups",
+      "system_health_logs",
+      "system_settings",
+      "transport_request_logs",
+      "transport_requests",
+      "transport_vehicles",
+      "unit_pemantauan",
+      "uploaded_files",
+      "users",
+      "vehicle_inspections",
+      "vehicle_issue_reports"
+    ],
+    "policies": 248,
+    "rlsEnabled": 84,
+    "functions": 32,
+    "triggers": 67,
+    "seedInserts": 31,
+    "tableByFile": {
+      "000_base_tables.sql": [
+        "hospitals",
+        "roles",
+        "departments",
+        "users",
+        "first",
+        "access_requests"
+      ],
+      "001_system_admin_tables.sql": [
+        "hospital_modules",
+        "system_health_logs",
+        "system_backups",
+        "system_alerts"
+      ],
+      "005_pharmacy_catalog_tables.sql": [
+        "uploaded_files",
+        "drug_categories",
+        "non_drug_categories",
+        "suppliers",
+        "drugs",
+        "non_drugs"
+      ],
+      "008_system_settings_table.sql": [
+        "system_settings"
+      ],
+      "009_hospital_logs_table.sql": [
+        "hospital_logs"
+      ],
+      "012_create_audit_logs_table.sql": [
+        "audit_logs"
+      ],
+      "015_create_memos_table.sql": [
+        "memos"
+      ],
+      "016_create_sensitive_data_requests_table.sql": [
+        "sensitive_data_requests",
+        "sensitive_data_access_logs"
+      ],
+      "017_create_hospital_health_metrics_table.sql": [
+        "hospital_health_metrics"
+      ],
+      "021_create_permissions_system.sql": [
+        "permissions",
+        "role_permissions"
+      ],
+      "031_create_emergency_contacts_table.sql": [
+        "emergency_contacts"
+      ],
+      "035_pharmacy_supplier_penalties.sql": [
+        "pharmacy_supplier_penalties"
+      ],
+      "036_create_oxygen_return_documents.sql": [
+        "pharmacy_oxygen_return_documents",
+        "pharmacy_oxygen_return_document_items"
+      ],
+      "039_create_oxygen_request_documents.sql": [
+        "pharmacy_oxygen_request_documents",
+        "pharmacy_oxygen_request_document_items"
+      ],
+      "040_create_cylinder_dispatch_requests.sql": [
+        "pharmacy_cylinder_dispatch_requests",
+        "pharmacy_cylinder_dispatch_request_items"
+      ],
+      "042_create_mysuhu_tables.sql": [
+        "lokasi",
+        "unit_pemantauan",
+        "ambang_suhu",
+        "bacaan_suhu"
+      ],
+      "043_create_myphis_tables.sql": [
+        "myphis_disk_changes",
+        "myphis_navigation_logs"
+      ],
+      "044_create_mykunci_tables.sql": [
+        "kunci_daftar",
+        "kunci_log",
+        "kunci_audit_bulanan"
+      ],
+      "046_hospital_wide_budget_forecasting.sql": [
+        "for",
+        "hospital_forecast_justifications"
+      ],
+      "047_create_mytransporter_tables.sql": [
+        "transport_vehicles",
+        "transport_requests",
+        "vehicle_inspections",
+        "vehicle_issue_reports",
+        "transport_request_logs"
+      ],
+      "058_create_cylinder_maintenance_tables.sql": [
+        "pharmacy_oxygen_cylinder_maintenance",
+        "pharmacy_oxygen_cylinder_maintenance_items"
+      ],
+      "059_create_mycrossborder_tables.sql": [
+        "crossborder_transfers",
+        "crossborder_patients",
+        "crossborder_escorts"
+      ],
+      "061_appl_sync_tables.sql": [
+        "appl_approved_suppliers",
+        "appl_sync_logs"
+      ],
+      "062_lp_sync_columns.sql": [
+        "lp_sync_logs"
+      ],
+      "063_create_facility_drug_inventory.sql": [
+        "facility_drug_inventory"
+      ],
+      "068_create_store_locations_table.sql": [
+        "store_locations"
+      ],
+      "069_create_facility_nondrug_inventory.sql": [
+        "facility_nondrug_inventory"
+      ],
+      "071_create_mystaff_tables.sql": [
+        "staff_leave_types",
+        "staff_leave_quotas",
+        "staff_leave_applications",
+        "staff_movements",
+        "staff_reminders",
+        "staff_deadlines"
+      ],
+      "074_create_staff_org_chart_table.sql": [
+        "staff_org_chart"
+      ],
+      "077_create_oxygen_receive_documents.sql": [
+        "pharmacy_oxygen_receive_documents",
+        "pharmacy_oxygen_receive_document_items"
+      ],
+      "081_create_myprepacking_tables.sql": [
+        "prepack_items",
+        "prepack_batches",
+        "prepack_usage_logs"
+      ],
+      "084_create_system_announcements_table.sql": [
+        "system_announcements"
+      ],
+      "085_create_prepack_kewps4_and_transfer_system.sql": [
+        "prepack_transfers",
+        "prepack_kewps4_transactions",
+        "prepack_store_verifications"
+      ],
+      "087_create_prepack_formulation_audit_and_fields.sql": [
+        "prepack_formulation_audit_logs"
+      ],
+      "20260813_distribution_indent.sql": [
+        "distribution_indent_entitlements",
+        "distribution_indent_requests",
+        "distribution_indent_request_items"
+      ]
+    }
+  },
+  "registry": {
+    "modules": [
+      {
+        "code": "pharmacy_logistics",
+        "name": "MyWarrant",
+        "officialName": "Pharmacy Warrant & Procurement Management",
+        "category": "pharmacy",
+        "routePath": "/pharmacy/dashboard",
+        "description": "Management of MOH warrants, operating budget, LPO procurement, and pharmacy expenditure monitoring.",
+        "isCore": false,
+        "defaultRoles": [
+          "system_admin",
+          "hospital_admin",
+          "hospital_administrator",
+          "hospital_director",
+          "pharmacy_director",
+          "pharmacy_manager",
+          "pharmacist",
+          "pharmacy_assistant",
+          "assistant_pharmacist",
+          "procurement_officer",
+          "budget_officer",
+          "inventory_manager"
+        ],
+        "features": [
+          {
+            "code": "warrant_allocation",
+            "name": "Warrant & Vote Allocation"
+          },
+          {
+            "code": "lpo_procurement",
+            "name": "Local Purchase Order (LPO)"
+          },
+          {
+            "code": "supplier_contracts",
+            "name": "Supplier Contracts & Penalties"
+          },
+          {
+            "code": "financial_reports",
+            "name": "Financial & APPL Reports"
+          }
+        ]
+      },
+      {
+        "code": "inventory",
+        "name": "MyInventory",
+        "officialName": "Inventory & Stock Logistics Management",
+        "category": "pharmacy",
+        "routePath": "/pharmacy/inventory",
+        "description": "Management of drug & non-drug stock, KEW.PS-4 ledgers, ward indents, and stock verification.",
+        "isCore": false,
+        "defaultRoles": [
+          "system_admin",
+          "hospital_admin",
+          "hospital_administrator",
+          "hospital_director",
+          "pharmacy_director",
+          "pharmacy_manager",
+          "pharmacist",
+          "pharmacy_assistant",
+          "assistant_pharmacist",
+          "pharmacy_storekeeper",
+          "pharmacy_staff",
+          "procurement_officer",
+          "inventory_manager"
+        ],
+        "features": [
+          {
+            "code": "stock_catalog",
+            "name": "Drug & Non-Drug Catalogue"
+          },
+          {
+            "code": "stock_distribution",
+            "name": "Ward Distribution & Indents"
+          },
+          {
+            "code": "kewps4_ledger",
+            "name": "KEW.PS-4 Stock Ledger"
+          },
+          {
+            "code": "stock_expiry_analysis",
+            "name": "Expiry Analysis & Verification"
+          }
+        ]
+      },
+      {
+        "code": "cylinder",
+        "name": "MyCylinder",
+        "officialName": "Medical Oxygen Cylinder Management",
+        "category": "pharmacy",
+        "routePath": "/pharmacy/oxygen",
+        "description": "Medical oxygen cylinder tracking, ward movement records, QR scanning, and tank safety compliance.",
+        "isCore": false,
+        "defaultRoles": [
+          "system_admin",
+          "hospital_admin",
+          "hospital_administrator",
+          "hospital_director",
+          "pharmacy_director",
+          "pharmacy_manager",
+          "pharmacist",
+          "pharmacy_assistant",
+          "assistant_pharmacist",
+          "pharmacy_storekeeper",
+          "pharmacy_staff",
+          "nurse",
+          "sister",
+          "matron",
+          "assistant_medical_officer",
+          "senior_assistant_medical_officer",
+          "doctor",
+          "medical_officer",
+          "inventory_manager",
+          "staff"
+        ],
+        "features": [
+          {
+            "code": "cylinder_tracking",
+            "name": "Cylinder Inventory & Tracking"
+          },
+          {
+            "code": "cylinder_dispatch",
+            "name": "Gas Dispatch & Issuance"
+          },
+          {
+            "code": "cylinder_maintenance",
+            "name": "Maintenance & Hydrostatic Testing"
+          }
+        ]
+      },
+      {
+        "code": "mysuhu",
+        "name": "MySuhu",
+        "officialName": "Cold Chain Temperature Monitoring",
+        "category": "facility",
+        "routePath": "/suhu/dashboard",
+        "description": "IoT monitoring of pharmacy refrigerators, temperature breach alerts, and corrective action workflows.",
+        "isCore": false,
+        "defaultRoles": [
+          "system_admin",
+          "hospital_admin",
+          "hospital_administrator",
+          "hospital_director",
+          "pharmacy_director",
+          "pharmacy_manager",
+          "pharmacist",
+          "pharmacy_assistant",
+          "assistant_pharmacist",
+          "nurse",
+          "sister",
+          "matron",
+          "assistant_medical_officer",
+          "senior_assistant_medical_officer",
+          "medical_lab_technician",
+          "pathologist"
+        ],
+        "features": [
+          {
+            "code": "temperature_logging",
+            "name": "IoT Temperature Logging & Charts"
+          },
+          {
+            "code": "breach_management",
+            "name": "Breach Logs & CAPA"
+          },
+          {
+            "code": "unit_configuration",
+            "name": "Threshold Settings & Sensor Locations"
+          }
+        ]
+      },
+      {
+        "code": "myformulari",
+        "name": "MyFormulari",
+        "officialName": "Hospital Formulary & Clinical Reference",
+        "category": "clinical",
+        "routePath": "/formulari/dashboard",
+        "description": "Hospital drug formulary catalogue, high-alert medications (HAM), LASA registry, and dilution protocols.",
+        "isCore": false,
+        "defaultRoles": [
+          "system_admin",
+          "hospital_admin",
+          "hospital_administrator",
+          "hospital_director",
+          "pharmacy_director",
+          "pharmacy_manager",
+          "pharmacist",
+          "pharmacy_assistant",
+          "assistant_pharmacist",
+          "doctor",
+          "medical_officer",
+          "nurse",
+          "sister",
+          "matron",
+          "assistant_medical_officer",
+          "senior_assistant_medical_officer",
+          "pathologist",
+          "staff"
+        ],
+        "features": [
+          {
+            "code": "formulari_catalog",
+            "name": "Formulary Catalogue & Indications"
+          },
+          {
+            "code": "ham_lasa_registry",
+            "name": "HAM & LASA / TALL-man Registry"
+          },
+          {
+            "code": "dilution_protocols",
+            "name": "IV Dilution Protocols & Guidelines"
+          },
+          {
+            "code": "hospital_lawas_formulary",
+            "name": "Hospital Lawas Formulary"
+          }
+        ]
+      },
+      {
+        "code": "myperolehan",
+        "name": "MyPerolehan",
+        "officialName": "Hospital Procurement & Development System",
+        "category": "administrative",
+        "routePath": "/perolehan/dashboard",
+        "description": "Management of non-drug procurement, development expenditures (P), and administrative supplies.",
+        "isCore": false,
+        "defaultRoles": [
+          "system_admin",
+          "hospital_admin",
+          "hospital_administrator",
+          "hospital_director",
+          "procurement_officer",
+          "budget_officer",
+          "department_head",
+          "inventory_manager",
+          "staff"
+        ],
+        "features": [
+          {
+            "code": "pengurusan_budget",
+            "name": "Operating Budget (B21, B24, B27)"
+          },
+          {
+            "code": "pembangunan_budget",
+            "name": "Development Budget (Special Projects)"
+          },
+          {
+            "code": "order_payment_tracking",
+            "name": "Orders & Payment Invoicing"
+          }
+        ]
+      },
+      {
+        "code": "mytransporter",
+        "name": "MyTransporter",
+        "officialName": "Vehicle Fleet Logistics & Patient Transport",
+        "category": "logistics",
+        "routePath": "/transporter/dashboard",
+        "description": "Official hospital vehicle bookings, ambulance dispatch, vehicle inspections, and driver scheduling.",
+        "isCore": false,
+        "defaultRoles": [
+          "system_admin",
+          "hospital_admin",
+          "hospital_administrator",
+          "hospital_director",
+          "transport_admin",
+          "transport_driver",
+          "hospital_driver",
+          "staff",
+          "nurse",
+          "sister",
+          "matron",
+          "assistant_medical_officer",
+          "senior_assistant_medical_officer",
+          "doctor",
+          "medical_officer",
+          "general_service_assistant"
+        ],
+        "features": [
+          {
+            "code": "transport_booking",
+            "name": "Vehicle Requests & Bookings"
+          },
+          {
+            "code": "fleet_management",
+            "name": "Vehicle Registry & Maintenance"
+          },
+          {
+            "code": "driver_panel",
+            "name": "Driver Panel & Pre-Trip Inspection"
+          }
+        ]
+      },
+      {
+        "code": "mykunci",
+        "name": "MyKunci",
+        "officialName": "Physical Key Management & Security Control",
+        "category": "facility",
+        "routePath": "/kunci/dashboard",
+        "description": "Master key registry, checkout/return logs, and security seal envelope integrity audits.",
+        "isCore": false,
+        "defaultRoles": [
+          "system_admin",
+          "hospital_admin",
+          "hospital_administrator",
+          "hospital_director",
+          "staff",
+          "nurse",
+          "sister",
+          "matron",
+          "assistant_medical_officer",
+          "senior_assistant_medical_officer",
+          "pharmacist",
+          "physiotherapist",
+          "radiographer",
+          "medical_lab_technician",
+          "occupational_therapist",
+          "pathologist",
+          "general_service_assistant"
+        ],
+        "features": [
+          {
+            "code": "key_registry",
+            "name": "Department Master Key Registry"
+          },
+          {
+            "code": "key_movement_log",
+            "name": "Key Checkout & Return Log"
+          },
+          {
+            "code": "key_monthly_audit",
+            "name": "Monthly Audit & Seal Inspection"
+          }
+        ]
+      },
+      {
+        "code": "mystaff",
+        "name": "MyStaff",
+        "officialName": "Staff Operations, Movement & Rostering",
+        "category": "support",
+        "routePath": "/staff/dashboard",
+        "description": "Daily staff movement logs, departmental leave calendar, on-call rostering, and organizational chart.",
+        "isCore": false,
+        "defaultRoles": [
+          "system_admin",
+          "hospital_admin",
+          "hospital_administrator",
+          "hospital_director",
+          "staff",
+          "nurse",
+          "sister",
+          "matron",
+          "doctor",
+          "medical_officer",
+          "assistant_medical_officer",
+          "senior_assistant_medical_officer",
+          "pharmacist",
+          "assistant_pharmacist",
+          "pharmacy_staff",
+          "physiotherapist",
+          "radiographer",
+          "medical_lab_technician",
+          "occupational_therapist",
+          "pathologist",
+          "procurement_officer",
+          "budget_officer",
+          "inventory_manager",
+          "general_service_assistant",
+          "hospital_driver",
+          "department_head"
+        ],
+        "features": [
+          {
+            "code": "staff_movement",
+            "name": "Duty Movement & External Tasks"
+          },
+          {
+            "code": "staff_leave_calendar",
+            "name": "Department Leave Calendar"
+          },
+          {
+            "code": "org_chart_management",
+            "name": "Organizational Chart & HOD Roles"
+          }
+        ]
+      },
+      {
+        "code": "mycrossborder",
+        "name": "MyCrossBorder",
+        "officialName": "Cross-Border Patient Escort & Referral",
+        "category": "clinical",
+        "routePath": "/crossborder/dashboard",
+        "description": "Cross-border medical transit permits, referral patient records, and clinical escort assignments.",
+        "isCore": false,
+        "defaultRoles": [
+          "system_admin",
+          "hospital_admin",
+          "hospital_administrator",
+          "hospital_director",
+          "doctor",
+          "medical_officer",
+          "nurse",
+          "sister",
+          "matron",
+          "assistant_medical_officer",
+          "senior_assistant_medical_officer"
+        ],
+        "features": [
+          {
+            "code": "permit_application",
+            "name": "Cross-Border Permit Application"
+          },
+          {
+            "code": "escort_assignment",
+            "name": "Medical Escort Team"
+          }
+        ]
+      },
+      {
+        "code": "myphis",
+        "name": "MyPHiS",
+        "officialName": "PHiS Backup Support System",
+        "category": "support",
+        "routePath": "/hub/myphis",
+        "description": "Hospital PHiS server backup tape/disk rotation logs and integration status tracking.",
+        "isCore": false,
+        "defaultRoles": [
+          "system_admin",
+          "hospital_admin",
+          "hospital_administrator",
+          "hospital_director",
+          "pharmacy_director",
+          "pharmacy_manager",
+          "pharmacist",
+          "pharmacy_assistant",
+          "assistant_pharmacist"
+        ],
+        "features": [
+          {
+            "code": "backup_disk_rotation",
+            "name": "Daily Backup Disk Rotation"
+          }
+        ]
+      },
+      {
+        "code": "mymsds",
+        "name": "MyMSDS",
+        "officialName": "Chemical Safety Data Sheets (MSDS / SDS)",
+        "category": "support",
+        "routePath": "/hub/mymsds",
+        "description": "Safety data sheet repository (MSDS/CSDS) and hazardous spill emergency response procedures.",
+        "isCore": false,
+        "defaultRoles": [
+          "system_admin",
+          "hospital_admin",
+          "hospital_administrator",
+          "hospital_director",
+          "pharmacist",
+          "pharmacy_assistant",
+          "assistant_pharmacist",
+          "nurse",
+          "sister",
+          "matron",
+          "assistant_medical_officer",
+          "senior_assistant_medical_officer",
+          "doctor",
+          "medical_officer",
+          "medical_lab_technician",
+          "pathologist",
+          "physiotherapist",
+          "radiographer",
+          "staff"
+        ],
+        "features": [
+          {
+            "code": "msds_directory",
+            "name": "MSDS / SDS Directory"
+          }
+        ]
+      },
+      {
+        "code": "mytempahan",
+        "name": "MyTempahan",
+        "officialName": "Hospital Venue & Facility Booking System",
+        "category": "facility",
+        "routePath": "/tempahan",
+        "description": "Meeting room, seminar hall, auditorium, and hospital AV equipment reservation management.",
+        "isCore": false,
+        "defaultRoles": [
+          "system_admin",
+          "hospital_admin",
+          "hospital_administrator",
+          "hospital_director",
+          "staff",
+          "nurse",
+          "sister",
+          "matron",
+          "doctor",
+          "medical_officer",
+          "assistant_medical_officer",
+          "senior_assistant_medical_officer",
+          "pharmacist",
+          "assistant_pharmacist",
+          "physiotherapist",
+          "radiographer",
+          "medical_lab_technician",
+          "occupational_therapist",
+          "pathologist",
+          "procurement_officer",
+          "budget_officer",
+          "department_head"
+        ],
+        "features": [
+          {
+            "code": "venue_booking",
+            "name": "Room Requisition & Booking"
+          },
+          {
+            "code": "booking_approval",
+            "name": "Booking Review & Approvals"
+          },
+          {
+            "code": "room_registry",
+            "name": "Facility & Room Directory"
+          },
+          {
+            "code": "utilization_reports",
+            "name": "Facility Utilization Reports"
+          }
+        ]
+      },
+      {
+        "code": "admin",
+        "name": "MyAdmin",
+        "officialName": "System Administration & Command Center",
+        "category": "administrative",
+        "routePath": "/hub/admin",
+        "description": "Central security management, staff account provisioning, RBAC matrix, and audit logging.",
+        "isCore": true,
+        "defaultRoles": [
+          "system_admin",
+          "hospital_admin",
+          "hospital_administrator",
+          "hospital_director"
+        ],
+        "features": [
+          {
+            "code": "user_management",
+            "name": "User Management & Account Status"
+          },
+          {
+            "code": "access_approvals",
+            "name": "Staff Registration Approvals"
+          },
+          {
+            "code": "rbac_matrix",
+            "name": "Access Control & Permission Matrix (RBAC)"
+          },
+          {
+            "code": "department_monitoring",
+            "name": "Department Structure Monitoring"
+          },
+          {
+            "code": "audit_logs",
+            "name": "Security Audit Trail & System Logs"
+          }
+        ]
+      }
+    ],
+    "featureCount": 43,
+    "actions": [
+      {
+        "code": "view",
+        "label": "View",
+        "description": "View dashboard, transaction records, and information lists"
+      },
+      {
+        "code": "create",
+        "label": "Create",
+        "description": "Create new records, orders, requests, or registrations"
+      },
+      {
+        "code": "edit",
+        "label": "Edit",
+        "description": "Modify existing records or update statuses"
+      },
+      {
+        "code": "approve",
+        "label": "Approve",
+        "description": "Provide authorization, approve requests, indents, or allocations"
+      },
+      {
+        "code": "delete",
+        "label": "Delete",
+        "description": "Delete records or void entered transactions"
+      },
+      {
+        "code": "export",
+        "label": "Export",
+        "description": "Download official ledgers (KEW.PS-4), PDF reports, and Excel data"
+      },
+      {
+        "code": "admin",
+        "label": "Admin",
+        "description": "Configure module settings, quota limits, and system parameters"
+      }
+    ],
+    "presets": [
+      {
+        "code": "read_only",
+        "label": "Read-Only",
+        "description": "View dashboards and record lists without data modification rights."
+      },
+      {
+        "code": "operator",
+        "label": "Operator",
+        "description": "View, create new records, and update own assigned task details."
+      },
+      {
+        "code": "supervisor",
+        "label": "Supervisor / HOD",
+        "description": "View, create, update, export reports, and approve documents."
+      },
+      {
+        "code": "manager",
+        "label": "Manager / Approver",
+        "description": "Full management authority including financial approvals, ledger exports, and record voiding."
+      },
+      {
+        "code": "full_admin",
+        "label": "Full Admin",
+        "description": "Full unrestricted administrative access including module parameter configuration and system administration."
+      }
+    ],
+    "roles": [
+      "system_admin",
+      "hospital_admin",
+      "pharmacy_director",
+      "pharmacy_manager",
+      "pharmacist",
+      "pharmacy_assistant",
+      "pharmacy_storekeeper",
+      "pharmacy_staff",
+      "nurse",
+      "doctor",
+      "medical_officer",
+      "assistant_medical_officer",
+      "assistant_pharmacist",
+      "hospital_administrator",
+      "staff",
+      "transport_driver",
+      "transport_admin",
+      "porter_staff",
+      "porter_supervisor",
+      "porter_admin",
+      "sister",
+      "senior_assistant_medical_officer",
+      "matron",
+      "hospital_director",
+      "procurement_officer",
+      "budget_officer",
+      "physiotherapist",
+      "radiographer",
+      "medical_lab_technician",
+      "occupational_therapist",
+      "pathologist",
+      "inventory_manager",
+      "general_service_assistant",
+      "hospital_driver",
+      "department_head"
+    ],
+    "roleCount": 35,
+    "displayNames": {
+      "SYSTEM_ADMIN": "System Administrator",
+      "HOSPITAL_ADMIN": "Hospital Administrator",
+      "PHARMACY_DIRECTOR": "Pharmacy Director",
+      "PHARMACY_MANAGER": "Pharmacy Manager",
+      "PHARMACIST": "Pharmacist",
+      "PHARMACY_ASSISTANT": "Pharmacy Assistant",
+      "PHARMACY_STOREKEEPER": "Store Keeper",
+      "PHARMACY_STAFF": "Pharmacy Staff",
+      "NURSE": "Nurse",
+      "DOCTOR": "Doctor",
+      "MEDICAL_OFFICER": "Medical Officer",
+      "ASSISTANT_MEDICAL_OFFICER": "Assistant Medical Officer",
+      "ASSISTANT_PHARMACIST": "Assistant Pharmacist",
+      "HOSPITAL_ADMINISTRATOR": "Hospital Administrator",
+      "STAFF": "Staff",
+      "TRANSPORT_DRIVER": "Transport Driver",
+      "TRANSPORT_ADMIN": "Transport Admin",
+      "PORTER_STAFF": "Hospital Porter",
+      "PORTER_SUPERVISOR": "Porter Supervisor",
+      "PORTER_ADMIN": "Porter Admin",
+      "SISTER": "Sister",
+      "SENIOR_ASSISTANT_MEDICAL_OFFICER": "Senior Assistant Medical Officer",
+      "MATRON": "Matron",
+      "HOSPITAL_DIRECTOR": "Hospital Director",
+      "PROCUREMENT_OFFICER": "Procurement Officer",
+      "BUDGET_OFFICER": "Budget Officer",
+      "PHYSIOTHERAPIST": "Physiotherapist",
+      "RADIOGRAPHER": "Radiographer",
+      "MEDICAL_LAB_TECHNICIAN": "Medical Laboratory Technologist",
+      "OCCUPATIONAL_THERAPIST": "Occupational Therapist",
+      "PATHOLOGIST": "Pathologist",
+      "INVENTORY_MANAGER": "Inventory Manager",
+      "GENERAL_SERVICE_ASSISTANT": "General Service Assistant",
+      "HOSPITAL_DRIVER": "Hospital Driver",
+      "DEPARTMENT_HEAD": "Department Head"
+    }
+  },
+  "hub": {
+    "tiles": [
+      {
+        "id": "formulari",
+        "name": "MyFormulari",
+        "shortName": "Formulary",
+        "description": "National & Hospital Drug Formulary and Pediatric Dosages",
+        "category": "clinical"
+      },
+      {
+        "id": "suhu",
+        "name": "MySuhu",
+        "shortName": "Temperature",
+        "description": "Cold Chain & Vaccine Chiller Temperature Monitoring",
+        "category": "clinical"
+      },
+      {
+        "id": "cylinder",
+        "name": "MyCylinder",
+        "shortName": "Cylinders",
+        "description": "Medical Oxygen & Medical Gas Cylinder Management",
+        "category": "clinical"
+      },
+      {
+        "id": "prepacking",
+        "name": "MyPrepacking",
+        "shortName": "Prepacking",
+        "description": "Unit-of-Dose (UOD) Prepacking & Medicine Label Studio",
+        "category": "clinical"
+      },
+      {
+        "id": "warrant",
+        "name": "MyWarrant",
+        "shortName": "Warrant",
+        "description": "Pharmacy Financial Warrant & Budget Allocation",
+        "category": "clinical"
+      },
+      {
+        "id": "priviledging",
+        "name": "MyPrivileging",
+        "shortName": "Privileging",
+        "description": "Clinical Privileging Logbook & Credentialing Committee",
+        "category": "clinical"
+      },
+      {
+        "id": "myphis",
+        "name": "MyPHiS",
+        "shortName": "PhIS",
+        "description": "Pharmacy Information System Integration & Backup Logs",
+        "category": "clinical"
+      },
+      {
+        "id": "mymsds",
+        "name": "MyMSDS",
+        "shortName": "MSDS",
+        "description": "Material Safety Data Sheets & Chemical Hazmat Directory",
+        "category": "clinical"
+      },
+      {
+        "id": "inventory",
+        "name": "MyInventory",
+        "shortName": "Inventory",
+        "description": "Hospital Store Inventory & KEW.PS-4 Stock Ledger",
+        "category": "logistics"
+      },
+      {
+        "id": "perolehan",
+        "name": "MyPerolehan",
+        "shortName": "Procurement",
+        "description": "Local Purchase Orders (LPO), Quotations & Suppliers",
+        "category": "logistics"
+      },
+      {
+        "id": "transporter",
+        "name": "MyTransporter",
+        "shortName": "Transport",
+        "description": "Vehicle Fleet Management & Inter-Facility Transport",
+        "category": "logistics"
+      },
+      {
+        "id": "porter",
+        "name": "MyPorter",
+        "shortName": "Porter",
+        "description": "Ward Portering Dispatch & Inpatient Transport",
+        "category": "logistics"
+      },
+      {
+        "id": "tempahan",
+        "name": "MyTempahan",
+        "shortName": "Bookings",
+        "description": "Conference Hall, Meeting Room & Facility Booking",
+        "category": "logistics"
+      },
+      {
+        "id": "kunci",
+        "name": "MyKunci",
+        "shortName": "Key Custody",
+        "description": "Security Key Custody Register & Monthly Audit System",
+        "category": "logistics"
+      },
+      {
+        "id": "admin",
+        "name": "MyAdmin",
+        "shortName": "Admin",
+        "description": "Access Control, RBAC Roles & System Audit Logs",
+        "category": "governance"
+      },
+      {
+        "id": "staff",
+        "name": "MyStaff",
+        "shortName": "Staff",
+        "description": "Staff Directory, Movement Logs & Organizational Chart",
+        "category": "governance"
+      },
+      {
+        "id": "timeoff",
+        "name": "MyTimeOff",
+        "shortName": "Time-Off",
+        "description": "Compensatory Time-Off (TOIL) & Movement Claims",
+        "category": "governance"
+      },
+      {
+        "id": "surat",
+        "name": "MySurat",
+        "shortName": "Letters",
+        "description": "Official Government Correspondence & Letter Tracking",
+        "category": "governance"
+      },
+      {
+        "id": "borang",
+        "name": "MyBorang",
+        "shortName": "Forms",
+        "description": "Hospital Operational Form Templates & Digital Archives",
+        "category": "governance"
+      },
+      {
+        "id": "memo",
+        "name": "MyMemo",
+        "shortName": "Memos",
+        "description": "Internal Circulars & Official Hospital Broadcasts",
+        "category": "governance"
+      },
+      {
+        "id": "file",
+        "name": "MyFile",
+        "shortName": "Files",
+        "description": "Departmental File Index & Document Archive",
+        "category": "governance"
+      },
+      {
+        "id": "gallery",
+        "name": "MyGallery",
+        "shortName": "Gallery",
+        "description": "Official Hospital Event Photos & Media Archive",
+        "category": "governance"
+      },
+      {
+        "id": "perhimpunan",
+        "name": "MyPerhimpunan",
+        "shortName": "Assembly",
+        "description": "Monthly Staff Assembly Attendance & Event Records",
+        "category": "governance"
+      }
+    ],
+    "tileCount": 23,
+    "categoryCounts": {
+      "clinical": 8,
+      "logistics": 6,
+      "governance": 9
+    },
+    "subMenus": [
+      "AdminSubMenu",
+      "BorangSubMenu",
+      "CrossBorderSubMenu",
+      "CutiSubMenu",
+      "CylinderSubMenu",
+      "FileSubMenu",
+      "FormulariSubMenu",
+      "InventorySubMenu",
+      "KunciSubMenu",
+      "PerolehanSubMenu",
+      "PorterSubMenu",
+      "PriviledgingSubMenu",
+      "StaffSubMenu",
+      "SuhuSubMenu",
+      "SuratSubMenu",
+      "TempahanSubMenu",
+      "TimeOffSubMenu",
+      "TransporterSubMenu",
+      "WarrantSubMenu"
+    ]
+  },
+  "routes": {
+    "declaredPaths": 243,
+    "uniquePaths": 167,
+    "byPrefix": {
+      "test-route": 1,
+      "gallery": 2,
+      "cylinder": 1,
+      "inventory": 1,
+      "warrant": 1,
+      "surat": 1,
+      "borang": 1,
+      "admin": 10,
+      "perolehan": 2,
+      "file": 1,
+      "formulari": 2,
+      "porter": 2,
+      "transporter": 2,
+      "priviledging": 2,
+      "tempahan": 2,
+      "prepacking": 2,
+      "kunci": 2,
+      "crossborder": 2,
+      "staff": 2,
+      "cuti": 1,
+      "time-off": 1,
+      "(root)": 1,
+      "dashboard": 17,
+      "pharmacy": 48,
+      "hub": 4,
+      "catalog": 4,
+      "uod": 1,
+      "prepack": 1,
+      "internal": 1,
+      "external": 1,
+      "items": 1,
+      "batches": 1,
+      "labels": 1,
+      "kewps4": 1,
+      "movement": 2,
+      "usage": 1,
+      "reports": 4,
+      "suhu": 1,
+      "department": 2,
+      "unit": 2,
+      "breaches": 2,
+      "temperature": 1,
+      "hospital-lawas": 2,
+      "drug": 2,
+      "ham": 2,
+      "lasa": 2,
+      "dilution": 2,
+      "antimicrobial": 2,
+      "quota": 2,
+      "alternatives": 2,
+      "antidotes": 2,
+      "paediatric-catalogue": 2,
+      "formulary": 1,
+      "daftar": 2,
+      "registry": 2,
+      "log": 2,
+      "audit": 2,
+      "polisi": 2,
+      "policy": 2,
+      "keys": 1,
+      "criteria": 1,
+      "my-submissions": 1,
+      "review-queue": 1,
+      "staff-progress": 1,
+      "print": 2,
+      "kalendar": 2,
+      "calendar": 3,
+      "permohonan-baru": 2,
+      "new": 2,
+      "permohonan-saya": 2,
+      "my": 2,
+      "kelulusan": 2,
+      "approvals": 2,
+      "senarai-bilik": 2,
+      "rooms": 2,
+      "laporan": 2,
+      "bookings": 1,
+      "leave": 2,
+      "reminders": 1,
+      "deadlines": 1,
+      "hod": 2,
+      "org-chart": 1,
+      "organization-chart": 1,
+      "timeoff": 1,
+      "claim": 1,
+      "claims": 1,
+      "redeem": 1,
+      "history": 1,
+      "pengurusan": 2,
+      "management": 2,
+      "pembangunan": 2,
+      "development": 2,
+      "orders": 2,
+      "payments": 2,
+      "procurement": 1,
+      "*": 2,
+      "requests": 5,
+      "panel": 1,
+      "receiver": 1,
+      "manager": 1,
+      "roster": 1,
+      "roles": 1,
+      "availability": 1,
+      "driver": 2
+    },
+    "lazyImports": 189,
+    "routeConstants": 266,
+    "pathList": [
+      "test-route",
+      "gallery",
+      "gallery/:albumId",
+      "cylinder",
+      "inventory",
+      "warrant",
+      "surat",
+      "borang",
+      "admin",
+      "perolehan",
+      "file",
+      "formulari",
+      "porter",
+      "transporter",
+      "priviledging",
+      "tempahan",
+      "prepacking",
+      "kunci",
+      "crossborder",
+      "staff",
+      "cuti",
+      "time-off",
+      "/",
+      "dashboard",
+      "admin/*",
+      "pharmacy",
+      "pharmacy/dashboard",
+      "hub/myphis",
+      "hub/mymsds",
+      "hub/prepacking",
+      "prepacking",
+      "dashboard",
+      "catalog",
+      "uod",
+      "prepack",
+      "internal",
+      "external",
+      "items",
+      "batches",
+      "labels",
+      "kewps4",
+      "movement",
+      "usage",
+      "reports",
+      "pharmacy/inventory",
+      "suhu",
+      "dashboard",
+      "department/:departmentId",
+      "unit/:unitId",
+      "breaches",
+      "admin",
+      "temperature",
+      "dashboard",
+      "department/:departmentId",
+      "unit/:unitId",
+      "breaches",
+      "admin",
+      "formulari",
+      "dashboard",
+      "hospital-lawas",
+      "drug/:id",
+      "ham",
+      "lasa",
+      "dilution",
+      "antimicrobial",
+      "quota",
+      "alternatives",
+      "antidotes",
+      "paediatric-catalogue",
+      "formulary",
+      "dashboard",
+      "hospital-lawas",
+      "drug/:id",
+      "ham",
+      "lasa",
+      "dilution",
+      "antimicrobial",
+      "quota",
+      "alternatives",
+      "antidotes",
+      "paediatric-catalogue",
+      "kunci",
+      "dashboard",
+      "daftar",
+      "registry",
+      "log",
+      "audit",
+      "polisi",
+      "policy",
+      "keys",
+      "dashboard",
+      "registry",
+      "daftar",
+      "log",
+      "audit",
+      "policy",
+      "polisi",
+      "priviledging",
+      "dashboard",
+      "criteria",
+      "catalog",
+      "my-submissions",
+      "review-queue",
+      "staff-progress",
+      "print",
+      "print/:staffId",
+      "tempahan",
+      "dashboard",
+      "kalendar",
+      "calendar",
+      "permohonan-baru",
+      "new",
+      "permohonan-saya",
+      "my",
+      "kelulusan",
+      "approvals",
+      "senarai-bilik",
+      "rooms",
+      "laporan",
+      "reports",
+      "bookings",
+      "dashboard",
+      "calendar",
+      "kalendar",
+      "new",
+      "permohonan-baru",
+      "my",
+      "permohonan-saya",
+      "approvals",
+      "kelulusan",
+      "rooms",
+      "senarai-bilik",
+      "reports",
+      "laporan",
+      "staff",
+      "dashboard",
+      "calendar",
+      "movement",
+      "leave",
+      "leave/apply",
+      "reminders",
+      "deadlines",
+      "hod",
+      "org-chart",
+      "organization-chart",
+      "timeoff",
+      "dashboard",
+      "claim/new",
+      "claims",
+      "redeem",
+      "history",
+      "hod",
+      "perolehan",
+      "dashboard",
+      "pengurusan",
+      "management",
+      "pembangunan",
+      "development",
+      "orders",
+      "payments",
+      "catalog",
+      "procurement",
+      "dashboard",
+      "management",
+      "pengurusan",
+      "development",
+      "pembangunan",
+      "orders",
+      "payments",
+      "catalog",
+      "crossborder",
+      "*",
+      "hub/porter",
+      "porter",
+      "dashboard",
+      "requests/new",
+      "requests/my",
+      "panel",
+      "receiver",
+      "manager",
+      "roster",
+      "reports",
+      "roles",
+      "transporter",
+      "dashboard",
+      "requests/new",
+      "requests/edit/:id",
+      "requests/my",
+      "availability",
+      "driver/panel",
+      "driver/monitor",
+      "admin/approval",
+      "admin/vehicles",
+      "admin/vehicles/movement",
+      "admin/vehicles/issues",
+      "admin/reports",
+      "admin/roles",
+      "pharmacy/oxygen",
+      "pharmacy/oxygen/cylinders",
+      "pharmacy/oxygen/consumption",
+      "pharmacy/oxygen/qr",
+      "pharmacy/oxygen/reconciliation",
+      "pharmacy/oxygen/reports",
+      "pharmacy/oxygen/maintenance",
+      "pharmacy/oxygen/ledger",
+      "pharmacy/inventory/appl",
+      "pharmacy/inventory/drugs",
+      "pharmacy/inventory/non-drugs",
+      "pharmacy/inventory/facility-drugs",
+      "pharmacy/inventory/facility-non-drugs",
+      "pharmacy/inventory/near-expiry",
+      "pharmacy/inventory/slow-moving",
+      "pharmacy/inventory/report",
+      "pharmacy/inventory/movement",
+      "pharmacy/inventory/ledger",
+      "pharmacy/procurement/orders",
+      "pharmacy/procurement/orders/create",
+      "pharmacy/procurement/receiving",
+      "pharmacy/distribution",
+      "pharmacy/inventory/distribution/indent",
+      "pharmacy/inventory/distribution/indent/new",
+      "pharmacy/inventory/distribution/indent/:id",
+      "pharmacy/inventory/distribution/issue",
+      "pharmacy/inventory/distribution/entitlement",
+      "pharmacy/financial/budget",
+      "pharmacy/financial/warrant",
+      "pharmacy/financial/forecast",
+      "pharmacy/reports",
+      "pharmacy/reports/inventory",
+      "pharmacy/reports/procurement",
+      "pharmacy/reports/financial",
+      "pharmacy/reports/distribution",
+      "pharmacy/logs",
+      "pharmacy/maintenance/locations",
+      "pharmacy/maintenance/verification",
+      "pharmacy/maintenance/units",
+      "pharmacy/catalog/drugs",
+      "pharmacy/catalog/suppliers",
+      "pharmacy/catalog/contracts",
+      "pharmacy/catalog/non-drugs",
+      "pharmacy/catalog/facilities",
+      "pharmacy/*",
+      "*"
+    ]
+  },
+  "evidence": {
+    "admin": {
+      "dir": "admin",
+      "files": 50,
+      "pages": 31,
+      "services": 17,
+      "components": 0,
+      "staticDataFiles": 0,
+      "supabaseFromCalls": 96,
+      "localStorageCalls": 5,
+      "tables": [
+        "access_requests",
+        "audit_logs",
+        "departments",
+        "emergency_contacts",
+        "hospital_logs",
+        "hospital_modules",
+        "hospitals",
+        "permissions",
+        "role_permissions",
+        "roles",
+        "system_alerts",
+        "system_backups",
+        "system_health_logs",
+        "system_settings",
+        "users"
+      ],
+      "tableCount": 15,
+      "persistence": "database",
+      "flags": {
+        "supabase": true,
+        "offline": false,
+        "audit": true,
+        "rbac": false,
+        "pdf": false,
+        "qr": false,
+        "localStorage": true,
+        "seed": false
+      },
+      "pageList": [
+        "AccessRequestDetailPage.tsx",
+        "AccessRequestListPage.tsx",
+        "index.ts",
+        "AlertCenterPage.tsx",
+        "index.ts",
+        "AuditLogPage.tsx",
+        "index.ts",
+        "BackupManagementPage.tsx",
+        "index.ts",
+        "ClinicDetailPage.tsx",
+        "ClinicListPage.tsx",
+        "DepartmentDetailPage.tsx",
+        "DepartmentListPage.tsx",
+        "index.ts",
+        "HospitalDetailPage.tsx",
+        "HospitalListPage.tsx",
+        "index.ts",
+        "index.ts",
+        "ModuleAccessControlPage.tsx",
+        "index.ts",
+        "SystemMonitoringPage.tsx",
+        "index.ts",
+        "RoleListPage.tsx",
+        "RolePermissionPage.tsx",
+        "index.ts",
+        "SystemSettingsPage.tsx",
+        "index.ts",
+        "SystemLogsPage.tsx",
+        "index.ts",
+        "UserDetailPage.tsx",
+        "UserListPage.tsx"
+      ]
+    },
+    "auth": {
+      "dir": "auth",
+      "files": 9,
+      "pages": 2,
+      "services": 4,
+      "components": 1,
+      "staticDataFiles": 0,
+      "supabaseFromCalls": 8,
+      "localStorageCalls": 1,
+      "tables": [
+        "hospital_modules",
+        "hospitals",
+        "users"
+      ],
+      "tableCount": 3,
+      "persistence": "database",
+      "flags": {
+        "supabase": true,
+        "offline": false,
+        "audit": false,
+        "rbac": false,
+        "pdf": false,
+        "qr": false,
+        "localStorage": true,
+        "seed": false
+      },
+      "pageList": [
+        "index.ts",
+        "LoginPage.tsx"
+      ]
+    },
+    "catalog": {
+      "dir": "catalog",
+      "files": 9,
+      "pages": 5,
+      "services": 3,
+      "components": 0,
+      "staticDataFiles": 0,
+      "supabaseFromCalls": 6,
+      "localStorageCalls": 0,
+      "tables": [
+        "contracts",
+        "contracts_view",
+        "drugs",
+        "non_drugs",
+        "suppliers"
+      ],
+      "tableCount": 5,
+      "persistence": "database",
+      "flags": {
+        "supabase": true,
+        "offline": false,
+        "audit": false,
+        "rbac": false,
+        "pdf": true,
+        "qr": false,
+        "localStorage": false,
+        "seed": false
+      },
+      "pageList": [
+        "ContractCatalogPage.tsx",
+        "DrugCatalogPage.tsx",
+        "FacilityCatalogPage.tsx",
+        "NonDrugCatalogPage.tsx",
+        "SupplierCatalogPage.tsx"
+      ]
+    },
+    "distribution": {
+      "dir": "distribution",
+      "files": 11,
+      "pages": 7,
+      "services": 2,
+      "components": 1,
+      "staticDataFiles": 0,
+      "supabaseFromCalls": 33,
+      "localStorageCalls": 6,
+      "tables": [
+        "departments",
+        "distribution_indent_entitlements",
+        "distribution_indent_request_items",
+        "distribution_indent_requests",
+        "drugs",
+        "non_drugs",
+        "pharmacy_stock_batches",
+        "pharmacy_stock_locations",
+        "pharmacy_transfer_request_items",
+        "pharmacy_transfer_requests",
+        "users"
+      ],
+      "tableCount": 11,
+      "persistence": "database",
+      "flags": {
+        "supabase": true,
+        "offline": false,
+        "audit": true,
+        "rbac": false,
+        "pdf": false,
+        "qr": false,
+        "localStorage": true,
+        "seed": false
+      },
+      "pageList": [
+        "IndentEntitlementPage.tsx",
+        "IndentRequestDetailPage.tsx",
+        "IndentRequestFormPage.tsx",
+        "IndentRequestListPage.tsx",
+        "index.ts",
+        "IssueCounterPage.tsx",
+        "TransferRequestListPage.tsx"
+      ]
+    },
+    "financial": {
+      "dir": "financial",
+      "files": 18,
+      "pages": 7,
+      "services": 10,
+      "components": 0,
+      "staticDataFiles": 0,
+      "supabaseFromCalls": 48,
+      "localStorageCalls": 0,
+      "tables": [
+        "approval_logs",
+        "drugs",
+        "hospital_forecast_justifications",
+        "non_drugs",
+        "pharmacy_appl",
+        "pharmacy_appl_expenses",
+        "pharmacy_budget_transactions",
+        "pharmacy_budgets",
+        "pharmacy_cc_expenses",
+        "pharmacy_oxygen_reception_records",
+        "pharmacy_purchase_order_items",
+        "pharmacy_purchase_orders",
+        "pharmacy_warrants"
+      ],
+      "tableCount": 13,
+      "persistence": "database",
+      "flags": {
+        "supabase": true,
+        "offline": false,
+        "audit": false,
+        "rbac": false,
+        "pdf": true,
+        "qr": false,
+        "localStorage": false,
+        "seed": false
+      },
+      "pageList": [
+        "APPLAllocationPage.tsx",
+        "BudgetOverviewPage.tsx",
+        "CCAllocationPage.tsx",
+        "HospitalBudgetForecastPage.tsx",
+        "index.ts",
+        "LPAllocationPage.tsx",
+        "WarrantPage.tsx"
+      ]
+    },
+    "hospital-admin": {
+      "dir": "hospital-admin",
+      "files": 13,
+      "pages": 5,
+      "services": 7,
+      "components": 0,
+      "staticDataFiles": 0,
+      "supabaseFromCalls": 38,
+      "localStorageCalls": 0,
+      "tables": [
+        "approval_logs",
+        "audit_logs",
+        "hospital_health_metrics",
+        "hospital_logs",
+        "hospitals",
+        "memos",
+        "patient_access_logs",
+        "patients",
+        "roles",
+        "sensitive_data_requests",
+        "system_backups",
+        "users"
+      ],
+      "tableCount": 12,
+      "persistence": "database",
+      "flags": {
+        "supabase": true,
+        "offline": false,
+        "audit": true,
+        "rbac": false,
+        "pdf": false,
+        "qr": false,
+        "localStorage": false,
+        "seed": false
+      },
+      "pageList": [
+        "index.ts",
+        "MemoListPage.tsx",
+        "index.ts",
+        "SensitiveDataRequestDetailPage.tsx",
+        "SensitiveDataRequestListPage.tsx"
+      ]
+    },
+    "hub": {
+      "dir": "hub",
+      "files": 33,
+      "pages": 30,
+      "services": 0,
+      "components": 3,
+      "staticDataFiles": 0,
+      "supabaseFromCalls": 8,
+      "localStorageCalls": 1,
+      "tables": [
+        "gallery_albums",
+        "gallery_photos",
+        "users"
+      ],
+      "tableCount": 3,
+      "persistence": "database",
+      "flags": {
+        "supabase": true,
+        "offline": false,
+        "audit": false,
+        "rbac": true,
+        "pdf": false,
+        "qr": false,
+        "localStorage": true,
+        "seed": false
+      },
+      "pageList": [
+        "AlbumDetailPage.tsx",
+        "MyGalleryPage.tsx",
+        "index.ts",
+        "ModuleHubPage.tsx",
+        "AdminApprovalsTab.tsx",
+        "AdminDepartmentsTab.tsx",
+        "AdminOverviewTab.tsx",
+        "AdminRbacTab.tsx",
+        "AdminSystemLogsTab.tsx",
+        "AdminUsersTab.tsx",
+        "MyAdminDashboard.tsx",
+        "AdminSubMenu.tsx",
+        "BorangSubMenu.tsx",
+        "CrossBorderSubMenu.tsx",
+        "CutiSubMenu.tsx",
+        "CylinderSubMenu.tsx",
+        "FileSubMenu.tsx",
+        "FormulariSubMenu.tsx",
+        "InventorySubMenu.tsx",
+        "KunciSubMenu.tsx",
+        "PerolehanSubMenu.tsx",
+        "PorterSubMenu.tsx",
+        "PriviledgingSubMenu.tsx",
+        "StaffSubMenu.tsx",
+        "SuhuSubMenu.tsx",
+        "SuratSubMenu.tsx",
+        "TempahanSubMenu.tsx",
+        "TimeOffSubMenu.tsx",
+        "TransporterSubMenu.tsx",
+        "WarrantSubMenu.tsx"
+      ]
+    },
+    "inventory": {
+      "dir": "inventory",
+      "files": 21,
+      "pages": 13,
+      "services": 1,
+      "components": 4,
+      "staticDataFiles": 0,
+      "supabaseFromCalls": 113,
+      "localStorageCalls": 32,
+      "tables": [
+        "appl_approved_suppliers",
+        "appl_sync_logs",
+        "cc_sync_logs",
+        "contracts",
+        "drug_categories",
+        "drugs",
+        "facility_drug_inventory",
+        "facility_non_drug_inventory",
+        "facility_nondrug_inventory",
+        "lp_sync_logs",
+        "non_drug_categories",
+        "non_drugs",
+        "pharmacy_stock_batches",
+        "pharmacy_stock_locations",
+        "pharmacy_stock_transactions"
+      ],
+      "tableCount": 15,
+      "persistence": "database",
+      "flags": {
+        "supabase": true,
+        "offline": true,
+        "audit": true,
+        "rbac": true,
+        "pdf": true,
+        "qr": true,
+        "localStorage": true,
+        "seed": false
+      },
+      "pageList": [
+        "APPLInventoryPage.tsx",
+        "DrugInventoryPage.tsx",
+        "FacilityDrugInventoryPage.tsx",
+        "FacilityNonDrugInventoryPage.tsx",
+        "index.ts",
+        "InventoryOverviewPage.tsx",
+        "InventoryReportPage.tsx",
+        "KewPs4LedgerPage.tsx",
+        "NearExpiryPage.tsx",
+        "NonDrugInventoryPage.tsx",
+        "SlowMovingPage.tsx",
+        "StockMovementScannerPage.tsx",
+        "StoreLocationManagementPage.tsx"
+      ]
+    },
+    "maintenance": {
+      "dir": "maintenance",
+      "files": 8,
+      "pages": 4,
+      "services": 3,
+      "components": 0,
+      "staticDataFiles": 0,
+      "supabaseFromCalls": 19,
+      "localStorageCalls": 0,
+      "tables": [
+        "pharmacy_stock_batches",
+        "pharmacy_stock_locations",
+        "pharmacy_unit_catalog",
+        "pharmacy_unit_catalog_changes",
+        "pharmacy_unit_catalog_items"
+      ],
+      "tableCount": 5,
+      "persistence": "database",
+      "flags": {
+        "supabase": true,
+        "offline": false,
+        "audit": false,
+        "rbac": false,
+        "pdf": false,
+        "qr": false,
+        "localStorage": false,
+        "seed": false
+      },
+      "pageList": [
+        "index.ts",
+        "StockLocationPage.tsx",
+        "StockVerificationPage.tsx",
+        "UnitCatalogPage.tsx"
+      ]
+    },
+    "mycrossborder": {
+      "dir": "mycrossborder",
+      "files": 7,
+      "pages": 4,
+      "services": 2,
+      "components": 0,
+      "staticDataFiles": 0,
+      "supabaseFromCalls": 16,
+      "localStorageCalls": 3,
+      "tables": [
+        "crossborder_escorts",
+        "crossborder_patients",
+        "crossborder_transfers"
+      ],
+      "tableCount": 3,
+      "persistence": "database",
+      "flags": {
+        "supabase": true,
+        "offline": false,
+        "audit": false,
+        "rbac": false,
+        "pdf": true,
+        "qr": false,
+        "localStorage": true,
+        "seed": true
+      },
+      "pageList": [
+        "CrossborderCreatePage.tsx",
+        "CrossborderDashboardPage.tsx",
+        "CrossborderDetailPage.tsx",
+        "CrossborderLogPage.tsx"
+      ]
+    },
+    "mycylinder": {
+      "dir": "mycylinder",
+      "files": 20,
+      "pages": 6,
+      "services": 10,
+      "components": 1,
+      "staticDataFiles": 0,
+      "supabaseFromCalls": 343,
+      "localStorageCalls": 0,
+      "tables": [
+        "audit_logs",
+        "departments",
+        "pharmacy_oxygen_consumption",
+        "pharmacy_oxygen_cylinder_inventory",
+        "pharmacy_oxygen_cylinder_maintenance",
+        "pharmacy_oxygen_cylinder_maintenance_items",
+        "pharmacy_oxygen_cylinder_movements",
+        "pharmacy_oxygen_cylinder_sizes",
+        "pharmacy_oxygen_cylinder_types",
+        "pharmacy_oxygen_dept_request_items",
+        "pharmacy_oxygen_dept_requests",
+        "pharmacy_oxygen_kewps4_transactions",
+        "pharmacy_oxygen_pricing_config",
+        "pharmacy_oxygen_receive_document_items",
+        "pharmacy_oxygen_receive_documents",
+        "pharmacy_oxygen_reception_items",
+        "pharmacy_oxygen_reception_records",
+        "pharmacy_oxygen_request_document_items",
+        "pharmacy_oxygen_request_documents",
+        "pharmacy_oxygen_return_document_items",
+        "pharmacy_oxygen_return_documents",
+        "pharmacy_oxygen_size_type_combos",
+        "pharmacy_oxygen_stock_adjustments",
+        "pharmacy_oxygen_store_verifications",
+        "pharmacy_oxygen_system_settings",
+        "pharmacy_warrants",
+        "suppliers",
+        "users"
+      ],
+      "tableCount": 28,
+      "persistence": "database",
+      "flags": {
+        "supabase": true,
+        "offline": false,
+        "audit": true,
+        "rbac": true,
+        "pdf": true,
+        "qr": true,
+        "localStorage": false,
+        "seed": false
+      },
+      "pageList": [
+        "CylinderKewPs4LedgerPage.tsx",
+        "CylinderMaintenancePage.tsx",
+        "CylinderReportPage.tsx",
+        "index.ts",
+        "OxygenAnalytics.tsx",
+        "OxygenDashboardPage.tsx"
+      ]
+    },
+    "myformulari": {
+      "dir": "myformulari",
+      "files": 66,
+      "pages": 11,
+      "services": 11,
+      "components": 28,
+      "staticDataFiles": 11,
+      "supabaseFromCalls": 12,
+      "localStorageCalls": 32,
+      "tables": [
+        "drugs",
+        "facility_drug_inventory",
+        "pharmacy_unit_catalog",
+        "pharmacy_unit_catalog_items"
+      ],
+      "tableCount": 4,
+      "persistence": "database",
+      "flags": {
+        "supabase": true,
+        "offline": false,
+        "audit": false,
+        "rbac": false,
+        "pdf": true,
+        "qr": false,
+        "localStorage": true,
+        "seed": false
+      },
+      "pageList": [
+        "AntidoteProtocolPage.tsx",
+        "AntimicrobialGuidelinePage.tsx",
+        "DilutionProtocolPage.tsx",
+        "DrugAlternativesPage.tsx",
+        "DrugDetailPage.tsx",
+        "DrugQuotaPage.tsx",
+        "FormulariDashboardPage.tsx",
+        "HamListPage.tsx",
+        "HospitalLawasFormulariPage.tsx",
+        "LasaListPage.tsx",
+        "PaediatricCataloguePage.tsx"
+      ]
+    },
+    "mykunci": {
+      "dir": "mykunci",
+      "files": 7,
+      "pages": 5,
+      "services": 1,
+      "components": 0,
+      "staticDataFiles": 0,
+      "supabaseFromCalls": 15,
+      "localStorageCalls": 3,
+      "tables": [
+        "kunci_audit_bulanan",
+        "kunci_daftar",
+        "kunci_log"
+      ],
+      "tableCount": 3,
+      "persistence": "database",
+      "flags": {
+        "supabase": true,
+        "offline": true,
+        "audit": false,
+        "rbac": false,
+        "pdf": false,
+        "qr": true,
+        "localStorage": true,
+        "seed": true
+      },
+      "pageList": [
+        "KunciAuditPage.tsx",
+        "KunciDashboardPage.tsx",
+        "KunciLogPage.tsx",
+        "KunciPolicyPage.tsx",
+        "KunciRegistryPage.tsx"
+      ]
+    },
+    "mymsds": {
+      "dir": "mymsds",
+      "files": 7,
+      "pages": 1,
+      "services": 0,
+      "components": 4,
+      "staticDataFiles": 1,
+      "supabaseFromCalls": 0,
+      "localStorageCalls": 0,
+      "tables": [],
+      "tableCount": 0,
+      "persistence": "static-bundle",
+      "flags": {
+        "supabase": false,
+        "offline": false,
+        "audit": false,
+        "rbac": false,
+        "pdf": false,
+        "qr": false,
+        "localStorage": false,
+        "seed": false
+      },
+      "pageList": [
+        "MyMsdsDashboardPage.tsx"
+      ]
+    },
+    "myperolehan": {
+      "dir": "myperolehan",
+      "files": 16,
+      "pages": 7,
+      "services": 1,
+      "components": 7,
+      "staticDataFiles": 0,
+      "supabaseFromCalls": 24,
+      "localStorageCalls": 0,
+      "tables": [
+        "admin_kategoris",
+        "admin_lpos",
+        "admin_objeks",
+        "admin_payments",
+        "admin_pembangunan",
+        "admin_perihal_catalog",
+        "admin_programs",
+        "admin_purchase_order_items",
+        "admin_purchase_orders",
+        "admin_receiving_records",
+        "admin_suppliers",
+        "admin_warrants"
+      ],
+      "tableCount": 12,
+      "persistence": "database",
+      "flags": {
+        "supabase": true,
+        "offline": false,
+        "audit": false,
+        "rbac": false,
+        "pdf": false,
+        "qr": false,
+        "localStorage": false,
+        "seed": false
+      },
+      "pageList": [
+        "MyPerolehanDashboard.tsx",
+        "PembangunanBudgetTab.tsx",
+        "PengurusanBudgetTab.tsx",
+        "PerihalSuppliersTab.tsx",
+        "PerolehanOverviewTab.tsx",
+        "PurchaseOrdersTab.tsx",
+        "ReceivingPaymentsTab.tsx"
+      ]
+    },
+    "myphis": {
+      "dir": "myphis",
+      "files": 2,
+      "pages": 1,
+      "services": 1,
+      "components": 0,
+      "staticDataFiles": 0,
+      "supabaseFromCalls": 4,
+      "localStorageCalls": 4,
+      "tables": [
+        "myphis_disk_changes",
+        "myphis_navigation_logs"
+      ],
+      "tableCount": 2,
+      "persistence": "database",
+      "flags": {
+        "supabase": true,
+        "offline": false,
+        "audit": false,
+        "rbac": false,
+        "pdf": true,
+        "qr": false,
+        "localStorage": true,
+        "seed": true
+      },
+      "pageList": [
+        "MyPhisDashboardPage.tsx"
+      ]
+    },
+    "myporter": {
+      "dir": "myporter",
+      "files": 17,
+      "pages": 9,
+      "services": 2,
+      "components": 5,
+      "staticDataFiles": 0,
+      "supabaseFromCalls": 0,
+      "localStorageCalls": 4,
+      "tables": [],
+      "tableCount": 0,
+      "persistence": "browser-local",
+      "flags": {
+        "supabase": true,
+        "offline": true,
+        "audit": false,
+        "rbac": false,
+        "pdf": true,
+        "qr": false,
+        "localStorage": true,
+        "seed": true
+      },
+      "pageList": [
+        "PorterDashboardPage.tsx",
+        "PorterDriverPanelPage.tsx",
+        "PorterManagerDispatchPage.tsx",
+        "PorterMyRequestsPage.tsx",
+        "PorterReceiverPanelPage.tsx",
+        "PorterReportsPage.tsx",
+        "PorterRequestWizardPage.tsx",
+        "PorterRoleAssignmentPage.tsx",
+        "PorterRosterPage.tsx"
+      ]
+    },
+    "myprepacking": {
+      "dir": "myprepacking",
+      "files": 35,
+      "pages": 8,
+      "services": 2,
+      "components": 21,
+      "staticDataFiles": 2,
+      "supabaseFromCalls": 52,
+      "localStorageCalls": 1,
+      "tables": [
+        "facility_drug_inventory",
+        "hospitals",
+        "prepack_batches",
+        "prepack_formulation_audit_logs",
+        "prepack_items",
+        "prepack_kewps4_transactions",
+        "prepack_store_verifications",
+        "prepack_transfers",
+        "prepack_usage_logs"
+      ],
+      "tableCount": 9,
+      "persistence": "database",
+      "flags": {
+        "supabase": true,
+        "offline": true,
+        "audit": true,
+        "rbac": false,
+        "pdf": true,
+        "qr": true,
+        "localStorage": true,
+        "seed": false
+      },
+      "pageList": [
+        "PrepackBatchListPage.tsx",
+        "PrepackDashboardPage.tsx",
+        "PrepackItemListPage.tsx",
+        "PrepackKewPs4LedgerPage.tsx",
+        "PrepackLabelStudioPage.tsx",
+        "PrepackReportsPage.tsx",
+        "PrepackStockMovementPage.tsx",
+        "PrepackUsageHistoryPage.tsx"
+      ]
+    },
+    "mypriviledging": {
+      "dir": "mypriviledging",
+      "files": 23,
+      "pages": 7,
+      "services": 1,
+      "components": 10,
+      "staticDataFiles": 3,
+      "supabaseFromCalls": 0,
+      "localStorageCalls": 6,
+      "tables": [],
+      "tableCount": 0,
+      "persistence": "browser-local",
+      "flags": {
+        "supabase": false,
+        "offline": false,
+        "audit": false,
+        "rbac": false,
+        "pdf": false,
+        "qr": false,
+        "localStorage": true,
+        "seed": false
+      },
+      "pageList": [
+        "AdminReviewQueuePage.tsx",
+        "CredentialingCriteriaPage.tsx",
+        "MySubmissionsPage.tsx",
+        "PrintPriviledgingPage.tsx",
+        "PriviledgingDashboardPage.tsx",
+        "ProcedureCatalogPage.tsx",
+        "StaffProgressPage.tsx"
+      ]
+    },
+    "mystaff": {
+      "dir": "mystaff",
+      "files": 14,
+      "pages": 9,
+      "services": 2,
+      "components": 2,
+      "staticDataFiles": 0,
+      "supabaseFromCalls": 25,
+      "localStorageCalls": 16,
+      "tables": [
+        "staff_audit_logs",
+        "staff_deadlines",
+        "staff_leave_applications",
+        "staff_leave_quotas",
+        "staff_leave_types",
+        "staff_movements",
+        "staff_org_chart",
+        "staff_reminders",
+        "users"
+      ],
+      "tableCount": 9,
+      "persistence": "database",
+      "flags": {
+        "supabase": true,
+        "offline": false,
+        "audit": true,
+        "rbac": false,
+        "pdf": false,
+        "qr": false,
+        "localStorage": true,
+        "seed": true
+      },
+      "pageList": [
+        "StaffCalendarPage.tsx",
+        "StaffDashboardPage.tsx",
+        "StaffDeadlinePage.tsx",
+        "StaffHodPage.tsx",
+        "StaffLeaveApplyPage.tsx",
+        "StaffLeavePage.tsx",
+        "StaffMovementPage.tsx",
+        "StaffOrgChartPage.tsx",
+        "StaffReminderPage.tsx"
+      ]
+    },
+    "mysuhu": {
+      "dir": "mysuhu",
+      "files": 8,
+      "pages": 5,
+      "services": 2,
+      "components": 0,
+      "staticDataFiles": 0,
+      "supabaseFromCalls": 20,
+      "localStorageCalls": 8,
+      "tables": [
+        "ambang_suhu",
+        "bacaan_suhu",
+        "lokasi",
+        "unit_pemantauan"
+      ],
+      "tableCount": 4,
+      "persistence": "database",
+      "flags": {
+        "supabase": true,
+        "offline": true,
+        "audit": false,
+        "rbac": false,
+        "pdf": true,
+        "qr": false,
+        "localStorage": true,
+        "seed": true
+      },
+      "pageList": [
+        "AdminSetupPage.tsx",
+        "BreachLogPage.tsx",
+        "DepartmentSuhuPage.tsx",
+        "SuhuDashboardPage.tsx",
+        "UnitDetailPage.tsx"
+      ]
+    },
+    "mytempahan": {
+      "dir": "mytempahan",
+      "files": 16,
+      "pages": 7,
+      "services": 5,
+      "components": 2,
+      "staticDataFiles": 0,
+      "supabaseFromCalls": 0,
+      "localStorageCalls": 14,
+      "tables": [],
+      "tableCount": 0,
+      "persistence": "browser-local",
+      "flags": {
+        "supabase": false,
+        "offline": true,
+        "audit": false,
+        "rbac": false,
+        "pdf": true,
+        "qr": true,
+        "localStorage": true,
+        "seed": true
+      },
+      "pageList": [
+        "TempahanApprovalQueuePage.tsx",
+        "TempahanCalendarPage.tsx",
+        "TempahanDashboardPage.tsx",
+        "TempahanMyBookingsPage.tsx",
+        "TempahanReportsPage.tsx",
+        "TempahanRequestFormPage.tsx",
+        "TempahanRoomRegistryPage.tsx"
+      ]
+    },
+    "mytimeoff": {
+      "dir": "mytimeoff",
+      "files": 8,
+      "pages": 6,
+      "services": 1,
+      "components": 0,
+      "staticDataFiles": 0,
+      "supabaseFromCalls": 17,
+      "localStorageCalls": 2,
+      "tables": [
+        "toil_audit_log",
+        "toil_balance",
+        "toil_claims",
+        "toil_redemptions"
+      ],
+      "tableCount": 4,
+      "persistence": "database",
+      "flags": {
+        "supabase": true,
+        "offline": false,
+        "audit": true,
+        "rbac": false,
+        "pdf": false,
+        "qr": false,
+        "localStorage": true,
+        "seed": false
+      },
+      "pageList": [
+        "TimeOffClaimPage.tsx",
+        "TimeOffDashboardPage.tsx",
+        "TimeOffHistoryPage.tsx",
+        "TimeOffHodPage.tsx",
+        "TimeOffMyClaimsPage.tsx",
+        "TimeOffRedeemPage.tsx"
+      ]
+    },
+    "mytransporter": {
+      "dir": "mytransporter",
+      "files": 18,
+      "pages": 13,
+      "services": 2,
+      "components": 2,
+      "staticDataFiles": 0,
+      "supabaseFromCalls": 40,
+      "localStorageCalls": 10,
+      "tables": [
+        "transport_request_logs",
+        "transport_requests",
+        "transport_vehicles",
+        "users",
+        "vehicle_inspections",
+        "vehicle_issue_reports"
+      ],
+      "tableCount": 6,
+      "persistence": "database",
+      "flags": {
+        "supabase": true,
+        "offline": true,
+        "audit": false,
+        "rbac": false,
+        "pdf": true,
+        "qr": false,
+        "localStorage": true,
+        "seed": true
+      },
+      "pageList": [
+        "jataNegaraBase64.ts",
+        "TransporterAdminApprovalPage.tsx",
+        "TransporterAvailabilityPage.tsx",
+        "TransporterDashboardPage.tsx",
+        "TransporterDriverMonitorPage.tsx",
+        "TransporterDriverPanelPage.tsx",
+        "TransporterMyRequestsPage.tsx",
+        "TransporterReportsPage.tsx",
+        "TransporterRequestFormPage.tsx",
+        "TransporterRoleAssignmentPage.tsx",
+        "TransporterVehicleIssuesPage.tsx",
+        "TransporterVehicleMovementPage.tsx",
+        "TransporterVehicleRegistryPage.tsx"
+      ]
+    },
+    "mywarrant": {
+      "dir": "mywarrant",
+      "files": 5,
+      "pages": 3,
+      "services": 1,
+      "components": 0,
+      "staticDataFiles": 0,
+      "supabaseFromCalls": 5,
+      "localStorageCalls": 0,
+      "tables": [
+        "approval_logs",
+        "pharmacy_lou",
+        "pharmacy_oxygen_reception_records",
+        "pharmacy_purchase_orders",
+        "pharmacy_warrants"
+      ],
+      "tableCount": 5,
+      "persistence": "database",
+      "flags": {
+        "supabase": true,
+        "offline": false,
+        "audit": false,
+        "rbac": false,
+        "pdf": false,
+        "qr": false,
+        "localStorage": false,
+        "seed": false
+      },
+      "pageList": [
+        "index.ts",
+        "PharmacyLogisticsDashboard.tsx",
+        "MyWarrantDashboard.tsx"
+      ]
+    },
+    "procurement": {
+      "dir": "procurement",
+      "files": 31,
+      "pages": 17,
+      "services": 13,
+      "components": 0,
+      "staticDataFiles": 0,
+      "supabaseFromCalls": 257,
+      "localStorageCalls": 11,
+      "tables": [
+        "approval_logs",
+        "contracts",
+        "drugs",
+        "non_drugs",
+        "penalty_performance_standards",
+        "pharmacy_credit_note_items",
+        "pharmacy_credit_notes",
+        "pharmacy_goods_receipt_items",
+        "pharmacy_goods_receipts",
+        "pharmacy_lou",
+        "pharmacy_lpo",
+        "pharmacy_lpo_reminders",
+        "pharmacy_order_tracking",
+        "pharmacy_penalties",
+        "pharmacy_purchase_order_items",
+        "pharmacy_purchase_orders",
+        "pharmacy_receiving",
+        "pharmacy_receiving_documents",
+        "pharmacy_receiving_items",
+        "pharmacy_supplier_assessments",
+        "pharmacy_warrants",
+        "suppliers",
+        "users"
+      ],
+      "tableCount": 23,
+      "persistence": "database",
+      "flags": {
+        "supabase": true,
+        "offline": true,
+        "audit": false,
+        "rbac": false,
+        "pdf": true,
+        "qr": false,
+        "localStorage": true,
+        "seed": false
+      },
+      "pageList": [
+        "APPLPenaltyDetailPage.tsx",
+        "CCPenaltyDetailPage.tsx",
+        "CreditNoteAuditPage.tsx",
+        "ExcelUploadModal.tsx",
+        "GoodsReceivingForm.tsx",
+        "index.ts",
+        "LPOListPage.tsx",
+        "OrderTrackingPage.tsx",
+        "PaymentPage.tsx",
+        "PenaltyDetailPage.tsx",
+        "PenaltyPage.tsx",
+        "PurchaseOrderCreatePage.tsx",
+        "PurchaseOrderDetailPage.tsx",
+        "PurchaseOrderDetailView.tsx",
+        "PurchaseOrderListPage.tsx",
+        "ReceivingPage.tsx",
+        "SupplierPerformancePage.tsx"
+      ]
+    },
+    "profile": {
+      "dir": "profile",
+      "files": 6,
+      "pages": 1,
+      "services": 1,
+      "components": 3,
+      "staticDataFiles": 0,
+      "supabaseFromCalls": 7,
+      "localStorageCalls": 2,
+      "tables": [
+        "audit_logs",
+        "users"
+      ],
+      "tableCount": 2,
+      "persistence": "database",
+      "flags": {
+        "supabase": true,
+        "offline": false,
+        "audit": true,
+        "rbac": false,
+        "pdf": false,
+        "qr": false,
+        "localStorage": true,
+        "seed": false
+      },
+      "pageList": [
+        "ProfilePage.tsx"
+      ]
+    },
+    "reports": {
+      "dir": "reports",
+      "files": 10,
+      "pages": 4,
+      "services": 5,
+      "components": 0,
+      "staticDataFiles": 0,
+      "supabaseFromCalls": 12,
+      "localStorageCalls": 0,
+      "tables": [
+        "pharmacy_credit_notes",
+        "pharmacy_goods_receipts",
+        "pharmacy_lou",
+        "pharmacy_lpo",
+        "pharmacy_order_tracking",
+        "pharmacy_penalties",
+        "pharmacy_purchase_orders",
+        "pharmacy_supplier_assessments",
+        "pharmacy_warrants"
+      ],
+      "tableCount": 9,
+      "persistence": "database",
+      "flags": {
+        "supabase": true,
+        "offline": false,
+        "audit": false,
+        "rbac": false,
+        "pdf": true,
+        "qr": false,
+        "localStorage": false,
+        "seed": false
+      },
+      "pageList": [
+        "FinancialReportPage.tsx",
+        "index.ts",
+        "ProcurementReportPage.tsx",
+        "ReportsPage.tsx"
+      ]
+    }
+  },
+  "platform": {
+    "offlineTables": [
+      "ambang_suhu",
+      "bacaan_suhu",
+      "crossborder_referrals",
+      "departments",
+      "drugs",
+      "kunci_daftar",
+      "kunci_log",
+      "lokasi",
+      "msds_records",
+      "pharmacy_budgets",
+      "pharmacy_lpo",
+      "pharmacy_purchase_orders",
+      "pharmacy_warrants",
+      "prepack_batches",
+      "prepack_items",
+      "prepack_kewps4_ledger",
+      "suppliers",
+      "tempahan_bookings",
+      "tempahan_rooms",
+      "transporter_requests",
+      "transporter_vehicles",
+      "unit_pemantauan",
+      "users"
+    ],
+    "offlineTableCount": 23,
+    "offlineServices": [
+      "offlineAdapter",
+      "offlineFetch",
+      "offlinePreloader",
+      "offlineQueue",
+      "offlineSession",
+      "offlineSyncService"
+    ],
+    "pwa": true,
+    "serviceCount": 97,
+    "edgeFunctions": [
+      "admin-user-ops",
+      "appl-sheet-sync",
+      "lp-sheet-sync"
+    ],
+    "ruleChecker": true,
+    "governanceTests": [
+      "agent-governance.test.cjs",
+      "agent-rules.test.cjs",
+      "agent-system.test.cjs",
+      "design-tokens.test.cjs"
+    ],
+    "productTests": [
+      "home-health.ts",
+      "home-auth-security.test.cjs",
+      "home-formulari-assets.test.cjs",
+      "home-health-regressions.test.cjs",
+      "home-health-ui.spec.cjs",
+      "home-inventory-contracts.test.cjs",
+      "home-offline-fetch.test.cjs",
+      "home-procurement-contracts.test.cjs",
+      "home-release-safety.test.cjs",
+      "home-store-locations-rls.sql",
+      "home-store-locations-rls.test.cjs",
+      "home-ui-regressions.spec.ts"
+    ],
+    "backups": [
+      "backup_2026-08-15T05-02-45-348Z",
+      "backup_2026-08-30T14-13-31-650Z",
+      "backup_2026-09-18T14-04-59-173Z",
+      "backup_2026-09-22T13-46-39-960Z"
+    ]
+  }
+}

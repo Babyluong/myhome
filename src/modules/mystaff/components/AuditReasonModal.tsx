@@ -2,19 +2,9 @@
 // Professional Confirmation Modal with Mandatory Reason & Audit Attribution
 
 import React, { useState } from 'react'
-import {
-  AlertTriangle,
-  User,
-  Clock,
-  Trash2,
-  Edit3,
-  X,
-  ShieldAlert,
-  CheckCircle2,
-  FileText
-} from 'lucide-react'
+import { AlertTriangle, User, Trash2, Edit3, X, ShieldAlert, CheckCircle2 } from 'lucide-react'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
-import { Button } from '@/components/ui'
+import '@/components/ui'
 
 interface AuditReasonModalProps {
   isOpen: boolean

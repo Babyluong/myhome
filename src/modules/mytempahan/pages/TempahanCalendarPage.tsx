@@ -3,31 +3,15 @@
 
 import React, { useState, useEffect, useMemo } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import {
-  CalendarDays,
-  ChevronLeft,
-  ChevronRight,
-  Plus,
-  ArrowLeft,
-  Filter,
-  Users,
-  Clock,
-  MapPin,
-  CheckCircle2,
-  AlertCircle,
-  Building2,
-  Calendar as CalendarIcon,
-  Layers,
-  Sparkles
-} from 'lucide-react'
+import 'framer-motion'
+import { CalendarDays, ChevronLeft, ChevronRight, Plus, ArrowLeft, Filter } from 'lucide-react'
 import { ROUTES } from '@/lib/constants'
 import {
   Room,
   Booking
 } from '@/shared/types/mytempahan'
 import { useLanguage } from '@/shared/contexts/LanguageContext'
-import { PUBLIC_HOLIDAYS_DATABASE, getPublicHolidayName } from '../constants/defaultVenues'
+import { getPublicHolidayName } from '../constants/defaultVenues'
 import { getRooms, getBookings } from '../services/tempahanService'
 import { BookingDetailDrawer } from '../components/BookingDetailDrawer'
 import { cn } from '@/lib/utils'
@@ -52,7 +36,7 @@ export const TempahanCalendarPage: React.FC = () => {
 
   const [rooms, setRooms] = useState<Room[]>([])
   const [bookings, setBookings] = useState<Booking[]>([])
-  const [loading, setLoading] = useState(true)
+  const [, setLoading] = useState(true)
 
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null)
   const [drawerOpen, setDrawerOpen] = useState(false)

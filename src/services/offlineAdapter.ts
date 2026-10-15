@@ -1,144 +1,79 @@
 import { get, set } from 'idb-keyval'
 import { supabase } from './supabase'
-import { offlineQueue, MutationAction, ConflictPolicy, QueuedMutation } from './offlineQueue'
+import { offlineQueue, MutationAction, ConflictPolicy } from './offlineQueue'
 import { offlineSyncService } from './offlineSyncService'
-import { mergeTableRecords } from './offlineFetch'
+import { getOfflineGeneration, offlineScope } from './offlineSession'
 
-export interface MutationOptions<T = any, P = any> {
+export interface MutationOptions<P = Record<string, unknown>> {
   module: string
   table: string
   action: MutationAction
   payload: P
-  matchCriteria?: Record<string, any>
+  matchCriteria?: Record<string, unknown>
   conflictPolicy?: ConflictPolicy
 }
 
-export interface MutationResult<T = any> {
+export interface MutationResult<T = Record<string, unknown>> {
   data: T | null
   error: Error | null
   isOffline: boolean
   queued: boolean
 }
 
+function recordId(value: object): unknown { return 'id' in value ? value.id : undefined }
 const CACHE_PREFIX = 'home_offline_cache_'
 
 export class OfflineAdapter {
   /**
    * Universal mutation execution with automatic offline fallback and queueing
    */
-  async executeMutation<T = any, P = any>(options: MutationOptions<T, P>): Promise<MutationResult<T>> {
+  async executeMutation<T = Record<string, unknown>, P = unknown>(options: MutationOptions<P>): Promise<MutationResult<T>> {
+    const generation = getOfflineGeneration()
     const { module, table, action, payload, matchCriteria } = options
-    const conflictPolicy: ConflictPolicy = options.conflictPolicy || (
-      // Personal logs default to client-wins; shared assets default to server-wins
-      ['suhu_log', 'suhu_records', 'user_notes', 'audit_logs'].includes(table)
-        ? 'client-wins'
-        : 'server-wins'
-    )
-
-    const isCurrentlyOnline = typeof navigator !== 'undefined' ? navigator.onLine : true
-
-    // If online, attempt direct execution first
-    if (isCurrentlyOnline) {
+    if ((action === 'UPDATE' || action === 'DELETE') && (!matchCriteria || !Object.keys(matchCriteria).length)) return { data: null, error: new Error('Mutation match criteria required'), isOffline: false, queued: false }
+    if (typeof navigator === 'undefined' || navigator.onLine) {
       try {
-        if (action === 'INSERT') {
-          const { data, error } = await supabase.from(table).insert([payload]).select().single()
-          if (!error) {
-            await this.updateCachedCollection(module, table, action, data || payload)
-            return { data: (data || payload) as T, error: null, isOffline: false, queued: false }
-          }
-          // If non-network error (e.g. database validation error), throw it
-          if (error.code && error.code !== 'PGRST301' && !error.message.includes('Failed to fetch')) {
-            return { data: null, error: new Error(error.message), isOffline: false, queued: false }
-          }
-        } else if (action === 'UPDATE') {
-          let query = supabase.from(table).update(payload)
-          if (matchCriteria) {
-            for (const [k, v] of Object.entries(matchCriteria)) {
-              query = query.eq(k, v)
-            }
-          }
-          const { data, error } = await query.select().maybeSingle()
-          if (!error) {
-            await this.updateCachedCollection(module, table, action, data || payload, matchCriteria)
-            return { data: (data || payload) as T, error: null, isOffline: false, queued: false }
-          }
-          if (error.code && error.code !== 'PGRST301' && !error.message.includes('Failed to fetch')) {
-            return { data: null, error: new Error(error.message), isOffline: false, queued: false }
-          }
-        } else if (action === 'DELETE') {
-          let query = supabase.from(table).delete()
-          if (matchCriteria) {
-            for (const [k, v] of Object.entries(matchCriteria)) {
-              query = query.eq(k, v)
-            }
-          }
-          const { error } = await query
-          if (!error) {
-            await this.updateCachedCollection(module, table, action, null, matchCriteria)
-            return { data: null, error: null, isOffline: false, queued: false }
-          }
-          if (error.code && error.code !== 'PGRST301' && !error.message.includes('Failed to fetch')) {
-            return { data: null, error: new Error(error.message), isOffline: false, queued: false }
-          }
+        let query = action === 'INSERT' ? supabase.from(table).insert([payload])
+          : action === 'UPSERT' ? supabase.from(table).upsert([payload])
+          : action === 'UPDATE' ? supabase.from(table).update(payload)
+          : supabase.from(table).delete()
+        if (matchCriteria && (action === 'UPDATE' || action === 'DELETE')) for (const [key, value] of Object.entries(matchCriteria)) query = query.eq(key, value)
+        const { data, error } = await query.select().maybeSingle()
+        if (generation !== getOfflineGeneration()) return { data: null, error: new Error('Session changed during mutation; refresh to reconcile'), isOffline: false, queued: false }
+        if (!error) {
+          if (!data && action !== 'DELETE') return { data: null, error: new Error('Mutation did not confirm an affected record'), isOffline: false, queued: false }
+          await this.updateCachedCollection(module, table, action, data, matchCriteria)
+          return { data: data as T | null, error: null, isOffline: false, queued: false }
         }
-      } catch (networkError: any) {
-        console.warn(`[OfflineAdapter] Network failure during ${action} on ${table}. Switching to offline queue:`, networkError)
+        if (error.code || !/Failed to fetch|NetworkError|fetch failed/i.test(error.message)) return { data: null, error: new Error('Server rejected mutation'), isOffline: false, queued: false }
+      } catch (error) {
+        if (!(error instanceof Error) || !/Failed to fetch|NetworkError|fetch failed/i.test(error.message)) return { data: null, error: error instanceof Error ? error : new Error('Mutation failed'), isOffline: false, queued: false }
       }
     }
-
-    // OFFLINE FALLBACK:
-    // Generate optimistic record and enqueue to background sync
-    const clientEntityId = (payload as any)?.id || `local_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`
-    const optimisticRecord = {
-      ...(payload as any),
-      id: clientEntityId,
-      __isOptimistic: true,
-      __offlinePending: true,
-      created_at: (payload as any)?.created_at || new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    }
-
-    // Enqueue mutation
-    await offlineQueue.enqueue({
-      module,
-      table,
-      action,
-      payload: optimisticRecord,
-      matchCriteria,
-      conflictPolicy,
-      clientEntityId,
-    })
-
-    // Update optimistic cache
+    if (generation !== getOfflineGeneration()) return { data: null, error: new Error('Session changed'), isOffline: true, queued: false }
+    const record = payload && typeof payload === 'object' ? payload as Record<string, unknown> : {}
+    const clientEntityId = typeof record.id === 'string' ? record.id : undefined
+    const optimisticRecord = { ...record, __isOptimistic: true, __offlinePending: true }
+    try {
+      await offlineQueue.enqueue({ module, table, action, payload, matchCriteria, conflictPolicy: options.conflictPolicy || 'server-wins', clientEntityId })
+    } catch (error) { return { data: null, error: error instanceof Error ? error : new Error('Queue persistence failed'), isOffline: true, queued: false } }
+    if (generation !== getOfflineGeneration()) return { data: null, error: new Error('Session changed; queued operation remains with originating account'), isOffline: true, queued: true }
     await this.updateCachedCollection(module, table, action, optimisticRecord, matchCriteria)
-
-    // Trigger sync service notification so UI updates pending badge
     void offlineSyncService.verifyConnection()
-
-    return {
-      data: optimisticRecord as T,
-      error: null,
-      isOffline: true,
-      queued: true,
-    }
+    return { data: optimisticRecord as T, error: null, isOffline: true, queued: true }
   }
 
   /**
    * Save collection snapshot to local IndexedDB cache
    */
   async setCache<T>(cacheKey: string, data: T[]): Promise<void> {
+    const scope = offlineScope()
+    if (!scope) return
     try {
-      await set(`${CACHE_PREFIX}${cacheKey}`, {
+      await set(`${CACHE_PREFIX}${scope}:${cacheKey}`, {
         timestamp: Date.now(),
         data,
       })
-      if (Array.isArray(data) && data.length > 0) {
-        void mergeTableRecords(cacheKey, data)
-        const pureTable = cacheKey.replace(/^(procurement_|pharmacy_|suhu_|kunci_)/, '')
-        if (pureTable !== cacheKey) {
-          void mergeTableRecords(pureTable, data)
-        }
-      }
     } catch (e) {
       console.warn('[OfflineAdapter] Cache write failed:', e)
     }
@@ -147,9 +82,12 @@ export class OfflineAdapter {
   /**
    * Get collection snapshot from cache, merged with any pending optimistic mutations
    */
-  async getCache<T>(cacheKey: string, module?: string, table?: string): Promise<T[] | null> {
+  async getCache<T extends object>(cacheKey: string, module?: string, table?: string): Promise<T[] | null> {
+    const scope = offlineScope()
+    const generation = getOfflineGeneration()
+    if (!scope) return null
     try {
-      const cached = await get<{ timestamp: number; data: T[] }>(`${CACHE_PREFIX}${cacheKey}`)
+      const cached = await get<{ timestamp: number; data: T[] }>(`${CACHE_PREFIX}${scope}:${cacheKey}`)
       if (!cached || !Array.isArray(cached.data)) {
         return null
       }
@@ -164,9 +102,9 @@ export class OfflineAdapter {
         for (const mut of relevantPending) {
           if (mut.action === 'INSERT') {
             // Avoid duplicate if already in cached list
-            const existingIndex = result.findIndex((item: any) => item.id === mut.payload?.id)
+            const existingIndex = result.findIndex((item) => recordId(item) === mut.payload?.id)
             if (existingIndex === -1) {
-              result.unshift({ ...mut.payload, __offlinePending: true })
+              result.unshift({ ...mut.payload, __offlinePending: true } as unknown as T)
             }
           } else if (mut.action === 'UPDATE' && mut.matchCriteria?.id) {
             const index = result.findIndex((item: any) => item.id === mut.matchCriteria?.id)
@@ -179,7 +117,7 @@ export class OfflineAdapter {
         }
       }
 
-      return result
+      return generation === getOfflineGeneration() ? result : null
     } catch (e) {
       console.warn('[OfflineAdapter] Cache read failed:', e)
       return null
@@ -193,14 +131,14 @@ export class OfflineAdapter {
     module: string,
     table: string,
     action: MutationAction,
-    record: any,
-    matchCriteria?: Record<string, any>
+    record: Record<string, unknown> | null,
+    matchCriteria?: Record<string, unknown>
   ): Promise<void> {
     const cacheKey = `${module}_${table}`
-    const existing = (await this.getCache<any>(cacheKey)) || []
+    const existing = (await this.getCache<Record<string, unknown>>(cacheKey)) || []
 
     let updated = [...existing]
-    if (action === 'INSERT' && record) {
+    if ((action === 'INSERT' || action === 'UPSERT') && record) {
       const exists = updated.some((item) => item.id === record.id)
       if (!exists) {
         updated.unshift(record)

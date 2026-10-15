@@ -1,28 +1,11 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
-import {
-  AlertTriangle,
-  Search,
-  Printer,
-  ChevronRight,
-  Sparkles,
-  Layers,
-  ShieldCheck,
-  CheckCircle2,
-  Info,
-  BookOpen,
-  Filter,
-  X,
-  Flame,
-  FileText,
-  AlertOctagon,
-  ExternalLink,
-  HelpCircle
-} from 'lucide-react'
-import { getAllFormulariDrugs } from '../services/formulariService'
-import { KKM_LASA_MASTER_REGISTRY, KkmLasaEntry, getLasaCategories } from '../data/lasaDatabase'
+import { AlertTriangle, Search, Printer, Layers, ShieldCheck, Info, BookOpen, X, Flame, FileText, AlertOctagon, ExternalLink } from 'lucide-react'
+import { getAllFormulariDrugs, FormulariAssetError } from '../services/formulariService'
+import type { DrugEntry } from '../types/formulariTypes'
+import { KKM_LASA_MASTER_REGISTRY, getLasaCategories } from '../data/lasaDatabase'
 import { TallManLettering } from '../components/TallManLettering'
-import { LASABadge, HAMBadge } from '../components/DrugBadge'
+import '../components/DrugBadge'
 
 export const LasaListPage: React.FC = () => {
   const navigate = useNavigate()
@@ -33,7 +16,28 @@ export const LasaListPage: React.FC = () => {
   const [hamOnlyFilter, setHamOnlyFilter] = useState<boolean>(false)
   const [isGuidelineModalOpen, setIsGuidelineModalOpen] = useState<boolean>(false)
 
-  const allDrugs = useMemo(() => getAllFormulariDrugs(), [])
+  const [allDrugs, setAllDrugs] = useState<DrugEntry[]>([])
+  const [isCatalogLoading, setIsCatalogLoading] = useState(true)
+  const [catalogError, setCatalogError] = useState<string | null>(null)
+  const [canRetryCatalog, setCanRetryCatalog] = useState(true)
+
+  const loadCatalog = useCallback(async () => {
+    setIsCatalogLoading(true)
+    setCatalogError(null)
+    try {
+      setAllDrugs(await getAllFormulariDrugs())
+    } catch (error) {
+      setCatalogError(error instanceof FormulariAssetError ? error.message : 'Formulary data is unavailable. Please try again.')
+      setCanRetryCatalog(!(error instanceof FormulariAssetError) || error.retryable)
+    } finally {
+      setIsCatalogLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    void loadCatalog()
+  }, [loadCatalog])
+
   const rawCategories = useMemo(() => getLasaCategories(), [])
   const categories = useMemo(() => rawCategories.map(c => c === 'Semua Kategori' ? 'All Categories' : c), [rawCategories])
 
@@ -115,6 +119,22 @@ export const LasaListPage: React.FC = () => {
     const categoriesCount = categories.length - 1
     return { total, critical, hamCount, categoriesCount }
   }, [categories])
+
+  if (isCatalogLoading) {
+    return <main className="p-6 text-text-secondary" role="status" aria-live="polite">Loading formulary data…</main>
+  }
+
+  if (catalogError) {
+    return (
+      <main className="m-6 rounded-xl border border-border-default bg-surface p-6 text-text-primary" role="alert">
+        <h1 className="text-lg font-semibold">Formulary data could not be loaded</h1>
+        <p className="mt-2 text-sm text-text-secondary">{catalogError}</p>
+        <button type="button" onClick={() => canRetryCatalog ? void loadCatalog() : window.location.reload()} className="mt-4 rounded-lg bg-accent-base px-4 py-2 text-sm font-semibold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-accent-base focus-visible:outline-offset-2">
+          {canRetryCatalog ? 'Try again' : 'Reload app'}
+        </button>
+      </main>
+    )
+  }
 
   return (
     <div className="p-4 sm:p-6 lg:p-8 w-full space-y-8">
@@ -308,7 +328,7 @@ export const LasaListPage: React.FC = () => {
           {/* Confusion Type Filter */}
           <select
             value={confusionFilter}
-            onChange={e => setConfusionFilter(e.target.value as any)}
+            onChange={e => setConfusionFilter((['ALL', 'look-alike', 'sound-alike', 'both', 'packaging'] as const).find(filter => filter === e.currentTarget.value) ?? 'ALL')}
             className="px-4 py-3 bg-subtle/50 border border-border-default rounded-2xl text-xs font-semibold text-text-secondary cursor-pointer focus:outline-hidden focus:border-amber-500 focus:bg-surface"
           >
             <option value="ALL">All Confusion Types</option>
@@ -321,7 +341,7 @@ export const LasaListPage: React.FC = () => {
           {/* Risk Level Filter */}
           <select
             value={riskFilter}
-            onChange={e => setRiskFilter(e.target.value as any)}
+            onChange={e => setRiskFilter((['ALL', 'CRITICAL', 'HIGH', 'MODERATE'] as const).find(risk => risk === e.currentTarget.value) ?? 'ALL')}
             className="px-4 py-3 bg-subtle/50 border border-border-default rounded-2xl text-xs font-semibold text-text-secondary cursor-pointer focus:outline-hidden focus:border-amber-500 focus:bg-surface"
           >
             <option value="ALL">All Risk Levels</option>

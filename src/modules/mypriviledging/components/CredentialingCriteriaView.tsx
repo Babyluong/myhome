@@ -1,18 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  FileCheck2,
-  CheckCircle2,
-  FileText,
-  Clock,
-  ShieldCheck,
-  Award,
-  AlertCircle,
-  Plus,
-  BookOpen,
-  ArrowRight,
-  Printer
-} from 'lucide-react';
+import { FileCheck2, CheckCircle2, FileText, Clock, ShieldCheck, Award, Plus, BookOpen, Printer } from 'lucide-react'
 import { useLanguage } from '@/shared/contexts/LanguageContext';
 import { cn } from '@/lib/utils';
 import { CREDENTIALING_CRITERIA } from '../data/credentialingCriteriaData';

@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import jsQR from 'jsqr';
-import { X, QrCode, AlertCircle, AlertTriangle, RefreshCw, CheckCircle2, Trash2, Camera, Keyboard, Check, Volume2, VolumeX, Search, Database, Wrench, ChevronDown, CheckSquare, Square, ArrowRight, Sparkles, Layers, FileText, Truck, Wifi, WifiOff } from 'lucide-react';
+import { X, QrCode, AlertCircle, AlertTriangle, RefreshCw, CheckCircle2, Camera, Keyboard, Check, Volume2, VolumeX, Search, Database, Wrench, ArrowRight, Layers, FileText, Truck, WifiOff } from 'lucide-react'
 import {
   offlineAwareGetCylinderByCode,
   offlineAwareMarkCylinderAsEmpty,
@@ -11,11 +11,37 @@ import {
   withTimeout,
 } from '@/modules/mycylinder/services/cylinderOfflineService';
 import { cylinderOfflineDB } from '@/modules/mycylinder/services/cylinderOfflineDB';
+import type { CachedCylinder } from '@/modules/mycylinder/services/cylinderOfflineDB';
 import { useCylinderOffline } from '@/modules/mycylinder/hooks/useCylinderOffline';
 import { useAuthStore } from '@/stores/authStore';
 import { useLanguage } from '@/shared/contexts/LanguageContext';
 import { supabase, isSupabaseConfigured } from '@/services/supabase';
 import type { OxygenCylinderWithRelations } from '@/types/pharmacy';
+
+type ScanCylinder = OxygenCylinderWithRelations & {
+  capacity?: string | number | null;
+  size_code?: string | null;
+  is_active?: boolean | null;
+  is_loan?: boolean | null;
+  department?: {
+    department_name?: string | null;
+    name?: string | null;
+  } | null;
+  type_name_display?: string;
+  assigned_ward?: { department_name?: string | null } | null;
+};
+
+type CylinderQueryResult = {
+  data: ScanCylinder[] | null;
+  error: unknown;
+};
+
+type TargetCombo = { display_name?: string | null };
+
+type AudioContextWindow = {
+  AudioContext?: typeof AudioContext;
+  webkitAudioContext?: typeof AudioContext;
+};
 
 interface ScanEmptyCylinderModalProps {
   hospitalId: string;
@@ -26,7 +52,7 @@ interface ScanEmptyCylinderModalProps {
   onSuccess: () => void;
   sessionScannedCylinders: OxygenCylinderWithRelations[];
   setSessionScannedCylinders: React.Dispatch<React.SetStateAction<OxygenCylinderWithRelations[]>>;
-  targetCombo?: any;
+  targetCombo?: TargetCombo;
 }
 
 export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
@@ -53,7 +79,7 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
   const [qrInput, setQrInput] = useState('');
   
   // Database states
-  const [activeCylinders, setActiveCylinders] = useState<any[]>([]);
+  const [activeCylinders, setActiveCylinders] = useState<ScanCylinder[]>([]);
   const [isDbLoading, setIsDbLoading] = useState(false);
   const [showDemoShortcuts, setShowDemoShortcuts] = useState(true); // Expanded by default for quick selection
   const [selectedSizeFilter, setSelectedSizeFilter] = useState('');
@@ -136,12 +162,13 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
   const [useRealCamera, setUseRealCamera] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
 
   // Animation states
   const [isRendered, setIsRendered] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
 
-  const normalizeCylinder = (c: any) => {
+  const normalizeCylinder = (c: ScanCylinder): ScanCylinder => {
     const upperSn = (c.serial_number || '').toUpperCase();
     const upperQr = (c.qr_code || '').toUpperCase();
     const sizeCode = c.size_info?.code || c.size_code || '';
@@ -178,10 +205,10 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
       setIsDbLoading(true);
       try {
         // Step 1: Instant load from IndexedDB local cache (0ms latency, works 100% offline!)
-        const localCached = await cylinderOfflineDB.getAllCylinders(hospitalId);
+        const localCached = await cylinderOfflineDB.getAllCylinders(hospitalId) as unknown as ScanCylinder[];
         if (localCached && localCached.length > 0) {
           const normalizedCached = localCached
-            .filter((c: any) => {
+            .filter((c) => {
               if (c.status === 'deactivated' || c.is_active === false) return false;
               const upperSn = (c.serial_number || '').toUpperCase();
               const upperQr = (c.qr_code || '').toUpperCase();
@@ -217,11 +244,15 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
             query = query.eq('hospital_id', hospitalId);
           }
 
-          const { data, error } = (await withTimeout(Promise.resolve(query), 2500, 'Supabase query timed out')) as any;
+          const { data, error } = await withTimeout(
+            Promise.resolve(query),
+            2500,
+            'Supabase query timed out'
+          ) as unknown as CylinderQueryResult;
 
           if (!error && data) {
             const normalized = data
-              .filter((c: any) => {
+              .filter((c) => {
                 if (c.status === 'deactivated' || c.is_active === false) return false;
                 const upperSn = (c.serial_number || '').toUpperCase();
                 const upperQr = (c.qr_code || '').toUpperCase();
@@ -235,7 +266,7 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
               })
               .map(normalizeCylinder);
             setActiveCylinders(normalized);
-            void cylinderOfflineDB.upsertCylinders(data);
+            void cylinderOfflineDB.upsertCylinders(data as unknown as CachedCylinder[]);
           }
         } else if (!isNetworkAvailable()) {
           setIsOperatingOffline(true);
@@ -269,7 +300,7 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
     const timer = setTimeout(async () => {
       try {
         // 1. Search local offline cache first (zero latency)
-        const localMatches = await cylinderOfflineDB.searchCylinders(hospitalId, queryText, undefined, 30);
+        const localMatches = await cylinderOfflineDB.searchCylinders(hospitalId, queryText, undefined, 30) as unknown as ScanCylinder[];
         if (localMatches && localMatches.length > 0) {
           setActiveCylinders(prev => {
             const existingIds = new Set(prev.map(c => c.id));
@@ -300,17 +331,21 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
             remoteQuery = remoteQuery.eq('hospital_id', hospitalId);
           }
 
-          const { data: remoteCyls } = (await withTimeout(Promise.resolve(remoteQuery), 1500, 'Search query timed out')) as any;
+          const { data: remoteCyls } = await withTimeout(
+            Promise.resolve(remoteQuery),
+            1500,
+            'Search query timed out'
+          ) as unknown as CylinderQueryResult;
 
           if (remoteCyls && remoteCyls.length > 0) {
             setActiveCylinders(prev => {
               const existingIds = new Set(prev.map(c => c.id));
               const toAdd = remoteCyls
-                .filter((rc: any) => !existingIds.has(rc.id) && rc.status !== 'deactivated' && rc.is_active !== false)
+                .filter((rc) => !existingIds.has(rc.id) && rc.status !== 'deactivated' && rc.is_active !== false)
                 .map(normalizeCylinder);
               return toAdd.length > 0 ? [...prev, ...toAdd] : prev;
             });
-            void cylinderOfflineDB.upsertCylinders(remoteCyls);
+            void cylinderOfflineDB.upsertCylinders(remoteCyls as unknown as CachedCylinder[]);
           }
         }
       } catch (e) {
@@ -321,20 +356,12 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
     return () => clearTimeout(timer);
   }, [dbSearchQuery, hospitalId]);
 
-  // Handle camera toggles
-  useEffect(() => {
-    if (cameraActive && activeTab === 'camera') {
-      startCamera();
-    } else {
-      stopCamera();
-    }
-    return () => stopCamera();
-  }, [cameraActive, activeTab]);
-
   const playBeep = (type: 'success' | 'error') => {
     if (!soundEnabled) return;
     try {
-      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const AudioContextConstructor = (window as AudioContextWindow).AudioContext || (window as AudioContextWindow).webkitAudioContext;
+      if (!AudioContextConstructor) return;
+      const audioCtx = new AudioContextConstructor();
 
       if (type === 'success') {
         // Two-tone confirmation chirp — loud and satisfying
@@ -374,9 +401,10 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
     }
   };
 
-  const startCamera = async () => {
+  const startCamera = useCallback(async () => {
     try {
       const s = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      streamRef.current = s;
       setStream(s);
       setUseRealCamera(true);
       if (videoRef.current) {
@@ -386,15 +414,26 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
       console.warn("Webcam fallback triggered.", err);
       setUseRealCamera(false);
     }
-  };
+  }, []);
 
-  const stopCamera = () => {
-    if (stream) {
-      stream.getTracks().forEach(track => track.stop());
+  const stopCamera = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
       setStream(null);
     }
     setUseRealCamera(false);
-  };
+  }, []);
+
+  // Handle camera toggles after the stable callbacks are initialized.
+  useEffect(() => {
+    if (cameraActive && activeTab === 'camera') {
+      void startCamera();
+    } else {
+      stopCamera();
+    }
+    return () => stopCamera();
+  }, [cameraActive, activeTab, startCamera, stopCamera]);
 
   // Safely bind the media stream to the video element once the element mounts
   useEffect(() => {
@@ -408,6 +447,7 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
   // This prevents the camera re-triggering the same code while an API call is in-flight
   // or scanning a neighbouring QR by accident.
   const lastScannedRef = useRef<{ code: string; ts: number } | null>(null);
+  const handleCodeInputRef = useRef<(inputStr: string) => Promise<void>>(async () => undefined);
   const SCAN_COOLDOWN_MS = 2000; // ignore same code for 2 s after a successful scan
 
   useEffect(() => {
@@ -442,7 +482,7 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
               // Cooldown: skip if we just scanned the exact same code within SCAN_COOLDOWN_MS
               if (!last || last.code !== detected.data || now - last.ts > SCAN_COOLDOWN_MS) {
                 lastScannedRef.current = { code: detected.data, ts: now };
-                handleCodeInput(detected.data);
+                void handleCodeInputRef.current(detected.data);
               }
             }
           }
@@ -462,11 +502,11 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
   }, [cameraActive, useRealCamera, stream]);
 
   // Helper to verify if cylinder matches active size filter (e.g. 1.4m3 F size vs N size vs E size)
-  const isCylinderMatchingFilter = (cyl: any, filter: string): boolean => {
+  const isCylinderMatchingFilter = (cyl: OxygenCylinderWithRelations & Partial<Pick<ScanCylinder, 'capacity' | 'size_code'>>, filter: string): boolean => {
     if (!filter) return true;
     const target = filter.toUpperCase().trim();
     const cCode = (cyl.size_info?.code || cyl.size_code || '').toUpperCase().trim();
-    const cCap = Number(cyl.size_info?.capacity || (cyl as any).capacity || 0);
+    const cCap = Number(cyl.size_info?.capacity || cyl.capacity || 0);
 
     // 1.4m3 F size (accepts both P101-F and 101-F formatted 1.4m3 cylinders, rejects N size and E size)
     if (target === 'P101-F' || target === '101-F' || target === '1.4' || target === '1.4M3' || target === '1.4M³') {
@@ -575,7 +615,7 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
               const updateRes = await offlineAwareMarkCylinderAsEmpty(hospitalId, targetCylinder.id, creatorId);
               if (updateRes.isOfflinePending) setIsOperatingOffline(true);
               if (!updateRes.error) {
-                targetCylinder = { ...targetCylinder, status: 'empty', current_location: { location_name: 'Pharmacy Store' } as any };
+                targetCylinder = { ...targetCylinder, status: 'empty', current_location: { location_name: 'Pharmacy Store' } };
               }
             }
             newScannedBatch.push(targetCylinder);
@@ -596,7 +636,7 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
         });
         // Update status in active list rather than removing, so it remains visible with '✓ Diimbas' badge
         const processedIds = new Set(newScannedBatch.map(c => c.id));
-        setActiveCylinders(prev => prev.map(c => processedIds.has(c.id) ? { ...c, status: 'empty', current_location: { location_name: 'Pharmacy Store' } as any } : c));
+        setActiveCylinders(prev => prev.map(c => processedIds.has(c.id) ? { ...c, status: 'empty', current_location: { location_name: 'Pharmacy Store' } } : c));
 
         playBeep('success');
         setSuccessFlash(true);
@@ -634,7 +674,7 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
         const cyl = res.data;
         if (selectedSizeFilter && !isCylinderMatchingFilter(cyl, selectedSizeFilter)) {
           playBeep('error');
-          const cCode = cyl.size_info?.code || (cyl as any).size_code || 'Unknown';
+          const cCode = cyl.size_info?.code || 'Unknown';
           const cCap = cyl.size_info?.capacity ? `${Number(cyl.size_info.capacity)} M³` : '';
           setStatusMessage({
             type: 'error',
@@ -666,14 +706,14 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
           const updateRes = await offlineAwareMarkCylinderAsEmpty(hospitalId, targetCylinder.id, creatorId);
           if (updateRes.isOfflinePending) setIsOperatingOffline(true);
           if (!updateRes.error) {
-            targetCylinder = { ...targetCylinder, status: 'empty', current_location: { location_name: 'Pharmacy Store' } as any };
+            targetCylinder = { ...targetCylinder, status: 'empty', current_location: { location_name: 'Pharmacy Store' } };
           }
           setSessionScannedCylinders(prev => {
             if (prev.some(c => c.id === targetCylinder.id)) return prev;
             return [...prev, targetCylinder];
           });
           // Update status in active list rather than removing, so it remains visible with '✓ Diimbas' badge
-          setActiveCylinders(prev => prev.map(c => c.id === targetCylinder.id ? { ...c, status: 'empty', current_location: { location_name: 'Pharmacy Store' } as any } : c));
+          setActiveCylinders(prev => prev.map(c => c.id === targetCylinder.id ? { ...c, status: 'empty', current_location: { location_name: 'Pharmacy Store' } } : c));
 
           // Track for valve type correction (QR codes don't embed valve type)
           setLastScannedCylinder(targetCylinder);
@@ -706,6 +746,8 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
     }
   };
 
+  handleCodeInputRef.current = handleCodeInput;
+
   const handleSingleConfirm = async () => {
     if (!matchedCylinder) return;
     setIsSubmitting(true);
@@ -726,13 +768,13 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
         if (res.error) {
           setStatusMessage({ type: 'error', text: res.error });
         } else {
-          const updated: OxygenCylinderWithRelations = { ...matchedCylinder, status: 'empty', current_location: { location_name: 'Pharmacy Store' } as any };
+          const updated: OxygenCylinderWithRelations = { ...matchedCylinder, status: 'empty', current_location: { location_name: 'Pharmacy Store' } };
           setSessionScannedCylinders(prev => {
             if (prev.some(c => c.id === updated.id)) return prev;
             return [...prev, updated];
           });
           // Update status in active list rather than removing, so it remains visible with '✓ Diimbas' badge
-          setActiveCylinders(prev => prev.map(c => c.id === updated.id ? { ...c, status: 'empty', current_location: { location_name: 'Pharmacy Store' } as any } : c));
+          setActiveCylinders(prev => prev.map(c => c.id === updated.id ? { ...c, status: 'empty', current_location: { location_name: 'Pharmacy Store' } } : c));
           setLastScannedCylinder(updated);
           playBeep('success');
           setSuccessFlash(true);
@@ -758,7 +800,7 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
   };
 
   // Bulk deplete all cylinders currently displayed under the active ward group
-  const handleBatchDepleteAll = async (cylsToDeplete: any[]) => {
+  const handleBatchDepleteAll = async (cylsToDeplete: ScanCylinder[]) => {
     if (!cylsToDeplete || cylsToDeplete.length === 0) return;
     setIsSubmitting(true);
     try {
@@ -767,17 +809,17 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
       const res = await offlineAwareMarkMultipleCylindersAsEmpty(hospitalId, ids, creatorId);
       if (res.isOfflinePending) setIsOperatingOffline(true);
       if (!res.error) {
-        const updatedList = cylsToDeplete.map(c => ({
+        const updatedList: OxygenCylinderWithRelations[] = cylsToDeplete.map(c => ({
           ...c,
-          status: 'empty',
-          current_location: { location_name: 'Pharmacy Store' } as any
+          status: 'empty' as const,
+          current_location: { location_name: 'Pharmacy Store' }
         }));
         setSessionScannedCylinders(prev => {
           const existingIds = new Set(prev.map(c => c.id));
           const toAdd = updatedList.filter(c => !existingIds.has(c.id));
           return [...prev, ...toAdd];
         });
-        setActiveCylinders(prev => prev.map(c => ids.includes(c.id) ? { ...c, status: 'empty', current_location: { location_name: 'Pharmacy Store' } as any } : c));
+        setActiveCylinders(prev => prev.map(c => ids.includes(c.id) ? { ...c, status: 'empty', current_location: { location_name: 'Pharmacy Store' } } : c));
         playBeep('success');
         setSuccessFlash(true);
         setTimeout(() => setSuccessFlash(false), 500);
@@ -820,7 +862,7 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
           text: `✓ Valve type corrected → ${valveLabel} for ${lastScannedCylinder.serial_number} ${res.isOfflinePending ? '(Mod Luar Talian)' : ''}`
         });
         // Update the cylinder in scanned session list
-        const corrected: OxygenCylinderWithRelations = { ...lastScannedCylinder, type_info: { ...lastScannedCylinder.type_info, code: targetCode } as any };
+        const corrected: OxygenCylinderWithRelations = { ...lastScannedCylinder, type_info: { ...lastScannedCylinder.type_info, code: targetCode } };
         setSessionScannedCylinders(prev =>
           prev.map(c => c.id === corrected.id ? corrected : c)
         );
@@ -837,11 +879,11 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
   // Filter active database cylinders by manual search term and selected category tab
   // Get unique sizes & valve types from fetched database cylinders
   const uniqueSizes = Array.from(
-    new Set(activeCylinders.map(c => c.size_info?.code).filter(Boolean))
+    new Set(activeCylinders.map(c => c.size_info?.code).filter((code): code is string => Boolean(code)))
   ).sort();
 
   const uniqueTypes = Array.from(
-    new Set(activeCylinders.map(c => c.type_info?.code).filter(Boolean))
+    new Set(activeCylinders.map(c => c.type_info?.code).filter((code): code is string => Boolean(code)))
   ).sort();
 
   // Filter active database cylinders by manual search term, size filter, and type filter
@@ -1205,7 +1247,7 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
                         </div>
                         <div>
                           <span className="text-[10px] text-slate-400 block font-bold">Location</span>
-                          <span className="truncate block">{matchedCylinder.assigned_ward?.department_name || 'Store'}</span>
+                          <span className="truncate block">{typeof matchedCylinder.assigned_ward === 'string' ? matchedCylinder.assigned_ward : matchedCylinder.assigned_ward?.department_name || 'Store'}</span>
                         </div>
                         <div>
                           <span className="text-[10px] text-slate-400 block font-bold">Status</span>
@@ -1578,26 +1620,26 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
                     onClick={() => handleCorrectValveType('BN')}
                     disabled={isCorrectingValveType}
                     className={`flex-1 py-1.5 rounded-lg text-[11px] font-extrabold transition-[transform,opacity,box-shadow,border-color] cursor-pointer border flex items-center justify-center gap-1 ${
-                      (lastScannedCylinder.type_info as any)?.code === 'BN'
+                      lastScannedCylinder.type_info?.code === 'BN'
                         ? 'bg-blue-100 border-blue-300 text-blue-400 opacity-60'
                         : 'bg-surface border-blue-300 text-blue-700 hover:bg-blue-500/10 shadow-elevation-1'
                     }`}
                   >
                     🔵 Bullnose (BN)
-                    {(lastScannedCylinder.type_info as any)?.code === 'BN' && <Check className="w-3 h-3 text-blue-600 ml-0.5" />}
+                    {lastScannedCylinder.type_info?.code === 'BN' && <Check className="w-3 h-3 text-blue-600 ml-0.5" />}
                   </button>
                   <button
                     type="button"
                     onClick={() => handleCorrectValveType('PI')}
                     disabled={isCorrectingValveType}
                     className={`flex-1 py-1.5 rounded-lg text-[11px] font-extrabold transition-[transform,opacity,box-shadow,border-color] cursor-pointer border flex items-center justify-center gap-1 ${
-                      (lastScannedCylinder.type_info as any)?.code === 'PI'
+                      lastScannedCylinder.type_info?.code === 'PI'
                         ? 'bg-purple-100 border-purple-300 text-indigo-400 opacity-60'
                         : 'bg-surface border-purple-300 text-purple-700 hover:bg-indigo-500/10 shadow-elevation-1'
                     }`}
                   >
                     {isCorrectingValveType ? <RefreshCw className="w-3 h-3 animate-spin" /> : '🟣 Pin Index (PI)'}
-                    {(lastScannedCylinder.type_info as any)?.code === 'PI' && <Check className="w-3 h-3 text-purple-600 ml-0.5" />}
+                    {lastScannedCylinder.type_info?.code === 'PI' && <Check className="w-3 h-3 text-purple-600 ml-0.5" />}
                   </button>
                 </div>
               </div>
@@ -1621,9 +1663,9 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
                 </div>
               ) : (
                 sessionScannedCylinders.map((cyl, idx) => {
-                  const capacityStr = cyl.size_info?.capacity ? `${Number(cyl.size_info.capacity)}M³` : ((cyl as any).capacity ? `${(cyl as any).capacity}M³` : '—');
-                  const valveCode = (cyl.type_info as any)?.code || ((cyl.type_info as any)?.name?.toLowerCase().includes('bullnose') ? 'BN' : 'PI');
-                  const sizeLabel = cyl.size_info?.code || (cyl as any).size_code || '—';
+                  const capacityStr = cyl.size_info?.capacity ? `${Number(cyl.size_info.capacity)}M³` : '—';
+                  const valveCode = cyl.type_info?.code || (cyl.type_info?.name?.toLowerCase().includes('bullnose') ? 'BN' : 'PI');
+                  const sizeLabel = cyl.size_info?.code || '—';
 
                   return (
                     <div
@@ -1640,7 +1682,7 @@ export const ScanEmptyCylinderModal: React.FC<ScanEmptyCylinderModalProps> = ({
                             {cyl.serial_number}
                           </span>
                           <div className="flex items-center gap-2 text-[10px] text-text-muted font-medium mt-0.5">
-                            <span>Loc: {(cyl.current_location as any)?.location_name || (typeof cyl.current_location === 'string' ? cyl.current_location : 'Pharmacy Store')}</span>
+                            <span>Loc: {(typeof cyl.current_location === 'string' ? cyl.current_location : cyl.current_location?.location_name) || 'Pharmacy Store'}</span>
                             <span>•</span>
                             <span className="font-mono text-slate-400">{cyl.qr_code || cyl.serial_number}</span>
                           </div>

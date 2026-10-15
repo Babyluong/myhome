@@ -1,32 +1,11 @@
 // src/modules/myporter/pages/PorterDashboardPage.tsx
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { 
-  PersonStanding, 
-  Plus, 
-  Clock, 
-  CheckCircle2, 
-  Activity, 
-  AlertTriangle, 
-  Users, 
-  ArrowRight, 
-  ClipboardList, 
-  Shield, 
-  MapPin, 
-  ChevronRight,
-  TrendingUp,
-  FlaskConical,
-  Droplets,
-  Pill,
-  Bed,
-  AirVent,
-  Radio,
-  FileText
-} from 'lucide-react'
+import 'framer-motion'
+import { PersonStanding, Plus, Activity, Users, ArrowRight, ClipboardList, Shield, MapPin, ChevronRight, TrendingUp, FlaskConical, Droplets, Pill, Bed, AirVent, Radio, FileText } from 'lucide-react'
 import { useAuthStore } from '@/stores/authStore'
 import { useToast } from '@/stores/toastStore'
-import { Card, CardHeader, CardTitle, CardContent, Button, Badge, ModulePageHeader } from '@/components/ui'
+import { Button, ModulePageHeader } from '@/components/ui'
 import { Skeleton } from '@/shared/components/ui/skeleton'
 import { Fab } from '@/shared/components/mobile'
 import { 

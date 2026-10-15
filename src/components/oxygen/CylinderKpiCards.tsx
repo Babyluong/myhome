@@ -1,5 +1,5 @@
 import React from 'react';
-import { Package, CheckCircle, Clock, Truck, Activity } from 'lucide-react';
+import { Package, CheckCircle, Clock, Truck } from 'lucide-react'
 import { Skeleton } from '@/shared/components/ui/skeleton';
 
 interface CylinderKpiCardsProps {

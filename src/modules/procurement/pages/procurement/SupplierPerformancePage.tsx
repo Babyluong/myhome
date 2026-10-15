@@ -1,21 +1,40 @@
-﻿// @ts-nocheck
-import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { ROUTES } from '@/lib/constants'
-import { 
-  IconSearch, 
-  IconRefreshCw,
-  IconCheckCircle,
-  IconClock,
-  IconAlertCircle,
-  IconShield
-} from '@/components/ui/Icons'
+import { useCallback, useEffect, useState } from 'react'
+import 'react-router-dom'
+import '@/lib/constants'
+import { IconSearch, IconRefreshCw, IconClock, IconAlertCircle } from '@/components/ui/Icons'
 import { getSupplierAssessments } from '@/services/pharmacy/lpoService'
 import { useAuthStore } from '@/stores/authStore'
-import { Spinner, Input, Badge, Card } from '@/components/ui'
-import { cn, formatCurrency } from '@/lib/utils'
-import { ChevronRight, Sparkles, Star, Award, TrendingUp, CheckCircle2, AlertTriangle, Package2 } from 'lucide-react'
+import { Spinner, Input, Badge } from '@/components/ui'
+import { cn } from '@/lib/utils'
+import { ChevronRight, Sparkles, Star, Award, TrendingUp, CheckCircle2, Package2 } from 'lucide-react'
 import { motion } from 'framer-motion'
+
+interface SupplierAssessmentItem {
+  item_name: string | null
+  quantity: number
+  unit_price: number
+}
+
+interface SupplierAssessmentRecord {
+  id: string
+  lpo_id: string
+  ratings: { quality: number; support: number; delivery: number }
+  total_score: number
+  percentage: number
+  performance_level: string
+  comments: string | null
+  created_at: string
+  goods_receipt?: { gr_number: string; delivery_note_number: string | null } | null
+  lpo?: {
+    lpo_number: string
+    po?: {
+      po_number: string
+      manual_supplier_name: string | null
+      supplier: { company_name: string | null } | Array<{ company_name: string | null }> | null
+      items: SupplierAssessmentItem[]
+    } | null
+  } | null
+}
 
 interface SupplierAggregate {
   supplierName: string
@@ -27,25 +46,19 @@ interface SupplierAggregate {
   avgPercentage: number
   performanceLevel: string
   itemsSupplied: Set<string>
-  assessments: any[]
+  assessments: SupplierAssessmentRecord[]
 }
 
 export default function SupplierPerformancePage() {
   const { user } = useAuthStore()
   const hospitalId = user?.hospital_id
 
-  const [assessments, setAssessments] = useState<any[]>([])
+  const [assessments, setAssessments] = useState<SupplierAssessmentRecord[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedSupplier, setSelectedSupplier] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (hospitalId) {
-      loadData()
-    }
-  }, [hospitalId])
-
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     if (!hospitalId) return
     setIsLoading(true)
     try {
@@ -58,13 +71,19 @@ export default function SupplierPerformancePage() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, [hospitalId])
+
+  useEffect(() => {
+    if (hospitalId) {
+      void loadData()
+    }
+  }, [hospitalId, loadData])
 
   // Parse and aggregate data by supplier
   const supplierAggregates = assessments.reduce<Record<string, SupplierAggregate>>((acc, item) => {
-    const po = item.lpo?.po || {}
-    const supplierData = po.supplier || {}
-    const supplierName = po.manual_supplier_name || supplierData.company_name || 'Unknown Supplier'
+    const po = item.lpo?.po
+    const supplierData = Array.isArray(po?.supplier) ? po.supplier[0] : po?.supplier
+    const supplierName = po?.manual_supplier_name || supplierData?.company_name || 'Unknown Supplier'
     
     if (!acc[supplierName]) {
       acc[supplierName] = {
@@ -92,8 +111,8 @@ export default function SupplierPerformancePage() {
     agg.assessments.push(item)
 
     // Add supplied items
-    if (Array.isArray(po.items)) {
-      po.items.forEach((i: any) => {
+    if (po?.items) {
+      po.items.forEach((i) => {
         if (i.item_name) agg.itemsSupplied.add(i.item_name)
       })
     }
@@ -135,9 +154,6 @@ export default function SupplierPerformancePage() {
     : 0
   const globalAvgQuality = assessments.length > 0
     ? Number((assessments.reduce((sum, item) => sum + (item.ratings?.quality || 0), 0) / assessments.length).toFixed(1))
-    : 0
-  const globalAvgSupport = assessments.length > 0
-    ? Number((assessments.reduce((sum, item) => sum + (item.ratings?.support || 0), 0) / assessments.length).toFixed(1))
     : 0
   const globalAvgDelivery = assessments.length > 0
     ? Number((assessments.reduce((sum, item) => sum + (item.ratings?.delivery || 0), 0) / assessments.length).toFixed(1))
@@ -491,8 +507,8 @@ export default function SupplierPerformancePage() {
 
                     <div className="space-y-4 max-h-[350px] overflow-y-auto pr-1">
                       {supplierAggregates[selectedSupplier].assessments.map((ass, idx) => {
-                        const po = ass.lpo?.po || {}
-                        const items = po.items || []
+                        const po = ass.lpo?.po
+                        const items = po?.items || []
                         return (
                           <div 
                             key={ass.id || idx} 
@@ -523,9 +539,9 @@ export default function SupplierPerformancePage() {
                             <div className="space-y-1">
                               <span className="text-[8px] font-bold text-text-muted uppercase tracking-wider block">Supplied Item(s)</span>
                               <div className="space-y-1">
-                                {items.map((it: any, iIdx: number) => (
+                                {items.map((it, iIdx) => (
                                   <div key={iIdx} className="flex justify-between items-center text-[10px] font-bold text-slate-300">
-                                    <span className="truncate max-w-[150px]" title={it.item_name}>{it.item_name}</span>
+                                    <span className="truncate max-w-[150px]" title={it.item_name || undefined}>{it.item_name}</span>
                                     <span className="text-slate-400 font-normal shrink-0">x{it.quantity}</span>
                                   </div>
                                 ))}
@@ -598,8 +614,9 @@ export default function SupplierPerformancePage() {
                   </thead>
                   <tbody className="divide-y divide-slate-50">
                     {assessments.map((ass) => {
-                      const po = ass.lpo?.po || {}
-                      const sName = po.manual_supplier_name || po.supplier?.company_name || 'â€”'
+                      const po = ass.lpo?.po
+                      const supplierData = Array.isArray(po?.supplier) ? po.supplier[0] : po?.supplier
+                      const sName = po?.manual_supplier_name || supplierData?.company_name || 'â€”'
                       return (
                         <tr key={ass.id} className="hover:bg-subtle/50 transition-colors">
                           <td className="px-6 py-5">
@@ -613,7 +630,7 @@ export default function SupplierPerformancePage() {
                           <td className="px-6 py-5">
                             <div className="flex flex-col gap-0.5">
                               <span className="text-xs font-extrabold text-text-secondary">{ass.lpo?.lpo_number || 'â€”'}</span>
-                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{po.po_number || 'â€”'}</span>
+                              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tight">{po?.po_number || 'â€”'}</span>
                               {ass.goods_receipt && (
                                 <span className="text-[9px] font-black text-indigo-600 bg-indigo-500/10 border border-indigo-100 rounded px-1.5 py-0.5 mt-1.5 self-start uppercase tracking-tighter">
                                   DO: {ass.goods_receipt.delivery_note_number || ass.goods_receipt.gr_number}
@@ -631,7 +648,7 @@ export default function SupplierPerformancePage() {
                             {renderRatingStars(ass.ratings?.delivery || 0)}
                           </td>
                           <td className="px-6 py-5">
-                            <span className="text-[11px] text-text-muted line-clamp-2 max-w-[200px]" title={ass.comments}>
+                            <span className="text-[11px] text-text-muted line-clamp-2 max-w-[200px]" title={ass.comments || undefined}>
                               {ass.comments || 'â€”'}
                             </span>
                           </td>

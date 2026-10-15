@@ -1305,20 +1305,34 @@ export const mapPackageAndPackType = (
 }
 
 /**
- * Searches the facility drug catalog (MyInventory) for quick auto-fill in Prepacking / UOD.
- * Searches facility_drug_inventory, drugs master table, and falls back to cached facility inventory.
+ * Helper to resolve the Inpatient Pharmacy store location ID.
+ * Defaults to official LOC-IPD-01 (Farmasi Pesakit Dalam).
+ */
+export const getInpatientStoreLocationId = async (hospitalId: string): Promise<string> => {
+  const { resolveFacilityStore } = await import('@/services/pharmacy/facilityStoreService')
+  return (await resolveFacilityStore(hospitalId, 'IPD')).id
+}
+
+/**
+ * Searches the facility drug catalog for Inpatient Pharmacy (Farmasi Pesakit Dalam).
+ * Strictly queries facility_drug_inventory scoped to the Inpatient Pharmacy store location.
+ * Eliminates unconstrained fallback to the 3,500+ national master drug catalog.
  */
 export const searchFacilityCatalogDrugs = async (
   query: string = '',
-  hospitalId?: string
+  hospitalId?: string,
+  storeLocationId?: string
 ): Promise<{ data: FacilityCatalogDrugOption[]; error: any }> => {
   try {
     const targetHospId = hospitalId || await getActiveHospitalId()
+    const targetStoreId = storeLocationId || await getInpatientStoreLocationId(targetHospId)
+    const { resolveFacilityStoreById } = await import('@/services/pharmacy/facilityStoreService')
+    await resolveFacilityStoreById(targetHospId, targetStoreId)
     const cleanQuery = query.trim()
 
-    // 1. Try querying facility_drug_inventory joined with drug:drugs
+    // 1. Query facility_drug_inventory for Inpatient Pharmacy
     try {
-      const facQuery = supabase
+      let facQuery = supabase
         .from('facility_drug_inventory')
         .select(`
           id,
@@ -1327,7 +1341,9 @@ export const searchFacilityCatalogDrugs = async (
           facility_stock,
           min_buffer_level,
           location,
-          drug:drugs (
+          store_location_id,
+          department_id,
+          drug:drugs!inner (
             id,
             drug_code,
             drug_name,
@@ -1341,126 +1357,57 @@ export const searchFacilityCatalogDrugs = async (
           )
         `)
         .eq('hospital_id', targetHospId)
-        .limit(30)
+        .eq('store_location_id', targetStoreId)
 
-      const { data: facData, error: facErr } = await facQuery
+      if (cleanQuery) {
+        facQuery = facQuery.or(
+          `drug_name.ilike.%${cleanQuery}%,generic_name.ilike.%${cleanQuery}%,drug_code.ilike.%${cleanQuery}%,brand_name.ilike.%${cleanQuery}%`,
+          { foreignTable: 'drug' }
+        )
+      }
 
-      if (!facErr && facData && facData.length > 0) {
+      const { data: facData, error: facErr } = await facQuery.limit(500)
+
+      if (facErr) throw new Error('Facility catalog lookup unavailable')
+      if (facData && facData.length > 0) {
         const mapped: FacilityCatalogDrugOption[] = []
         for (const row of facData) {
           const d = (row as any).drug
           if (!d) continue
-          const matches = !cleanQuery || 
-            (d.drug_name || '').toLowerCase().includes(cleanQuery.toLowerCase()) ||
-            (d.generic_name || '').toLowerCase().includes(cleanQuery.toLowerCase()) ||
-            (d.drug_code || '').toLowerCase().includes(cleanQuery.toLowerCase()) ||
-            (d.brand_name || '').toLowerCase().includes(cleanQuery.toLowerCase())
 
-          if (matches) {
-            mapped.push({
-              id: d.id,
-              drug_code: d.drug_code || '',
-              drug_name: d.drug_name || '',
-              generic_name: d.generic_name,
-              brand_name: d.brand_name,
-              dosage_form: d.dosage_form,
-              strength: d.strength || extractDrugStrength(d.drug_name || d.generic_name),
-              storage_conditions: d.storage_conditions,
-              packaging_description: d.packaging_description,
-              unit_of_measure: d.unit_of_measure,
-              min_buffer_level: row.min_buffer_level,
-              facility_stock: row.facility_stock,
-              location: row.location
-            })
-          }
+          mapped.push({
+            id: d.id,
+            drug_code: d.drug_code || '',
+            drug_name: d.drug_name || '',
+            generic_name: d.generic_name,
+            brand_name: d.brand_name,
+            dosage_form: d.dosage_form,
+            strength: d.strength || extractDrugStrength(d.drug_name || d.generic_name),
+            storage_conditions: d.storage_conditions,
+            packaging_description: d.packaging_description,
+            unit_of_measure: d.unit_of_measure,
+            min_buffer_level: row.min_buffer_level,
+            facility_stock: row.facility_stock ?? null,
+            location: row.location
+          })
         }
 
-        if (mapped.length > 0) {
-          return { data: mapped, error: null }
-        }
+        // Sort alphabetically by drug name
+        mapped.sort((a, b) => (a.drug_name || '').localeCompare(b.drug_name || ''))
+
+        return { data: mapped, error: null }
+      }
+
+      // If PostgREST foreignTable filter yielded no rows and no error, return empty search result
+      if (!facErr) {
+        return { data: [], error: null }
       }
     } catch {
-      // Continue to direct drugs table query
+      throw new Error('Facility catalog lookup unavailable')
     }
-
-    // 2. Query master drugs table directly
-    let drugQuery = supabase
-      .from('drugs')
-      .select(`
-        id,
-        drug_code,
-        drug_name,
-        generic_name,
-        brand_name,
-        dosage_form,
-        strength,
-        storage_conditions,
-        packaging_description,
-        unit_of_measure,
-        min_stock_level
-      `)
-      .order('drug_name', { ascending: true })
-      .limit(20)
-
-    if (cleanQuery) {
-      drugQuery = drugQuery.or(
-        `drug_name.ilike.%${cleanQuery}%,generic_name.ilike.%${cleanQuery}%,drug_code.ilike.%${cleanQuery}%,brand_name.ilike.%${cleanQuery}%`
-      )
-    }
-
-    const { data: drugsData, error: drugsError } = await drugQuery
-
-    if (!drugsError && drugsData && drugsData.length > 0) {
-      const mapped: FacilityCatalogDrugOption[] = drugsData.map((d: any) => ({
-        id: d.id,
-        drug_code: d.drug_code || '',
-        drug_name: d.drug_name || '',
-        generic_name: d.generic_name,
-        brand_name: d.brand_name,
-        dosage_form: d.dosage_form,
-        strength: d.strength || extractDrugStrength(d.drug_name || d.generic_name),
-        storage_conditions: d.storage_conditions,
-        packaging_description: d.packaging_description,
-        unit_of_measure: d.unit_of_measure,
-        min_buffer_level: d.min_stock_level || 20,
-        facility_stock: null
-      }))
-      return { data: mapped, error: null }
-    }
-
-    // 3. Fallback to facility inventory cache / local mock
-    const { loadFacilityDrugInventory } = await import('@/services/pharmacy/facilityDrugInventoryService')
-    const cachedItems = await loadFacilityDrugInventory(targetHospId)
-    const filteredCached: FacilityCatalogDrugOption[] = (cachedItems || [])
-      .filter(item => {
-        if (!cleanQuery) return true
-        return (
-          (item.drug_name || '').toLowerCase().includes(cleanQuery.toLowerCase()) ||
-          (item.generic_name || '').toLowerCase().includes(cleanQuery.toLowerCase()) ||
-          (item.drug_code || '').toLowerCase().includes(cleanQuery.toLowerCase())
-        )
-      })
-      .slice(0, 15)
-      .map(item => ({
-        id: item.id || (item as any).drug_id || '',
-        drug_code: item.drug_code || '',
-        drug_name: item.drug_name || '',
-        generic_name: item.generic_name,
-        brand_name: item.brand_name,
-        dosage_form: item.dosage_form,
-        strength: item.strength || extractDrugStrength(item.drug_name || item.generic_name),
-        storage_conditions: item.storage_conditions,
-        packaging_description: item.packaging_description,
-        unit_of_measure: item.unit_of_measure,
-        min_buffer_level: item.min_buffer_level || item.min_stock_level || 20,
-        facility_stock: item.facility_stock ?? null,
-        location: item.location
-      }))
-
-    return { data: filteredCached, error: null }
+    return { data: [], error: null }
   } catch (err: any) {
     console.error('Error in searchFacilityCatalogDrugs:', err)
     return { data: [], error: err }
   }
 }
-

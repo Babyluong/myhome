@@ -1,6 +1,41 @@
-# Session Handoff: System-Wide Inverted Backgrounds & Color Style Harmonization (T-014 Complete)
+# Session Handoff: In-Patient Pharmacy Location Hierarchy & Department Switcher (T-016 Complete)
 
-## 0. Latest Milestone: System-Wide Inverted Backgrounds & Color Harmonization (T-014)
+## 0. Latest Milestone: In-Patient Pharmacy Location Hierarchy & Multi-Department Navigation (T-016)
+- **Status:** PASS (ACCEPT by AMRI).
+- **Core Problem Resolved:**
+  - `StoreLocationManagementPage.tsx` previously only listed hardcoded/default storage units for Logistics Pharmacy (`LOG-MF-001`, `LOG-SL-001`, `LOG-SL-002`, `LOG-TL-001`).
+  - There was no department switcher to view or configure In-Patient Pharmacy (Farmasi Pesakit Dalam / IPD) storage locations.
+  - Item placement and occupancy calculations were not scoped to Inpatient Pharmacy facility inventory (`LOC-IPD-01`).
+- **Fixes Applied:**
+  - **Supabase Migration 088**: Seeded 5 standard KKM Inpatient storage locations (`IPD-ORAL-001`, `IPD-IV-001`, `IPD-DDA-001`, `IPD-CHILL-001`, `IPD-EMG-001`) and 28 sub-locations (Rak Oral A/B with shelves, Rak Injeksi IV, Palet Infusi Pukal, Peti Besi Berkunci DDA, Chiller 2-8°C shelves, Crash Cart tiers).
+  - **Department Switcher UI (`StoreLocationManagementPage.tsx`)**: Added interactive segmented navigation tabs for `Logistik Farmasi (LOG)` (4 locations), `Farmasi Pesakit Dalam (IPD)` (5 locations), and `Semua Jabatan` (9 locations) with dynamic badge counters.
+  - **Department-Scoped Metrics & Inventory**: Summary KPI cards adapt directly to the active tab. Item loading, placement modals, and occupancy queries are scoped to `LOC-IPD-01` (`2d1b7112-9c3a-4e2b-bb43-e8417e349a01`) for IPD locations and `LOC-LOG-01` for Logistics.
+  - **Modal Form Alignment**: Creating a store location automatically defaults the department code to the active tab (`IPD` when viewing Inpatient).
+- **Verification:**
+  - `npm run build`: PASS (built cleanly in 1m 26s, 0 errors, 345 PWA bundle entries).
+  - `scripts/check-rules.cjs`: PASS (0 violations).
+  - Database verification: All 5 IPD locations and 28 sub-locations confirmed in live Supabase.
+
+---
+
+## 0.1 Previous Milestone: Prepack Medication Catalog Scoped to Inpatient Pharmacy (T-015)
+- **Status:** PASS (ACCEPT by AMRI).
+- **Core Problem Resolved:**
+  - The medication catalog picker in MyPrepacking formulation editor (`PrepackDrugPickerModal`) had hardcoded `.limit(30)` truncation displaying only 30 arbitrary records with "30 Drugs Available".
+  - It failed to scope queries to the Inpatient Pharmacy store (`LOC-IPD-01` / `Farmasi Pesakit Dalam`), and when search queries did not match the 30 initial records, it fell back into the 3,500+ national master drug catalog instead of facility inventory.
+- **Fixes Applied:**
+  - **Inpatient Pharmacy Scoping (`prepackService.ts`)**: Added dynamic store resolver `getInpatientStoreLocationId` (defaulting to official `LOC-IPD-01` / `2d1b7112-9c3a-4e2b-bb43-e8417e349a01`). Scoped `searchFacilityCatalogDrugs` strictly to `facility_drug_inventory` where `store_location_id = targetStoreId`.
+  - **Removed Truncation Cap**: Removed `.limit(30)` restriction so all 216 registered Inpatient Pharmacy facility inventory items are available.
+  - **Multi-Field PostgREST Search**: Supports searching by drug name, generic name, brand name, and drug code directly on joined `drug:drugs!inner`.
+  - **Store Context & Badge UI (`PrepackDrugPickerModal.tsx`)**: Added `Farmasi Pesakit Dalam (Inpatient)` store badge, accurate item counter, and enhanced store stock formatting.
+- **Verification:**
+  - `npm run build`: PASS (built cleanly in 55.5s, 0 errors, clean PWA bundle).
+  - `scripts/check-rules.cjs`: PASS (0 violations).
+  - Test query: 216 Inpatient drugs returned; search queries operate correctly.
+
+---
+
+## 0.1 Previous Milestone: System-Wide Inverted Backgrounds & Color Harmonization (T-014)
 - **Status:** PASS (ACCEPT by AMRI).
 - **Core Problem Resolved:**
   - Components located under `src/components/` (specifically `src/components/oxygen/` StoreBalanceGrid pipeline flow, SupplierReturnsSection, and modals) and several legacy pages used hardcoded light styling (`bg-white`, `border-slate-200`, `text-slate-900`) because previous harmonization scripts only targeted `src/modules` and `src/shared/components`.

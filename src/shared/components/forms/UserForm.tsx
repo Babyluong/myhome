@@ -2,14 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion } from 'framer-motion'
-import { Save, User as UserIcon, Mail, Hash, Phone, Calendar, MapPin, Building2, Briefcase } from 'lucide-react'
+import { Save, User as UserIcon, Mail, Hash, Phone, Calendar, Building2, Briefcase } from 'lucide-react'
 import { Button, Input, Select, Textarea, FileUpload, Avatar } from '@/components/ui'
 import { userSchema, type UserFormData } from '@/lib/validators'
 import { createUser, updateUser } from '@/services/userService'
-import { mockHospitals, mockDepartments, mockRoles } from '@/services/mockData'
+import { getAllHospitals } from '@/services/hospitalService'
+import { getDepartmentsByHospital } from '@/services/departmentService'
+import { getAllRoles } from '@/services/roleService'
+import { isSupabaseConfigured } from '@/services/supabase'
 import { useToast } from '@/stores/toastStore'
 import { USER_STATUS, GENDER_OPTIONS } from '@/lib/constants'
-import type { UserWithRelations, User } from '@/types'
+import type { UserWithRelations, User, Hospital, Department, Role } from '@/types'
 
 interface UserFormProps {
   user?: UserWithRelations
@@ -56,24 +59,60 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSuccess, onCancel })
   })
 
   const selectedHospitalId = watch('hospitalId')
-  const [availableDepartments, setAvailableDepartments] = useState(
-    mockDepartments.filter((d) => !selectedHospitalId || d.hospital_id === selectedHospitalId)
-  )
+  const [hospitals, setHospitals] = useState<Hospital[]>([])
+  const [roles, setRoles] = useState<Role[]>([])
+  const [availableDepartments, setAvailableDepartments] = useState<Department[]>([])
+  const [lookupError, setLookupError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (selectedHospitalId) {
-      const filtered = mockDepartments.filter((d) => d.hospital_id === selectedHospitalId)
-      setAvailableDepartments(filtered)
-      // Reset department if it doesn't belong to selected hospital
-      const currentDept = watch('departmentId')
-      if (currentDept && !filtered.find((d) => d.id === currentDept)) {
-        setValue('departmentId', '')
+    let active = true
+    const loadLookups = async () => {
+      if (!isSupabaseConfigured()) {
+        setLookupError('Hospital and role options are unavailable while the database connection is offline.')
+        return
       }
-    } else {
+      try {
+        const [hospitalRows, roleRows] = await Promise.all([getAllHospitals(), getAllRoles()])
+        if (active) {
+          setHospitals(hospitalRows)
+          setRoles(roleRows)
+          setLookupError(null)
+        }
+      } catch (error) {
+        if (active) setLookupError('Hospital and role options could not be loaded. Try again after checking your connection.')
+        console.error('Unable to load user form options:', error)
+      }
+    }
+    void loadLookups()
+    return () => { active = false }
+  }, [])
+
+  useEffect(() => {
+    let active = true
+    if (!selectedHospitalId || !isSupabaseConfigured()) {
       setAvailableDepartments([])
       setValue('departmentId', '')
+      return () => { active = false }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const loadDepartments = async () => {
+      try {
+        const rows = await getDepartmentsByHospital(selectedHospitalId)
+        if (!active) return
+        setAvailableDepartments(rows)
+        const currentDept = watch('departmentId')
+        if (currentDept && !rows.some((department) => department.id === currentDept)) {
+          setValue('departmentId', '')
+        }
+      } catch (error) {
+        if (active) {
+          setAvailableDepartments([])
+          setLookupError('Departments could not be loaded for this hospital. Try again after checking your connection.')
+        }
+        console.error('Unable to load user form departments:', error)
+      }
+    }
+    void loadDepartments()
+    return () => { active = false }
   }, [selectedHospitalId])
 
   const handlePhotoChange = (file: File | null) => {
@@ -246,13 +285,14 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSuccess, onCancel })
         </h3>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {lookupError && <p role="alert" className="md:col-span-2 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-800">{lookupError}</p>}
           <Select
             {...register('hospitalId')}
             label="Hospital"
             placeholder="Select hospital"
             error={errors.hospitalId?.message}
             required
-            options={mockHospitals.map((h) => ({
+            options={hospitals.map((h) => ({
               value: h.id,
               label: h.hospital_name,
             }))}
@@ -277,7 +317,7 @@ export const UserForm: React.FC<UserFormProps> = ({ user, onSuccess, onCancel })
             placeholder="Select role"
             error={errors.roleId?.message}
             required
-            options={mockRoles.map((r) => ({
+            options={roles.map((r) => ({
               value: r.id,
               label: r.role_name,
             }))}

@@ -1,5 +1,5 @@
 // @ts-nocheck
-import React from 'react'
+import 'react'
 import StaffSubMenu from './StaffSubMenu'
 
 export const CutiSubMenu = StaffSubMenu

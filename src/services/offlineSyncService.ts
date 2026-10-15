@@ -1,5 +1,6 @@
 import { supabase } from './supabase'
 import { offlineQueue, QueuedMutation } from './offlineQueue'
+import { getOfflineIdentity } from './offlineSession'
 
 export interface SyncStatus {
   isOnline: boolean
@@ -18,8 +19,7 @@ class OfflineSyncService {
   private lastSyncTime: Date | null = null
   private lastSyncError: string | null = null
   private listeners: Set<SyncStatusListener> = new Set()
-  private syncTimeout: any = null
-  private initialized = false
+    private initialized = false
 
   init() {
     if (this.initialized) return
@@ -87,8 +87,8 @@ class OfflineSyncService {
   async verifyConnection(): Promise<boolean> {
     try {
       // Light query to verify database reachability
-      const { error } = await supabase.from('users').select('id').limit(1).abortSignal(AbortSignal.timeout(4000))
-      return !error || error.code !== 'PGRST301' // Connected if no transport error
+      const { error } = await supabase.from('users').select('id').limit(1).setHeader('x-home-require-online', 'true').abortSignal(AbortSignal.timeout(4000))
+      return !error
     } catch {
       return false
     }
@@ -150,29 +150,31 @@ class OfflineSyncService {
 
     for (const mutation of pending) {
       try {
+        const { data: auth, error: authError } = await supabase.auth.getUser()
+        const identity = getOfflineIdentity()
+        if (authError || auth.user?.id !== mutation.actorId || identity?.actorId !== mutation.actorId || identity.hospitalId !== mutation.hospitalId) break
+        const { data: profile, error: profileError } = await supabase.from('users').select('hospital_id,status').eq('id', auth.user.id).setHeader('x-home-require-online', 'true').maybeSingle()
+        if (profileError || profile?.status !== 'active' || profile.hospital_id !== mutation.hospitalId) break
         await offlineQueue.updateStatus(mutation.id, 'syncing')
         this.notify()
 
-        const success = await this.executeMutationOnServer(mutation)
+        const { data: sessionData } = await supabase.auth.getSession()
+        if (sessionData.session?.user.id !== mutation.actorId) break
+        const success = await this.executeMutationOnServer(mutation, sessionData.session.access_token)
 
         if (success) {
-          await offlineQueue.remove(mutation.id)
-          successCount++
-
           // R3 Compliance: Automatic audit logging upon replaying offline mutation
-          try {
-            const effectiveUserId = (mutation.payload as any)?.created_by || 
-                                    (mutation.payload as any)?.user_id || 
-                                    null
+          {
+            const effectiveUserId = mutation.actorId
             const isValidUuid = typeof effectiveUserId === 'string' &&
               /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(effectiveUserId)
 
-            await supabase.from('audit_logs').insert({
+            const { error: auditError } = await supabase.from('audit_logs').insert({
               user_id: isValidUuid ? effectiveUserId : null,
               action: `OFFLINE_SYNC_${mutation.action}`,
               module: mutation.module || 'offline_sync',
               entity_type: mutation.table,
-              entity_id: (mutation.payload as any)?.id || mutation.matchCriteria?.id || null,
+              entity_id: mutation.payload.id || mutation.matchCriteria?.id || null,
               new_values: {
                 table: mutation.table,
                 action: mutation.action,
@@ -180,17 +182,18 @@ class OfflineSyncService {
                 offline_timestamp: new Date(mutation.timestamp).toISOString(),
                 synced_at: new Date().toISOString()
               }
-            })
-          } catch (auditErr) {
-            console.warn('[OfflineSync] Audit log replay notice (non-blocking):', auditErr)
+            }).setHeader('Authorization', `Bearer ${sessionData.session.access_token}`)
+            if (auditError) throw new Error('Replay audit unavailable; reconciliation required')
           }
+          await offlineQueue.remove(mutation.id)
+          successCount++
         } else {
           failureCount++
           await offlineQueue.updateStatus(mutation.id, 'failed', 'Server rejected mutation')
         }
-      } catch (err: any) {
+      } catch (err) {
         failureCount++
-        const errorMsg = err?.message || String(err)
+        const errorMsg = err instanceof Error ? err.message : 'Queued operation failed'
         console.error(`[OfflineSync] Error syncing mutation ${mutation.id}:`, err)
         await offlineQueue.updateStatus(mutation.id, 'failed', errorMsg)
 
@@ -213,118 +216,60 @@ class OfflineSyncService {
   /**
    * Execute single mutation on Supabase with conflict resolution & deduplication
    */
-  private async executeMutationOnServer(mutation: QueuedMutation): Promise<boolean> {
+  private async executeMutationOnServer(mutation: QueuedMutation, accessToken: string): Promise<boolean> {
+    const assertIdentity = () => {
+      const identity = getOfflineIdentity()
+      if (!identity || mutation.actorId !== identity.actorId || mutation.hospitalId !== identity.hospitalId) throw new Error('Queued mutation belongs to another session')
+    }
+    assertIdentity()
     const { table, action, payload, matchCriteria, conflictPolicy } = mutation
-
-    // Clean payload of any client-only metadata
     const cleanPayload = { ...payload }
     delete cleanPayload.__isOptimistic
     delete cleanPayload.__tempId
     delete cleanPayload.__offlinePending
-
-    // If table is pharmacy_purchase_orders and contains embedded items array
-    let poItems: any[] | null = null
-    if (table === 'pharmacy_purchase_orders' && Array.isArray(cleanPayload.items)) {
-      poItems = cleanPayload.items
-      delete cleanPayload.items
-    }
-
+    const poItems = table === 'pharmacy_purchase_orders' && Array.isArray(cleanPayload.items) ? cleanPayload.items : null
+    if (poItems) delete cleanPayload.items
     if (action === 'INSERT') {
-      // Check for deduplication: if record has an id, check if already exists
+      let exists = false
       if (cleanPayload.id) {
-        const { data: existing } = await supabase
-          .from(table)
-          .select('id')
-          .eq('id', cleanPayload.id)
-          .maybeSingle()
-
-        if (existing) {
-          console.info(`[OfflineSync] Record ${cleanPayload.id} already exists in ${table}, skipping duplicate insert.`)
-          return true
-        }
+        const { data, error } = await supabase.from(table).select('id').eq('id', cleanPayload.id).setHeader('Authorization', `Bearer ${accessToken}`).setHeader('x-home-require-online', 'true').maybeSingle()
+        if (error) throw error
+        exists = !!data
       }
-
-      const { error } = await supabase.from(table).insert([cleanPayload])
-      if (error) {
-        // If unique constraint violation or duplicate key, treat as resolved
-        if (error.code === '23505') {
-          console.info(`[OfflineSync] Unique constraint caught for ${table}, considering synced.`)
-          return true
-        }
-        console.error(`[OfflineSync] Insert error on ${table}:`, error)
-        throw error
+      assertIdentity()
+      if (!exists) {
+        const { error } = await supabase.from(table).insert([cleanPayload]).setHeader('Authorization', `Bearer ${accessToken}`)
+        if (error) throw error
       }
-
-      // If this was a purchase order with items, insert items as well
-      if (table === 'pharmacy_purchase_orders' && poItems && poItems.length > 0) {
-        const itemsToInsert = poItems.map((item) => {
-          const cleanItem = { ...item, po_id: cleanPayload.id }
-          delete cleanItem.__offlinePending
-          delete cleanItem.__isOptimistic
-          return cleanItem
+      if (poItems?.length) {
+        assertIdentity()
+        const items = poItems.map((item: unknown) => {
+          if (!item || typeof item !== 'object') throw new Error('Invalid purchase order item')
+          return { ...item, po_id: cleanPayload.id }
         })
-        await supabase.from('pharmacy_purchase_order_items').insert(itemsToInsert)
+        const { error } = await supabase.from('pharmacy_purchase_order_items').upsert(items, { onConflict: 'id', ignoreDuplicates: true }).setHeader('Authorization', `Bearer ${accessToken}`)
+        if (error) throw error
       }
-
       return true
     }
-
     if (action === 'UPSERT') {
-      const { error } = await supabase.from(table).upsert([cleanPayload])
+      const { error } = await supabase.from(table).upsert([cleanPayload]).setHeader('Authorization', `Bearer ${accessToken}`)
       if (error) throw error
       return true
     }
-
-    if (action === 'UPDATE') {
-      if (!matchCriteria || Object.keys(matchCriteria).length === 0) {
-        console.error('[OfflineSync] Missing match criteria for UPDATE:', mutation)
-        return false
-      }
-
-      // Conflict policy: server-wins
-      if (conflictPolicy === 'server-wins' && matchCriteria.id) {
-        const { data: serverRecord } = await supabase
-          .from(table)
-          .select('updated_at')
-          .eq('id', matchCriteria.id)
-          .maybeSingle()
-
-        if (serverRecord?.updated_at) {
-          const serverUpdatedTime = new Date(serverRecord.updated_at).getTime()
-          if (serverUpdatedTime > mutation.timestamp) {
-            console.warn(`[OfflineSync] Server record in ${table} was updated more recently. Applying server-wins policy.`)
-            return true // Resolve conflict cleanly without overwriting newer server data
-          }
-        }
-      }
-
-      let query = supabase.from(table).update(cleanPayload)
-      for (const [key, val] of Object.entries(matchCriteria)) {
-        query = query.eq(key, val)
-      }
-
-      const { error } = await query
+    if (!matchCriteria || !Object.keys(matchCriteria).length) throw new Error('Mutation match criteria required')
+    if (action === 'UPDATE' && conflictPolicy === 'server-wins' && matchCriteria.id) {
+      const { data, error } = await supabase.from(table).select('updated_at').eq('id', matchCriteria.id).setHeader('Authorization', `Bearer ${accessToken}`).setHeader('x-home-require-online', 'true').maybeSingle()
       if (error) throw error
-      return true
+      if (data?.updated_at && new Date(data.updated_at).getTime() > mutation.timestamp) throw new Error('Server record changed; conflict requires review')
     }
-
-    if (action === 'DELETE') {
-      if (!matchCriteria || Object.keys(matchCriteria).length === 0) {
-        console.error('[OfflineSync] Missing match criteria for DELETE:', mutation)
-        return false
-      }
-
-      let query = supabase.from(table).delete()
-      for (const [key, val] of Object.entries(matchCriteria)) {
-        query = query.eq(key, val)
-      }
-
-      const { error } = await query
-      if (error) throw error
-      return true
-    }
-
-    return false
+    assertIdentity()
+    let query = action === 'UPDATE' ? supabase.from(table).update(cleanPayload) : supabase.from(table).delete()
+    for (const [key, value] of Object.entries(matchCriteria)) query = query.eq(key, value)
+    const { data, error } = await query.select('id').setHeader('Authorization', `Bearer ${accessToken}`)
+    if (error) throw error
+    if (!data?.length) throw new Error('No affected record confirmed; reconciliation required')
+    return true
   }
 }
 

@@ -1,0 +1,247 @@
+{
+  "taskId": "SYSTEM-RULES-UPDATE-20261013",
+  "baselineRevision": "f1d4918084f4b9da515d055471f21acc1525e243",
+  "baselinePaths": [
+    ".gitignore",
+    "dist/index.html",
+    "docs/DECISIONS.md",
+    "docs/SESSION_HANDOFF.md",
+    "public/version.json",
+    "src/config/generatedReleases.json",
+    "src/config/systemReleases.ts",
+    "src/modules/inventory/components/StoreLocationSelector.tsx",
+    "src/modules/inventory/pages/inventory/DrugInventoryPage.tsx",
+    "src/modules/inventory/pages/inventory/FacilityDrugInventoryPage.tsx",
+    "src/modules/inventory/pages/inventory/FacilityNonDrugInventoryPage.tsx",
+    "src/modules/inventory/pages/inventory/InventoryOverviewPage.tsx",
+    "src/modules/inventory/pages/inventory/KewPs4LedgerPage.tsx",
+    "src/modules/inventory/pages/inventory/NearExpiryPage.tsx",
+    "src/modules/inventory/pages/inventory/NonDrugInventoryPage.tsx",
+    "src/modules/inventory/pages/inventory/SlowMovingPage.tsx",
+    "src/modules/inventory/pages/inventory/StoreLocationManagementPage.tsx",
+    "src/modules/myprepacking/components/PrepackDrugPickerModal.tsx",
+    "src/modules/myprepacking/services/prepackService.ts",
+    "src/routes/routes.tsx",
+    "src/services/pharmacy/storeLocationService.ts",
+    "src/services/pharmacy/storeSubLocationService.ts",
+    "src/shared/components/mobile/TabBar.tsx",
+    "src/shared/config/mobileTabs.ts",
+    "src/shared/utils/cacheBuster.ts",
+    ".agents/AGENTS.md",
+    ".agents/CODEBASE_ROUTER.json",
+    ".agents/skills/agent-monitor/SKILL.md",
+    ".agents/skills/amri/SKILL.md",
+    ".agents/skills/antislop-copywriting/SKILL.md",
+    ".agents/skills/antislop-human/SKILL.md",
+    ".agents/skills/babyaaralyn/SKILL.md",
+    ".agents/skills/babybun/SKILL.md",
+    ".agents/skills/babyhien/SKILL.md",
+    ".agents/skills/babyluong/SKILL.md",
+    ".agents/skills/brainstorming/SKILL.md",
+    ".agents/skills/caveman/SKILL.md",
+    ".agents/skills/codebase-memory/SKILL.md",
+    ".agents/skills/compact-code/SKILL.md",
+    ".agents/skills/emil-kowalski/SKILL.md",
+    ".agents/skills/error-guard/SKILL.md",
+    ".agents/skills/frontend-architecture/SKILL.md",
+    ".agents/skills/grill-me/SKILL.md",
+    ".agents/skills/impeccable/SKILL.md",
+    ".agents/skills/plan-first/SKILL.md",
+    ".agents/skills/security-gate/SKILL.md",
+    ".agents/skills/session-compactor/SKILL.md",
+    ".agents/skills/supabase-postgres-best-practices/SKILL.md",
+    ".agents/skills/system-design-pro/SKILL.md",
+    ".agents/skills/task-slicer/SKILL.md",
+    ".agents/skills/tasteskill/SKILL.md",
+    ".agents/skills/test-gate/SKILL.md",
+    ".agents/skills/zero-scan-router/SKILL.md",
+    ".codex/agents/babyaaralyn.toml",
+    ".codex/agents/babybun.toml",
+    ".codex/agents/babyhien.toml",
+    ".codex/agents/babyluong.toml",
+    ".codex/config.toml",
+    ".codex/task-manifest.template.json",
+    "AGENTS.md",
+    "docs/AGENT_OWNERSHIP.json",
+    "docs/AGENT_RULES_SOURCES.md",
+    "docs/audits/login-premium-20261012.manifest.json",
+    "docs/audits/login-premium-20261012.md",
+    "docs/audits/system-rules-20261013.manifest.json",
+    "docs/audits/system-rules-20261013.md",
+    "docs/audits/system-rules-20261013.tools.json",
+    "docs/audits/token-efficiency-20261013.manifest.json",
+    "docs/tasks/T-015.md",
+    "docs/tasks/T-016.md",
+    "docs/test-reports/2026-10-12-inpatient-pharmacy-store-locations-report.md",
+    "scripts/check-agent-boundaries.cjs",
+    "scripts/refactor-store-location-page.cjs",
+    "scripts/test-ipd-locations.cjs",
+    "scripts/update-store-location-service.cjs",
+    "src/modules/inventory/components/FacilityDrugMobileCard.tsx",
+    "src/modules/inventory/components/FacilityNonDrugMobileCard.tsx",
+    "supabase/migrations/088_seed_inpatient_store_locations.sql"
+  ],
+  "slices": [
+    {
+      "agent": "amri",
+      "allowedPaths": [
+        "AGENTS.md",
+        "docs/AGENT_OWNERSHIP.json",
+        "docs/AGENT_RULES_SOURCES.md",
+        ".codex/task-manifest.template.json",
+        ".codex/agents/babybun.toml",
+        ".codex/agents/babyluong.toml",
+        ".codex/agents/babyhien.toml",
+        ".codex/agents/babyaaralyn.toml",
+        "docs/audits/system-rules-update-20261013.manifest.json",
+        "docs/audits/system-rules-update-20261013.baseline.json",
+        "docs/audits/system-rules-update-20261013.md",
+        ".agents/skills/amri/SKILL.md",
+        ".agents/skills/agent-monitor/SKILL.md",
+        ".agents/skills/babybun/SKILL.md",
+        ".agents/skills/babyluong/SKILL.md",
+        ".agents/skills/babyhien/SKILL.md",
+        ".agents/skills/babyaaralyn/SKILL.md",
+        ".agents/skills/antislop-human/SKILL.md",
+        ".agents/skills/antislop-copywriting/SKILL.md",
+        ".agents/skills/brainstorming/SKILL.md",
+        ".agents/skills/caveman/SKILL.md",
+        ".agents/skills/codebase-memory/SKILL.md",
+        ".agents/skills/compact-code/SKILL.md",
+        ".agents/skills/emil-kowalski/SKILL.md",
+        ".agents/skills/error-guard/SKILL.md",
+        ".agents/skills/frontend-architecture/SKILL.md",
+        ".agents/skills/grill-me/SKILL.md",
+        ".agents/skills/impeccable/SKILL.md",
+        ".agents/skills/plan-first/SKILL.md",
+        ".agents/skills/security-gate/SKILL.md",
+        ".agents/skills/session-compactor/SKILL.md",
+        ".agents/skills/supabase-postgres-best-practices/SKILL.md",
+        ".agents/skills/system-design-pro/SKILL.md",
+        ".agents/skills/task-slicer/SKILL.md",
+        ".agents/skills/tasteskill/SKILL.md",
+        ".agents/skills/test-gate/SKILL.md",
+        ".agents/skills/zero-scan-router/SKILL.md"
+      ],
+      "goal": "Apply approved governance/skill corrections and supervise acceptance",
+      "acceptanceCriteria": [
+        "User intent and authorizations control task scope",
+        "Skills parse and references are maintained",
+        "Baselines preserve unrelated existing changes",
+        "No false quality/isolation claims"
+      ],
+      "dependencies": [],
+      "reportTo": "amri"
+    },
+    {
+      "agent": "babybun",
+      "allowedPaths": [
+        "docs/tasks/SYSTEM-RULES-UPDATE-20261013.md",
+        "docs/tasks/LOGIN-DESIGN-BRIEF-20261013.md",
+        "docs/DECISIONS.md",
+        ".agents/CODEBASE_ROUTER.json"
+      ],
+      "goal": "Record approved plan, repair routing, redact documented credential and prepare login brief",
+      "acceptanceCriteria": [
+        "All router paths exist or explicit gaps recorded",
+        "Secret value removed without unrelated decision edits",
+        "Reviewable premium 3D brief records measurable visual acceptance"
+      ],
+      "dependencies": [],
+      "reportTo": "amri"
+    },
+    {
+      "agent": "babyhien",
+      "allowedPaths": [
+        "scripts/check-agent-boundaries.cjs",
+        "scripts/check-rules.cjs",
+        "scripts/capture-agent-baseline.cjs",
+        "scripts/check-agent-system.cjs",
+        "package.json",
+        "eslint.config.mjs"
+      ],
+      "goal": "Repair enforcement, discovery validation and lint configuration",
+      "acceptanceCriteria": [
+        "Dirty baseline changes detected",
+        "Both rename endpoints checked",
+        "Complete manifest and overrides validated",
+        "Tracked status parsing fixed",
+        "Lint executable and static checker truthfully scoped"
+      ],
+      "dependencies": [
+        "approved v2 manifest/policy contract"
+      ],
+      "reportTo": "amri"
+    },
+    {
+      "agent": "babyaaralyn",
+      "allowedPaths": [
+        "tests/agent-governance.test.cjs",
+        "tests/agent-rules.test.cjs",
+        "tests/design-tokens.test.cjs",
+        "tests/agent-system.test.cjs",
+        "docs/test-reports/2026-10-13-agent-system-update.md",
+        "scripts/test-ipd-locations.cjs"
+      ],
+      "goal": "Provide isolated regression and acceptance evidence",
+      "acceptanceCriteria": [
+        "Adversarial failures remain failures",
+        "No live data required",
+        "Style compilation/skill/routing checks reproducible",
+        "Failures reported without feature fixes",
+        "Missing credentials produce explicit SKIP without claiming executed local tests"
+      ],
+      "dependencies": [
+        "BabyHien checker contract",
+        "Babyluong style handoff",
+        "Amri governance handoff"
+      ],
+      "reportTo": "amri"
+    },
+    {
+      "agent": "babyluong",
+      "allowedPaths": [
+        "tailwind.config.js",
+        "src/index.css",
+        "docs/DESIGN_SYSTEM.md"
+      ],
+      "goal": "Repair confirmed style contract and scope design guidance",
+      "acceptanceCriteria": [
+        "Semantic alpha utilities compile",
+        "Referenced shadow tokens resolve in both themes",
+        "Existing palette and authentication behavior preserved",
+        "Operational density rules scoped separately from approved login/hub heroes"
+      ],
+      "dependencies": [
+        "Amri policy ownership and Babybun brief"
+      ],
+      "reportTo": "amri"
+    }
+  ],
+  "version": 2,
+  "baselineSnapshotPath": "docs/audits/system-rules-update-20261013.baseline.json",
+  "ownerOverrides": {
+    "package.json": "babyhien",
+    "eslint.config.mjs": "babyhien",
+    "tailwind.config.js": "babyluong",
+    "docs/DESIGN_SYSTEM.md": "babyluong",
+    "scripts/test-ipd-locations.cjs": "babyaaralyn"
+  },
+  "approval": {
+    "approvedBy": "user",
+    "date": "2026-10-13",
+    "evidence": "proceed with this update. Make sure it follow what i want and deliver perfect quality",
+    "scope": "Apply proposed audit corrections; prepare reviewed login direction before new design implementation.",
+    "amriApproved": true
+  },
+  "acceptanceCriteria": [
+    "Resolve audited governance conflicts and malformed skill metadata",
+    "Repair dirty-file, rename, manifest and tracked-status enforcement with isolated regressions",
+    "Refresh all router references and remove plaintext credential from decision documentation",
+    "Restore runnable lint without suppressing existing code problems",
+    "Repair proven semantic style compilation and document coherent product guidance",
+    "Retain per-owner handoffs and verification evidence; preserve unrelated workspace changes"
+  ],
+  "status": "IMPLEMENTING_APPROVED_CORRECTIONS",
+  "baselineSnapshotSha256": "a3273edd4172eebf57c69fdb3da91bae0c4c023f80e97e37446f5bb9d246dd29"
+}
