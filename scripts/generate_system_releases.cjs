@@ -451,9 +451,9 @@ if (recentCommits.length > 0) {
 if (dynamicReleases.length === 0 && process.env.VERCEL_GIT_COMMIT_SHA) {
   const vercelSha = process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7);
   const vercelMsg = process.env.VERCEL_GIT_COMMIT_MESSAGE || 'Production system updates and optimizations';
-  const isKnown = BUILT_IN_RELEASES.some(r => r.metadata?.commit_hash === vercelSha);
-  
-  if (!isKnown && !vercelMsg.toLowerCase().includes(CURRENT_VERSION.toLowerCase())) {
+  // Built-in release metadata can inherit latestShortHash at build time, so
+  // it cannot reliably determine whether this deployment has its own release.
+  if (!vercelMsg.toLowerCase().includes(CURRENT_VERSION.toLowerCase())) {
     const dynamicVersion = `${CURRENT_VERSION}-sync-${vercelSha}`;
     dynamicReleases.push({
       id: `release-prod-${vercelSha}`,
