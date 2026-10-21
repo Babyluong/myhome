@@ -7,6 +7,7 @@
   "scripts": {
     "predev": "powershell -NoProfile -Command \"$ErrorActionPreference='SilentlyContinue'; $conn = Get-NetTCPConnection -LocalPort 3000; if ($conn) { $pids = $conn | Select-Object -ExpandProperty OwningProcess -Unique; $pids | ForEach-Object { Stop-Process -Id $_ -Force; Write-Host \"[predev] Killed zombie process PID $_  on port 3000\" } } else { Write-Host '[predev] Port 3000 is free. Starting fresh...' }\"",
     "dev": "vite",
+    "prebuild": "node scripts/generate_system_releases.cjs",
     "build": "tsc && vite build",
     "release:preview": "node scripts/generate_system_releases.cjs --preview",
     "release:generate": "node scripts/generate_system_releases.cjs",
