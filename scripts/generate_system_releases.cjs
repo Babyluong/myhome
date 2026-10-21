@@ -451,14 +451,26 @@ if (recentCommits.length > 0) {
 if (dynamicReleases.length === 0 && process.env.VERCEL_GIT_COMMIT_SHA) {
   const vercelSha = process.env.VERCEL_GIT_COMMIT_SHA.slice(0, 7);
   const vercelMsg = process.env.VERCEL_GIT_COMMIT_MESSAGE || 'Production system updates and optimizations';
+  const releaseNotes = (process.env.HOME_RELEASE_NOTES || '')
+    .split(/\r?\n|\s*\|\|\s*/)
+    .map(note => note.trim())
+    .filter(Boolean);
   // Built-in release metadata can inherit latestShortHash at build time, so
   // it cannot reliably determine whether this deployment has its own release.
   if (!vercelMsg.toLowerCase().includes(CURRENT_VERSION.toLowerCase())) {
     const dynamicVersion = `${CURRENT_VERSION}-sync-${vercelSha}`;
     dynamicReleases.push({
       id: `release-prod-${vercelSha}`,
-      title: `Production Deployment Live Sync (${vercelSha})`,
-      content: `• Automated Production CI/CD Deployment: ${vercelMsg}\n• Deployed from Git branch: ${currentBranch}\n• Exact Commit Reference: ${vercelSha}`,
+      title: releaseNotes.length
+        ? `System Release & Operations Upgrade (${vercelSha})`
+        : `Production Deployment Live Sync (${vercelSha})`,
+      content: [
+        ...(releaseNotes.length
+          ? releaseNotes.map(note => `• ${note}`)
+          : [`• Automated Production Deployment: ${vercelMsg}`]),
+        `• Deployed from Git branch: ${currentBranch}`,
+        `• Exact Commit Reference: ${vercelSha}`
+      ].join('\n'),
       type: 'system_update',
       severity: 'info',
       status: 'published',
